@@ -1,0 +1,16 @@
+# Miarritze — en-têtes requis pour l'export web Godot 4 (threads/SharedArrayBuffer).
+# Sans COOP/COEP : écran noir au chargement (cf. CLAUDE.md §8).
+
+<IfModule mod_headers.c>
+	Header set Cross-Origin-Opener-Policy "same-origin"
+	Header set Cross-Origin-Embedder-Policy "require-corp"
+</IfModule>
+
+<IfModule mod_mime.c>
+	AddType application/wasm .wasm
+</IfModule>
+
+# Compression conseillée (le .wasm et le .pck sont volumineux).
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE application/wasm application/javascript text/html
+</IfModule>

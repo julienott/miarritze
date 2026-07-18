@@ -1,0 +1,18 @@
+# Godot
+.godot/
+*.translation
+
+# Exports / builds
+web/build/
+exports/
+*.zip
+
+# Backend — jamais versionnés (cf. CLAUDE.md §3)
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+backend/config.php
+config.php
+
+# OS
+.DS_Store
