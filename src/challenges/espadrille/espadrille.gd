@@ -7,7 +7,7 @@ extends ChallengeBase
 
 const _LAUNCH_POS: Vector2 = Vector2(150.0, 560.0)
 
-@export var throws_total: int = 5
+@export var wave_bonus: int = 50
 @export var power_scale: float = 3.4
 @export var power_max: float = 1500.0
 @export var gravity: float = 1400.0
@@ -20,8 +20,7 @@ var _fsm: StateMachine
 var _player: LouisSprite
 var _projectile: Sprite2D
 var _preview: Line2D
-var _throws_left_label: Label
-var _throws_left: int = 0
+var _wave_count: int = 0
 var _velocity: Vector2 = Vector2.ZERO
 var _drag_vector: Vector2 = Vector2.ZERO
 var _hits_this_throw: int = 0
@@ -29,8 +28,6 @@ var _targets: Array[Dictionary] = []
 
 
 func _on_begin() -> void:
-	_throws_left = throws_total
-
 	_player = LouisSprite.new()
 	_player.position = Vector2(70.0, 640.0 - LouisSprite.FEET_Y)
 	add_child(_player)
@@ -44,11 +41,6 @@ func _on_begin() -> void:
 	_preview.width = 5.0
 	_preview.default_color = Color(0.97, 0.95, 0.89, 0.65)
 	add_child(_preview)
-
-	_throws_left_label = Label.new()
-	_throws_left_label.add_theme_font_size_override(&"font_size", 22)
-	_throws_left_label.position = Vector2(24.0, 96.0)
-	add_child(_throws_left_label)
 
 	_spawn_targets()
 
@@ -70,8 +62,8 @@ func _spawn_targets() -> void:
 	_add_target("buoy", Vector2(610.0, 540.0), buoy_points, Vector2.ZERO)
 	_add_target("buoy", Vector2(790.0, 505.0), buoy_points, Vector2.ZERO)
 	# mouettes chapardeuses
-	_add_target("gull", Vector2(820.0, 210.0), gull_points, Vector2(120.0, 0.0))
-	_add_target("gull", Vector2(1050.0, 120.0), gull_points, Vector2(-90.0, 0.0))
+	_add_target("gull", Vector2(820.0, 210.0), gull_points, Vector2(120.0 + 30.0 * _wave_count, 0.0))
+	_add_target("gull", Vector2(1050.0, 120.0), gull_points, Vector2(-90.0 - 25.0 * _wave_count, 0.0))
 
 
 func _add_target(kind: String, target_position: Vector2, points: int, velocity: Vector2) -> void:
@@ -80,6 +72,8 @@ func _add_target(kind: String, target_position: Vector2, points: int, velocity: 
 		node = SpriteUtil.animated(["gull_1", "gull_2"], 6.0)
 	else:
 		node = SpriteUtil.sprite(kind)
+	if kind == "buoy":
+		node.scale = Vector2(5.5, 5.5)
 	node.position = target_position
 	add_child(node)
 	_targets.append({"node": node, "points": points, "velocity": velocity})
@@ -90,7 +84,6 @@ func _physics_process(delta: float) -> void:
 		return
 	_fsm.update(delta)
 	_move_gulls(delta)
-	_throws_left_label.text = "Espadrilles : %d" % _throws_left
 
 
 func _move_gulls(delta: float) -> void:
@@ -152,13 +145,19 @@ func check_hits() -> void:
 				points *= combo_multiplier
 			add_score(points)
 			_targets.erase(target)
+			Fx.stars(self, node.position + SpriteUtil.display_size(node) * 0.5)
 			node.queue_free()
 			AudioManager.sfx(&"impact")
 
 
 func maybe_finish() -> void:
-	if _throws_left <= 0 or _targets.is_empty():
-		end()
+	# plus de limite de lancers : quand tout est touché, une nouvelle
+	# vague de cibles apparaît (bonus) — la partie se joue aux cœurs.
+	if _targets.is_empty():
+		_wave_count += 1
+		add_score(wave_bonus * _wave_count)
+		AudioManager.sfx(&"crossed")
+		_spawn_targets()
 
 
 # --- États ---
@@ -190,7 +189,6 @@ class ThrowState extends State:
 		var espadrille: Espadrille = machine.owner_node as Espadrille
 		espadrille._velocity = espadrille.launch_velocity()
 		espadrille._preview.points = PackedVector2Array()
-		espadrille._throws_left -= 1
 		espadrille._player.play(&"throw")
 		AudioManager.sfx(&"throw")
 

@@ -39,11 +39,9 @@ var _line: Line2D
 var _caught_sprite: Sprite2D = null
 var _status_label: Label
 var _hint_label: Label
-var _bar_labels: Array[Label] = []
-var _tension_bar: ColorRect
-var _tension_fill: ColorRect
-var _progress_bar: ColorRect
-var _progress_fill: ColorRect
+var _tension_gauge: PixelGauge
+var _progress_gauge: PixelGauge
+var _catches: int = 0
 var _bob_time: float = 0.0
 
 
@@ -76,13 +74,21 @@ func _on_begin() -> void:
 	_hint_label.custom_minimum_size = Vector2(1000.0, 0.0)
 	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(_hint_label)
-	_add_bar_label("LIGNE", Vector2(240.0, 588.0))
-	_add_bar_label("TENSION", Vector2(180.0, 640.0))
 
-	_tension_bar = _make_bar(Vector2(336.0, 636.0), Vector2(608.0, 44.0), Color(0.14, 0.08, 0.12, 0.9))
-	_tension_fill = _make_bar(Vector2(342.0, 642.0), Vector2(0.0, 32.0), Color(0.3, 0.85, 0.3))
-	_progress_bar = _make_bar(Vector2(336.0, 586.0), Vector2(608.0, 32.0), Color(0.14, 0.08, 0.12, 0.9))
-	_progress_fill = _make_bar(Vector2(342.0, 592.0), Vector2(0.0, 20.0), Color(0.4, 0.7, 1.0))
+	_progress_gauge = PixelGauge.new()
+	_progress_gauge.position = Vector2(336.0, 590.0)
+	_progress_gauge.size = Vector2(600.0, 24.0)
+	_progress_gauge.fill_color = Color(0.4, 0.7, 1.0)
+	_progress_gauge.label_text = "LIGNE"
+	_progress_gauge.visible = false
+	add_child(_progress_gauge)
+	_tension_gauge = PixelGauge.new()
+	_tension_gauge.position = Vector2(336.0, 652.0)
+	_tension_gauge.size = Vector2(600.0, 32.0)
+	_tension_gauge.label_text = "TENSION"
+	_tension_gauge.target_mark = red_zone
+	_tension_gauge.visible = false
+	add_child(_tension_gauge)
 
 	_fsm = StateMachine.new(self)
 	_fsm.add_state(&"cast", CastState.new())
@@ -121,19 +127,17 @@ func _pick_fish() -> void:
 
 func _update_visuals() -> void:
 	var fighting: bool = _fsm.current_name == &"reel" or _fsm.current_name == &"slack"
-	for bar: ColorRect in [_tension_bar, _tension_fill, _progress_bar, _progress_fill]:
-		bar.visible = fighting
-	for label: Label in _bar_labels:
-		label.visible = fighting
+	_tension_gauge.visible = fighting
+	_progress_gauge.visible = fighting
 	if fighting:
-		_tension_fill.size.x = 596.0 * clampf(_tension, 0.0, 1.0)
+		_tension_gauge.value = _tension
 		if _tension >= red_zone:
-			_tension_fill.color = Color(0.9, 0.2, 0.15)
+			_tension_gauge.fill_color = Color(0.9, 0.2, 0.15)
 		elif _tension >= orange_zone:
-			_tension_fill.color = Color(0.95, 0.65, 0.15)
+			_tension_gauge.fill_color = Color(0.95, 0.65, 0.15)
 		else:
-			_tension_fill.color = Color(0.3, 0.85, 0.3)
-		_progress_fill.size.x = 596.0 * clampf(_progress, 0.0, 1.0)
+			_tension_gauge.fill_color = Color(0.3, 0.85, 0.3)
+		_progress_gauge.value = _progress
 		# le bouchon se rapproche du ponton avec la progression
 		_bobber.position = _BOBBER_HOME.lerp(Vector2(470.0, 540.0), _progress)
 	else:
@@ -145,30 +149,11 @@ func _update_visuals() -> void:
 	])
 
 
-func _make_bar(bar_position: Vector2, size: Vector2, color: Color) -> ColorRect:
-	var bar: ColorRect = ColorRect.new()
-	bar.position = bar_position
-	bar.size = size
-	bar.color = color
-	bar.visible = false
-	add_child(bar)
-	return bar
-
 
 func set_status(text: String, hint: String = "") -> void:
 	_status_label.text = text
 	_hint_label.text = hint
 
-
-func _add_bar_label(text: String, label_position: Vector2) -> void:
-	var label: Label = Label.new()
-	label.text = text
-	label.add_theme_font_size_override(&"font_size", 14)
-	label.add_theme_color_override(&"font_color", Color(0.97, 0.95, 0.89))
-	label.position = label_position
-	label.visible = false
-	add_child(label)
-	_bar_labels.append(label)
 
 
 func show_catch() -> void:
@@ -200,6 +185,7 @@ class CastState extends State:
 		_time_left -= delta
 		if _time_left <= 0.0:
 			fishing._bobber.visible = true
+			Fx.splash(fishing, fishing._bobber.position)
 			AudioManager.sfx(&"splash")
 			machine.transition_to(&"bite")
 
@@ -230,6 +216,8 @@ class BiteState extends State:
 			_window_left -= delta
 			if _window_left <= 0.0:
 				fishing.set_status("Trop tard, il est parti…", "sois plus rapide au prochain !")
+				Fx.splash(fishing, fishing._bobber.position)
+				fishing.lose_life()
 				machine.transition_to(&"cast")
 
 	func handle_tap(_position: Vector2) -> void:
@@ -255,7 +243,7 @@ class ReelState extends State:
 		if not fishing._is_touch_pressed():
 			machine.transition_to(&"slack")
 			return
-		var resist: float = fishing._fish["resist"]
+		var resist: float = fishing._fish["resist"] * (1.0 + 0.06 * fishing._catches)
 		fishing._progress += fishing.reel_rate / resist * delta
 		fishing._tension += fishing.tension_up_rate * resist * delta
 		if fishing._progress >= 1.0:
@@ -291,6 +279,7 @@ class SnapState extends State:
 		_time_left = 1.0
 		fishing.set_status("Oh non, la ligne a cassé !", "reste dans le vert et l'orange, évite le rouge")
 		AudioManager.sfx(&"snap")
+		Fx.splash(fishing, fishing._bobber.position)
 		fishing.lose_life()
 
 	func update(delta: float) -> void:
@@ -305,9 +294,11 @@ class LandedState extends State:
 	func enter(_previous: StringName) -> void:
 		var fishing: Fishing = machine.owner_node as Fishing
 		_time_left = 1.2
+		fishing._catches += 1
 		var points: int = fishing._fish["points"]
 		fishing.add_score(points)
 		fishing.show_catch()
+		Fx.splash(fishing, fishing._bobber.position)
 		fishing.set_status("%s attrapé ! +%d points" % [fishing._fish["name"], points])
 		AudioManager.sfx(&"landed")
 

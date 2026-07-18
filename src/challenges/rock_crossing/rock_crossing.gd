@@ -20,8 +20,7 @@ const _SPACING_X: float = 145.0
 
 var _fsm: StateMachine
 var _player: LouisSprite
-var _wave_overlay: ColorRect
-var _foam_line: Line2D
+var _wave: WaveVisual
 var _cycle_time: float = 0.0
 var _position_index: int = 0
 var _crossings: int = 0
@@ -34,16 +33,14 @@ func _on_begin() -> void:
 		platform.position = Vector2(_platform_x(i) - size.x * 0.5, _PLATFORM_Y)
 		add_child(platform)
 
-	_wave_overlay = ColorRect.new()
-	_wave_overlay.position = Vector2(0.0, 340.0)
-	_wave_overlay.size = Vector2(1280.0, 380.0)
-	_wave_overlay.color = Color(0.87, 0.96, 0.94, 0.0)
-	add_child(_wave_overlay)
-
-	_foam_line = Line2D.new()
-	_foam_line.width = 10.0
-	_foam_line.default_color = Color(0.87, 0.96, 0.94, 0.9)
-	add_child(_foam_line)
+	# la vague déferlante réutilise le visuel du surf, en balayage
+	_wave = WaveVisual.new()
+	_wave.base_y = 730.0
+	_wave.sigma = 320.0
+	_wave.height = 0.0
+	_wave.breaking = 1.0
+	_wave.z_index = 1
+	add_child(_wave)
 
 	_player = LouisSprite.new()
 	add_child(_player)
@@ -75,21 +72,18 @@ func is_safe() -> bool:
 
 func _update_wave_visual() -> void:
 	var fraction: float = _cycle_time / wave_cycle
-	var alpha: float
 	if fraction < safe_fraction:
-		alpha = lerpf(0.30, 0.0, fraction / safe_fraction)
+		# mer retirée : la vague se reforme au large, à droite
+		var t: float = fraction / safe_fraction
+		_wave.center_x = 1650.0
+		_wave.height = lerpf(20.0, 90.0, t)
+		_wave.collapse = 0.0
 	else:
+		# la vague BALAYE la passerelle de droite à gauche, en déferlant
 		var danger: float = (fraction - safe_fraction) / (1.0 - safe_fraction)
-		alpha = 0.12 + 0.5 * sin(danger * PI)
-	_wave_overlay.color.a = alpha
-	# ligne d'écume qui monte et descend avec le cycle (télégraphe visuel)
-	var foam_y: float = 720.0 - 300.0 * alpha
-	var points: PackedVector2Array = PackedVector2Array()
-	for i: int in 17:
-		var x: float = i * 80.0
-		points.append(Vector2(x, foam_y + 14.0 * sin(x * 0.02 + _cycle_time * 4.0)))
-	_foam_line.points = points
-	_foam_line.modulate.a = clampf(alpha * 2.5, 0.0, 1.0)
+		_wave.center_x = lerpf(1650.0, -420.0, danger)
+		_wave.height = 310.0 * sin(minf(danger * 1.25, 1.0) * PI * 0.72 + 0.35)
+		_wave.collapse = 0.5 + 0.5 * danger
 
 
 func _platform_x(index: int) -> float:
@@ -109,6 +103,8 @@ func _complete_crossing() -> void:
 	_crossings += 1
 	add_score(crossing_points)
 	AudioManager.sfx(&"crossed")
+	# chaque traversée accélère l'océan : la partie se corse toute seule
+	wave_cycle = maxf(wave_cycle * 0.92, 1.3)
 	_place_player_at(0)
 
 
@@ -165,6 +161,7 @@ class SweptState extends State:
 		crossing._player.play(&"hit")
 		crossing._player.modulate = Color(1, 1, 1, 0.6)
 		AudioManager.sfx(&"splash")
+		Fx.splash(crossing, crossing._player.position + Vector2(32.0, 40.0))
 		crossing.lose_life()
 
 	func update(delta: float) -> void:

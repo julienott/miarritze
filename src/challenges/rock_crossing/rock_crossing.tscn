@@ -7,7 +7,7 @@
 [node name="RockCrossing" instance=ExtResource("1_base")]
 script = ExtResource("2_rock")
 challenge_id = &"rock_crossing"
-time_limit = 60.0
+time_limit = 0.0
 intro_title = "Le Rocher de la Vierge"
 intro_place = "La traversée"
 intro_text = "TAPE pour avancer de rocher en rocher\nquand la mer se retire.\nSi la vague arrive... attends qu'elle passe !"

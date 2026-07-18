@@ -21,6 +21,11 @@ const _TITLES: Dictionary = {
 
 
 func _ready() -> void:
+	var louis: LouisSprite = LouisSprite.new()
+	louis.position = Vector2(210.0, 400.0)
+	add_child(louis)
+	louis.scale = Vector2(6.0, 6.0)   # après add_child : _ready impose 4x
+	louis.play(&"win" if SceneRouter.last_was_best else &"idle")
 	var challenge: StringName = SceneRouter.last_challenge
 	_title_label.text = str(_TITLES.get(challenge, String(challenge)))
 	_score_label.text = str(SceneRouter.last_score)

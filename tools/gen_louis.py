@@ -470,6 +470,34 @@ def draw_paddle_sheet(out_dir):
     sheet.save(os.path.join(out_dir, "louis_paddle.png"))
     return sheet
 
+# victoire : bras levés en V, grand sourire
+WIN = frame([
+    ".OSO.......OSO..",
+    ".OSO.OOOOO.OSO..",
+    ".OSOOBBBBBOOSO..",
+    ".OOOBBBBBBBBOO..",
+    "..OBBBBBBBBBBO..",
+    "..ODDBBBBBBDDO..",
+    "..OHHHHHHHHHHO..",
+    "...OHSSSSSSHO...",
+    "...OSSKSSKSSO...",
+    "...OSSSSSSSSO...",
+    "...OTSKKKKSTO...",
+    "....OSSTTSSO....",
+    "....OWWWWWO.....",
+    "...OWWWWWWWO....",
+    "...OWWWWWWWO....",
+    "....OBBBBBO.....",
+    "....OCCCCCO.....",
+    "....OCCOCCO.....",
+    "....OCCOCCO.....",
+    "....OUCOUCO.....",
+    "....OEEOEEO.....",
+    "....OOOOOOO.....",
+    "................",
+    "................",
+])
+
 ANIMS = [
     ("idle", [IDLE_1, IDLE_2]),
     ("run", [RUN_1, RUN_2, RUN_3, RUN_2, RUN_4, RUN_3]),
@@ -480,6 +508,7 @@ ANIMS = [
     ("fish", [FISH_1, FISH_2]),
     ("throw", [THROW_1, THROW_2]),
     ("climb", [CLIMB_1, CLIMB_2]),
+    ("win", [WIN, IDLE_1]),
 ]
 
 

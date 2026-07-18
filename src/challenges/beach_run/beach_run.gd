@@ -10,7 +10,7 @@ const _PLAYER_X: float = 250.0
 const _SPAWN_X: float = 1400.0
 
 @export var run_speed_start: float = 340.0
-@export var run_speed_max: float = 680.0
+@export var run_speed_max: float = 1200.0
 @export var speed_ramp_per_second: float = 10.0
 @export var jump_velocity: float = -950.0
 @export var gravity: float = 2300.0
@@ -102,10 +102,16 @@ func _spawn_obstacle() -> void:
 	add_child(node)
 	_obstacles.append(node)
 	if randf() < coin_chance:
-		var coin: AnimatedSprite2D = SpriteUtil.animated(["coin", "coin_2", "coin_3", "coin_2"], 8.0)
-		coin.position = Vector2(_SPAWN_X + 90.0, _GROUND_Y - randf_range(190.0, 330.0))
-		add_child(coin)
-		_coins.append(coin)
+		# chapelet de pièces en arc, bien plus satisfaisant qu'une pièce seule
+		var count: int = randi_range(3, 5)
+		var base_y: float = _GROUND_Y - randf_range(190.0, 300.0)
+		for i: int in count:
+			var coin: AnimatedSprite2D = SpriteUtil.animated(["coin", "coin_2", "coin_3", "coin_2"], 8.0)
+			var t: float = i / float(count - 1)
+			coin.position = Vector2(_SPAWN_X + 90.0 + i * 52.0,
+				base_y - 60.0 * sin(t * PI))
+			add_child(coin)
+			_coins.append(coin)
 
 
 func _player_rect() -> Rect2:
@@ -137,11 +143,13 @@ func player_feet() -> float:
 # --- États ---
 
 class RunState extends State:
-	func enter(_previous: StringName) -> void:
+	func enter(previous: StringName) -> void:
 		var run: BeachRun = machine.owner_node as BeachRun
 		run._player.position.y = BeachRun._GROUND_Y - LouisSprite.FEET_Y
 		run._velocity_y = 0.0
 		run._player.play(&"run")
+		if previous == &"fall":
+			Fx.sand_puff(run, run._player.position + Vector2(32.0, LouisSprite.FEET_Y))
 
 	func handle_tap(_position: Vector2) -> void:
 		machine.transition_to(&"jump")
@@ -152,6 +160,7 @@ class JumpState extends State:
 		var run: BeachRun = machine.owner_node as BeachRun
 		run._velocity_y = run.jump_velocity
 		run._player.play(&"jump")
+		Fx.sand_puff(run, run._player.position + Vector2(32.0, LouisSprite.FEET_Y), )
 		AudioManager.sfx(&"jump")
 
 	func update(delta: float) -> void:
@@ -184,6 +193,7 @@ class HitState extends State:
 		run._speed = run.run_speed_start
 		run._player.play(&"hit")
 		run._player.modulate = Color(1, 1, 1, 0.6)
+		Fx.stars(run, run._player.position + Vector2(32.0, 30.0))
 		run.lose_life()
 
 	func update(delta: float) -> void:

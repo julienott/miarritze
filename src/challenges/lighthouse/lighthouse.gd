@@ -5,7 +5,7 @@ extends ChallengeBase
 ## palier suivant. Au sommet : la salle des trophées et un bonus.
 ## FSM : Climb, Jump, Fall, Reach.
 
-const _PLATFORM_W: float = 112.0
+const _PLATFORM_W: float = 146.0
 const _LEFT_X: float = 440.0
 const _RIGHT_X: float = 840.0
 const _BASE_Y: float = 640.0
@@ -13,9 +13,9 @@ const _STEP_Y: float = 150.0
 
 @export var platform_count: int = 25
 @export var walk_speed: float = 240.0
-@export var jump_velocity: float = -880.0
-@export var jump_horizontal_speed: float = 320.0
-@export var gravity: float = 2100.0
+@export var jump_velocity: float = -920.0
+@export var jump_horizontal_speed: float = 440.0
+@export var gravity: float = 1900.0
 @export var platform_points: int = 15
 @export var summit_points: int = 200
 
@@ -40,6 +40,7 @@ func _on_begin() -> void:
 
 	for i: int in platform_count:
 		var ledge: Sprite2D = SpriteUtil.sprite("ledge")
+		ledge.scale = Vector2(5.2, 4.0)   # paliers ~30% plus larges (146 px)
 		ledge.position = Vector2(_platform_x(i) - _PLATFORM_W * 0.5, _level_y(i))
 		add_child(ledge)
 
@@ -100,7 +101,7 @@ func landing_level() -> int:
 	for level: int in range(platform_count - 1, -1, -1):
 		var top: float = _level_y(level)
 		if feet >= top and feet <= top + 40.0:
-			if absf(center_x - _platform_x(level)) <= _PLATFORM_W * 0.5 + 10.0:
+			if absf(center_x - _platform_x(level)) <= _PLATFORM_W * 0.5 + 26.0:
 				return level
 	return -1
 
@@ -224,6 +225,7 @@ class FallState extends State:
 			lighthouse._place_on_level(level)
 			if reached_higher:
 				lighthouse.add_score(lighthouse.platform_points)
+				Fx.sand_puff(lighthouse, lighthouse._player.position + Vector2(32.0, LouisSprite.FEET_Y))
 				AudioManager.sfx(&"step")
 			if level >= lighthouse.platform_count - 1:
 				machine.transition_to(&"reach")
@@ -240,6 +242,6 @@ class ReachState extends State:
 	func enter(_previous: StringName) -> void:
 		var lighthouse: Lighthouse = machine.owner_node as Lighthouse
 		lighthouse.add_score(lighthouse.summit_points)
-		lighthouse._player.play(&"idle")
+		lighthouse._player.play(&"win")
 		AudioManager.sfx(&"victory")
 		lighthouse.show_trophy_room()

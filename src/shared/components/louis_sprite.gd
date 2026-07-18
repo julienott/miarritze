@@ -21,6 +21,7 @@ const _ANIMS: Dictionary = {
 	&"fish": [6, 2, 2.0, true],
 	&"throw": [7, 2, 8.0, false],
 	&"climb": [8, 2, 6.0, true],
+	&"win": [9, 2, 3.0, true],
 }
 
 

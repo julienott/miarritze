@@ -7,7 +7,7 @@
 [node name="Fishing" instance=ExtResource("1_base")]
 script = ExtResource("2_fish")
 challenge_id = &"fishing"
-time_limit = 60.0
+time_limit = 0.0
 intro_title = "Le Port des Pêcheurs"
 intro_place = "La pêche"
 intro_text = "Surveille le bouchon : quand ÇA MORD, tape vite !\nPuis MAINTIENS le doigt pour remonter le poisson,\nrelâche quand la jauge de tension devient rouge."

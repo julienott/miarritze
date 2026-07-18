@@ -29,8 +29,8 @@ static func animated(names: Array, fps: float, loop: bool = true) -> AnimatedSpr
 ## Taille affichée (px écran) d'un sprite non centré, échelle comprise.
 static func display_size(s: Node2D) -> Vector2:
 	if s is Sprite2D:
-		return (s as Sprite2D).texture.get_size() * SCALE
+		return (s as Sprite2D).texture.get_size() * s.scale
 	if s is AnimatedSprite2D:
 		var anim: AnimatedSprite2D = s
-		return anim.sprite_frames.get_frame_texture(&"default", 0).get_size() * SCALE
+		return anim.sprite_frames.get_frame_texture(&"default", 0).get_size() * s.scale
 	return Vector2.ZERO

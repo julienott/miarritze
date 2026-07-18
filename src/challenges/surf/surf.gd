@@ -42,9 +42,7 @@ var _player: LouisSprite
 var _board: Sprite2D
 var _paddle_sprite: AnimatedSprite2D
 var _wave: WaveVisual
-var _speed_bar: ColorRect
-var _speed_fill: ColorRect
-var _speed_zone: ColorRect
+var _speed_gauge: PixelGauge
 var _status: Label
 var _hint: Label
 
@@ -87,10 +85,14 @@ func _on_begin() -> void:
 	_rider.add_child(_paddle_sprite)
 
 	# jauge de rame (verticale, à gauche de Louis)
-	_speed_bar = _bar(Vector2(240.0, 300.0), Vector2(36.0, 260.0), Color(0.14, 0.08, 0.12, 0.9))
-	_speed_fill = _bar(Vector2(246.0, 554.0), Vector2(24.0, 0.0), Color(0.3, 0.85, 0.3))
-	_speed_zone = _bar(Vector2(240.0, 300.0), Vector2(36.0, 6.0), Color(0.95, 0.78, 0.24))
-	_speed_zone.position.y = 300.0 + 260.0 * (1.0 - takeoff_threshold)
+	_speed_gauge = PixelGauge.new()
+	_speed_gauge.position = Vector2(240.0, 300.0)
+	_speed_gauge.size = Vector2(40.0, 260.0)
+	_speed_gauge.vertical = true
+	_speed_gauge.target_mark = takeoff_threshold
+	_speed_gauge.label_text = "RAME"
+	_speed_gauge.visible = false
+	add_child(_speed_gauge)
 
 	_status = _make_label(30, Vector2(140.0, 130.0), Color(0.97, 0.95, 0.89))
 	_hint = _make_label(18, Vector2(140.0, 180.0), Color(0.95, 0.78, 0.24))
@@ -104,15 +106,6 @@ func _on_begin() -> void:
 	_fsm.add_state(&"wave_end", WaveEndState.new())
 	_fsm.transition_to(&"wait")
 
-
-func _bar(bar_position: Vector2, size: Vector2, color: Color) -> ColorRect:
-	var bar: ColorRect = ColorRect.new()
-	bar.position = bar_position
-	bar.size = size
-	bar.color = color
-	bar.visible = false
-	add_child(bar)
-	return bar
 
 
 func _make_label(size: int, label_position: Vector2, color: Color) -> Label:
@@ -145,14 +138,10 @@ func _physics_process(delta: float) -> void:
 
 func _update_speed_bar() -> void:
 	var show_bar: bool = _fsm.current_name == &"paddle"
-	_speed_bar.visible = show_bar
-	_speed_fill.visible = show_bar
-	_speed_zone.visible = show_bar
+	_speed_gauge.visible = show_bar
 	if show_bar:
-		var h: float = 248.0 * clampf(_paddle_speed, 0.0, 1.0)
-		_speed_fill.size.y = h
-		_speed_fill.position.y = 554.0 - h
-		_speed_fill.color = Color(0.3, 0.85, 0.3) if _paddle_speed >= takeoff_threshold else Color(0.95, 0.65, 0.15)
+		_speed_gauge.value = _paddle_speed
+		_speed_gauge.fill_color = Color(0.3, 0.85, 0.3) if _paddle_speed >= takeoff_threshold else Color(0.95, 0.65, 0.15)
 
 
 ## Ligne d'eau sous Louis (la houle de la vague comprise).
@@ -250,6 +239,7 @@ class TakeOffState extends State:
 		_t = 0.0
 		surf.rider_flat(false)
 		surf._player.play(&"surf")
+		Fx.splash(surf, surf._rider.position + Vector2(32.0, 80.0))
 		AudioManager.sfx(&"jump")
 
 	func update(delta: float) -> void:
@@ -326,6 +316,7 @@ class CloseoutState extends State:
 		surf._board.visible = false
 		surf._player.play(&"hit")
 		surf._player.modulate = Color(1, 1, 1, 0.6)
+		Fx.splash(surf, surf._rider.position + Vector2(32.0, 60.0))
 		AudioManager.sfx(&"splash")
 		surf.lose_life()
 

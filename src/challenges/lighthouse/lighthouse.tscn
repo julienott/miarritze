@@ -7,7 +7,7 @@
 [node name="Lighthouse" instance=ExtResource("1_base")]
 script = ExtResource("2_lh")
 challenge_id = &"lighthouse"
-time_limit = 90.0
+time_limit = 0.0
 intro_title = "Le Phare"
 intro_place = "L'ascension"
 intro_text = "TAPE pour sauter de palier en palier.\nGrimpe jusqu'au sommet du Phare\net découvre la salle des trophées !"

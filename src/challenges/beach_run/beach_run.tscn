@@ -7,7 +7,7 @@
 [node name="BeachRun" instance=ExtResource("1_base")]
 script = ExtResource("2_run")
 challenge_id = &"beach_run"
-time_limit = 60.0
+time_limit = 0.0
 intro_title = "La Grande Plage"
 intro_place = "Course sur le sable"
 intro_text = "TAPE pour sauter par-dessus les crabes\net les châteaux de sable !\nRamasse les pièces dorées."
