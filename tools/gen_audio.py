@@ -90,11 +90,21 @@ def mix_to_wav(path, buf):
 # La mélodie est jouée au carré, la basse au triangle, batterie kick/hat.
 
 def song(path, bpm, melody, bass, drums=None, duty=0.5, vibrato=0.006,
-         mel_vol=0.30, bass_vol=0.26, swing=0.0):
+         mel_vol=0.30, bass_vol=0.26, swing=0.0, extra_tracks=None):
     beat = 60.0 / bpm
     total_beats = sum(d for _, d in melody)
     n = int(total_beats * beat * SR) + SR // 4
     buf = [0.0] * n
+
+    for track in (extra_tracks or []):
+        t2 = 0.0
+        for note, d in track["seq"]:
+            dur = d * beat
+            if note is not None:
+                render_note(buf, int(t2 * SR), dur * track.get("gate", 0.5), note,
+                            track.get("wave", "square"), duty=track.get("duty", 0.25),
+                            vol=track.get("vol", 0.14))
+            t2 += dur
 
     t = 0.0
     for i, (note, d) in enumerate(melody):
@@ -310,35 +320,67 @@ HEGOAK_MELODY = [
 ]
 
 
-def hegoak_bass(melody):
-    """Basse auto-harmonisée : par mesure (3 temps), la fondamentale la plus
-    consonante avec les notes de la mesure (mi min : E, D, G, B, A)."""
-    roots = [40, 38, 43, 47, 45]
+
+def hegoak_reggae_parts(melody):
+    """Skank reggae : deux voix d'accord piquées sur les contretemps
+    de chaque temps (3/4), construites sur la basse harmonisée."""
+    roots = [r for r, _ in hegoak_bass_roots(melody)]
+    skank_low, skank_high = [], []
+    for root in roots:                      # une entrée par mesure de 3 temps
+        for _ in range(3):                  # 3 temps : silence puis stab
+            skank_low += [(None, 0.5), (root + 12, 0.5)]
+            skank_high += [(None, 0.5), (root + 19, 0.5)]
+    return skank_low, skank_high
+
+
+def hegoak_bass_roots(melody):
+    roots_pool = [40, 38, 43, 47, 45]
     beats = []
     for note, d in melody:
         for _ in range(int(d * 2)):
             beats.append(note)
-    bass = []
+    out = []
     i = 0
     while i < len(beats):
         bar = [b for b in beats[i:i + 6] if b]
         best, best_score = 40, -1
-        for r in roots:
+        for r in roots_pool:
             score = sum(1 for b in bar if (b - r) % 12 in (0, 3, 4, 7))
             if score > best_score:
                 best, best_score = r, score
-        bass.append((best, 2))
-        bass.append((best + 7, 1))
+        out.append((best, 3))
         i += 6
-    return bass
+    return out
 
 
-SONGS["menu"] = dict(
-    bpm=104, duty=0.5, vibrato=0.012, mel_vol=0.32, bass_vol=0.22,
-    melody=notes(HEGOAK_MELODY),
-    bass=notes(hegoak_bass(HEGOAK_MELODY)),
-    drums=None,
-)
+def hegoak_reggae_bass(melody):
+    """Basse reggae : fondamentale appuyée sur 1, quinte piquée sur 3."""
+    seq = []
+    for root, _ in hegoak_bass_roots(melody):
+        seq += [(root, 1.5), (root + 7, 0.5), (root, 1.0)]
+    return seq
+
+
+_skank_low, _skank_high = None, None
+
+
+def _build_menu_song():
+    global _skank_low, _skank_high
+    _skank_low, _skank_high = hegoak_reggae_parts(HEGOAK_MELODY)
+    return dict(
+        bpm=138, duty=0.5, vibrato=0.012, mel_vol=0.30, bass_vol=0.26,
+        swing=0.04,
+        melody=notes(HEGOAK_MELODY),
+        bass=notes(hegoak_reggae_bass(HEGOAK_MELODY)),
+        drums=(["kick", None, "hat", None, "snare", "hat"], 0.5),
+        extra_tracks=[
+            {"seq": _skank_low, "duty": 0.25, "vol": 0.11, "gate": 0.35},
+            {"seq": _skank_high, "duty": 0.25, "vol": 0.09, "gate": 0.35},
+        ],
+    )
+
+
+SONGS["menu"] = _build_menu_song()
 
 # ---------------------------------------------------------------- SFX
 

@@ -352,6 +352,33 @@ SPRITES["algae"] = [
     "...OOOOO...",
 ]
 
+SPRITES["towel_1"] = [
+    "OOOOOOOOOOOOOO",
+    "ORRWWRRWWRRWWO",
+    "ORRWWRRWWRRWWO",
+    "ORRWWRRWWRRWWO",
+    "OOOOOOOOOOOOOO",
+]
+
+SPRITES["towel_2"] = [
+    "OOOOOOOOOOOOOO",
+    "OTTTTTTTTTTTTO",
+    "OTTGGTTGGTTGGO",
+    "OTTTTTTTTTTTTO",
+    "OOOOOOOOOOOOOO",
+]
+
+SPRITES["sail"] = [
+    "....O....",
+    "....OO...",
+    "...OWWO..",
+    "..OWWWO..",
+    ".OWWWWO..",
+    "..OOOOO..",
+    ".ORRRRRO.",
+    "..OOOOO..",
+]
+
 
 def render(name, rows):
     w = max(len(r) for r in rows)

@@ -28,6 +28,8 @@ void fragment() {
 
 var _iris: ColorRect
 var _transitioning: bool = false
+var _pending_path: String = ""
+
 
 
 func _ready() -> void:
@@ -113,6 +115,9 @@ func _goto(scene_path: String) -> void:
 
 func _change_scene(scene_path: String) -> void:
 	if _transitioning:
+		# une navigation arrivée pendant le fondu n'est jamais perdue :
+		# elle remplace la destination en attente
+		_pending_path = scene_path
 		return
 	_transitioning = true
 	await _iris_to(0.0, 0.32)
@@ -122,3 +127,7 @@ func _change_scene(scene_path: String) -> void:
 	await get_tree().process_frame
 	await _iris_to(1.5, 0.38)
 	_transitioning = false
+	if _pending_path != "":
+		var next_path: String = _pending_path
+		_pending_path = ""
+		_change_scene(next_path)

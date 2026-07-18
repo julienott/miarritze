@@ -30,18 +30,35 @@ var _spawn_countdown: float = 0.0
 var _distance_accumulator: float = 0.0
 var _obstacles: Array[Node2D] = []
 var _coins: Array[Node2D] = []
+var _clouds: Array[Node2D] = []
+var _sails: Array[Node2D] = []
+var _decor: Array[Node2D] = []
+var _decor_countdown: float = 0.6
 
 
 func _on_begin() -> void:
 	_speed = run_speed_start
 	_player = LouisSprite.new()
 	_player.position = Vector2(_PLAYER_X, _GROUND_Y - LouisSprite.FEET_Y)
+	_player.z_index = 2
 	add_child(_player)
 	_player.play(&"run")
 	# une mouette passe dans le ciel pour la vie du décor
 	_gull = SpriteUtil.animated(["gull_1", "gull_2"], 5.0)
 	_gull.position = Vector2(1400.0, 120.0)
 	add_child(_gull)
+	# parallaxe : nuages lents et voiliers à l'horizon
+	for i: int in 3:
+		var cloud: Sprite2D = SpriteUtil.sprite("cloud")
+		cloud.position = Vector2(160.0 + i * 480.0, 60.0 + i * 55.0)
+		cloud.modulate.a = 0.9
+		add_child(cloud)
+		_clouds.append(cloud)
+	for i: int in 2:
+		var sail: Sprite2D = SpriteUtil.sprite("sail")
+		sail.position = Vector2(300.0 + i * 620.0, 396.0)
+		add_child(sail)
+		_sails.append(sail)
 	_spawn_countdown = 1.2
 	_fsm = StateMachine.new(self)
 	_fsm.add_state(&"run", RunState.new())
@@ -61,6 +78,15 @@ func _physics_process(delta: float) -> void:
 	_speed = minf(_speed + speed_ramp_per_second * delta, run_speed_max)
 	_fsm.update(delta)
 	_scroll_world(delta)
+	# parallaxe : les plans lointains glissent moins vite que le sol
+	for cloud: Node2D in _clouds:
+		cloud.position.x -= _speed * 0.06 * delta
+		if cloud.position.x < -120.0:
+			cloud.position = Vector2(1380.0, randf_range(40.0, 210.0))
+	for sail: Node2D in _sails:
+		sail.position.x -= _speed * 0.16 * delta
+		if sail.position.x < -60.0:
+			sail.position = Vector2(1340.0, randf_range(385.0, 405.0))
 	_check_collisions()
 	_gull.position.x -= 90.0 * delta
 	if _gull.position.x < -80.0:
@@ -78,10 +104,25 @@ func _scroll_world(delta: float) -> void:
 	if _spawn_countdown <= 0.0:
 		_spawn_obstacle()
 		_spawn_countdown = randf_range(obstacle_interval_min, obstacle_interval_max)
-	for node: Node2D in _obstacles + _coins:
+	# décor du haut de plage : parasols plantés et serviettes (sans collision)
+	_decor_countdown -= delta
+	if _decor_countdown <= 0.0:
+		_decor_countdown = randf_range(0.7, 1.6)
+		var decor: Sprite2D
+		var roll: float = randf()
+		if roll < 0.35:
+			decor = SpriteUtil.sprite("parasol")
+			decor.position = Vector2(_SPAWN_X, 452.0 + randf_range(0.0, 16.0))
+		else:
+			decor = SpriteUtil.sprite("towel_1" if randf() < 0.5 else "towel_2")
+			decor.position = Vector2(_SPAWN_X, 508.0 + randf_range(0.0, 26.0))
+		add_child(decor)
+		_decor.append(decor)
+	for node: Node2D in _obstacles + _coins + _decor:
 		node.position.x -= step
 	_obstacles = _obstacles.filter(_keep_on_screen)
 	_coins = _coins.filter(_keep_on_screen)
+	_decor = _decor.filter(_keep_on_screen)
 
 
 func _keep_on_screen(node: Node2D) -> bool:

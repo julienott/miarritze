@@ -5,7 +5,7 @@ extends ChallengeBase
 ## Cibles : boîtes de conserve, bouées, mouettes chapardeuses (mobiles).
 ## FSM : Aim, Charge, Throw, Resolve.
 
-const _LAUNCH_POS: Vector2 = Vector2(150.0, 560.0)
+const _LAUNCH_POS: Vector2 = Vector2(116.0, 622.0)   # le pied de Louis
 
 @export var wave_bonus: int = 50
 @export var power_scale: float = 3.4
