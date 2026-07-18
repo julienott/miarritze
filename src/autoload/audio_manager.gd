@@ -18,6 +18,7 @@ var _music_player: AudioStreamPlayer
 var _sfx_players: Array[AudioStreamPlayer] = []
 var _sfx_next: int = 0
 var _current_music: StringName = &""
+var _web_unlocked: bool = false
 
 
 func _ready() -> void:
@@ -28,6 +29,21 @@ func _ready() -> void:
 		var player: AudioStreamPlayer = AudioStreamPlayer.new()
 		add_child(player)
 		_sfx_players.append(player)
+	_web_unlocked = not OS.has_feature("web")
+
+
+func _input(event: InputEvent) -> void:
+	# Web : l'autoplay est bloqué tant que l'utilisateur n'a pas interagi.
+	# Au premier geste, on relance la piste en cours si elle est muette.
+	if _web_unlocked:
+		return
+	if event is InputEventScreenTouch or event is InputEventMouseButton \
+			or event is InputEventKey:
+		_web_unlocked = true
+		if _current_music != &"":
+			var track: StringName = _current_music
+			_current_music = &""
+			play_music(track)
 
 
 ## Lance (ou relance) le thème musical associé à une épreuve.
