@@ -8,6 +8,10 @@
 script = ExtResource("2_run")
 challenge_id = &"beach_run"
 time_limit = 60.0
+intro_title = "La Grande Plage"
+intro_place = "Course sur le sable"
+intro_text = "TAPE pour sauter par-dessus les crabes\net les châteaux de sable !\nRamasse les pièces dorées."
+play_bg = "play_beach_run"
 
 [node name="Bg" type="Sprite2D" parent="." index="0"]
 script = ExtResource("3_bg")

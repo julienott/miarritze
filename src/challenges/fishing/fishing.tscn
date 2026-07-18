@@ -8,6 +8,10 @@
 script = ExtResource("2_fish")
 challenge_id = &"fishing"
 time_limit = 60.0
+intro_title = "Le Port des Pêcheurs"
+intro_place = "La pêche"
+intro_text = "Surveille le bouchon : quand ÇA MORD, tape vite !\nPuis MAINTIENS le doigt pour remonter le poisson,\nrelâche quand la jauge de tension devient rouge."
+play_bg = "play_fishing"
 
 [node name="Bg" type="Sprite2D" parent="." index="0"]
 script = ExtResource("3_bg")

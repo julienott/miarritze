@@ -8,6 +8,10 @@
 script = ExtResource("2_rock")
 challenge_id = &"rock_crossing"
 time_limit = 60.0
+intro_title = "Le Rocher de la Vierge"
+intro_place = "La traversée"
+intro_text = "TAPE pour avancer de rocher en rocher\nquand la mer se retire.\nSi la vague arrive... attends qu'elle passe !"
+play_bg = "play_rock_crossing"
 
 [node name="Bg" type="Sprite2D" parent="." index="0"]
 script = ExtResource("3_bg")

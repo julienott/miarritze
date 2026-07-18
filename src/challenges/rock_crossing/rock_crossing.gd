@@ -165,6 +165,7 @@ class SweptState extends State:
 		crossing._player.play(&"hit")
 		crossing._player.modulate = Color(1, 1, 1, 0.6)
 		AudioManager.sfx(&"splash")
+		crossing.lose_life()
 
 	func update(delta: float) -> void:
 		var crossing: RockCrossing = machine.owner_node as RockCrossing

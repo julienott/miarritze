@@ -323,6 +323,35 @@ SPRITES["crab_2"] = [
     "..O...O..O...O..",
 ]
 
+SPRITES["heart"] = [
+    ".OO..OO.",
+    "ORROORRO",
+    "ORRRRRRO",
+    "ORRRRRRO",
+    ".ORRRRO.",
+    "..ORRO..",
+    "...OO...",
+]
+
+SPRITES["heart_empty"] = [
+    ".OO..OO.",
+    "OqqOOqqO",
+    "OqqqqqqO",
+    "OqqqqqqO",
+    ".OqqqqO.",
+    "..OqqO..",
+    "...OO...",
+]
+
+SPRITES["algae"] = [
+    "...O..O....",
+    "..OLO.OLO..",
+    ".OLLOOLLLO.",
+    ".OLlLLLlLO.",
+    "..OLLlLLO..",
+    "...OOOOO...",
+]
+
 
 def render(name, rows):
     w = max(len(r) for r in rows)

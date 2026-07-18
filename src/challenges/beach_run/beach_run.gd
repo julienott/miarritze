@@ -5,7 +5,7 @@ extends ChallengeBase
 ## (châteaux de sable, crabes) ; pièces à ramasser. Score = distance + pièces.
 ## FSM : Run, Jump, Fall, Hit.
 
-const _GROUND_Y: float = 592.0
+const _GROUND_Y: float = 620.0
 const _PLAYER_X: float = 250.0
 const _SPAWN_X: float = 1400.0
 
@@ -184,7 +184,7 @@ class HitState extends State:
 		run._speed = run.run_speed_start
 		run._player.play(&"hit")
 		run._player.modulate = Color(1, 1, 1, 0.6)
-		AudioManager.sfx(&"hit")
+		run.lose_life()
 
 	func update(delta: float) -> void:
 		var run: BeachRun = machine.owner_node as BeachRun

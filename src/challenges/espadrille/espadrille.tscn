@@ -8,6 +8,10 @@
 script = ExtResource("2_esp")
 challenge_id = &"espadrille"
 time_limit = 0.0
+intro_title = "Le Port Vieux"
+intro_place = "Le lancer d'espadrille"
+intro_text = "TIRE en arrière avec ton doigt pour viser,\nlâche pour lancer l'espadrille !\nBoîtes, bouées, mouettes chapardeuses..."
+play_bg = "play_espadrille"
 
 [node name="Bg" type="Sprite2D" parent="." index="0"]
 script = ExtResource("3_bg")

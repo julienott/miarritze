@@ -229,8 +229,10 @@ class FallState extends State:
 				machine.transition_to(&"reach")
 			else:
 				machine.transition_to(&"climb")
-		elif lighthouse._player.position.y > Lighthouse._BASE_Y + 200.0:
-			lighthouse._place_on_level(0)
+		elif lighthouse.player_feet() > lighthouse._level_y(maxi(lighthouse._current_level - 1, 0)) + 220.0:
+			# tombé sous le palier précédent : une vie en moins, on se replace
+			lighthouse.lose_life()
+			lighthouse._place_on_level(maxi(lighthouse._current_level - 1, 0))
 			machine.transition_to(&"climb")
 
 

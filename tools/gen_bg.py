@@ -578,9 +578,8 @@ def menu(img, phase):
 
 def main():
     previews = []
-    for fn, name in [(beach, "bg_beach"), (surf, "bg_surf"), (fishing, "bg_fishing"),
-                     (rock, "bg_rock"), (espadrille, "bg_espadrille"),
-                     (hub_map, "bg_hub"), (menu, "bg_menu")]:
+    for fn, name in [(beach, "play_beach_run"), (surf, "play_surf"), (fishing, "play_fishing"),
+                     (rock, "play_rock_crossing"), (espadrille, "play_espadrille")]:
         previews.append((name, save_frames(fn, name)))
         print("décor animé :", name)
     tall = lighthouse_bg()

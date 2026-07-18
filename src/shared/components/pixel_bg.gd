@@ -37,6 +37,23 @@ func _fit_viewport() -> void:
 	position = Vector2((view.x - tex.x * factor) * 0.5, view.y - tex.y * factor)
 
 
+## Bascule vers un autre jeu de frames (ex. intro -> fond de gameplay).
+func switch_to(new_name: String, new_frame_count: int = 3) -> void:
+	bg_name = new_name
+	frame_count = new_frame_count
+	_frames.clear()
+	_index = 0
+	if frame_count <= 1:
+		texture = load("res://assets/sprites/%s.png" % bg_name)
+		set_process(false)
+	else:
+		for i: int in frame_count:
+			_frames.append(load("res://assets/sprites/%s_%d.png" % [bg_name, i]))
+		texture = _frames[0]
+		set_process(true)
+	_fit_viewport()
+
+
 func _process(delta: float) -> void:
 	_elapsed += delta
 	if _elapsed >= 1.0 / fps:

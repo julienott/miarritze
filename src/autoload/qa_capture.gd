@@ -15,7 +15,15 @@ func _ready() -> void:
 	if _shot_path == "":
 		set_process(false)
 		return
+	if OS.get_cmdline_user_args().has("--autostart"):
+		get_tree().create_timer(0.5).timeout.connect(_auto_start)
 	get_tree().create_timer(_delay).timeout.connect(_capture)
+
+
+func _auto_start() -> void:
+	var root: Node = get_tree().current_scene
+	if root is ChallengeBase and root.has_method("_on_start_pressed"):
+		root.call("_on_start_pressed")
 
 
 func _capture() -> void:

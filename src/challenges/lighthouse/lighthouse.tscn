@@ -1,9 +1,19 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="PackedScene" path="res://src/challenges/base/challenge_base.tscn" id="1_base"]
 [ext_resource type="Script" path="res://src/challenges/lighthouse/lighthouse.gd" id="2_lh"]
+[ext_resource type="Script" path="res://src/shared/components/pixel_bg.gd" id="3_bg"]
 
 [node name="Lighthouse" instance=ExtResource("1_base")]
 script = ExtResource("2_lh")
 challenge_id = &"lighthouse"
 time_limit = 90.0
+intro_title = "Le Phare"
+intro_place = "L'ascension"
+intro_text = "TAPE pour sauter de palier en palier.\nGrimpe jusqu'au sommet du Phare\net découvre la salle des trophées !"
+play_bg = ""
+
+[node name="Bg" type="Sprite2D" parent="." index="0"]
+script = ExtResource("3_bg")
+bg_name = "bg_lighthouse_intro"
+frame_count = 1
