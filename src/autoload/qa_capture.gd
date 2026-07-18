@@ -17,7 +17,26 @@ func _ready() -> void:
 		return
 	if OS.get_cmdline_user_args().has("--autostart"):
 		get_tree().create_timer(0.5).timeout.connect(_auto_start)
+	if OS.get_cmdline_user_args().has("--autotap"):
+		var timer: Timer = Timer.new()
+		timer.wait_time = 0.14
+		timer.timeout.connect(_auto_tap)
+		add_child(timer)
+		timer.start()
 	get_tree().create_timer(_delay).timeout.connect(_capture)
+
+
+func _auto_tap() -> void:
+	var press: InputEventScreenTouch = InputEventScreenTouch.new()
+	press.index = 3   # index arbitraire : vérifie aussi le correctif iOS
+	press.position = Vector2(640.0, 400.0)
+	press.pressed = true
+	Input.parse_input_event(press)
+	var release: InputEventScreenTouch = InputEventScreenTouch.new()
+	release.index = 3
+	release.position = Vector2(640.0, 400.0)
+	release.pressed = false
+	Input.parse_input_event(release)
 
 
 func _auto_start() -> void:

@@ -40,9 +40,7 @@ var _fsm: StateMachine
 var _rider: Node2D
 var _player: LouisSprite
 var _board: Sprite2D
-var _face: Polygon2D
-var _lip: Line2D
-var _foam: Line2D
+var _wave: WaveVisual
 var _speed_bar: ColorRect
 var _speed_fill: ColorRect
 var _speed_zone: ColorRect
@@ -52,23 +50,13 @@ var _hint: Label
 var _wave_count: int = 0
 var _wave_size: float = 1.0
 var _paddle_speed: float = 0.0
-var _swell_x: float = 1600.0             # front de la vague qui approche
+var _ride_s: float = 0.55                # position sur la face (0 pied, 1 crête)
 var _bob_time: float = 0.0
 
 
 func _on_begin() -> void:
-	_face = Polygon2D.new()
-	_face.color = Color(0.13, 0.47, 0.60, 0.96)
-	add_child(_face)
-
-	_lip = Line2D.new()
-	_lip.width = 22.0
-	_lip.default_color = Color(0.87, 0.96, 0.94)
-	add_child(_lip)
-	_foam = Line2D.new()
-	_foam.width = 30.0
-	_foam.default_color = Color(0.80, 0.92, 0.90, 0.9)
-	add_child(_foam)
+	_wave = WaveVisual.new()
+	add_child(_wave)
 
 	_rider = Node2D.new()
 	_rider.z_index = 2
@@ -148,9 +136,9 @@ func _update_speed_bar() -> void:
 		_speed_fill.color = Color(0.3, 0.85, 0.3) if _paddle_speed >= takeoff_threshold else Color(0.95, 0.65, 0.15)
 
 
-## Ligne d'eau au line-up (houle légère).
-func lineup_y() -> float:
-	return _SEA_Y + 6.0 * sin(_bob_time * 1.6)
+## Ligne d'eau sous Louis (la houle de la vague comprise).
+func water_y() -> float:
+	return _wave.surface_y(_PLAYER_X)
 
 
 func rider_flat(flat: bool) -> void:
@@ -160,50 +148,9 @@ func rider_flat(flat: bool) -> void:
 	_board.position = Vector2(-16.0, 82.0) if flat else Vector2(-20.0, LouisSprite.FEET_Y - 4.0)
 
 
-## Dessine la vague qui approche pendant Wait/Paddle (front à _swell_x).
-func draw_approaching_wave() -> void:
-	var height: float = 130.0 * _wave_size
-	var points: PackedVector2Array = PackedVector2Array()
-	points.append(Vector2(1400.0, 730.0))
-	points.append(Vector2(_swell_x - 220.0, 730.0))
-	for i: int in 13:
-		var x: float = _swell_x - 220.0 + i * 40.0
-		var t: float = i / 12.0
-		points.append(Vector2(x, lineup_y() + 40.0 - height * sin(t * PI * 0.5)))
-	_face.polygon = points
-	_face.visible = true
-	_lip.visible = false
-	_foam.visible = false
-
-
-## Dessine la face pendant la glisse : pente, lèvre en haut, mousse en bas.
-func draw_ride_wave(progress: float) -> void:
-	var points: PackedVector2Array = PackedVector2Array()
-	points.append(Vector2(-40.0, 730.0))
-	points.append(Vector2(1320.0, 730.0))
-	points.append(Vector2(1320.0, face_top - 40.0))
-	for i: int in 17:
-		var x: float = 1320.0 - i * 85.0
-		var t: float = i / 16.0
-		points.append(Vector2(x, face_top - 40.0 + (face_bottom + 90.0 - face_top) * t
-			+ 12.0 * sin(_bob_time * 3.0 + i)))
-	_face.polygon = points
-	_face.visible = true
-	var lip_points: PackedVector2Array = PackedVector2Array()
-	var foam_points: PackedVector2Array = PackedVector2Array()
-	for i: int in 9:
-		lip_points.append(Vector2(1320.0 - i * 90.0,
-			face_top - 20.0 + 10.0 * sin(_bob_time * 5.0 + i * 1.3)))
-	for i: int in 9:
-		foam_points.append(Vector2(-40.0 + i * 90.0,
-			face_bottom + 66.0 + 10.0 * sin(_bob_time * 4.0 + i)))
-	_lip.points = lip_points
-	_foam.points = foam_points
-	_lip.visible = true
-	_foam.visible = true
-	# l'étau se resserre visuellement en fin de vague
-	_lip.position.y = progress * 30.0
-	_foam.position.y = -progress * 30.0
+## Place Louis (allongé ou debout) sur l'eau à x = _PLAYER_X.
+func float_rider() -> void:
+	_rider.position = Vector2(_PLAYER_X, water_y() - LouisSprite.FEET_Y)
 
 
 # ================================================================= États
@@ -214,17 +161,20 @@ class WaitState extends State:
 	func enter(_previous: StringName) -> void:
 		var surf: Surf = machine.owner_node as Surf
 		_rest = surf.wave_interval
-		surf._swell_x = 1600.0
 		surf.rider_flat(true)
 		surf._player.play(&"idle")
 		surf._board.visible = true
+		# la houle se reforme au large
+		surf._wave.center_x = 1650.0
+		surf._wave.height = 60.0
+		surf._wave.breaking = 0.1
+		surf._wave.collapse = 0.0
 		surf.set_status("La vague arrive…", "prépare-toi à ramer")
 
 	func update(delta: float) -> void:
 		var surf: Surf = machine.owner_node as Surf
-		surf._rider.position = Vector2(Surf._PLAYER_X, surf.lineup_y() - LouisSprite.FEET_Y)
+		surf.float_rider()
 		surf._rider.rotation = 0.05 * sin(surf._bob_time * 1.6)
-		surf.draw_approaching_wave()
 		_rest -= delta
 		if _rest <= 0.0:
 			machine.transition_to(&"paddle")
@@ -244,13 +194,13 @@ class PaddleState extends State:
 		_elapsed += delta
 		surf._paddle_speed = maxf(surf._paddle_speed - surf.paddle_decay * delta, 0.0)
 		var total: float = surf.wave_approach_time
-		surf._swell_x = lerpf(1600.0, Surf._PLAYER_X - 120.0, clampf(_elapsed / total, 0.0, 1.0))
-		surf.draw_approaching_wave()
-		# la houle soulève Louis quand le front est proche
-		var lift: float = clampf(1.0 - absf(surf._swell_x - Surf._PLAYER_X) / 300.0, 0.0, 1.0)
-		surf._rider.position = Vector2(Surf._PLAYER_X,
-			surf.lineup_y() - LouisSprite.FEET_Y - lift * 110.0 * surf._wave_size)
-		surf._rider.rotation = -0.18 * lift
+		var t: float = clampf(_elapsed / total, 0.0, 1.0)
+		# la vague approche et grossit ; elle soulève Louis toute seule
+		surf._wave.center_x = lerpf(1650.0, Surf._PLAYER_X + 180.0, t)
+		surf._wave.height = lerpf(60.0, 260.0 * surf._wave_size, t)
+		surf._wave.breaking = lerpf(0.1, 0.6, t)
+		surf.float_rider()
+		surf._rider.rotation = -0.22 * t
 		# verdict dans la fenêtre de take-off
 		var window_start: float = total - surf.takeoff_window * 0.5
 		var window_end: float = total + surf.takeoff_window * 0.5
@@ -271,6 +221,7 @@ class PaddleState extends State:
 		var surf: Surf = machine.owner_node as Surf
 		surf._paddle_speed = minf(surf._paddle_speed + surf.paddle_per_tap, 1.0)
 		surf._player.play(&"climb")   # bras qui rament
+		AudioManager.sfx(&"step")
 
 
 class TakeOffState extends State:
@@ -286,12 +237,11 @@ class TakeOffState extends State:
 	func update(delta: float) -> void:
 		var surf: Surf = machine.owner_node as Surf
 		_t += delta
-		var from: Vector2 = surf._rider.position
-		var to: Vector2 = Vector2(Surf._PLAYER_X,
-			(surf.face_top + surf.face_bottom) * 0.5 - LouisSprite.FEET_Y)
-		surf._rider.position = from.lerp(to, minf(_t * 3.0, 1.0))
-		surf._rider.rotation = 0.22
-		surf.draw_ride_wave(0.0)
+		# la vague se cale sous Louis, il se lève au milieu de la face
+		var target: Vector2 = surf._wave.face_point(0.55)
+		surf._wave.center_x = lerpf(surf._wave.center_x, Surf._PLAYER_X + surf._wave.sigma * 1.5 * 0.45, 6.0 * delta)
+		surf._rider.position = surf._rider.position.lerp(target - Vector2(0.0, LouisSprite.FEET_Y), minf(_t * 3.0, 1.0))
+		surf._rider.rotation = 0.18
 		if _t >= 0.45:
 			machine.transition_to(&"ride")
 
@@ -307,6 +257,7 @@ class RideState extends State:
 		_time = 0.0
 		_danger_time = 0.0
 		_duration = surf.ride_duration_base * (0.8 + 0.4 * surf._wave_size)
+		surf._ride_s = 0.55
 		surf._rider.rotation = 0.0
 		surf.set_status("Surfe la face !", "MAINTIENS = descendre, relâche = remonter")
 
@@ -314,25 +265,26 @@ class RideState extends State:
 		var surf: Surf = machine.owner_node as Surf
 		_time += delta
 		var progress: float = _time / _duration
-		surf.draw_ride_wave(progress)
-		var y: float = surf._rider.position.y + LouisSprite.FEET_Y
+		# la vague meurt doucement, l'écume monte
+		surf._wave.height = 260.0 * surf._wave_size * (1.0 - progress * 0.55)
+		surf._wave.breaking = 0.6 + 0.4 * progress
+		# pilotage LE LONG de la face : maintenir = descendre, relâcher = monter
 		if surf._is_touch_pressed():
-			y += surf.dive_speed * delta
-			surf._rider.rotation = lerpf(surf._rider.rotation, 0.25, 8.0 * delta)
+			surf._ride_s = maxf(surf._ride_s - delta / 0.9, 0.0)
+			surf._rider.rotation = lerpf(surf._rider.rotation, 0.3, 8.0 * delta)
 		else:
-			y -= surf.climb_speed * delta
-			surf._rider.rotation = lerpf(surf._rider.rotation, -0.18, 8.0 * delta)
-		var top_limit: float = surf.face_top + progress * 30.0
-		var bottom_limit: float = surf.face_bottom - progress * 30.0
-		y = clampf(y, top_limit - surf.danger_margin, bottom_limit + surf.danger_margin)
-		surf._rider.position.y = y - LouisSprite.FEET_Y
-		var in_danger: bool = y < top_limit or y > bottom_limit
+			surf._ride_s = minf(surf._ride_s + delta / 1.1, 1.0)
+			surf._rider.rotation = lerpf(surf._rider.rotation, -0.15, 8.0 * delta)
+		var p: Vector2 = surf._wave.face_point(surf._ride_s)
+		surf._rider.position = p - Vector2(32.0, LouisSprite.FEET_Y)
+		var in_danger: bool = surf._ride_s > 0.86 or surf._ride_s < 0.10
 		if in_danger:
 			_danger_time += delta
 			if _danger_time >= surf.danger_grace:
 				machine.transition_to(&"closeout")
 				return
-			surf.set_status("Attention !", "reviens au milieu de la vague !")
+			var hint: String = "trop haut, la lèvre déferle !" if surf._ride_s > 0.5 else "trop bas, la mousse te rattrape !"
+			surf.set_status("Attention !", hint)
 		else:
 			_danger_time = maxf(_danger_time - delta * 2.0, 0.0)
 		_score_tick += delta
@@ -359,8 +311,12 @@ class CloseoutState extends State:
 	func update(delta: float) -> void:
 		var surf: Surf = machine.owner_node as Surf
 		_t += delta
+		# l'écume dévale la face et emporte Louis
+		surf._wave.collapse = minf(surf._wave.collapse + delta * 2.0, 1.0)
+		surf._wave.breaking = 1.0
+		surf._wave.height = maxf(surf._wave.height - 140.0 * delta, 30.0)
 		surf._rider.position.y = lerpf(surf._rider.position.y,
-			surf.lineup_y() - LouisSprite.FEET_Y, 3.0 * delta)
+			surf.water_y() - LouisSprite.FEET_Y, 3.0 * delta)
 		surf._rider.rotation += 6.0 * delta
 		if _t >= 1.1:
 			surf._player.modulate = Color.WHITE
@@ -384,8 +340,9 @@ class WaveEndState extends State:
 	func update(delta: float) -> void:
 		var surf: Surf = machine.owner_node as Surf
 		_t += delta
+		surf._wave.height = maxf(surf._wave.height - 200.0 * delta, 8.0)
+		surf._wave.breaking = maxf(surf._wave.breaking - delta, 0.2)
 		surf._rider.position.y = lerpf(surf._rider.position.y,
-			surf.lineup_y() - LouisSprite.FEET_Y, 2.0 * delta)
-		surf.draw_ride_wave(1.0)
+			surf.water_y() - LouisSprite.FEET_Y, 2.0 * delta)
 		if _t >= 1.0:
 			machine.transition_to(&"wait")
