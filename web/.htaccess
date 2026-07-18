@@ -4,6 +4,9 @@
 <IfModule mod_headers.c>
 	Header set Cross-Origin-Opener-Policy "same-origin"
 	Header set Cross-Origin-Embedder-Policy "require-corp"
+	# Sans Cache-Control, les navigateurs gardent d'anciens builds (heuristique)
+	# et mélangent les fichiers entre déploiements -> loader figé.
+	Header set Cache-Control "no-cache, must-revalidate"
 </IfModule>
 
 <IfModule mod_mime.c>

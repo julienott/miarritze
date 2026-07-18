@@ -81,6 +81,7 @@ func _on_begin() -> void:
 	_paddle_sprite.sprite_frames = paddle_frames
 	_paddle_sprite.centered = false
 	_paddle_sprite.scale = Vector2(4.0, 4.0)
+	_paddle_sprite.flip_h = true   # tête à gauche : la vague arrive dans son dos
 	_paddle_sprite.position = Vector2(-64.0, LouisSprite.FEET_Y - 56.0)
 	_paddle_sprite.play(&"default")
 	_rider.add_child(_paddle_sprite)

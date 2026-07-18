@@ -7,6 +7,7 @@ extends Control
 
 
 func _ready() -> void:
+	AudioManager.play_music(&"menu")
 	var timer: SceneTreeTimer = get_tree().create_timer(splash_duration)
 	timer.timeout.connect(_on_splash_timer_timeout)
 

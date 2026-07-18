@@ -289,6 +289,57 @@ SONGS["lighthouse"] = dict(
 )
 
 
+# MENU — Hegoak (Txoria txori), musique de Mikel Laboa, d'après
+# l'arrangement de Jo Maris (partition EKE). Usage privé/familial :
+# l'œuvre n'est PAS dans le domaine public (cf. DESIGN.md §7).
+# Mélodie extraite du MIDI de la collection Maris (3/4, mi mineur).
+HEGOAK_MELODY = [
+    (64, 4), (71, 1), (69, 1), (71, 4), (69, 1), (67, 1),
+    (69, 4), (71, 1), (69, 1), (71, 6),
+    (64, 4), (71, 1), (69, 1), (71, 4), (69, 1), (67, 1),
+    (69, 4), (71, 1), (69, 1), (64, 4),
+    (N, 1), (59, 1), (64, 1), (64, 1), (64, 1), (66, 1),
+    (64, 1), (66, 1), (67, 2), (71, 1), (74, 4),
+    (N, 1), (71, 1), (69, 1), (69, 1), (69, 2), (71, 1), (69, 1), (71, 4),
+    (N, 1), (71, 1), (69, 1), (69, 1), (69, 2), (71, 1), (69, 1), (71, 4),
+    (N, 1), (59, 1), (64, 1), (64, 1), (64, 1), (66, 1),
+    (64, 1), (66, 1), (67, 2), (71, 1), (74, 4),
+    (N, 1), (71, 1), (69, 1), (69, 1), (69, 2), (71, 1), (69, 1), (71, 4),
+    (N, 1), (71, 1), (69, 1), (69, 1), (69, 2), (71, 1), (69, 1), (71, 4),
+    (N, 2),
+]
+
+
+def hegoak_bass(melody):
+    """Basse auto-harmonisée : par mesure (3 temps), la fondamentale la plus
+    consonante avec les notes de la mesure (mi min : E, D, G, B, A)."""
+    roots = [40, 38, 43, 47, 45]
+    beats = []
+    for note, d in melody:
+        for _ in range(int(d * 2)):
+            beats.append(note)
+    bass = []
+    i = 0
+    while i < len(beats):
+        bar = [b for b in beats[i:i + 6] if b]
+        best, best_score = 40, -1
+        for r in roots:
+            score = sum(1 for b in bar if (b - r) % 12 in (0, 3, 4, 7))
+            if score > best_score:
+                best, best_score = r, score
+        bass.append((best, 2))
+        bass.append((best + 7, 1))
+        i += 6
+    return bass
+
+
+SONGS["menu"] = dict(
+    bpm=104, duty=0.5, vibrato=0.012, mel_vol=0.32, bass_vol=0.22,
+    melody=notes(HEGOAK_MELODY),
+    bass=notes(hegoak_bass(HEGOAK_MELODY)),
+    drums=None,
+)
+
 # ---------------------------------------------------------------- SFX
 
 def sfx_sweep(path, f0, f1, dur, wave="square", vol=0.5, duty=0.5):

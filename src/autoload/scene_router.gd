@@ -14,9 +14,50 @@ const _SCENES: Dictionary = {
 	&"leaderboard": "res://src/ui/leaderboard/leaderboard.tscn",
 }
 
+const _IRIS_SHADER: String = """
+shader_type canvas_item;
+uniform float radius = 1.5;
+void fragment() {
+	vec2 uv = UV - vec2(0.5);
+	uv.x *= 16.0 / 9.0;
+	// bord en escalier : l'iris est pixelisé comme le reste du jeu
+	uv = floor(uv * 40.0) / 40.0;
+	COLOR = length(uv) < radius ? vec4(0.0) : vec4(0.09, 0.06, 0.10, 1.0);
+}
+"""
+
+var _iris: ColorRect
+var _transitioning: bool = false
+
+
 func _ready() -> void:
 	# Jamais de gris : la couleur de fond par défaut = sable
 	RenderingServer.set_default_clear_color(Color(0.933, 0.792, 0.502))
+	# Iris de transition (fondu rond façon rétro), au-dessus de tout
+	var layer: CanvasLayer = CanvasLayer.new()
+	layer.layer = 95
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(layer)
+	_iris = ColorRect.new()
+	_iris.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_iris.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var shader: Shader = Shader.new()
+	shader.code = _IRIS_SHADER
+	var material: ShaderMaterial = ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("radius", 1.5)
+	_iris.material = material
+	layer.add_child(_iris)
+
+
+func _iris_to(target_radius: float, duration: float) -> void:
+	var material: ShaderMaterial = _iris.material as ShaderMaterial
+	var tween: Tween = create_tween()
+	tween.set_ignore_time_scale(true)
+	tween.tween_method(
+		func(value: float) -> void: material.set_shader_parameter("radius", value),
+		material.get_shader_parameter("radius") as float, target_radius, duration)
+	await tween.finished
 
 
 ## Payload de navigation vers l'écran results (posé par goto_results).
@@ -71,6 +112,13 @@ func _goto(scene_path: String) -> void:
 
 
 func _change_scene(scene_path: String) -> void:
+	if _transitioning:
+		return
+	_transitioning = true
+	await _iris_to(0.0, 0.32)
 	var error: Error = get_tree().change_scene_to_file(scene_path)
 	if error != OK:
 		push_error("SceneRouter: échec du changement de scène vers %s (%s)" % [scene_path, error])
+	await get_tree().process_frame
+	await _iris_to(1.5, 0.38)
+	_transitioning = false

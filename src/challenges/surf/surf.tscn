@@ -7,7 +7,7 @@
 [node name="Surf" instance=ExtResource("1_base")]
 script = ExtResource("2_surf")
 challenge_id = &"surf"
-time_limit = 60.0
+time_limit = 0.0
 intro_title = "La Côte des Basques"
 intro_place = "Rame et glisse"
 intro_text = "Quand la vague arrive : TAPE vite pour ramer\net remplir la jauge jusqu'au trait jaune !\nPuis MAINTIENS pour descendre la vague,\nrelâche pour remonter. Évite la lèvre et la mousse !"
