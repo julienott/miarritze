@@ -24,7 +24,7 @@ func _ready() -> void:
 	_leaderboard_button.pressed.connect(_on_leaderboard_button_pressed)
 	_change_player_button.pressed.connect(_on_change_player_button_pressed)
 	_build_place_buttons()
-	AudioManager.play_music(&"hub")
+	AudioManager.play_music(&"menu")   # le thème Hegoak continue sur la carte
 
 
 func _build_place_buttons() -> void:

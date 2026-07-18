@@ -47,7 +47,16 @@ def render_note(buf, start, dur, note, wave="square", duty=0.5, vol=0.5,
         rem = dur - t
         if rem < release:
             env = max(rem / release, 0.0)
-        s = square(phase, duty) if wave == "square" else triangle(phase)
+        if wave == "steel":
+            s = (math.sin(2 * math.pi * phase)
+                 + 0.55 * math.sin(4 * math.pi * phase + 0.3)
+                 + 0.22 * math.sin(6.04 * math.pi * phase)
+                 + 0.10 * math.sin(9.2 * math.pi * phase)) * 0.5
+            env *= math.exp(-t * 3.2)
+        elif wave == "square":
+            s = square(phase, duty)
+        else:
+            s = triangle(phase)
         idx = start + i
         if idx < len(buf):
             buf[idx] += s * vol * env
@@ -90,7 +99,8 @@ def mix_to_wav(path, buf):
 # La mélodie est jouée au carré, la basse au triangle, batterie kick/hat.
 
 def song(path, bpm, melody, bass, drums=None, duty=0.5, vibrato=0.006,
-         mel_vol=0.30, bass_vol=0.26, swing=0.0, extra_tracks=None):
+         mel_vol=0.30, bass_vol=0.26, swing=0.0, extra_tracks=None,
+         mel_wave="square"):
     beat = 60.0 / bpm
     total_beats = sum(d for _, d in melody)
     n = int(total_beats * beat * SR) + SR // 4
@@ -111,7 +121,7 @@ def song(path, bpm, melody, bass, drums=None, duty=0.5, vibrato=0.006,
         dur = d * beat
         sw = swing * beat if i % 2 == 1 else 0.0
         if note is not None:
-            render_note(buf, int((t + sw) * SR), dur * 0.92, note, "square",
+            render_note(buf, int((t + sw) * SR), dur * 0.92, note, mel_wave,
                         duty=duty, vol=mel_vol, vibrato=vibrato)
         t += dur
     t = 0.0
@@ -368,8 +378,8 @@ def _build_menu_song():
     global _skank_low, _skank_high
     _skank_low, _skank_high = hegoak_reggae_parts(HEGOAK_MELODY)
     return dict(
-        bpm=138, duty=0.5, vibrato=0.012, mel_vol=0.30, bass_vol=0.26,
-        swing=0.04,
+        bpm=138, duty=0.5, vibrato=0.010, mel_vol=0.42, bass_vol=0.26,
+        swing=0.04, mel_wave="steel",
         melody=notes(HEGOAK_MELODY),
         bass=notes(hegoak_reggae_bass(HEGOAK_MELODY)),
         drums=(["kick", None, "hat", None, "snare", "hat"], 0.5),
