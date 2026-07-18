@@ -254,12 +254,14 @@ class TakeOffState extends State:
 	func update(delta: float) -> void:
 		var surf: Surf = machine.owner_node as Surf
 		_t += delta
-		# la vague se cale sous Louis, il se lève au milieu de la face
+		# recentrage : la vague se place pour que la glisse (s=0.55) tombe
+		# au CENTRE de l'écran — Louis fait le voyage pendant le drop
+		var center_target: float = 640.0 + surf._wave.sigma * 1.5 * 0.45
+		surf._wave.center_x = lerpf(surf._wave.center_x, center_target, 5.0 * delta)
 		var target: Vector2 = surf._wave.face_point(0.55)
-		surf._wave.center_x = lerpf(surf._wave.center_x, Surf._PLAYER_X + surf._wave.sigma * 1.5 * 0.45, 6.0 * delta)
-		surf._rider.position = surf._rider.position.lerp(target - Vector2(0.0, LouisSprite.FEET_Y), minf(_t * 3.0, 1.0))
+		surf._rider.position = surf._rider.position.lerp(target - Vector2(32.0, LouisSprite.FEET_Y), minf(_t * 2.2, 1.0))
 		surf._rider.rotation = 0.18
-		if _t >= 0.45:
+		if _t >= 0.7:
 			machine.transition_to(&"ride")
 
 

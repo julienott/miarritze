@@ -22,6 +22,7 @@ AudioManager="*res://src/autoload/audio_manager.gd"
 LeaderboardClient="*res://src/autoload/leaderboard_client.gd"
 SceneRouter="*res://src/autoload/scene_router.gd"
 QaCapture="*res://src/autoload/qa_capture.gd"
+OrientationOverlay="*res://src/autoload/orientation_overlay.gd"
 
 [gui]
 
