@@ -10,7 +10,7 @@ const _WATER_BASE_Y: float = 430.0
 
 @export var wave_cycle: float = 2.4
 @export var wave_amplitude: float = 90.0
-@export var launch_window: float = 0.4
+@export var launch_window: float = 0.6
 @export var launch_velocity: float = -820.0
 @export var gravity: float = 1600.0
 @export var trick_duration: float = 0.38
@@ -29,6 +29,7 @@ var _wave_time: float = 0.0
 var _velocity_y: float = 0.0
 var _streak: int = 0
 var _tricks_this_air: int = 0
+var _miss_flash: float = 0.0
 
 
 func _on_begin() -> void:
@@ -53,9 +54,11 @@ func _on_begin() -> void:
 
 	_window_hint = Label.new()
 	_window_hint.text = "TAPE !"
+	_window_hint.custom_minimum_size = Vector2(600.0, 0.0)
 	_window_hint.add_theme_font_size_override(&"font_size", 40)
 	_window_hint.add_theme_color_override(&"font_color", Color(1.0, 0.9, 0.2))
-	_window_hint.position = Vector2(_PLAYER_X - 30.0, 170.0)
+	_window_hint.position = Vector2(_PLAYER_X - 240.0, 170.0)
+	_window_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_window_hint.visible = false
 	add_child(_window_hint)
 
@@ -78,7 +81,15 @@ func _physics_process(delta: float) -> void:
 	_wave_time += delta
 	_fsm.update(delta)
 	_redraw_wave()
-	_window_hint.visible = _fsm.current_name == &"ride" and is_in_launch_window()
+	_miss_flash = maxf(_miss_flash - delta, 0.0)
+	if _fsm.current_name == &"ride" and is_in_launch_window():
+		_window_hint.text = "TAPE !"
+		_window_hint.visible = true
+	elif _miss_flash > 0.0:
+		_window_hint.text = "au sommet de la vague !"
+		_window_hint.visible = true
+	else:
+		_window_hint.visible = false
 
 
 func wave_y(x: float) -> float:
@@ -132,6 +143,10 @@ class RideState extends State:
 		var surf: Surf = machine.owner_node as Surf
 		if surf.is_in_launch_window():
 			machine.transition_to(&"launch")
+		else:
+			# feedback immédiat : un tap raté n'est jamais silencieux
+			surf._miss_flash = 0.6
+			AudioManager.sfx(&"step")
 
 
 class LaunchState extends State:
