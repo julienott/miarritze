@@ -14,3 +14,10 @@
 <IfModule mod_deflate.c>
 	AddOutputFilterByType DEFLATE application/wasm application/javascript text/html
 </IfModule>
+
+# API leaderboard : /api/* → routeur PHP unique (déployé dans api/public/).
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteRule ^api/public/ - [L]
+	RewriteRule ^api(/.*)?$ api/public/index.php [QSA,L]
+</IfModule>

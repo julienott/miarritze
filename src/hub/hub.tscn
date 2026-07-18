@@ -1,0 +1,88 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/hub/hub.gd" id="1_hub"]
+
+[node name="Hub" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hub")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.13, 0.5, 0.68, 1)
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 16.0
+offset_right = -40.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Layout/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Les Halles — Biarritz"
+
+[node name="Spacer" type="Control" parent="Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PlayerLabel" type="Label" parent="Layout/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "pseudo"
+
+[node name="CumulativeLabel" type="Label" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Cumul : 0"
+
+[node name="GridCenter" type="CenterContainer" parent="Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlacesGrid" type="GridContainer" parent="Layout/GridCenter"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 16
+columns = 3
+
+[node name="Footer" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="LeaderboardButton" type="Button" parent="Layout/Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(280, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "🏆 Classement"
+
+[node name="ChangePlayerButton" type="Button" parent="Layout/Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(280, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Changer de joueur"

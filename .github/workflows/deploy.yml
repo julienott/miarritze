@@ -51,6 +51,9 @@ jobs:
           ~/godot-bin/godot --headless --export-release "Web" web/build/index.html
           test -f web/build/index.wasm && test -f web/build/index.pck
 
+      - name: PHP lint
+        run: find backend -name '*.php' -print0 | xargs -0 -n1 php -l
+
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
@@ -64,6 +67,11 @@ jobs:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
         run: |
           cp web/.htaccess web/build/.htaccess
-          sshpass -e rsync -avz \
-            -e "ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1" \
+          SSH_OPTS="ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1"
+          sshpass -e rsync -avz -e "$SSH_OPTS" \
             web/build/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/"
+          # API : backend/ → api/ (la base SQLite vit dans api/db/, jamais écrasée
+          # car *.sqlite est exclu ; config.php prod pareil).
+          sshpass -e rsync -avz -e "$SSH_OPTS" \
+            --exclude='*.sqlite*' --exclude='config.php' \
+            backend/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/api/"

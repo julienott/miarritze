@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/challenges/base/challenge_base.gd" id="1_base"]
+[ext_resource type="Script" path="res://src/shared/input/touch_input.gd" id="2_touch"]
+
+[node name="ChallengeBase" type="Node2D"]
+script = ExtResource("1_base")
+
+[node name="Touch" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_touch")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+
+[node name="ScoreLabel" type="Label" parent="Hud"]
+unique_name_in_owner = true
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 400.0
+offset_bottom = 72.0
+theme_override_font_sizes/font_size = 48
+text = "0"
+
+[node name="TimeLabel" type="Label" parent="Hud"]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -400.0
+offset_top = 12.0
+offset_right = -24.0
+offset_bottom = 72.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 48
+text = ""
+horizontal_alignment = 2
