@@ -5,7 +5,7 @@ extends ChallengeBase
 ## (châteaux de sable, crabes) ; pièces à ramasser. Score = distance + pièces.
 ## FSM : Run, Jump, Fall, Hit.
 
-const _GROUND_Y: float = 620.0
+const _GROUND_Y: float = 592.0
 const _PLAYER_X: float = 250.0
 const _SPAWN_X: float = 1400.0
 

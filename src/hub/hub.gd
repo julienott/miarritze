@@ -3,12 +3,12 @@ extends Control
 ## son monument (positions calées sur bg_hub, échelle x4).
 
 const _PLACES: Array[Dictionary] = [
-	{"id": &"beach_run", "title": "Grande Plage", "pos": Vector2(380, 240)},
-	{"id": &"surf", "title": "Côte des Basques", "pos": Vector2(1060, 600)},
-	{"id": &"fishing", "title": "Port des Pêcheurs", "pos": Vector2(860, 540)},
-	{"id": &"rock_crossing", "title": "Rocher de la Vierge", "pos": Vector2(360, 566)},
-	{"id": &"espadrille", "title": "Port Vieux", "pos": Vector2(610, 620)},
-	{"id": &"lighthouse", "title": "Le Phare", "pos": Vector2(1010, 140)},
+	{"id": &"beach_run", "title": "Grande Plage", "pos": Vector2(880, 150)},
+	{"id": &"surf", "title": "Côte des Basques", "pos": Vector2(520, 660)},
+	{"id": &"fishing", "title": "Port des Pêcheurs", "pos": Vector2(430, 430)},
+	{"id": &"rock_crossing", "title": "Rocher de la Vierge", "pos": Vector2(300, 520)},
+	{"id": &"espadrille", "title": "Port Vieux", "pos": Vector2(430, 600)},
+	{"id": &"lighthouse", "title": "Le Phare", "pos": Vector2(470, 280)},
 ]
 
 @onready var _player_label: Label = %PlayerLabel
