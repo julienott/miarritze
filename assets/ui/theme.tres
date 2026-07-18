@@ -1,0 +1,102 @@
+[gd_resource type="Theme" load_steps=7 format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/press_start_2p.ttf" id="1_font"]
+
+[sub_resource type="StyleBoxFlat" id="btn_normal"]
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+bg_color = Color(0.145, 0.095, 0.13, 0.88)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 5
+border_color = Color(0.97, 0.945, 0.89, 1)
+
+[sub_resource type="StyleBoxFlat" id="btn_hover"]
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+bg_color = Color(0.807, 0.204, 0.204, 0.92)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 5
+border_color = Color(0.97, 0.945, 0.89, 1)
+
+[sub_resource type="StyleBoxFlat" id="btn_pressed"]
+content_margin_left = 16.0
+content_margin_top = 14.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.588, 0.133, 0.157, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.97, 0.945, 0.89, 1)
+
+[sub_resource type="StyleBoxFlat" id="btn_disabled"]
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+bg_color = Color(0.2, 0.18, 0.22, 0.7)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 5
+border_color = Color(0.64, 0.61, 0.6, 1)
+
+[sub_resource type="StyleBoxFlat" id="panel_box"]
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+bg_color = Color(0.095, 0.125, 0.2, 0.86)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.97, 0.945, 0.89, 1)
+
+[sub_resource type="StyleBoxFlat" id="line_edit"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.97, 0.945, 0.89, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.227, 0.15, 0.204, 1)
+
+[resource]
+default_font = ExtResource("1_font")
+default_font_size = 16
+Button/colors/font_color = Color(0.97, 0.945, 0.89, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(0.95, 0.85, 0.7, 1)
+Button/colors/font_disabled_color = Color(0.7, 0.68, 0.66, 1)
+Button/styles/normal = SubResource("btn_normal")
+Button/styles/hover = SubResource("btn_hover")
+Button/styles/pressed = SubResource("btn_pressed")
+Button/styles/disabled = SubResource("btn_disabled")
+Button/styles/focus = SubResource("btn_normal")
+OptionButton/colors/font_color = Color(0.97, 0.945, 0.89, 1)
+OptionButton/styles/normal = SubResource("btn_normal")
+OptionButton/styles/hover = SubResource("btn_hover")
+OptionButton/styles/pressed = SubResource("btn_pressed")
+OptionButton/styles/focus = SubResource("btn_normal")
+PanelContainer/styles/panel = SubResource("panel_box")
+LineEdit/colors/font_color = Color(0.14, 0.1, 0.14, 1)
+LineEdit/colors/font_placeholder_color = Color(0.45, 0.4, 0.42, 1)
+LineEdit/colors/caret_color = Color(0.14, 0.1, 0.14, 1)
+LineEdit/styles/normal = SubResource("line_edit")
+LineEdit/styles/focus = SubResource("line_edit")
+Label/colors/font_shadow_color = Color(0.14, 0.08, 0.12, 0.85)
+Label/constants/shadow_offset_x = 3
+Label/constants/shadow_offset_y = 3

@@ -39,6 +39,10 @@ func play_music(challenge: StringName) -> void:
 	if stream == null:
 		_music_player.stop()
 		return
+	if stream is AudioStreamMP3:
+		(stream as AudioStreamMP3).loop = true
+	elif stream is AudioStreamOggVorbis:
+		(stream as AudioStreamOggVorbis).loop = true
 	_music_player.stream = stream
 	_music_player.volume_db = linear_to_db(music_volume)
 	_music_player.play()

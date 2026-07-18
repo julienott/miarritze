@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://src/ui/pseudo_entry/pseudo_entry.gd" id="1_entry"]
+[ext_resource type="Script" path="res://src/shared/components/pixel_bg.gd" id="2_bg"]
 
 [node name="PseudoEntry" type="Control"]
 layout_mode = 3
@@ -11,71 +12,68 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_entry")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Bg" type="Sprite2D" parent="."]
+script = ExtResource("2_bg")
+bg_name = "bg_menu"
+
+[node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.09, 0.42, 0.64, 1)
 
-[node name="Panel" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -280.0
-offset_top = -240.0
-offset_right = 280.0
-offset_bottom = 240.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 18
-
-[node name="Title" type="Label" parent="Panel"]
+[node name="PanelBox" type="PanelContainer" parent="Center"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 56
+
+[node name="Panel" type="VBoxContainer" parent="Center/PanelBox"]
+custom_minimum_size = Vector2(620, 0)
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Center/PanelBox/Panel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.97, 0.945, 0.89, 1)
+theme_override_font_sizes/font_size = 40
 text = "Miarritze"
 horizontal_alignment = 1
 
-[node name="PseudoEdit" type="LineEdit" parent="Panel"]
+[node name="PseudoEdit" type="LineEdit" parent="Center/PanelBox/Panel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 20
 placeholder_text = "Ton pseudo"
 max_length = 15
 
-[node name="CodeEdit" type="LineEdit" parent="Panel"]
+[node name="CodeEdit" type="LineEdit" parent="Center/PanelBox/Panel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 20
 placeholder_text = "Code du groupe"
 max_length = 8
 
-[node name="JoinButton" type="Button" parent="Panel"]
+[node name="JoinButton" type="Button" parent="Center/PanelBox/Panel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 66)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 20
 text = "Rejoindre le groupe"
 
-[node name="CreateButton" type="Button" parent="Panel"]
+[node name="CreateButton" type="Button" parent="Center/PanelBox/Panel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 66)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 20
 text = "Créer un groupe"
 
-[node name="ErrorLabel" type="Label" parent="Panel"]
+[node name="ErrorLabel" type="Label" parent="Center/PanelBox/Panel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.95, 0.78, 0.24, 1)
+theme_override_font_sizes/font_size = 16
 text = ""
 horizontal_alignment = 1
 autowrap_mode = 2

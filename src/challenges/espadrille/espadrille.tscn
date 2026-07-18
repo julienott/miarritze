@@ -1,26 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="PackedScene" path="res://src/challenges/base/challenge_base.tscn" id="1_base"]
 [ext_resource type="Script" path="res://src/challenges/espadrille/espadrille.gd" id="2_esp"]
+[ext_resource type="Script" path="res://src/shared/components/pixel_bg.gd" id="3_bg"]
 
 [node name="Espadrille" instance=ExtResource("1_base")]
 script = ExtResource("2_esp")
 challenge_id = &"espadrille"
 time_limit = 0.0
 
-[node name="Sky" type="ColorRect" parent="." index="0"]
-offset_right = 1280.0
-offset_bottom = 640.0
-color = Color(0.55, 0.8, 0.9, 1)
-
-[node name="Water" type="ColorRect" parent="." index="1"]
-offset_top = 640.0
-offset_right = 1280.0
-offset_bottom = 720.0
-color = Color(0.15, 0.45, 0.65, 1)
-
-[node name="Quay" type="ColorRect" parent="." index="2"]
-offset_top = 596.0
-offset_right = 420.0
-offset_bottom = 720.0
-color = Color(0.6, 0.55, 0.5, 1)
+[node name="Bg" type="Sprite2D" parent="." index="0"]
+script = ExtResource("3_bg")
+bg_name = "bg_espadrille"

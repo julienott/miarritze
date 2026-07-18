@@ -1,27 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="PackedScene" path="res://src/challenges/base/challenge_base.tscn" id="1_base"]
 [ext_resource type="Script" path="res://src/challenges/rock_crossing/rock_crossing.gd" id="2_rock"]
+[ext_resource type="Script" path="res://src/shared/components/pixel_bg.gd" id="3_bg"]
 
 [node name="RockCrossing" instance=ExtResource("1_base")]
 script = ExtResource("2_rock")
 challenge_id = &"rock_crossing"
 time_limit = 60.0
 
-[node name="Sky" type="ColorRect" parent="." index="0"]
-offset_right = 1280.0
-offset_bottom = 380.0
-color = Color(0.75, 0.8, 0.85, 1)
-
-[node name="Sea" type="ColorRect" parent="." index="1"]
-offset_top = 380.0
-offset_right = 1280.0
-offset_bottom = 720.0
-color = Color(0.15, 0.4, 0.55, 1)
-
-[node name="Rock" type="ColorRect" parent="." index="2"]
-offset_left = 1150.0
-offset_top = 300.0
-offset_right = 1280.0
-offset_bottom = 520.0
-color = Color(0.35, 0.33, 0.32, 1)
+[node name="Bg" type="Sprite2D" parent="." index="0"]
+script = ExtResource("3_bg")
+bg_name = "bg_rock"

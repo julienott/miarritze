@@ -3,23 +3,22 @@ extends ChallengeBase
 ## Port Vieux — lancer d'espadrille façon Angry Birds (cf. DESIGN.md §4.5).
 ## Glisser = viser/doser (trajectoire prévisualisée), relâcher = lancer.
 ## Cibles : boîtes de conserve, bouées, mouettes chapardeuses (mobiles).
-## Combos valorisés : plusieurs cibles dans un même lancer.
 ## FSM : Aim, Charge, Throw, Resolve.
 
-const _LAUNCH_POS: Vector2 = Vector2(180.0, 560.0)
-const _PROJECTILE_SIZE: Vector2 = Vector2(34, 18)
+const _LAUNCH_POS: Vector2 = Vector2(118.0, 452.0)
 
 @export var throws_total: int = 5
-@export var power_scale: float = 3.4         # vitesse par pixel de drag
+@export var power_scale: float = 3.4
 @export var power_max: float = 1500.0
 @export var gravity: float = 1400.0
 @export var box_points: int = 10
 @export var buoy_points: int = 20
 @export var gull_points: int = 40
-@export var combo_multiplier: int = 2        # points ×2 dès la 2e cible du lancer
+@export var combo_multiplier: int = 2
 
 var _fsm: StateMachine
-var _projectile: ColorRect
+var _player: LouisSprite
+var _projectile: Sprite2D
 var _preview: Line2D
 var _throws_left_label: Label
 var _throws_left: int = 0
@@ -32,19 +31,23 @@ var _targets: Array[Dictionary] = []
 func _on_begin() -> void:
 	_throws_left = throws_total
 
-	_projectile = ColorRect.new()
-	_projectile.size = _PROJECTILE_SIZE
-	_projectile.color = Color(0.9, 0.9, 0.8)
+	_player = LouisSprite.new()
+	_player.position = Vector2(60.0, 508.0 - LouisSprite.FEET_Y)
+	add_child(_player)
+	_player.play(&"idle")
+
+	_projectile = SpriteUtil.sprite("espadrille_shoe")
+	_projectile.position = _LAUNCH_POS
 	add_child(_projectile)
 
 	_preview = Line2D.new()
-	_preview.width = 4.0
-	_preview.default_color = Color(1, 1, 1, 0.6)
+	_preview.width = 5.0
+	_preview.default_color = Color(0.97, 0.95, 0.89, 0.65)
 	add_child(_preview)
 
 	_throws_left_label = Label.new()
-	_throws_left_label.add_theme_font_size_override(&"font_size", 32)
-	_throws_left_label.position = Vector2(24.0, 80.0)
+	_throws_left_label.add_theme_font_size_override(&"font_size", 22)
+	_throws_left_label.position = Vector2(24.0, 96.0)
 	add_child(_throws_left_label)
 
 	_spawn_targets()
@@ -58,31 +61,28 @@ func _on_begin() -> void:
 
 
 func _spawn_targets() -> void:
-	# Pile de boîtes de conserve
+	# pile de boîtes de conserve sur des caisses (droite)
 	for i: int in 3:
 		for j: int in (3 - i):
-			_add_target(Vector2(900.0 + j * 54.0 + i * 27.0, 600.0 - i * 46.0),
-				Vector2(44, 44), Color(0.7, 0.7, 0.75), box_points, Vector2.ZERO)
-	# Bouées dans l'eau
-	_add_target(Vector2(700.0, 660.0), Vector2(52, 40), Color(0.95, 0.5, 0.15),
-		buoy_points, Vector2.ZERO)
-	_add_target(Vector2(1130.0, 660.0), Vector2(52, 40), Color(0.95, 0.5, 0.15),
-		buoy_points, Vector2.ZERO)
-	# Mouettes chapardeuses (mobiles)
-	_add_target(Vector2(820.0, 220.0), Vector2(48, 30), Color(0.95, 0.95, 0.95),
-		gull_points, Vector2(120.0, 0.0))
-	_add_target(Vector2(1050.0, 130.0), Vector2(48, 30), Color(0.95, 0.95, 0.95),
-		gull_points, Vector2(-90.0, 0.0))
+			_add_target("can", Vector2(920.0 + j * 44.0 + i * 22.0, 560.0 - i * 40.0),
+				box_points, Vector2.ZERO)
+	# bouées dans l'eau
+	_add_target("buoy", Vector2(690.0, 566.0), buoy_points, Vector2.ZERO)
+	_add_target("buoy", Vector2(1140.0, 572.0), buoy_points, Vector2.ZERO)
+	# mouettes chapardeuses
+	_add_target("gull", Vector2(820.0, 210.0), gull_points, Vector2(120.0, 0.0))
+	_add_target("gull", Vector2(1050.0, 120.0), gull_points, Vector2(-90.0, 0.0))
 
 
-func _add_target(target_position: Vector2, size: Vector2, color: Color,
-		points: int, velocity: Vector2) -> void:
-	var rect: ColorRect = ColorRect.new()
-	rect.position = target_position
-	rect.size = size
-	rect.color = color
-	add_child(rect)
-	_targets.append({"node": rect, "points": points, "velocity": velocity})
+func _add_target(kind: String, target_position: Vector2, points: int, velocity: Vector2) -> void:
+	var node: Node2D
+	if kind == "gull":
+		node = SpriteUtil.animated(["gull_1", "gull_2"], 6.0)
+	else:
+		node = SpriteUtil.sprite(kind)
+	node.position = target_position
+	add_child(node)
+	_targets.append({"node": node, "points": points, "velocity": velocity})
 
 
 func _physics_process(delta: float) -> void:
@@ -98,14 +98,16 @@ func _move_gulls(delta: float) -> void:
 		var velocity: Vector2 = target["velocity"]
 		if velocity == Vector2.ZERO:
 			continue
-		var node: ColorRect = target["node"]
+		var node: Node2D = target["node"]
 		node.position += velocity * delta
-		if node.position.x < 600.0 or node.position.x > 1240.0:
+		if node is AnimatedSprite2D:
+			(node as AnimatedSprite2D).flip_h = velocity.x < 0.0
+		if node.position.x < 600.0 or node.position.x > 1220.0:
 			target["velocity"] = -velocity
 
 
 func _on_drag_started(position: Vector2) -> void:
-	_fsm.handle_tap(position)   # Aim → Charge
+	_fsm.handle_tap(position)
 
 
 func _on_drag_updated(_position: Vector2, vector: Vector2) -> void:
@@ -120,7 +122,6 @@ func _on_drag_ended(_position: Vector2, vector: Vector2) -> void:
 		_fsm.transition_to(&"throw")
 
 
-## Vitesse de lancer : on tire l'espadrille EN ARRIÈRE (drag inversé).
 func launch_velocity() -> Vector2:
 	var velocity: Vector2 = -_drag_vector * power_scale
 	return velocity.limit_length(power_max)
@@ -141,10 +142,10 @@ func _update_preview() -> void:
 
 
 func check_hits() -> void:
-	var projectile_rect: Rect2 = Rect2(_projectile.position, _PROJECTILE_SIZE)
+	var projectile_rect: Rect2 = Rect2(_projectile.position, SpriteUtil.display_size(_projectile))
 	for target: Dictionary in _targets.duplicate():
-		var node: ColorRect = target["node"]
-		if projectile_rect.intersects(Rect2(node.position, node.size)):
+		var node: Node2D = target["node"]
+		if projectile_rect.intersects(Rect2(node.position, SpriteUtil.display_size(node))):
 			_hits_this_throw += 1
 			var points: int = target["points"]
 			if _hits_this_throw >= 2:
@@ -156,7 +157,6 @@ func check_hits() -> void:
 
 
 func maybe_finish() -> void:
-	# Fin anticipée : plus de cibles ou plus d'espadrilles.
 	if _throws_left <= 0 or _targets.is_empty():
 		end()
 
@@ -168,8 +168,10 @@ class AimState extends State:
 		var espadrille: Espadrille = machine.owner_node as Espadrille
 		espadrille._projectile.position = Espadrille._LAUNCH_POS
 		espadrille._projectile.rotation = 0.0
+		espadrille._projectile.visible = true
 		espadrille._preview.points = PackedVector2Array()
 		espadrille._hits_this_throw = 0
+		espadrille._player.play(&"idle")
 
 	func handle_tap(_position: Vector2) -> void:
 		machine.transition_to(&"charge")
@@ -179,6 +181,8 @@ class ChargeState extends State:
 	func enter(_previous: StringName) -> void:
 		var espadrille: Espadrille = machine.owner_node as Espadrille
 		espadrille._drag_vector = Vector2.ZERO
+		espadrille._player.play(&"throw")
+		espadrille._player.pause()   # bras armé tant qu'on vise
 
 
 class ThrowState extends State:
@@ -187,6 +191,7 @@ class ThrowState extends State:
 		espadrille._velocity = espadrille.launch_velocity()
 		espadrille._preview.points = PackedVector2Array()
 		espadrille._throws_left -= 1
+		espadrille._player.play(&"throw")
 		AudioManager.sfx(&"throw")
 
 	func update(delta: float) -> void:
@@ -204,6 +209,8 @@ class ResolveState extends State:
 	var _time_left: float = 0.0
 
 	func enter(_previous: StringName) -> void:
+		var espadrille: Espadrille = machine.owner_node as Espadrille
+		espadrille._projectile.visible = false
 		_time_left = 0.6
 
 	func update(delta: float) -> void:

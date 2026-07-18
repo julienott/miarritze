@@ -1,20 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="PackedScene" path="res://src/challenges/base/challenge_base.tscn" id="1_base"]
 [ext_resource type="Script" path="res://src/challenges/surf/surf.gd" id="2_surf"]
+[ext_resource type="Script" path="res://src/shared/components/pixel_bg.gd" id="3_bg"]
 
 [node name="Surf" instance=ExtResource("1_base")]
 script = ExtResource("2_surf")
 challenge_id = &"surf"
 time_limit = 60.0
 
-[node name="Sky" type="ColorRect" parent="." index="0"]
-offset_right = 1280.0
-offset_bottom = 430.0
-color = Color(0.5, 0.8, 0.95, 1)
-
-[node name="Sea" type="ColorRect" parent="." index="1"]
-offset_top = 430.0
-offset_right = 1280.0
-offset_bottom = 720.0
-color = Color(0.12, 0.45, 0.68, 1)
+[node name="Bg" type="Sprite2D" parent="." index="0"]
+script = ExtResource("3_bg")
+bg_name = "bg_surf"

@@ -7,24 +7,3 @@
 script = ExtResource("2_lh")
 challenge_id = &"lighthouse"
 time_limit = 90.0
-
-[node name="Sky" type="ColorRect" parent="." index="0"]
-offset_left = -2000.0
-offset_top = -4000.0
-offset_right = 3280.0
-offset_bottom = 720.0
-color = Color(0.35, 0.55, 0.8, 1)
-
-[node name="Tower" type="ColorRect" parent="." index="1"]
-offset_left = 540.0
-offset_top = -3800.0
-offset_right = 700.0
-offset_bottom = 700.0
-color = Color(0.92, 0.9, 0.85, 1)
-
-[node name="Ground" type="ColorRect" parent="." index="2"]
-offset_left = -2000.0
-offset_top = 700.0
-offset_right = 3280.0
-offset_bottom = 900.0
-color = Color(0.35, 0.55, 0.35, 1)

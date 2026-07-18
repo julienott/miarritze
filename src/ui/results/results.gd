@@ -25,7 +25,7 @@ func _ready() -> void:
 	_title_label.text = str(_TITLES.get(challenge, String(challenge)))
 	_score_label.text = str(SceneRouter.last_score)
 	if SceneRouter.last_was_best:
-		_best_label.text = "🎉 Nouveau record !"
+		_best_label.text = "Nouveau record !"
 	else:
 		_best_label.text = "Ton record : %d" % ScoreManager.best(challenge)
 	_cumulative_label.text = "Cumul : %d" % ScoreManager.cumulative()
