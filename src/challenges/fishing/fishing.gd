@@ -12,7 +12,7 @@ const _BOBBER_HOME: Vector2 = Vector2(430.0, 560.0)
 @export var cast_duration: float = 0.8
 @export var bite_delay_min: float = 0.6
 @export var bite_delay_max: float = 2.2
-@export var bite_window: float = 1.0
+@export var bite_window: float = 1.3
 @export var reel_rate: float = 0.22
 @export var slack_rate: float = 0.06
 @export var tension_up_rate: float = 0.55
@@ -38,6 +38,8 @@ var _bobber: Sprite2D
 var _line: Line2D
 var _caught_sprite: Sprite2D = null
 var _status_label: Label
+var _hint_label: Label
+var _bar_labels: Array[Label] = []
 var _tension_bar: ColorRect
 var _tension_fill: ColorRect
 var _progress_bar: ColorRect
@@ -61,9 +63,21 @@ func _on_begin() -> void:
 	add_child(_bobber)
 
 	_status_label = Label.new()
-	_status_label.add_theme_font_size_override(&"font_size", 36)
-	_status_label.position = Vector2(400.0, 200.0)
+	_status_label.add_theme_font_size_override(&"font_size", 30)
+	_status_label.add_theme_color_override(&"font_color", Color(0.97, 0.95, 0.89))
+	_status_label.position = Vector2(140.0, 150.0)
+	_status_label.custom_minimum_size = Vector2(1000.0, 0.0)
+	_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(_status_label)
+	_hint_label = Label.new()
+	_hint_label.add_theme_font_size_override(&"font_size", 18)
+	_hint_label.add_theme_color_override(&"font_color", Color(0.95, 0.78, 0.24))
+	_hint_label.position = Vector2(140.0, 200.0)
+	_hint_label.custom_minimum_size = Vector2(1000.0, 0.0)
+	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	add_child(_hint_label)
+	_add_bar_label("LIGNE", Vector2(240.0, 588.0))
+	_add_bar_label("TENSION", Vector2(180.0, 640.0))
 
 	_tension_bar = _make_bar(Vector2(336.0, 636.0), Vector2(608.0, 44.0), Color(0.14, 0.08, 0.12, 0.9))
 	_tension_fill = _make_bar(Vector2(342.0, 642.0), Vector2(0.0, 32.0), Color(0.3, 0.85, 0.3))
@@ -109,6 +123,8 @@ func _update_visuals() -> void:
 	var fighting: bool = _fsm.current_name == &"reel" or _fsm.current_name == &"slack"
 	for bar: ColorRect in [_tension_bar, _tension_fill, _progress_bar, _progress_fill]:
 		bar.visible = fighting
+	for label: Label in _bar_labels:
+		label.visible = fighting
 	if fighting:
 		_tension_fill.size.x = 596.0 * clampf(_tension, 0.0, 1.0)
 		if _tension >= red_zone:
@@ -139,8 +155,20 @@ func _make_bar(bar_position: Vector2, size: Vector2, color: Color) -> ColorRect:
 	return bar
 
 
-func set_status(text: String) -> void:
+func set_status(text: String, hint: String = "") -> void:
 	_status_label.text = text
+	_hint_label.text = hint
+
+
+func _add_bar_label(text: String, label_position: Vector2) -> void:
+	var label: Label = Label.new()
+	label.text = text
+	label.add_theme_font_size_override(&"font_size", 14)
+	label.add_theme_color_override(&"font_color", Color(0.97, 0.95, 0.89))
+	label.position = label_position
+	label.visible = false
+	add_child(label)
+	_bar_labels.append(label)
 
 
 func show_catch() -> void:
@@ -185,7 +213,7 @@ class BiteState extends State:
 		var fishing: Fishing = machine.owner_node as Fishing
 		_wait_left = randf_range(fishing.bite_delay_min, fishing.bite_delay_max)
 		_biting = false
-		fishing.set_status("…")
+		fishing.set_status("Surveille le bouchon…", "quand ÇA MORD, tape vite !")
 
 	func update(delta: float) -> void:
 		var fishing: Fishing = machine.owner_node as Fishing
@@ -194,14 +222,14 @@ class BiteState extends State:
 			if _wait_left <= 0.0:
 				_biting = true
 				_window_left = fishing.bite_window
-				fishing.set_status("ÇA MORD ! TAPE !")
+				fishing.set_status("ÇA MORD !", "TAPE MAINTENANT !")
 				AudioManager.sfx(&"bite")
 		else:
 			# le bouchon s'agite frénétiquement
 			fishing._bobber.position += Vector2(0.0, 4.0 * sin(_window_left * 40.0))
 			_window_left -= delta
 			if _window_left <= 0.0:
-				fishing.set_status("Trop tard…")
+				fishing.set_status("Trop tard, il est parti…", "sois plus rapide au prochain !")
 				machine.transition_to(&"cast")
 
 	func handle_tap(_position: Vector2) -> void:
@@ -220,7 +248,7 @@ class ReelState extends State:
 		var fishing: Fishing = machine.owner_node as Fishing
 		if previous != &"slack":
 			_red_time = 0.0
-		fishing.set_status("On remonte ! (%s)" % fishing._fish["name"])
+		fishing.set_status("Un %s a mordu !" % fishing._fish["name"], "MAINTIENS le doigt appuyé — mais pas trop longtemps !")
 
 	func update(delta: float) -> void:
 		var fishing: Fishing = machine.owner_node as Fishing
@@ -244,7 +272,7 @@ class ReelState extends State:
 class SlackState extends State:
 	func enter(_previous: StringName) -> void:
 		var fishing: Fishing = machine.owner_node as Fishing
-		fishing.set_status("La ligne se détend…")
+		fishing.set_status("Ligne relâchée : la tension baisse", "rappuie pour continuer à remonter")
 
 	func update(delta: float) -> void:
 		var fishing: Fishing = machine.owner_node as Fishing
@@ -261,7 +289,7 @@ class SnapState extends State:
 	func enter(_previous: StringName) -> void:
 		var fishing: Fishing = machine.owner_node as Fishing
 		_time_left = 1.0
-		fishing.set_status("Oh non, la ligne a casse !")
+		fishing.set_status("Oh non, la ligne a cassé !", "reste dans le vert et l'orange, évite le rouge")
 		AudioManager.sfx(&"snap")
 
 	func update(delta: float) -> void:
@@ -279,7 +307,7 @@ class LandedState extends State:
 		var points: int = fishing._fish["points"]
 		fishing.add_score(points)
 		fishing.show_catch()
-		fishing.set_status("%s ! +%d" % [fishing._fish["name"], points])
+		fishing.set_status("%s attrapé ! +%d points" % [fishing._fish["name"], points])
 		AudioManager.sfx(&"landed")
 
 	func update(delta: float) -> void:

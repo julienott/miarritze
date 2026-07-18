@@ -19,7 +19,7 @@ INK = {
     "D": PALETTE["red_dark"],     # ombre du béret
     "S": PALETTE["skin"],
     "T": PALETTE["skin_shade"],
-    "H": PALETTE["hair"],
+    "H": (236, 200, 116),   # blond doré
     "W": PALETTE["white"],        # chemise
     "V": PALETTE["cream_shade"],  # ombre chemise
     "C": PALETTE["cream"],        # pantalon
