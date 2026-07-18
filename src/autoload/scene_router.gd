@@ -14,6 +14,11 @@ const _SCENES: Dictionary = {
 	&"leaderboard": "res://src/ui/leaderboard/leaderboard.tscn",
 }
 
+func _ready() -> void:
+	# Jamais de gris : la couleur de fond par défaut = sable
+	RenderingServer.set_default_clear_color(Color(0.933, 0.792, 0.502))
+
+
 ## Payload de navigation vers l'écran results (posé par goto_results).
 var last_challenge: StringName = &""
 var last_score: int = 0
