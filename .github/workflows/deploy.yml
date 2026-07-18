@@ -1,0 +1,69 @@
+name: Build & deploy web export
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.7.1"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Godot headless + templates web sont mis en cache (~120 Mo) pour
+      # éviter de retélécharger le .tpz de 1,2 Go à chaque run.
+      - name: Cache Godot + web templates
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot-bin
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-web
+
+      - name: Install Godot + web export templates
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot-bin
+          curl -sL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" ~/godot-bin/godot
+          chmod +x ~/godot-bin/godot
+
+          TPL_DIR="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$TPL_DIR"
+          curl -sL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          # On n'extrait que les templates web (le .tpz complet fait 1,2 Go décompressé)
+          unzip -q templates.tpz "templates/web_*" "templates/version.txt" -d /tmp/tpz
+          mv /tmp/tpz/templates/* "$TPL_DIR/"
+
+      - name: Import project resources
+        run: ~/godot-bin/godot --headless --import || true
+
+      - name: Export Web (release)
+        run: |
+          mkdir -p web/build
+          ~/godot-bin/godot --headless --export-release "Web" web/build/index.html
+          test -f web/build/index.wasm && test -f web/build/index.pck
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      # Force l'auth par mot de passe — sans ces flags, ssh tente publickey
+      # d'abord et un MaxAuthTries bas côté serveur peut nous bloquer avant
+      # d'atteindre la tentative par mot de passe. (Même pattern que sutorimu.)
+      # Pas de --delete : FTP_PATH pourrait contenir d'autres fichiers (API
+      # backend plus tard) ; les fichiers index.* sont simplement écrasés.
+      - name: Deploy via rsync over SSH
+        env:
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          cp web/.htaccess web/build/.htaccess
+          sshpass -e rsync -avz \
+            -e "ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1" \
+            web/build/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/"
