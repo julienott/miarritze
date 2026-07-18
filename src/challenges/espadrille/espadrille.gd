@@ -5,7 +5,7 @@ extends ChallengeBase
 ## Cibles : boîtes de conserve, bouées, mouettes chapardeuses (mobiles).
 ## FSM : Aim, Charge, Throw, Resolve.
 
-const _LAUNCH_POS: Vector2 = Vector2(118.0, 452.0)
+const _LAUNCH_POS: Vector2 = Vector2(150.0, 560.0)
 
 @export var throws_total: int = 5
 @export var power_scale: float = 3.4
@@ -32,7 +32,7 @@ func _on_begin() -> void:
 	_throws_left = throws_total
 
 	_player = LouisSprite.new()
-	_player.position = Vector2(60.0, 508.0 - LouisSprite.FEET_Y)
+	_player.position = Vector2(70.0, 640.0 - LouisSprite.FEET_Y)
 	add_child(_player)
 	_player.play(&"idle")
 
@@ -67,8 +67,8 @@ func _spawn_targets() -> void:
 			_add_target("can", Vector2(920.0 + j * 44.0 + i * 22.0, 560.0 - i * 40.0),
 				box_points, Vector2.ZERO)
 	# bouées dans l'eau
-	_add_target("buoy", Vector2(690.0, 566.0), buoy_points, Vector2.ZERO)
-	_add_target("buoy", Vector2(1140.0, 572.0), buoy_points, Vector2.ZERO)
+	_add_target("buoy", Vector2(610.0, 540.0), buoy_points, Vector2.ZERO)
+	_add_target("buoy", Vector2(790.0, 505.0), buoy_points, Vector2.ZERO)
 	# mouettes chapardeuses
 	_add_target("gull", Vector2(820.0, 210.0), gull_points, Vector2(120.0, 0.0))
 	_add_target("gull", Vector2(1050.0, 120.0), gull_points, Vector2(-90.0, 0.0))

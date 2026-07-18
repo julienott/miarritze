@@ -5,9 +5,9 @@ extends ChallengeBase
 ## relâcher pour la faire redescendre. Jauge vert / orange / rouge.
 ## FSM : Cast, Bite, Reel, Slack, Snap, Landed.
 
-const _DOCK_Y: float = 592.0
-const _LOUIS_X: float = 90.0
-const _BOBBER_HOME: Vector2 = Vector2(720.0, 470.0)
+const _DOCK_Y: float = 604.0
+const _LOUIS_X: float = 400.0
+const _BOBBER_HOME: Vector2 = Vector2(660.0, 440.0)
 
 @export var cast_duration: float = 0.8
 @export var bite_delay_min: float = 0.6
@@ -119,7 +119,7 @@ func _update_visuals() -> void:
 			_tension_fill.color = Color(0.3, 0.85, 0.3)
 		_progress_fill.size.x = 596.0 * clampf(_progress, 0.0, 1.0)
 		# le bouchon se rapproche du ponton avec la progression
-		_bobber.position = _BOBBER_HOME.lerp(Vector2(220.0, 540.0), _progress)
+		_bobber.position = _BOBBER_HOME.lerp(Vector2(230.0, 560.0), _progress)
 	else:
 		_bobber.position = _BOBBER_HOME + Vector2(0.0, 3.0 * sin(_bob_time * 2.0))
 	# fil de pêche : de la canne au bouchon

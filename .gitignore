@@ -16,3 +16,6 @@ config.php
 
 # OS
 .DS_Store
+
+# Clé API Retro Diffusion (jamais versionnée)
+.rd_api_key
