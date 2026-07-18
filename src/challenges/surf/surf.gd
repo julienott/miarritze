@@ -40,6 +40,7 @@ var _fsm: StateMachine
 var _rider: Node2D
 var _player: LouisSprite
 var _board: Sprite2D
+var _paddle_sprite: AnimatedSprite2D
 var _wave: WaveVisual
 var _speed_bar: ColorRect
 var _speed_fill: ColorRect
@@ -66,6 +67,23 @@ func _on_begin() -> void:
 	_rider.add_child(_board)
 	_player = LouisSprite.new()
 	_rider.add_child(_player)
+	# Louis allongé qui rame (profil), sprite dédié 2 frames
+	_paddle_sprite = AnimatedSprite2D.new()
+	var paddle_frames: SpriteFrames = SpriteFrames.new()
+	paddle_frames.set_animation_speed(&"default", 5.0)
+	paddle_frames.set_animation_loop(&"default", true)
+	var paddle_sheet: Texture2D = load("res://assets/sprites/louis_paddle.png")
+	for i: int in 2:
+		var atlas: AtlasTexture = AtlasTexture.new()
+		atlas.atlas = paddle_sheet
+		atlas.region = Rect2(i * 32, 0, 32, 16)
+		paddle_frames.add_frame(&"default", atlas)
+	_paddle_sprite.sprite_frames = paddle_frames
+	_paddle_sprite.centered = false
+	_paddle_sprite.scale = Vector2(4.0, 4.0)
+	_paddle_sprite.position = Vector2(-64.0, LouisSprite.FEET_Y - 56.0)
+	_paddle_sprite.play(&"default")
+	_rider.add_child(_paddle_sprite)
 
 	# jauge de rame (verticale, à gauche de Louis)
 	_speed_bar = _bar(Vector2(240.0, 300.0), Vector2(36.0, 260.0), Color(0.14, 0.08, 0.12, 0.9))
@@ -142,10 +160,10 @@ func water_y() -> float:
 
 
 func rider_flat(flat: bool) -> void:
-	# à plat SUR la planche pour ramer, debout pour surfer
-	_player.rotation = -PI / 2.0 if flat else 0.0
-	_player.position = Vector2(12.0, 76.0) if flat else Vector2.ZERO
-	_board.position = Vector2(-16.0, 82.0) if flat else Vector2(-20.0, LouisSprite.FEET_Y - 4.0)
+	# allongé sur la planche (sprite profil dédié) ou debout pour surfer
+	_paddle_sprite.visible = flat
+	_player.visible = not flat
+	_board.visible = not flat
 
 
 ## Place Louis (allongé ou debout) sur l'eau à x = _PLAYER_X.
@@ -162,8 +180,7 @@ class WaitState extends State:
 		var surf: Surf = machine.owner_node as Surf
 		_rest = surf.wave_interval
 		surf.rider_flat(true)
-		surf._player.play(&"idle")
-		surf._board.visible = true
+		surf._paddle_sprite.speed_scale = 1.0
 		# la houle se reforme au large
 		surf._wave.center_x = 1650.0
 		surf._wave.height = 60.0
@@ -220,7 +237,7 @@ class PaddleState extends State:
 	func handle_tap(_position: Vector2) -> void:
 		var surf: Surf = machine.owner_node as Surf
 		surf._paddle_speed = minf(surf._paddle_speed + surf.paddle_per_tap, 1.0)
-		surf._player.play(&"climb")   # bras qui rament
+		surf._paddle_sprite.speed_scale = 2.5
 		AudioManager.sfx(&"step")
 
 
@@ -302,6 +319,7 @@ class CloseoutState extends State:
 		var surf: Surf = machine.owner_node as Surf
 		_t = 0.0
 		surf.set_status("La vague a fermé !", "")
+		surf.rider_flat(false)
 		surf._board.visible = false
 		surf._player.play(&"hit")
 		surf._player.modulate = Color(1, 1, 1, 0.6)
