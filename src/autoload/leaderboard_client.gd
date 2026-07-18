@@ -30,7 +30,13 @@ var _api_base: String
 
 
 func _ready() -> void:
-	_api_base = "/api" if OS.has_feature("web") else fallback_api_url
+	if OS.has_feature("web"):
+		# HTTPRequest exige une URL absolue, même en web : on reconstruit
+		# l'origine de la page (le jeu et l'API partagent le même domaine).
+		var origin: Variant = JavaScriptBridge.eval("window.location.origin", true)
+		_api_base = str(origin) + "/api" if origin != null else fallback_api_url
+	else:
+		_api_base = fallback_api_url
 
 
 ## Crée un groupe → group_created(code).
