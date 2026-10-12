@@ -15,6 +15,8 @@ var ai_level: PackedInt32Array = PackedInt32Array([0, 0])
 ## Garde automatique « Facile » (30 % des coups si le joueur ne touche à rien).
 var autoguard: PackedInt32Array = PackedInt32Array([0, 0])
 var start_health: PackedInt32Array = PackedInt32Array([0, 0])
+## Entraînement : chrono figé, pas de K.O., vie rechargée hors combo.
+var training: bool = false
 
 # --- État (sérialisé)
 var frame: int = 0
@@ -47,6 +49,7 @@ func setup(def1: FighterDef, def2: FighterDef, options: Dictionary = {}) -> void
 	ai_level = PackedInt32Array([int(ai[0]), int(ai[1])])
 	var guard: Array = options.get("autoguard", [0, 0])
 	autoguard = PackedInt32Array([int(guard[0]), int(guard[1])])
+	training = bool(options.get("training", false))
 	var health: Array = options.get("health", [0, 0])
 	start_health = PackedInt32Array([int(health[0]), int(health[1])])
 	f = [FighterState.new(), FighterState.new()]
@@ -122,6 +125,14 @@ func _step_intro() -> void:
 
 func _step_fight() -> void:
 	_step_world(true)
+	if training:
+		timer = SimConst.ROUND_FRAMES
+		for p: int in 2:
+			var me: FighterState = f[p]
+			me.health = maxi(me.health, 1)
+			if me.combo_hits == 0 and me.actionable() and me.health < me.max_health:
+				me.health = me.max_health
+		return
 	_check_wave_return()
 	if f[0].health <= 0 or f[1].health <= 0:
 		var w: int = -1
@@ -730,7 +741,8 @@ func _land(p: int) -> void:
 		SimConst.ST_MOVE:
 			var mv: MoveDef = defs[p].moves[me.move]
 			if mv.air_ok and not mv.velocity.is_empty() and me.move_t < mv.startup + mv.active:
-				me.vx = 0
+				# Coup aérien qui touche le sol en cours (piqué) : il glisse au sol.
+				me.vy = 0
 				return
 			me.move = -1
 			me.set_state(SimConst.ST_LAND, SimConst.A_CROUCH)
@@ -816,6 +828,7 @@ func _spawn_projectile(p: int, index: int, ox: int, oy: int) -> void:
 	pr.id = next_proj_id
 	next_proj_id += 1
 	pr.owner = p
+	pr.src = p
 	pr.def = index
 	pr.facing = me.facing
 	pr.x = me.x + me.facing * ox
@@ -832,7 +845,7 @@ func _spawn_projectile(p: int, index: int, ox: int, oy: int) -> void:
 func _step_projectiles() -> void:
 	var keep: Array[ProjectileState] = []
 	for pr: ProjectileState in projectiles:
-		var pd: ProjectileDef = defs[pr.owner].projectiles[pr.def]
+		var pd: ProjectileDef = defs[pr.src].projectiles[pr.def]
 		pr.age += 1
 		pr.life -= 1
 		if pd.returns and pr.returning == 0 and pr.age * 2 >= pd.life:
@@ -861,8 +874,8 @@ func _step_projectiles() -> void:
 			var b: ProjectileState = projectiles[j]
 			if a.owner == b.owner or a.life <= 0 or b.life <= 0:
 				continue
-			var pa: ProjectileDef = defs[a.owner].projectiles[a.def]
-			var pb: ProjectileDef = defs[b.owner].projectiles[b.def]
+			var pa: ProjectileDef = defs[a.src].projectiles[a.def]
+			var pb: ProjectileDef = defs[b.src].projectiles[b.def]
 			if pa.trap or pb.trap:
 				continue
 			if Collision.overlap(Collision.world(pa.hitbox, a.x, a.y, a.facing),
@@ -903,7 +916,7 @@ func _resolve_hits() -> void:
 		var target: int = opponent(pr.owner)
 		if pr.hits_left <= 0 or not _hittable(target):
 			continue
-		var pd: ProjectileDef = defs[pr.owner].projectiles[pr.def]
+		var pd: ProjectileDef = defs[pr.src].projectiles[pr.def]
 		if pr.age - pr.last_hit < pd.rehit_interval and pr.last_hit >= 0:
 			continue
 		var box: PackedInt32Array = Collision.world(pd.hitbox, pr.x, pr.y, pr.facing)
@@ -937,7 +950,7 @@ func _reflect(p: int, boxes: Array[PackedInt32Array]) -> void:
 	for pr: ProjectileState in projectiles:
 		if pr.owner == p:
 			continue
-		var pd: ProjectileDef = defs[pr.owner].projectiles[pr.def]
+		var pd: ProjectileDef = defs[pr.src].projectiles[pr.def]
 		if pd.trap:
 			continue
 		var box: PackedInt32Array = Collision.world(pd.hitbox, pr.x, pr.y, pr.facing)
@@ -990,14 +1003,14 @@ func _apply_projectile_hit(proj_id: int) -> void:
 	for pr: ProjectileState in projectiles:
 		if pr.id != proj_id:
 			continue
-		var pd: ProjectileDef = defs[pr.owner].projectiles[pr.def]
+		var pd: ProjectileDef = defs[pr.src].projectiles[pr.def]
 		_apply_damage(pr.owner, pd.damage, pd.hitstun, pd.blockstun, 4 * SimConst.SUB,
 			pd.hit_level, pd.knockdown, pd.launch_vx, pd.launch_vy, pd.hitstop,
 			pd.meter_gain, pd.chip_permille, pr.bonus, pd.pull_on_hit,
 			pd.stun_on_hit, pd.slow_on_hit, 0, pr.x - pr.facing * 64 * SimConst.SUB, pr.y)
 		pr.hits_left -= 1
 		pr.last_hit = pr.age
-		emit(FxEvents.PROJ_HIT, pr.owner, pr.x, pr.y, pr.def)
+		emit(FxEvents.PROJ_HIT, pr.src, pr.x, pr.y, pr.def)
 		if pr.hits_left <= 0:
 			pr.life = 0
 		return

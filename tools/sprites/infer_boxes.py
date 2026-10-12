@@ -24,6 +24,11 @@ def _bbox(mask):
     return xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
 
 
+def set_foot(foot) -> None:
+    global FOOT
+    FOOT = tuple(foot)
+
+
 def _rel(x0, y0, x1, y1, shrink):
     x0, y0, x1, y1 = x0 + shrink, y0 + shrink, x1 - shrink, y1 - shrink
     if x1 - x0 < 2:
@@ -84,7 +89,7 @@ def hit_box(cell: np.ndarray, idle0: np.ndarray, direction: str = "fwd") -> list
     son extrémité (rayon REACH autour du point le plus éloigné)."""
     diff = (cell > 0) & ~(idle0 > 0)
     comps = [c for c in _components(diff) if len(c) >= 4]
-    cx, cy = FOOT[0], FOOT[1] - 55          # centre approximatif du corps
+    cx, cy = FOOT[0], FOOT[1] - int(55 * FOOT[1] / 120)   # centre approximatif du corps
 
     def reach(p):
         dx = p[1] - cx

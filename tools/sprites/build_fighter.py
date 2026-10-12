@@ -87,6 +87,15 @@ def build(fid):
         "outfit_b": [14, 15, 16, 17], "hat": [18, 19, 20, 21], "acc_b": [22, 23, 24, 25],
         "acc_c": [26, 27, 28], "extra": [29, 30, 31]})
     data.setdefault("ending", ["ending_0.png", "ending_1.png", "ending_2.png"])
+    # Équilibrage : multiplicateur de dégâts par perso (tools/balance_tune.py).
+    pct = int(data.get("damage_pct", 100))
+    if pct != 100:
+        for mv in data["moves"].values():
+            if mv.get("damage"):
+                mv["damage"] = max(1, round(mv["damage"] * pct / 100))
+        for pr in data.get("projectiles", {}).values():
+            if pr.get("damage"):
+                pr["damage"] = max(1, round(pr["damage"] * pct / 100))
     errors = validate(data)
     if errors:
         raise SystemExit(f"{fid} invalide :\n  " + "\n  ".join(errors))

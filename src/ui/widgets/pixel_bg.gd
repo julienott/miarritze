@@ -16,6 +16,9 @@ var _index: int = 0
 
 func _ready() -> void:
 	centered = false
+	# Fond fixe (bg_<nom>.png) ou animé (bg_<nom>_0/1/2.png) : détection auto.
+	if not ResourceLoader.exists("res://assets/sprites/%s_0.png" % bg_name):
+		frame_count = 1
 	if frame_count <= 1:
 		texture = load("res://assets/sprites/%s.png" % bg_name)
 		set_process(false)

@@ -62,3 +62,12 @@ func _on_completed(result: int, response_code: int, _headers: PackedStringArray,
 		return
 	var data: Variant = JSON.parse_string(body.get_string_from_utf8())
 	on_done.call(response_code >= 200 and response_code < 300, response_code, data)
+
+
+## Score de pyramide → classement du groupe (si le profil a rejoint un groupe).
+func post_tower_score(fighter: String, difficulty: String, score: int) -> void:
+	if int(Profiles.active().get("player_id", 0)) <= 0:
+		return
+	call_api(HTTPClient.METHOD_POST, "/tower/score",
+		{"fighter": fighter, "difficulty": difficulty, "score": score},
+		func(_ok: bool, _code: int, _data: Variant) -> void: pass)

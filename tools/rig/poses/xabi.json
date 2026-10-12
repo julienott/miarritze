@@ -1,0 +1,515 @@
+{
+ "_doc": "Généré par gen_char_poses.py — ne pas éditer à la main.",
+ "anims": {
+  "sp_neutral": {
+   "frames": 8,
+   "fps": 14,
+   "loop": false,
+   "base": "guard",
+   "keys": [
+    {
+     "t": 0,
+     "p": {}
+    },
+    {
+     "t": 1,
+     "p": {
+      "uaf": -55,
+      "faf": 70,
+      "tor": 12,
+      "head": -4,
+      "uab": 40,
+      "fab": 90,
+      "thf": 20,
+      "thb": -30,
+      "accf": 20
+     }
+    },
+    {
+     "t": 2,
+     "p": {
+      "uaf": -70,
+      "faf": 70,
+      "tor": 16,
+      "head": -4,
+      "uab": 40,
+      "fab": 90,
+      "thf": 20,
+      "thb": -30,
+      "accf": 20
+     }
+    },
+    {
+     "t": 3,
+     "p": {
+      "uaf": 100,
+      "faf": -5,
+      "tor": -22,
+      "head": 14,
+      "uab": 10,
+      "fab": 60,
+      "thf": 40,
+      "shf": -26,
+      "thb": -34,
+      "str": {
+       "uaf": [
+        1.0,
+        1.15
+       ],
+       "faf": [
+        1.0,
+        1.25
+       ]
+      },
+      "accf": 30
+     }
+    },
+    {
+     "t": 4,
+     "p": {
+      "uaf": 100,
+      "faf": -5,
+      "tor": -22,
+      "head": 14,
+      "uab": 10,
+      "fab": 60,
+      "thf": 40,
+      "shf": -26,
+      "thb": -34,
+      "accf": 30
+     }
+    },
+    {
+     "t": 6,
+     "p": {
+      "uaf": 70,
+      "faf": 30,
+      "tor": -8
+     }
+    },
+    {
+     "t": 7,
+     "p": {},
+     "use": "guard"
+    }
+   ],
+   "hit_frame": 3
+  },
+  "sp_forward": {
+   "frames": 8,
+   "fps": 14,
+   "loop": false,
+   "base": "guard",
+   "keys": [
+    {
+     "t": 0,
+     "p": {}
+    },
+    {
+     "t": 1,
+     "p": {
+      "uaf": -50,
+      "faf": 30,
+      "accf": 10
+     },
+     "use": "crouch"
+    },
+    {
+     "t": 3,
+     "p": {
+      "uaf": 80,
+      "faf": -10,
+      "accf": -60,
+      "tor": -30,
+      "head": 16,
+      "thf": 95,
+      "shf": -100
+     },
+     "use": "crouch"
+    },
+    {
+     "t": 4,
+     "p": {
+      "uaf": 90,
+      "faf": 0,
+      "accf": -70,
+      "tor": -30
+     },
+     "use": "crouch"
+    },
+    {
+     "t": 7,
+     "p": {},
+     "use": "guard"
+    }
+   ],
+   "hit_frame": 3,
+   "hit_dir": "low"
+  },
+  "sp_down": {
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "base": "guard",
+   "keys": [
+    {
+     "t": 0,
+     "p": {}
+    },
+    {
+     "t": 1,
+     "p": {
+      "uaf": 170,
+      "faf": 40,
+      "accf": 40,
+      "tor": 14,
+      "head": -10
+     }
+    },
+    {
+     "t": 3,
+     "p": {
+      "uaf": 110,
+      "faf": -10,
+      "accf": -60,
+      "tor": -24,
+      "head": 12,
+      "thf": 40,
+      "shf": -30,
+      "thb": -36
+     }
+    },
+    {
+     "t": 4,
+     "p": {
+      "uaf": 95,
+      "faf": -10,
+      "accf": -70,
+      "tor": -26
+     }
+    },
+    {
+     "t": 7,
+     "p": {},
+     "use": "guard"
+    }
+   ],
+   "hit_frame": 3
+  },
+  "sp_up": {
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "base": "guard",
+   "keys": [
+    {
+     "t": 0,
+     "p": {}
+    },
+    {
+     "t": 1,
+     "p": {
+      "uaf": -40,
+      "faf": 20,
+      "accf": 30,
+      "tor": -6
+     }
+    },
+    {
+     "t": 3,
+     "p": {
+      "uaf": 140,
+      "faf": 10,
+      "accf": -40,
+      "tor": 8,
+      "head": -10,
+      "thf": 50,
+      "shf": -40
+     }
+    },
+    {
+     "t": 4,
+     "p": {
+      "uaf": 150,
+      "faf": 10,
+      "accf": -50,
+      "tor": 10
+     }
+    },
+    {
+     "t": 7,
+     "p": {},
+     "use": "guard"
+    }
+   ],
+   "hit_frame": 3,
+   "hit_dir": "up"
+  },
+  "super": {
+   "frames": 12,
+   "fps": 18,
+   "loop": false,
+   "base": "guard",
+   "keys": [
+    {
+     "t": 0,
+     "p": {}
+    },
+    {
+     "t": 1,
+     "p": {
+      "uaf": -60,
+      "faf": 40,
+      "accf": 20,
+      "tor": 12,
+      "head": -4
+     }
+    },
+    {
+     "t": 2,
+     "p": {
+      "uaf": 100,
+      "faf": -5,
+      "accf": -60,
+      "tor": -22,
+      "head": 12
+     }
+    },
+    {
+     "t": 3,
+     "p": {
+      "uaf": -60,
+      "faf": 40,
+      "accf": 20,
+      "tor": 12,
+      "head": -4
+     }
+    },
+    {
+     "t": 4,
+     "p": {
+      "uaf": 100,
+      "faf": -5,
+      "accf": -60,
+      "tor": -22,
+      "head": 12
+     }
+    },
+    {
+     "t": 5,
+     "p": {
+      "uaf": -60,
+      "faf": 40,
+      "accf": 20,
+      "tor": 12,
+      "head": -4
+     }
+    },
+    {
+     "t": 6,
+     "p": {
+      "uaf": 100,
+      "faf": -5,
+      "accf": -60,
+      "tor": -22,
+      "head": 12
+     }
+    },
+    {
+     "t": 7,
+     "p": {
+      "uaf": -60,
+      "faf": 40,
+      "accf": 20,
+      "tor": 12,
+      "head": -4
+     }
+    },
+    {
+     "t": 8,
+     "p": {
+      "uaf": 100,
+      "faf": -5,
+      "accf": -60,
+      "tor": -22,
+      "head": 12
+     }
+    },
+    {
+     "t": 9,
+     "p": {
+      "uaf": -60,
+      "faf": 40,
+      "accf": 20,
+      "tor": 12,
+      "head": -4
+     }
+    },
+    {
+     "t": 10,
+     "p": {
+      "uaf": 150,
+      "faf": 10,
+      "accf": -60,
+      "tor": 10
+     }
+    },
+    {
+     "t": 11,
+     "p": {},
+     "use": "guard"
+    }
+   ],
+   "hit_frame": 6
+  },
+  "finisher": {
+   "frames": 12,
+   "fps": 10,
+   "loop": false,
+   "base": "relaxed",
+   "keys": [
+    {
+     "t": 0,
+     "p": {}
+    },
+    {
+     "t": 2,
+     "p": {
+      "uaf": 125,
+      "faf": 50,
+      "uab": -20,
+      "fab": 60,
+      "head": -10,
+      "tor": 8
+     }
+    },
+    {
+     "t": 6,
+     "p": {
+      "uaf": 125,
+      "faf": 50,
+      "uab": -20,
+      "fab": 60,
+      "head": -10,
+      "tor": 8
+     }
+    },
+    {
+     "t": 4,
+     "p": {
+      "uaf": 40,
+      "faf": 110,
+      "uab": 40,
+      "fab": 110,
+      "tor": -20,
+      "head": 16
+     }
+    },
+    {
+     "t": 8,
+     "p": {
+      "uaf": 40,
+      "faf": 110,
+      "uab": 40,
+      "fab": 110,
+      "tor": -20,
+      "head": 16
+     }
+    },
+    {
+     "t": 10,
+     "p": {
+      "uaf": 120,
+      "faf": 60,
+      "uab": -30,
+      "fab": 40,
+      "tor": 8,
+      "head": -10
+     }
+    },
+    {
+     "t": 11,
+     "p": {
+      "uaf": 118,
+      "faf": 50,
+      "uab": -30,
+      "fab": 40,
+      "tor": 8,
+      "head": -10
+     }
+    }
+   ]
+  },
+  "win": {
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "base": "relaxed",
+   "keys": [
+    {
+     "t": 0,
+     "p": {
+      "uaf": 78,
+      "faf": 96,
+      "uab": -20,
+      "fab": 60,
+      "tor": 8,
+      "head": -8,
+      "off": {
+       "uaf": [
+        11,
+        0
+       ],
+       "tor": [
+        0,
+        0
+       ]
+      }
+     }
+    },
+    {
+     "t": 4,
+     "p": {
+      "uaf": 82,
+      "faf": 92,
+      "uab": -20,
+      "fab": 60,
+      "tor": 8,
+      "head": -8,
+      "off": {
+       "uaf": [
+        11,
+        -2
+       ],
+       "tor": [
+        0,
+        -1
+       ]
+      }
+     }
+    },
+    {
+     "t": 8,
+     "p": {
+      "uaf": 78,
+      "faf": 96,
+      "uab": -20,
+      "fab": 60,
+      "tor": 8,
+      "head": -8,
+      "off": {
+       "uaf": [
+        11,
+        0
+       ],
+       "tor": [
+        0,
+        0
+       ]
+      }
+     }
+    }
+   ]
+  }
+ }
+}

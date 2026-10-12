@@ -1,0 +1,98 @@
+{
+ "id": "hondar",
+ "name": "Hondar",
+ "title": "Bonhomme de sable",
+ "archetype": "mannequin",
+ "health": 1000,
+ "training": true,
+ "moves": {
+  "sp_neutral": {
+   "anim": "sp_neutral",
+   "startup": 10,
+   "active": 4,
+   "recovery": 16,
+   "damage": 40,
+   "hitboxes": [
+    [
+     10,
+     -70,
+     30,
+     20
+    ]
+   ]
+  },
+  "sp_forward": {
+   "anim": "sp_forward",
+   "startup": 10,
+   "active": 4,
+   "recovery": 16,
+   "damage": 40,
+   "hitboxes": [
+    [
+     10,
+     -70,
+     30,
+     20
+    ]
+   ]
+  },
+  "sp_down": {
+   "anim": "sp_down",
+   "startup": 10,
+   "active": 4,
+   "recovery": 16,
+   "damage": 40,
+   "hit_level": "low",
+   "hitboxes": [
+    [
+     10,
+     -20,
+     30,
+     20
+    ]
+   ]
+  },
+  "sp_up": {
+   "anim": "sp_up",
+   "startup": 10,
+   "active": 4,
+   "recovery": 16,
+   "damage": 40,
+   "hitboxes": [
+    [
+     0,
+     -110,
+     30,
+     50
+    ]
+   ]
+  },
+  "super": {
+   "anim": "super",
+   "startup": 10,
+   "active": 4,
+   "recovery": 16,
+   "damage": 40,
+   "hitboxes": [
+    [
+     10,
+     -70,
+     30,
+     20
+    ]
+   ]
+  }
+ },
+ "projectiles": {},
+ "ai": {
+  "aggression": 0.0,
+  "zoning": 0.0,
+  "anti_air": 0.0,
+  "favorite_moves": []
+ },
+ "ending_text": [
+  "",
+  "",
+  ""
+ ]
+}

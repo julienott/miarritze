@@ -11,6 +11,13 @@ var _SCENES: Dictionary = {
 	&"boot": "res://src/ui/boot/boot.tscn",
 	&"title": "res://src/ui/title/title.tscn",
 	&"fight": "res://src/fight/view/fight_scene.tscn",
+	&"main_menu": "res://src/ui/main_menu/main_menu.tscn",
+	&"fighter_select": "res://src/ui/fighter_select/fighter_select.tscn",
+	&"stage_select": "res://src/ui/stage_select/stage_select.tscn",
+	&"versus_splash": "res://src/ui/versus_splash/versus_splash.tscn",
+	&"tower": "res://src/ui/tower/tower.tscn",
+	&"ending": "res://src/ui/ending/ending.tscn",
+	&"results": "res://src/ui/results/results.tscn",
 }
 
 const _IRIS_SHADER: String = """

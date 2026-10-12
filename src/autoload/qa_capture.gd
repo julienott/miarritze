@@ -15,6 +15,11 @@ var _frames: PackedInt32Array = []
 var _next_frame: int = 0
 var touch_random: bool = false
 var _inputs: String = ""
+## QA : le joueur est piloté par l'IA (pyramide automatique).
+var autoplay: bool = false
+var _autotower: String = ""
+var _tower_t: float = 0.0
+var _shots_taken: Dictionary = {}
 
 
 func _ready() -> void:
@@ -33,25 +38,36 @@ func _ready() -> void:
 			autofight = arg.trim_prefix("--autofight=")
 		elif arg.begins_with("--inputs="):
 			_inputs = arg.trim_prefix("--inputs=")
+		elif arg.begins_with("--autotower="):
+			_autotower = arg.trim_prefix("--autotower=")
+			autoplay = true
+		elif arg.begins_with("--speed="):
+			Engine.time_scale = float(arg.trim_prefix("--speed="))
 		elif arg == "--touchidx=random":
 			touch_random = true
 	if autofight != "":
 		_start_autofight.call_deferred(autofight)
+	if _autotower != "":
+		_start_autotower.call_deferred()
 	if _shot_path != "":
 		# Garde-fou : une capture QA ne doit jamais bloquer indéfiniment.
-		get_tree().create_timer(180.0, true, false, true).timeout.connect(func() -> void:
+		var limit: float = 180.0
+		for arg2: String in OS.get_cmdline_user_args():
+			if arg2.begins_with("--timeout="):
+				limit = float(arg2.trim_prefix("--timeout="))
+		get_tree().create_timer(limit, true, false, true).timeout.connect(func() -> void:
 			push_error("qa_capture: délai dépassé, abandon")
 			get_tree().quit(2))
 	if _shot_path == "":
 		set_physics_process(false)
 		return
-	if _frames.is_empty():
+	if _frames.is_empty() and _autotower == "":
 		get_tree().create_timer(_delay).timeout.connect(_capture.bind(_shot_path, true))
 
 
 func _start_autofight(spec: String) -> void:
 	var parts: PackedStringArray = spec.split(",")
-	var level: int = int(parts[4]) if parts.size() > 4 else 3
+	var level: int = int(parts[4]) if parts.size() > 4 else 80
 	var ai: Array = [level, level]
 	if _inputs != "":
 		ai = [0, level if parts.size() > 4 else 0]
@@ -63,6 +79,44 @@ func _start_autofight(spec: String) -> void:
 		"seed": int(parts[3]) if parts.size() > 3 else 1,
 		"ai": ai, "return_to": "title",
 	})
+
+
+func _start_autotower() -> void:
+	var parts: PackedStringArray = _autotower.split(",")
+	TowerMode.start(parts[0], 0, int(parts[1]) if parts.size() > 1 else 0)
+	SceneRouter.goto(&"tower", {"event": "start"})
+
+
+## Pilote la pyramide : appuie sur « Combattre », capture chaque écran clé.
+func _process(delta: float) -> void:
+	if _autotower == "":
+		return
+	var scene: Node = get_tree().current_scene
+	if scene == null:
+		return
+	var sname: String = scene.name
+	_tower_t += delta
+	if sname == "Tower" and _tower_t > 1.5:
+		var key: String = "tower_%d_%d" % [TowerMode.run.floor_index, TowerMode.run.fight_log.size()] if TowerMode.run != null else "tower"
+		_shot_once(key)
+		_tower_t = 0.0
+		scene.call("_fight")
+	elif sname == "Ending" and _tower_t > 2.0:
+		_shot_once("ending_%d" % int(_tower_t))
+		if _tower_t > 20.0:
+			_shot_once("ending_final")
+			print("qa_capture: pyramide terminée, score %d" % (TowerMode.run.score if TowerMode.run != null else -1))
+			get_tree().quit()
+	elif sname != "Tower" and sname != "Ending":
+		_tower_t = 0.0 if sname != "FightScene" else _tower_t
+
+
+func _shot_once(key: String) -> void:
+	if _shots_taken.has(key) or _shot_path == "":
+		return
+	_shots_taken[key] = true
+	var base: String = _shot_path.trim_suffix(".png")
+	_capture("%s_%s.png" % [base, key], false)
 
 
 func _physics_process(_delta: float) -> void:

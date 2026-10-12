@@ -15,7 +15,7 @@ func _initialize() -> void:
 		test_lint_sim, test_data_valid, test_save_load_identity, test_determinism,
 		test_rollback, test_frame_data, test_chip_never_kills, test_combo_forced_knockdown,
 		test_timer_and_draw, test_wave_return_once, test_throw_and_tech, test_full_match_ends,
-		test_inputs_to_moves,
+		test_inputs_to_moves, test_fuzz_roster, test_reflect_projectile,
 	]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
@@ -331,3 +331,38 @@ func test_inputs_to_moves() -> void:
 					bonus = sim.f[0].move_bonus
 		check(hit_name == c[2], "%s : attendu %s, obtenu « %s »" % [c[0], c[2], hit_name])
 		check(bonus == c[3], "%s : bonus %d au lieu de %d" % [c[0], bonus, c[3]])
+
+
+## Chaque combattant contre chacun : entrées aléatoires + IA, sans erreur,
+## et la sim reste déterministe (deux passes identiques).
+func test_fuzz_roster() -> void:
+	var ids: PackedStringArray = Roster.FIGHTERS.duplicate()
+	ids.append(Roster.BOSS)
+	ids.append(Roster.DUMMY)
+	for a: String in ids:
+		for b: String in [ids[(ids.find(a) + 1) % ids.size()], ids[(ids.find(a) + 5) % ids.size()]]:
+			var sums: Array[int] = []
+			for pass_i: int in 2:
+				var sim: FightSim = make_sim(a, b, {"seed": 42, "ai": [0, 60]})
+				var inputs: PackedInt32Array = random_inputs(a.length() * 31 + b.length(), 1500)
+				for i: int in 1500:
+					sim.step(inputs[i], 0)
+				sums.append(sim.checksum())
+			check(sums[0] == sums[1], "%s vs %s : non déterministe" % [a, b])
+
+
+func test_reflect_projectile() -> void:
+	var sim: FightSim = make_sim("ramuntxo", "louis")
+	skip_intro(sim)
+	sim.f[0].x = 200 * SimConst.SUB
+	sim.f[1].x = 330 * SimConst.SUB
+	sim._start_move(1, sim.defs[1].m_sp[0], 0)
+	var reflected: bool = false
+	for i: int in 60:
+		if i == 18:
+			sim._start_move(0, sim.defs[0].m_sp[3], 0)
+		sim.step(0, 0)
+		for pr: ProjectileState in sim.projectiles:
+			if pr.owner == 0 and pr.src == 1:
+				reflected = true
+	check(reflected, "la poêle n'a pas renvoyé l'espadrille")

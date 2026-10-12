@@ -18,6 +18,9 @@ var active_index: int = -1
 
 func _ready() -> void:
 	_load()
+	# Phase 2 : profil par défaut tant que l'écran de profils n'existe pas.
+	if profiles.is_empty() and not OS.get_cmdline_user_args().has("--no-profile"):
+		create("Joueur")
 
 
 func active() -> Dictionary:

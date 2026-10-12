@@ -26,6 +26,9 @@ var _dim: ColorRect
 var _seen: Dictionary = {}
 var _end_timer: float = -1.0
 var _super_t: int = 0
+var _ui: CanvasLayer
+var _pause_box: Control
+var _training: TrainingOverlay
 
 
 func _ready() -> void:
@@ -38,6 +41,10 @@ func _ready() -> void:
 	var c2: int = int(params.get("c2", 0))
 	if def1.id == def2.id and c1 == c2:
 		c2 = (c1 + 1) % 4
+	if QaCapture.autoplay:
+		var ai: Array = (params.get("ai", [0, 0]) as Array).duplicate()
+		ai[0] = 92
+		params["ai"] = ai
 	sim = FightSim.new()
 	sim.setup(def1, def2, {
 		"seed": int(params.get("seed", Time.get_ticks_usec() & 0x7FFFFFFF)),
@@ -46,6 +53,7 @@ func _ready() -> void:
 		"autoguard": params.get("autoguard", [0, 0]),
 		"health": params.get("health", [0, 0]),
 		"finishers": bool(params.get("finishers", true)),
+		"training": bool(params.get("training", false)),
 	})
 	_build(def1, def2, c1, c2)
 	var names: Array = params.get("names", [def1.display_name, def2.display_name])
@@ -82,19 +90,70 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 	_camera.make_current()
 	var ui: CanvasLayer = CanvasLayer.new()
 	ui.layer = 10
+	ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(ui)
+	_ui = ui
 	_hud = FightHud.new()
 	_hud.sim = sim
 	ui.add_child(_hud)
 	_announcer = Announcer.new()
 	ui.add_child(_announcer)
+	if bool(params.get("training", false)):
+		_training = TrainingOverlay.new()
+		_training.sim = sim
+		_training.behavior = int(params.get("behavior", 0))
+		_training.behavior_requested.connect(func(i: int) -> void:
+			sim.ai_level[1] = TrainingMode.BEHAVIOR_LEVELS[i])
+		_training.move_list_requested.connect(_show_move_list)
+		ui.add_child(_training)
+	if str(params.get("mode", "")) != "online":
+		var pause_btn: Button = UiKit.button("II", _toggle_pause, 24)
+		pause_btn.focus_mode = Control.FOCUS_NONE
+		pause_btn.custom_minimum_size = Vector2(24, 24)
+		pause_btn.position = Vector2(get_viewport_rect().size.x * 0.5 - 12, 30)
+		ui.add_child(pause_btn)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"debug_boxes") and OS.is_debug_build():
 		_debug.visible = not _debug.visible
-	elif event.is_action_pressed(&"ui_cancel"):
-		_leave()
+	elif event.is_action_pressed(&"ui_cancel") or (event is InputEventJoypadButton
+			and (event as InputEventJoypadButton).button_index == JOY_BUTTON_START and event.is_pressed()):
+		if str(params.get("mode", "")) != "online":
+			_toggle_pause()
+
+
+func _toggle_pause() -> void:
+	if _pause_box != null:
+		_pause_box.queue_free()
+		_pause_box = null
+		paused = false
+		return
+	paused = true
+	_pause_box = Control.new()
+	_pause_box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var shade: ColorRect = ColorRect.new()
+	shade.color = Color(0.05, 0.04, 0.1, 0.65)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_pause_box.add_child(shade)
+	_ui.add_child(_pause_box)
+	var head: Label = UiKit.title("PAUSE")
+	head.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	head.position.y = 30
+	_pause_box.add_child(head)
+	UiKit.menu_column(_pause_box, [
+		UiKit.button("Reprendre", _toggle_pause),
+		UiKit.button("Liste des coups", _show_move_list),
+		UiKit.button("Quitter", _leave),
+	], 64)
+
+
+func _show_move_list() -> void:
+	var was_paused: bool = paused
+	paused = true
+	var list: MoveList = MoveList.create(sim.defs[0].id)
+	list.closed.connect(func() -> void: paused = was_paused)
+	_ui.add_child(list)
 
 
 func _physics_process(_delta: float) -> void:
@@ -186,11 +245,16 @@ func _on_event(ev: PackedInt32Array) -> void:
 		FxEvents.BUKATU:
 			_announcer.say("BUKATU !", 2.0)
 		FxEvents.FINISHER:
-			_announcer.say("ZORIONAK !", 2.5, Color8(244, 198, 62))
+			_announcer.say("ZORIONAK !", 1.6, Color8(244, 198, 62))
+			var fin: Dictionary = FighterDb.load_json(sim.defs[actor].id).get("finisher", {})
+			var fx: FinisherFx = FinisherFx.new()
+			add_child(fx)
+			fx.start(str(fin.get("fx", "bucket")), str(fin.get("text", "PLOUF !")), _views[actor], _views[1 - actor], _vfx)
 		FxEvents.MATCH_END:
 			_on_match_end(actor)
 		FxEvents.PROJ_HIT:
-			_vfx.spark(pos, 0)
+			if sim.defs[actor].projectiles[ev[5]].damage > 0:
+				_vfx.spark(pos, 0)
 		FxEvents.PROJ_CLASH:
 			_vfx.spark(pos, 1)
 

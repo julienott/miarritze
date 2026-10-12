@@ -51,6 +51,8 @@ class Bone:
     parent: str | None
     piece: str
     attach_key: str = ""     # clé dans parent.attach (défaut : nom de l'os)
+    rest: float = 0.0        # angle de repos ajouté à la pose (accessoires tenus)
+    soft_joint: bool = True  # pas de contour là où l'os recouvre son parent de même couleur
 
 
 class Rig:
@@ -60,8 +62,11 @@ class Rig:
     (None si pas de voisin dans la rampe).
     """
 
-    def __init__(self, bones: list, pieces: dict, draw_order: list, ramps: dict):
+    def __init__(self, bones: list, pieces: dict, draw_order: list, ramps: dict,
+                 families: dict | None = None):
         self.bones = {b.name: b for b in bones}
+        # index de palette -> famille (rampe) : sert aux articulations douces
+        self.families = families or {}
         self.order_fk = [b.name for b in bones]     # parents avant enfants
         self.pieces = pieces
         self.draw_order = draw_order
@@ -77,7 +82,7 @@ class Rig:
         offs = pose.get("off", {})
         for name in self.order_fk:
             bone = self.bones[name]
-            local = float(pose.get(name, 0.0))
+            local = float(pose.get(name, 0.0)) + bone.rest
             st = tuple(stretch.get(name, (1.0, 1.0)))
             off = offs.get(name, (0, 0))
             if bone.parent is None:
@@ -98,7 +103,9 @@ class Rig:
 
     def render(self, pose: dict, canvas_size=(256, 256), root_pos=(128.0, 150.0)) -> np.ndarray:
         canvas = np.zeros((canvas_size[1], canvas_size[0]), np.uint8)
+        owner = np.full(canvas.shape, -1, np.int16)
         solved = self.solve(pose, root_pos)
+        names = list(self.bones)
         for name in self.draw_order:
             if name not in solved:
                 continue
@@ -115,11 +122,22 @@ class Rig:
                 dx, dy = rotate((dpos[0] * st[0], dpos[1] * st[1]), ang)
                 cx, cy = pos[0] + dx - x0, pos[1] + dy - y0
                 paste_motif(layer, motif, cx, cy)
-            blit(canvas, layer, x0, y0)
+            soft = None
+            if bone.soft_joint and bone.parent and self.families:
+                soft = (names.index(bone.parent), self._family(layer))
+            blit(canvas, layer, x0, y0, owner, names.index(name), soft, self.families)
         sq = pose.get("squash")
         if sq:
             canvas = squash(canvas, sq, root_pos)
         return cleanup(canvas)
+
+    def _family(self, layer: np.ndarray):
+        vals = layer[layer > 2]
+        if len(vals) == 0:
+            return None
+        fams = [self.families.get(int(v)) for v in vals]
+        fams = [f for f in fams if f is not None]
+        return max(set(fams), key=fams.count) if fams else None
 
     def _img8(self, key: str, piece: Piece) -> np.ndarray:
         if key not in self._cache8:
@@ -249,7 +267,9 @@ def add_outline(layer: np.ndarray) -> np.ndarray:
     return padded
 
 
-def blit(canvas: np.ndarray, layer: np.ndarray, x0: int, y0: int) -> None:
+def blit(canvas: np.ndarray, layer: np.ndarray, x0: int, y0: int,
+         owner: np.ndarray | None = None, bone_id: int = -1, soft=None,
+         families: dict | None = None) -> None:
     # add_outline a ajouté une marge de 1 px
     x0 -= 1
     y0 -= 1
@@ -260,7 +280,21 @@ def blit(canvas: np.ndarray, layer: np.ndarray, x0: int, y0: int) -> None:
         return
     sub = layer[cy0 - y0:cy1 - y0, cx0 - x0:cx1 - x0]
     region = canvas[cy0:cy1, cx0:cx1]
-    region[sub > 0] = sub[sub > 0]
+    write = sub > 0
+    if soft is not None and owner is not None and soft[1] is not None:
+        # Articulation douce : le contour de l'enfant n'est pas dessiné sur
+        # les pixels de son parent de même famille de couleur.
+        parent_id, fam = soft
+        own = owner[cy0:cy1, cx0:cx1]
+        fam_lut = np.zeros(256, np.int16) - 1
+        for k, v in (families or {}).items():
+            fam_lut[k] = v if isinstance(v, int) else hash(v) % 1000
+        target = fam if isinstance(fam, int) else hash(fam) % 1000
+        same = (own == parent_id) & (fam_lut[region] == target)
+        write &= ~((sub == OUTLINE) & same)
+    region[write] = sub[write]
+    if owner is not None:
+        owner[cy0:cy1, cx0:cx1][write] = bone_id
 
 
 def paste_motif(layer: np.ndarray, motif: np.ndarray, cx: float, cy: float) -> None:

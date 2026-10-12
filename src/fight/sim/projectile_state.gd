@@ -3,12 +3,14 @@ extends RefCounted
 ## Projectile ou piège en vol (entiers uniquement).
 
 const FIELDS: PackedStringArray = [
-	"id", "owner", "def", "x", "y", "vx", "vy", "facing", "life", "age",
+	"id", "owner", "src", "def", "x", "y", "vx", "vy", "facing", "life", "age",
 	"hits_left", "last_hit", "returning", "bonus",
 ]
 
 var id: int = 0
 var owner: int = 0
+## Joueur dont la fiche définit ce projectile (≠ owner après un renvoi).
+var src: int = 0
 var def: int = 0
 var x: int = 0
 var y: int = 0

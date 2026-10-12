@@ -1,0 +1,183 @@
+{
+ "id": "kaio",
+ "name": "Kaio",
+ "title": "Le goéland voleur",
+ "archetype": "aerien",
+ "health": 900,
+ "walk_fwd": 600,
+ "walk_back": 560,
+ "run": 1200,
+ "jump_v": -2500,
+ "gravity": 100,
+ "jump_h": 780,
+ "push_w": 22,
+ "push_h": 62,
+ "ladder_rival": "patxi",
+ "home_stage": "port_vieux",
+ "stats": {
+  "power": 1,
+  "speed": 3,
+  "reach": 2
+ },
+ "moves": {
+  "sp_neutral": {
+   "anim": "sp_neutral",
+   "name": "Fiente !",
+   "classic": "D,DF,F+P",
+   "startup": 10,
+   "active": 1,
+   "recovery": 18,
+   "air": true,
+   "spawn": {
+    "frame": 9,
+    "projectile": "fiente",
+    "offset": [
+     16,
+     -80
+    ]
+   }
+  },
+  "sp_forward": {
+   "anim": "sp_forward",
+   "name": "Piqué",
+   "classic": "B,F+K",
+   "startup": 6,
+   "active": 14,
+   "recovery": 16,
+   "damage": 75,
+   "hitstun": 20,
+   "blockstun": 12,
+   "hitstop": 8,
+   "meter_gain": 8,
+   "air": true,
+   "velocity": [
+    [
+     4,
+     1700,
+     900
+    ]
+   ],
+   "hitboxes": [
+    [
+     4,
+     -60,
+     38,
+     40
+    ]
+   ]
+  },
+  "sp_down": {
+   "anim": "sp_down",
+   "name": "Vol à l'étalage",
+   "classic": "D,DB,B+P",
+   "startup": 7,
+   "active": 5,
+   "recovery": 18,
+   "damage": 20,
+   "hitstun": 14,
+   "blockstun": 8,
+   "steal_meter": 30,
+   "hitstop": 6,
+   "meter_gain": 0,
+   "velocity": [
+    [
+     4,
+     900,
+     0
+    ],
+    [
+     12,
+     0,
+     0
+    ]
+   ],
+   "hitboxes": [
+    [
+     6,
+     -60,
+     34,
+     40
+    ]
+   ]
+  },
+  "sp_up": {
+   "anim": "sp_up",
+   "name": "Envol",
+   "classic": "F,D,DF+K",
+   "startup": 3,
+   "active": 1,
+   "recovery": 6,
+   "air": true,
+   "velocity": [
+    [
+     1,
+     200,
+     -2300
+    ]
+   ]
+  },
+  "super": {
+   "anim": "super",
+   "name": "Nuée de goélands",
+   "startup": 8,
+   "active": 40,
+   "recovery": 24,
+   "damage": 60,
+   "hitstun": 26,
+   "blockstun": 14,
+   "hits": 5,
+   "rehit_interval": 8,
+   "pushback": 2,
+   "hitstop": 20,
+   "meter_gain": 0,
+   "hitboxes": [
+    [
+     0,
+     -120,
+     90,
+     120
+    ]
+   ]
+  }
+ },
+ "projectiles": {
+  "fiente": {
+   "anim": "proj_fiente",
+   "speed": 600,
+   "vy": -400,
+   "gravity": 70,
+   "damage": 55,
+   "hitstun": 20,
+   "blockstun": 10,
+   "hit_level": "air",
+   "hitbox": [
+    -6,
+    -6,
+    12,
+    12
+   ],
+   "life": 90,
+   "hitstop": 6
+  }
+ },
+ "ai": {
+  "aggression": 0.6,
+  "zoning": 0.4,
+  "anti_air": 0.4,
+  "favorite_moves": [
+   "sp_forward",
+   "sp_neutral",
+   "jump_kick"
+  ]
+ },
+ "finisher": {
+  "text": "HIHIHI !",
+  "fx": "feathers"
+ },
+ "ending_text": [
+  "Kaio s'envole avec la txapela… et le sac de chips.",
+  "Il la cache dans son nid, sur la falaise.",
+  "Tout le Port Vieux le cherche encore…"
+ ],
+ "damage_pct": 126
+}

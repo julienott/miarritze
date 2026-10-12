@@ -4,11 +4,28 @@ extends RefCounted
 ## (lit l'état, utilise le XRng de la sim) : les replays IA sont
 ## déterministes. Son état vit dans FighterState (ai_timer, ai_hold, ai_plan).
 ##
-## Niveaux : 1 Facile, 2 Normal, 3 Expert, 4 boss.
-## Mannequins d'entraînement : 10 inerte, 11 garde tout, 12 saute, 13 répète un coup.
+## Niveau = compétence de 1 à 100 (réaction et garde interpolées, §13) :
+## Facile ≈ 10–30, Normal ≈ 35–60, Expert ≈ 65–90, boss 95.
+## Mannequins d'entraînement : 200 inerte, 201 garde tout, 202 saute, 203 répète un coup.
 
-const REACTION: PackedInt32Array = [24, 24, 14, 8, 7]
-const GUARD_PERMILLE: PackedInt32Array = [150, 150, 450, 750, 800]
+const SKILL_EASY: int = 20
+const SKILL_NORMAL: int = 50
+const SKILL_EXPERT: int = 80
+const SKILL_BOSS: int = 95
+const DUMMY_IDLE: int = 200
+const DUMMY_GUARD: int = 201
+const DUMMY_JUMP: int = 202
+const DUMMY_REPEAT: int = 203
+
+
+## Temps de réaction (frames) : 26 à skill 1, 7 à skill 100.
+static func reaction(skill: int) -> int:
+	return 26 - 19 * clampi(skill, 1, 100) / 100
+
+
+## Probabilité de garde (pour-mille) : 100 à 820.
+static func guard_permille(skill: int) -> int:
+	return 100 + 720 * clampi(skill, 1, 100) / 100
 
 const PLAN_NONE: int = 0
 const PLAN_COMBO: int = 1
@@ -17,11 +34,11 @@ const PLAN_COMBO: int = 1
 static func think(sim: FightSim, p: int) -> int:
 	var level: int = sim.ai_level[p]
 	var me: FighterState = sim.f[p]
-	if level >= 10:
+	if level >= DUMMY_IDLE:
 		return _dummy(sim, p, level)
 	if sim.phase != SimConst.PH_FIGHT and sim.phase != SimConst.PH_BUKATU:
 		return 0
-	var lv: int = clampi(level, 1, 4)
+	var lv: int = clampi(level, 1, 100)
 	var o: FighterState = sim.f[1 - p]
 	var fwd: int = SimConst.RIGHT if o.x >= me.x else SimConst.LEFT
 	var back: int = SimConst.LEFT if fwd == SimConst.RIGHT else SimConst.RIGHT
@@ -35,8 +52,8 @@ static func think(sim: FightSim, p: int) -> int:
 		var dist: int = absi(o.x - me.x)
 		if dist < 110 * SimConst.SUB or omv.spawn_projectile >= 0:
 			me.ai_plan = -(o.move + 2)
-			if sim.rng.chance(GUARD_PERMILLE[lv]):
-				var low: bool = omv.hit_level == SimConst.LVL_LOW and (lv >= 3 or sim.rng.chance(300))
+			if sim.rng.chance(guard_permille(lv)):
+				var low: bool = omv.hit_level == SimConst.LVL_LOW and (lv >= 65 or sim.rng.chance(300))
 				me.ai_hold = SimConst.GUARD | (SimConst.DOWN if low else 0)
 				me.ai_timer = omv.total - o.move_t + 2
 				return me.ai_hold
@@ -56,19 +73,19 @@ static func _decide(sim: FightSim, p: int, lv: int, fwd: int, back: int) -> int:
 	var def: FighterDef = sim.defs[p]
 	var rng: XRng = sim.rng
 	var dist: int = absi(o.x - me.x) / SimConst.SUB
-	var react: int = REACTION[lv]
+	var react: int = reaction(lv)
 	var out: int = 0
 	me.ai_plan = PLAN_NONE
 	me.ai_timer = react / 2 + rng.below(react / 2 + 1)
 	if not me.actionable() and me.state != SimConst.ST_AIR:
 		me.ai_hold = 0
 		return 0
-	# Facile : l'IA « respire » parfois.
-	if lv == 1 and rng.chance(250):
+	# Facile : l'IA « respire » parfois et ne s'acharne jamais.
+	if lv < 35 and rng.chance(250 - lv * 5):
 		me.ai_hold = 0
 		return 0
 	# Anti-aérien.
-	if o.is_airborne() and dist < 90 and o.state == SimConst.ST_AIR and rng.chance(def.ai_anti_air * (lv + 1) / 4):
+	if o.is_airborne() and dist < 90 and o.state == SimConst.ST_AIR and rng.chance(def.ai_anti_air * (lv + 20) / 120):
 		if def.m_sp[3] >= 0 and rng.chance(500):
 			out = SimConst.UP | SimConst.SPECIAL
 		else:
@@ -82,7 +99,7 @@ static func _decide(sim: FightSim, p: int, lv: int, fwd: int, back: int) -> int:
 		me.ai_timer = 20
 		return SimConst.SPECIAL | SimConst.GUARD
 	# Punition (Expert) : l'adversaire rate un coup près de nous.
-	if lv >= 3 and o.state == SimConst.ST_MOVE and o.move_connected == 0 and dist < 70 \
+	if lv >= 65 and o.state == SimConst.ST_MOVE and o.move_connected == 0 and dist < 70 \
 			and o.move_t > sim.defs[1 - p].moves[o.move].startup + sim.defs[1 - p].moves[o.move].active:
 		me.ai_hold = 0
 		me.ai_timer = 8
@@ -118,7 +135,9 @@ static func _decide(sim: FightSim, p: int, lv: int, fwd: int, back: int) -> int:
 	var pick: int = rng.below(100)
 	if not def.ai_favorites.is_empty() and pick < 25:
 		var fav: MoveDef = def.moves[def.ai_favorites[rng.below(def.ai_favorites.size())]]
-		return _input_for(fav, fwd, back)
+		var last_special: bool = me.last_move >= 0 and def.moves[me.last_move].is_special
+		if not (lv < 35 and fav.is_special and last_special):
+			return _input_for(fav, fwd, back)
 	if pick < 55:
 		me.ai_plan = PLAN_COMBO
 		me.ai_hold = 0
@@ -187,11 +206,11 @@ static func _bukatu(sim: FightSim, p: int, fwd: int) -> int:
 static func _dummy(sim: FightSim, p: int, level: int) -> int:
 	var me: FighterState = sim.f[p]
 	match level:
-		11:
+		DUMMY_GUARD:
 			return SimConst.GUARD
-		12:
+		DUMMY_JUMP:
 			return SimConst.UP if sim.frame % 60 < 2 else 0
-		13:
+		DUMMY_REPEAT:
 			return SimConst.PUNCH if sim.frame % 50 == 0 else 0
 	me.ai_hold = 0
 	return 0

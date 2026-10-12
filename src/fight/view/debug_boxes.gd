@@ -37,7 +37,7 @@ func _draw() -> void:
 		draw_string(_font, Vector2(me.x / 256.0 - 30, me.y / 256.0 + 12), info,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color.WHITE)
 	for pr: ProjectileState in sim.projectiles:
-		var pd: ProjectileDef = sim.defs[pr.owner].projectiles[pr.def]
+		var pd: ProjectileDef = sim.defs[pr.src].projectiles[pr.def]
 		_box(Collision.world(pd.hitbox, pr.x, pr.y, pr.facing), Color(0.95, 0.15, 0.15, 0.45), Color(1, 0.2, 0.2))
 
 

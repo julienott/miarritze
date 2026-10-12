@@ -1,0 +1,167 @@
+{
+ "id": "itsaso",
+ "name": "Itsaso",
+ "title": "L'esprit de l'écume",
+ "archetype": "mystique",
+ "health": 950,
+ "walk_fwd": 620,
+ "walk_back": 600,
+ "ladder_rival": "amaia",
+ "home_stage": "cote_basques_crepuscule",
+ "stats": {
+  "power": 2,
+  "speed": 2,
+  "reach": 3
+ },
+ "moves": {
+  "sp_neutral": {
+   "anim": "sp_neutral",
+   "name": "Perle",
+   "classic": "D,DF,F+P",
+   "startup": 11,
+   "active": 1,
+   "recovery": 20,
+   "spawn": {
+    "frame": 10,
+    "projectile": "perle",
+    "offset": [
+     24,
+     -62
+    ]
+   }
+  },
+  "sp_forward": {
+   "anim": "sp_forward",
+   "name": "Ressac",
+   "classic": "B,F+K",
+   "startup": 10,
+   "active": 1,
+   "recovery": 14,
+   "invuln": [
+    0,
+    12
+   ],
+   "teleport_frame": 8
+  },
+  "sp_down": {
+   "anim": "sp_down",
+   "name": "Marée basse",
+   "classic": "D,DB,B+K",
+   "startup": 12,
+   "active": 1,
+   "recovery": 20,
+   "spawn": {
+    "frame": 11,
+    "projectile": "flaque",
+    "offset": [
+     70,
+     0
+    ]
+   }
+  },
+  "sp_up": {
+   "anim": "sp_up",
+   "name": "Geyser",
+   "classic": "F,D,DF+P",
+   "startup": 10,
+   "active": 10,
+   "recovery": 20,
+   "damage": 95,
+   "hitstun": 26,
+   "blockstun": 14,
+   "knockdown": true,
+   "launch": [
+    200,
+    -1900
+   ],
+   "hitstop": 12,
+   "meter_gain": 9,
+   "hitboxes": [
+    [
+     40,
+     -140,
+     30,
+     140
+    ]
+   ]
+  },
+  "super": {
+   "anim": "super",
+   "name": "Marée montante",
+   "startup": 8,
+   "active": 40,
+   "recovery": 24,
+   "damage": 60,
+   "hitstun": 26,
+   "blockstun": 14,
+   "hits": 5,
+   "rehit_interval": 8,
+   "pushback": 2,
+   "hitstop": 20,
+   "meter_gain": 0,
+   "hitboxes": [
+    [
+     0,
+     -120,
+     110,
+     120
+    ]
+   ]
+  }
+ },
+ "projectiles": {
+  "perle": {
+   "anim": "proj_perle",
+   "speed": 1000,
+   "damage": 50,
+   "hitstun": 18,
+   "blockstun": 10,
+   "slow_on_hit": 90,
+   "hitbox": [
+    -7,
+    -7,
+    14,
+    14
+   ],
+   "life": 80,
+   "hitstop": 6
+  },
+  "flaque": {
+   "anim": "proj_flaque",
+   "speed": 0,
+   "damage": 40,
+   "hit_level": "low",
+   "hitstun": 34,
+   "blockstun": 10,
+   "hitbox": [
+    -16,
+    -8,
+    32,
+    8
+   ],
+   "life": 240,
+   "trap": true,
+   "hitstop": 6
+  }
+ },
+ "ai": {
+  "aggression": 0.4,
+  "zoning": 0.6,
+  "anti_air": 0.6,
+  "favorite_moves": [
+   "sp_neutral",
+   "sp_forward",
+   "sp_up"
+  ]
+ },
+ "finisher": {
+  "text": "PLOUF !",
+  "fx": "sandcastle"
+ },
+ "ending_text": [
+  "Itsaso dépose la txapela sur l'écume.",
+  "Chaque vague de la Côte des Basques la salue.",
+  "À marée basse, on dit qu'on la voit briller…"
+ ],
+ "damage_pct": 109
+}

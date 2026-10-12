@@ -36,7 +36,20 @@ def _mid(ramp):
     return ramp[len(ramp) // 2]
 
 
-def rotate_ramp(name: str, step: float) -> str:
+def resolve(spec) -> list:
+    """Rampe RGB : nom de rampe, ou liste « rampe:i » (couleurs de la palette)."""
+    if isinstance(spec, str):
+        return list(RAMPS[spec])
+    out = []
+    for item in spec:
+        name, i = item.split(":")
+        out.append(RAMPS[name][int(i)])
+    return out
+
+
+def rotate_ramp(name, step: float):
+    if not isinstance(name, str):
+        return name                                 # rampe composée : inchangée
     h, s, v = _hsv(_mid(RAMPS[name]))
     if s < 0.25 or name not in CANDIDATES:      # blanc, pierre, bois, sable : inchangés
         return name
@@ -66,7 +79,7 @@ def build(fiche: dict) -> Image.Image:
     img = Image.new("RGBA", (32, 4))
     for k in range(4):
         roles = costume_roles(fiche, k)
-        row = ix.build_row({r: RAMPS[n] for r, n in roles.items()})
+        row = ix.build_row({r: resolve(n) for r, n in roles.items()})
         for i, c in enumerate(row):
             img.putpixel((i, k), c)
     return img

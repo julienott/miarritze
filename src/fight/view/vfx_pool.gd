@@ -112,7 +112,7 @@ func _particle_color() -> Color:
 
 ## Projectiles procéduraux (en attendant leurs sprites) : forme par nom.
 func _draw_projectile(pr: ProjectileState) -> void:
-	var pd: ProjectileDef = defs[pr.owner].projectiles[pr.def]
+	var pd: ProjectileDef = defs[pr.src].projectiles[pr.def]
 	var p: Vector2 = Vector2(roundi(pr.x / 256.0), roundi(pr.y / 256.0))
 	var hb: PackedInt32Array = pd.hitbox
 	var w: float = hb[2] / 256.0

@@ -31,9 +31,21 @@ CANVAS = (256, 256)
 ROOT = (128.0, 150.0)             # bassin sur la toile de travail
 
 
-def load_poses(path: str = POSES_PATH) -> dict:
+def load_poses(fid: str | None = None, path: str = POSES_PATH) -> dict:
+    """Poses communes + surcharges du perso (tools/rig/poses/<fid>.json :
+    {"named": {...}, "anims": {nom: définition complète}}). Les surcharges
+    remplacent l'animation entière ; les poses communes ne sont pas dupliquées."""
     with open(path) as f:
         data = json.load(f)
+    if fid:
+        over_path = os.path.join(HERE, "poses", f"{fid}.json")
+        if os.path.exists(over_path):
+            with open(over_path) as f:
+                over = json.load(f)
+            for name, pose in over.get("named", {}).items():
+                data["named"][name] = {**data["named"].get(name, {}), **pose}
+            for name, anim in over.get("anims", {}).items():
+                data["anims"][name] = anim
     named = data["named"]
     guard = named["guard"]
     for name, pose in named.items():
@@ -54,36 +66,42 @@ def expand(anim: dict, named: dict, amp: float) -> list:
     return interpolate({"keys": keys}, named[anim["base"]], anim["frames"], amp, named["guard"])
 
 
-def render_all(rig: Rig, amp: float = 1.0, poses: dict | None = None) -> dict:
-    """Renvoie {anim: [cellule uint8 128×128, …]} dans l'ordre ANIM_ORDER."""
+def render_all(rig: Rig, amp: float = 1.0, poses: dict | None = None,
+               cell_size: int = CELL, foot: tuple = FOOT) -> dict:
+    """Renvoie {anim: [cellule uint8 cell×cell, …]} dans l'ordre ANIM_ORDER."""
     poses = poses or load_poses()
+    CELL_ = cell_size
+    ground_row = foot[1] - 1
+    canvas = (cell_size * 2, cell_size * 2)
+    root = (float(cell_size), cell_size * 150.0 / 128.0)
     named = poses["named"]
     raw = {}
     for name in ANIM_ORDER:
         anim = poses["anims"][name]
-        raw[name] = [rig.render(p, CANVAS, ROOT) for p in expand(anim, named, amp)]
+        raw[name] = [rig.render(p, canvas, root) for p in expand(anim, named, amp)]
     # référence en l'air : centre vertical de la silhouette d'idle frame 0
     # (les saltos tournent autour du centre du corps, pas du bassin)
-    idle_top = _lowest(raw["idle"][0]) - GROUND_ROW
+    idle_top = _lowest(raw["idle"][0]) - ground_row
     idle_mid = _vmid(raw["idle"][0]) - idle_top
     cells = {}
-    base_x0 = int(ROOT[0]) - FOOT[0]
+    base_x0 = int(root[0]) - foot[0]
     for name, frames in raw.items():
         out = []
         for img in frames:
             if name in AIR_ANIMS:
                 top = int(round(_vmid(img) - idle_mid))
             else:
-                top = _lowest(img) - GROUND_ROW
+                top = _lowest(img) - ground_row
             # bassin à x = 64 ; si le corps déborde (couché…), décalage minimal
             x0 = base_x0
             cols = np.nonzero(img.any(axis=0))[0]
             if len(cols):
                 if cols.min() < x0:
                     x0 = int(cols.min())
-                if cols.max() >= x0 + CELL:
-                    x0 = int(cols.max()) - CELL + 1
-            cell = img[top:top + CELL, x0:x0 + CELL]
+                if cols.max() >= x0 + CELL_:
+                    x0 = int(cols.max()) - CELL_ + 1
+            top = max(top, 0)
+            cell = img[top:top + CELL_, x0:x0 + CELL_]
             lost = int((img > 0).sum() - (cell > 0).sum())
             if lost:
                 print(f"  ! {name}: {lost} px hors cellule")

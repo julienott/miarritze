@@ -34,12 +34,14 @@ def build(fid: str) -> None:
     t0 = time.time()
     fiche = FICHES[fid]
     rig = build_rig(fiche)
-    poses = animate.load_poses()
-    cells = animate.render_all(rig, fiche.get("amp", 1.0), poses)
+    poses = animate.load_poses(fid)
+    C = fiche.get("cell", animate.CELL)
+    foot = tuple(fiche.get("foot", animate.FOOT))
+    cells = animate.render_all(rig, fiche.get("amp", 1.0), poses, C, foot)
     meta = animate.anim_meta(poses)
+    infer_boxes.set_foot(foot)
     out = os.path.join(ROOT, "assets", "fighters", fid)
     os.makedirs(out, exist_ok=True)
-    C = animate.CELL
     # Grille compacte (≤ 2048 px de large, hauteur ≤ 4096) : les frames
     # sont rangées à la suite, `first` = index de la 1re frame de l'anim.
     cols = SHEET_W // C
@@ -56,7 +58,7 @@ def build(fid: str) -> None:
     Image.fromarray(sheet, "L").save(os.path.join(out, "sheet.png"), optimize=True)
     make_palettes.write(fiche, os.path.join(out, "palettes.png"))
     data = {
-        "id": fid, "cell": C, "cols": cols, "foot": list(animate.FOOT),
+        "id": fid, "cell": C, "cols": cols, "foot": list(foot),
         "palette_roles": ix.palette_roles(),
         "source": "mannequin",
         "anims": meta,
