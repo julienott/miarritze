@@ -19,6 +19,15 @@ func _route() -> void:
 		var text: String = str(hash_value)
 		if text.begins_with("#scene="):
 			target = text.trim_prefix("#scene=")
+	if target == "touchfight":
+		# QA : combat complet au tactile contre l'IA Facile.
+		InputHub.set_solo()
+		SceneRouter.goto(&"fight", {"p1": "louis", "p2": "maia", "stage": "grande_plage",
+			"ai": [0, AiBrain.SKILL_EASY], "rounds": 3, "return_to": "title"})
+		return
+	if target == "tutorial":
+		SceneRouter.goto(&"fight", TrainingMode.tutorial_params())
+		return
 	if target.begins_with("res://"):
 		SceneRouter.goto_path(target)
 	elif target != "":

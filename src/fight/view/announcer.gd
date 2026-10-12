@@ -20,7 +20,9 @@ func _ready() -> void:
 	_label.offset_bottom = -110
 	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_label.add_theme_font_size_override(&"font_size", 24)
+	if ResourceLoader.exists(UiKit.EUSKAL):
+		_label.add_theme_font_override(&"font", load(UiKit.EUSKAL))
+	_label.add_theme_font_size_override(&"font_size", 16)
 	_label.add_theme_color_override(&"font_color", C_RED)
 	_label.add_theme_color_override(&"font_outline_color", C_GOLD)
 	_label.add_theme_constant_override(&"outline_size", 6)
@@ -31,16 +33,18 @@ func _ready() -> void:
 	add_child(_label)
 
 
+## Lettrage basque ×2 (échelle entière) pour les grandes annonces, ×1 sinon.
 func say(text: String, duration: float = 1.0, color: Color = C_RED, size_px: int = 24) -> void:
-	_label.text = text
-	_label.add_theme_color_override(&"font_color", color)
-	_label.add_theme_font_size_override(&"font_size", size_px)
+	_label.text = text.to_upper()
+	_label.add_theme_color_override(&"font_color", color.lightened(0.1))
+	_label.remove_theme_constant_override(&"outline_size")
 	_label.visible = true
-	_label.pivot_offset = size * 0.5
-	_label.scale = Vector2(2.2, 2.2)
+	_label.pivot_offset = Vector2(size.x * 0.5, (size.y - 110.0) * 0.5)
+	var target: Vector2 = Vector2(2, 2) if size_px >= 20 else Vector2.ONE
+	_label.scale = target * 2.0
 	_label.rotation = -0.12
 	var tween: Tween = create_tween()
-	tween.tween_property(_label, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_label, "scale", target, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(_label, "rotation", 0.0, 0.18)
 	tween.tween_interval(duration)
 	tween.tween_callback(func() -> void: _label.visible = false)

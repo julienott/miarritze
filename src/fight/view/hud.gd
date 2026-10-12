@@ -22,6 +22,7 @@ var _combo_text: Array[String] = ["", ""]
 var _combo_t: PackedInt32Array = PackedInt32Array([0, 0])
 var _font: Font
 var _portraits: Array[PortraitView] = []
+var _txapela: Texture2D
 
 
 func _ready() -> void:
@@ -29,6 +30,8 @@ func _ready() -> void:
 	_fit()
 	get_viewport().size_changed.connect(_fit)
 	_font = load("res://assets/fonts/press_start_2p.ttf")
+	if ResourceLoader.exists("res://assets/ui/icon_txapela.png"):
+		_txapela = load("res://assets/ui/icon_txapela.png")
 
 
 ## Portraits aux extrémités des barres de vie (40×40 si disponibles).
@@ -86,8 +89,8 @@ func _draw() -> void:
 		var name_x: float = x0 if p == 0 else x0 + bar_w - _text_w(names[p])
 		_text(Vector2(name_x, 25), names[p], C_LINEN)
 		for r: int in sim.rounds_to_win:
-			var cx: float = x0 + 4.0 + r * 10.0 if p == 0 else x0 + bar_w - 4.0 - r * 10.0
-			_draw_txapela(Vector2(cx, 32), r < me.rounds)
+			var cx: float = x0 + 8.0 + r * 16.0 if p == 0 else x0 + bar_w - 8.0 - r * 16.0
+			_draw_txapela(Vector2(cx, 40), r < me.rounds)
 		var mw: float = 3.0 * 22.0
 		var mx: float = 6.0 if p == 0 else w - 6.0 - mw
 		_draw_meter(Rect2(mx, size.y - 12.0, mw, 6), me.meter, p == 1)
@@ -119,6 +122,10 @@ func _draw_life(r: Rect2, ratio: float, lag: float, mirror: bool) -> void:
 
 
 func _draw_txapela(c: Vector2, won: bool) -> void:
+	if _txapela != null:
+		var tex_pos: Vector2 = c - Vector2(8, 10)
+		draw_texture(_txapela, tex_pos, Color(1, 1, 1, 1.0 if won else 0.3))
+		return
 	var col: Color = C_RED if won else C_DARK
 	draw_rect(Rect2(c.x - 3, c.y - 2, 7, 3), C_OUTLINE)
 	draw_rect(Rect2(c.x - 2, c.y - 1, 5, 1), col)
@@ -166,6 +173,8 @@ func _text(pos: Vector2, t: String, color: Color, shadow: bool = true) -> void:
 ## Un Control sous un CanvasLayer n'a pas de parent dimensionné : on
 ## recopie la taille visible du viewport (largeur variable en paysage).
 func _fit() -> void:
-	position = Vector2.ZERO
-	size = get_viewport().get_visible_rect().size
+	# Zones sûres : le HUD se resserre entre l'encoche et le bord opposé.
+	var m: Vector4 = SafeArea.margins(get_viewport())
+	position = Vector2(m.x, 0)
+	size = get_viewport().get_visible_rect().size - Vector2(m.x + m.z, 0)
 	_place_portraits()

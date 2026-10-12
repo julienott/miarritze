@@ -5,6 +5,7 @@ var _params: Dictionary = {}
 
 
 func _ready() -> void:
+	AudioManager.play_music(&"select")
 	_params = SceneRouter.params.duplicate()
 	UiKit.backdrop(self, "bg_hub", 0.5)
 	var head: Label = UiKit.title("CHOIX DE LA MAP")

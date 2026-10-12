@@ -21,6 +21,7 @@ var _font: Font
 
 
 func _ready() -> void:
+	AudioManager.play_music(&"select")
 	mode = str(SceneRouter.params.get("mode", "versus"))
 	_players = 2 if mode == "versus" else 1
 	_font = load("res://assets/fonts/press_start_2p.ttf")

@@ -29,6 +29,7 @@ var _super_t: int = 0
 var _ui: CanvasLayer
 var _pause_box: Control
 var _training: TrainingOverlay
+var _touch: TouchControls
 
 
 func _ready() -> void:
@@ -60,6 +61,7 @@ func _ready() -> void:
 	_hud.names = PackedStringArray([str(names[0]).to_upper(), str(names[1]).to_upper()])
 	_hud.set_portraits([def1.id, def2.id], [c1, c2])
 	_sync_views(true)
+	_play_stage_music()
 
 
 func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
@@ -107,12 +109,42 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 			sim.ai_level[1] = TrainingMode.BEHAVIOR_LEVELS[i])
 		_training.move_list_requested.connect(_show_move_list)
 		ui.add_child(_training)
+	if bool(params.get("tutorial", false)):
+		var tuto: TutorialOverlay = TutorialOverlay.new()
+		tuto.sim = sim
+		tuto.finished.connect(func() -> void:
+			Profiles.update_active({"tutorial_done": true})
+			Profiles.grant_title("debutant")
+			_leave())
+		ui.add_child(tuto)
+		if _training != null:
+			_training.visible = false
+	if Settings.touch_enabled() and str(params.get("mode", "")) != "versus" \
+			and int((params.get("ai", [0, 0]) as Array)[0]) == 0:
+		_touch = TouchControls.new()
+		_touch.facing_getter = func() -> int: return sim.f[0].facing
+		_touch.meter_full_getter = func() -> bool: return sim.f[0].meter >= SimConst.METER_MAX
+		ui.add_child(_touch)
+		InputHub.add_source(0, VirtualPadSource.new(_touch))
 	if str(params.get("mode", "")) != "online":
 		var pause_btn: Button = UiKit.button("II", _toggle_pause, 24)
 		pause_btn.focus_mode = Control.FOCUS_NONE
 		pause_btn.custom_minimum_size = Vector2(24, 24)
 		pause_btn.position = Vector2(get_viewport_rect().size.x * 0.5 - 12, 30)
 		ui.add_child(pause_btn)
+
+
+const SPECIAL_SFX: Dictionary = {"txomin": &"whistle", "karramarro": &"pinch", "ramuntxo": &"fire",
+	"xabi": &"pelota", "kaio": &"gull", "maia": &"wave", "itsaso": &"splash"}
+
+
+func _play_stage_music() -> void:
+	var track: String = str(_stage.data.get("music", ""))
+	if track == "":
+		track = str(params.get("stage", "grande_plage")).replace("_soir", "").replace("_crepuscule", "")
+	if sim.defs[1].id == Roster.BOSS:
+		track = "phare_sommet"
+	AudioManager.play_music(StringName(track))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -202,9 +234,11 @@ func _on_event(ev: PackedInt32Array) -> void:
 	match type:
 		FxEvents.ROUND_START:
 			_announcer.say("ROUND %d" % ev[5], 0.9)
+			AudioManager.sfx(&"round")
 		FxEvents.FIGHT:
 			_announcer.say("BORROKA !", 0.7)
 			AudioManager.sfx(&"fight")
+			AudioManager.voice(&"borroka")
 		FxEvents.HIT:
 			var hit_pos: Vector2 = pos + Vector2(0, -56)
 			if actor >= 0:
@@ -223,11 +257,13 @@ func _on_event(ev: PackedInt32Array) -> void:
 		FxEvents.KO:
 			_announcer.say("PLOUF !", 1.4)
 			_vfx.dust(pos, true)
-			AudioManager.sfx(&"plouf")
+			AudioManager.sfx(&"ko")
+			AudioManager.voice(&"plouf")
 		FxEvents.TIME_OVER:
 			_announcer.say("TEMPS !", 1.0)
 		FxEvents.PERFECT:
 			_announcer.say("PARFAIT !", 1.2, Color8(244, 198, 62))
+			AudioManager.sfx(&"perfect")
 		FxEvents.WAVE_RETURN:
 			_vfx.word(pos + Vector2(0, -100), "LA MARÉE MONTE !", Color8(196, 232, 230))
 			AudioManager.sfx(&"wave")
@@ -239,14 +275,26 @@ func _on_event(ev: PackedInt32Array) -> void:
 			AudioManager.sfx(&"super")
 		FxEvents.LAND, FxEvents.KNOCKDOWN, FxEvents.JUMP:
 			_vfx.dust(pos, type == FxEvents.KNOCKDOWN)
+			AudioManager.sfx(&"jump" if type == FxEvents.JUMP else &"land")
+		FxEvents.WHIFF:
+			AudioManager.sfx(&"whiff")
+		FxEvents.SPECIAL_START:
+			AudioManager.sfx(SPECIAL_SFX.get(sim.defs[actor].id, &"special"))
+		FxEvents.PROJ_SPAWN:
+			AudioManager.sfx(&"projectile")
 		FxEvents.THROW:
 			_vfx.word(pos + Vector2(0, -90), "HOP !")
+			AudioManager.sfx(&"throw")
 		FxEvents.TECH:
 			_vfx.word(pos + Vector2(0, -90), "ESQUIVE !", Color8(84, 112, 168))
+			AudioManager.sfx(&"tech")
 		FxEvents.BUKATU:
 			_announcer.say("BUKATU !", 2.0)
+			AudioManager.voice(&"bukatu")
 		FxEvents.FINISHER:
 			_announcer.say("ZORIONAK !", 1.6, Color8(244, 198, 62))
+			AudioManager.sfx(StringName(str({"bucket": "bucket", "wave": "wave", "fish": "splash"}.get(
+				str(FighterDb.load_json(sim.defs[actor].id).get("finisher", {}).get("fx", "")), "crowd"))))
 			var fin: Dictionary = FighterDb.load_json(sim.defs[actor].id).get("finisher", {})
 			var fx: FinisherFx = FinisherFx.new()
 			add_child(fx)
@@ -261,6 +309,7 @@ func _on_event(ev: PackedInt32Array) -> void:
 
 
 func _on_match_end(w: int) -> void:
+	AudioManager.play_music(&"victory")
 	if w >= 0:
 		_announcer.say("%s GAGNE !" % _hud.names[w], 2.4, Color8(244, 198, 62), 16)
 	else:

@@ -16,6 +16,7 @@ const DUMMY_IDLE: int = 200
 const DUMMY_GUARD: int = 201
 const DUMMY_JUMP: int = 202
 const DUMMY_REPEAT: int = 203
+const DUMMY_ATTACK: int = 204   # avance et frappe (tutoriel : apprendre la garde)
 
 
 ## Temps de réaction (frames) : 26 à skill 1, 7 à skill 100.
@@ -210,6 +211,12 @@ static func _dummy(sim: FightSim, p: int, level: int) -> int:
 			return SimConst.GUARD
 		DUMMY_JUMP:
 			return SimConst.UP if sim.frame % 60 < 2 else 0
+		DUMMY_ATTACK:
+			var o: FighterState = sim.f[1 - p]
+			var fwd: int = SimConst.RIGHT if o.x >= me.x else SimConst.LEFT
+			if absi(o.x - me.x) > 62 * SimConst.SUB:
+				return fwd
+			return SimConst.PUNCH if sim.frame % 40 == 0 else 0
 		DUMMY_REPEAT:
 			return SimConst.PUNCH if sim.frame % 50 == 0 else 0
 	me.ai_hold = 0

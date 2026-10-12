@@ -1,97 +1,125 @@
-[gd_resource type="Theme" load_steps=7 format=3]
+[gd_resource type="Theme" load_steps=17 format=3]
 
-[ext_resource type="FontFile" path="res://assets/fonts/press_start_2p.ttf" id="1_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/press_start_2p.ttf" id="font"]
 
-[sub_resource type="StyleBoxFlat" id="btn_normal"]
+[ext_resource type="Texture2D" path="res://assets/ui/button_normal.png" id="button_normal.png"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/button_hover.png" id="button_hover.png"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/button_pressed.png" id="button_pressed.png"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/button_disabled.png" id="button_disabled.png"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/frame_wood.png" id="frame_wood.png"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/frame_parchment.png" id="frame_parchment.png"]
+
+
+[sub_resource type="StyleBoxTexture" id="btn_normal"]
 content_margin_left = 6.0
 content_margin_top = 4.0
 content_margin_right = 6.0
 content_margin_bottom = 4.0
-bg_color = Color(0.145, 0.095, 0.13, 0.88)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.97, 0.945, 0.89, 1)
+texture = ExtResource("button_normal.png")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
 
-[sub_resource type="StyleBoxFlat" id="btn_hover"]
+[sub_resource type="StyleBoxTexture" id="btn_hover"]
 content_margin_left = 6.0
 content_margin_top = 4.0
 content_margin_right = 6.0
 content_margin_bottom = 4.0
-bg_color = Color(0.807, 0.204, 0.204, 0.92)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.97, 0.945, 0.89, 1)
+texture = ExtResource("button_hover.png")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
 
-[sub_resource type="StyleBoxFlat" id="btn_pressed"]
+[sub_resource type="StyleBoxTexture" id="btn_pressed"]
+content_margin_left = 6.0
+content_margin_top = 5.0
+content_margin_right = 6.0
+content_margin_bottom = 3.0
+texture = ExtResource("button_pressed.png")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[sub_resource type="StyleBoxTexture" id="btn_disabled"]
 content_margin_left = 6.0
 content_margin_top = 4.0
 content_margin_right = 6.0
 content_margin_bottom = 4.0
-bg_color = Color(0.588, 0.133, 0.157, 0.95)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.97, 0.945, 0.89, 1)
+texture = ExtResource("button_disabled.png")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
 
-[sub_resource type="StyleBoxFlat" id="btn_disabled"]
-content_margin_left = 6.0
-content_margin_top = 4.0
-content_margin_right = 6.0
-content_margin_bottom = 4.0
-bg_color = Color(0.2, 0.18, 0.22, 0.7)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.64, 0.61, 0.6, 1)
+[sub_resource type="StyleBoxTexture" id="panel"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+texture = ExtResource("frame_wood.png")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
 
-[sub_resource type="StyleBoxFlat" id="panel_box"]
-content_margin_left = 6.0
-content_margin_top = 4.0
-content_margin_right = 6.0
-content_margin_bottom = 4.0
-bg_color = Color(0.095, 0.125, 0.2, 0.86)
+[sub_resource type="StyleBoxFlat" id="focus"]
+draw_center = false
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.97, 0.945, 0.89, 1)
+border_color = Color(0.957, 0.776, 0.243, 1)
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
 
 [sub_resource type="StyleBoxFlat" id="line_edit"]
 content_margin_left = 6.0
 content_margin_top = 4.0
 content_margin_right = 6.0
 content_margin_bottom = 4.0
-bg_color = Color(0.97, 0.945, 0.89, 1)
+bg_color = Color(0.968, 0.945, 0.89, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.227, 0.15, 0.204, 1)
+border_color = Color(0.227, 0.149, 0.204, 1)
 
 [resource]
-default_font = ExtResource("1_font")
+default_font = ExtResource("font")
 default_font_size = 8
-Button/colors/font_color = Color(0.97, 0.945, 0.89, 1)
+Button/colors/font_color = Color(0.968, 0.945, 0.89, 1)
 Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_focus_color = Color(1, 0.91, 0.43, 1)
 Button/colors/font_pressed_color = Color(0.95, 0.85, 0.7, 1)
-Button/colors/font_disabled_color = Color(0.7, 0.68, 0.66, 1)
+Button/colors/font_disabled_color = Color(0.75, 0.72, 0.7, 1)
+Button/colors/font_outline_color = Color(0.227, 0.149, 0.204, 1)
+Button/constants/outline_size = 3
 Button/styles/normal = SubResource("btn_normal")
 Button/styles/hover = SubResource("btn_hover")
 Button/styles/pressed = SubResource("btn_pressed")
 Button/styles/disabled = SubResource("btn_disabled")
-Button/styles/focus = SubResource("btn_normal")
-OptionButton/colors/font_color = Color(0.97, 0.945, 0.89, 1)
-OptionButton/styles/normal = SubResource("btn_normal")
-OptionButton/styles/hover = SubResource("btn_hover")
-OptionButton/styles/pressed = SubResource("btn_pressed")
-OptionButton/styles/focus = SubResource("btn_normal")
-PanelContainer/styles/panel = SubResource("panel_box")
+Button/styles/focus = SubResource("focus")
+PanelContainer/styles/panel = SubResource("panel")
 LineEdit/colors/font_color = Color(0.14, 0.1, 0.14, 1)
 LineEdit/colors/font_placeholder_color = Color(0.45, 0.4, 0.42, 1)
 LineEdit/colors/caret_color = Color(0.14, 0.1, 0.14, 1)

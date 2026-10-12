@@ -16,3 +16,10 @@ static func fight_params(fighter: String, costume: int, behavior: int = 0) -> Di
 		"training": true, "behavior": behavior, "finishers": false,
 		"mode": "training", "return_to": "main_menu",
 	}
+
+
+## Tutoriel : entraînement contre Hondar avec la surcouche guidée.
+static func tutorial_params(fighter: String = "louis") -> Dictionary:
+	var params: Dictionary = fight_params(fighter, 0, 0)
+	params["tutorial"] = true
+	return params

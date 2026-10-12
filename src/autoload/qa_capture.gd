@@ -48,6 +48,9 @@ func _ready() -> void:
 			touch_random = true
 	if autofight != "":
 		_start_autofight.call_deferred(autofight)
+	elif _inputs != "":
+		# Entrées scriptées hors autofight (tutoriel, écrans) : J1 seulement.
+		InputHub.set_sources.call_deferred(0, [ScriptSource.new(_inputs)])
 	if _autotower != "":
 		_start_autotower.call_deferred()
 	if _shot_path != "":

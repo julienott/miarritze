@@ -21,3 +21,7 @@ Chaque revue est faite par un sous-agent qui n'a pas produit le travail (SPEC §
 - **Itération 2 : À REFAIRE** sur un seul point bloquant, le chevauchement au contact ; tout le reste est validé.
 - **Blocage consigné (règle §0.8 : 2 itérations maximum) :** boîte de poussée rendue asymétrique (avant/arrière mesurés sur le torse de l'idle). La sim garde au moins 50 px entre les deux pieds, et la garde au neutre est nette. Ce qui se superpose encore, ce sont les poings et la planche au moment du contact, comme dans tout jeu de combat (sans contact, aucun coup ne porte). Point à revoir en playtest (§16).
 - Registre RD en fin de phase : 3,41 $ (≤ 8 $ ✔).
+
+## Phase 4 — tactile iPhone (2026-10-13)
+**ACCEPTÉ** (itération 1), en émulation Playwright (Chromium mobile + multitouch CDP à index aléatoires, WebKit pour les taps). Tutoriel complet au doigt avec super au bouton MARÉE, combat entier au tactile contre l'IA Facile jusqu'au K.O. Le test sur vrai iPhone reste à faire (`docs/TEST_IPHONE.md`).
+- Corrigé après la revue : marges sûres de 44 pt sur les quatre bords (et l'encoche/la barre d'accueil si le navigateur les donne), boutons ≥ 64 pt quelle que soit la taille choisie, icônes (poing, espadrille, lauburu, bouclier) à la place des lettres, losange plus bas, super à deux doigts seulement sur deux taps courts quasi simultanés, garde maintenue tant qu'un autre doigt la tient, second doigt gauche ignoré, tests du mode Gestes.

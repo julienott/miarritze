@@ -1,0 +1,51 @@
+{
+ "_doc": "marges 9-patch [gauche, haut, droite, bas] en px (StyleBoxTexture texture_margin_*)",
+ "frame_wood.png": [
+  5,
+  5,
+  5,
+  5
+ ],
+ "button_normal.png": [
+  4,
+  4,
+  4,
+  5
+ ],
+ "button_hover.png": [
+  4,
+  4,
+  4,
+  5
+ ],
+ "button_pressed.png": [
+  4,
+  4,
+  4,
+  4
+ ],
+ "button_disabled.png": [
+  4,
+  4,
+  4,
+  5
+ ],
+ "frame_portrait.png": [
+  5,
+  5,
+  5,
+  5
+ ],
+ "frame_parchment.png": [
+  5,
+  5,
+  5,
+  5
+ ],
+ "frame_lifebar.png": [
+  4,
+  3,
+  4,
+  3
+ ]
+}

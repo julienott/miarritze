@@ -65,6 +65,8 @@ func _ready() -> void:
 	_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	frame.add_child(_text_label)
 	AudioManager.play_music(&"txapeldun")
+	AudioManager.voice(&"txapeldun")
+	get_tree().create_timer(9.0).timeout.connect(func() -> void: AudioManager.play_music(&"ending"))
 	_txapeldun()
 	get_tree().create_timer(1.0).timeout.connect(func() -> void: _skip_ready = true)
 

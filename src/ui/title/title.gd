@@ -7,6 +7,17 @@ extends Control
 var _blink: float = 0.0
 
 
+func _ready() -> void:
+	$TitleLabel.visible = false
+	$SubLabel.visible = false
+	var logo: LogoView = LogoView.new()
+	logo.position = Vector2(get_viewport_rect().size.x * 0.5, 62)
+	add_child(logo)
+	get_viewport().size_changed.connect(func() -> void:
+		logo.position.x = get_viewport_rect().size.x * 0.5)
+	AudioManager.play_music(&"title")
+
+
 func _process(delta: float) -> void:
 	_blink += delta
 	_press_label.visible = fmod(_blink, 1.0) < 0.7
@@ -21,8 +32,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_start_pressed() -> void:
-	if SceneRouter.has_screen(&"main_menu"):
-		SceneRouter.goto(&"main_menu")
+	if SceneRouter.has_screen(&"profile_select"):
+		SceneRouter.goto(&"profile_select")
 		return
 	# Phase 1 : versus local direct au clavier (J1 WASD+JKL, J2 flèches+Num).
 	InputHub.set_versus()

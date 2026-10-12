@@ -18,6 +18,9 @@ var _SCENES: Dictionary = {
 	&"tower": "res://src/ui/tower/tower.tscn",
 	&"ending": "res://src/ui/ending/ending.tscn",
 	&"results": "res://src/ui/results/results.tscn",
+	&"settings": "res://src/ui/settings/settings.tscn",
+	&"profile_select": "res://src/ui/profile_select/profile_select.tscn",
+	&"profile_edit": "res://src/ui/profile_edit/profile_edit.tscn",
 }
 
 const _IRIS_SHADER: String = """

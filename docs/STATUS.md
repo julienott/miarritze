@@ -2,7 +2,16 @@
 
 Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
-## Phase atteinte : 3 ✅ (pipeline graphique, Louis/Maïa/Patxi/Xabi en RD, 3 stages)
+## Phase atteinte : 4 ✅ (tactile iPhone) — Phase 5 en cours
+
+### Phase 4
+- Manette virtuelle (`src/input/touch_controls.gd`) : joystick flottant (rayon 56 pt, zone morte 25 %, 8 directions, hystérésis 10°), losange P/K/S/G ≥ 64 pt avec icônes, glisser d'un bouton à l'autre, MARÉE, multitouch par index arbitraires, appuis brefs verrouillés, zones sûres.
+- Mode Gestes (§7.4) dans le même composant ; `Settings` (autoload) + écran Réglages (mode, taille, opacité, sons, difficulté, combats express, remappage clavier).
+- Tutoriel guidé en 6 étapes contre Hondar (premier lancement, menu « Tutoriel »).
+- Tests : `tests/touch_test.tscn` (index aléatoires, gestes) ; Playwright `tests/web/touch_fight.mjs`, `touch_phase4.mjs`.
+- Captures : `docs/captures/phase4_touch.png`, `phase4_pad.png`.
+
+### Phase 3 (rappel)
 
 ### Phase 3
 - RD : exploration `rd_fast` img2img depuis le mannequin, finale `rd_pro`, idle animé, portrait — Louis, Maïa, Patxi, Xabi. Rig propre à chaque perso découpé sur la pose RD (`tools/rig/rd_rig.py`), 37 animations, cellules 160, indexation (groupe, couleur), costumes sans toucher la peau, portraits (normal, grand, HUD, petit, K.O.).

@@ -18,9 +18,12 @@ var active_index: int = -1
 
 func _ready() -> void:
 	_load()
-	# Phase 2 : profil par défaut tant que l'écran de profils n'existe pas.
-	if profiles.is_empty() and not OS.get_cmdline_user_args().has("--no-profile"):
-		create("Joueur")
+	# Outils QA (captures, pyramides automatiques) : profil jetable.
+	if profiles.is_empty():
+		for arg: String in OS.get_cmdline_user_args():
+			if arg == "--qa-profile" or arg.begins_with("--autotower="):
+				create("Testeur")
+				break
 
 
 func active() -> Dictionary:
@@ -65,6 +68,106 @@ func update_active(fields: Dictionary) -> void:
 	save()
 
 
+## Titres débloquables (SPEC §3.1) : id -> [libellé, condition lisible].
+const TITLES: Dictionary = {
+	"": ["Sans titre", ""],
+	"debutant": ["Petit·e baigneur·se", "Finir le tutoriel"],
+	"txapeldun": ["Txapeldun", "Terminer la Pyramide du Phare"],
+	"expert": ["Gardien·ne du Phare", "Terminer la Pyramide en Expert"],
+	"cote_basques": ["Roi·Reine de la Côte des Basques", "Gagner 5 combats à la Côte des Basques"],
+	"fronton": ["Invaincu·e du fronton", "Gagner 5 combats au Fronton"],
+	"finisher": ["Maître du BUKATU", "Réussir 10 finishs"],
+	"parfait": ["Parfait·e", "Gagner un round sans être touché·e"],
+	"collection": ["Collectionneur·se", "Débloquer 10 costumes"],
+}
+const EMOTES: PackedStringArray = ["Agur !", "Prêt·e ?", "Bravo !", "Encore !"]
+const BANNERS: int = 8
+## Victoires avec un perso pour débloquer son costume 2 (§5.4).
+const WINS_FOR_COSTUME_2: int = 5
+
+
+## Valide un pseudo (2 à 15 caractères, lettres/chiffres/espace/-/_).
+## Le filtre anti-gros-mots complet est appliqué par le serveur (Profanity).
+static func pseudo_ok(pseudo: String) -> bool:
+	var p: String = pseudo.strip_edges()
+	if p.length() < 2 or p.length() > 15:
+		return false
+	var re: RegEx = RegEx.create_from_string("^[\\p{L}0-9 _-]+$")
+	return re.search(p) != null
+
+
+func costume_unlocked(fighter: String, costume: int) -> bool:
+	if costume == 0 or OS.get_cmdline_user_args().has("--unlock-all"):
+		return true
+	return (active().get("unlocks", {}).get(fighter, [0]) as Array).has(costume)
+
+
+func title_unlocked(title_id: String) -> bool:
+	return title_id == "" or (active().get("titles", []) as Array).has(title_id)
+
+
+## Enregistre l'issue d'un combat pour le profil actif (stats, costumes, titres).
+## Renvoie la liste des déblocages (textes) à annoncer.
+func record_fight(fighter: String, won: bool, stage: String, finisher: bool, perfect: bool) -> Array[String]:
+	var out: Array[String] = []
+	if not has_active():
+		return out
+	var prof: Dictionary = profiles[active_index]
+	var stats: Dictionary = prof.get("stats", {})
+	stats["fights"] = int(stats.get("fights", 0)) + 1
+	var per: Dictionary = stats.get("wins_by", {})
+	var by_stage: Dictionary = stats.get("wins_stage", {})
+	if won:
+		stats["wins"] = int(stats.get("wins", 0)) + 1
+		per[fighter] = int(per.get(fighter, 0)) + 1
+		by_stage[stage] = int(by_stage.get(stage, 0)) + 1
+	if finisher:
+		stats["finishers"] = int(stats.get("finishers", 0)) + 1
+	stats["wins_by"] = per
+	stats["wins_stage"] = by_stage
+	prof["stats"] = stats
+	var unlocks: Dictionary = prof.get("unlocks", {})
+	var costumes: Array = unlocks.get(fighter, [0])
+	if int(per.get(fighter, 0)) >= WINS_FOR_COSTUME_2 and not costumes.has(1):
+		costumes.append(1)
+		out.append("Costume 2 de %s" % Roster.display_name(fighter))
+	unlocks[fighter] = costumes
+	prof["unlocks"] = unlocks
+	if perfect:
+		out.append_array(_grant_title(prof, "parfait"))
+	if int(by_stage.get("cote_basques", 0)) + int(by_stage.get("cote_basques_crepuscule", 0)) >= 5:
+		out.append_array(_grant_title(prof, "cote_basques"))
+	if int(by_stage.get("fronton", 0)) >= 5:
+		out.append_array(_grant_title(prof, "fronton"))
+	if int(stats.get("finishers", 0)) >= 10:
+		out.append_array(_grant_title(prof, "finisher"))
+	var total_costumes: int = 0
+	for f: Variant in unlocks:
+		if unlocks[f] is Array:
+			total_costumes += maxi((unlocks[f] as Array).size() - 1, 0)
+	if total_costumes >= 10:
+		out.append_array(_grant_title(prof, "collection"))
+	save()
+	return out
+
+
+func grant_title(title_id: String) -> Array[String]:
+	if not has_active():
+		return []
+	var out: Array[String] = _grant_title(profiles[active_index], title_id)
+	save()
+	return out
+
+
+func _grant_title(prof: Dictionary, title_id: String) -> Array[String]:
+	var titles: Array = prof.get("titles", [])
+	if titles.has(title_id):
+		return []
+	titles.append(title_id)
+	prof["titles"] = titles
+	return ["Titre : %s" % str(TITLES[title_id][0])]
+
+
 func _new_profile(pseudo: String) -> Dictionary:
 	return {
 		"pseudo": pseudo,
@@ -77,6 +180,7 @@ func _new_profile(pseudo: String) -> Dictionary:
 		"title": "",
 		"emote": 0,
 		"unlocks": {},
+		"titles": [],
 		"stats": {"fights": 0, "wins": 0, "towers": {}, "txapelas": {}, "best_tower": 0},
 		"tutorial_done": false,
 	}

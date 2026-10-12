@@ -39,11 +39,23 @@ static func label(text: String, size: int = 8, color: Color = C_LINEN,
 	return l
 
 
-## Titre de page : lettres rouges à contour or (provisoire, police basque en Phase 5).
-static func title(text: String) -> Label:
-	var l: Label = label(text, 16, C_RED)
-	l.add_theme_color_override(&"font_outline_color", C_GOLD)
-	l.add_theme_constant_override(&"outline_size", 4)
+const EUSKAL: String = "res://assets/fonts/euskal_outline.fnt"
+
+
+## Titre de page : lettrage basque (euskal letra, police bitmap 16 px).
+static func title(text: String, color: Color = C_RED) -> Label:
+	var l: Label = Label.new()
+	l.text = text.to_upper()
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if ResourceLoader.exists(EUSKAL):
+		l.add_theme_font_override(&"font", load(EUSKAL))
+		l.add_theme_font_size_override(&"font_size", 16)
+		l.add_theme_color_override(&"font_color", color.lightened(0.15))
+		l.add_theme_constant_override(&"shadow_offset_x", 0)
+		l.add_theme_constant_override(&"shadow_offset_y", 1)
+	else:
+		l.add_theme_font_size_override(&"font_size", 16)
+		l.add_theme_color_override(&"font_color", color)
 	return l
 
 
@@ -81,3 +93,20 @@ static func fighter_preview(id: String, costume: int = 0, anim: String = "idle",
 	view.setup(FighterDb.get_def(id), costume)
 	view.play_preview(anim, facing)
 	return view
+
+
+## Grille de boutons sur deux colonnes (menus longs, écran de 216 px).
+static func menu_grid(parent: Control, buttons: Array, top: float = 60.0) -> GridContainer:
+	var grid: GridContainer = GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override(&"h_separation", 6)
+	grid.add_theme_constant_override(&"v_separation", 5)
+	grid.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	grid.position = Vector2(-146, top)
+	parent.add_child(grid)
+	for b: Variant in buttons:
+		(b as Control).custom_minimum_size.x = 140
+		grid.add_child(b as Control)
+	if not buttons.is_empty():
+		(buttons[0] as Control).grab_focus.call_deferred()
+	return grid

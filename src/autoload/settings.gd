@@ -7,7 +7,8 @@ signal changed
 const SAVE_PATH: String = "user://settings.json"
 const PAD_MODES: PackedStringArray = ["pad", "gestures"]
 const PAD_SIZES: PackedStringArray = ["S", "M", "L"]
-const PAD_SIZE_FACTORS: PackedFloat32Array = [0.85, 1.0, 1.2]
+## Facteurs ≥ 1 : un bouton fait toujours au moins 64 pt (§7.3).
+const PAD_SIZE_FACTORS: PackedFloat32Array = [1.0, 1.15, 1.3]
 
 var touch_mode: String = "pad"        # "pad" (manette virtuelle) | "gestures"
 var pad_size: int = 1                 # index dans PAD_SIZES
@@ -47,7 +48,8 @@ func touch_enabled() -> bool:
 func _web_touch_device() -> bool:
 	if not OS.has_feature("web"):
 		return false
-	var coarse: Variant = JavaScriptBridge.eval("window.matchMedia('(pointer: coarse)').matches", true)
+	var coarse: Variant = JavaScriptBridge.eval(
+		"window.matchMedia('(pointer: coarse)').matches || location.search.indexOf('touch=1') >= 0", true)
 	return bool(coarse)
 
 

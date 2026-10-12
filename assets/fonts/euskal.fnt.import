@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://dp27h5rgyeul4"
+path="res://.godot/imported/euskal.fnt-f347c356fc8bc9fc2dcb9bb419e5a6a4.fontdata"
+
+[deps]
+
+source_file="res://assets/fonts/euskal.fnt"
+dest_files=["res://.godot/imported/euskal.fnt-f347c356fc8bc9fc2dcb9bb419e5a6a4.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=2

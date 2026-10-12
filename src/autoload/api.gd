@@ -71,3 +71,15 @@ func post_tower_score(fighter: String, difficulty: String, score: int) -> void:
 	call_api(HTTPClient.METHOD_POST, "/tower/score",
 		{"fighter": fighter, "difficulty": difficulty, "score": score},
 		func(_ok: bool, _code: int, _data: Variant) -> void: pass)
+
+
+## Envoie la carte de joueur au serveur (si le profil a rejoint un groupe).
+func sync_profile() -> void:
+	var p: Dictionary = Profiles.active()
+	if int(p.get("player_id", 0)) <= 0:
+		return
+	call_api(HTTPClient.METHOD_POST, "/profile", {
+		"fighter": str(p.get("fighter", "louis")), "costume": int(p.get("costume", 0)),
+		"banner": int(p.get("banner", 0)), "title": str(p.get("title", "")),
+		"emote": int(p.get("emote", 0)), "stats": p.get("stats", {}),
+	}, func(_ok: bool, _c: int, _d: Variant) -> void: pass)
