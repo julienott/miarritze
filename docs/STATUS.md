@@ -2,7 +2,15 @@
 
 Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
-## Phase atteinte : 5 ✅ (profils, menus, DA complète, audio) — Phase 6 en cours
+## Phase atteinte : 6 ✅ (en ligne) — Phase 7 en cours
+
+### Phase 6
+- Backend (`backend/`) : schéma migré (profils, présence, matchs, signaux, pyramide, télémétrie), routes §9.4 authentifiées, appariement au sein du groupe seulement, signalisation par polling, Elo K=32 seulement si les deux rapports concordent, revanches comptées, limites de débit, purge. Tests : `python3 tests/backend/api_test.py`.
+- Client : salon (plage, copains en miniature, défi, match rapide, classement), sélection en ligne (30 s, favori), tirage de map, mise en relation WebRTC (data channels négociés), session rollback (délai 1–4 selon RTT, prédiction, rollback ≤ 8, stall, redondance, checksums), forfait, rapports.
+- Tests : `test_netcode_*` (headless), `node tests/web/online_two.mjs` et `online_rematch.mjs` (deux pages + PHP local).
+- Capture : `docs/captures/phase6_online.png`.
+
+### Phase 5 (rappel)
 
 ### Phase 5
 - Profils locaux (4 max) : création (pseudo seul, filtré), choix, suppression confirmée ; carte de joueur (favori, costume, bannière, titre, emote) ; stats, txapelas, titres, costumes 2/3/4 débloqués (5 victoires / pyramide / Expert) ; rang de groupe.

@@ -16,6 +16,7 @@ func _initialize() -> void:
 		test_rollback, test_frame_data, test_chip_never_kills, test_combo_forced_knockdown,
 		test_timer_and_draw, test_wave_return_once, test_throw_and_tech, test_full_match_ends,
 		test_inputs_to_moves, test_fuzz_roster, test_reflect_projectile,
+		test_netcode_lossy, test_netcode_desync_detected, test_netcode_final_checksum,
 	]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
@@ -366,3 +367,81 @@ func test_reflect_projectile() -> void:
 			if pr.owner == 0 and pr.src == 1:
 				reflected = true
 	check(reflected, "la poêle n'a pas renvoyé l'espadrille")
+
+
+## Deux sessions rollback reliées par un réseau simulé (latence 1–6 ticks,
+## 15 % de pertes, désordre) : les deux sims doivent rester identiques.
+func _run_net(loss_permille: int, frames: int, corrupt: bool) -> Array:
+	var sa: FightSim = make_sim("louis", "maia", {"seed": 77})
+	var sb: FightSim = make_sim("louis", "maia", {"seed": 77})
+	var ra: RollbackSession = RollbackSession.new()
+	var rb: RollbackSession = RollbackSession.new()
+	ra.setup(sa, 0, 2, 77)
+	rb.setup(sb, 1, 2, 77)
+	var rng: XRng = XRng.new(4242)
+	var in_a: PackedInt32Array = random_inputs(3, frames + 20)
+	var in_b: PackedInt32Array = random_inputs(9, frames + 20)
+	var wire: Array = []   # [tick d'arrivée, destinataire 0/1, paquet]
+	var t: int = 0
+	var guard: int = 0
+	while (ra.frame < frames or rb.frame < frames) and guard < frames * 4:
+		guard += 1
+		t += 1
+		if corrupt and t == 300:
+			sb.f[0].health -= 1   # désynchronisation volontaire
+		var pa: PackedByteArray = ra.tick(in_a[mini(ra.frame, frames)]) if ra.frame < frames else ra._input_packet()
+		var pb: PackedByteArray = rb.tick(in_b[mini(rb.frame, frames)]) if rb.frame < frames else rb._input_packet()
+		var outgoing: Array = [[1, pa], [0, pb]]
+		for c: PackedByteArray in ra.take_check_packets():
+			outgoing.append([1, c])
+		for c: PackedByteArray in rb.take_check_packets():
+			outgoing.append([0, c])
+		for o: Array in outgoing:
+			if rng.chance(loss_permille) and (o[1] as PackedByteArray)[0] == 1:
+				continue
+			wire.append([t + 1 + rng.below(6), o[0], o[1]])
+		var keep: Array = []
+		for w: Array in wire:
+			if int(w[0]) <= t:
+				(ra if int(w[1]) == 0 else rb).receive(w[2])
+			else:
+				keep.append(w)
+		wire = keep
+	# Vidange : tout finit par arriver (redondance).
+	for i: int in 40:
+		for w: Array in wire:
+			(ra if int(w[1]) == 0 else rb).receive(w[2])
+		wire.clear()
+		var pa2: PackedByteArray = ra._input_packet()
+		var pb2: PackedByteArray = rb._input_packet()
+		rb.receive(pa2)
+		ra.receive(pb2)
+	return [sa, sb, ra, rb]
+
+
+func test_netcode_lossy() -> void:
+	var r: Array = _run_net(150, 900, false)
+	var sa: FightSim = r[0]
+	var sb: FightSim = r[1]
+	var ra: RollbackSession = r[2]
+	check(sa.frame == sb.frame, "frames différentes (%d / %d)" % [sa.frame, sb.frame])
+	check(sa.checksum() == sb.checksum(), "états différents après réseau à pertes")
+	check(ra.rollbacks > 10, "trop peu de rollbacks (%d)" % ra.rollbacks)
+	check(ra.max_rollback_seen <= RollbackSession.MAX_ROLLBACK, "rollback de plus de 8 frames (%d)" % ra.max_rollback_seen)
+	check(not ra.desync and not (r[3] as RollbackSession).desync, "fausse désynchronisation détectée")
+
+
+## Match complet en ligne : les deux sessions s'accordent sur la frame et le
+## checksum de fin, même si elles continuent à tourner ensuite.
+func test_netcode_final_checksum() -> void:
+	var r: Array = _run_net(100, 30000, false)
+	var ra: RollbackSession = r[2]
+	var rb: RollbackSession = r[3]
+	check(ra.final_frame >= 0 and rb.final_frame >= 0, "fin de match non détectée")
+	check(ra.final_frame == rb.final_frame and ra.final_checksum == rb.final_checksum,
+		"checksums finaux différents (%d/%d, %d/%d)" % [ra.final_frame, rb.final_frame, ra.final_checksum, rb.final_checksum])
+
+
+func test_netcode_desync_detected() -> void:
+	var r: Array = _run_net(0, 700, true)
+	check((r[2] as RollbackSession).desync or (r[3] as RollbackSession).desync, "désynchronisation non détectée par les checksums")

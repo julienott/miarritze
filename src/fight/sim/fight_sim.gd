@@ -1160,6 +1160,12 @@ func save_state() -> PackedByteArray:
 	return buf.data_array
 
 
+## Phase du match lue directement dans un état sérialisé (sans le charger).
+## Couplée à l'ordre d'écriture de save_state : frame, puis phase.
+static func phase_of_state(bytes: PackedByteArray) -> int:
+	return bytes.decode_s32(4) if bytes.size() >= 8 else -1
+
+
 func load_state(bytes: PackedByteArray) -> void:
 	var buf: StreamPeerBuffer = StreamPeerBuffer.new()
 	buf.data_array = bytes

@@ -22,3 +22,7 @@ Choix pris en mode autonome (SPEC §0.6, §0.8) : l'option la plus simple qui re
 | 2026-10-13 | Musique | Compositions originales dans des formes traditionnelles basques (fandango, arin-arin, zortziko, aurresku…), sans transcrire d'air précis faute de source vérifiable (`docs/MUSIC.md`). | Zéro risque de droits ; *Hegoak* exclu. |
 | 2026-10-13 | Encodage audio | OGG Vorbis via `soundfile` (le ffmpeg local manque `libvmaf`). | Dépendance Python ajoutée à la CI. |
 | 2026-10-13 | Fins illustrées | `rd_plus` 320×180 en img2img depuis une composition (stage maison + pose RD), affichées centrées (bandes sur les côtés en 16:9 large). | Agrandir ×1,2 casserait la grille de pixels. |
+| 2026-10-13 | Code de salle (§3.4) | Pas en v1 : seul le groupe permet de jouer en ligne. | Plus simple et cohérent avec le pilier « zéro inconnu ». |
+| 2026-10-13 | TURN | STUN Google seulement ; serveurs TURN ajoutables dans `backend/config.php` (`turn_servers`) sans recompiler. | §9.2 : à trancher sur mesure des échecs (`net_reports`). |
+| 2026-10-13 | Délai d'entrée | Mesuré une fois avant le combat (4 pings sur le canal ctrl), propre à chaque client. | Chaque client planifie ses propres entrées ; pas besoin d'accord. |
+| 2026-10-13 | Revanche | Nouveau match côté serveur (comptée à l'Elo), même map, nouvelle graine. | Revue Phase 6. |

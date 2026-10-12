@@ -14,7 +14,8 @@ final class Db
         if (self::$pdo !== null) {
             return self::$pdo;
         }
-        $path = $config['db_path'] ?? __DIR__ . '/../db/miarritze.sqlite';
+        // MIARRITZE_DB : base jetable pour les tests (php -S local).
+        $path = getenv('MIARRITZE_DB') ?: ($config['db_path'] ?? __DIR__ . '/../db/miarritze.sqlite');
         $dir = dirname($path);
         if (!is_dir($dir)) {
             mkdir($dir, 0775, true);
@@ -27,6 +28,12 @@ final class Db
         $schema = file_get_contents(__DIR__ . '/../db/schema.sql');
         if ($schema !== false) {
             $pdo->exec($schema);
+        }
+        // Migrations additives (colonnes ajoutées après la création de la table).
+        try {
+            $pdo->exec('ALTER TABLE matches ADD COLUMN rematch_of INTEGER');
+        } catch (PDOException $e) {
+            // colonne déjà présente
         }
         self::$pdo = $pdo;
         return $pdo;

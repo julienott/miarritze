@@ -24,6 +24,8 @@ var _stats: Array = [[2, 2, 2], [2, 2, 2]]
 var _locked: Array[bool] = [false, false]
 var _overlay: Control
 var _icons: Dictionary = {}
+var _countdown: float = -1.0
+var _count_label: Label
 
 
 func _ready() -> void:
@@ -44,7 +46,7 @@ func _ready() -> void:
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(shade)
 	var head: Label = UiKit.title({"tower": "PYRAMIDE DU PHARE", "versus": "VERSUS",
-		"training": "ENTRAÎNEMENT"}.get(mode, "CHOIX"))
+		"training": "ENTRAÎNEMENT", "online": "EN LIGNE"}.get(mode, "CHOIX"))
 	head.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	head.position.y = 4
 	add_child(head)
@@ -87,7 +89,32 @@ func _ready() -> void:
 		_refresh(p)
 	if _players == 1:
 		_refresh_cpu()
+	if mode == "online":
+		# Favori du profil présélectionné ; 30 s pour choisir (§3.4).
+		var fav: int = ids.find(str(Profiles.active().get("fighter", "louis")))
+		if fav >= 0:
+			_cursor[0] = fav
+			_costume[0] = int(Profiles.active().get("costume", 0))
+			_refresh(0)
+		_countdown = float(OnlineMode.PICK_SECONDS)
+		_count_label = UiKit.label("", 16, UiKit.C_GOLD)
+		_count_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		_count_label.position.y = 22
+		add_child(_count_label)
+		if not OnlineMode.qa.is_empty():
+			_countdown = 1.5
 
+
+
+func _process(delta: float) -> void:
+	if _countdown < 0.0 or _done[0]:
+		return
+	_countdown -= delta
+	_count_label.text = str(ceili(maxf(_countdown, 0.0)))
+	if _countdown <= 0.0:
+		if not _costume_ok(ids[_cursor[0]], _costume[0]):
+			_costume[0] = 0
+		_confirm(0)
 
 
 func _layout() -> void:
@@ -269,7 +296,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif _pressed(event, prefixes, ["_punch", "_accept"]):
 			_confirm(p)
 		elif _pressed(event, prefixes, ["_kick", "_cancel"]):
-			SceneRouter.goto(&"main_menu")
+			if mode == "online":
+				OnlineMode.leave()
+			else:
+				SceneRouter.goto(&"main_menu")
 		if moved:
 			_costume[p] = 0
 			AudioManager.sfx(&"ui_move")
@@ -308,6 +338,10 @@ func _proceed() -> void:
 		"training":
 			InputHub.set_solo()
 			SceneRouter.goto(&"fight", TrainingMode.fight_params(p1, _costume[0]))
+		"online":
+			OnlineMode.my_pick = {"fighter": p1, "costume": _costume[0],
+				"pseudo": str(Profiles.active().get("pseudo", "?")), "express": Settings.express_fights}
+			SceneRouter.goto(&"stage_select", {"mode": "online"})
 		_:
 			var p2: String = ids[_cursor[1]]
 			var c2: int = _costume[1]

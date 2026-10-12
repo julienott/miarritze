@@ -2,31 +2,26 @@
 declare(strict_types=1);
 
 /**
- * Validation côté serveur : pseudos, codes, épreuves, plausibilité des
- * scores. Les plafonds sont le miroir serveur de src/shared/config/balance.gd
- * — garder les deux en phase.
+ * Validation côté serveur (SPEC-BORROKA §9.4–9.5) : pseudos, codes, roster,
+ * stages, cartes de joueur, plausibilité des scores de pyramide.
+ * Miroir de src/fight/data/roster.gd et src/autoload/profiles.gd.
  */
 final class Validation
 {
-    /** Épreuves connues (mêmes identifiants que challenges.gd). */
-    public const CHALLENGES = [
-        'beach_run', 'surf', 'fishing', 'rock_crossing', 'espadrille', 'lighthouse',
+    public const FIGHTERS = [
+        'louis', 'maia', 'patxi', 'xabi', 'mattin', 'amaia', 'txomin', 'kaio',
+        'karramarro', 'ramuntxo', 'itsaso', 'peio', 'itsasargi',
     ];
-
-    /** Les 5 épreuves cœur (le cumul = somme de leurs best). */
-    public const CORE = [
-        'beach_run', 'surf', 'fishing', 'rock_crossing', 'espadrille',
+    public const STAGES = [
+        'grande_plage', 'cote_basques', 'port_pecheurs', 'rocher_vierge', 'port_vieux',
+        'halles', 'fronton', 'stade', 'aquarium', 'phare_sommet',
     ];
-
-    /** Plafond de plausibilité par épreuve (miroir de balance.gd). */
-    public const MAX_SCORE = [
-        'beach_run' => 100000,
-        'surf' => 100000,
-        'fishing' => 100000,
-        'rock_crossing' => 100000,
-        'espadrille' => 100000,
-        'lighthouse' => 100000,
-    ];
+    public const DIFFICULTIES = ['facile', 'normal', 'expert'];
+    public const TITLES = ['', 'debutant', 'txapeldun', 'expert', 'cote_basques', 'fronton', 'finisher', 'parfait', 'collection'];
+    /** 9 étages × (victoire + vie + temps) ×2 (Parfait) + finish : ≈ 45 000. */
+    public const MAX_TOWER_SCORE = 60000;
+    public const MAX_STATS_BYTES = 4096;
+    public const MAX_SIGNAL_BYTES = 16384;
 
     public static function isValidPseudo(string $pseudo): bool
     {
@@ -38,17 +33,41 @@ final class Validation
         return (bool) preg_match('/^[A-Z2-9]{4,8}$/', $code);
     }
 
-    public static function isValidChallenge(string $challenge): bool
+    public static function isFighter(string $id): bool
     {
-        return in_array($challenge, self::CHALLENGES, true);
+        return in_array($id, self::FIGHTERS, true);
     }
 
-    /** Score plausible : entier, positif, sous le plafond de l'épreuve. */
-    public static function isPlausibleScore(string $challenge, mixed $score): bool
+    public static function isStage(string $id): bool
     {
-        if (!is_int($score) || $score < 0) {
+        return in_array($id, self::STAGES, true);
+    }
+
+    public static function isPlausibleTowerScore(mixed $score): bool
+    {
+        return is_int($score) && $score >= 0 && $score <= self::MAX_TOWER_SCORE;
+    }
+
+    /**
+     * Costume débloqué de façon plausible d'après les stats déclarées (§5.4) :
+     * 2 → 5 victoires avec le perso, 3 → une pyramide, 4 → la pyramide en Expert.
+     */
+    public static function isPlausibleCostume(string $fighter, int $costume, array $stats): bool
+    {
+        if ($costume === 0) {
+            return true;
+        }
+        if ($costume < 0 || $costume > 3) {
             return false;
         }
-        return $score <= (self::MAX_SCORE[$challenge] ?? 0);
+        $wins = (int) (($stats['wins_by'] ?? [])[$fighter] ?? 0);
+        $towers = (int) (($stats['towers'] ?? [])[$fighter] ?? 0);
+        $expert = !empty(($stats['txapelas'] ?? [])[$fighter . '_expert']);
+        return match ($costume) {
+            1 => $wins >= 5 || $towers > 0,
+            2 => $towers > 0,
+            3 => $expert,
+            default => false,
+        };
     }
 }

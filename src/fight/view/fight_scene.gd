@@ -30,6 +30,26 @@ var _ui: CanvasLayer
 var _pause_box: Control
 var _training: TrainingOverlay
 var _touch: TouchControls
+## En ligne : session rollback + lien P2P (SPEC §8.6).
+var session: RollbackSession
+var _online: bool = false
+var _local_slot: int = 0
+var _net_icon: Label
+var _away_t: float = -1.0
+var _forfeit: int = -2
+var _recorded: bool = false
+var _stall_t: float = 0.0
+var _was_hidden: bool = false
+
+
+## Web : l'onglet passé en arrière-plan (visibilitychange) prévient l'adversaire.
+func _check_visibility(link: P2PLink) -> void:
+	if not OS.has_feature("web"):
+		return
+	var hidden: bool = bool(JavaScriptBridge.eval("document.hidden", true))
+	if hidden != _was_hidden:
+		_was_hidden = hidden
+		link.send_ctrl({"t": "away" if hidden else "back"})
 
 
 func _ready() -> void:
@@ -57,11 +77,47 @@ func _ready() -> void:
 		"training": bool(params.get("training", false)),
 	})
 	_build(def1, def2, c1, c2)
+	if str(params.get("mode", "")) == "online" and OnlineMode.link != null:
+		_setup_online()
 	var names: Array = params.get("names", [def1.display_name, def2.display_name])
 	_hud.names = PackedStringArray([str(names[0]).to_upper(), str(names[1]).to_upper()])
 	_hud.set_portraits([def1.id, def2.id], [c1, c2])
 	_sync_views(true)
 	_play_stage_music()
+
+
+func _setup_online() -> void:
+	_online = true
+	_local_slot = int(params.get("local_slot", 0))
+	session = RollbackSession.new()
+	session.setup(sim, _local_slot, int(params.get("delay", 2)), int(params.get("seed", 0)))
+	OnlineMode.link.ctrl_received.connect(_on_ctrl)
+	OnlineMode.link.failed.connect(func(_r: String) -> void:
+		if not sim.is_over():
+			_forfeit = _local_slot
+			_announcer.say("CONNEXION PERDUE", 2.0)
+			_end_timer = 2.5)
+	_net_icon = UiKit.label("~", 16, Color8(196, 232, 230))
+	_net_icon.position = Vector2(4, 48)
+	_net_icon.visible = false
+	_ui.add_child(_net_icon)
+
+
+func _on_ctrl(d: Dictionary) -> void:
+	match str(d.get("t", "")):
+		"away":
+			_away_t = 10.0
+		"back":
+			_away_t = -1.0
+
+
+func _notification(what: int) -> void:
+	if not _online:
+		return
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		OnlineMode.link.send_ctrl({"t": "away"})
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		OnlineMode.link.send_ctrl({"t": "back"})
 
 
 func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
@@ -122,8 +178,9 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 	if Settings.touch_enabled() and str(params.get("mode", "")) != "versus" \
 			and int((params.get("ai", [0, 0]) as Array)[0]) == 0:
 		_touch = TouchControls.new()
-		_touch.facing_getter = func() -> int: return sim.f[0].facing
-		_touch.meter_full_getter = func() -> bool: return sim.f[0].meter >= SimConst.METER_MAX
+		var me_slot: int = int(params.get("local_slot", 0))
+		_touch.facing_getter = func() -> int: return sim.f[me_slot].facing
+		_touch.meter_full_getter = func() -> bool: return sim.f[me_slot].meter >= SimConst.METER_MAX
 		ui.add_child(_touch)
 		InputHub.add_source(0, VirtualPadSource.new(_touch))
 	if str(params.get("mode", "")) != "online":
@@ -192,7 +249,9 @@ func _show_move_list() -> void:
 func _physics_process(_delta: float) -> void:
 	if paused or get_tree().paused:
 		return
-	if not sim.is_over() or _end_timer > 0.0:
+	if _online:
+		_online_tick()
+	elif not sim.is_over() or _end_timer > 0.0:
 		sim.step(InputHub.sample(0), InputHub.sample(1))
 		_consume_events()
 	_sync_views(false)
@@ -205,8 +264,53 @@ func _physics_process(_delta: float) -> void:
 			_camera.set_bias(0.0)
 	if _end_timer > 0.0:
 		_end_timer -= 1.0 / 60.0
-		if _end_timer <= 0.0:
+		# En ligne, on attend le checksum final confirmé (sauf forfait/désync).
+		if _end_timer <= 0.0 and _online and session.final_checksum < 0 and _forfeit < 0 and not session.desync:
+			_end_timer = 1.0 / 60.0
+		elif _end_timer <= 0.0:
 			_finish()
+
+
+func _online_tick() -> void:
+	var link: P2PLink = OnlineMode.link
+	if link == null or not is_instance_valid(link):
+		return
+	_check_visibility(link)
+	# Adversaire figé trop longtemps (onglet suspendu, réseau coupé) : forfait.
+	if session.stalled:
+		_stall_t += 1.0 / 60.0
+		if _stall_t > 12.0 and _end_timer < 0.0:
+			_forfeit = 1 - _local_slot
+			_announcer.say("FORFAIT", 2.0)
+			_end_timer = 2.5
+	else:
+		_stall_t = 0.0
+	for packet: PackedByteArray in link.poll_inputs():
+		session.receive(packet)
+	if not sim.is_over() or session.final_checksum < 0 or _end_timer > 0.0:
+		link.send_input(session.tick(InputHub.sample(0)))
+	else:
+		# Canal non fiable : on continue de renvoyer la dernière fenêtre
+		# d'entrées pour que l'adversaire confirme lui aussi la fin du match.
+		link.send_input(session._input_packet())
+	for c: PackedByteArray in session.take_check_packets():
+		link.send_input(c)
+	for ev: PackedInt32Array in session.take_events():
+		var key: int = (ev[0] << 12) | (ev[1] << 4) | (ev[2] + 1)
+		if not _seen.has(key):
+			_seen[key] = true
+			_on_event(ev)
+	_net_icon.visible = session.stalled
+	if session.desync and _end_timer < 0.0:
+		_announcer.say("MATCH NUL TECHNIQUE", 2.0)
+		_end_timer = 2.5
+	if _away_t > 0.0:
+		_away_t -= 1.0 / 60.0
+		_announcer.say("%s : %d" % [_hud.names[1 - _local_slot], ceili(_away_t)], 0.2, Color8(244, 198, 62), 8)
+		if _away_t <= 0.0 and _end_timer < 0.0:
+			_forfeit = 1 - _local_slot
+			_announcer.say("FORFAIT", 2.0)
+			_end_timer = 2.5
 
 
 func _sync_views(snap: bool) -> void:
@@ -332,6 +436,9 @@ func result() -> Dictionary:
 
 func _finish() -> void:
 	var res: Dictionary = result()
+	if _online:
+		_report_online(res)
+		return
 	match_finished.emit(res)
 	var on_end: Variant = params.get("on_end")
 	if on_end is Callable and (on_end as Callable).is_valid():
@@ -340,5 +447,33 @@ func _finish() -> void:
 		_leave()
 
 
+func _report_online(res: Dictionary, attempt: int = 0) -> void:
+	var winner: int = int(res.get("winner", -1))
+	if _forfeit >= 0:
+		winner = 1 - _forfeit
+	if session.desync:
+		winner = -1
+	Api.call_api(HTTPClient.METHOD_POST, "/match/report", {"match_id": int(OnlineMode.current.get("match_id", 0)),
+		"winner": winner, "checksum": session.final_checksum if _forfeit < 0 else 0,
+		"rounds": res.get("rounds", [0, 0])}, func(_ok: bool, _c: int, data: Variant) -> void:
+			print("online_report winner=%d checksum=%d final_frame=%d attempt=%d reponse=%s" % [winner,
+				session.final_checksum, session.final_frame, attempt, str(data)])
+			# Premier rapporteur : le verdict arrive quand l'autre a rapporté à son tour.
+			if data is Dictionary and str((data as Dictionary).get("state", "")) == "waiting" and attempt < 4:
+				get_tree().create_timer(1.5).timeout.connect(_report_online.bind(res, attempt + 1))
+				return
+			var rated: bool = data is Dictionary and bool((data as Dictionary).get("rated", false))
+			if winner >= 0 and not _recorded:
+				_recorded = true
+				var my_win: bool = winner == _local_slot
+				Profiles.record_fight(sim.defs[_local_slot].id, my_win, str(params.get("stage", "")),
+					my_win and int(res.get("finisher", 0)) != 0, my_win and bool(res.get("perfect", false)))
+			SceneRouter.goto(&"results", {"mode": "online", "result": res, "fight": params,
+				"rated": rated, "local_slot": _local_slot, "desync": session.desync, "rollbacks": session.rollbacks}))
+
+
 func _leave() -> void:
+	if _online:
+		OnlineMode.leave()
+		return
 	SceneRouter.goto(StringName(str(params.get("return_to", "title"))))

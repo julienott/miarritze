@@ -21,6 +21,8 @@ var _SCENES: Dictionary = {
 	&"settings": "res://src/ui/settings/settings.tscn",
 	&"profile_select": "res://src/ui/profile_select/profile_select.tscn",
 	&"profile_edit": "res://src/ui/profile_edit/profile_edit.tscn",
+	&"lobby": "res://src/ui/lobby/lobby.tscn",
+	&"online_connect": "res://src/ui/online_connect/online_connect.tscn",
 }
 
 const _IRIS_SHADER: String = """

@@ -28,6 +28,8 @@ func _ready() -> void:
 	var rnd: Button = UiKit.button("Aléatoire", _pick.bind(""), 120)
 	grid.add_child(rnd)
 	first.grab_focus.call_deferred()
+	if str(_params.get("mode", "")) == "online" and not OnlineMode.qa.is_empty():
+		get_tree().create_timer(0.8).timeout.connect(_pick.bind("grande_plage"))
 	var rounds: Label = UiKit.label("Meilleur des 3 rounds", 8, UiKit.C_GOLD)
 	rounds.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	rounds.position.y = -16
@@ -37,6 +39,12 @@ func _ready() -> void:
 func _pick(id: String) -> void:
 	if id == "":
 		id = Roster.STAGES[randi() % (Roster.STAGES.size() - 1)]
+	if str(_params.get("mode", "")) == "online":
+		# Chacun propose ; le serveur tire entre les deux propositions (§3.4).
+		Api.call_api(HTTPClient.METHOD_POST, "/match/stage",
+			{"match_id": int(OnlineMode.current.get("match_id", 0)), "stage": id},
+			func(_ok: bool, _c: int, _d: Variant) -> void: SceneRouter.goto(&"online_connect"))
+		return
 	var params: Dictionary = _params.duplicate()
 	params["stage"] = id
 	params["ai"] = [0, 0]
@@ -48,4 +56,7 @@ func _pick(id: String) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel"):
-		SceneRouter.goto(&"fighter_select", {"mode": "versus"})
+		if str(_params.get("mode", "")) == "online":
+			OnlineMode.leave()
+		else:
+			SceneRouter.goto(&"fighter_select", {"mode": "versus"})

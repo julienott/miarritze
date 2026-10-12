@@ -25,6 +25,9 @@ func _route() -> void:
 		SceneRouter.goto(&"fight", {"p1": "louis", "p2": "maia", "stage": "grande_plage",
 			"ai": [0, AiBrain.SKILL_EASY], "rounds": 3, "return_to": "title"})
 		return
+	if target.begins_with("online_qa"):
+		_online_qa(target)
+		return
 	if target == "vs":
 		SceneRouter.goto(&"versus_splash", {"p1": "patxi", "p2": "xabi", "c1": 0, "c2": 1,
 			"stage": "port_pecheurs", "mode": "qa"})
@@ -42,3 +45,20 @@ func _route() -> void:
 		SceneRouter.goto(StringName(target))
 	else:
 		SceneRouter.goto(&"title")
+
+
+
+## QA en ligne (Playwright à deux pages) : #scene=online_qa&pid=1&sec=…&code=…&pseudo=…&role=invite&bot=1
+func _online_qa(spec: String) -> void:
+	var args: Dictionary = {}
+	for part: String in spec.split("&"):
+		var kv: PackedStringArray = part.split("=")
+		if kv.size() == 2:
+			args[kv[0]] = kv[1].uri_decode()
+	if Profiles.profiles.is_empty() or str(Profiles.active().get("pseudo", "")) != str(args.get("pseudo", "")):
+		Profiles.create(str(args.get("pseudo", "Testeur")))
+	Profiles.update_active({"player_id": int(args.get("pid", "0")), "secret": str(args.get("sec", "")),
+		"group_code": str(args.get("code", "")), "fighter": str(args.get("fighter", "louis")), "tutorial_done": true})
+	OnlineMode.qa = {"role": str(args.get("role", "")), "bot": args.get("bot", "0") == "1",
+		"rematch": args.get("rematch", "0") == "1"}
+	SceneRouter.goto(&"lobby")

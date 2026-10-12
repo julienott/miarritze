@@ -34,9 +34,72 @@ func _ready() -> void:
 	stats.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	stats.position.y = 34
 	add_child(stats)
+	if str(params.get("mode", "")) == "online":
+		_online_buttons(params)
+		return
 	UiKit.menu_column(self, [
 		UiKit.button("Revanche", VersusMode.rematch),
 		UiKit.button("Changer de combattant", func() -> void:
 			SceneRouter.goto(&"fighter_select", {"mode": "versus"}), 150),
 		UiKit.button("Menu", func() -> void: SceneRouter.goto(&"main_menu")),
 	], 80)
+
+
+# ------------------------------------------------------------------ en ligne
+
+var _rematch_label: Label
+var _my_vote: bool = false
+
+
+func _online_buttons(params: Dictionary) -> void:
+	var extra: String = "Classement mis à jour !" if bool(params.get("rated", false)) else \
+		("Match nul technique : pas de points" if bool(params.get("desync", false)) else "")
+	_rematch_label = UiKit.label(extra, 8, UiKit.C_LINEN)
+	_rematch_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_rematch_label.position.y = 60
+	add_child(_rematch_label)
+	UiKit.menu_column(self, [
+		UiKit.button("Revanche ?", _vote_rematch),
+		UiKit.button("Retour au salon", OnlineMode.leave),
+	], 84)
+	if OnlineMode.link != null and is_instance_valid(OnlineMode.link):
+		OnlineMode.link.ctrl_received.connect(_on_ctrl)
+		OnlineMode.link.failed.connect(func(_r: String) -> void: _rematch_label.text = "Ton copain est parti")
+	if OnlineMode.rematch_votes.get("them", false):
+		_rematch_label.text = "Ton copain veut une revanche !"
+	if bool(OnlineMode.qa.get("rematch", false)):
+		_vote_rematch()
+
+
+func _on_ctrl(d: Dictionary) -> void:
+	if str(d.get("t", "")) == "rematch":
+		_rematch_label.text = "Ton copain veut une revanche !"
+		_try_rematch.call_deferred()
+
+
+func _vote_rematch() -> void:
+	if _my_vote:
+		return
+	_my_vote = true
+	OnlineMode.rematch_votes["me"] = true
+	OnlineMode.link.send_ctrl({"t": "rematch"})
+	_rematch_label.text = "En attente de ton copain…"
+	_try_rematch()
+
+
+## Les deux doivent accepter ; la graine avance de 1 des deux côtés.
+func _try_rematch() -> void:
+	if not (OnlineMode.rematch_votes.get("me", false) and OnlineMode.rematch_votes.get("them", false)):
+		return
+	OnlineMode.rematch_votes = {}
+	# Revanche = nouveau match serveur (compté), même map, nouvelle graine.
+	_rematch_label.text = "Revanche !"
+	Api.call_api(HTTPClient.METHOD_POST, "/match/rematch", {"match_id": int(OnlineMode.current.get("match_id", 0))},
+		func(ok: bool, _c: int, data: Variant) -> void:
+			if not ok or not data is Dictionary or not (data as Dictionary).get("match") is Dictionary:
+				_rematch_label.text = "Revanche impossible"
+				return
+			var m: Dictionary = (data as Dictionary)["match"]
+			OnlineMode.current["match_id"] = int(m.get("match_id", 0))
+			OnlineMode.current["seed"] = int(m.get("seed", 1))
+			SceneRouter.goto(&"fight", OnlineMode.fight_params()))
