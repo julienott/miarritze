@@ -20,3 +20,7 @@
 {"at": "2026-10-12T23:31:06", "label": "stage/port_pecheurs/widen_l", "style": "edit:outpainting", "size": "", "num_images": 1, "balance_cost": 0.18, "cumul": 3.05, "task_id": "fc1aa7ae-781e-5e16-92e7-149295441593"}
 {"at": "2026-10-12T23:31:32", "label": "stage/port_pecheurs/widen_r", "style": "edit:outpainting", "size": "", "num_images": 1, "balance_cost": 0.18, "cumul": 3.23, "task_id": "2444988c-3e4b-5dca-9de1-887e8dd05120"}
 {"at": "2026-10-12T23:32:08", "label": "stage/cote_basques/widen_r", "style": "edit:outpainting", "size": "", "num_images": 1, "balance_cost": 0.18, "cumul": 3.41, "task_id": "2d2d150d-3aa8-5cdf-afb2-d9aab82074aa"}
+{"at": "2026-10-13T00:10:38", "label": "louis/ending", "style": "rd_plus__default", "size": "320x180", "num_images": 1, "balance_cost": 0.06, "cumul": 3.47, "task_id": "c301775b-c2f9-46d7-bfd5-35d277749c64"}
+{"at": "2026-10-13T00:10:56", "label": "maia/ending", "style": "rd_plus__default", "size": "320x180", "num_images": 1, "balance_cost": 0.06, "cumul": 3.53, "task_id": "e0b4d2c6-0edf-40ef-ae36-4cf63c3e9fac"}
+{"at": "2026-10-13T00:11:09", "label": "patxi/ending", "style": "rd_plus__default", "size": "320x180", "num_images": 1, "balance_cost": 0.06, "cumul": 3.59, "task_id": "f492901b-ee78-4d5d-8798-8011eca9d5b1"}
+{"at": "2026-10-13T00:11:22", "label": "xabi/ending", "style": "rd_plus__default", "size": "320x180", "num_images": 1, "balance_cost": 0.06, "cumul": 3.65, "task_id": "3ad3edd1-d333-4959-b497-9411deaec250"}

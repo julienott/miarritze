@@ -8,6 +8,7 @@ func _ready() -> void:
 	var result: Dictionary = params.get("result", {})
 	var fight: Dictionary = params.get("fight", {})
 	UiKit.backdrop(self, "bg_beach", 0.35)
+	AudioManager.play_music(&"victory")
 	var w: float = get_viewport_rect().size.x
 	var winner: int = int(result.get("winner", -1))
 	for p: int in 2:
@@ -27,6 +28,9 @@ func _ready() -> void:
 	var stats: Label = UiKit.label("Rounds %d - %d\n%s%s" % [int(rounds[0]), int(rounds[1]),
 		"PARFAIT !\n" if bool(result.get("perfect", false)) else "",
 		"Finish réussi !" if int(result.get("finisher", 0)) != 0 else ""], 8, UiKit.C_GOLD)
+	var unlocks: Array = params.get("unlocks", [])
+	if not unlocks.is_empty():
+		stats.text += "\nDébloqué : " + ", ".join(unlocks)
 	stats.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	stats.position.y = 34
 	add_child(stats)

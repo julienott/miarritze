@@ -35,7 +35,7 @@ func _ready() -> void:
 
 ## Lettrage basque ×2 (échelle entière) pour les grandes annonces, ×1 sinon.
 func say(text: String, duration: float = 1.0, color: Color = C_RED, size_px: int = 24) -> void:
-	_label.text = text.to_upper()
+	_label.text = UiKit.euskal_text(text)
 	_label.add_theme_color_override(&"font_color", color.lightened(0.1))
 	_label.remove_theme_constant_override(&"outline_size")
 	_label.visible = true

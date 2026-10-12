@@ -26,12 +26,30 @@ var _SCENES: Dictionary = {
 const _IRIS_SHADER: String = """
 shader_type canvas_item;
 uniform float radius = 1.5;
+// mode 0 : iris rond ; mode 1 : vague qui balaie l'écran (entrée en combat)
+uniform int mode = 0;
 void fragment() {
 	vec2 uv = UV - vec2(0.5);
 	uv.x *= 16.0 / 9.0;
-	// bord en escalier : l'iris est pixelisé comme le reste du jeu
+	// bord en escalier : la transition est pixelisée comme le reste du jeu
 	uv = floor(uv * 40.0) / 40.0;
-	COLOR = length(uv) < radius ? vec4(0.0) : vec4(0.09, 0.06, 0.10, 1.0);
+	if (mode >= 1) {
+		vec2 p = floor(UV * vec2(96.0, 54.0)) / vec2(96.0, 54.0);
+		vec3 sea = mix(vec3(0.13, 0.47, 0.6), vec3(0.09, 0.31, 0.46), p.y);
+		if (mode == 1) {
+			// entrée : le front de la vague avance de gauche à droite
+			float edge = (1.5 - radius) / 1.5 * 1.4 - 0.2 + 0.06 * sin(p.y * 18.0 + radius * 9.0);
+			vec3 col = (p.x < edge - 0.03) ? sea : vec3(0.92, 0.98, 0.96);
+			COLOR = p.x < edge ? vec4(col, 1.0) : vec4(0.0);
+		} else {
+			// sortie : l'arrière de la vague découvre l'écran par la gauche
+			float tail = radius / 1.5 * 1.4 - 0.2 + 0.05 * sin(p.y * 15.0 - radius * 7.0);
+			vec3 col = (p.x < tail + 0.03) ? vec3(0.92, 0.98, 0.96) : sea;
+			COLOR = p.x > tail ? vec4(col, 1.0) : vec4(0.0);
+		}
+	} else {
+		COLOR = length(uv) < radius ? vec4(0.0) : vec4(0.09, 0.06, 0.10, 1.0);
+	}
 }
 """
 
@@ -113,12 +131,23 @@ func _change_scene(scene_path: String) -> void:
 		_pending_path = scene_path
 		return
 	_transitioning = true
-	await _iris_to(0.0, 0.32)
+	var wave: bool = scene_path == _SCENES.get(&"fight", "")
+	(_iris.material as ShaderMaterial).set_shader_parameter("mode", 1 if wave else 0)
+	await _iris_to(0.0, 0.42 if wave else 0.32)
 	var error: Error = get_tree().change_scene_to_file(scene_path)
 	if error != OK:
 		push_error("SceneRouter: échec du changement de scène vers %s (%s)" % [scene_path, error])
 	await get_tree().process_frame
-	await _iris_to(1.5, 0.38)
+	if wave:
+		# La vague repart : on poursuit le balayage vers la droite.
+		var mat: ShaderMaterial = _iris.material as ShaderMaterial
+		mat.set_shader_parameter("mode", 2)
+		mat.set_shader_parameter("radius", 0.0)
+		await _iris_to(1.5, 0.42)
+		mat.set_shader_parameter("mode", 0)
+		mat.set_shader_parameter("radius", 1.5)
+	else:
+		await _iris_to(1.5, 0.38)
 	_transitioning = false
 	if _pending_path != "":
 		var next_path: String = _pending_path

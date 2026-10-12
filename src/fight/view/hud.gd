@@ -23,6 +23,9 @@ var _combo_t: PackedInt32Array = PackedInt32Array([0, 0])
 var _font: Font
 var _portraits: Array[PortraitView] = []
 var _txapela: Texture2D
+var _frame_bar: StyleBoxTexture
+var _frame_portrait: StyleBoxTexture
+const PORTRAIT: float = 40.0
 
 
 func _ready() -> void:
@@ -32,9 +35,26 @@ func _ready() -> void:
 	_font = load("res://assets/fonts/press_start_2p.ttf")
 	if ResourceLoader.exists("res://assets/ui/icon_txapela.png"):
 		_txapela = load("res://assets/ui/icon_txapela.png")
+	_frame_bar = _ninepatch("frame_lifebar.png", [4, 3, 4, 3])
+	_frame_portrait = _ninepatch("frame_portrait.png", [5, 5, 5, 5])
 
 
 ## Portraits aux extrémités des barres de vie (40×40 si disponibles).
+func _ninepatch(file: String, m: Array) -> StyleBoxTexture:
+	var path: String = "res://assets/ui/" + file
+	if not ResourceLoader.exists(path):
+		return null
+	var sb: StyleBoxTexture = StyleBoxTexture.new()
+	sb.texture = load(path)
+	sb.texture_margin_left = m[0]
+	sb.texture_margin_top = m[1]
+	sb.texture_margin_right = m[2]
+	sb.texture_margin_bottom = m[3]
+	sb.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+	sb.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+	return sb
+
+
 func set_portraits(ids: Array, costumes: Array) -> void:
 	_portraits.clear()
 	for p: int in 2:
@@ -50,11 +70,11 @@ func set_portraits(ids: Array, costumes: Array) -> void:
 func _place_portraits() -> void:
 	for p: int in _portraits.size():
 		var face: PortraitView = _portraits[p]
-		var sz: Vector2 = face.texture.get_size() if face.region_enabled == false else face.region_rect.size
-		var scale_f: float = 1.0 if sz.x <= 28.0 else 0.5
-		face.scale = Vector2(scale_f, scale_f)
-		var w: float = sz.x * scale_f
-		face.position = Vector2(3.0 if p == 0 else size.x - 3.0 - w, 3.0)
+		var sz: Vector2 = face.texture.get_size()
+		face.scale = Vector2.ONE
+		var box_x: float = 3.0 if p == 0 else size.x - 3.0 - PORTRAIT
+		face.position = Vector2(box_x + floorf((PORTRAIT - sz.x) * 0.5), 3.0 + floorf((PORTRAIT - sz.y) * 0.5))
+		face.z_index = 1
 
 
 func show_combo(attacker: int, hits: int) -> void:
@@ -80,7 +100,11 @@ func _draw() -> void:
 	if sim == null:
 		return
 	var w: float = size.x
-	var inset: float = 26.0 if not _portraits.is_empty() else 0.0
+	var inset: float = PORTRAIT + 4.0 if not _portraits.is_empty() else 0.0
+	for p2: int in _portraits.size():
+		if _frame_portrait != null:
+			var bx: float = 3.0 if p2 == 0 else w - 3.0 - PORTRAIT
+			draw_style_box(_frame_portrait, Rect2(bx - 2, 1, PORTRAIT + 4, PORTRAIT + 4))
 	var bar_w: float = floorf(w * 0.5) - 28.0 - inset
 	for p: int in 2:
 		var me: FighterState = sim.f[p]
@@ -93,7 +117,7 @@ func _draw() -> void:
 			_draw_txapela(Vector2(cx, 40), r < me.rounds)
 		var mw: float = 3.0 * 22.0
 		var mx: float = 6.0 if p == 0 else w - 6.0 - mw
-		_draw_meter(Rect2(mx, size.y - 12.0, mw, 6), me.meter, p == 1)
+		_draw_meter(Rect2(mx, size.y - 13.0, mw, 8), me.meter, p == 1)
 		if _combo_t[p] > 0:
 			var cxp: float = 8.0 if p == 0 else w - 8.0 - _text_w(_combo_text[p])
 			_text(Vector2(cxp, 70), _combo_text[p], C_GOLD)
@@ -101,9 +125,9 @@ func _draw() -> void:
 
 
 func _draw_life(r: Rect2, ratio: float, lag: float, mirror: bool) -> void:
-	draw_rect(r.grow(2), C_OUTLINE)
-	draw_rect(r.grow(1), C_WOOD)
-	draw_rect(Rect2(r.position.x, r.position.y + r.size.y - 1, r.size.x, 1).grow_individual(1, 0, 1, 1), C_WOOD_DARK)
+	if _frame_bar == null:
+		draw_rect(r.grow(2), C_OUTLINE)
+		draw_rect(r.grow(1), C_WOOD)
 	draw_rect(r, C_DARK)
 	var lag_w: float = floorf(r.size.x * clampf(lag, 0.0, 1.0))
 	var w: float = floorf(r.size.x * clampf(ratio, 0.0, 1.0))
@@ -116,15 +140,20 @@ func _draw_life(r: Rect2, ratio: float, lag: float, mirror: bool) -> void:
 		draw_rect(Rect2(r.position.x, r.position.y, lag_w, r.size.y), C_LINEN)
 		draw_rect(Rect2(r.position.x, r.position.y, w, r.size.y), color)
 		draw_rect(Rect2(r.position.x, r.position.y, w, 2), color.lightened(0.25))
-	# rivets
-	for rx: float in [r.position.x - 1, r.end.x]:
-		draw_rect(Rect2(rx, r.position.y + 3, 1, 1), C_GOLD)
+	if _frame_bar != null:
+		draw_style_box(_frame_bar, r.grow_individual(4, 3, 4, 3))
+	else:
+		for rx: float in [r.position.x - 1, r.end.x]:
+			draw_rect(Rect2(rx, r.position.y + 3, 1, 1), C_GOLD)
 
 
 func _draw_txapela(c: Vector2, won: bool) -> void:
 	if _txapela != null:
 		var tex_pos: Vector2 = c - Vector2(8, 10)
-		draw_texture(_txapela, tex_pos, Color(1, 1, 1, 1.0 if won else 0.3))
+		if won:
+			draw_texture(_txapela, tex_pos)
+		else:
+			draw_texture(_txapela, tex_pos, Color(0.25, 0.2, 0.28, 0.85))
 		return
 	var col: Color = C_RED if won else C_DARK
 	draw_rect(Rect2(c.x - 3, c.y - 2, 7, 3), C_OUTLINE)
@@ -134,18 +163,26 @@ func _draw_txapela(c: Vector2, won: bool) -> void:
 
 
 func _draw_meter(r: Rect2, meter: int, mirror: bool) -> void:
+	# 3 segments en vagues : la mer monte dans chaque segment, crête d'écume
+	# quand il est plein (SPEC §10.5).
 	var seg_w: float = floorf(r.size.x / 3.0)
+	var t: float = Time.get_ticks_msec() / 1000.0
 	for i: int in 3:
 		var sx: float = r.position.x + (i * seg_w if not mirror else (2 - i) * seg_w)
 		var seg: Rect2 = Rect2(sx + 1, r.position.y, seg_w - 2, r.size.y)
 		draw_rect(seg.grow(1), C_OUTLINE)
 		draw_rect(seg, C_DARK)
 		var fill: float = clampf(float(meter - i * SimConst.METER_SEGMENT) / SimConst.METER_SEGMENT, 0.0, 1.0)
+		if fill <= 0.0:
+			continue
 		var fw: float = floorf(seg.size.x * fill)
-		var fx: float = seg.position.x if not mirror else seg.end.x - fw
-		draw_rect(Rect2(fx, seg.position.y, fw, seg.size.y), C_SEA if fill < 1.0 else C_FOAM)
-		if fill >= 1.0:
-			draw_rect(Rect2(fx, seg.position.y, fw, 1), C_LINEN)
+		var x0: float = seg.position.x if not mirror else seg.end.x - fw
+		for x: int in int(fw):
+			var px: float = x0 + x
+			var crest: int = int(round(sin(px * 0.7 + t * 4.0) * 1.0))
+			var top: float = seg.position.y + 1 + crest
+			draw_rect(Rect2(px, top, 1, seg.end.y - top), C_SEA)
+			draw_rect(Rect2(px, top, 1, 1), C_FOAM if fill >= 1.0 else C_SEA.lightened(0.3))
 
 
 func _draw_timer(c: Vector2) -> void:

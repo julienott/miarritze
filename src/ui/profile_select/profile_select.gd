@@ -50,15 +50,27 @@ func _show_delete() -> void:
 	_clear()
 	var buttons: Array = []
 	for i: int in Profiles.profiles.size():
-		buttons.append(UiKit.button("Supprimer %s" % str(Profiles.profiles[i].get("pseudo", "?")), func() -> void:
+		buttons.append(UiKit.button("Supprimer %s" % str(Profiles.profiles[i].get("pseudo", "?")),
+			_confirm_delete.bind(i), 200))
+	buttons.append(UiKit.button("Annuler", _show_list, 200))
+	_box = UiKit.menu_column(self, buttons, 40)
+	_box.position.x -= 30
+
+
+## Confirmation : un enfant ne doit pas effacer le profil de son frère par erreur.
+func _confirm_delete(i: int) -> void:
+	_clear()
+	var pseudo: String = str(Profiles.profiles[i].get("pseudo", "?"))
+	_box = UiKit.menu_column(self, [
+		UiKit.button("Non, garder %s" % pseudo, _show_list, 220),
+		UiKit.button("Oui, effacer %s pour toujours" % pseudo, func() -> void:
 			Profiles.remove(i)
 			if Profiles.profiles.is_empty():
 				_show_create(true)
 			else:
-				_show_list(), 200))
-	buttons.append(UiKit.button("Annuler", _show_list, 200))
-	_box = UiKit.menu_column(self, buttons, 40)
-	_box.position.x -= 30
+				_show_list(), 220),
+	], 60)
+	_box.position.x -= 40
 
 
 func _show_create(first: bool) -> void:
@@ -70,6 +82,7 @@ func _show_create(first: bool) -> void:
 	_box.custom_minimum_size = Vector2(200, 0)
 	add_child(_box)
 	_box.add_child(UiKit.label("Ton pseudo (pas ton vrai nom !)", 8, UiKit.C_GOLD))
+	_box.add_child(UiKit.label("Lettres et chiffres, sans espace", 8, UiKit.C_LINEN))
 	var edit: LineEdit = LineEdit.new()
 	edit.max_length = 15
 	edit.placeholder_text = "Pseudo"

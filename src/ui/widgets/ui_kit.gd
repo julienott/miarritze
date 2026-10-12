@@ -43,9 +43,21 @@ const EUSKAL: String = "res://assets/fonts/euskal_outline.fnt"
 
 
 ## Titre de page : lettrage basque (euskal letra, police bitmap 16 px).
+## Lettres absentes de la police basque → équivalent sans diacritique.
+const EUSKAL_FALLBACK: Dictionary = {"Ï": "I", "Î": "I", "Ë": "E", "Ê": "E", "Ü": "U", "Û": "U",
+	"Ù": "U", "Ö": "O", "Ô": "O", "Â": "A", "Ä": "A", "Œ": "OE", "·": "."}
+
+
+static func euskal_text(text: String) -> String:
+	var t: String = text.to_upper()
+	for k: String in EUSKAL_FALLBACK:
+		t = t.replace(k, EUSKAL_FALLBACK[k])
+	return t
+
+
 static func title(text: String, color: Color = C_RED) -> Label:
 	var l: Label = Label.new()
-	l.text = text.to_upper()
+	l.text = euskal_text(text)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if ResourceLoader.exists(EUSKAL):
 		l.add_theme_font_override(&"font", load(EUSKAL))

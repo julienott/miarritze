@@ -18,6 +18,12 @@ var _info: Array[Label] = []
 var _grid: Control
 var _picking_difficulty: bool = false
 var _font: Font
+var _stage_bg: Sprite2D
+var _names: Array[Label] = []
+var _stats: Array = [[2, 2, 2], [2, 2, 2]]
+var _locked: Array[bool] = [false, false]
+var _overlay: Control
+var _icons: Dictionary = {}
 
 
 func _ready() -> void:
@@ -28,21 +34,38 @@ func _ready() -> void:
 	ids = Roster.FIGHTERS.duplicate()
 	if bool(Profiles.active().get("unlocks", {}).get("boss", false)) or OS.get_cmdline_user_args().has("--unlock-all"):
 		ids.append(Roster.BOSS)
-	UiKit.backdrop(self, "bg_hub", 0.45)
+	_stage_bg = Sprite2D.new()
+	_stage_bg.centered = false
+	_stage_bg.modulate = Color(0.55, 0.55, 0.65)
+	add_child(_stage_bg)
+	var shade: ColorRect = ColorRect.new()
+	shade.color = Color(0.09, 0.06, 0.1, 0.35)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(shade)
 	var head: Label = UiKit.title({"tower": "PYRAMIDE DU PHARE", "versus": "VERSUS",
 		"training": "ENTRAÎNEMENT"}.get(mode, "CHOIX"))
 	head.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	head.position.y = 10
-	head.add_theme_font_size_override(&"font_size", 8)
+	head.position.y = 4
 	add_child(head)
+	_overlay = Control.new()
+	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_overlay.z_index = 3
+	_overlay.draw.connect(_draw_overlay)
+	for icon: String in ["punch", "espadrille", "lauburu", "lock", "star"]:
+		var ip: String = "res://assets/ui/icon_%s.png" % icon
+		if ResourceLoader.exists(ip):
+			_icons[icon] = load(ip)
 	_grid = Control.new()
 	_grid.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	add_child(_grid)
 	_grid.draw.connect(_draw_grid)
 	_build_cells()
+	add_child(_overlay)
 	for p: int in 2:
 		var info: Label = UiKit.label("", 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT if p == 0 else HORIZONTAL_ALIGNMENT_RIGHT)
-		info.size = Vector2(130, 40)
+		info.size = Vector2(150, 30)
 		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		add_child(info)
 		_info.append(info)
@@ -74,7 +97,7 @@ func _layout() -> void:
 	for p: int in 2:
 		if _previews[p] != null:
 			_previews[p].position = Vector2(48 if p == 0 else w - 48, 204)
-		_info[p].position = Vector2(4 if p == 0 else w - 134, 30)
+		_info[p].position = Vector2(4 if p == 0 else w - 154, 46)
 	var ok: Node = get_node_or_null("OkButton")
 	if ok != null:
 		(ok as Control).position = Vector2(w - 52, 4)
@@ -121,11 +144,21 @@ func _refresh(p: int) -> void:
 	add_child(_previews[p])
 	var data: Dictionary = FighterDb.load_json(id)
 	var stats: Dictionary = data.get("stats", {})
-	var bars: String = "Puissance %s\nVitesse   %s\nPortée    %s" % [
-		_bar(int(stats.get("power", 2))), _bar(int(stats.get("speed", 2))), _bar(int(stats.get("reach", 2)))]
-	var lock: String = "" if _costume_ok(id, _costume[p]) else "  (verrouillé)"
-	_info[p].text = "%s\n%s\nCostume %d%s\n%s" % [str(data.get("name", id)).to_upper(),
-		str(data.get("title", "")), _costume[p] + 1, lock, bars]
+	_stats[p] = [int(stats.get("power", 2)), int(stats.get("speed", 2)), int(stats.get("reach", 2))]
+	_locked[p] = not _costume_ok(id, _costume[p])
+	_info[p].text = "%s\nCostume %d" % [str(data.get("title", "")), _costume[p] + 1]
+	_overlay.queue_redraw()
+	while _names.size() <= p:
+		var nl: Label = UiKit.title("")
+		nl.size = Vector2(150, 18)
+		add_child(nl)
+		_names.append(nl)
+	_names[p].text = UiKit.euskal_text(str(data.get("name", id)))
+	_names[p].horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if p == 0 else HORIZONTAL_ALIGNMENT_RIGHT
+	# Nom en lettrage basque, au-dessus de la tête du grand aperçu.
+	_names[p].position = Vector2(4 if p == 0 else get_viewport_rect().size.x - 154, 28)
+	if p == 0:
+		_show_home_stage(id)
 	_layout()
 	_grid.queue_redraw()
 
@@ -137,6 +170,48 @@ func _refresh_cpu() -> void:
 			_previews[1] = UiKit.fighter_preview(Roster.DUMMY, 0, "idle", -1)
 			add_child(_previews[1])
 			_layout()
+
+
+## Stage maison du perso en fond (assombri), sinon un ancien décor.
+func _show_home_stage(id: String) -> void:
+	var stage: String = Roster.home_stage(id).replace("_soir", "").replace("_crepuscule", "")
+	var path: String = "res://assets/stages/%s/far_v_0.png" % stage
+	if not ResourceLoader.exists(path):
+		path = "res://assets/sprites/%s_0.png" % str(StageView.FALLBACK_BG.get(stage, "bg_beach"))
+		if not ResourceLoader.exists(path):
+			path = "res://assets/sprites/bg_beach_0.png"
+	var img: Image = (load(path) as Texture2D).get_image()
+	if img.is_compressed():
+		img.decompress()
+	var small: Vector2i = Vector2i(maxi(img.get_width() / 4, 1), maxi(img.get_height() / 4, 1))
+	img.resize(small.x, small.y, Image.INTERPOLATE_BILINEAR)
+	img.resize(small.x * 4, small.y * 4, Image.INTERPOLATE_BILINEAR)
+	_stage_bg.texture = ImageTexture.create_from_image(img)
+	var w: float = get_viewport_rect().size.x
+	var f: float = maxf(w / _stage_bg.texture.get_width(), 216.0 / _stage_bg.texture.get_height())
+	_stage_bg.scale = Vector2(f, f)
+	_stage_bg.position = Vector2((w - _stage_bg.texture.get_width() * f) * 0.5, 0)
+
+
+## Archétype en 3 jauges d'étoiles + verrou de costume (dessin par-dessus).
+func _draw_overlay() -> void:
+	var w: float = get_viewport_rect().size.x
+	var labels: PackedStringArray = ["Puissance", "Vitesse", "Portée"]
+	for p: int in (_players if mode == "versus" else 1):
+		var right: bool = p == 1
+		for row: int in 3:
+			var y: float = 84.0 + row * 9.0
+			var lx: float = 4.0 if not right else w - 4.0 - 108.0
+			_overlay.draw_string(_font, Vector2(lx + 1, y + 8), labels[row], HORIZONTAL_ALIGNMENT_LEFT, -1, 8, UiKit.C_OUTLINE)
+			_overlay.draw_string(_font, Vector2(lx, y + 7), labels[row], HORIZONTAL_ALIGNMENT_LEFT, -1, 8, UiKit.C_LINEN)
+			for k: int in 3:
+				var on: bool = k < int(_stats[p][row])
+				if _icons.has("star"):
+					_overlay.draw_texture_rect(_icons["star"], Rect2(lx + 80.0 + k * 9.0, y, 8, 8), false,
+						Color(1, 1, 1, 1) if on else Color(0.2, 0.18, 0.22, 0.9))
+		if _locked[p] and _icons.has("lock"):
+			var kx: float = 76.0 if not right else w - 76.0 - 16.0
+			_overlay.draw_texture(_icons["lock"], Vector2(kx, 60))
 
 
 func _bar(n: int) -> String:

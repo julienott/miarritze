@@ -56,6 +56,11 @@ func remove(index: int) -> void:
 	if index < 0 or index >= profiles.size():
 		return
 	profiles.remove_at(index)
+	# L'actif garde son profil : décalé si on supprime un profil placé avant lui.
+	if index < active_index:
+		active_index -= 1
+	elif index == active_index:
+		active_index = 0 if not profiles.is_empty() else -1
 	active_index = mini(active_index, profiles.size() - 1)
 	save()
 
@@ -92,7 +97,7 @@ static func pseudo_ok(pseudo: String) -> bool:
 	var p: String = pseudo.strip_edges()
 	if p.length() < 2 or p.length() > 15:
 		return false
-	var re: RegEx = RegEx.create_from_string("^[\\p{L}0-9 _-]+$")
+	var re: RegEx = RegEx.create_from_string("^[\\p{L}0-9_-]+$")
 	return re.search(p) != null
 
 

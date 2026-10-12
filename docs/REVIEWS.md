@@ -25,3 +25,8 @@ Chaque revue est faite par un sous-agent qui n'a pas produit le travail (SPEC §
 ## Phase 4 — tactile iPhone (2026-10-13)
 **ACCEPTÉ** (itération 1), en émulation Playwright (Chromium mobile + multitouch CDP à index aléatoires, WebKit pour les taps). Tutoriel complet au doigt avec super au bouton MARÉE, combat entier au tactile contre l'IA Facile jusqu'au K.O. Le test sur vrai iPhone reste à faire (`docs/TEST_IPHONE.md`).
 - Corrigé après la revue : marges sûres de 44 pt sur les quatre bords (et l'encoche/la barre d'accueil si le navigateur les donne), boutons ≥ 64 pt quelle que soit la taille choisie, icônes (poing, espadrille, lauburu, bouclier) à la place des lettres, losange plus bas, super à deux doigts seulement sur deux taps courts quasi simultanés, garde maintenue tant qu'un autre doigt la tient, second doigt gauche ignoré, tests du mode Gestes.
+
+## Phase 5 — profils, menus, DA complète, audio (2026-10-13)
+- **Itération 1 : À REFAIRE.** VS non démontré ; HUD pas en DA finale ; sélection en ASCII sans fond flouté ni verrou ; costumes 3–4 jugés non déblocables (ils l'étaient, au terme de la Pyramide) ; rang de groupe absent ; suppression de profil sans confirmation ; mauvais profil actif après suppression.
+- Corrections : VS en grands portraits RD + « VS » basque ; HUD en cadres de planche 9-patch, portraits 40×40 cadrés laiton, jauge Marée en vagues, txapelas lisibles ; sélection en étoiles, fond flouté, cadenas ; rang de groupe (API `rating`) ; confirmation de suppression ; index actif corrigé.
+- **Itération 2 : ACCEPTÉ.** Restes mineurs : projectiles encore procéduraux (rectangle de la pelote de Xabi) → Phase 7/8.

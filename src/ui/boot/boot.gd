@@ -25,6 +25,14 @@ func _route() -> void:
 		SceneRouter.goto(&"fight", {"p1": "louis", "p2": "maia", "stage": "grande_plage",
 			"ai": [0, AiBrain.SKILL_EASY], "rounds": 3, "return_to": "title"})
 		return
+	if target == "vs":
+		SceneRouter.goto(&"versus_splash", {"p1": "patxi", "p2": "xabi", "c1": 0, "c2": 1,
+			"stage": "port_pecheurs", "mode": "qa"})
+		return
+	if target.begins_with("ending:"):
+		SceneRouter.goto(&"ending", {"fighter": target.trim_prefix("ending:"), "score": 12345,
+			"unlocked": ["Costume 3", "Titre : Txapeldun"]})
+		return
 	if target == "tutorial":
 		SceneRouter.goto(&"fight", TrainingMode.tutorial_params())
 		return

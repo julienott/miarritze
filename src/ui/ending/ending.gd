@@ -16,6 +16,8 @@ var _hero: FighterView
 var _done: bool = false
 var _skip_ready: bool = false
 var _tween: Tween
+var _has_art: bool = false
+var _art_offset: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
@@ -34,7 +36,10 @@ func _ready() -> void:
 		var art: Sprite2D = Sprite2D.new()
 		art.texture = load(art_path)
 		art.centered = false
+		_art_offset = Vector2(floorf((get_viewport_rect().size.x - 320.0) * 0.5), 0)
+		art.position = _art_offset
 		_stage.add_child(art)
+		_has_art = true
 	else:
 		var pbg: PixelBg = PixelBg.new()
 		pbg.bg_name = _bg_for(Roster.home_stage(fighter))
@@ -88,6 +93,8 @@ func _txapeldun() -> void:
 	add_child(big)
 	# La txapela vise le haut de la silhouette du champion.
 	var head_y: float = 196.0 - _hero_height() - 2.0 if _hero != null else 80.0
+	if _has_art:
+		_beret.visible = false   # la txapela est déjà dans l'illustration
 	if _tween != null:
 		_tween.kill()
 	var tween: Tween = create_tween()
@@ -115,6 +122,9 @@ func _next_panel() -> void:
 	# Cadrages : plan large, puis 2 zooms ×2 avec un lent panoramique.
 	var zoom: float = 1.0 if _panel == 0 else 2.0
 	var focus: Vector2 = Vector2(w * 0.5, 150) if _panel == 1 else Vector2(w * 0.5 + 40, 120)
+	if _has_art:
+		# Cadrages sur l'illustration : le champion, puis le décor.
+		focus = _art_offset + (Vector2(160, 70) if _panel == 1 else Vector2(230, 100))
 	var start: Vector2 = Vector2.ZERO if _panel == 0 else (Vector2(w * 0.5, 108) - focus * zoom)
 	_stage.scale = Vector2(zoom, zoom)
 	_stage.position = start.round()

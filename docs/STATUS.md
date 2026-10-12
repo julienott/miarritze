@@ -2,7 +2,16 @@
 
 Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
-## Phase atteinte : 4 ✅ (tactile iPhone) — Phase 5 en cours
+## Phase atteinte : 5 ✅ (profils, menus, DA complète, audio) — Phase 6 en cours
+
+### Phase 5
+- Profils locaux (4 max) : création (pseudo seul, filtré), choix, suppression confirmée ; carte de joueur (favori, costume, bannière, titre, emote) ; stats, txapelas, titres, costumes 2/3/4 débloqués (5 victoires / pyramide / Expert) ; rang de groupe.
+- DA finale : thème bois et laiton (9-patch), police bitmap euskal letra, logo animé (lauburu), bannières et icônes, HUD en planches avec portraits, jauge Marée en vagues, VS en grands portraits, sélection en étoiles, fins illustrées RD (4 persos), transition en vague vers le combat.
+- Audio : 16 musiques, 31 SFX, 4 jingles (OGG), bus Music/SFX/Voice, ducking.
+- Captures : `docs/captures/phase5_parcours.png`, `phase5_vs_hud.png`.
+- Dépense RD : 3,59 $.
+
+### Phase 4 (rappel)
 
 ### Phase 4
 - Manette virtuelle (`src/input/touch_controls.gd`) : joystick flottant (rayon 56 pt, zone morte 25 %, 8 directions, hystérésis 10°), losange P/K/S/G ≥ 64 pt avec icônes, glisser d'un bouton à l'autre, MARÉE, multitouch par index arbitraires, appuis brefs verrouillés, zones sûres.

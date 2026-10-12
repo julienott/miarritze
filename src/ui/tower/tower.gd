@@ -60,6 +60,9 @@ func _ready() -> void:
 	add_child(info)
 	var msg: String = {"start": "Allez !", "won": "Bravo !",
 		"lost": "Encore ! -20 %", "double_next": "Et de deux !"}.get(_event, "")
+	if not _run.last_unlocks.is_empty():
+		msg += "\n" + "\n".join(_run.last_unlocks)
+		_run.last_unlocks.clear()
 	var score: Label = UiKit.label("SCORE %d\n%s\n%s" % [_run.score, TowerMode.DIFFICULTY_NAMES[_run.difficulty], msg],
 		8, UiKit.C_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
 	score.position = Vector2(4, 30)

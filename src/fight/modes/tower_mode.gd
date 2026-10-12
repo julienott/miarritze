@@ -28,6 +28,7 @@ var score: int = 0
 var losses_here: int = 0
 var skill_malus: int = 0
 var fight_log: Array[Dictionary] = []
+var last_unlocks: Array[String] = []
 
 
 static func start(p_fighter: String, p_costume: int, p_difficulty: int) -> TowerMode:
@@ -119,6 +120,8 @@ static func on_fight_end(result: Dictionary) -> void:
 func _handle_result(result: Dictionary) -> void:
 	var won: bool = int(result.get("winner", -1)) == 0
 	var fl: Dictionary = current_floor()
+	last_unlocks = Profiles.record_fight(fighter, won, str(fl.get("stage", "")),
+		int(result.get("finisher", 0)) != 0, bool(result.get("perfect", false)))
 	if not won:
 		# Continue illimité : même étage, score réduit de 20 %, rien d'autre.
 		score = score * (100 - LOSS_PENALTY_PCT) / 100
@@ -187,6 +190,9 @@ func _complete() -> void:
 			unlocks["boss"] = true
 			unlocked.append("Le Gardien du Phare est jouable !")
 		Profiles.update_active({"stats": stats, "unlocks": unlocks})
+		unlocked.append_array(Profiles.grant_title("txapeldun"))
+		if difficulty == 2:
+			unlocked.append_array(Profiles.grant_title("expert"))
 	Api.post_tower_score(fighter, DIFFICULTIES[difficulty], score)
 	SceneRouter.goto(&"ending", {"fighter": fighter, "costume": costume, "score": score,
 		"unlocked": unlocked, "difficulty": difficulty})

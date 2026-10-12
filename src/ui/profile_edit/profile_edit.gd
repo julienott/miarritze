@@ -89,6 +89,17 @@ func _build() -> void:
 	]
 	for line: String in lines:
 		_list.add_child(UiKit.label(line, 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT))
+	var rank: Label = UiKit.label("Rang du groupe : —", 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT)
+	_list.add_child(rank)
+	if code != "":
+		Api.call_api(HTTPClient.METHOD_GET, "/leaderboard", {"code": code, "type": "rating"},
+			func(ok: bool, _c: int, data: Variant) -> void:
+				if ok and data is Array and is_instance_valid(rank):
+					var pseudo: String = str(Profiles.active().get("pseudo", ""))
+					for i: int in (data as Array).size():
+						if str((data as Array)[i].get("pseudo", "")) == pseudo:
+							rank.text = "Rang du groupe : %d / %d (%d pts)" % [i + 1, (data as Array).size(),
+								int((data as Array)[i].get("rating", 1000))], false)
 
 
 func _sum(d: Dictionary) -> int:
