@@ -21,6 +21,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_start_pressed() -> void:
-	# Phase 0 : pas encore de menu ; les écrans arrivent aux phases suivantes.
 	if SceneRouter.has_screen(&"main_menu"):
 		SceneRouter.goto(&"main_menu")
+		return
+	# Phase 1 : versus local direct au clavier (J1 WASD+JKL, J2 flèches+Num).
+	InputHub.set_versus()
+	SceneRouter.goto(&"fight", {"p1": "louis", "p2": "maia", "stage": "grande_plage"})

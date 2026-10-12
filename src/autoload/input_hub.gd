@@ -61,6 +61,12 @@ func sample(slot: int) -> int:
 	return mask
 
 
+func _input(event: InputEvent) -> void:
+	for slot: Array in _slots:
+		for source: Variant in slot:
+			(source as InputSource).on_event(event)
+
+
 func _on_joy_connection_changed(_device: int, _connected: bool) -> void:
 	# Une manette branchée en cours de route rejoint J1 en solo.
 	if (_slots[1] as Array).is_empty():

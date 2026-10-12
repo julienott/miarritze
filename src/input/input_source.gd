@@ -18,6 +18,12 @@ func sample() -> int:
 	return 0
 
 
+## Événement brut transmis par InputHub (pour verrouiller les appuis très
+## brefs, plus courts qu'un tick de sim). Par défaut : rien.
+func on_event(_event: InputEvent) -> void:
+	pass
+
+
 ## Nom court affichable (« Clavier J1 », « Manette 1 »…).
 func label() -> String:
 	return "?"

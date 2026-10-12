@@ -10,6 +10,7 @@ extends Node
 var _SCENES: Dictionary = {
 	&"boot": "res://src/ui/boot/boot.tscn",
 	&"title": "res://src/ui/title/title.tscn",
+	&"fight": "res://src/fight/view/fight_scene.tscn",
 }
 
 const _IRIS_SHADER: String = """

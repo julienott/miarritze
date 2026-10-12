@@ -1,0 +1,44 @@
+name: Tests (sim headless, données, budget RD)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.7.2"
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache Godot
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/godot-bin
+          key: godot-${{ env.GODOT_VERSION }}-bin
+      - name: Install Godot
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot-bin
+          curl -sL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" ~/godot-bin/godot
+          chmod +x ~/godot-bin/godot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Python deps
+        run: pip install pillow numpy pyyaml
+      - name: Validation des fiches combattants
+        run: python tools/sprites/build_fighter.py --all
+      - name: Test hors ligne du plafond RD
+        run: python tools/rd/test_client.py
+      - name: Import
+        run: ~/godot-bin/godot --headless --path . --import || true
+      - name: Tests de la sim (déterminisme, rollback, règles)
+        run: ~/godot-bin/godot --headless --path . --script res://tests/run_tests.gd
+      - name: PHP lint
+        run: find backend -name '*.php' -print0 | xargs -0 -n1 php -l

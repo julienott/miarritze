@@ -22,14 +22,14 @@ Ce document fige le format des fichiers produits par `tools/` et lus par le jeu.
 
 ## 2. Fichiers par combattant : `assets/fighters/<id>/`
 
-- `sheet.png` : PNG **niveaux de gris 8 bits** (mode `L`), la valeur du pixel = index de palette (0 = transparent). Cellules **128×128**, une rangée par animation, une colonne par frame. Pied du personnage au point **(64, 120)** de la cellule, regard vers la **droite**. (Boss : cellules 160×160, pied en (80, 152).)
+- `sheet.png` : PNG **niveaux de gris 8 bits** (mode `L`), la valeur du pixel = index de palette (0 = transparent). Cellules **128×128** rangées à la suite dans une grille de `cols` colonnes (16 → 2048 px de large ; hauteur ≤ 4096 pour WebGL2). La frame `i` d'une animation est la cellule `first + i` (ligne `k // cols`, colonne `k % cols`). Pied du personnage au point **(64, 120)** de la cellule, regard vers la **droite**. (Boss : cellules 160×160, pied en (80, 152).)
 - `palettes.png` : RGBA **32×4**, une rangée par costume, une colonne par index.
 - `anims.json` (produit par le pipeline) :
 ```json
 {
-  "cell": 128, "foot": [64, 120],
+  "cell": 128, "cols": 16, "foot": [64, 120],
   "anims": {
-    "idle": {"row": 0, "frames": 8, "fps": 10, "loop": true},
+    "idle": {"row": 1, "first": 8, "frames": 8, "fps": 10, "loop": true},
     "punch_1": {"row": 9, "frames": 4, "fps": 20, "loop": false, "hit_frame": 2}
   },
   "boxes": {
@@ -41,7 +41,7 @@ Ce document fige le format des fichiers produits par `tools/` et lus par le jeu.
   Boîtes en px, `[x, y, w, h]`, relatives au pied, x vers l'avant (droite), y vers le haut négatif. `hurt` : 3 boîtes (tête, torse, jambes) par frame. `hit` : une boîte pour la frame `hit_frame` de chaque animation d'attaque.
 - `data.json` : fiche de jeu complète (SPEC §8.5), produite par `tools/sprites/build_fighter.py` en fusionnant `tools/fighters/<id>.json` (moveset écrit à la main) et `anims.json`.
 
-## 3. Liste des animations (ordre des rangées)
+## 3. Liste des animations (ordre dans la feuille)
 
 `intro, idle, walk, run, crouch, crouch_idle, jump_up, jump_fwd, fall, block, crouch_block, punch_1, punch_2, punch_3, kick, kick_high, crouch_punch, sweep, uppercut, jump_punch, jump_kick, throw, thrown, hit_high, hit_low, hit_air, knockdown, getup, dizzy, ko, win, sp_neutral, sp_forward, sp_down, sp_up, super, finisher`
 

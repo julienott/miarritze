@@ -2,7 +2,21 @@
 
 Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
-## Phase atteinte : 0 ✅ (Nettoyage et fondations)
+## Phase atteinte : 1 ✅ (sim déterministe + combat de mannequins)
+
+### Phase 1
+- `src/fight/sim/` : sim entière (1 px = 256), XRng, InputBuffer (buffer 8 f, double tape, manips), coups normaux, auto-combo P×3, garde haute/basse, chip sans K.O., projection + tech, projectiles (boomerang, chocs, renvoi), spéciaux (vitesses, invuln, armure, téléport, contre, traction, vol de jauge, ralentissement), super, Marée + Retour de vague, rounds, chrono, égalités, BUKATU + finish, `save_state/load_state/checksum` (< 1 Ko).
+- `tests/run_tests.gd` : 13 tests au vert (lint, données, save/load, déterminisme 3600 f, rollback 1–8 f, frame data, chip, combo forcé, chrono, Retour de vague, projection/tech, match complet, entrées → coups).
+- IA de base (`src/fight/ai/ai_brain.gd`) dans la sim, déterministe.
+- Pipeline sprites : rig cut-out RotSprite (`tools/rig/`), mannequins (`tools/mannequin/`), palettes/costumes, boîtes inférées, planches contact (`tools/sprites/`). Louis et Maïa : 37 animations, 215 frames, feuille 2048×1792 indexée.
+- Vue : shader de palette, caméra (lissage, shake), HUD (vie + vie perdue, bouée-chrono, txapelas, Marée), annonces, vfx procéduraux, F3 boîtes, ombres.
+- Versus local au clavier (titre → combat) testé dans le build web (Playwright).
+- QaCapture : `--autofight`, `--frames`, `--inputs` (entrées scriptées), garde-fou 180 s.
+
+### Captures Phase 1
+`docs/captures/phase1_autofight.png`, `phase1_uppercut.png/.gif`, `phase1_web_clavier.png`.
+
+## Historique
 
 ### Ce qui marche
 - Branche `borroka`. L'ancien gameplay a été supprimé (§2.2). Nouvelle arborescence (§8.1).

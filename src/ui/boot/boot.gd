@@ -10,6 +10,8 @@ func _ready() -> void:
 func _route() -> void:
 	var target: String = ""
 	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--autofight="):
+			return   # QaCapture lance le combat
 		if arg.begins_with("--scene="):
 			target = arg.trim_prefix("--scene=")
 	if target == "" and OS.has_feature("web"):

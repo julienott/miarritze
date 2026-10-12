@@ -1,0 +1,42 @@
+{
+  "id": "maia",
+  "name": "Maïa",
+  "title": "Surfeuse de la Côte des Basques",
+  "archetype": "rapide",
+  "health": 960,
+  "walk_fwd": 700, "walk_back": 560, "run": 1250,
+  "ladder_rival": "louis",
+  "home_stage": "cote_basques",
+  "moves": {
+    "punch_1": {"startup": 3},
+    "sp_neutral": {"anim": "sp_neutral", "name": "Coup de planche", "input": "S", "classic": "D,DF,F+P",
+      "startup": 9, "active": 4, "recovery": 16, "damage": 85, "hitstun": 22, "blockstun": 14,
+      "pushback": 16, "hitstop": 8, "meter_gain": 8, "hitboxes": [[4, -84, 52, 56]]},
+    "sp_forward": {"anim": "sp_forward", "name": "Glisse", "input": "F+S", "classic": "B,F+K",
+      "startup": 6, "active": 16, "recovery": 14, "damage": 50, "hitstun": 18, "blockstun": 10,
+      "hits": 2, "rehit_interval": 8, "pushback": 4, "hitstop": 6, "meter_gain": 6,
+      "velocity": [[4, 1900, 0], [22, 0, 0]], "hitboxes": [[0, -60, 36, 56]]},
+    "sp_down": {"anim": "sp_down", "name": "Rouleau", "input": "D+S", "classic": "D,DF,F+K",
+      "startup": 12, "active": 1, "recovery": 20,
+      "spawn": {"frame": 11, "projectile": "rouleau", "offset": [28, -10]}},
+    "sp_up": {"anim": "sp_up", "name": "Aerial", "input": "U+S", "classic": "F,D,DF+K",
+      "startup": 5, "active": 12, "recovery": 18, "damage": 55, "hitstun": 22, "blockstun": 12,
+      "hits": 2, "rehit_interval": 6, "hit_level": "mid", "knockdown": true, "launch": [400, -1200],
+      "hitstop": 8, "meter_gain": 8, "air": true, "velocity": [[2, 700, -2200]],
+      "hitboxes": [[-10, -100, 46, 60]]},
+    "super": {"anim": "super", "name": "La Grande Vague", "input": "S+G",
+      "startup": 8, "active": 40, "recovery": 24, "damage": 60, "hitstun": 26, "blockstun": 14,
+      "hits": 5, "rehit_interval": 8, "pushback": 2, "hitstop": 20, "meter_gain": 0,
+      "velocity": [[6, 600, 0], [46, 0, 0]], "hitboxes": [[0, -100, 48, 100]]}
+  },
+  "projectiles": {
+    "rouleau": {"anim": "proj_rouleau", "speed": 900, "damage": 70, "hit_level": "low",
+      "hitstun": 18, "blockstun": 12, "hitbox": [-12, -14, 24, 14], "life": 80, "hitstop": 6, "ground": true}
+  },
+  "ai": {"aggression": 0.7, "zoning": 0.3, "anti_air": 0.5, "favorite_moves": ["sp_forward", "punch_1", "sp_up"]},
+  "ending_text": [
+    "Maïa pose la txapela sur le nez de sa planche.",
+    "Elle part chercher la plus grande vague de la Côte des Basques.",
+    "Les surfeurs du monde entier viennent la défier…"
+  ]
+}

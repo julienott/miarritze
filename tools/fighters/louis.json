@@ -1,0 +1,39 @@
+{
+  "id": "louis",
+  "name": "Louis",
+  "title": "L'enfant du pays",
+  "archetype": "equilibre",
+  "ladder_rival": "maia",
+  "home_stage": "grande_plage",
+  "moves": {
+    "sp_neutral": {"anim": "sp_neutral", "name": "Espadrille boomerang", "input": "S", "classic": "D,DF,F+P",
+      "startup": 12, "active": 1, "recovery": 22,
+      "spawn": {"frame": 11, "projectile": "espadrille", "offset": [24, -62]}},
+    "sp_forward": {"anim": "sp_forward", "name": "Charge du béret", "input": "F+S", "classic": "B,F+P",
+      "startup": 8, "active": 12, "recovery": 16, "damage": 90, "hitstun": 22, "blockstun": 14,
+      "pushback": 18, "hitstop": 8, "meter_gain": 8,
+      "velocity": [[6, 1500, 0], [20, 0, 0]], "hitboxes": [[6, -78, 30, 40]]},
+    "sp_down": {"anim": "sp_down", "name": "Balayette d'écume", "input": "D+S", "classic": "D,DB,B+K",
+      "startup": 6, "active": 12, "recovery": 18, "damage": 80, "hitstun": 20, "blockstun": 12,
+      "hit_level": "low", "knockdown": true, "launch": [300, -500], "hitstop": 8, "meter_gain": 8,
+      "velocity": [[4, 1300, 0], [18, 0, 0]], "hitboxes": [[4, -16, 40, 16]]},
+    "sp_up": {"anim": "sp_up", "name": "Saut du Phare", "input": "U+S", "classic": "F,D,DF+P",
+      "startup": 4, "active": 10, "recovery": 24, "damage": 120, "hitstun": 30, "blockstun": 16,
+      "knockdown": true, "launch": [300, -1800], "hitstop": 14, "meter_gain": 10, "invuln": [0, 6],
+      "air": true, "velocity": [[3, 300, -2500]], "hitboxes": [[4, -112, 28, 60]], "hits": 2, "rehit_interval": 5},
+    "super": {"anim": "super", "name": "Coup du Txapeldun", "input": "S+G",
+      "startup": 8, "active": 40, "recovery": 24, "damage": 60, "hitstun": 26, "blockstun": 14,
+      "hits": 5, "rehit_interval": 8, "pushback": 2, "hitstop": 20, "meter_gain": 0,
+      "velocity": [[6, 500, 0], [46, 0, 0]], "hitboxes": [[4, -90, 40, 70]]}
+  },
+  "projectiles": {
+    "espadrille": {"anim": "proj_espadrille", "speed": 1400, "returns": true, "damage": 70,
+      "hitstun": 18, "blockstun": 12, "hitbox": [-8, -6, 16, 12], "life": 70, "hitstop": 6}
+  },
+  "ai": {"aggression": 0.5, "zoning": 0.5, "anti_air": 0.6, "favorite_moves": ["sp_neutral", "uppercut", "sp_forward"]},
+  "ending_text": [
+    "Louis rapporte la txapela à la Grande Plage.",
+    "Toute la plage scande son nom.",
+    "Mais au loin, un goéland lorgne déjà le béret…"
+  ]
+}
