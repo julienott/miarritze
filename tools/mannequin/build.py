@@ -88,7 +88,10 @@ def build(fid: str) -> None:
             sheet[y:y + C, x:x + C] = c
             index += 1
     Image.fromarray(sheet, "L").save(os.path.join(out, "sheet.png"), optimize=True)
-    make_palettes.write(fiche, os.path.join(out, "palettes.png"))
+    if source == "rd" and rd_rig.load_spec(fid).get("groups"):
+        rd_rig.rd_palette(fid)          # palettes = couleurs RD + costumes par groupe
+    else:
+        make_palettes.write(fiche, os.path.join(out, "palettes.png"))
     data = {
         "id": fid, "cell": C, "cols": cols, "foot": list(foot),
         "palette_roles": ix.palette_roles(),

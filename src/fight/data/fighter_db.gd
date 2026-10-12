@@ -63,6 +63,8 @@ static func parse(data: Dictionary) -> FighterDef:
 	def.gravity = int(data.get("gravity", 120))
 	def.push_w = int(data.get("push_w", 22)) * SUB
 	def.push_h = int(data.get("push_h", 70)) * SUB
+	def.push_front = int(data.get("push_front", data.get("push_w", 22))) * SUB
+	def.push_back = int(data.get("push_back", data.get("push_w", 22))) * SUB
 	def.no_light_recoil = bool(data.get("no_light_recoil", false))
 	_parse_anims(def, data)
 	var projectiles: Dictionary = data.get("projectiles", {})

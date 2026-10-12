@@ -2,7 +2,16 @@
 
 Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
-## Phase atteinte : 2 ✅ (contenu de gameplay en mannequins)
+## Phase atteinte : 3 ✅ (pipeline graphique, Louis/Maïa/Patxi/Xabi en RD, 3 stages)
+
+### Phase 3
+- RD : exploration `rd_fast` img2img depuis le mannequin, finale `rd_pro`, idle animé, portrait — Louis, Maïa, Patxi, Xabi. Rig propre à chaque perso découpé sur la pose RD (`tools/rig/rd_rig.py`), 37 animations, cellules 160, indexation (groupe, couleur), costumes sans toucher la peau, portraits (normal, grand, HUD, petit, K.O.).
+- Stages Grande Plage, Côte des Basques, Port des Pêcheurs : élargis à 512×216 (outpainting RD + miroir, `tools/stages/widen.py`), voile 15 %, sols procéduraux, goélands, `stage.json`.
+- Boîte de poussée asymétrique mesurée sur les sprites ; équilibrage relancé : 44–57 %.
+- Captures : `docs/captures/phase3_louis_maia.gif`, `phase3_stages.png`, `phase3_compare_rd.png`, `phase3_costumes_rd.png`.
+- Dépense RD : 3,41 $ / 50 $.
+
+### Phase 2 (rappel)
 
 ### Phase 2
 - 12 combattants + boss Itsasargi + mannequin Hondar : fiches de coups (4 spéciaux, super, finish), projectiles et pièges, mannequins distincts (14 silhouettes, 4 costumes chacun).

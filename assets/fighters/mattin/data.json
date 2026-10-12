@@ -5193,6 +5193,8 @@
    ]
   ]
  },
+ "push_front": 31,
+ "push_back": 18,
  "palettes": "palettes.png",
  "palette_roles": {
   "skin": [

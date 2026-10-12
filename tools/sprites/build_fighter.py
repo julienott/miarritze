@@ -65,6 +65,12 @@ def build(fid):
     data["foot"] = pipe.get("foot", [64, 120])
     boxes = pipe.get("boxes", {})
     data["hurtboxes"] = boxes.get("hurt", {})
+    # Boîte de poussée asymétrique mesurée sur l'idle (torse, accessoires bornés).
+    ext = torso_extent(out_dir, pipe) if pipe else None
+    if ext and "push_front" not in own:
+        back, front = ext
+        data["push_front"] = max(18, min(36, round(front * 0.8)))
+        data["push_back"] = max(14, min(28, round(back * 0.8)))
     auto_hit = boxes.get("hit", {})
     own_moves = own.get("moves", {})
     for name, mv in data["moves"].items():
@@ -105,6 +111,29 @@ def build(fid):
         f.write("\n")
     print(f"{fid}: {len(data['moves'])} coups, {len(data['anims'])} anims"
           f"{' (anims par défaut)' if not pipe else ''}")
+
+
+def torso_extent(out_dir, pipe):
+    """(arrière, avant) du torse en px depuis le pied, idle frame 0."""
+    try:
+        import numpy as np
+        from PIL import Image
+    except ImportError:
+        return None
+    sheet_path = os.path.join(out_dir, "sheet.png")
+    if not os.path.exists(sheet_path) or "idle" not in pipe.get("anims", {}):
+        return None
+    cell, cols, foot = pipe["cell"], pipe.get("cols", 16), pipe["foot"]
+    k = pipe["anims"]["idle"].get("first", 0)
+    sh = np.array(Image.open(sheet_path))
+    c = sh[(k // cols) * cell:(k // cols + 1) * cell, (k % cols) * cell:(k % cols + 1) * cell]
+    ys, xs = np.nonzero(c)
+    if xs.size == 0:
+        return None
+    top = ys.min()
+    h = foot[1] - top
+    band = (ys > top + h * 0.25) & (ys < top + h * 0.75)
+    return int(foot[0] - xs[band].min()), int(xs[band].max() - foot[0])
 
 
 REQUIRED = ["punch_1", "punch_2", "punch_3", "kick", "kick_high", "crouch_punch", "sweep",

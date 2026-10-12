@@ -480,7 +480,7 @@ func _can_throw(p: int) -> bool:
 			or o.state == SimConst.ST_GETUP or o.state == SimConst.ST_THROWN \
 			or o.state == SimConst.ST_BLOCKSTUN:
 		return false
-	return absi(o.x - me.x) <= SimConst.THROW_RANGE + defs[p].push_w
+	return absi(o.x - me.x) <= SimConst.THROW_RANGE + defs[p].push_front
 
 
 func _try_special(p: int) -> bool:
@@ -633,7 +633,7 @@ func _advance_move(p: int) -> void:
 			me.move_connected = 1
 			emit(FxEvents.THROW, p, me.x, me.y)
 	if o.state == SimConst.ST_THROWN and o.thrower == p:
-		o.x = me.x + me.facing * (defs[p].push_w + defs[opponent(p)].push_w)
+		o.x = me.x + me.facing * (defs[p].push_front + defs[opponent(p)].push_front)
 		if o.tech_window <= 0 and me.move_t >= mv.startup + mv.active:
 			_land_throw(p)
 
@@ -763,8 +763,12 @@ func _push_apart() -> void:
 	var b: FighterState = f[1]
 	if a.state == SimConst.ST_THROWN or b.state == SimConst.ST_THROWN:
 		return
-	var need: int = defs[0].push_w + defs[1].push_w
 	var dx: int = b.x - a.x
+	# Chacun présente son avant s'il regarde l'autre, son dos sinon.
+	var a_toward: bool = (dx >= 0) == (a.facing > 0)
+	var b_toward: bool = (dx <= 0) == (b.facing < 0)
+	var need: int = (defs[0].push_front if a_toward else defs[0].push_back) \
+		+ (defs[1].push_front if b_toward else defs[1].push_back)
 	var dist: int = absi(dx)
 	var vertical: bool = absi(a.y - b.y) < (defs[0].push_h + defs[1].push_h) / 2
 	if vertical and dist < need:

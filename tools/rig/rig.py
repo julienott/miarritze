@@ -43,6 +43,9 @@ class Piece:
     attach: dict = field(default_factory=dict)
     decals: list = field(default_factory=list)
     shade: bool = True
+    # Orientation de l'image de la pièce dans le monde (pièces découpées dans
+    # une pose RD : 0 pour les mannequins dessinés « au repos »).
+    base: float = 0.0
 
 
 @dataclass
@@ -53,6 +56,9 @@ class Bone:
     attach_key: str = ""     # clé dans parent.attach (défaut : nom de l'os)
     rest: float = 0.0        # angle de repos ajouté à la pose (accessoires tenus)
     soft_joint: bool = True  # pas de contour là où l'os recouvre son parent de même couleur
+    # Accessoire « verrouillé » : son angle monde vaut lock_angle + valeur de la
+    # pose (il ne suit pas la rotation de la main ; ex. canne à pêche tenue droite).
+    lock_angle: float | None = None
 
 
 class Rig:
@@ -96,6 +102,9 @@ class Rig:
             ax, ay = ax * pst[0], ay * pst[1]
             wx, wy = rotate((ax, ay), pang)
             pos = (ppos[0] + wx + off[0], ppos[1] + wy + off[1])
+            if bone.lock_angle is not None:
+                out[name] = (pos, bone.lock_angle + float(pose.get(name, 0.0)), st)
+                continue
             out[name] = (pos, pang + local, st)
         return out
 
@@ -145,7 +154,13 @@ class Rig:
         return self._cache8[key]
 
     def render_piece(self, key: str, piece: Piece, angle: float, pos: tuple, st: tuple):
-        angle = quantize(angle)
+        angle = quantize(angle - piece.base)
+        if angle == 0.0 and st == (1.0, 1.0) and piece.base != 0.0:
+            # Pose identique à la source RD : copie exacte, sans rééchantillonnage.
+            h, w = piece.img.shape
+            fx, fy = pos[0] - piece.pivot[0], pos[1] - piece.pivot[1]
+            x0, y0 = int(round(fx)), int(round(fy))
+            return piece.img.copy(), x0, y0
         img8 = self._img8(key, piece)
         h, w = piece.img.shape
         px, py = piece.pivot
@@ -411,7 +426,7 @@ def interpolate(anim: dict, base_pose: dict, n_frames: int, amp: float = 1.0,
                 pose[name] = a + (b - a) * u
         if guard is not None and amp != 1.0:
             for name, val in list(pose.items()):
-                if name in ("root", "off"):
+                if name in ("root", "off", "lift"):
                     continue
                 g = guard.get(name, 0.0)
                 pose[name] = g + (val - g) * amp

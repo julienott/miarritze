@@ -31,7 +31,8 @@ CANVAS = (256, 256)
 ROOT = (128.0, 150.0)             # bassin sur la toile de travail
 
 
-def load_poses(fid: str | None = None, path: str = POSES_PATH) -> dict:
+def load_poses(fid: str | None = None, path: str = POSES_PATH,
+               guard_override: dict | None = None) -> dict:
     """Poses communes + surcharges du perso (tools/rig/poses/<fid>.json :
     {"named": {...}, "anims": {nom: définition complète}}). Les surcharges
     remplacent l'animation entière ; les poses communes ne sont pas dupliquées."""
@@ -47,6 +48,10 @@ def load_poses(fid: str | None = None, path: str = POSES_PATH) -> dict:
             for name, anim in over.get("anims", {}).items():
                 data["anims"][name] = anim
     named = data["named"]
+    if guard_override:
+        # Rig RD : la garde est la pose mesurée sur l'image RD ; les autres
+        # poses nommées héritent de cette garde pour les os non précisés.
+        named["guard"] = {**named["guard"], **guard_override}
     guard = named["guard"]
     for name, pose in named.items():
         for bone, val in guard.items():
@@ -75,10 +80,14 @@ def render_all(rig: Rig, amp: float = 1.0, poses: dict | None = None,
     canvas = (cell_size * 2, cell_size * 2)
     root = (float(cell_size), cell_size * 150.0 / 128.0)
     named = poses["named"]
-    raw = {}
+    raw, lifts = {}, {}
     for name in ANIM_ORDER:
         anim = poses["anims"][name]
-        raw[name] = [rig.render(p, canvas, root) for p in expand(anim, named, amp)]
+        exp = expand(anim, named, amp)
+        raw[name] = [rig.render(p, canvas, root) for p in exp]
+        # « lift » : élévation (px) appliquée APRÈS le recalage au sol (saut
+        # de l'uppercut), bornée par la place libre en haut de la cellule.
+        lifts[name] = [int(round(float(p.get("lift", 0)))) for p in exp]
     # référence en l'air : centre vertical de la silhouette d'idle frame 0
     # (les saltos tournent autour du centre du corps, pas du bassin)
     idle_top = _lowest(raw["idle"][0]) - ground_row
@@ -87,11 +96,14 @@ def render_all(rig: Rig, amp: float = 1.0, poses: dict | None = None,
     base_x0 = int(root[0]) - foot[0]
     for name, frames in raw.items():
         out = []
-        for img in frames:
+        for fi, img in enumerate(frames):
             if name in AIR_ANIMS:
                 top = int(round(_vmid(img) - idle_mid))
             else:
                 top = _lowest(img) - ground_row
+                rows = np.nonzero(img.any(axis=1))[0]
+                room = int(rows.min()) - top if len(rows) else 0
+                top += max(0, min(lifts[name][fi], room))
             # bassin à x = 64 ; si le corps déborde (couché…), décalage minimal
             x0 = base_x0
             cols = np.nonzero(img.any(axis=0))[0]

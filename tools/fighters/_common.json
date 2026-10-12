@@ -3,7 +3,7 @@
   "health": 1000,
   "walk_fwd": 640, "walk_back": 512, "run": 1100,
   "jump_v": -2300, "gravity": 120, "jump_h": 700,
-  "push_w": 26, "push_h": 70,
+  "push_w": 30, "push_h": 70,
   "moves": {
     "punch_1": {"anim": "punch_1", "input": "P", "startup": 4, "active": 2, "recovery": 8,
       "damage": 40, "hitstun": 14, "blockstun": 10, "pushback": 6, "hit_level": "mid",

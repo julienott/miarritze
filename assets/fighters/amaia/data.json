@@ -6,7 +6,7 @@
  "jump_v": -2400,
  "gravity": 120,
  "jump_h": 700,
- "push_w": 26,
+ "push_w": 30,
  "push_h": 70,
  "moves": {
   "punch_1": {
@@ -5155,6 +5155,8 @@
    ]
   ]
  },
+ "push_front": 31,
+ "push_back": 14,
  "palettes": "palettes.png",
  "palette_roles": {
   "skin": [

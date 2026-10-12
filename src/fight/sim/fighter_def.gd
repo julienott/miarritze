@@ -13,6 +13,9 @@ var jump_h: int = 700
 var gravity: int = 120
 var push_w: int = 22 * 256
 var push_h: int = 70 * 256
+## Boîte de poussée asymétrique : le corps déborde davantage vers l'avant.
+var push_front: int = 22 * 256
+var push_back: int = 22 * 256
 var no_light_recoil: bool = false
 ## Coups, indexés ; `move_by_name` pour la résolution des entrées.
 var moves: Array[MoveDef] = []
