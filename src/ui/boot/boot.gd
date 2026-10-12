@@ -1,42 +1,25 @@
 extends Control
-## Écran de démarrage : fond + titre "Miarritze", puis bascule vers
-## l'orientation_gate après un court délai. Rien d'autre en Phase 0.
-
-## Durée d'affichage du titre avant de basculer, en secondes.
-@export var splash_duration: float = 1.5
+## Démarrage : bascule immédiatement vers l'écran titre (ou vers une scène
+## de QA passée par l'URL `#scene=<id>` en web, ou `--scene=` en natif).
 
 
 func _ready() -> void:
-	AudioManager.play_music(&"menu")
-	var timer: SceneTreeTimer = get_tree().create_timer(splash_duration)
-	timer.timeout.connect(_on_splash_timer_timeout)
+	_route.call_deferred()
 
 
-func _on_splash_timer_timeout() -> void:
-	if _route_debug_hash():
-		return
-	SceneRouter.goto_orientation_gate()
-
-
-## Accès direct à une scène via l'URL (QA) : /#scene=hub, /#scene=surf…
-func _route_debug_hash() -> bool:
-	if not OS.has_feature("web"):
-		return false
-	var hash_value: Variant = JavaScriptBridge.eval("window.location.hash", true)
-	var text: String = str(hash_value)
-	print("boot: hash='%s'" % text)
-	if not text.begins_with("#scene="):
-		return false
-	var target: StringName = StringName(text.trim_prefix("#scene="))
-	match target:
-		&"hub":
-			SceneRouter.goto_hub()
-		&"pseudo_entry":
-			SceneRouter.goto_pseudo_entry()
-		&"leaderboard":
-			SceneRouter.goto_leaderboard()
-		&"results":
-			SceneRouter.goto_results(&"surf", 123, true)
-		_:
-			SceneRouter.goto_challenge(target)
-	return true
+func _route() -> void:
+	var target: String = ""
+	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--scene="):
+			target = arg.trim_prefix("--scene=")
+	if target == "" and OS.has_feature("web"):
+		var hash_value: Variant = JavaScriptBridge.eval("window.location.hash", true)
+		var text: String = str(hash_value)
+		if text.begins_with("#scene="):
+			target = text.trim_prefix("#scene=")
+	if target.begins_with("res://"):
+		SceneRouter.goto_path(target)
+	elif target != "":
+		SceneRouter.goto(StringName(target))
+	else:
+		SceneRouter.goto(&"title")

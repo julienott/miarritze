@@ -1,0 +1,61 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/ui/title/title.gd" id="1_title"]
+[ext_resource type="Script" path="res://src/ui/widgets/pixel_bg.gd" id="2_bg"]
+
+[node name="Title" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_title")
+
+[node name="Bg" type="Sprite2D" parent="."]
+script = ExtResource("2_bg")
+bg_name = "bg_menu"
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 40.0
+offset_bottom = 64.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.807, 0.204, 0.204, 1)
+theme_override_colors/font_outline_color = Color(0.957, 0.776, 0.243, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "MIARRITZE"
+horizontal_alignment = 1
+
+[node name="SubLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 66.0
+offset_bottom = 90.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.807, 0.204, 0.204, 1)
+theme_override_colors/font_outline_color = Color(0.957, 0.776, 0.243, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "BORROKA"
+horizontal_alignment = 1
+
+[node name="PressLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.97, 0.945, 0.89, 1)
+theme_override_colors/font_outline_color = Color(0.227, 0.149, 0.204, 1)
+theme_override_constants/outline_size = 4
+text = "Appuie pour commencer"
+horizontal_alignment = 1

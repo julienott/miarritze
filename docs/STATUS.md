@@ -1,0 +1,23 @@
+# STATUS — Miarritze Borroka
+
+Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
+
+## Phase atteinte : 0 ✅ (Nettoyage et fondations)
+
+### Ce qui marche
+- Branche `borroka`. L'ancien gameplay a été supprimé (§2.2). Nouvelle arborescence (§8.1).
+- `project.godot` : 384×216, viewport/expand/fractional, 60 ticks, autoloads `Profiles, Api, InputHub, AudioManager, SceneRouter, QaCapture, OrientationOverlay`, actions clavier J1/J2 (§4.1).
+- Écran titre provisoire ; l'export web tourne en WebKit (émulation iPhone 844×390, tactile) et en Chromium : `crossOriginIsolated`, aucune erreur console.
+- `tools/palette.py` : 68 couleurs en rampes, `tools/palette.png`.
+- `tools/rd/client.py` (v2) : check_cost, cache versionné, registre, **plafond 50 $**, contrôle croisé du solde, `--status`. Test réel : 1 image `rd_fast` 64×64. Test hors ligne du refus : `tools/rd/test_client.py`.
+- *Hegoak* retiré (`gen_audio.py`, `menu.mp3` supprimé avec les anciennes musiques).
+
+### Captures
+`tests/out/smoke_webkit.png`, `tests/out/smoke_chromium.png`, `tests/out/title.png` (non versionnées : `node tests/web/smoke.mjs webkit` pour les régénérer).
+
+### Dépense RD
+0,03 $ / 50 $ (solde réel du compte au départ : 54,86 $).
+
+### Blocages / notes
+- Les photos sources i2i ne sont plus sur le disque. Repli : élargir les décors `bg_*` existants, txt2img pour les nouveaux stages (DECISIONS).
+- `tools/rd_i2i.py` / `rd_post.py` gardent des chemins codés en dur : ils seront migrés vers `tools/rd/` en Phase 3.

@@ -309,88 +309,9 @@ SONGS["lighthouse"] = dict(
 )
 
 
-# MENU — Hegoak (Txoria txori), musique de Mikel Laboa, d'après
-# l'arrangement de Jo Maris (partition EKE). Usage privé/familial :
-# l'œuvre n'est PAS dans le domaine public (cf. DESIGN.md §7).
-# Mélodie extraite du MIDI de la collection Maris (3/4, mi mineur).
-HEGOAK_MELODY = [
-    (64, 4), (71, 1), (69, 1), (71, 4), (69, 1), (67, 1),
-    (69, 4), (71, 1), (69, 1), (71, 6),
-    (64, 4), (71, 1), (69, 1), (71, 4), (69, 1), (67, 1),
-    (69, 4), (71, 1), (69, 1), (64, 4),
-    (N, 1), (59, 1), (64, 1), (64, 1), (64, 1), (66, 1),
-    (64, 1), (66, 1), (67, 2), (71, 1), (74, 4),
-    (N, 1), (71, 1), (69, 1), (69, 1), (69, 2), (71, 1), (69, 1), (71, 4),
-    (N, 1), (71, 1), (69, 1), (69, 1), (69, 2), (71, 1), (69, 1), (71, 4),
-    (N, 1), (59, 1), (64, 1), (64, 1), (64, 1), (66, 1),
-    (64, 1), (66, 1), (67, 2), (71, 1), (74, 4),
-    (N, 1), (71, 1), (69, 1), (69, 1), (69, 2), (71, 1), (69, 1), (71, 4),
-    (N, 1), (71, 1), (69, 1), (69, 1), (69, 2), (71, 1), (69, 1), (71, 4),
-    (N, 2),
-]
+# MENU : Hegoak (Mikel Laboa) retiré, œuvre non libre (SPEC-BORROKA §2.2).
+# Les nouveaux thèmes sont des arrangements de traditionnels (docs/MUSIC.md).
 
-
-
-def hegoak_reggae_parts(melody):
-    """Skank reggae : deux voix d'accord piquées sur les contretemps
-    de chaque temps (3/4), construites sur la basse harmonisée."""
-    roots = [r for r, _ in hegoak_bass_roots(melody)]
-    skank_low, skank_high = [], []
-    for root in roots:                      # une entrée par mesure de 3 temps
-        for _ in range(3):                  # 3 temps : silence puis stab
-            skank_low += [(None, 0.5), (root + 12, 0.5)]
-            skank_high += [(None, 0.5), (root + 19, 0.5)]
-    return skank_low, skank_high
-
-
-def hegoak_bass_roots(melody):
-    roots_pool = [40, 38, 43, 47, 45]
-    beats = []
-    for note, d in melody:
-        for _ in range(int(d * 2)):
-            beats.append(note)
-    out = []
-    i = 0
-    while i < len(beats):
-        bar = [b for b in beats[i:i + 6] if b]
-        best, best_score = 40, -1
-        for r in roots_pool:
-            score = sum(1 for b in bar if (b - r) % 12 in (0, 3, 4, 7))
-            if score > best_score:
-                best, best_score = r, score
-        out.append((best, 3))
-        i += 6
-    return out
-
-
-def hegoak_reggae_bass(melody):
-    """Basse reggae : fondamentale appuyée sur 1, quinte piquée sur 3."""
-    seq = []
-    for root, _ in hegoak_bass_roots(melody):
-        seq += [(root, 1.5), (root + 7, 0.5), (root, 1.0)]
-    return seq
-
-
-_skank_low, _skank_high = None, None
-
-
-def _build_menu_song():
-    global _skank_low, _skank_high
-    _skank_low, _skank_high = hegoak_reggae_parts(HEGOAK_MELODY)
-    return dict(
-        bpm=138, duty=0.5, vibrato=0.010, mel_vol=0.42, bass_vol=0.26,
-        swing=0.04, mel_wave="steel",
-        melody=notes(HEGOAK_MELODY),
-        bass=notes(hegoak_reggae_bass(HEGOAK_MELODY)),
-        drums=(["kick", None, "hat", None, "snare", "hat"], 0.5),
-        extra_tracks=[
-            {"seq": _skank_low, "duty": 0.25, "vol": 0.11, "gate": 0.35},
-            {"seq": _skank_high, "duty": 0.25, "vol": 0.09, "gate": 0.35},
-        ],
-    )
-
-
-SONGS["menu"] = _build_menu_song()
 
 # ---------------------------------------------------------------- SFX
 

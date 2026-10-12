@@ -47,7 +47,7 @@ func _auto_tap() -> void:
 
 func _auto_start() -> void:
 	var root: Node = get_tree().current_scene
-	if root is ChallengeBase and root.has_method("_on_start_pressed"):
+	if root != null and root.has_method("_on_start_pressed"):
 		root.call("_on_start_pressed")
 
 

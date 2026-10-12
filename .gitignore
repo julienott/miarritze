@@ -19,3 +19,13 @@ config.php
 
 # Clé API Retro Diffusion (jamais versionnée)
 .rd_api_key
+
+# Outils Python
+.venv/
+__pycache__/
+# Sorties brutes Retro Diffusion (le cache et le registre, eux, sont versionnés)
+tools/rd/out/
+# Artefacts de tests / captures
+tests/out/
+.cc_tmp/
+node_modules/
