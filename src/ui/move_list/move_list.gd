@@ -26,7 +26,7 @@ func _build(fighter_id: String) -> void:
 	var data: Dictionary = FighterDb.load_json(fighter_id)
 	var moves: Dictionary = data.get("moves", {})
 	var box: StyleBoxFlat = StyleBoxFlat.new()
-	box.bg_color = Color(0.09, 0.06, 0.1, 0.94)
+	box.bg_color = Color8(24, 16, 28)
 	box.border_color = UiKit.C_GOLD
 	box.set_border_width_all(1)
 	box.set_content_margin_all(6)
@@ -45,7 +45,10 @@ func _build(fighter_id: String) -> void:
 	col.add_child(UiKit.label("COUPS DE %s" % str(data.get("name", fighter_id)).to_upper(), 8, UiKit.C_GOLD))
 	for n: Array in NORMALS:
 		col.add_child(_row(n[0], n[1], ""))
-	col.add_child(UiKit.label("SPÉCIAUX", 8, UiKit.C_GOLD))
+	var sp_title: Label = UiKit.label("SPÉCIAUX", 8, UiKit.C_GOLD)
+	sp_title.custom_minimum_size = Vector2(0, 14)
+	sp_title.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	col.add_child(sp_title)
 	for slot: Array in SLOTS:
 		var mv: Dictionary = moves.get(slot[0], {})
 		col.add_child(_row(str(mv.get("name", slot[0])), slot[1], _classic(str(mv.get("classic", "")))))
@@ -61,15 +64,18 @@ func _build(fighter_id: String) -> void:
 
 
 func _row(name_text: String, input_text: String, classic: String) -> Control:
-	var row: HBoxContainer = HBoxContainer.new()
+	var row: VBoxContainer = VBoxContainer.new()
+	row.add_theme_constant_override(&"separation", 0)
 	var a: Label = UiKit.label(name_text, 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT)
-	a.custom_minimum_size = Vector2(150, 0)
 	a.add_theme_constant_override(&"outline_size", 0)
 	row.add_child(a)
-	var b: Label = UiKit.label(input_text + (("  [" + classic + "]") if classic != "" else ""), 8,
-		UiKit.C_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
+	var b: Label = UiKit.label("  " + input_text, 8, UiKit.C_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
 	b.add_theme_constant_override(&"outline_size", 0)
 	row.add_child(b)
+	if classic != "":
+		var c: Label = UiKit.label("  manip : " + classic + " (+10 %)", 8, Color8(196, 232, 230), HORIZONTAL_ALIGNMENT_LEFT)
+		c.add_theme_constant_override(&"outline_size", 0)
+		row.add_child(c)
 	return row
 
 

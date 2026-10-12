@@ -1,0 +1,23 @@
+# Fiches visuelles RD (SPEC §11.3). Gabarit commun + description par perso.
+template: >-
+  full body fighting game character sprite, side view facing right, open fighting stance,
+  limbs clearly separated, arms not crossing the torso, {description},
+  chibi proportions 1:4 head, bold readable silhouette, thick dark plum outline,
+  sunny basque coast palette, kid friendly cartoon, no weapon blades, no blood, no text
+portrait: >-
+  bust portrait, 3/4 view facing right, determined friendly expression, same character,
+  {description}, thick dark plum outline, kid friendly cartoon, no text
+fighters:
+  louis: "a blond 9 year old basque boy with a red basque beret, white shirt, red sash belt, navy trousers, rope espadrilles"
+  maia: "a young surfer girl with wet brown hair, deep turquoise wetsuit with a navy panel, a yellow surfboard strapped on her back, barefoot"
+  patxi: "a bearded basque fisherman in a bright yellow raincoat, blue wool beanie, black rubber boots, holding a fishing rod"
+  xabi: "a basque pelota player dressed all in white with a red sash, a big wicker chistera basket glove on his right arm"
+  mattin: "a huge strong basque stone lifter, red and white striped shirt, navy trousers, holding a grey granite stone"
+  amaia: "a basque dancer girl, red skirt, green vest, white blouse, red ribbons, holding a wooden makila walking stick"
+  txomin: "a lifeguard in red shorts and yellow tank top, black sunglasses, a whistle, an orange rescue tube"
+  kaio: "an anthropomorphic seagull with a big yellow beak, white and grey feathers, wings as arms, holding a bag of chips"
+  karramarro: "a giant orange crab standing upright, huge pincers, eye stalks, cartoon"
+  ramuntxo: "a basque chef with a tall white toque, white apron, red neckerchief, holding a ladle"
+  itsaso: "a young woman spirit made of sea foam and turquoise water, wavy hair like a wave, barefoot"
+  peio: "a rugby player in a red and white jersey, black shorts, holding an oval rugby ball, cauliflower ears, no logo"
+  itsasargi: "an old lighthouse keeper with a white beard, navy pea coat, captain cap, holding a lantern"

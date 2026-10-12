@@ -16,11 +16,9 @@ func _initialize() -> void:
 		elif arg == "--boss":
 			ids.append(Roster.BOSS)
 	var count: int = ids.size()
-	var wins: Array = []
-	for i: int in count:
-		var row: PackedInt32Array = []
-		row.resize(count)
-		wins.append(row)
+	# Matrice à plat (un PackedInt32Array dans un Array est copié par valeur).
+	var wins: PackedInt32Array = []
+	wins.resize(count * count)
 	var total_wins: PackedInt32Array = []
 	total_wins.resize(count)
 	var total_games: PackedInt32Array = []
@@ -46,16 +44,16 @@ func _initialize() -> void:
 				total_games[a] += 1
 				total_games[b] += 1
 				if sim.winner == 0:
-					(wins[a] as PackedInt32Array)[b] += 1
+					wins[a * count + b] += 1
 					total_wins[a] += 1
 				elif sim.winner == 1:
-					(wins[b] as PackedInt32Array)[a] += 1
+					wins[b * count + a] += 1
 					total_wins[b] += 1
 	var lines: PackedStringArray = ["id," + ",".join(ids) + ",total"]
 	for i: int in count:
 		var cells: PackedStringArray = [ids[i]]
 		for j: int in count:
-			cells.append("" if i == j else str((wins[i] as PackedInt32Array)[j]))
+			cells.append("" if i == j else str(wins[i * count + j]))
 		cells.append("%.1f" % (100.0 * total_wins[i] / maxi(total_games[i], 1)))
 		lines.append(",".join(cells))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://tests/out"))

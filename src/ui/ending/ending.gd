@@ -27,12 +27,8 @@ func _ready() -> void:
 	bg.color = Color8(24, 16, 28)
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
-	var clip: Control = Control.new()
-	clip.clip_contents = true
-	clip.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(clip)
 	_stage = Node2D.new()
-	clip.add_child(_stage)
+	add_child(_stage)
 	var art_path: String = "res://assets/fighters/%s/ending.png" % fighter
 	if ResourceLoader.exists(art_path):
 		var art: Sprite2D = Sprite2D.new()
@@ -88,7 +84,8 @@ func _txapeldun() -> void:
 	big.position.y = 20
 	big.name = "Big"
 	add_child(big)
-	var head_y: float = 196.0 - 104.0
+	# La txapela vise le haut de la silhouette du champion.
+	var head_y: float = 196.0 - _hero_height() - 2.0 if _hero != null else 80.0
 	if _tween != null:
 		_tween.kill()
 	var tween: Tween = create_tween()
@@ -98,6 +95,12 @@ func _txapeldun() -> void:
 	tween.tween_callback(func() -> void:
 		big.queue_free()
 		_next_panel())
+
+
+func _hero_height() -> float:
+	var data: Dictionary = FighterDb.load_json(str(_params.get("fighter", "louis")))
+	var cell: float = float(data.get("cell", 128))
+	return 104.0 if cell <= 128.0 else 130.0
 
 
 func _next_panel() -> void:

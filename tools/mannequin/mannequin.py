@@ -605,7 +605,7 @@ def _accessories(fiche, P, s, pieces) -> None:
 
 
 # Angles de repos des accessoires tenus (relatifs à l'avant-bras).
-ACC_REST = {"rod": -20.0, "chistera": -75.0, "makila": 35.0, "ladle": -10.0,
+ACC_REST = {"rod": -115.0, "chistera": -75.0, "makila": 35.0, "ladle": -10.0,
             "stone": -100.0, "ball": 0.0, "lantern": -120.0, "chips": 0.0}
 
 

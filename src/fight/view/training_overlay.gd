@@ -24,11 +24,11 @@ func _ready() -> void:
 	size = get_viewport().get_visible_rect().size
 	_behavior_button = UiKit.button("Mannequin : " + TrainingMode.BEHAVIORS[behavior], _cycle, 150)
 	_behavior_button.focus_mode = Control.FOCUS_NONE
-	_behavior_button.position = Vector2(size.x - 154, 40)
+	_behavior_button.position = Vector2(size.x - 154, 44)
 	add_child(_behavior_button)
 	var moves: Button = UiKit.button("Coups", func() -> void: move_list_requested.emit(), 60)
 	moves.focus_mode = Control.FOCUS_NONE
-	moves.position = Vector2(size.x - 154, 66)
+	moves.position = Vector2(size.x - 64, 70)
 	add_child(moves)
 
 
@@ -70,12 +70,12 @@ func _describe(mask: int, facing: int) -> String:
 func _draw() -> void:
 	for i: int in _history.size():
 		var alpha: float = 1.0 - i * 0.07
-		draw_string(_font, Vector2(6, 48 + i * 10), _history[i], HORIZONTAL_ALIGNMENT_LEFT, -1, 8,
+		draw_string(_font, Vector2(6, 84 + i * 9), _history[i], HORIZONTAL_ALIGNMENT_LEFT, -1, 8,
 			Color(UiKit.C_LINEN, alpha))
 	if _combo_peak > 0:
-		draw_string(_font, Vector2(size.x * 0.5 - 60, 48), "COMBO %d coups : %d dégâts" % [_combo_hits, _combo_peak],
+		draw_string(_font, Vector2(size.x * 0.5 - 100, 66), "COMBO %d coups : %d dégâts" % [_combo_hits, _combo_peak],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 8, UiKit.C_GOLD)
 	if sim.f[0].state == SimConst.ST_MOVE and sim.f[0].move >= 0:
 		var mv: MoveDef = sim.defs[0].moves[sim.f[0].move]
-		draw_string(_font, Vector2(size.x * 0.5 - 60, 60), "%s (%d+%d+%d)" % [mv.name, mv.startup, mv.active, mv.recovery],
+		draw_string(_font, Vector2(size.x * 0.5 - 100, 76), "%s (%d+%d+%d)" % [mv.name, mv.startup, mv.active, mv.recovery],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 8, UiKit.C_LINEN)

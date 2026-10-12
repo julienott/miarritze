@@ -265,6 +265,62 @@ def generate(payload: dict, label: str, dry_run: bool = False) -> list[str]:
     return paths
 
 
+def edit_tool(tool_id: str, payload: dict, label: str) -> list[str]:
+    """Outil d'édition RD (outpainting, seam_tiling…), même discipline que
+    `generate` : estimation gratuite, plafond, registre, cache."""
+    _ensure_dirs()
+    key = _cache_key({"tool": tool_id, **payload})
+    hit = _cached(key)
+    if hit:
+        print(f"[rd] cache : {label}")
+        return hit
+    with _locked():
+        cost = float(_http("POST", f"/edit/tools/{tool_id}/estimate", payload).get("balance_cost", 0.0))
+        print(f"[rd] {label} ({tool_id}) : coût {cost:.3f} $ | dépensé {spent():.3f} $ | restant {remaining():.3f} $")
+        if spent() + cost > float(budget()["cap_usd"]) + 1e-9:
+            raise BudgetExceeded(f"refus : {label} coûterait {cost:.3f} $ (plafond {budget()['cap_usd']} $)")
+        _cross_check(credits())
+        custom = str(uuid.uuid4())
+        body = dict(payload)
+        body["custom_id"] = custom
+        task = _http("POST", f"/edit/tools/{tool_id}/tasks", body)
+        task_id = task.get("task_id")
+        deadline = time.time() + 600
+        while time.time() < deadline:
+            st = _http("GET", f"/edit/tasks/{task_id}")
+            if st.get("status") == "succeeded":
+                result = st.get("result", st)
+                break
+            if st.get("status") == "failed":
+                raise RdError(0, "edit_failed", str(st.get("error")))
+            time.sleep(3)
+        else:
+            raise RdError(0, "poll_timeout", f"tâche {task_id}")
+        real = float(result.get("balance_cost", cost))
+        _append_jsonl(LEDGER_PATH, {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "label": label,
+                                    "style": f"edit:{tool_id}", "size": "", "num_images": 1,
+                                    "balance_cost": real, "cumul": round(spent() + real, 4),
+                                    "task_id": task_id})
+    images = list(result.get("base64_images") or [])
+    paths = []
+    for i, b64 in enumerate(images):
+        p = os.path.join(CACHE_DIR, f"{key}_{i}.png")
+        with open(p, "wb") as f:
+            f.write(base64.b64decode(b64))
+        paths.append(p)
+    if not paths:
+        for i, url in enumerate(result.get("output_urls") or []):
+            p = os.path.join(CACHE_DIR, f"{key}_{i}.png")
+            with urllib.request.urlopen(url, timeout=120) as resp, open(p, "wb") as f:
+                f.write(resp.read())
+            paths.append(p)
+    _append_jsonl(MANIFEST_PATH, {"key": key, "label": label, "payload": {"tool": tool_id},
+                                  "cost": real, "task_id": task_id,
+                                  "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                                  "files": [os.path.basename(p) for p in paths]})
+    return paths
+
+
 def _submit(payload: dict, idem: str) -> dict:
     for attempt in range(5):
         try:

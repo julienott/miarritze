@@ -58,6 +58,7 @@ func _ready() -> void:
 	_build(def1, def2, c1, c2)
 	var names: Array = params.get("names", [def1.display_name, def2.display_name])
 	_hud.names = PackedStringArray([str(names[0]).to_upper(), str(names[1]).to_upper()])
+	_hud.set_portraits([def1.id, def2.id], [c1, c2])
 	_sync_views(true)
 
 

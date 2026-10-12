@@ -20,6 +20,7 @@ var autoplay: bool = false
 var _autotower: String = ""
 var _tower_t: float = 0.0
 var _shots_taken: Dictionary = {}
+var _last_scene: String = ""
 
 
 func _ready() -> void:
@@ -95,20 +96,25 @@ func _process(delta: float) -> void:
 	if scene == null:
 		return
 	var sname: String = scene.name
-	_tower_t += delta
-	if sname == "Tower" and _tower_t > 1.5:
+	if sname != _last_scene:
+		_last_scene = sname
+		_tower_t = 0.0
+		print("qa_capture: scène %s (étage %d)" % [sname, TowerMode.run.floor_index if TowerMode.run != null else -1])
+	_tower_t += delta / maxf(Engine.time_scale, 0.01)   # temps réel (l'iris ignore la vitesse)
+	if sname == "Tower" and _tower_t > 1.6:
 		var key: String = "tower_%d_%d" % [TowerMode.run.floor_index, TowerMode.run.fight_log.size()] if TowerMode.run != null else "tower"
 		_shot_once(key)
+	if sname == "Tower" and _tower_t > 2.2:
 		_tower_t = 0.0
 		scene.call("_fight")
 	elif sname == "Ending" and _tower_t > 2.0:
-		_shot_once("ending_%d" % int(_tower_t))
+		var ending_t: int = int(_tower_t)
+		if ending_t in [3, 6, 9, 13]:
+			_shot_once("ending_%02d" % ending_t)
 		if _tower_t > 20.0:
 			_shot_once("ending_final")
 			print("qa_capture: pyramide terminée, score %d" % (TowerMode.run.score if TowerMode.run != null else -1))
 			get_tree().quit()
-	elif sname != "Tower" and sname != "Ending":
-		_tower_t = 0.0 if sname != "FightScene" else _tower_t
 
 
 func _shot_once(key: String) -> void:

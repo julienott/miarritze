@@ -26,6 +26,16 @@ SWAP_ROLES = ("outfit_a", "outfit_b", "hat", "acc_b", "acc_c", "extra")
 CANDIDATES = ("red", "green", "navy", "turquoise", "yellow", "orange", "purple",
               "pink", "sea", "brass")
 HUE_STEPS = {1: 0.33, 2: 0.58, 3: 0.80}
+# Tenues neutres : remplacées par costume (sinon Xabi en blanc ne change pas).
+NEUTRAL_SWAPS = {
+    "linen": {1: "sand", 2: "pink", 3: "sky"},
+    "wood": {1: "stone", 2: "night", 3: "brass"},
+    "stone": {1: "wood", 2: "navy", 3: "steel"},
+    "steel": {1: "brass", 2: "stone", 3: "navy"},
+    "sand": {1: "linen", 2: "orange", 3: "stone"},
+    "night": {1: "wood", 2: "green", 3: "purple"},
+}
+NEUTRAL_ROLES = ("outfit_a", "outfit_b", "hat")
 
 
 def _hsv(rgb):
@@ -71,7 +81,12 @@ def costume_roles(fiche: dict, k: int) -> dict:
         return roles
     override = fiche.get("costumes", {}).get(k, {})
     for role in SWAP_ROLES:
-        roles[role] = override.get(role, rotate_ramp(roles[role], HUE_STEPS[k]))
+        base = roles[role]
+        if role in NEUTRAL_ROLES and isinstance(base, str) and base in NEUTRAL_SWAPS:
+            swapped = NEUTRAL_SWAPS[base][k]
+        else:
+            swapped = rotate_ramp(base, HUE_STEPS[k])
+        roles[role] = override.get(role, swapped)
     return roles
 
 

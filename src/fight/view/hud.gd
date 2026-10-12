@@ -21,6 +21,7 @@ var _lag: PackedFloat32Array = PackedFloat32Array([1.0, 1.0])
 var _combo_text: Array[String] = ["", ""]
 var _combo_t: PackedInt32Array = PackedInt32Array([0, 0])
 var _font: Font
+var _portraits: Array[PortraitView] = []
 
 
 func _ready() -> void:
@@ -28,6 +29,29 @@ func _ready() -> void:
 	_fit()
 	get_viewport().size_changed.connect(_fit)
 	_font = load("res://assets/fonts/press_start_2p.ttf")
+
+
+## Portraits aux extrémités des barres de vie (40×40 si disponibles).
+func set_portraits(ids: Array, costumes: Array) -> void:
+	_portraits.clear()
+	for p: int in 2:
+		var kind: String = "portrait_hud" if ResourceLoader.exists(
+			"res://assets/fighters/%s/portrait_hud.png" % ids[p]) else "portrait_small"
+		var face: PortraitView = PortraitView.create(str(ids[p]), int(costumes[p]), kind)
+		face.flip_h = p == 1
+		add_child(face)
+		_portraits.append(face)
+	_place_portraits()
+
+
+func _place_portraits() -> void:
+	for p: int in _portraits.size():
+		var face: PortraitView = _portraits[p]
+		var sz: Vector2 = face.texture.get_size() if face.region_enabled == false else face.region_rect.size
+		var scale_f: float = 1.0 if sz.x <= 28.0 else 0.5
+		face.scale = Vector2(scale_f, scale_f)
+		var w: float = sz.x * scale_f
+		face.position = Vector2(3.0 if p == 0 else size.x - 3.0 - w, 3.0)
 
 
 func show_combo(attacker: int, hits: int) -> void:
@@ -53,10 +77,11 @@ func _draw() -> void:
 	if sim == null:
 		return
 	var w: float = size.x
-	var bar_w: float = floorf(w * 0.5) - 28.0
+	var inset: float = 26.0 if not _portraits.is_empty() else 0.0
+	var bar_w: float = floorf(w * 0.5) - 28.0 - inset
 	for p: int in 2:
 		var me: FighterState = sim.f[p]
-		var x0: float = 6.0 if p == 0 else w - 6.0 - bar_w
+		var x0: float = 6.0 + inset if p == 0 else w - 6.0 - inset - bar_w
 		_draw_life(Rect2(x0, 6, bar_w, 9), float(me.health) / float(me.max_health), _lag[p], p == 1)
 		var name_x: float = x0 if p == 0 else x0 + bar_w - _text_w(names[p])
 		_text(Vector2(name_x, 25), names[p], C_LINEN)
@@ -143,3 +168,4 @@ func _text(pos: Vector2, t: String, color: Color, shadow: bool = true) -> void:
 func _fit() -> void:
 	position = Vector2.ZERO
 	size = get_viewport().get_visible_rect().size
+	_place_portraits()

@@ -31,7 +31,8 @@ func _ready() -> void:
 	var head: Label = UiKit.title({"tower": "PYRAMIDE DU PHARE", "versus": "VERSUS",
 		"training": "ENTRAÎNEMENT"}.get(mode, "CHOIX"))
 	head.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	head.position.y = 4
+	head.position.y = 10
+	head.add_theme_font_size_override(&"font_size", 8)
 	add_child(head)
 	_grid = Control.new()
 	_grid.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
@@ -40,7 +41,8 @@ func _ready() -> void:
 	_build_cells()
 	for p: int in 2:
 		var info: Label = UiKit.label("", 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT if p == 0 else HORIZONTAL_ALIGNMENT_RIGHT)
-		info.size = Vector2(150, 40)
+		info.size = Vector2(130, 40)
+		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		add_child(info)
 		_info.append(info)
 	if mode == "versus":
@@ -71,7 +73,7 @@ func _layout() -> void:
 	for p: int in 2:
 		if _previews[p] != null:
 			_previews[p].position = Vector2(48 if p == 0 else w - 48, 204)
-		_info[p].position = Vector2(4 if p == 0 else w - 154, 30)
+		_info[p].position = Vector2(4 if p == 0 else w - 134, 30)
 	var ok: Node = get_node_or_null("OkButton")
 	if ok != null:
 		(ok as Control).position = Vector2(w - 52, 4)
@@ -90,13 +92,8 @@ func _build_cells() -> void:
 		bg.size = clip.size
 		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		clip.add_child(bg)
-		var view: FighterView = UiKit.fighter_preview(ids[i])
-		view.set_process(false)
-		# Cadrage « portrait » : on montre la tête et les épaules.
-		var data: Dictionary = FighterDb.load_json(ids[i])
-		var cell_px: int = int(data.get("cell", 128))
-		view.position = Vector2(14, 92 if cell_px == 128 else 128)
-		clip.add_child(view)
+		var face: PortraitView = PortraitView.create(ids[i])
+		clip.add_child(face)
 		_grid.add_child(clip)
 
 
@@ -126,7 +123,7 @@ func _refresh(p: int) -> void:
 	var bars: String = "Puissance %s\nVitesse   %s\nPortée    %s" % [
 		_bar(int(stats.get("power", 2))), _bar(int(stats.get("speed", 2))), _bar(int(stats.get("reach", 2)))]
 	var lock: String = "" if _costume_ok(id, _costume[p]) else "  (verrouillé)"
-	_info[p].text = "%s\n%s\nCostume %d%s\n\n%s" % [str(data.get("name", id)).to_upper(),
+	_info[p].text = "%s\n%s\nCostume %d%s\n%s" % [str(data.get("name", id)).to_upper(),
 		str(data.get("title", "")), _costume[p] + 1, lock, bars]
 	_layout()
 	_grid.queue_redraw()
