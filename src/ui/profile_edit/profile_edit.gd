@@ -73,6 +73,7 @@ func _build() -> void:
 	edit.custom_minimum_size = Vector2(70, 22)
 	edit.add_theme_font_size_override(&"font_size", 8)
 	row.add_child(edit)
+	WebTextField.attach(edit)
 	row.add_child(UiKit.button("Rejoindre", func() -> void: _join(edit.text.strip_edges().to_upper()), 80))
 	row.add_child(UiKit.button("Créer", _create_group, 60))
 	_list.add_child(row)

@@ -89,6 +89,7 @@ func _show_create(first: bool) -> void:
 	edit.custom_minimum_size = Vector2(200, 22)
 	edit.add_theme_font_size_override(&"font_size", 8)
 	_box.add_child(edit)
+	WebTextField.attach(edit)
 	var err: Label = UiKit.label("", 8, UiKit.C_RED)
 	_box.add_child(err)
 	var ok: Button = UiKit.button("C'est parti !", func() -> void: _create(edit.text, err), 200)
