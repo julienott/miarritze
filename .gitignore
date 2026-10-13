@@ -29,3 +29,8 @@ tools/rd/out/
 tests/out/
 .cc_tmp/
 node_modules/
+
+# Sauvegardes des sheets de combattants avant nettoyage procédural
+# (voir tools/sprites/clean_alpha.py). Les .orig restent en local pour
+# pouvoir rejouer un nettoyage ; la vérité versionnée est la sheet nettoyée.
+assets/fighters/*/sheet.orig.png
