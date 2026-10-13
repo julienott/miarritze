@@ -7,7 +7,7 @@ var _creating: bool = false
 
 
 func _ready() -> void:
-	AudioManager.play_music(&"title")
+	AudioManager.play_music(&"hegoak")
 	UiKit.backdrop(self, "bg_menu", 0.45)
 	var head: Label = UiKit.title("QUI JOUE ?")
 	head.set_anchors_preset(Control.PRESET_TOP_WIDE)

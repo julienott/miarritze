@@ -4,7 +4,7 @@ Toute la bande-son est **synthétisée** par `tools/gen_audio.py` (chiptune mais
 
 **Principe de droits.** Aucune mélodie n'est reprise d'une œuvre à auteur identifié, ni d'une partition ou d'un MIDI tiers. Plutôt que de transcrire de mémoire des airs traditionnels précis (risque d'approximation, voire de confusion avec un arrangement protégé), **chaque morceau est une composition originale écrite dans une FORME traditionnelle basque**. Ces formes (fandango, arin-arin, zortziko, aurresku, kalejira, ezpata-dantza, berceuse « lo-lo ») sont des genres de danse et de chant populaires anonymes, sans auteur : elles appartiennent au domaine public. Les compositions elles-mêmes sont originales (créées pour le jeu).
 
-*Hegoak* (Txoria txori, musique de Mikel Laboa) est **retiré** : œuvre protégée (SPEC §2.2). Il n'apparaît dans aucun fichier.
+*Hegoak* (Txoria txori, musique de Mikel Laboa) : œuvre protégée, retirée en Phase 0 puis **rétablie le 2026-10-13 à la demande de Julien** sur l'accueil (titre, profils, menu, réglages) : `assets/audio/music/hegoak.mp3`, l'arrangement de l'ancien jeu. `title.ogg` reste dans le dépôt, prêt à servir si on le retire de nouveau.
 
 | Fichier | Rôle | Forme traditionnelle (domaine public) | Mélodie | Notes d'arrangement |
 |---|---|---|---|---|

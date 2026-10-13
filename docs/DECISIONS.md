@@ -28,3 +28,4 @@ Choix pris en mode autonome (SPEC §0.6, §0.8) : l'option la plus simple qui re
 | 2026-10-13 | Revanche | Nouveau match côté serveur (comptée à l'Elo), même map, nouvelle graine. | Revue Phase 6. |
 | 2026-10-13 | IA Facile | Garde plafonnée à 100–150 ‰ sous la compétence 35 ; le boss de la Pyramide en Facile est limité à 34. | SPEC : 15 % de garde en Facile ; le boss ne doit pas surprendre un enfant. |
 | 2026-10-13 | Caméra | Montée jusqu'à 44 px au lieu de modifier `jump_v` (la sim et l'équilibrage restent inchangés). | Revue de ressenti Phase 8. |
+| 2026-10-13 | Musique d'accueil | *Hegoak* rétabli sur le titre et les menus (`hegoak.mp3`, l'arrangement de l'ancien jeu), sur décision de Julien et contrairement à la SPEC §2.2. | Choix du propriétaire, en connaissance de cause (œuvre protégée). |

@@ -8,7 +8,7 @@ var _status: Label
 
 
 func _ready() -> void:
-	AudioManager.play_music(&"title")
+	AudioManager.play_music(&"hegoak")
 	UiKit.backdrop(self, "bg_hub", 0.55)
 	var head: Label = UiKit.title("MON PROFIL")
 	head.set_anchors_preset(Control.PRESET_TOP_WIDE)

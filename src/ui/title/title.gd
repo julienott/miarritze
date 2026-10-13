@@ -19,7 +19,7 @@ func _ready() -> void:
 	add_child(logo)
 	get_viewport().size_changed.connect(func() -> void:
 		logo.position.x = get_viewport_rect().size.x * 0.5)
-	AudioManager.play_music(&"title")
+	AudioManager.play_music(&"hegoak")
 
 
 func _process(delta: float) -> void:

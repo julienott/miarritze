@@ -15,7 +15,7 @@ Résumé opérationnel pour Claude Code. **La source de vérité est `SPEC-BORRO
 7. **Enfants (9 ans) :** lisible, généreux, jamais punitif, zéro violence graphique. **Zéro donnée personnelle** : pseudo + code de groupe, pas de texte libre.
 8. **Tout paramètre de gameplay est une donnée** (JSON combattant, `stage.json`, constantes nommées), pas un nombre magique.
 9. **Branche `borroka`** : pas de push sur `main`, pas de déploiement en prod sans Julien.
-10. Pas de musique non libre (*Hegoak* retiré). Airs traditionnels du domaine public uniquement (`docs/MUSIC.md`).
+10. Musique : compositions originales ou airs du domaine public (`docs/MUSIC.md`). Exception décidée par Julien : *Hegoak* (`hegoak.mp3`) sur l'accueil et les menus.
 
 ## 1. Stack
 

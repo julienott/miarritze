@@ -40,7 +40,7 @@ func _ready() -> void:
 		Input.joy_connection_changed.connect(func(_d: int, connected: bool) -> void:
 			if connected and is_instance_valid(_pad_hint):
 				_pad_hint.text = "Manette détectée !")
-	AudioManager.play_music(&"title")
+	AudioManager.play_music(&"hegoak")
 
 
 var _pad_hint: Label
