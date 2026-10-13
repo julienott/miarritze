@@ -1,6 +1,6 @@
 # HANDOFF — reprendre Miarritze Borroka sur un autre ordinateur
 
-Dernière mise à jour : 2026-10-13. Branche de travail : `borroka`. Elle est identique à `main`, à part ce fichier, qui n'est que sur `borroka`.
+Dernière mise à jour : 2026-10-13. Branche de travail : `borroka`, identique à `main`.
 Prod : https://miarritze.ijulien.com. Un push sur `main` déclenche `.github/workflows/deploy.yml` (build Godot 4.7.2 + rsync).
 
 ## 1. À lire d'abord
