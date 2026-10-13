@@ -16,6 +16,7 @@ var _canvas: Control
 
 
 func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_run = TowerMode.run
 	if _run == null:
 		SceneRouter.goto(&"main_menu")
@@ -69,8 +70,8 @@ func _ready() -> void:
 	score.size = Vector2(150, 40)
 	add_child(score)
 	var go: Button = UiKit.button("Combattre !", _fight, 100)
-	go.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	go.position = Vector2(w * 0.5 - 50, 216 - 28)
+	# Position absolue (une ancre en bas + position absolue l'envoyait hors écran).
+	go.position = Vector2(roundf(w * 0.5 - 50), get_viewport_rect().size.y - 28)
 	add_child(go)
 	go.grab_focus.call_deferred()
 	var quit: Button = UiKit.button("Abandonner", func() -> void:
@@ -146,5 +147,6 @@ func _fight() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"p1_punch") or event.is_action_pressed(&"ui_accept"):
+	if event.is_action_pressed(&"p1_punch") or event.is_action_pressed(&"ui_accept") \
+			or (event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed):
 		_fight()

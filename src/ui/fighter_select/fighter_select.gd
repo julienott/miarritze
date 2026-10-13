@@ -128,7 +128,7 @@ func _process(delta: float) -> void:
 
 func _layout() -> void:
 	var w: float = get_viewport_rect().size.x
-	_grid.position = Vector2(floorf((w - COLS * CELL) * 0.5), 216 - 2 * CELL - 8)
+	_grid.position = Vector2(floorf((w - COLS * CELL) * 0.5), get_viewport_rect().size.y - 2 * CELL - 8)
 	_grid.size = Vector2(COLS * CELL, 2 * CELL)
 	for p: int in 2:
 		if _previews[p] != null:

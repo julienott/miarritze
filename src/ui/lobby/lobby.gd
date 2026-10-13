@@ -40,11 +40,10 @@ func _ready() -> void:
 	_ground.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_ground)
 	var quick: Button = UiKit.button("Match rapide", _quick_match, 110)
-	quick.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	quick.position = Vector2(get_viewport_rect().size.x - 114, 216 - 28)
+	quick.position = Vector2(get_viewport_rect().size.x - 114, get_viewport_rect().size.y - 28)
 	add_child(quick)
 	var board: Button = UiKit.button("Classement", _show_board, 90)
-	board.position = Vector2(4, 216 - 28)
+	board.position = Vector2(4, get_viewport_rect().size.y - 28)
 	add_child(board)
 	OnlineMode.reset_net()
 	OnlineMode.current = {}
