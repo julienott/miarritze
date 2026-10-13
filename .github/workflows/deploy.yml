@@ -67,6 +67,7 @@ jobs:
           mkdir -p web/build/pwa
           cp web/pwa/*.png web/build/pwa/
           cp web/pwa/manifest.webmanifest web/build/pwa/manifest.webmanifest
+          cp web/pwa/audio-unlock.js web/build/pwa/audio-unlock.js
 
       - name: Deploy via rsync over SSH
         env:
