@@ -18,6 +18,11 @@ var pad_visible: String = "auto"
 var music_volume: float = 0.8
 var sfx_volume: float = 1.0
 var voice_volume: float = 1.0
+## Version de settings.json : bumpé quand on change les valeurs par défaut.
+## Les sauvegardes plus anciennes se font restaurer les volumes au premier
+## chargement (fichier d'un ancien test qui pouvait les avoir à 0).
+const SETTINGS_VERSION: int = 2
+var _version: int = 0
 var default_difficulty: int = 0
 var express_fights: bool = false      # désactive les finishs en ligne
 var colorblind: bool = false          # HUD lisible pour les daltoniens
@@ -28,6 +33,12 @@ var key_overrides: Dictionary = {}
 
 func _ready() -> void:
 	_load()
+	if _version < SETTINGS_VERSION:
+		music_volume = maxf(music_volume, 0.5)
+		sfx_volume = maxf(sfx_volume, 0.6)
+		voice_volume = maxf(voice_volume, 0.6)
+		_version = SETTINGS_VERSION
+		save()
 	_apply_keys()
 
 
@@ -97,6 +108,7 @@ func save() -> void:
 		"voice_volume": voice_volume, "default_difficulty": default_difficulty,
 		"express_fights": express_fights, "key_overrides": key_overrides,
 		"colorblind": colorblind, "vibrations": vibrations,
+		"version": _version,
 	}))
 
 
@@ -117,3 +129,5 @@ func _load() -> void:
 			set(str(key), bool(data[key]))
 		elif str(key) == "key_overrides" and data[key] is Dictionary:
 			key_overrides = data[key]
+		elif str(key) == "version":
+			_version = int(data[key])

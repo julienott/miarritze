@@ -19,6 +19,10 @@ var start_health: PackedInt32Array = PackedInt32Array([0, 0])
 var training: bool = false
 ## Tutoriel, dernière étape : le mannequin (J2) peut tomber K.O. sans finir le round.
 var training_ko: bool = false
+## Frames avant régénération de vie en entraînement (0 = recharge).
+## Non sérialisé : l'entraînement n'utilise pas de rollback.
+var _training_regen: PackedInt32Array = PackedInt32Array([0, 0])
+const _TRAINING_REGEN_DELAY: int = 90
 
 # --- État (sérialisé)
 var frame: int = 0
@@ -135,8 +139,15 @@ func _step_fight() -> void:
 				if me.health <= 0 and me.state != SimConst.ST_KO:
 					_go_ko(p)
 				continue
+			# La vie se recharge seulement après un délai de calme (1,5 s) :
+			# sans ça la barre remonte entre deux coups et Louis ne la voit
+			# jamais descendre.
+			if me.combo_hits > 0 or not me.actionable() or me.hit_flash > 0:
+				_training_regen[p] = _TRAINING_REGEN_DELAY
+			elif _training_regen[p] > 0:
+				_training_regen[p] -= 1
 			me.health = maxi(me.health, 1)
-			if me.combo_hits == 0 and me.actionable() and me.health < me.max_health:
+			if _training_regen[p] == 0 and me.health < me.max_health:
 				me.health = me.max_health
 		return
 	_check_wave_return()

@@ -30,6 +30,50 @@ func _ready() -> void:
 	moves.focus_mode = Control.FOCUS_NONE
 	moves.position = Vector2(size.x - 64, 70)
 	add_child(moves)
+	_build_keys_help()
+
+
+## Petit panneau clavier : rappel des touches par défaut, affiché en bas à
+## gauche pendant 6 s puis masqué (bouton « Touches » pour le rouvrir).
+var _keys_panel: PanelContainer
+var _keys_toggle: Button
+
+
+func _build_keys_help() -> void:
+	_keys_panel = PanelContainer.new()
+	var sb: StyleBoxFlat = StyleBoxFlat.new()
+	sb.bg_color = Color8(24, 16, 28, 220)
+	sb.border_color = UiKit.C_GOLD
+	sb.set_border_width_all(1)
+	sb.set_content_margin_all(5)
+	_keys_panel.add_theme_stylebox_override(&"panel", sb)
+	_keys_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var v: VBoxContainer = VBoxContainer.new()
+	v.add_theme_constant_override(&"separation", 1)
+	_keys_panel.add_child(v)
+	for line: String in [
+		"TOUCHES  J1",
+		"ZQSD : bouger / sauter / s'accroupir",
+		"J : POING    K : PIED",
+		"L : SPÉCIAL    I : GARDE",
+		"Échap : pause",
+	]:
+		var l: Label = UiKit.label(line, 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT)
+		v.add_child(l)
+	add_child(_keys_panel)
+	_keys_panel.position = Vector2(6, size.y - 72)
+	_keys_toggle = UiKit.button("Touches", _toggle_keys, 60)
+	_keys_toggle.focus_mode = Control.FOCUS_NONE
+	_keys_toggle.position = Vector2(size.x - 128, 70)
+	add_child(_keys_toggle)
+	get_tree().create_timer(6.0).timeout.connect(func() -> void:
+		if is_instance_valid(_keys_panel):
+			_keys_panel.visible = false)
+
+
+func _toggle_keys() -> void:
+	if is_instance_valid(_keys_panel):
+		_keys_panel.visible = not _keys_panel.visible
 
 
 func _cycle() -> void:

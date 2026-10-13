@@ -155,16 +155,16 @@ func _draw_life(r: Rect2, ratio: float, lag: float, mirror: bool) -> void:
 
 
 func _draw_txapela(c: Vector2, won: bool) -> void:
-	if _txapela != null:
-		var tex_pos: Vector2 = c - Vector2(8, 10)
-		if won:
-			draw_texture(_txapela, tex_pos)
-		else:
-			draw_texture(_txapela, tex_pos, Color(0.25, 0.2, 0.28, 0.85))
+	# Round pas encore gagné : cercle vide pâle (sinon la texture sombre se
+	# lit comme une tache à cette taille).
+	if not won:
+		draw_arc(c - Vector2(0, 2), 3.0, 0.0, TAU, 16, Color(C_LINEN, 0.55), 1.0)
 		return
-	var col: Color = C_RED if won else C_DARK
+	if _txapela != null:
+		draw_texture(_txapela, c - Vector2(8, 10))
+		return
 	draw_rect(Rect2(c.x - 3, c.y - 2, 7, 3), C_OUTLINE)
-	draw_rect(Rect2(c.x - 2, c.y - 1, 5, 1), col)
+	draw_rect(Rect2(c.x - 2, c.y - 1, 5, 1), C_RED)
 	draw_rect(Rect2(c.x - 1, c.y - 3, 3, 1), C_OUTLINE)
 	draw_rect(Rect2(c.x, c.y - 4, 1, 1), C_OUTLINE)
 

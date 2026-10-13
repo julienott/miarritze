@@ -86,8 +86,22 @@ func _show_create(first: bool) -> void:
 	var edit: LineEdit = LineEdit.new()
 	edit.max_length = 15
 	edit.placeholder_text = "Pseudo"
-	edit.custom_minimum_size = Vector2(200, 22)
-	edit.add_theme_font_size_override(&"font_size", 8)
+	edit.custom_minimum_size = Vector2(200, 28)
+	edit.add_theme_font_size_override(&"font_size", 12)
+	# Cadre doré visible au focus : sur Mac le LineEdit par défaut est
+	# quasi invisible à cette taille, Louis ne voyait pas où il tapait.
+	var sb_normal: StyleBoxFlat = StyleBoxFlat.new()
+	sb_normal.bg_color = Color8(247, 241, 227)
+	sb_normal.border_color = Color8(58, 38, 52)
+	sb_normal.set_border_width_all(1)
+	sb_normal.set_content_margin_all(4)
+	var sb_focus: StyleBoxFlat = sb_normal.duplicate()
+	sb_focus.border_color = UiKit.C_GOLD
+	sb_focus.set_border_width_all(2)
+	edit.add_theme_stylebox_override(&"normal", sb_normal)
+	edit.add_theme_stylebox_override(&"focus", sb_focus)
+	edit.add_theme_color_override(&"font_color", Color8(58, 38, 52))
+	edit.add_theme_color_override(&"caret_color", Color8(58, 38, 52))
 	_box.add_child(edit)
 	WebTextField.attach(edit)
 	var err: Label = UiKit.label("", 8, UiKit.C_RED)
