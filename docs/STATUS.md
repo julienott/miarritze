@@ -2,7 +2,7 @@
 
 Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
-## Phase atteinte : 8 ✅ (polissage) — v1 complète sur `borroka`, prod en attente du feu vert de Julien
+## Phase atteinte : 8 ✅ (polissage) — v1 en prod sur https://miarritze.ijulien.com (main = borroka, déployé le 2026-10-13)
 
 ### Phase 8
 - Session longue (`node tests/web/long_session.mjs`) : 39 combats en 30 min, aucune erreur. Mémoire à 69 Mo, un palier à 215 Mo à la 21e minute (agrandissement du tas WASM), puis stable (`docs/captures/phase8_long_session.json`).
