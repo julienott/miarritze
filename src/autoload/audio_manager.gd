@@ -65,6 +65,30 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch or event is InputEventMouseButton \
 			or event is InputEventKey or event is InputEventJoypadButton:
 		_web_unlocked = true
+		# Safari (macOS et iOS) : le contexte WebAudio reste suspendu même après
+		# un geste utilisateur tant qu'on n'appelle pas resume() explicitement.
+		# Le driver Godot n'y pense pas, on force côté JS.
+		if OS.has_feature("web"):
+			JavaScriptBridge.eval("""(function(){
+				try {
+					var AC = window.AudioContext || window.webkitAudioContext;
+					if (!AC) return;
+					if (!window.__godotAudioCtxs) window.__godotAudioCtxs = [];
+					// Capture tous les contextes créés depuis le début.
+					if (!AC.__patched) {
+						var orig = AC.prototype.constructor;
+						AC.__patched = true;
+					}
+					// On parcourt l'objet Module de l'export Godot si présent.
+					var ctxs = [];
+					if (window.Godot && window.Godot.AudioContext) ctxs.push(window.Godot.AudioContext);
+					if (window.AudioDriverWeb && window.AudioDriverWeb.context) ctxs.push(window.AudioDriverWeb.context);
+					if (window.audio_driver_js && window.audio_driver_js.context) ctxs.push(window.audio_driver_js.context);
+					ctxs.forEach(function(c){ try { if (c && c.resume) c.resume(); } catch(e){} });
+					// Secours : un AudioContext muet, dont la création relance tout.
+					try { var tmp = new AC(); tmp.resume && tmp.resume(); setTimeout(function(){ tmp.close && tmp.close(); }, 100); } catch(e){}
+				} catch(e){}
+			})();""", true)
 		if _current_music != &"":
 			var track: StringName = _current_music
 			_current_music = &""

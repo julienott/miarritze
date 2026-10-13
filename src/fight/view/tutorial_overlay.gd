@@ -31,15 +31,30 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	position = Vector2.ZERO
 	size = get_viewport().get_visible_rect().size
-	_label = UiKit.label("", 8, UiKit.C_LINEN)
-	# Consigne à gauche du losange de boutons (sinon le bouton garde la cache).
-	_label.position = Vector2(8, 48)
-	_label.size = Vector2(size.x - 150, 30)
+	# Consigne centrée dans une bannière sombre, bien séparée du bouton PAUSE
+	# (haut-centre) et des portraits du HUD (haut-gauche/droite). Sur fond de
+	# combat les lettres se perdaient : on ajoute un panneau.
+	var panel: PanelContainer = PanelContainer.new()
+	var sb: StyleBoxFlat = StyleBoxFlat.new()
+	sb.bg_color = Color8(24, 16, 28, 215)
+	sb.border_color = UiKit.C_GOLD
+	sb.set_border_width_all(1)
+	sb.set_content_margin_all(5)
+	panel.add_theme_stylebox_override(&"panel", sb)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	panel.offset_left = 60
+	panel.offset_right = -60
+	panel.offset_top = 56
+	add_child(panel)
+	_label = UiKit.label("", 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_CENTER)
 	_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	add_child(_label)
+	_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.add_child(_label)
 	var skip: Button = UiKit.button("Passer", func() -> void: finished.emit(), 60)
 	skip.focus_mode = Control.FOCUS_NONE
-	skip.position = Vector2(size.x - 64, 38)
+	# Bas-droit : loin du bouton PAUSE (haut-centre) et des portraits du HUD.
+	skip.position = Vector2(size.x - 68, size.y - 28)
 	add_child(skip)
 	_enter(0)
 

@@ -19,9 +19,12 @@ var _cb_key: JavaScriptObject
 var _last_css: String = ""
 
 
-## Branche un champ natif sur `edit` si on tourne dans un navigateur tactile.
+## Branche un champ natif sur `edit` dans n'importe quel navigateur.
+## Safari (iOS ET desktop macOS) gère mal la capture clavier d'un LineEdit
+## Godot web ; un vrai <input> HTML évite tous ces soucis et donne le même
+## comportement partout.
 static func attach(edit: LineEdit) -> void:
-	if not OS.has_feature("web") or not DisplayServer.is_touchscreen_available():
+	if not OS.has_feature("web"):
 		return
 	edit.virtual_keyboard_enabled = false
 	edit.add_child(WebTextField.new())

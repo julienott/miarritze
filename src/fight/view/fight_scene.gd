@@ -160,7 +160,7 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 	if bool(params.get("training", false)):
 		_training = TrainingOverlay.new()
 		_training.sim = sim
-		_training.behavior = int(params.get("behavior", 0))
+		_training.behavior = int(params.get("behavior", TrainingMode.DEFAULT_BEHAVIOR))
 		_training.behavior_requested.connect(func(i: int) -> void:
 			sim.ai_level[1] = TrainingMode.BEHAVIOR_LEVELS[i])
 		_training.move_list_requested.connect(_show_move_list)
@@ -193,10 +193,10 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 		ui.add_child(_touch)
 		InputHub.add_source(0, VirtualPadSource.new(_touch))
 	if str(params.get("mode", "")) != "online":
-		var pause_btn: Button = UiKit.button("II", _toggle_pause, 24)
+		var pause_btn: Button = UiKit.button("PAUSE", _toggle_pause, 50)
 		pause_btn.focus_mode = Control.FOCUS_NONE
-		pause_btn.custom_minimum_size = Vector2(24, 24)
-		pause_btn.position = Vector2(get_viewport_rect().size.x * 0.5 - 12, 30)
+		pause_btn.custom_minimum_size = Vector2(50, 20)
+		pause_btn.position = Vector2(get_viewport_rect().size.x * 0.5 - 25, 30)
 		ui.add_child(pause_btn)
 	# Les annonces passent au-dessus du bouton pause et de la manette.
 	ui.move_child(_announcer, -1)

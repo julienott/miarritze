@@ -3,8 +3,13 @@ extends Control
 ## combat avec le portrait de l'adversaire, le curseur qui monte, le
 ## faisceau qui balaie. Appuie pour combattre.
 
-const FLOOR_H: int = 19
+## Hauteur d'étage et largeur du phare — calculées dans _ready() pour que les
+## 9 étages tiennent entre la lanterne et la base, bien au-dessus de l'herbe.
+var _floor_h: int = 15
 const TOWER_W: int = 56
+## Marge entre le bas du phare et le bord inférieur (place pour "Combattre !"
+## et pour que la base repose au-dessus de l'herbe du décor).
+const BASE_MARGIN: int = 36
 
 var _run: TowerMode
 var _event: String = ""
@@ -13,6 +18,7 @@ var _cursor_y: float = 0.0
 var _font: Font
 var _ready_to_go: bool = false
 var _canvas: Control
+var _tower_base_y: float = 0.0
 
 
 func _ready() -> void:
@@ -32,16 +38,22 @@ func _ready() -> void:
 	_canvas.draw.connect(_draw_tower)
 	add_child(_canvas)
 	var w: float = get_viewport_rect().size.x
+	var h: float = get_viewport_rect().size.y
+	# Base du phare au-dessus de l'herbe (le décor pose la ligne d'herbe
+	# vers 72 % de la hauteur) ; les étages tiennent entre le haut et cette base.
+	_tower_base_y = floorf(h * 0.72)
+	_floor_h = clampi(int((_tower_base_y - 40) / TowerMode.FLOORS), 11, 19)
 	var tower_x: float = floorf(w * 0.5 - TOWER_W * 0.5)
 	# Portraits des adversaires, un par étage (le 6e en a deux).
 	for i: int in TowerMode.FLOORS:
 		var fl: Dictionary = _run.floors[i]
 		var opps: Array = fl["opponents"]
+		var portrait_sz: int = _floor_h - 2
 		for k: int in opps.size():
 			var face: PortraitView = PortraitView.create(str(opps[k]), int(fl.get("costume", 0)))
 			face.region_enabled = true
-			face.region_rect = Rect2(5, 2, FLOOR_H - 2, FLOOR_H - 2)
-			face.position = Vector2(tower_x + 3 + k * (FLOOR_H - 1), _floor_y(i) + 1)
+			face.region_rect = Rect2(5, 2, portrait_sz, portrait_sz)
+			face.position = Vector2(tower_x + 3 + k * (portrait_sz + 1), _floor_y(i) + 1)
 			add_child(face)
 	var player: FighterView = UiKit.fighter_preview(_run.fighter, _run.costume, "idle")
 	player.position = Vector2(60, 190)
@@ -89,7 +101,7 @@ func _ready() -> void:
 
 
 func _floor_y(i: int) -> float:
-	return 196.0 - (i + 1) * FLOOR_H
+	return _tower_base_y - (i + 1) * _floor_h
 
 
 func _process(delta: float) -> void:
@@ -116,20 +128,21 @@ func _draw_tower() -> void:
 	for i: int in TowerMode.FLOORS:
 		var y: float = _floor_y(i)
 		var inset: float = floorf((TowerMode.FLOORS - 1 - i) * 0.0)
-		var r: Rect2 = Rect2(x0 + inset, y, TOWER_W - inset * 2, FLOOR_H)
+		var r: Rect2 = Rect2(x0 + inset, y, TOWER_W - inset * 2, _floor_h)
 		var done: bool = i < _run.floor_index
 		var fill: Color = Color8(236, 225, 204) if not done else Color8(176, 160, 140)
 		if i == TowerMode.FLOORS - 1:
 			fill = Color8(44, 60, 110)
 		_canvas.draw_rect(r, UiKit.C_OUTLINE)
 		_canvas.draw_rect(r.grow(-1), fill)
-		_canvas.draw_string(_font, Vector2(r.end.x - 14, y + 13), str(i + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 8,
+		var text_y: float = y + _floor_h - 3
+		_canvas.draw_string(_font, Vector2(r.end.x - 14, text_y), str(i + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 8,
 			UiKit.C_OUTLINE if i < TowerMode.FLOORS - 1 else UiKit.C_GOLD)
 		if done:
-			_canvas.draw_string(_font, Vector2(r.end.x - 26, y + 13), "v", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, UiKit.C_GREEN)
+			_canvas.draw_string(_font, Vector2(r.end.x - 26, text_y), "v", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, UiKit.C_GREEN)
 		if i == _run.floor_index:
 			_canvas.draw_rect(r.grow(1), UiKit.C_GOLD, false, 2.0)
-	_canvas.draw_rect(Rect2(x0 - 6, 196, TOWER_W + 12, 8), UiKit.C_OUTLINE)
+	_canvas.draw_rect(Rect2(x0 - 6, _tower_base_y, TOWER_W + 12, 8), UiKit.C_OUTLINE)
 	# Curseur du joueur
 	var cy: float = _cursor_y
 	_canvas.draw_rect(Rect2(x0 - 10, cy + 4, 8, 12), UiKit.C_OUTLINE)

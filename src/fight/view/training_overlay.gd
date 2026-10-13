@@ -7,7 +7,7 @@ signal behavior_requested(index: int)
 signal move_list_requested
 
 var sim: FightSim
-var behavior: int = 0
+var behavior: int = TrainingMode.DEFAULT_BEHAVIOR
 var _history: Array[String] = []
 var _counts: Array[int] = []
 var _last_mask: int = -1
