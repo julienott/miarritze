@@ -62,6 +62,12 @@ jobs:
       # d'atteindre la tentative par mot de passe. (Même pattern que sutorimu.)
       # Pas de --delete : FTP_PATH pourrait contenir d'autres fichiers (API
       # backend plus tard) ; les fichiers index.* sont simplement écrasés.
+      - name: Copy PWA assets (manifest + icônes) dans le build
+        run: |
+          mkdir -p web/build/pwa
+          cp web/pwa/*.png web/build/pwa/
+          cp web/pwa/manifest.webmanifest web/build/pwa/manifest.webmanifest
+
       - name: Deploy via rsync over SSH
         env:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
