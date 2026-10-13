@@ -5,9 +5,13 @@ extends Control
 @onready var _press_label: Label = $PressLabel
 
 var _blink: float = 0.0
+var _started: bool = false
 
 
 func _ready() -> void:
+	# Le Control racine ne doit pas capter les touchers : sinon la GUI les
+	# consomme et « Appuie pour commencer » ne réagit pas sur iPhone.
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$TitleLabel.visible = false
 	$SubLabel.visible = false
 	var logo: LogoView = LogoView.new()
@@ -25,9 +29,11 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	var pressed: bool = (event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed) \
+		or (event is InputEventMouseButton and (event as InputEventMouseButton).pressed) \
 		or (event is InputEventKey and (event as InputEventKey).pressed) \
 		or (event is InputEventJoypadButton and (event as InputEventJoypadButton).pressed)
-	if pressed:
+	if pressed and not _started:
+		_started = true
 		_on_start_pressed()
 
 
