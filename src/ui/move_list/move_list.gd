@@ -36,13 +36,32 @@ func _build(fighter_id: String) -> void:
 	offset_right = -12
 	offset_top = 8
 	offset_bottom = -8
+	# Au-dessus du HUD (portraits) et de tout le reste de la couche UI.
+	z_index = 100
+	var outer: VBoxContainer = VBoxContainer.new()
+	outer.add_theme_constant_override(&"separation", 4)
+	add_child(outer)
+	# En-tête fixe : « Fermer » toujours visible, sans avoir à faire défiler.
+	var header: HBoxContainer = HBoxContainer.new()
+	outer.add_child(header)
+	var title: Label = UiKit.label("COUPS DE %s" % str(data.get("name", fighter_id)).to_upper(), 8, UiKit.C_GOLD,
+		HORIZONTAL_ALIGNMENT_LEFT)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	header.add_child(title)
+	var close: Button = UiKit.button("Fermer", func() -> void:
+		closed.emit()
+		queue_free(), 80)
+	header.add_child(close)
+	close.grab_focus.call_deferred()
 	var scroll: ScrollContainer = ScrollContainer.new()
-	add_child(scroll)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	outer.add_child(scroll)
 	var col: VBoxContainer = VBoxContainer.new()
-	col.add_theme_constant_override(&"separation", 1)
+	col.add_theme_constant_override(&"separation", 3)
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(col)
-	col.add_child(UiKit.label("COUPS DE %s" % str(data.get("name", fighter_id)).to_upper(), 8, UiKit.C_GOLD))
 	for n: Array in NORMALS:
 		col.add_child(_row(n[0], n[1], ""))
 	var sp_title: Label = UiKit.label("SPÉCIAUX", 8, UiKit.C_GOLD)
@@ -56,16 +75,11 @@ func _build(fighter_id: String) -> void:
 	col.add_child(_row("SUPER : %s" % str(sup.get("name", "Coup du Txapeldun")), "SPÉCIAL + GARDE (Marée pleine)", ""))
 	col.add_child(_row("Spécial renforcé", "SPÉCIAL + GARDE + direction (1 Marée)", ""))
 	col.add_child(_row("Finish BUKATU !", "Bas, Bas + SPÉCIAL (tout près)", ""))
-	var close: Button = UiKit.button("Fermer", func() -> void:
-		closed.emit()
-		queue_free(), 80)
-	col.add_child(close)
-	close.grab_focus.call_deferred()
 
 
 func _row(name_text: String, input_text: String, classic: String) -> Control:
 	var row: VBoxContainer = VBoxContainer.new()
-	row.add_theme_constant_override(&"separation", 0)
+	row.add_theme_constant_override(&"separation", 1)
 	var a: Label = UiKit.label(name_text, 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT)
 	a.add_theme_constant_override(&"outline_size", 0)
 	row.add_child(a)

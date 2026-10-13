@@ -183,6 +183,13 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 		var me_slot: int = int(params.get("local_slot", 0))
 		_touch.facing_getter = func() -> int: return sim.f[me_slot].facing
 		_touch.meter_full_getter = func() -> bool: return sim.f[me_slot].meter >= SimConst.METER_MAX
+		_touch.fighter_rects_getter = func() -> Array:
+			var out: Array = []
+			var xf: Transform2D = get_viewport().get_canvas_transform()
+			for p: int in 2:
+				var feet: Vector2 = xf * Vector2(sim.f[p].x / 256.0, sim.f[p].y / 256.0)
+				out.append(Rect2(feet.x - 22.0, feet.y - 96.0, 44.0, 96.0))
+			return out
 		ui.add_child(_touch)
 		InputHub.add_source(0, VirtualPadSource.new(_touch))
 	if str(params.get("mode", "")) != "online":
@@ -484,4 +491,4 @@ func _leave() -> void:
 	if _online:
 		OnlineMode.leave()
 		return
-	SceneRouter.goto(StringName(str(params.get("return_to", "title"))))
+	SceneRouter.goto(StringName(str(params.get("return_to", "main_menu"))))

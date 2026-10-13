@@ -160,6 +160,10 @@ func _build_cells() -> void:
 func _on_cell_input(event: InputEvent, index: int) -> void:
 	var tapped: bool = (event is InputEventMouseButton and (event as InputEventMouseButton).pressed) \
 		or (event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed)
+	# Sur iPhone, Godot émule aussi un clic souris à partir du toucher : sans ce
+	# filtre, un seul tap choisissait ET validait le perso.
+	if event is InputEventMouseButton and (event as InputEventMouseButton).device == InputEvent.DEVICE_ID_EMULATION:
+		return
 	if not tapped or _picking_difficulty:
 		return
 	var p: int = 0 if not _done[0] else (1 if _players == 2 else 0)
@@ -182,7 +186,8 @@ func _refresh(p: int) -> void:
 	var stats: Dictionary = data.get("stats", {})
 	_stats[p] = [int(stats.get("power", 2)), int(stats.get("speed", 2)), int(stats.get("reach", 2))]
 	_locked[p] = not _costume_ok(id, _costume[p])
-	_info[p].text = "%s\nCostume %d" % [str(data.get("title", "")), _costume[p] + 1]
+	_info[p].text = "%s\nCostume %d/4%s" % [str(data.get("title", "")), _costume[p] + 1,
+		"  (touche-moi)" if Settings.touch_enabled() and not _done[p] else ""]
 	_overlay.queue_redraw()
 	while _names.size() <= p:
 		var nl: Label = UiKit.title("")
@@ -197,6 +202,28 @@ func _refresh(p: int) -> void:
 		_show_home_stage(id)
 	_layout()
 	_grid.queue_redraw()
+
+
+## Toucher le grand aperçu d'un joueur change son costume (pas de flèches au doigt).
+func _gui_input(event: InputEvent) -> void:
+	if not (event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed) or _picking_difficulty:
+		return
+	var pos: Vector2 = (event as InputEventScreenTouch).position
+	var w: float = get_viewport_rect().size.x
+	var h: float = get_viewport_rect().size.y
+	if pos.y < h * 0.4:
+		return
+	var p: int = -1
+	if pos.x < 110.0:
+		p = 0
+	elif pos.x > w - 110.0 and _players == 2:
+		p = 1
+	if p < 0 or _done[p] or (p == 1 and not _done[0]):
+		return
+	_costume[p] = (_costume[p] + 1) % 4
+	AudioManager.sfx(&"ui_move")
+	_refresh(p)
+	accept_event()
 
 
 func _refresh_cpu() -> void:

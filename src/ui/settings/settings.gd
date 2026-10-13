@@ -36,6 +36,7 @@ func _ready() -> void:
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override(&"separation", 3)
 	scroll.add_child(_list)
+	UiKit.touch_scroll(_list)
 	_build()
 
 

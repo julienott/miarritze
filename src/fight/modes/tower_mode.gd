@@ -113,6 +113,7 @@ func fight_params() -> Dictionary:
 		"health": [carried_health if double and sub_index == 1 else 0, 0],
 		"on_end": TowerMode.on_fight_end,
 		"mode": "tower",
+		"return_to": "tower",   # Pause > Quitter : retour au phare, la Pyramide continue
 	}
 
 
@@ -128,7 +129,7 @@ func _handle_result(result: Dictionary) -> void:
 	var won: bool = int(result.get("winner", -1)) == 0
 	var fl: Dictionary = current_floor()
 	last_unlocks = Profiles.record_fight(fighter, won, str(fl.get("stage", "")),
-		int(result.get("finisher", 0)) != 0, bool(result.get("perfect", false)))
+		won and int(result.get("finisher", 0)) != 0, won and bool(result.get("perfect", false)))
 	if not won:
 		# Continue illimité : même étage, score réduit de 20 %, rien d'autre.
 		score = score * (100 - LOSS_PENALTY_PCT) / 100

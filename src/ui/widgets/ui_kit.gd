@@ -122,3 +122,17 @@ static func menu_grid(parent: Control, buttons: Array, top: float = 60.0) -> Gri
 	if not buttons.is_empty():
 		(buttons[0] as Control).grab_focus.call_deferred()
 	return grid
+
+
+## Liste dans un ScrollContainer : les boutons laissent passer le glissé du doigt
+## (MOUSE_FILTER_PASS), sinon on ne peut défiler qu'en partant d'un titre.
+static func touch_scroll(list: Control) -> void:
+	_pass_buttons(list)
+	list.child_entered_tree.connect(_pass_buttons)
+
+
+static func _pass_buttons(n: Node) -> void:
+	if n is BaseButton or n is LineEdit:
+		(n as Control).mouse_filter = Control.MOUSE_FILTER_PASS
+	for c: Node in n.get_children():
+		_pass_buttons(c)

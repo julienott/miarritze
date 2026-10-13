@@ -24,8 +24,8 @@ func _ready() -> void:
 	size = get_viewport().get_visible_rect().size
 	_behavior_button = UiKit.button("Mannequin : " + TrainingMode.BEHAVIORS[behavior], _cycle, 150)
 	_behavior_button.focus_mode = Control.FOCUS_NONE
-	_behavior_button.position = Vector2(size.x - 154, 44)
 	add_child(_behavior_button)
+	_place_behavior()
 	var moves: Button = UiKit.button("Coups", func() -> void: move_list_requested.emit(), 60)
 	moves.focus_mode = Control.FOCUS_NONE
 	moves.position = Vector2(size.x - 64, 70)
@@ -35,7 +35,15 @@ func _ready() -> void:
 func _cycle() -> void:
 	behavior = (behavior + 1) % TrainingMode.BEHAVIORS.size()
 	_behavior_button.text = "Mannequin : " + TrainingMode.BEHAVIORS[behavior]
+	_place_behavior()
 	behavior_requested.emit(behavior)
+
+
+## Calé à droite selon la largeur réelle du libellé (il varie avec le comportement).
+func _place_behavior() -> void:
+	_behavior_button.reset_size()
+	var bw: float = _behavior_button.get_combined_minimum_size().x
+	_behavior_button.position = Vector2(size.x - bw - 4, 44)
 
 
 func _process(_delta: float) -> void:

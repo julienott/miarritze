@@ -4,6 +4,31 @@ Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
 ## Phase atteinte : 8 ✅ (polissage) — v1 en prod sur https://miarritze.ijulien.com (main = borroka, déployé le 2026-10-13)
 
+### Après la mise en prod (retours de Julien sur iPhone, 2026-10-13)
+- Corrigés et déployés :
+  - tap de l'écran titre ;
+  - saisie du pseudo (champ HTML natif) ;
+  - Hegoak rétabli ;
+  - versus contre l'ordi sur le tactile ;
+  - K.O. du mannequin au tutoriel ;
+  - parallaxe sur écran large ;
+  - « Combattre ! » de la Pyramide et boutons du salon hors écran.
+- Tournée iPhone complète (agent, `tests/web/iphone_tour.mjs`, crochet `?qa=1` → `window.__qa`), 15 bugs gênants corrigés :
+  - sélection : un tap ne valide plus, le costume change en touchant le perso ;
+  - pause > Quitter ne renvoie plus au titre ;
+  - « Parfait·e » n'est plus donné sur une défaite ;
+  - salon sans groupe ;
+  - fenêtre de défi hors écran ;
+  - mannequin / liste des coups ;
+  - maps sur iPhone SE ;
+  - boutons tactiles estompés au-dessus des persos ;
+  - défilement des réglages et du profil au doigt ;
+  - « TU GAGNES / L'ORDI GAGNE » ;
+  - message portrait ;
+  - encoche : `viewport-fit=cover` retiré.
+- Décors (`tests/stage_sheet.tscn`, planches dans `tests/out/stages/`) : Sommet du Phare refait (balcon de la lanterne au coucher de soleil, sol en dalles, faisceau depuis la lanterne), Port Vieux refait, raccords de Côte des Basques et Grande Plage effacés. Méthode : `tools/stages/regen_wide.py pano` (RD 384×160 agrandi ×4/3, sans miroir ni outpainting). Ces 4 décors sont désormais statiques (plus d'eau animée).
+- **À reprendre :** relancer `node tests/web/iphone_tour.mjs all iphone13` puis `screens,tower,settings,portrait iphone_se` sur le build actuel et vérifier les captures (la tournée de contrôle a été interrompue) ; vérifier l'écran de fin (bouton « Menu » déplacé en bas à droite).
+
 ### Phase 8
 - Session longue (`node tests/web/long_session.mjs`) : 39 combats en 30 min, aucune erreur. Mémoire à 69 Mo, un palier à 215 Mo à la 21e minute (agrandissement du tas WASM), puis stable (`docs/captures/phase8_long_session.json`).
 - Équilibrage à n=30 (1980 matchs IA contre IA) : de 46,4 % (Louis) à 55,8 % (Peio).

@@ -168,13 +168,17 @@ func _draw_ambient() -> void:
 			"beam":
 				# Faisceau du Phare qui balaie le ciel nocturne (§5.3, §6).
 				var origin: Vector2 = Vector2(left * 0.75 + 256.0, float(pr.get("y", 40)))
+				# « x » : position dans l'image du plan lointain (la lanterne y est dessinée).
+				if pr.has("x") and not _layers.is_empty():
+					origin.x = (_layers[0]["node"] as Node2D).position.x + float(pr["x"])
 				var ang: float = sin(t * 0.8) * 1.3
 				for side: int in [-1, 1]:
 					var dir: Vector2 = Vector2(cos(ang) * side, sin(ang) * 0.25 - 0.05)
 					var tip: Vector2 = origin + dir * 420.0
 					var n: Vector2 = Vector2(-dir.y, dir.x) * 26.0
 					_fx.draw_colored_polygon(PackedVector2Array([origin, tip + n, tip - n]), Color(1.0, 0.95, 0.62, 0.16))
-				_fx.draw_circle(origin, 5, Color(1.0, 0.96, 0.7, 0.9))
+				if bool(pr.get("dot", true)):
+					_fx.draw_circle(origin, 5, Color(1.0, 0.96, 0.7, 0.9))
 			"bubbles":
 				for i: int in 18:
 					var x: float = fmod(i * 61.0, 560.0) + 8.0 + sin(t * 1.3 + i) * 4.0

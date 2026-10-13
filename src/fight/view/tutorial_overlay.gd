@@ -8,11 +8,11 @@ signal finished
 
 const STEPS: Array = [
 	{"title": "BOUGER", "pad": "Glisse le pouce à gauche de l'écran", "keys": "A / D (ou ← →)", "goal": "move"},
-	{"title": "FRAPPER", "pad": "Touche le bouton rouge P", "keys": "J (POING) — 3 fois = combo !", "goal": "hit"},
-	{"title": "GARDER", "pad": "Maintiens le bouton bleu G", "keys": "Espace (GARDE)", "goal": "block"},
-	{"title": "TXAPEL-CUT !", "pad": "Pouce en bas-arrière + P", "keys": "S + A + J (bas-arrière + POING)", "goal": "uppercut"},
-	{"title": "SPÉCIAL", "pad": "Touche le bouton or S", "keys": "L (SPÉCIAL)", "goal": "special"},
-	{"title": "SUPER !", "pad": "Touche MARÉE (jauge pleine)", "keys": "L + Espace (SPÉCIAL + GARDE)", "goal": "super"},
+	{"title": "FRAPPER", "pad": "Touche le bouton rouge (poing)", "keys": "J (POING) — 3 fois = combo !", "goal": "hit"},
+	{"title": "GARDER", "pad": "Garde le doigt sur le bouton bleu (bouclier)", "keys": "Espace (GARDE)", "goal": "block"},
+	{"title": "TXAPEL-CUT !", "pad": "Pouce en bas, vers l'arrière, + bouton rouge", "keys": "S + A + J (bas-arrière + POING)", "goal": "uppercut"},
+	{"title": "SPÉCIAL", "pad": "Touche le bouton jaune (lauburu)", "keys": "L (SPÉCIAL)", "goal": "special"},
+	{"title": "SUPER !", "pad": "Touche le bouton MARÉE", "keys": "L + Espace (SPÉCIAL + GARDE)", "goal": "super"},
 	{"title": "K.O. !", "pad": "Vide la barre de vie de Hondar !", "keys": "Vide la barre de vie de Hondar !", "goal": "ko"},
 ]
 
@@ -32,8 +32,10 @@ func _ready() -> void:
 	position = Vector2.ZERO
 	size = get_viewport().get_visible_rect().size
 	_label = UiKit.label("", 8, UiKit.C_LINEN)
-	_label.position = Vector2(0, 60)
-	_label.size = Vector2(size.x, 30)
+	# Consigne à gauche du losange de boutons (sinon le bouton garde la cache).
+	_label.position = Vector2(8, 48)
+	_label.size = Vector2(size.x - 150, 30)
+	_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(_label)
 	var skip: Button = UiKit.button("Passer", func() -> void: finished.emit(), 60)
 	skip.focus_mode = Control.FOCUS_NONE

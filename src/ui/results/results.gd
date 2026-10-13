@@ -19,7 +19,13 @@ func _ready() -> void:
 		add_child(view)
 	var head_text: String = "ÉGALITÉ !"
 	if winner >= 0:
-		head_text = "%s GAGNE !" % Roster.display_name(str(fight.get("p%d" % (winner + 1), ""))).to_upper()
+		var vs_cpu: bool = int((fight.get("ai", [0, 0]) as Array)[1]) > 0
+		if vs_cpu:
+			head_text = "TU GAGNES !" if winner == 0 else "L'ORDI GAGNE !"
+		elif str(fight.get("p1", "")) == str(fight.get("p2", "")):
+			head_text = "J%d GAGNE !" % (winner + 1)   # miroir : le nom ne dit pas qui
+		else:
+			head_text = "%s GAGNE !" % Roster.display_name(str(fight.get("p%d" % (winner + 1), ""))).to_upper()
 	var head: Label = UiKit.title(head_text)
 	head.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	head.position.y = 10

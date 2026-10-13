@@ -28,6 +28,8 @@ static func attach(edit: LineEdit) -> void:
 
 
 func _ready() -> void:
+	# Doit tourner pendant la pause (overlay portrait) pour masquer le champ.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_edit = get_parent() as LineEdit
 	_next_id += 1
 	_id = "godot-text-%d" % _next_id
@@ -70,7 +72,7 @@ func _process(_delta: float) -> void:
 	if _el == null:
 		return
 	var css: String = "none"
-	if _edit.is_visible_in_tree():
+	if _edit.is_visible_in_tree() and not get_tree().paused:
 		# Le viewport logique remplit toute la fenêtre (aspect expand) :
 		# on passe par des fractions, converties en CSS côté navigateur.
 		var view: Vector2 = get_viewport().get_visible_rect().size

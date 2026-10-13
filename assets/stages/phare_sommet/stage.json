@@ -28,7 +28,9 @@
  "props": [
   {
    "kind": "beam",
-   "y": 40
+   "x": 96,
+   "y": 58,
+   "dot": false
   }
  ],
  "music": "phare_sommet",

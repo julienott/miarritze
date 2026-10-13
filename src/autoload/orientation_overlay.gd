@@ -16,7 +16,9 @@ func _ready() -> void:
 	add_child(_dim)
 	_message = Label.new()
 	_message.text = "Tourne ton appareil\n\n(le jeu est en pause)"
-	_message.add_theme_font_size_override(&"font_size", 30)
+	# Portrait : le viewport logique fait ~216 px de large → petit corps, retour à la ligne.
+	_message.add_theme_font_size_override(&"font_size", 12)
+	_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_message.add_theme_color_override(&"font_color", Color(0.97, 0.95, 0.89))
 	_message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

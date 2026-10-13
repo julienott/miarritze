@@ -26,8 +26,8 @@ STAGES = {
                 "props": [{"kind": "gull", "y": 30, "speed": 7, "parallax": 0.4}]},
     "stade": {"floor": "grass", "particles": "sand", "music": "stade", "props": [{"kind": "confetti"}]},
     "aquarium": {"floor": "aqua_tiles", "particles": "water", "music": "aquarium", "props": [{"kind": "bubbles"}]},
-    "phare_sommet": {"floor": "stone_night", "particles": "wood", "music": "phare_sommet",
-                     "props": [{"kind": "beam", "y": 40}]},
+    "phare_sommet": {"floor": "balcony", "particles": "wood", "music": "phare_sommet",
+                     "props": [{"kind": "beam", "x": 96, "y": 58, "dot": False}]},
 }
 # Variantes recolorées (soir / crépuscule) : même décor, LUT chaude ou bleutée.
 VARIANTS = {"grande_plage_soir": ("grande_plage", "sunset"), "cote_basques_crepuscule": ("cote_basques", "dusk")}
@@ -100,6 +100,27 @@ def floor(kind, seed=7):
                 px[x, y] = RAMPS["linen"][0]
         for _ in range(300):
             px[rnd.randrange(w), rnd.randrange(h)] = ramp[2]
+    elif kind == "balcony":
+        # Dalles de pierre du balcon du phare, au coucher de soleil : rangées
+        # décalées, teintes variées, liseré chaud (lumière du soleil) en haut.
+        ramp = RAMPS["stone"]
+        warm = RAMPS["sand"]
+        for y in range(h):
+            for x in range(w):
+                row = (y - 3) // 10
+                off = 11 if row % 2 else 0
+                cell = ((x + off) // 22, row)
+                edge = (y - 3) % 10 == 0 or (x + off) % 22 == 0
+                shade = ramp[2] if edge else ramp[(cell[0] * 7 + cell[1] * 3) % 3 // 2]
+                px[x, y] = shade
+        for x in range(w):
+            px[x, 0] = warm[1]
+            px[x, 1] = warm[2]
+            px[x, 2] = ramp[2]
+        for _ in range(500):
+            x, y = rnd.randrange(w), rnd.randrange(4, h)
+            if px[x, y] != ramp[2]:
+                px[x, y] = ramp[1]
     elif kind == "stone_night":
         ramp = RAMPS["night"]
         for y in range(h):

@@ -20,6 +20,12 @@ func _ready() -> void:
 	add_child(grid)
 	# Centrage sur la largeur réelle (iPhone 19,5:9 plus large que 384).
 	var center: Callable = func() -> void:
+		# Écran étroit (iPhone SE, 16:9) : 3 colonnes ne tiennent pas → 2.
+		grid.columns = 3
+		grid.reset_size()
+		if grid.get_combined_minimum_size().x > get_viewport_rect().size.x - 8:
+			grid.columns = 2
+		grid.reset_size()
 		grid.position.x = roundf((get_viewport_rect().size.x - grid.get_combined_minimum_size().x) * 0.5)
 	get_viewport().size_changed.connect(center)
 	center.call_deferred()
@@ -53,6 +59,7 @@ func _pick(id: String) -> void:
 	params["stage"] = id
 	params["ai"] = [0, int(_params.get("ai_level", 0))]
 	params["mode"] = "versus"
+	params["return_to"] = "main_menu"
 	params["on_end"] = VersusMode.on_fight_end
 	VersusMode.last = params
 	SceneRouter.goto(&"versus_splash", params)

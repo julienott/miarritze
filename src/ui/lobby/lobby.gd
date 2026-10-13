@@ -50,9 +50,11 @@ func _ready() -> void:
 	if int(Profiles.active().get("player_id", 0)) <= 0:
 		_info.text = "Rejoins d'abord un groupe (Profil > Groupe)"
 		var go: Button = UiKit.button("Aller au profil", func() -> void: SceneRouter.goto(&"profile_edit"), 140)
-		go.set_anchors_preset(Control.PRESET_CENTER)
-		go.position = Vector2(get_viewport_rect().size.x * 0.5 - 70, 100)
+		go.position = Vector2(roundf(get_viewport_rect().size.x * 0.5 - 70), 100)
 		add_child(go)
+		# Sans groupe, le serveur refuse : pas de recherche sans fin ni classement vide.
+		quick.disabled = true
+		board.disabled = true
 		set_process(false)
 		return
 	_info.text = "Groupe %s — touche un copain pour le défier" % str(Profiles.active().get("group_code", ""))
@@ -200,8 +202,7 @@ func _show_invite(inv: Dictionary) -> void:
 		_respond(mid, true)
 		return
 	_invite_box = PanelContainer.new()
-	_invite_box.set_anchors_preset(Control.PRESET_CENTER)
-	_invite_box.position = Vector2(get_viewport_rect().size.x * 0.5 - 110, 70)
+	_invite_box.position = Vector2(roundf(get_viewport_rect().size.x * 0.5 - 110), 70)
 	_invite_box.custom_minimum_size = Vector2(220, 0)
 	add_child(_invite_box)
 	var col: VBoxContainer = VBoxContainer.new()

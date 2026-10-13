@@ -151,9 +151,9 @@ func _show_summary() -> void:
 	var ok: Button = UiKit.button("Menu", func() -> void:
 		TowerMode.run = null
 		SceneRouter.goto(&"main_menu"), 80)
-	ok.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	ok.position = Vector2(-40, 10)
+	# En bas à droite : au centre en haut, il cachait la tête du héros.
 	add_child(ok)
+	ok.position = Vector2(get_viewport_rect().size.x - 84, get_viewport_rect().size.y - 26)
 	ok.grab_focus.call_deferred()
 
 

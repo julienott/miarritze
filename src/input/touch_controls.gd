@@ -33,6 +33,12 @@ var mode: String = "pad"
 var facing_getter: Callable = func() -> int: return 1
 ## La jauge est-elle pleine ? (affiche le bouton MARÉE)
 var meter_full_getter: Callable = func() -> bool: return false
+## Rectangles écran des combattants : un bouton qui en recouvre un s'efface
+## (le combat reste visible quand un perso passe sous le losange).
+var fighter_rects_getter: Callable = func() -> Array: return []
+## Opacité d'un bouton posé sur un combattant (fraction de l'opacité normale).
+const OVER_FIGHTER_ALPHA: float = 0.35
+var _over_mask: int = 0
 
 var _touches: Dictionary = {}      # index -> {kind, start, pos, t0, button}
 var _stick_center: Vector2 = Vector2.ZERO
@@ -346,6 +352,7 @@ func _pulse_bits(mask: int) -> void:
 
 
 func _process(_delta: float) -> void:
+	_update_fade()
 	if mode != "gestures":
 		return
 	# Appui long sur la moitié droite : GARDE tant que maintenu.
@@ -386,6 +393,29 @@ func read_mask() -> int:
 
 # ------------------------------------------------------------------ dessin
 
+func _covers_fighter(b: Dictionary) -> bool:
+	var c: Vector2 = b["center"]
+	var r: float = float(b["radius"])
+	var box: Rect2 = Rect2(c - Vector2(r, r), Vector2(r, r) * 2.0)
+	for rect: Variant in fighter_rects_getter.call():
+		if (rect as Rect2).intersects(box):
+			return true
+	return false
+
+
+func _update_fade() -> void:
+	# Redessin seulement quand le recouvrement change (budget web).
+	var mask: int = 0
+	var i: int = 0
+	for name: String in _buttons:
+		if _covers_fighter(_buttons[name]):
+			mask |= 1 << i
+		i += 1
+	if mask != _over_mask:
+		_over_mask = mask
+		queue_redraw()
+
+
 func _draw() -> void:
 	var alpha: float = Settings.pad_opacity
 	if mode == "gestures":
@@ -408,11 +438,12 @@ func _draw() -> void:
 			continue
 		var lit: bool = (_held & int(b["bit"])) != 0 and name != "maree"
 		var col: Color = (b["color"] as Color)
-		draw_circle(b["center"], float(b["radius"]), Color(col.lightened(0.3) if lit else col, alpha if not lit else 0.9))
-		draw_arc(b["center"], float(b["radius"]), 0, TAU, 24, Color(C_OUTLINE, 0.9), 1.5)
+		var fade: float = OVER_FIGHTER_ALPHA if _covers_fighter(b) and not lit else 1.0
+		draw_circle(b["center"], float(b["radius"]), Color(col.lightened(0.3) if lit else col, (alpha if not lit else 0.9) * fade))
+		draw_arc(b["center"], float(b["radius"]), 0, TAU, 24, Color(C_OUTLINE, 0.9 * fade), 1.5)
 		if _icons.has(name):
 			var tex: Texture2D = _icons[name]
-			draw_texture(tex, ((b["center"] as Vector2) - tex.get_size() * 0.5).round(), Color(1, 1, 1, 0.95))
+			draw_texture(tex, ((b["center"] as Vector2) - tex.get_size() * 0.5).round(), Color(1, 1, 1, 0.95 * fade))
 		if name == "maree":
 			var tw: float = _font.get_string_size("MARÉE", HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x
 			draw_string(_font, (b["center"] as Vector2) + Vector2(-tw * 0.5, -float(b["radius"]) - 3), "MARÉE",

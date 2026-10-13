@@ -28,6 +28,7 @@ func _ready() -> void:
 	_list = VBoxContainer.new()
 	_list.add_theme_constant_override(&"separation", 3)
 	scroll.add_child(_list)
+	UiKit.touch_scroll(_list)
 	_build()
 
 
@@ -66,6 +67,12 @@ func _build() -> void:
 	_list.add_child(UiKit.label("GROUPE", 8, UiKit.C_GOLD, HORIZONTAL_ALIGNMENT_LEFT))
 	var code: String = str(prof.get("group_code", ""))
 	_list.add_child(UiKit.label("Code : %s" % (code if code != "" else "aucun"), 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT))
+	# Message de Créer / Rejoindre juste au-dessus de la ligne du code (visible
+	# sans défiler), sur plusieurs lignes si besoin.
+	_status = UiKit.label("", 8, UiKit.C_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
+	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_status.custom_minimum_size = Vector2(get_viewport_rect().size.x - 136, 0)
+	_list.add_child(_status)
 	var row: HBoxContainer = HBoxContainer.new()
 	var edit: LineEdit = LineEdit.new()
 	edit.max_length = 6
@@ -77,8 +84,6 @@ func _build() -> void:
 	row.add_child(UiKit.button("Rejoindre", func() -> void: _join(edit.text.strip_edges().to_upper()), 80))
 	row.add_child(UiKit.button("Créer", _create_group, 60))
 	_list.add_child(row)
-	_status = UiKit.label("", 8, UiKit.C_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
-	_list.add_child(_status)
 	_list.add_child(UiKit.label("STATISTIQUES", 8, UiKit.C_GOLD, HORIZONTAL_ALIGNMENT_LEFT))
 	var stats: Dictionary = prof.get("stats", {})
 	var tx: Dictionary = stats.get("txapelas", {})
