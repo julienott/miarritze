@@ -8,6 +8,8 @@ extends Node
 ##   --inputs=R*60,DLP,_*30              entrées scriptées pour J1 (J2 : niveau IA du
 ##                                       5e champ d'--autofight, 0 = inerte)
 ##   --touchidx=random                   index tactiles aléatoires (régression iOS)
+## Web : `?qa=1` dans l'URL publie `window.__qa` (scène + boutons visibles en
+## fractions d'écran) pour les tests Playwright qui touchent par libellé.
 
 var _shot_path: String = ""
 var _delay: float = 3.0
@@ -25,6 +27,12 @@ var _last_scene: String = ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	if OS.has_feature("web") and str(JavaScriptBridge.eval("location.search")).contains("qa=1"):
+		var t: Timer = Timer.new()
+		t.wait_time = 0.25
+		t.autostart = true
+		t.timeout.connect(_publish_web_qa)
+		add_child(t)
 	var autofight: String = ""
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--shot="):
@@ -149,3 +157,25 @@ func _capture(path: String, quit_after: bool) -> void:
 	print("qa_capture: écrit %s" % path)
 	if quit_after:
 		get_tree().quit()
+
+
+## Web QA : scène courante + boutons visibles (texte, rect en fractions, état).
+func _publish_web_qa() -> void:
+	var root: Window = get_tree().root
+	var view: Vector2 = root.get_visible_rect().size
+	var buttons: Array = []
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var n: Node = stack.pop_back()
+		for c: Node in n.get_children():
+			stack.append(c)
+		if n is BaseButton and (n as Control).is_visible_in_tree():
+			var b: BaseButton = n
+			var r: Rect2 = b.get_global_rect()
+			var label: String = (b as Button).text if b is Button else str(b.name)
+			buttons.append({"t": label, "x": (r.position.x + r.size.x * 0.5) / view.x,
+				"y": (r.position.y + r.size.y * 0.5) / view.y, "w": r.size.x / view.x, "h": r.size.y / view.y,
+				"off": b.disabled})
+	var scene: String = get_tree().current_scene.scene_file_path if get_tree().current_scene != null else ""
+	var data: Dictionary = {"scene": scene, "view": [view.x, view.y], "buttons": buttons}
+	JavaScriptBridge.eval("window.__qa = %s;" % JSON.stringify(data), true)
