@@ -13,7 +13,7 @@ func _initialize() -> void:
 			_only = arg.trim_prefix("--only=")
 	var tests: Array[Callable] = [
 		test_lint_sim, test_data_valid, test_save_load_identity, test_determinism,
-		test_rollback, test_frame_data, test_chip_never_kills, test_combo_forced_knockdown,
+		test_rollback, test_frame_data, test_chip_never_kills, test_training_ko, test_combo_forced_knockdown,
 		test_timer_and_draw, test_wave_return_once, test_throw_and_tech, test_full_match_ends,
 		test_inputs_to_moves, test_fuzz_roster, test_reflect_projectile,
 		test_netcode_lossy, test_netcode_desync_detected, test_netcode_final_checksum,
@@ -221,6 +221,24 @@ func test_chip_never_kills() -> void:
 		sim._apply_damage(0, 400, 10, 10, 0, SimConst.LVL_MID, false, 0, 0, 4, 0, 150, 0, 0, 0, 0, 0, sim.f[0].x, sim.f[0].y)
 		sim.f[1].set_state(SimConst.ST_BLOCK, SimConst.A_BLOCK)
 	check(sim.f[1].health == 1, "le chip a tué ou n'a rien fait (vie %d)" % sim.f[1].health)
+
+
+func test_training_ko() -> void:
+	# Entraînement : le mannequin ne tombe jamais ; tutoriel (training_ko) : il tombe K.O.
+	var sim: FightSim = make_sim("louis", "hondar", {"training": true, "rounds": 1})
+	skip_intro(sim)
+	sim.f[1].health = 5
+	sim._apply_damage(0, 50, 10, 10, 0, SimConst.LVL_MID, false, 0, 0, 4, 0, 150, 0, 0, 0, 0, 0, sim.f[0].x, sim.f[0].y)
+	for i: int in 120:
+		sim.step(0, 0)
+	check(sim.f[1].health > 0, "entraînement : le mannequin est tombé")
+	sim.training_ko = true
+	sim.f[1].health = 5
+	sim._apply_damage(0, 50, 10, 10, 0, SimConst.LVL_MID, false, 0, 0, 4, 0, 150, 0, 0, 0, 0, 0, sim.f[0].x, sim.f[0].y)
+	for i: int in 120:
+		sim.step(0, 0)
+	check(sim.f[1].health == 0 and sim.f[1].state == SimConst.ST_KO, "tutoriel : pas de K.O. (vie %d)" % sim.f[1].health)
+	check(sim.phase == SimConst.PH_FIGHT, "tutoriel : le K.O. a terminé le round")
 
 
 func test_combo_forced_knockdown() -> void:

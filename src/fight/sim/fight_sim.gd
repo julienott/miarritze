@@ -17,6 +17,8 @@ var autoguard: PackedInt32Array = PackedInt32Array([0, 0])
 var start_health: PackedInt32Array = PackedInt32Array([0, 0])
 ## Entraînement : chrono figé, pas de K.O., vie rechargée hors combo.
 var training: bool = false
+## Tutoriel, dernière étape : le mannequin (J2) peut tomber K.O. sans finir le round.
+var training_ko: bool = false
 
 # --- État (sérialisé)
 var frame: int = 0
@@ -129,6 +131,10 @@ func _step_fight() -> void:
 		timer = SimConst.ROUND_FRAMES
 		for p: int in 2:
 			var me: FighterState = f[p]
+			if training_ko and p == 1:
+				if me.health <= 0 and me.state != SimConst.ST_KO:
+					_go_ko(p)
+				continue
 			me.health = maxi(me.health, 1)
 			if me.combo_hits == 0 and me.actionable() and me.health < me.max_health:
 				me.health = me.max_health

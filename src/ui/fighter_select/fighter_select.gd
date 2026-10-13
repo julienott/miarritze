@@ -26,12 +26,16 @@ var _overlay: Control
 var _icons: Dictionary = {}
 var _countdown: float = -1.0
 var _count_label: Label
+## Versus sur appareil tactile sans manette : J2 est l'ordinateur (SPEC §3.3 :
+## pas de place pour deux manettes virtuelles sur iPhone).
+var _vs_cpu: bool = false
 
 
 func _ready() -> void:
 	AudioManager.play_music(&"select")
 	mode = str(SceneRouter.params.get("mode", "versus"))
 	_players = 2 if mode == "versus" else 1
+	_vs_cpu = mode == "versus" and Settings.touch_enabled() and Input.get_connected_joypads().is_empty()
 	_font = load("res://assets/fonts/press_start_2p.ttf")
 	ids = Roster.FIGHTERS.duplicate()
 	if bool(Profiles.active().get("unlocks", {}).get("boss", false)) or OS.get_cmdline_user_args().has("--unlock-all"):
@@ -71,7 +75,7 @@ func _ready() -> void:
 		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		add_child(info)
 		_info.append(info)
-	if mode == "versus":
+	if mode == "versus" and not _vs_cpu:
 		InputHub.set_versus()
 	else:
 		InputHub.set_solo()
@@ -79,7 +83,7 @@ func _ready() -> void:
 	back.position = Vector2(4, 4)
 	back.focus_mode = Control.FOCUS_NONE
 	add_child(back)
-	var ok: Button = UiKit.button("OK", func() -> void: _confirm(0), 48)
+	var ok: Button = UiKit.button("OK", func() -> void: _confirm(0 if not _done[0] else (1 if _players == 2 else 0)), 48)
 	ok.name = "OkButton"
 	ok.focus_mode = Control.FOCUS_NONE
 	add_child(ok)
@@ -87,6 +91,11 @@ func _ready() -> void:
 	_layout()
 	for p: int in _players:
 		_refresh(p)
+	if _vs_cpu:
+		var sub: Label = UiKit.label("contre l'ordi", 8, UiKit.C_GOLD)
+		sub.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		sub.position.y = 24
+		add_child(sub)
 	if _players == 1:
 		_refresh_cpu()
 	if mode == "online":
@@ -343,6 +352,9 @@ func _proceed() -> void:
 				"pseudo": str(Profiles.active().get("pseudo", "?")), "express": Settings.express_fights}
 			SceneRouter.goto(&"stage_select", {"mode": "online"})
 		_:
+			if _vs_cpu:
+				_ask_difficulty()
+				return
 			var p2: String = ids[_cursor[1]]
 			var c2: int = _costume[1]
 			if p2 == p1 and c2 == _costume[0]:
@@ -362,8 +374,20 @@ func _ask_difficulty() -> void:
 	add_child(label)
 	var buttons: Array = []
 	for d: int in 3:
-		buttons.append(UiKit.button(TowerMode.DIFFICULTY_NAMES[d], _start_tower.bind(d)))
+		buttons.append(UiKit.button(TowerMode.DIFFICULTY_NAMES[d],
+			(_start_vs_cpu if _vs_cpu else _start_tower).bind(d)))
 	UiKit.menu_column(self, buttons, 70)
+
+
+func _start_vs_cpu(difficulty: int) -> void:
+	var p1: String = ids[_cursor[0]]
+	var p2: String = ids[_cursor[1]]
+	var c2: int = _costume[1]
+	if p2 == p1 and c2 == _costume[0]:
+		c2 = (c2 + 1) % 4
+	var r: Array = TowerMode.SKILL_RANGE[difficulty]
+	SceneRouter.goto(&"stage_select", {"p1": p1, "c1": _costume[0], "p2": p2, "c2": c2,
+		"ai_level": (int(r[0]) + int(r[1])) / 2})
 
 
 func _start_tower(difficulty: int) -> void:

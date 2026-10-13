@@ -124,6 +124,16 @@ func update_scroll(view_left: float) -> void:
 		var factor: float = layer["factor"]
 		# Parallaxe classique : le calque défile à `factor` fois la caméra.
 		var x: float = view_left * (1.0 - factor)
+		# Calque plus étroit que le monde : on le fait glisser au prorata de la
+		# course de la caméra, pour qu'il couvre l'écran quelle que soit sa
+		# largeur (iPhone 19,5:9 plus large que le 16:9 de référence).
+		var sprite: Sprite2D = node as Sprite2D
+		if sprite != null and sprite.texture != null:
+			var w: float = sprite.texture.get_width() * sprite.scale.x
+			var view_w: float = get_viewport_rect().size.x
+			if w < WORLD_W and w >= view_w and WORLD_W > view_w:
+				var t: float = clampf(view_left / (WORLD_W - view_w), 0.0, 1.0)
+				x = view_left - t * (w - view_w)
 		node.position = Vector2(roundf(x), float(layer["y"]))
 	for pr: Dictionary in _props:
 		var node2: Sprite2D = pr["node"]

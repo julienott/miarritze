@@ -47,5 +47,8 @@ func _ready() -> void:
 
 func _go() -> void:
 	if str(_params.get("mode", "")) == "versus":
-		InputHub.set_versus()
+		if int((_params.get("ai", [0, 0]) as Array)[1]) > 0:
+			InputHub.set_solo()
+		else:
+			InputHub.set_versus()
 	SceneRouter.goto(&"fight", _params)

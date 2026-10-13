@@ -15,5 +15,8 @@ static func on_fight_end(result: Dictionary) -> void:
 
 
 static func rematch() -> void:
-	InputHub.set_versus()
+	if int((last.get("ai", [0, 0]) as Array)[1]) > 0:
+		InputHub.set_solo()
+	else:
+		InputHub.set_versus()
 	SceneRouter.goto(&"fight", last)

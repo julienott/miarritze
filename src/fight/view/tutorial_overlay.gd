@@ -1,7 +1,7 @@
 class_name TutorialOverlay
 extends Control
 ## Tutoriel intégré (SPEC §7.5) : combat d'apprentissage contre Hondar en
-## 6 étapes guidées (bouger, frapper, garder, uppercut, spécial, super).
+## 7 étapes guidées (bouger, frapper, garder, uppercut, spécial, super, K.O.).
 ## Chaque étape attend que le geste soit réussi. Passable (bouton).
 
 signal finished
@@ -13,7 +13,11 @@ const STEPS: Array = [
 	{"title": "TXAPEL-CUT !", "pad": "Pouce en bas-arrière + P", "keys": "S + A + J (bas-arrière + POING)", "goal": "uppercut"},
 	{"title": "SPÉCIAL", "pad": "Touche le bouton or S", "keys": "L (SPÉCIAL)", "goal": "special"},
 	{"title": "SUPER !", "pad": "Touche MARÉE (jauge pleine)", "keys": "L + Espace (SPÉCIAL + GARDE)", "goal": "super"},
+	{"title": "K.O. !", "pad": "Vide la barre de vie de Hondar !", "keys": "Vide la barre de vie de Hondar !", "goal": "ko"},
 ]
+
+## Vie de départ du mannequin à l'étape K.O. (en %), pour un K.O. rapide.
+const KO_START_PCT: int = 40
 
 var sim: FightSim
 var step: int = 0
@@ -46,11 +50,14 @@ func _enter(i: int) -> void:
 		return
 	var st: Dictionary = STEPS[step]
 	var how: String = st["pad"] if Settings.touch_enabled() else st["keys"]
-	_label.text = "%d/6  %s\n%s" % [step + 1, st["title"], how]
+	_label.text = "%d/%d  %s\n%s" % [step + 1, STEPS.size(), st["title"], how]
 	_start_x = sim.f[0].x
 	sim.ai_level[1] = AiBrain.DUMMY_ATTACK if st["goal"] == "block" else AiBrain.DUMMY_IDLE
 	if st["goal"] == "super":
 		sim.f[0].meter = SimConst.METER_MAX
+	if st["goal"] == "ko":
+		sim.training_ko = true
+		sim.f[1].health = mini(sim.f[1].health, sim.f[1].max_health * KO_START_PCT / 100)
 
 
 func _physics_process(_delta: float) -> void:
@@ -64,7 +71,7 @@ func _physics_process(_delta: float) -> void:
 	if _achieved(str(STEPS[step]["goal"])):
 		AudioManager.sfx(&"ui_ok")
 		_label.text = "Super !"
-		_done_t = 0.8
+		_done_t = 1.6 if str(STEPS[step]["goal"]) == "ko" else 0.8
 
 
 func _achieved(goal: String) -> bool:
@@ -84,4 +91,6 @@ func _achieved(goal: String) -> bool:
 			return mv.begins_with("sp_")
 		"super":
 			return mv == "super"
+		"ko":
+			return dummy.health <= 0
 	return false

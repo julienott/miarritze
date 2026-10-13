@@ -175,8 +175,10 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 		ui.add_child(tuto)
 		if _training != null:
 			_training.visible = false
-	if Settings.touch_enabled() and str(params.get("mode", "")) != "versus" \
-			and int((params.get("ai", [0, 0]) as Array)[0]) == 0:
+	var ai_pair: Array = params.get("ai", [0, 0])
+	# Versus contre l'ordi (J2 piloté par l'IA) : la manette tactile reste dispo.
+	if Settings.touch_enabled() and (str(params.get("mode", "")) != "versus" or int(ai_pair[1]) > 0) \
+			and int(ai_pair[0]) == 0:
 		_touch = TouchControls.new()
 		var me_slot: int = int(params.get("local_slot", 0))
 		_touch.facing_getter = func() -> int: return sim.f[me_slot].facing

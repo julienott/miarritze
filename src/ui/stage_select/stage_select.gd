@@ -16,9 +16,13 @@ func _ready() -> void:
 	grid.columns = 3
 	grid.add_theme_constant_override(&"h_separation", 4)
 	grid.add_theme_constant_override(&"v_separation", 4)
-	grid.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	grid.position = Vector2(-186, 34)
+	grid.position = Vector2(0, 34)
 	add_child(grid)
+	# Centrage sur la largeur réelle (iPhone 19,5:9 plus large que 384).
+	var center: Callable = func() -> void:
+		grid.position.x = roundf((get_viewport_rect().size.x - grid.get_combined_minimum_size().x) * 0.5)
+	get_viewport().size_changed.connect(center)
+	center.call_deferred()
 	var first: Button = null
 	for id: String in Roster.STAGES:
 		var b: Button = UiKit.button(str(Roster.STAGE_NAMES.get(id, id)), _pick.bind(id), 120)
@@ -47,7 +51,7 @@ func _pick(id: String) -> void:
 		return
 	var params: Dictionary = _params.duplicate()
 	params["stage"] = id
-	params["ai"] = [0, 0]
+	params["ai"] = [0, int(_params.get("ai_level", 0))]
 	params["mode"] = "versus"
 	params["on_end"] = VersusMode.on_fight_end
 	VersusMode.last = params
