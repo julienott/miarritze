@@ -189,6 +189,8 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 		pause_btn.custom_minimum_size = Vector2(24, 24)
 		pause_btn.position = Vector2(get_viewport_rect().size.x * 0.5 - 12, 30)
 		ui.add_child(pause_btn)
+	# Les annonces passent au-dessus du bouton pause et de la manette.
+	ui.move_child(_announcer, -1)
 
 
 const SPECIAL_SFX: Dictionary = {"txomin": &"whistle", "karramarro": &"pinch", "ramuntxo": &"fire",
@@ -316,6 +318,8 @@ func _online_tick() -> void:
 func _sync_views(snap: bool) -> void:
 	for p: int in 2:
 		_views[p].sync(sim.f[p])
+		# L'attaquant est dessiné devant : on voit qui frappe qui.
+		_views[p].z_index = 11 if sim.f[p].state == SimConst.ST_MOVE else 10
 	# Sommet approximatif du combattant le plus haut (pied − 110 px).
 	_camera.set_top(minf(sim.f[0].y, sim.f[1].y) / 256.0 - 110.0)
 	_camera.follow(sim.f[0].x / 256.0, sim.f[1].x / 256.0, snap)

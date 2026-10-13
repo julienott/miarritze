@@ -2,7 +2,17 @@
 
 Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
-## Phase atteinte : 7 ✅ (roster complet, 10 stages, 13 fins) — Phase 8 en cours
+## Phase atteinte : 8 ✅ (polissage) — v1 complète sur `borroka`, prod en attente du feu vert de Julien
+
+### Phase 8
+- Session longue (`node tests/web/long_session.mjs`) : 39 combats en 30 min, aucune erreur. Mémoire à 69 Mo, un palier à 215 Mo à la 21e minute (agrandissement du tas WASM), puis stable (`docs/captures/phase8_long_session.json`).
+- Équilibrage à n=30 (1980 matchs IA contre IA) : de 46,4 % (Louis) à 55,8 % (Peio).
+- Ressenti (playtest en sous-agent) : flash d'impact franc, attaquant dessiné devant l'adversaire, caméra qui monte jusqu'à 44 px (les sauts ne passent plus sous le HUD), annonces au-dessus du bouton pause, joystick visible au repos, garde de l'IA Facile ramenée à ≤ 15 %, boss de la Pyramide en Facile plafonné, poussée du crabe élargie.
+- Accessibilité : mode daltonisme, vibrations désactivables.
+- Smoke WebKit sur le build release OK ; `.pck` de 14,5 Mo. Tests : 18 sim/netcode, touch_test, flow, touch_phase4, online_two, tous au vert.
+- Capture : `docs/captures/phase8_fight.png`.
+- Reste à faire par Julien : la checklist sur un vrai iPhone (`docs/TEST_IPHONE.md`), un match en ligne en 4G, TURN si besoin, et la décision de mise en prod (merge sur `main`).
+
 
 ### Phase 7
 - Les 9 derniers combattants (dont le crabe Karramarro, le goéland Kaio et le boss Itsasargi) passés en sprites RD avec rig dédié, idle RD ou rig, portraits, costumes.

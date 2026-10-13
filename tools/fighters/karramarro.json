@@ -183,5 +183,7 @@
   "Les crabes du Rocher défilent en son honneur.",
   "Personne n'ose lui demander de la rendre…"
  ],
- "damage_pct": 108
+ "damage_pct": 108,
+ "push_front": 54,
+ "push_back": 34
 }

@@ -26,3 +26,5 @@ Choix pris en mode autonome (SPEC §0.6, §0.8) : l'option la plus simple qui re
 | 2026-10-13 | TURN | STUN Google seulement ; serveurs TURN ajoutables dans `backend/config.php` (`turn_servers`) sans recompiler. | §9.2 : à trancher sur mesure des échecs (`net_reports`). |
 | 2026-10-13 | Délai d'entrée | Mesuré une fois avant le combat (4 pings sur le canal ctrl), propre à chaque client. | Chaque client planifie ses propres entrées ; pas besoin d'accord. |
 | 2026-10-13 | Revanche | Nouveau match côté serveur (comptée à l'Elo), même map, nouvelle graine. | Revue Phase 6. |
+| 2026-10-13 | IA Facile | Garde plafonnée à 100–150 ‰ sous la compétence 35 ; le boss de la Pyramide en Facile est limité à 34. | SPEC : 15 % de garde en Facile ; le boss ne doit pas surprendre un enfant. |
+| 2026-10-13 | Caméra | Montée jusqu'à 44 px au lieu de modifier `jump_v` (la sim et l'équilibrage restent inchangés). | Revue de ressenti Phase 8. |

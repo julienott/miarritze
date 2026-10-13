@@ -51,6 +51,9 @@ var _icons: Dictionary = {}
 var _tap_releases: Array[int] = []    # gestes : instants des derniers taps courts
 
 
+## Opacité minimale du cercle du joystick au repos (toujours repérable).
+const STICK_HINT_MIN_ALPHA: float = 0.5
+
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	mode = Settings.touch_mode
@@ -398,7 +401,7 @@ func _draw() -> void:
 		draw_circle(knob, r * 0.4, Color(C_LINEN, alpha))
 	else:
 		var hint: Vector2 = Vector2(_safe.x + r + 6.0, size.y - _safe.w - r)
-		draw_arc(hint, r * 0.7, 0, TAU, 24, Color(C_LINEN, alpha * 0.5), 1.0)
+		draw_arc(hint, r * 0.7, 0, TAU, 24, Color(C_LINEN, maxf(alpha, STICK_HINT_MIN_ALPHA) * 0.8), 1.5)
 	for name: String in _buttons:
 		var b: Dictionary = _buttons[name]
 		if name == "maree" and not meter_full_getter.call():

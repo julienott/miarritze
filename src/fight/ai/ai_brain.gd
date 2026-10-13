@@ -24,8 +24,10 @@ static func reaction(skill: int) -> int:
 	return 26 - 19 * clampi(skill, 1, 100) / 100
 
 
-## Probabilité de garde (pour-mille) : 100 à 820.
+## Probabilité de garde (pour-mille) : 100 à 820, plafonnée à 150 en Facile (SPEC : 15 %).
 static func guard_permille(skill: int) -> int:
+	if skill < 35:
+		return 100 + 50 * clampi(skill, 1, 34) / 34
 	return 100 + 720 * clampi(skill, 1, 100) / 100
 
 const PLAN_NONE: int = 0

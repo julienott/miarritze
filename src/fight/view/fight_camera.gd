@@ -18,7 +18,7 @@ func _ready() -> void:
 
 
 ## Hauteur max dont la caméra monte pour garder un combattant projeté en vue.
-const MAX_RISE: float = 30.0
+const MAX_RISE: float = 44.0
 var _top: float = 999.0
 
 

@@ -81,12 +81,19 @@ func current_opponent() -> String:
 	return str(opps[mini(sub_index, opps.size() - 1)])
 
 
+## Bonus du boss ; en Facile il reste sous le seuil de garde « Normal » (35).
+const BOSS_BONUS: int = 10
+const BOSS_EASY_MAX: int = 34
+
+
 ## Compétence de l'IA à cet étage (rampe 1→8, boss en Expert+).
 func ai_skill() -> int:
 	var r: Array = SKILL_RANGE[difficulty]
 	var skill: int
 	if current_floor()["kind"] == "boss":
-		skill = mini(int(r[1]) + 10, 100)
+		skill = mini(int(r[1]) + BOSS_BONUS, 100)
+		if difficulty == 0:
+			skill = mini(skill, BOSS_EASY_MAX)
 	else:
 		skill = int(r[0]) + (int(r[1]) - int(r[0])) * mini(floor_index, 7) / 7
 	return clampi(skill - skill_malus, 1, 100)

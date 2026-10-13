@@ -80,7 +80,8 @@ func sync(me: FighterState) -> void:
 	var flip: bool = me.facing < 0
 	_sprite.flip_h = flip
 	_sprite.position = Vector2(-(cell - foot.x) if flip else -foot.x, -foot.y)
-	_material.set_shader_parameter("flash", 0.6 if me.hit_flash > 0 else 0.0)
+	# Flash franc (0.9) sur le tick d'impact.
+	_material.set_shader_parameter("flash", 0.9 if me.hit_flash > 0 else 0.0)
 
 
 func set_silhouette(on: bool) -> void:
