@@ -1,0 +1,100 @@
+{
+ "_note": "Mattin RD (pierre tenue, perso large) : uppercut sans \u00e9tirement de bras, pierre moins haute pour rester dans la cellule 176.",
+ "anims": {
+  "uppercut": {
+   "frames": 6,
+   "fps": 16,
+   "loop": false,
+   "base": "crouch",
+   "hit_frame": 3,
+   "keys": [
+    {
+     "t": 0,
+     "p": {}
+    },
+    {
+     "t": 1,
+     "p": {
+      "tor": -25,
+      "uaf": 20,
+      "faf": 100,
+      "head": 20
+     }
+    },
+    {
+     "t": 2,
+     "use": "guard",
+     "p": {
+      "tor": 0,
+      "uaf": 92,
+      "faf": 20,
+      "thf": 40,
+      "shf": -30,
+      "thb": -15,
+      "shb": -5
+     }
+    },
+    {
+     "t": 3,
+     "p": {
+      "tor": 6,
+      "head": -4,
+      "uaf": 92,
+      "faf": 20,
+      "uab": -30,
+      "fab": 40,
+      "thf": 88,
+      "shf": -98,
+      "thb": -8,
+      "shb": 0,
+      "off": {
+       "uaf": [
+        3,
+        -2
+       ]
+      },
+      "squash": [
+       0.95,
+       1.06
+      ]
+     }
+    },
+    {
+     "t": 4,
+     "p": {
+      "tor": 6,
+      "head": -4,
+      "uaf": 92,
+      "faf": 20,
+      "uab": -30,
+      "fab": 40,
+      "thf": 88,
+      "shf": -98,
+      "thb": -8,
+      "shb": 0,
+      "off": {
+       "uaf": [
+        3,
+        -2
+       ]
+      }
+     }
+    },
+    {
+     "t": 5,
+     "use": "guard",
+     "p": {
+      "off": {
+       "uaf": [
+        0,
+        0
+       ]
+      }
+     }
+    }
+   ],
+   "hit_dir": "up"
+  }
+ },
+ "named": {}
+}

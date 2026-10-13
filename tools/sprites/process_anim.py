@@ -43,6 +43,10 @@ def split(sheet: np.ndarray, cell: int, n: int) -> list:
 
 def color_drift(fid, rgba) -> float:
     pal = np.array(Image.open(os.path.join(rd_rig.fighter_dir(fid), "palettes.png")).convert("RGBA"))[0, 1:, :3].astype(int)
+    # 2e ton de contour RD (outline_extra) : indexé comme contour, pas une dérive
+    extra = rd_rig.load_spec(fid).get("outline_extra", []) if rd_rig.has_rd_rig(fid) else []
+    if extra:
+        pal = np.vstack([pal, [[int(h[i:i + 2], 16) for i in (0, 2, 4)] for h in extra]])
     m = rgba[..., 3] > 127
     px = rgba[m][:, :3].astype(int)
     if len(px) == 0:

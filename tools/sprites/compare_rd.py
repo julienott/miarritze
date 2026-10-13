@@ -29,13 +29,25 @@ def frame(d, sheet_name, meta_name, anim, i, cell_out):
     return out
 
 
-def main(ids):
-    C = 160
+def sources(fid):
+    """(dossier, feuille, anims, palette) mannequin puis RD. Phase 7 : le
+    mannequin vient de tests/out/rig/mannequin/<id>/ (extrait du commit)."""
+    d = os.path.join(ROOT, "assets", "fighters", fid)
+    pal = os.path.join(d, "palettes.png")
+    if os.path.exists(os.path.join(d, "sheet_mannequin.png")):
+        man = (d, "sheet_mannequin.png", "anims_mannequin.json", pal)
+    else:
+        m = os.path.join(ROOT, "tests", "out", "rig", "mannequin", fid)
+        man = (m, "sheet.png", "anims.json", os.path.join(m, "palettes.png"))
+    return [man, (d, "sheet.png", "anims.json", pal)]
+
+
+def main(ids, out="compare_rd.png"):
+    C = max(json.load(open(os.path.join(ROOT, "assets", "fighters", f, "anims.json")))["cell"] for f in ids)
     rows = []
     for fid in ids:
-        d = os.path.join(ROOT, "assets", "fighters", fid)
-        pal = np.array(Image.open(os.path.join(d, "palettes.png")).convert("RGBA"))[0]
-        for sheet, meta in (("sheet_mannequin.png", "anims_mannequin.json"), ("sheet.png", "anims.json")):
+        for d, sheet, meta, palp in sources(fid):
+            pal = np.array(Image.open(palp).convert("RGBA"))[0]
             rows.append([Image.fromarray(pal[frame(d, sheet, meta, a, i, C)].astype(np.uint8), "RGBA") for a, i in KEYS])
     img = Image.new("RGBA", (len(KEYS) * C, len(rows) * C), (90, 96, 120, 255))
     dr = ImageDraw.Draw(img)
@@ -45,10 +57,16 @@ def main(ids):
         for k, t in enumerate(row):
             img.alpha_composite(t, (k * C, r * C))
     img = img.resize((img.width, img.height), Image.NEAREST)
-    path = os.path.join(ROOT, "tests", "out", "sheets", "compare_rd.png")
+    path = os.path.join(ROOT, "tests", "out", "sheets", out)
     img.save(path)
     print(path, img.size)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:] or ["louis", "maia", "patxi", "xabi"])
+    args = sys.argv[1:]
+    out = "compare_rd.png"
+    if "--out" in args:
+        k = args.index("--out")
+        out = args[k + 1]
+        del args[k:k + 2]
+    main(args or ["louis", "maia", "patxi", "xabi"], out)

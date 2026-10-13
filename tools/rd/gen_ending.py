@@ -15,8 +15,9 @@ sys.path.insert(0, HERE)
 import client  # noqa: E402
 
 PROMPTS = yaml.safe_load(open(os.path.join(HERE, "prompts", "fighters.yaml")))
-STAGE_FOR = {"grande_plage": "grande_plage", "cote_basques": "cote_basques", "port_pecheurs": "port_pecheurs",
-             "cote_basques_crepuscule": "cote_basques", "grande_plage_soir": "grande_plage"}
+STAGE_FOR = {s: s for s in ["grande_plage", "cote_basques", "port_pecheurs", "rocher_vierge", "port_vieux",
+                             "halles", "fronton", "stade", "aquarium", "phare_sommet"]}
+STAGE_FOR.update({"cote_basques_crepuscule": "cote_basques", "grande_plage_soir": "grande_plage"})
 FALLBACK_BG = {"fronton": "bg_espadrille_0", "stade": "bg_beach_0", "halles": "bg_fishing_0",
                "rocher_vierge": "bg_rock_0", "port_vieux": "bg_espadrille_0", "aquarium": "bg_surf_0",
                "phare_sommet": "bg_lighthouse_intro"}
@@ -41,14 +42,14 @@ def compose(fid):
     return bg
 
 
-def generate(fid, strength=0.55):
+def generate(fid, strength=0.55, seed=21):
     img = compose(fid)
     desc = PROMPTS["fighters"][fid]
     prompt = (f"summer postcard illustration, {desc}, proudly wearing a red basque beret trophy, "
               "cheering crowd far away, sunny Biarritz coast, joyful kid friendly cartoon, "
-              "no text, no letters")
+              "no text, no letters, no signature, no watermark, no logo on objects")
     payload = {"prompt": prompt, "prompt_style": "rd_plus__default", "width": 320, "height": 180,
-               "num_images": 1, "seed": 21, "input_image": client.b64_png(img), "strength": strength}
+               "num_images": 1, "seed": seed, "input_image": client.b64_png(img), "strength": strength}
     paths = client.generate(payload, f"{fid}/ending")
     out = os.path.join(ROOT, "assets", "fighters", fid, "ending.png")
     Image.open(paths[0]).convert("RGB").save(out)
@@ -60,5 +61,7 @@ def generate(fid, strength=0.55):
 
 if __name__ == "__main__":
     st = float(sys.argv[sys.argv.index("--strength") + 1]) if "--strength" in sys.argv else 0.55
-    for fid in [a for a in sys.argv[1:] if not a.startswith("--") and a != str(st)]:
-        print(generate(fid, st))
+    seed = int(sys.argv[sys.argv.index("--seed") + 1]) if "--seed" in sys.argv else 21
+    skip = {str(st), str(seed)}
+    for fid in [a for a in sys.argv[1:] if not a.startswith("--") and a not in skip]:
+        print(generate(fid, st, seed))

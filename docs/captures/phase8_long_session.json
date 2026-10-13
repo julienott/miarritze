@@ -1,0 +1,158 @@
+{
+ "minutes": 30,
+ "fights": 39,
+ "samples": [
+  {
+   "min": 1,
+   "mb": 69,
+   "fights": 2
+  },
+  {
+   "min": 2,
+   "mb": 69,
+   "fights": 4
+  },
+  {
+   "min": 3,
+   "mb": 69,
+   "fights": 5
+  },
+  {
+   "min": 4,
+   "mb": 69,
+   "fights": 6
+  },
+  {
+   "min": 5,
+   "mb": 69,
+   "fights": 7
+  },
+  {
+   "min": 6,
+   "mb": 69,
+   "fights": 9
+  },
+  {
+   "min": 7,
+   "mb": 69,
+   "fights": 10
+  },
+  {
+   "min": 8,
+   "mb": 69,
+   "fights": 11
+  },
+  {
+   "min": 9,
+   "mb": 69,
+   "fights": 12
+  },
+  {
+   "min": 10,
+   "mb": 69,
+   "fights": 14
+  },
+  {
+   "min": 11,
+   "mb": 69,
+   "fights": 15
+  },
+  {
+   "min": 12,
+   "mb": 69,
+   "fights": 16
+  },
+  {
+   "min": 13,
+   "mb": 69,
+   "fights": 17
+  },
+  {
+   "min": 14,
+   "mb": 69,
+   "fights": 18
+  },
+  {
+   "min": 15,
+   "mb": 69,
+   "fights": 20
+  },
+  {
+   "min": 16,
+   "mb": 69,
+   "fights": 21
+  },
+  {
+   "min": 17,
+   "mb": 69,
+   "fights": 22
+  },
+  {
+   "min": 18,
+   "mb": 69,
+   "fights": 24
+  },
+  {
+   "min": 19,
+   "mb": 69,
+   "fights": 25
+  },
+  {
+   "min": 20,
+   "mb": 69,
+   "fights": 27
+  },
+  {
+   "min": 21,
+   "mb": 215,
+   "fights": 28
+  },
+  {
+   "min": 22,
+   "mb": 215,
+   "fights": 29
+  },
+  {
+   "min": 23,
+   "mb": 215,
+   "fights": 30
+  },
+  {
+   "min": 24,
+   "mb": 215,
+   "fights": 31
+  },
+  {
+   "min": 25,
+   "mb": 215,
+   "fights": 32
+  },
+  {
+   "min": 26,
+   "mb": 215,
+   "fights": 34
+  },
+  {
+   "min": 27,
+   "mb": 215,
+   "fights": 35
+  },
+  {
+   "min": 28,
+   "mb": 215,
+   "fights": 36
+  },
+  {
+   "min": 29,
+   "mb": 215,
+   "fights": 38
+  },
+  {
+   "min": 30,
+   "mb": 215,
+   "fights": 39
+  }
+ ],
+ "growth_mb": 146,
+ "errors": []
+}

@@ -316,6 +316,8 @@ func _online_tick() -> void:
 func _sync_views(snap: bool) -> void:
 	for p: int in 2:
 		_views[p].sync(sim.f[p])
+	# Sommet approximatif du combattant le plus haut (pied − 110 px).
+	_camera.set_top(minf(sim.f[0].y, sim.f[1].y) / 256.0 - 110.0)
 	_camera.follow(sim.f[0].x / 256.0, sim.f[1].x / 256.0, snap)
 	_stage.update_scroll(_camera.view_left())
 
@@ -349,7 +351,7 @@ func _on_event(ev: PackedInt32Array) -> void:
 				hit_pos.x -= sim.f[actor].facing * -6
 			_vfx.spark(hit_pos, ev[5])
 			AudioManager.sfx([&"hit_light", &"hit_heavy", &"hit_uppercut", &"hit_super"][clampi(ev[5], 0, 3)])
-			if OS.has_feature("mobile") or OS.has_feature("web_android"):
+			if Settings.vibrations and (OS.has_feature("mobile") or OS.has_feature("web_android")):
 				Input.vibrate_handheld(20)
 		FxEvents.BLOCK:
 			_vfx.block(pos + Vector2(0, -56))

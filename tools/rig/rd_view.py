@@ -16,7 +16,8 @@ def main():
     fid = sys.argv[1]
     S = int(sys.argv[sys.argv.index("--scale") + 1]) if "--scale" in sys.argv else 6
     finals = json.load(open(os.path.join(ROOT, "tools", "rd", "out", "finals.json")))
-    img = Image.open(os.path.join(ROOT, finals[fid])).convert("RGBA")
+    prepped = os.path.join(ROOT, "assets", "fighters", fid, "rd_pose.png")
+    img = Image.open(prepped if os.path.exists(prepped) else os.path.join(ROOT, finals[fid])).convert("RGBA")
     crop = (0, 0, img.width, img.height)
     if "--crop" in sys.argv:
         crop = tuple(int(v) for v in sys.argv[sys.argv.index("--crop") + 1].split(","))

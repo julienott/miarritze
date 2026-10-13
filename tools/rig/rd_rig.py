@@ -114,7 +114,14 @@ def _hex(c):
 
 
 def pose_rgba(spec):
-    return np.array(Image.open(os.path.join(ROOT, spec["image"])).convert("RGBA"))
+    rgba = np.array(Image.open(os.path.join(ROOT, spec["image"])).convert("RGBA"))
+    # Contour RD sur 2 tons (noir + brun) : le ton externe devient le contour
+    # standard pour que le retrait du contour avant rotation l'emporte aussi.
+    for h in spec.get("outline_extra", []):
+        c = [int(h[i:i + 2], 16) for i in (0, 2, 4)]
+        m = (rgba[..., 0] == c[0]) & (rgba[..., 1] == c[1]) & (rgba[..., 2] == c[2])
+        rgba[m, :3] = (58, 38, 52)
+    return rgba
 
 
 def group_map(spec, rgba, label=None, names=None) -> np.ndarray:
@@ -326,6 +333,7 @@ def build_pieces(fid, spec=None):
     else:
         idx = index_image(fid, rgba, protect_mask(spec, rgba.shape[:2]))
     names, label = segment(fid, spec, idx)
+    pal_rgb = np.array(Image.open(os.path.join(fighter_dir(fid), "palettes.png")).convert("RGB"))[0].astype(int)
     H, W = idx.shape
     Y, X = np.mgrid[0:H, 0:W] + 0.5
     order = spec.get("order", DEFAULT_ORDER)
@@ -350,17 +358,42 @@ def build_pieces(fid, spec=None):
             # Couleur dominante de la pièce (hors contour) : pas de taches
             # d'ombre propagées dans les zones reconstruites.
             vals, counts = np.unique(img[own & (img > 1)], return_counts=True)
+            # Les contours internes très sombres (2e ton de contour RD) ne
+            # servent jamais de remplissage : sinon taches noires.
+            light = np.array([_lum(pal_rgb[v]) >= 45 for v in vals], bool) if len(vals) else vals
+            if spec.get("clean_pieces") and light.any():
+                vals, counts = vals[light], counts[light]
             main = vals[counts.argmax()] if len(vals) else mains.get(PARENT.get(n), 0)
+            if b.get("fill_color"):
+                h = b["fill_color"]
+                c = np.array([int(h[i:i + 2], 16) for i in (0, 2, 4)])
+                main = 2 + int(np.abs(pal_rgb[2:] - c).sum(1).argmin())
             if main:
                 # Membre entièrement caché (bras arrière) : toute sa capsule.
                 add = (hidden if len(vals) else caps & opaque_all) & ~own
-                img[add] = main
+                if b.get("fill_mode") == "rows" and len(vals):
+                    # Motifs horizontaux (maillot rayé) : la couleur visible la
+                    # plus proche sur la même rangée prolonge les rayures.
+                    for y, x in zip(*np.nonzero(add)):
+                        row = np.nonzero(own[y] & (img[y] > 1))[0]
+                        img[y, x] = img[y, row[np.abs(row - x).argmin()]] if len(row) else main
+                else:
+                    img[add] = main
                 own = own | add
         # Contour extérieur retiré : add_outline le régénère à 1 px après rotation.
-        up, down, left, right = _neigh(own)
-        border = own & ~(up & down & left & right)
-        img[border & (img == ix.OUTLINE)] = 0
-        own = img > 0
+        for _ in range(int(spec.get("outline_px", 1))):
+            up, down, left, right = _neigh(own)
+            border = own & ~(up & down & left & right)
+            img[border & (img == ix.OUTLINE)] = 0
+            own = img > 0
+        # Poussière de contour RD (pixels isolés hors silhouette) : retirée,
+        # sinon elle se transforme en piquants après rotation (clean_pieces,
+        # Phase 7 : les persos de la Phase 3 restent identiques).
+        for _ in range(0 if n.startswith("acc") or not spec.get("clean_pieces") else 2):
+            up, down, left, right = _neigh(own)
+            nb = up.astype(int) + down + left + right
+            img[own & (nb <= 1)] = 0
+            own = img > 0
         ys, xs = np.nonzero(own)
         if len(ys) == 0:
             continue
@@ -427,15 +460,30 @@ RD_DEFAULT_ANIMS = {
 }
 
 
+ARM_BONES = ("uaf", "faf", "uab", "fab", "acc", "accf", "accb")
+
+
 def pose_overrides(fid) -> dict:
     """Surcharges de poses propres au rig RD : communes (RD_DEFAULT_ANIMS)
-    puis tools/rig/poses/<id>_rd.json."""
+    puis tools/rig/poses/<id>_rd.json. `keep_arms` (rig.json) : liste d'anims
+    où les bras gardent la garde RD (objet tenu à deux mains)."""
     out = {"anims": json.loads(json.dumps(RD_DEFAULT_ANIMS)), "named": {}}
     path = os.path.join(HERE, "poses", f"{fid}_rd.json")
     if os.path.exists(path):
         own = json.load(open(path))
         out["anims"].update(own.get("anims", {}))
         out["named"].update(own.get("named", {}))
+    keep = load_spec(fid).get("keep_arms", []) if has_rd_rig(fid) else []
+    if keep:
+        import animate
+        base = animate.load_poses(fid)
+        for name in keep:
+            anim = json.loads(json.dumps(out["anims"].get(name) or base["anims"].get(name, {})))
+            for key in anim.get("keys", []):
+                for bone in ARM_BONES:
+                    key.get("p", {}).pop(bone, None)
+            if anim:
+                out["anims"][name] = anim
     return out
 
 
@@ -506,9 +554,9 @@ def exploded_sheet(fid, pieces, scale=4):
         canvas.alpha_composite(img, (4, 4))
         cx, cy = int(p.pivot[0]) + 4, int(p.pivot[1]) + 4
         for d in range(-2, 3):
-            if 0 <= cx + d < canvas.width:
+            if 0 <= cx + d < canvas.width and 0 <= cy < canvas.height:
                 canvas.putpixel((cx + d, cy), (255, 0, 255, 255))
-            if 0 <= cy + d < canvas.height:
+            if 0 <= cy + d < canvas.height and 0 <= cx < canvas.width:
                 canvas.putpixel((cx, cy + d), (255, 0, 255, 255))
         tiles.append((n, canvas))
     W = sum(t.width for _, t in tiles) + 4 * len(tiles)

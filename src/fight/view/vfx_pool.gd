@@ -110,24 +110,89 @@ func _particle_color() -> Color:
 	return C_SAND
 
 
-## Projectiles procéduraux (en attendant leurs sprites) : forme par nom.
+## Projectiles et pièges procéduraux : une forme lisible par nom (SPEC §11.1).
 func _draw_projectile(pr: ProjectileState) -> void:
 	var pd: ProjectileDef = defs[pr.src].projectiles[pr.def]
 	var p: Vector2 = Vector2(roundi(pr.x / 256.0), roundi(pr.y / 256.0))
-	var hb: PackedInt32Array = pd.hitbox
-	var w: float = hb[2] / 256.0
-	var h: float = hb[3] / 256.0
+	var f: float = float(pr.facing)
 	var spin: int = (pr.age / 3) % 4
 	match pd.name:
 		"espadrille":
-			var rect: Rect2 = Rect2(p - Vector2(7, 3), Vector2(14, 6)) if spin % 2 == 0 \
-				else Rect2(p - Vector2(3, 7), Vector2(6, 14))
+			var rect: Rect2 = Rect2(p - Vector2(7, 3), Vector2(14, 6)) if spin % 2 == 0 else Rect2(p - Vector2(3, 7), Vector2(6, 14))
 			draw_rect(rect.grow(1), C_OUTLINE)
 			draw_rect(rect, C_LINEN)
-			draw_rect(Rect2(rect.position, Vector2(rect.size.x, 2)) if spin % 2 == 0
-				else Rect2(rect.position, Vector2(2, rect.size.y)), C_SAND)
+			draw_rect(Rect2(rect.position, Vector2(rect.size.x, 2)) if spin % 2 == 0 else Rect2(rect.position, Vector2(2, rect.size.y)), C_SAND)
+		"pelote", "rasante", "rebond", "cloche":
+			draw_circle(p, 5, C_OUTLINE)
+			draw_circle(p, 4, C_LINEN)
+			draw_arc(p, 3, spin * 0.8, spin * 0.8 + 2.4, 6, C_RED, 1.0)
+			draw_line(p - Vector2(10 * f, 0), p - Vector2(5 * f, 0), Color(C_LINEN, 0.5), 1.0)
+		"sardines":
+			for k: int in 3:
+				_fish(p + Vector2(0, (k - 1) * 7), f)
+		"hamecon":
+			var owner: FighterState = sim.f[pr.owner]
+			draw_line(Vector2(owner.x / 256.0, owner.y / 256.0 - 70), p, Color8(108, 72, 46), 1.0)
+			draw_arc(p + Vector2(0, 2), 3, 0, PI, 6, C_OUTLINE, 2.0)
+		"filet":
+			var r: Rect2 = Rect2(p - Vector2(11, 14), Vector2(22, 28))
+			for k: int in 5:
+				draw_line(Vector2(r.position.x + k * 5.5, r.position.y), Vector2(r.position.x + k * 5.5, r.end.y), Color8(150, 104, 62), 1.0)
+				draw_line(Vector2(r.position.x, r.position.y + k * 7), Vector2(r.end.x, r.position.y + k * 7), Color8(150, 104, 62), 1.0)
+		"pierre":
+			draw_circle(p, 10, C_OUTLINE)
+			draw_circle(p, 9, Color8(140, 150, 162))
+			draw_rect(Rect2(p + Vector2(-4, -5), Vector2(3, 2)), Color8(200, 208, 214))
+		"onde":
+			for k: int in 3:
+				draw_arc(p + Vector2(0, 0), 6 + k * 3, PI, TAU, 8, Color(C_SAND, 0.9 - k * 0.25), 2.0)
+		"fiente":
+			draw_circle(p, 4, C_OUTLINE)
+			draw_circle(p, 3, C_LINEN)
+		"bulles":
+			draw_arc(p, 9, 0, TAU, 12, C_FOAM, 2.0)
+			draw_rect(Rect2(p + Vector2(-4, -5), Vector2(2, 2)), C_LINEN)
+		"gateau":
+			draw_rect(Rect2(p + Vector2(-11, -7), Vector2(22, 7)), C_OUTLINE)
+			draw_rect(Rect2(p + Vector2(-10, -6), Vector2(20, 5)), Color8(222, 176, 82))
+			draw_rect(Rect2(p + Vector2(-10, -6), Vector2(20, 1)), Color8(160, 112, 50))
+		"perle":
+			draw_circle(p, 6, Color(C_FOAM, 0.6))
+			draw_circle(p, 4, C_LINEN)
+			draw_rect(Rect2(p + Vector2(-2, -3), Vector2(1, 1)), Color.WHITE)
+		"flaque":
+			draw_rect(Rect2(p + Vector2(-16, -3), Vector2(32, 3)), Color(C_SEA, 0.85))
+			draw_rect(Rect2(p + Vector2(-12, -4), Vector2(24, 1)), C_FOAM)
+		"ballon":
+			var rr: Rect2 = Rect2(p - Vector2(8, 5), Vector2(16, 10))
+			draw_rect(rr.grow(1), C_OUTLINE)
+			draw_rect(rr, Color8(140, 96, 60))
+			draw_line(p - Vector2(4, 0), p + Vector2(4, 0), C_LINEN, 1.0)
+		"faisceau":
+			draw_rect(Rect2(p + Vector2(-40, -5), Vector2(80, 10)), Color(1.0, 0.95, 0.6, 0.55))
+			draw_rect(Rect2(p + Vector2(-40, -2), Vector2(80, 4)), Color(1.0, 1.0, 0.9, 0.9))
+		"bouee":
+			draw_arc(p, 8, 0, TAU, 14, C_OUTLINE, 5.0)
+			draw_arc(p, 8, 0, TAU, 14, Color8(238, 140, 58), 3.0)
+			for k: int in 4:
+				var a: float = k * PI * 0.5 + pr.age * 0.2
+				draw_rect(Rect2(p + Vector2(cos(a), sin(a)) * 8 - Vector2(1, 1), Vector2(2, 2)), C_LINEN)
+		"pavillon":
+			draw_rect(Rect2(p + Vector2(-1, -58), Vector2(2, 58)), C_OUTLINE)
+			var wave: float = sin(pr.age * 0.2) * 2.0
+			draw_colored_polygon(PackedVector2Array([p + Vector2(1, -58), p + Vector2(18, -52 + wave), p + Vector2(1, -46)]), C_RED)
+			draw_rect(Rect2(p + Vector2(-24, -1), Vector2(48, 1)), Color(C_RED, 0.35))
+		"rouleau":
+			draw_arc(p + Vector2(0, -2), 8, PI * 0.9, TAU, 10, C_SEA, 4.0)
+			draw_arc(p + Vector2(0, -2), 8, PI * 1.1, PI * 1.6, 6, C_FOAM, 2.0)
 		_:
-			var r: Rect2 = Rect2(p + Vector2(hb[0] / 256.0, hb[1] / 256.0), Vector2(w, h))
-			draw_rect(r.grow(1), C_OUTLINE)
-			draw_rect(r, C_SEA if pd.ground else C_GOLD)
-			draw_rect(Rect2(r.position, Vector2(r.size.x, 2)), C_FOAM)
+			var hb: PackedInt32Array = pd.hitbox
+			var r2: Rect2 = Rect2(p + Vector2(hb[0] / 256.0, hb[1] / 256.0), Vector2(hb[2] / 256.0, hb[3] / 256.0))
+			draw_rect(r2.grow(1), C_OUTLINE)
+			draw_rect(r2, C_GOLD)
+
+
+func _fish(p: Vector2, f: float) -> void:
+	draw_colored_polygon(PackedVector2Array([p + Vector2(-6 * f, 0), p + Vector2(0, -3), p + Vector2(6 * f, 0), p + Vector2(0, 3)]), Color8(140, 150, 162))
+	draw_colored_polygon(PackedVector2Array([p + Vector2(-6 * f, 0), p + Vector2(-10 * f, -3), p + Vector2(-10 * f, 3)]), Color8(92, 100, 116))
+	draw_rect(Rect2(p + Vector2(3 * f - 0.5, -1), Vector2(1, 1)), C_OUTLINE)

@@ -54,6 +54,9 @@ func _build() -> void:
 	_section("JEU")
 	_cycle("Difficulté par défaut", ["Facile", "Normal", "Expert"], [0, 1, 2], "default_difficulty")
 	_cycle("Combats express (sans finish en ligne)", ["Non", "Oui"], [false, true], "express_fights")
+	_section("ACCESSIBILITÉ")
+	_cycle("Couleurs pour daltoniens", ["Non", "Oui"], [false, true], "colorblind")
+	_cycle("Vibrations", ["Oui", "Non"], [true, false], "vibrations")
 	_section("CLAVIER")
 	for pair: Array in KEY_ACTIONS:
 		_key_row(pair[0], pair[1])

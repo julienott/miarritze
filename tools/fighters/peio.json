@@ -36,13 +36,13 @@
    "anim": "sp_forward",
    "name": "Plaquage",
    "classic": "B,F+P",
-   "startup": 10,
+   "startup": 14,
    "active": 14,
-   "recovery": 24,
-   "damage": 115,
+   "recovery": 30,
+   "damage": 95,
    "hitstun": 28,
    "blockstun": 14,
-   "hit_level": "unblockable",
+   "hit_level": "mid",
    "knockdown": true,
    "launch": [
     600,
@@ -206,5 +206,5 @@
   "Tout le stade entonne « Allez le BO ! ».",
   "La troisième mi-temps durera jusqu'à l'aube…"
  ],
- "damage_pct": 77
+ "damage_pct": 98
 }

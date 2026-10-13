@@ -132,6 +132,9 @@ func _draw_life(r: Rect2, ratio: float, lag: float, mirror: bool) -> void:
 	var lag_w: float = floorf(r.size.x * clampf(lag, 0.0, 1.0))
 	var w: float = floorf(r.size.x * clampf(ratio, 0.0, 1.0))
 	var color: Color = C_GREEN if ratio > 0.5 else (C_GOLD if ratio > 0.25 else C_RED)
+	if Settings.colorblind:
+		# Bleu → jaune → orange : distinguable en deutéranopie/protanopie.
+		color = Color8(84, 112, 168) if ratio > 0.5 else (Color8(255, 232, 110) if ratio > 0.25 else Color8(238, 140, 58))
 	if mirror:
 		draw_rect(Rect2(r.end.x - lag_w, r.position.y, lag_w, r.size.y), C_LINEN)
 		draw_rect(Rect2(r.end.x - w, r.position.y, w, r.size.y), color)
@@ -140,6 +143,10 @@ func _draw_life(r: Rect2, ratio: float, lag: float, mirror: bool) -> void:
 		draw_rect(Rect2(r.position.x, r.position.y, lag_w, r.size.y), C_LINEN)
 		draw_rect(Rect2(r.position.x, r.position.y, w, r.size.y), color)
 		draw_rect(Rect2(r.position.x, r.position.y, w, 2), color.lightened(0.25))
+	if Settings.colorblind:
+		# Repères de quart : la vie se lit aussi sans les couleurs.
+		for q: int in [1, 2, 3]:
+			draw_rect(Rect2(r.position.x + floorf(r.size.x * q / 4.0), r.position.y, 1, r.size.y), Color(C_OUTLINE, 0.7))
 	if _frame_bar != null:
 		draw_style_box(_frame_bar, r.grow_individual(4, 3, 4, 3))
 	else:

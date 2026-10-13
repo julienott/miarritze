@@ -17,7 +17,20 @@ STAGES = {
                      "props": [{"kind": "gull", "y": 30, "speed": -7, "parallax": 0.45}]},
     "port_pecheurs": {"floor": "quay", "particles": "wood", "music": "port_pecheurs",
                       "props": [{"kind": "gull", "y": 50, "speed": 6, "parallax": 0.5}]},
+    "rocher_vierge": {"floor": "planks", "particles": "water", "music": "rocher_vierge",
+                      "props": [{"kind": "gull", "y": 36, "speed": 8, "parallax": 0.45}, {"kind": "spray", "y": 120}]},
+    "port_vieux": {"floor": "sand", "particles": "sand", "music": "port_vieux",
+                   "props": [{"kind": "gull", "y": 44, "speed": -6, "parallax": 0.5}]},
+    "halles": {"floor": "tiles", "particles": "flour", "music": "halles", "props": []},
+    "fronton": {"floor": "parquet", "particles": "wood", "music": "fronton",
+                "props": [{"kind": "gull", "y": 30, "speed": 7, "parallax": 0.4}]},
+    "stade": {"floor": "grass", "particles": "sand", "music": "stade", "props": [{"kind": "confetti"}]},
+    "aquarium": {"floor": "aqua_tiles", "particles": "water", "music": "aquarium", "props": [{"kind": "bubbles"}]},
+    "phare_sommet": {"floor": "stone_night", "particles": "wood", "music": "phare_sommet",
+                     "props": [{"kind": "beam", "y": 40}]},
 }
+# Variantes recolorées (soir / crépuscule) : même décor, LUT chaude ou bleutée.
+VARIANTS = {"grande_plage_soir": ("grande_plage", "sunset"), "cote_basques_crepuscule": ("cote_basques", "dusk")}
 VEIL = 0.15
 
 
@@ -54,6 +67,47 @@ def floor(kind, seed=7):
             for x in range(w):  # écume au fond
                 if (x // 6) % 3 != 0:
                     px[x, 27] = RAMPS["foam"][0]
+    elif kind in ("planks", "parquet"):
+        ramp = RAMPS["wood"]
+        plank = 12 if kind == "planks" else 6
+        for y in range(h):
+            for x in range(w):
+                if kind == "parquet":
+                    # Lames horizontales, joints décalés d'une rangée à l'autre.
+                    row = y // 7
+                    seam = y % 7 == 0 or (x + row * 29) % 58 == 0
+                    px[x, y] = ramp[2] if seam else ramp[0 if row % 2 else 1]
+                    continue
+                seam = x % (plank * 4) == 0
+                gap = y % 10 == 0
+                px[x, y] = ramp[3] if (seam or gap) else ramp[0 if (x // plank + y // 10) % 3 else 1]
+        for x in range(w):
+            px[x, 0] = RAMPS["steel"][2] if kind == "planks" else ramp[3]
+    elif kind in ("tiles", "aqua_tiles"):
+        # Carrelage discret : deux tons proches (les combattants doivent ressortir).
+        a, b = (RAMPS["linen"][2], RAMPS["linen"][3]) if kind == "tiles" else (RAMPS["night"][1], RAMPS["sea"][2])
+        for y in range(h):
+            for x in range(w):
+                edge = x % 16 == 0 or (y - 2) % 12 == 0
+                px[x, y] = RAMPS["stone"][2] if edge else (a if ((x // 16) + ((y - 2) // 12)) % 2 else b)
+    elif kind == "grass":
+        ramp = RAMPS["green"]
+        for y in range(h):
+            for x in range(w):
+                px[x, y] = ramp[0] if (x // 48) % 2 else ramp[1]
+        for x in range(0, w, 96):
+            for y in range(h):
+                px[x, y] = RAMPS["linen"][0]
+        for _ in range(300):
+            px[rnd.randrange(w), rnd.randrange(h)] = ramp[2]
+    elif kind == "stone_night":
+        ramp = RAMPS["night"]
+        for y in range(h):
+            for x in range(w):
+                edge = x % 24 == 0 or (y - 2) % 13 == 0
+                px[x, y] = ramp[2] if edge else ramp[1 if ((x // 24) + (y // 13)) % 2 else 0]
+        for x in range(w):
+            px[x, 0] = RAMPS["steel"][1]
     else:  # pavés de quai
         ramp = RAMPS["stone"]
         for y in range(h):
@@ -68,7 +122,36 @@ def floor(kind, seed=7):
     return img
 
 
+def recolor(img, mode):
+    px = img.load()
+    for y in range(img.height):
+        for x in range(img.width):
+            r, g, b = px[x, y][:3]
+            if mode == "sunset":     # coucher de soleil chaud
+                px[x, y] = (min(255, int(r * 1.08 + 22)), int(g * 0.86 + 6), int(b * 0.68))
+            else:                    # crépuscule bleuté
+                px[x, y] = (int(r * 0.62 + 18), int(g * 0.66 + 10), min(255, int(b * 0.9 + 34)))
+    return img
+
+
+def build_variant(vid):
+    base, mode = VARIANTS[vid]
+    src = os.path.join(ROOT, "assets", "stages", base)
+    d = os.path.join(ROOT, "assets", "stages", vid)
+    os.makedirs(d, exist_ok=True)
+    data = json.load(open(os.path.join(src, "stage.json")))
+    for i in range(3):
+        recolor(Image.open(os.path.join(src, f"far_v_{i}.png")).convert("RGB"), mode).save(os.path.join(d, f"far_v_{i}.png"))
+    recolor(Image.open(os.path.join(src, "floor.png")).convert("RGB"), mode).save(os.path.join(d, "floor.png"))
+    data["id"] = vid
+    json.dump(data, open(os.path.join(d, "stage.json"), "w"), indent=1)
+    print(vid, "ok")
+
+
 def build(sid):
+    if sid in VARIANTS:
+        build_variant(sid)
+        return
     d = os.path.join(ROOT, "assets", "stages", sid)
     cfg = STAGES[sid]
     frames = []
@@ -92,5 +175,5 @@ def build(sid):
 
 
 if __name__ == "__main__":
-    for sid in sys.argv[1:] or list(STAGES):
+    for sid in sys.argv[1:] or (list(STAGES) + list(VARIANTS)):
         build(sid)

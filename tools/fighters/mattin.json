@@ -3,7 +3,7 @@
  "name": "Mattin",
  "title": "Leveur de pierre",
  "archetype": "lourd",
- "health": 1150,
+ "health": 1100,
  "walk_fwd": 500,
  "walk_back": 420,
  "run": 900,

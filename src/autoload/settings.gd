@@ -20,6 +20,8 @@ var sfx_volume: float = 1.0
 var voice_volume: float = 1.0
 var default_difficulty: int = 0
 var express_fights: bool = false      # désactive les finishs en ligne
+var colorblind: bool = false          # HUD lisible pour les daltoniens
+var vibrations: bool = true
 ## Remappages clavier : action -> [physical_keycode, …]
 var key_overrides: Dictionary = {}
 
@@ -94,6 +96,7 @@ func save() -> void:
 		"pad_visible": pad_visible, "music_volume": music_volume, "sfx_volume": sfx_volume,
 		"voice_volume": voice_volume, "default_difficulty": default_difficulty,
 		"express_fights": express_fights, "key_overrides": key_overrides,
+		"colorblind": colorblind, "vibrations": vibrations,
 	}))
 
 
@@ -110,7 +113,7 @@ func _load() -> void:
 			set(str(key), int(data[key]))
 		elif str(key) in ["pad_opacity", "music_volume", "sfx_volume", "voice_volume"]:
 			set(str(key), float(data[key]))
-		elif str(key) == "express_fights":
-			express_fights = bool(data[key])
+		elif str(key) in ["express_fights", "colorblind", "vibrations"]:
+			set(str(key), bool(data[key]))
 		elif str(key) == "key_overrides" and data[key] is Dictionary:
 			key_overrides = data[key]

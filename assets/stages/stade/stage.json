@@ -1,0 +1,36 @@
+{
+ "id": "stade",
+ "ground_y": 196,
+ "walls": [
+  16,
+  560
+ ],
+ "layers": [
+  {
+   "file": "far_v_0.png",
+   "frames": [
+    "far_v_0.png",
+    "far_v_1.png",
+    "far_v_2.png"
+   ],
+   "fps": 3,
+   "parallax": 0.25,
+   "y": 0,
+   "z": -10
+  },
+  {
+   "file": "floor.png",
+   "parallax": 1.0,
+   "y": 176,
+   "z": -5
+  }
+ ],
+ "props": [
+  {
+   "kind": "confetti"
+  }
+ ],
+ "music": "stade",
+ "ambient_sfx": "",
+ "impact_particles": "sand"
+}

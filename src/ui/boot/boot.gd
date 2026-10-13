@@ -28,6 +28,9 @@ func _route() -> void:
 	if target.begins_with("online_qa"):
 		_online_qa(target)
 		return
+	if target == "autoloop":
+		BootLoop.next_fight()
+		return
 	if target == "vs":
 		SceneRouter.goto(&"versus_splash", {"p1": "patxi", "p2": "xabi", "c1": 0, "c2": 1,
 			"stage": "port_pecheurs", "mode": "qa"})

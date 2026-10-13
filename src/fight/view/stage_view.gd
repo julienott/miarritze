@@ -15,6 +15,10 @@ var _anim_t: float = 0.0
 var _anim_fps: float = 3.0
 ## Éléments d'ambiance (goélands…) : {node, speed, parallax, base_x, frames}
 var _props: Array[Dictionary] = []
+## Ambiances procédurales (faisceau, bulles, confettis, embruns) dessinées par _fx.
+var _ambient: Array[Dictionary] = []
+var _fx: Node2D
+var _view_left: float = 0.0
 
 
 func setup(id: String) -> void:
@@ -43,6 +47,18 @@ func setup(id: String) -> void:
 		_layers.append({"node": sprite, "factor": float(l.get("parallax", 1.0)),
 			"y": float(l.get("y", 0.0))})
 	_build_props()
+	# Au-dessus du décor (caméra qui monte), le ciel prolonge le haut de l'image.
+	if not _layers.is_empty():
+		var img: Image = ((_layers[0]["node"] as Sprite2D).texture as Texture2D).get_image()
+		if img != null:
+			if img.is_compressed():
+				img.decompress()
+			RenderingServer.set_default_clear_color(img.get_pixel(img.get_width() / 2, 0))
+	if not _ambient.is_empty():
+		_fx = Node2D.new()
+		_fx.z_index = -7
+		_fx.draw.connect(_draw_ambient)
+		add_child(_fx)
 
 
 ## Repli tant que le stage n'a pas ses calques : ancien décor i2i le plus proche.
@@ -58,6 +74,7 @@ func _build_props() -> void:
 	for raw: Variant in data.get("props", []):
 		var pr: Dictionary = raw
 		if str(pr.get("kind", "")) != "gull":
+			_ambient.append(pr)
 			continue
 		var frames: Array[Texture2D] = [load("res://assets/sprites/gull_1.png"), load("res://assets/sprites/gull_2.png")]
 		var sprite: Sprite2D = Sprite2D.new()
@@ -101,6 +118,7 @@ func _build_fallback() -> void:
 
 ## Place les calques selon la position de la caméra (bord gauche de la vue).
 func update_scroll(view_left: float) -> void:
+	_view_left = view_left
 	for layer: Dictionary in _layers:
 		var node: Node2D = layer["node"]
 		var factor: float = layer["factor"]
@@ -123,7 +141,45 @@ func _process(delta: float) -> void:
 		pr["x"] = px
 		var frames: Array[Texture2D] = pr["frames"]
 		(pr["node"] as Sprite2D).texture = frames[int(_anim_t * 4.0) % frames.size()]
+	if _fx != null:
+		_fx.queue_redraw()
 	if _anim_sprite == null or _anim_frames.size() < 2:
 		return
 	var index: int = int(_anim_t * _anim_fps) % _anim_frames.size()
 	_anim_sprite.texture = _anim_frames[index]
+
+
+
+func _draw_ambient() -> void:
+	var t: float = _anim_t
+	var left: float = _view_left
+	for pr: Dictionary in _ambient:
+		match str(pr.get("kind", "")):
+			"beam":
+				# Faisceau du Phare qui balaie le ciel nocturne (§5.3, §6).
+				var origin: Vector2 = Vector2(left * 0.75 + 256.0, float(pr.get("y", 40)))
+				var ang: float = sin(t * 0.8) * 1.3
+				for side: int in [-1, 1]:
+					var dir: Vector2 = Vector2(cos(ang) * side, sin(ang) * 0.25 - 0.05)
+					var tip: Vector2 = origin + dir * 420.0
+					var n: Vector2 = Vector2(-dir.y, dir.x) * 26.0
+					_fx.draw_colored_polygon(PackedVector2Array([origin, tip + n, tip - n]), Color(1.0, 0.95, 0.62, 0.16))
+				_fx.draw_circle(origin, 5, Color(1.0, 0.96, 0.7, 0.9))
+			"bubbles":
+				for i: int in 18:
+					var x: float = fmod(i * 61.0, 560.0) + 8.0 + sin(t * 1.3 + i) * 4.0
+					var y: float = 176.0 - fmod(t * (14.0 + i % 5 * 4.0) + i * 37.0, 160.0)
+					_fx.draw_rect(Rect2(Vector2(x, y).round(), Vector2(2, 2)), Color(0.85, 0.97, 1.0, 0.7))
+			"confetti":
+				var cols: Array[Color] = [Color8(206, 52, 52), Color8(247, 241, 227)]
+				for i: int in 30:
+					var x2: float = fmod(i * 47.0 + t * 9.0, 576.0)
+					var y2: float = fmod(t * (20.0 + i % 7 * 5.0) + i * 29.0, 150.0) + 10.0
+					_fx.draw_rect(Rect2(Vector2(x2, y2).round(), Vector2(2, 1 + i % 2)), cols[i % 2])
+			"spray":
+				var phase: float = fmod(t, 3.2)
+				if phase < 1.0:
+					for i: int in 14:
+						var x3: float = 120.0 + i * 26.0 + left * 0.4
+						var h: float = sin(phase * PI) * (18.0 + (i * 7) % 16)
+						_fx.draw_rect(Rect2(Vector2(x3, float(pr.get("y", 120)) - h).round(), Vector2(3, 3)), Color(0.93, 0.98, 0.97, 0.75))

@@ -2,7 +2,17 @@
 
 Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
-## Phase atteinte : 6 ✅ (en ligne) — Phase 7 en cours
+## Phase atteinte : 7 ✅ (roster complet, 10 stages, 13 fins) — Phase 8 en cours
+
+### Phase 7
+- Les 9 derniers combattants (dont le crabe Karramarro, le goéland Kaio et le boss Itsasargi) passés en sprites RD avec rig dédié, idle RD ou rig, portraits, costumes.
+- 7 nouveaux stages : Rocher de la Vierge, Port Vieux (anciens décors élargis), Halles, Fronton, Stade, Aquarium, Sommet du Phare (txt2img RD + miroir), variantes soir/crépuscule recolorées ; sols procéduraux, ambiances (faisceau, bulles, confettis, embruns, goélands).
+- 13 fins illustrées RD ; projectiles dessinés (19 formes).
+- Seconde passe d'équilibrage (Plaquage de Peio rendu gardable, Kaio et Mattin ajustés) : 45–54 %.
+- Captures : `docs/captures/phase7_lineup.png`, `phase7_fights.png`, `phase7_stages.png`, `phase7_fins.png`, `phase7_balance.png`.
+- Dépense RD : 10,13 $ / 50 $.
+
+### Phase 6 (rappel)
 
 ### Phase 6
 - Backend (`backend/`) : schéma migré (profils, présence, matchs, signaux, pyramide, télémétrie), routes §9.4 authentifiées, appariement au sein du groupe seulement, signalisation par polling, Elo K=32 seulement si les deux rapports concordent, revanches comptées, limites de débit, purge. Tests : `python3 tests/backend/api_test.py`.

@@ -36,14 +36,51 @@ FACES = {
     "louis": {"protect": (36, 24, 82, 60), "eyes": [(46, 35, 52, 42), (62, 36, 67, 42)], "mouth": (56, 51), "head": (28, 6, 84, 62)},
     "maia": {"protect": (36, 24, 80, 62), "eyes": [(44, 38, 53, 46), (62, 38, 70, 46)], "mouth": (57, 53), "head": (30, 12, 86, 68)},
     "patxi": {"protect": (36, 27, 66, 52), "eyes": [(44, 32, 48, 37), (53, 32, 57, 37)], "mouth": (52, 47), "head": (20, 6, 76, 62)},
+    "mattin": {"protect": (30, 16, 60, 40), "eyes": [(41, 21, 45, 25), (50, 21, 54, 25)], "mouth": (47, 31), "head": (20, 4, 76, 60)},
+    "amaia": {"protect": (36, 24, 66, 52), "eyes": [(42, 34, 47, 40), (56, 34, 60, 40)], "mouth": (52, 46), "head": (22, 8, 78, 64)},
+    "txomin": {"flood_ymax": 76, "protect": (30, 28, 70, 64), "eyes": [(35, 33, 52, 40), (56, 33, 66, 40)], "mouth": (54, 57), "head": (16, 6, 72, 62)},
+    # Kaio : décor chargé (détourage depuis le haut) ; texte CHIPS aplati
+    "kaio": {"flood_ymax": 60, "fills": [(33, 59, 53, 68, "ed6054")], "protect": (34, 14, 80, 44),
+             "eyes": [(41, 22, 49, 29)], "mouth": (62, 38), "head": (24, 4, 80, 60)},
+    "karramarro": {"protect": (46, 10, 70, 28), "eyes": [(47, 15, 53, 23), (62, 15, 68, 23)], "mouth": (58, 48), "head": (30, 4, 86, 60)},
+    "ramuntxo": {"seal": 1, "protect": (36, 40, 64, 64), "eyes": [(46, 44, 51, 50), (54, 45, 59, 50)], "mouth": (52, 57), "head": (22, 10, 78, 66)},
+    "itsaso": {"protect": (46, 28, 76, 56), "eyes": [(56, 36, 62, 41), (66, 37, 70, 41)], "mouth": (61, 49), "head": (28, 8, 84, 64)},
+    "peio": {"protect": (32, 20, 64, 52), "eyes": [(47, 30, 53, 34), (56, 30, 60, 34)], "mouth": (56, 46), "head": (22, 2, 78, 58)},
+    "itsasargi": {"protect": (24, 16, 58, 48), "eyes": [(33, 24, 37, 28), (41, 24, 46, 28)], "mouth": (45, 36), "head": (12, 2, 68, 58)},
     "xabi": {"big_x0": 32, "protect": (24, 22, 58, 52), "eyes": [(34, 32, 40, 40)], "mouth": (44, 50), "head": (12, 2, 68, 58)},
 }
 
 
-def detour(rgba: np.ndarray) -> np.ndarray:
-    """Masque des pixels de fond (connexes au bord, couleurs de fond)."""
+def detour(rgba: np.ndarray, flood_ymax: int = 0, keep=None, seal: int = 0) -> np.ndarray:
+    """Masque des pixels de fond (connexes au bord, couleurs de fond).
+    flood_ymax > 0 : fond chargé (décor) → tout ce qui n'est pas contour,
+    connexe aux bords haut/latéraux au-dessus de flood_ymax."""
     rgb = rgba[..., :3].astype(int)
     H, W = rgb.shape[:2]
+    if flood_ymax:
+        is_bg = np.abs(rgb - OUTLINE_RGB).sum(-1) >= 60
+        is_bg &= np.abs(rgb - np.array([24, 16, 28])).sum(-1) >= 40
+        bg = np.zeros((H, W), bool)
+        q = deque()
+        starts = [(0, x) for x in range(W)] + [(y, x) for y in range(flood_ymax) for x in (0, W - 1)]
+        for y, x in starts:
+            if is_bg[y, x] and not bg[y, x]:
+                bg[y, x] = True
+                q.append((y, x))
+        while q:
+            y, x = q.popleft()
+            for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                ny, nx = y + dy, x + dx
+                if 0 <= ny < H and 0 <= nx < W and not bg[ny, nx] and is_bg[ny, nx]:
+                    bg[ny, nx] = True
+                    q.append((ny, nx))
+        # cadre du décor (lignes sombres au bord de l'image)
+        bg[0, :] = True
+        bg[:flood_ymax, 0] = True
+        bg[:, -1] = True
+        for x in (1, W - 2):
+            bg[:flood_ymax, x] |= ~is_bg[:flood_ymax, x] & bg[:flood_ymax, x - 1 if x == 1 else x + 1]
+        return bg
     seeds = []
     for k in range(min(H, W)):
         c = rgb[k, k]
@@ -54,6 +91,9 @@ def detour(rgba: np.ndarray) -> np.ndarray:
     is_bg = np.zeros((H, W), bool)
     for s in seeds:
         is_bg |= np.abs(rgb - s).sum(-1) < 24
+    for k in keep or []:
+        # fond de la couleur de la peau : visage et mains ne sont jamais du fond
+        is_bg[k[1]:k[3], k[0]:k[2]] = False
     bg = np.zeros((H, W), bool)
     q = deque()
     for y in range(H):
@@ -66,13 +106,27 @@ def detour(rgba: np.ndarray) -> np.ndarray:
             if is_bg[y, x] and not bg[y, x]:
                 bg[y, x] = True
                 q.append((y, x))
+    flood_ok = is_bg.copy()
+    if seal:
+        # fond de la couleur de la peau : les trous du contour sont bouchés
+        # (contour épaissi de `seal` px) le temps du remplissage
+        dark = rgb.sum(-1) < 200
+        for _ in range(seal):
+            p = np.pad(dark, 1)
+            dark = dark | p[:-2, 1:-1] | p[2:, 1:-1] | p[1:-1, :-2] | p[1:-1, 2:]
+        flood_ok &= ~dark
+        bg &= flood_ok
+        q = deque((y, x) for y, x in zip(*np.nonzero(bg)))
     while q:
         y, x = q.popleft()
         for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             ny, nx = y + dy, x + dx
-            if 0 <= ny < H and 0 <= nx < W and not bg[ny, nx] and is_bg[ny, nx]:
+            if 0 <= ny < H and 0 <= nx < W and not bg[ny, nx] and flood_ok[ny, nx]:
                 bg[ny, nx] = True
                 q.append((ny, nx))
+    for _ in range(seal):
+        p = np.pad(bg, 1)
+        bg = bg | (is_bg & (p[:-2, 1:-1] | p[2:, 1:-1] | p[1:-1, :-2] | p[1:-1, 2:]))
     return bg
 
 
@@ -100,8 +154,13 @@ def skin_index(fid) -> int:
 
 def make(fid):
     ps = json.load(open(os.path.join(ROOT, "tools", "rd", "out", "portraits.json")))
+    p7 = os.path.join(ROOT, "tools", "rd", "out", "p7_assets.json")
+    if fid not in ps and os.path.exists(p7):
+        ps[fid] = json.load(open(p7))[fid]["portrait"]
     rgba = np.array(Image.open(os.path.join(ROOT, ps[fid])).convert("RGBA"))
-    bg = detour(rgba)
+    for x0, y0, x1, y1, h in FACES[fid].get("fills", []):
+        rgba[y0:y1 + 1, x0:x1 + 1, :3] = [int(h[i:i + 2], 16) for i in (0, 2, 4)]
+    bg = detour(rgba, FACES[fid].get("flood_ymax", 0), FACES[fid].get("keep"), FACES[fid].get("seal", 0))
     rgba[bg, 3] = 0
     face0 = FACES[fid]
     prot = np.zeros(rgba.shape[:2], bool)

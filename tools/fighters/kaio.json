@@ -3,7 +3,7 @@
  "name": "Kaio",
  "title": "Le goéland voleur",
  "archetype": "aerien",
- "health": 900,
+ "health": 1040,
  "walk_fwd": 600,
  "walk_back": 560,
  "run": 1200,
@@ -26,7 +26,7 @@
    "classic": "D,DF,F+P",
    "startup": 10,
    "active": 1,
-   "recovery": 18,
+   "recovery": 14,
    "air": true,
    "spawn": {
     "frame": 9,
@@ -44,7 +44,7 @@
    "startup": 6,
    "active": 14,
    "recovery": 16,
-   "damage": 75,
+   "damage": 85,
    "hitstun": 20,
    "blockstun": 12,
    "hitstop": 8,
@@ -179,5 +179,5 @@
   "Il la cache dans son nid, sur la falaise.",
   "Tout le Port Vieux le cherche encore…"
  ],
- "damage_pct": 128
+ "damage_pct": 130
 }
