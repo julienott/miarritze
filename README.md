@@ -4,6 +4,7 @@ Jeu de combat 2D en pixel art, esprit Mortal Kombat mais solaire, basque et pour
 
 - Spec complète (source de vérité) : `SPEC-BORROKA.md`
 - Résumés : `DESIGN.md` (le quoi/pourquoi), `CLAUDE.md` (architecture, conventions, commandes)
+- Reprise sur un autre ordinateur : `docs/HANDOFF.md`
 - Avancement : `docs/STATUS.md` · décisions : `docs/DECISIONS.md` · revues : `docs/REVIEWS.md`
 
 ## Jouer en local
