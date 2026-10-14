@@ -19,7 +19,7 @@ import sys
 import numpy as np
 from PIL import Image
 
-ISLAND_MAX = 24
+ISLAND_MAX = 60
 # Un vrai vide (entre bras et tête…) doit rester transparent : on ne comble
 # que les fentes d'1 px et les trous fermés minuscules.
 SLIT_R = 1

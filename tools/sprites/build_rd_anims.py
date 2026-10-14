@@ -47,6 +47,10 @@ SOURCES = {
     "crouch_idle": ("crouch", "hold"),
     "block": ("block", "hold"),
     "crouch_block": ("crouch_block", "hold"),
+    # RD anime mal un perso en l'air : on reprend des images au sol réussies,
+    # placées en l'air (jambe tendue du coup de pied, début de chute arrière).
+    "jump_kick": ("kick", None),
+    "hit_air": ("knockdown", slice(0, 3)),
 }
 
 
@@ -119,6 +123,71 @@ def fix_red_skin(f):
     return out
 
 
+def _comps(mask):
+    h, w = mask.shape
+    seen = np.zeros_like(mask)
+    out = []
+    for sy, sx in zip(*np.nonzero(mask)):
+        if seen[sy, sx]:
+            continue
+        stack, pts = [(sy, sx)], []
+        seen[sy, sx] = True
+        while stack:
+            y, x = stack.pop()
+            pts.append((y, x))
+            for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                ny, nx = y + dy, x + dx
+                if 0 <= ny < h and 0 <= nx < w and mask[ny, nx] and not seen[ny, nx]:
+                    seen[ny, nx] = True
+                    stack.append((ny, nx))
+        out.append(pts)
+    return out
+
+
+def is_pale(c):
+    """Blanc/crème (dents, blanc des yeux, chemise) : peu saturé et clair."""
+    r, g, b = int(c[0]), int(c[1]), int(c[2])
+    return min(r, g, b) > 160 and max(r, g, b) - min(r, g, b) < 60
+
+
+def fix_light_specks(f, max_size=20):
+    """Taches crème posées sur la peau (RD étale la couleur des dents sur le
+    menton et les joues) : sur un ciel clair elles se lisent comme des trous.
+    Une dent ou un blanc d'œil a un trait sombre juste au-dessus (lèvre,
+    paupière) ; une petite tache claire entourée de peau, sans ce trait,
+    prend la couleur de peau voisine la plus fréquente."""
+    out = f.copy()
+    op = f[..., 3] > 0
+    pale = op & np.array([[is_pale(c) for c in row] for row in f])
+    h, w = op.shape
+    dark = op & (f[..., :3].astype(int).sum(-1) < 200)
+    for pts in _comps(pale):
+        if len(pts) > max_size:
+            continue
+        ring = set()
+        for y, x in pts:
+            for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                ny, nx = y + dy, x + dx
+                if 0 <= ny < h and 0 <= nx < w and not pale[ny, nx]:
+                    ring.add((ny, nx))
+        cols = [f[q] for q in ring if op[q]]
+        skins = [tuple(int(v) for v in c[:3]) for c in cols if is_skin(c)]
+        if not cols or len(skins) < 0.5 * len(cols):
+            continue
+        xs = sorted({x for _, x in pts})
+        lid = 0
+        for x in xs:
+            top = min(y for y, xx in pts if xx == x)
+            if dark[max(0, top - 2):top, x].any():
+                lid += 1
+        if lid >= 0.5 * len(xs):
+            continue
+        fill = max(set(skins), key=skins.count)
+        for y, x in pts:
+            out[y, x, :3] = fill
+    return out
+
+
 def group_of(c):
     r, g, b = int(c[0]), int(c[1]), int(c[2])
     if r > 120 and g < 90 and b < 90:
@@ -156,6 +225,25 @@ def index(f, slots):
     edge = op & ~(p[:-2, 1:-1] & p[2:, 1:-1] & p[1:-1, :-2] & p[1:-1, 2:])
     out[edge] = 1
     return out
+
+
+def final_clean(idx, hole_max=6, island_max=60):
+    """Dernière passe sur l'image indexée définitive : morceaux détachés
+    (traits de vitesse, miettes) retirés, micro-trous bouchés au contour."""
+    op = idx > 0
+    comps = sorted(_comps(op), key=len, reverse=True)
+    for pts in comps[1:]:
+        if len(pts) <= island_max:
+            for p in pts:
+                idx[p] = 0
+    h, w = idx.shape
+    for pts in _comps(idx == 0):
+        ys = [p[0] for p in pts]
+        xs = [p[1] for p in pts]
+        if len(pts) <= hole_max and min(ys) > 0 and min(xs) > 0 and max(ys) < h - 1 and max(xs) < w - 1:
+            for p in pts:
+                idx[p] = 1
+    return idx
 
 
 def place(f, dx, air):
@@ -202,10 +290,10 @@ def main():
         out = []
         worst = 0
         for f in chosen:
-            f = cb.fix(fix_red_skin(f))
+            f = cb.fix(fix_light_specks(fix_red_skin(f)))
             r = cb.analyse(f)
             worst = max(worst, int(r["slits"].sum() + r["islands"].sum()))
-            out.append(index(place(f, dx, name in AIR), slots))
+            out.append(final_clean(index(place(f, dx, name in AIR), slots)))
         cells[name] = out
         report[name] = worst
     cols = SHEET_W // CELL
