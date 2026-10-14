@@ -8,6 +8,7 @@ extends Node
 ##   --inputs=R*60,DLP,_*30              entrées scriptées pour J1 (J2 : niveau IA du
 ##                                       5e champ d'--autofight, 0 = inerte)
 ##   --touchidx=random                   index tactiles aléatoires (régression iOS)
+##   --meter=full                        jauge de J1 pleine au départ (supers)
 ## Web : `?qa=1` dans l'URL publie `window.__qa` (scène + boutons visibles en
 ## fractions d'écran) pour les tests Playwright qui touchent par libellé.
 
@@ -23,6 +24,8 @@ var _autotower: String = ""
 var _tower_t: float = 0.0
 var _shots_taken: Dictionary = {}
 var _last_scene: String = ""
+## QA : jauge de J1 pleine au début du combat (vérifier les supers).
+var _meter_full: bool = false
 
 
 func _ready() -> void:
@@ -54,6 +57,8 @@ func _ready() -> void:
 			Engine.time_scale = float(arg.trim_prefix("--speed="))
 		elif arg == "--touchidx=random":
 			touch_random = true
+		elif arg == "--meter=full":
+			_meter_full = true
 	if autofight != "":
 		_start_autofight.call_deferred(autofight)
 	elif _inputs != "":
@@ -143,6 +148,8 @@ func _physics_process(_delta: float) -> void:
 	if scene == null or not ("sim" in scene) or scene.get("sim") == null:
 		return
 	var sim: FightSim = scene.get("sim")
+	if _meter_full and sim.frame < 5:
+		sim.f[0].meter = SimConst.METER_MAX
 	if sim.frame >= _frames[_next_frame]:
 		var base: String = _shot_path.trim_suffix(".png")
 		var last: bool = _next_frame == _frames.size() - 1

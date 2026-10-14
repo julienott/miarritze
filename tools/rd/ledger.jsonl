@@ -109,3 +109,10 @@
 {"at": "2026-10-14T11:32:39", "label": "louis/refine_128", "style": "rd_pro__default", "size": "128x128", "num_images": 1, "balance_cost": 0.18, "cumul": 14.15, "task_id": "e3ac3a05-0729-497e-94ff-3708ba44a234"}
 {"at": "2026-10-14T11:36:53", "label": "louis/idle", "style": "rd_advanced_animation__idle", "size": "128x128", "num_images": 1, "balance_cost": 0.14, "cumul": 14.29, "task_id": "b000393a-e20e-4caa-858f-07628a5ea42e"}
 {"at": "2026-10-14T11:42:37", "label": "louis/portrait", "style": "rd_pro__default", "size": "96x96", "num_images": 1, "balance_cost": 0.18, "cumul": 14.47, "task_id": "bb3f5ba3-80fb-4d54-9d40-5bdd37f7f889"}
+{"at": "2026-10-14T12:00:03", "label": "louis/vfx_proj_espadrille", "style": "rd_fast__default", "size": "64x64", "num_images": 4, "balance_cost": 0.12, "cumul": 14.59, "task_id": "4d453ce0-875e-4b02-95be-899b6b3c1449"}
+{"at": "2026-10-14T12:00:55", "label": "louis/vfx_sp_forward", "style": "rd_fast__default", "size": "64x64", "num_images": 4, "balance_cost": 0.12, "cumul": 14.71, "task_id": "a5193953-8434-46d5-a030-ddc7ac59bb02"}
+{"at": "2026-10-14T12:01:42", "label": "louis/vfx_sp_down", "style": "rd_fast__default", "size": "64x64", "num_images": 4, "balance_cost": 0.12, "cumul": 14.83, "task_id": "0127b0af-ae3b-46f8-8807-0c369ef7a425"}
+{"at": "2026-10-14T12:02:12", "label": "louis/vfx_sp_up", "style": "rd_fast__default", "size": "64x64", "num_images": 4, "balance_cost": 0.12, "cumul": 14.95, "task_id": "f14eae44-37a9-4ff6-a7aa-59d839793661"}
+{"at": "2026-10-14T12:02:46", "label": "louis/vfx_super", "style": "rd_fast__default", "size": "96x96", "num_images": 4, "balance_cost": 0.12, "cumul": 15.07, "task_id": "45866871-2599-45aa-bb19-08e6bf302352"}
+{"at": "2026-10-14T12:03:29", "label": "louis/vfx_sp_down", "style": "rd_fast__default", "size": "64x64", "num_images": 4, "balance_cost": 0.12, "cumul": 15.19, "task_id": "9c5d3051-f2a2-4af7-bed9-99c81e044519"}
+{"at": "2026-10-14T12:03:56", "label": "louis/vfx_sp_up", "style": "rd_fast__default", "size": "64x64", "num_images": 4, "balance_cost": 0.12, "cumul": 15.31, "task_id": "7b58ad3e-f309-4314-a0e5-8127fa89ea0e"}

@@ -136,6 +136,12 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 		view.z_index = 10 + p
 		add_child(view)
 		_views.append(view)
+	for b: bool in [true, false]:
+		var mfx: MoveFx = MoveFx.new()
+		mfx.sim = sim
+		mfx.defs = sim.defs
+		mfx.back = b
+		add_child(mfx)
 	_vfx = VfxPool.new()
 	_vfx.sim = sim
 	_vfx.defs = sim.defs

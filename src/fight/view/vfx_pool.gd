@@ -116,6 +116,13 @@ func _draw_projectile(pr: ProjectileState) -> void:
 	var p: Vector2 = Vector2(roundi(pr.x / 256.0), roundi(pr.y / 256.0))
 	var f: float = float(pr.facing)
 	var spin: int = (pr.age / 3) % 4
+	var tex: Texture2D = _proj_texture(defs[pr.src].id, pd.name)
+	if tex != null:
+		# Sprite RD : quart de tour toutes les 3 frames (pixels nets).
+		draw_set_transform(p, spin * PI * 0.5 * f, Vector2(f, 1.0))
+		draw_texture(tex, -Vector2(tex.get_width(), tex.get_height()) * 0.5)
+		draw_set_transform(Vector2.ZERO)
+		return
 	match pd.name:
 		"espadrille":
 			var rect: Rect2 = Rect2(p - Vector2(7, 3), Vector2(14, 6)) if spin % 2 == 0 else Rect2(p - Vector2(3, 7), Vector2(6, 14))
@@ -190,6 +197,17 @@ func _draw_projectile(pr: ProjectileState) -> void:
 			var r2: Rect2 = Rect2(p + Vector2(hb[0] / 256.0, hb[1] / 256.0), Vector2(hb[2] / 256.0, hb[3] / 256.0))
 			draw_rect(r2.grow(1), C_OUTLINE)
 			draw_rect(r2, C_GOLD)
+
+
+var _proj_tex: Dictionary = {}
+
+
+func _proj_texture(fid: String, proj: String) -> Texture2D:
+	var key: String = fid + "/" + proj
+	if not _proj_tex.has(key):
+		var path: String = "res://assets/vfx/%s/proj_%s.png" % [fid, proj]
+		_proj_tex[key] = load(path) if ResourceLoader.exists(path) else null
+	return _proj_tex[key]
 
 
 func _fish(p: Vector2, f: float) -> void:
