@@ -113,6 +113,46 @@ def refine(fid, src_path, size=128, strength=0.3):
     return client.generate(payload, f"{fid}/refine_{size}")
 
 
+NEUTRAL = ("neutral fighting guard stance, side view facing right, both fists raised in front of the chest, "
+           "elbows bent, feet apart, nothing extended, whole body visible")
+
+
+def neutral(fid, src_path, size=128, strength=0.55):
+    """Pose neutre de départ pour les animations RD (bonne pratique : les
+    animations partent d'une pose calme, membres groupés)."""
+    src = Image.open(src_path).convert("RGBA")
+    body = src.crop(src.getbbox())
+    k = (size - 28) / body.height
+    body = body.resize((round(body.width * k), size - 28), Image.NEAREST)
+    canvas = Image.new("RGBA", (size, size), (255, 255, 255, 255))
+    canvas.alpha_composite(body, ((size - body.width) // 2, size - 8 - body.height))
+    payload = {
+        "prompt": PROMPTS["template"].replace("open fighting stance", NEUTRAL + ", small margin around the character").format(description=PROMPTS["fighters"][fid]),
+        "prompt_style": "rd_pro__default",
+        "width": size, "height": size, "num_images": 1, "seed": 10,
+        "input_image": client.b64_png(canvas.convert("RGB")), "strength": strength,
+        "reference_images": [client.b64_png(src)],
+        "input_palette": client.b64_png(palette_image(fid)), "remove_bg": True,
+    }
+    return client.generate(payload, f"{fid}/neutral_{size}")
+
+
+def animate(fid, pose_path, anim, style, prompt_text, frames):
+    """Animation RD d'un mouvement à partir de la pose neutre (case élargie
+    pour laisser de la place au geste)."""
+    pose = Image.open(pose_path).convert("RGBA")
+    size = 160
+    canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    canvas.alpha_composite(pose, ((size - pose.width) // 2, size - pose.height))
+    payload = {
+        "prompt": f"{prompt_text}, {PROMPTS['fighters'][fid]}",
+        "prompt_style": style, "width": size, "height": size, "num_images": 1,
+        "frames_duration": frames, "input_image": client.b64_png(canvas),
+        "return_spritesheet": True, "input_palette": client.b64_png(palette_image(fid)), "remove_bg": True,
+    }
+    return client.generate(payload, f"{fid}/anim_{anim}")
+
+
 def idle(fid, pose_path):
     img = Image.open(pose_path).convert("RGBA")
     payload = {
@@ -167,6 +207,11 @@ if __name__ == "__main__":
         st = float(sys.argv[sys.argv.index("--strength") + 1]) if "--strength" in sys.argv else 0.3
         paths = refine(fid, sys.argv[3], size, st)
         print(contact([sys.argv[3]] + paths, os.path.join(OUT, fid, f"refine_{size}.png")))
+    elif step == "neutral":
+        print(neutral(fid, sys.argv[3]))
+    elif step == "animate":
+        # animate <id> <pose.png> <anim> <style> <frames> "<description du geste>"
+        print(animate(fid, sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[7], int(sys.argv[6])))
     elif step == "idle":
         print(idle(fid, sys.argv[3]))
     elif step == "portrait":

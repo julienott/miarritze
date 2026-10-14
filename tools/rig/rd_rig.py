@@ -150,6 +150,12 @@ def rd_palette(fid, spec=None):
     opaque = rgba[..., 3] > 127
     names, label = segment(fid, spec, opaque.astype(np.uint8))
     gmap = group_map(spec, rgba, label, names)
+    if spec.get("palette_slots"):
+        # Palette figée par build_rd_anims.py (animations RD) : la feuille est
+        # indexée dessus, tout le monde doit la réutiliser telle quelle.
+        slots = [(g, tuple(c)) for g, c in spec["palette_slots"]]
+        _write_palettes(fid, spec, slots)
+        return slots, gmap, label, names
     counts = {}
     for y, x in zip(*np.nonzero(opaque)):
         key = (gmap[y, x], tuple(int(v) for v in rgba[y, x, :3]))

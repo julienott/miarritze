@@ -33,6 +33,10 @@ SHEET_W = 2048
 
 def build(fid: str) -> None:
     t0 = time.time()
+    current = os.path.join(ROOT, "assets", "fighters", fid, "anims.json")
+    if os.path.exists(current) and json.load(open(current)).get("source") == "rd_anim" and "--force" not in sys.argv:
+        print(f"{fid}: animations RD (build_rd_anims.py), non écrasées ; --force pour forcer")
+        return
     fiche = FICHES[fid]
     source = "mannequin"
     if rd_rig.has_rd_rig(fid) and "--mannequin" not in sys.argv:
