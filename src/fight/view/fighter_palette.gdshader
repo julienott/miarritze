@@ -17,7 +17,9 @@ void fragment() {
 		discard;
 	}
 	vec4 c = texture(palette, vec2((idx + 0.5) / 32.0, (float(costume) + 0.5) / 4.0));
-	c.rgb = mix(c.rgb, vec3(1.0), flash);
+	// Index 1 = contour : il reste sombre pendant le flash, sinon le perso
+	// blanchi se fond dans un ciel clair et paraît transparent.
+	c.rgb = mix(c.rgb, vec3(1.0), idx < 1.5 ? 0.0 : flash);
 	c.rgb = mix(c.rgb, vec3(0.9, 0.2, 0.2), tint_red * 0.5);
 	float l = dot(c.rgb, vec3(0.3, 0.59, 0.11));
 	c.rgb = mix(c.rgb, vec3(l), gray);
