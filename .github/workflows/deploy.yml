@@ -62,11 +62,14 @@ jobs:
       # d'atteindre la tentative par mot de passe. (Même pattern que sutorimu.)
       # Pas de --delete : FTP_PATH pourrait contenir d'autres fichiers (API
       # backend plus tard) ; les fichiers index.* sont simplement écrasés.
-      - name: Copy PWA assets (manifest + icônes) dans le build
+      # landing/ : fond, logo et police de la page d'accueil (web/shell.html).
+      - name: Copy PWA + landing assets dans le build
         run: |
-          mkdir -p web/build/pwa
+          mkdir -p web/build/pwa web/build/landing
           cp web/pwa/*.png web/build/pwa/
           cp web/pwa/manifest.webmanifest web/build/pwa/manifest.webmanifest
+          cp web/landing/* web/build/landing/
+          test -f web/build/landing/bg_menu_0.png && test -f web/build/landing/press_start_2p.ttf
 
       - name: Deploy via rsync over SSH
         env:

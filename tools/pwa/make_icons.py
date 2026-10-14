@@ -6,7 +6,7 @@ fond rouge brand, avec « MB » en Press Start 2P. Décline en 192, 512, 180
 (apple-touch-icon), 512 maskable (avec safe area 10 %) et 32 (favicon).
 
 Usage : make_icons.py
-Sortie : web/pwa/icon-<size>.png
+Sortie : web/pwa/icon-<size>.png + assets/ui/app_icon.png (icône du projet Godot)
 """
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 OUT = os.path.join(ROOT, "web", "pwa")
 TXAPELA = os.path.join(ROOT, "assets", "ui", "icon_txapela.png")
 FONT_TTF = os.path.join(ROOT, "assets", "fonts", "press_start_2p.ttf")
+APP_ICON = os.path.join(ROOT, "assets", "ui", "app_icon.png")
 
 BG = (206, 52, 52, 255)        # rouge brand
 GOLD = (244, 198, 62, 255)
@@ -63,6 +64,11 @@ def main() -> None:
         print(f"icon-{sz}.png")
     compose(512, maskable=True).save(os.path.join(OUT, "icon-maskable-512.png"))
     print("icon-maskable-512.png")
+    # Icône du projet Godot (application/config/icon) : l'export web en tire
+    # index.icon.png / index.apple-touch-icon.png et le moteur la remet en
+    # favicon au démarrage. Sans elle, c'est le logo Godot qui s'affiche.
+    compose(256).save(APP_ICON)
+    print(os.path.relpath(APP_ICON, ROOT))
 
 
 if __name__ == "__main__":

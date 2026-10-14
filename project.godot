@@ -13,6 +13,7 @@ config_version=5
 config/name="Miarritze Borroka"
 run/main_scene="res://src/ui/boot/boot.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://assets/ui/app_icon.png"
 
 [autoload]
 
