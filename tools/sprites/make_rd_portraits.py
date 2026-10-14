@@ -45,7 +45,7 @@ FACES = {
     "karramarro": {"protect": (46, 10, 70, 28), "eyes": [(47, 15, 53, 23), (62, 15, 68, 23)], "mouth": (58, 48), "head": (30, 4, 86, 60)},
     "ramuntxo": {"seal": 1, "protect": (36, 40, 64, 64), "eyes": [(46, 44, 51, 50), (54, 45, 59, 50)], "mouth": (52, 57), "head": (22, 10, 78, 66)},
     "itsaso": {"protect": (46, 28, 76, 56), "eyes": [(56, 36, 62, 41), (66, 37, 70, 41)], "mouth": (61, 49), "head": (28, 8, 84, 64)},
-    "peio": {"protect": (32, 20, 64, 52), "eyes": [(47, 30, 53, 34), (56, 30, 60, 34)], "mouth": (56, 46), "head": (22, 2, 78, 58)},
+    "peio": {"src": "tools/rd/cache/834a7be0c9a517acf2f99be79ba12848e44c1371_0.png", "protect": (34, 26, 76, 66), "eyes": [(42, 40, 51, 49), (64, 40, 72, 49)], "mouth": (58, 58), "head": (22, 10, 78, 66), "big_x0": 16},
     "itsasargi": {"protect": (24, 16, 58, 48), "eyes": [(33, 24, 37, 28), (41, 24, 46, 28)], "mouth": (45, 36), "head": (12, 2, 68, 58)},
     "xabi": {"big_x0": 32, "protect": (24, 22, 58, 52), "eyes": [(34, 32, 40, 40)], "mouth": (44, 50), "head": (12, 2, 68, 58)},
 }
@@ -134,6 +134,15 @@ def portrait_index(fid, rgba, prot):
     """Même indexation par groupes que le sprite : une couleur prend le groupe
     qu'elle a le plus souvent dans la pose RD ; le visage reste « fixed »."""
     slots, gmap, _, _ = rd_rig.rd_palette(fid)
+    if rd_rig.load_spec(fid).get("palette_slots"):
+        # Perso régénéré (build_rd_anims) : mêmes règles de groupe par teinte.
+        import build_rd_anims as bra
+        bra.FID = fid
+        g = np.full(rgba.shape[:2], "fixed", dtype=object)
+        for y, x in zip(*np.nonzero(rgba[..., 3] > 127)):
+            # visage : couleur la plus proche parmi toutes (dents, yeux blancs)
+            g[y, x] = "visage" if prot[y, x] else bra.group_of(rgba[y, x])
+        return rd_rig.index_grouped(rgba, g, slots)
     pose = rd_rig.pose_rgba(rd_rig.load_spec(fid))
     votes = {}
     for y, x in zip(*np.nonzero(pose[..., 3] > 127)):

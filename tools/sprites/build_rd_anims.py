@@ -54,6 +54,15 @@ SOURCES = {
 }
 # Reprises propres à un perso (mouvement RD raté, image réussie ailleurs).
 SOURCES_BY = {
+    "peio": {
+        "run": ("walk", None),
+        "kick_high": ("kick", None),
+        "crouch_idle": ("crouch", "hold"),
+        "crouch_block": ("crouch", "hold"),
+        "hit_air": ("knockdown", slice(0, 3)),
+        "ko": ("knockdown", "end_hold"),
+        "getup": ("knockdown", "reverse"),
+    },
     "maia": {
         "crouch": ("sp_down", slice(0, 6)),
         "crouch_idle": ("sp_down", "hold"),
@@ -219,6 +228,9 @@ GROUP_RULES = {
         ("hat", lambda c, h, s, v: c[0] > 120 and c[1] < 90 and c[2] < 90),
         ("pants", lambda c, h, s, v: c[2] > c[0] + 20 and c[2] > c[1] and c[2] > 60),
         ("shirt", lambda c, h, s, v: min(c) > 160 and max(c) - min(c) < 60),
+    ],
+    "peio": [
+        ("jersey", lambda c, h, s, v: (h < 12 or h > 345) and s > 0.45 and v > 0.3),
     ],
     "maia": [
         ("suit", lambda c, h, s, v: 165 <= h <= 250 and s > 0.25),

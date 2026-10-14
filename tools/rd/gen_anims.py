@@ -99,7 +99,26 @@ MAIA.update({
     "super": (C, 12, "spins around once, then dashes forward and throws a big two-handed push with both arms fully extended" + NOFX, "neutral"),
     "finisher": (C, 12, "jumps up and down with joy, then makes a big surfer shaka sign with one hand raised high and a wide smile" + NOFX, "neutral"),
 })
-SPECS = {"louis": LOUIS, "maia": MAIA}
+PEIO = {k: v for k, v in LOUIS.items()}
+PEIO.update({k: v for k, v in MAIA.items() if k in ("idle", "block", "crouch", "crouch_block", "punch_1", "punch_2", "hit_high", "knockdown", "getup", "ko")})
+PEIO.update({
+    "intro": (C, 8, "claps his hands twice with a big grin, then takes a fighting guard" + NOFX, "neutral"),
+    "win": (C, 8, "raises both fists in victory and jumps with joy, big smile" + NOFX, "neutral"),
+    "sp_neutral": (C, 8, "drops a brown oval rugby ball from his hands and kicks it forward with a big swinging drop kick" + NOFX, "neutral"),
+    "sp_forward": (C, 8, "charges forward low with his shoulder lowered for a rugby tackle, arms wide open" + NOFX, "neutral"),
+    "sp_down": (C, 8, "pushes one open hand straight forward at arm's length in a strong rugby hand-off, braced" + NOFX, "neutral"),
+    "sp_up": (C, 8, "jumps straight up high with both arms stretched above his head to catch a ball in a rugby lineout" + NOFX, "neutral"),
+    "super": (C, 12, "lowers his head and shoulders and drives forward hard in a powerful rugby scrum push, legs pumping" + NOFX, "neutral"),
+    "finisher": (C, 12, "lifts both arms high and cheers, then puts one hand on his heart and bows to the crowd" + NOFX, "neutral"),
+    "throw": (C, 8, "alone, mimes grabbing with both hands in front of him then swings both arms over his shoulder in a throwing motion, no other character, empty hands" + NOFX, "neutral"),
+})
+PEIO = {k: (st, n, g.replace(" her ", " his ").replace("her ", "his ").replace(" she ", " he "), start) for k, (st, n, g, start) in PEIO.items()}
+PEIO.update({
+    "crouch": (C, 6, "squats down very low on bent knees like a rugby player ready to scrum, back bent forward, head at half height, fists up, then holds the low squat" + NOFX, "neutral"),
+    "knockdown": (C, 6, "topples backward and lands lying flat on his back on the ground, legs in the air then flat, cartoon, no injury" + NOFX, "neutral"),
+    "sp_forward": (C, 8, "dives forward almost horizontally with his shoulder first and both arms stretched forward to tackle, body parallel to the ground" + NOFX, "neutral"),
+})
+SPECS = {"louis": LOUIS, "maia": MAIA, "peio": PEIO}
 
 
 def out_dir(fid):
