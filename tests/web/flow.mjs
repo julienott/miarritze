@@ -1,6 +1,6 @@
 // Parcours des écrans au clavier (Chromium) avec captures à chaque étape.
 // Usage : node flow.mjs <nom> "<étapes>" ; étapes séparées par ";" :
-//   k:Enter  (touche)   w:1500 (attente ms)   s:nom (capture)   d:d/u:d (appui/relâche)
+//   k:Enter (touche)  w:1500 (attente ms)  s:nom (capture)  d:d/u:d (appui/relâche)  c:x,y (clic)  t:texte (saisie)
 import { chromium } from 'playwright';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -30,6 +30,7 @@ for (const step of steps) {
   else if (op === 'u') await page.keyboard.up(arg);
   else if (op === 's') await page.screenshot({ path: `${out}/${String(n++).padStart(2, '0')}_${arg}.png` });
   else if (op === 'c') { const [x, y] = arg.split(',').map(Number); await page.mouse.click(x, y); }
+  else if (op === 't') await page.keyboard.type(arg, { delay: 60 });
 }
 await browser.close();
 server.close();

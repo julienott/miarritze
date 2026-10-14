@@ -27,6 +27,9 @@ static func attach(edit: LineEdit) -> void:
 	if not OS.has_feature("web"):
 		return
 	edit.virtual_keyboard_enabled = false
+	# Un LineEdit focalisé réactive l'IME web de Godot à chaque redessin, et
+	# son <div> caché vole alors toutes les frappes : le focus reste au <input>.
+	edit.focus_mode = Control.FOCUS_NONE
 	edit.add_child(WebTextField.new())
 
 
@@ -46,6 +49,13 @@ func _ready() -> void:
 		i.style.cssText = 'position:fixed;z-index:20;box-sizing:border-box;margin:0;padding:0 6px;'
 			+ 'border:2px solid #3a2634;border-radius:0;outline:none;background:#f5efe3;color:#3a2634;'
 			+ 'font:%dpx monospace;display:none;';
+		// Sinon Godot reprend le focus pour son canvas et les frappes s'y perdent.
+		['pointerdown','pointerup','mousedown','mouseup','touchstart','touchend','click'].forEach(function(t){
+			i.addEventListener(t, function(e){ e.stopPropagation(); if (t === 'click' || t === 'touchend') i.focus(); });
+		});
+		['keydown','keyup','keypress'].forEach(function(t){
+			i.addEventListener(t, function(e){ e.stopPropagation(); });
+		});
 		document.body.appendChild(i);
 	})();""" % [_id, _edit.max_length if _edit.max_length > 0 else 64,
 		JSON.stringify(_edit.placeholder_text), CSS_FONT_PX], true)
@@ -56,6 +66,12 @@ func _ready() -> void:
 	_cb_key = JavaScriptBridge.create_callback(_on_key)
 	_el.addEventListener("input", _cb_input)
 	_el.addEventListener("keydown", _cb_key)
+	_focus_input.call_deferred()
+
+
+func _focus_input() -> void:
+	if _el != null:
+		_el.focus()
 
 
 func _on_input(_args: Array) -> void:
@@ -67,8 +83,13 @@ func _on_key(args: Array) -> void:
 	var ev: JavaScriptObject = args[0]
 	if str(ev.key) == "Enter":
 		ev.preventDefault()
-		_el.blur()
+		_focus_canvas()
 		_edit.text_submitted.emit(_edit.text)
+
+
+## Rend le clavier au jeu (sinon le focus tombe sur <body> et Godot n'entend plus rien).
+func _focus_canvas() -> void:
+	JavaScriptBridge.eval("var c = document.querySelector('canvas'); if (c) c.focus();", true)
 
 
 func _process(_delta: float) -> void:
@@ -98,9 +119,11 @@ func _process(_delta: float) -> void:
 		i.style.left = (c.left + f[0] * c.width) + 'px';
 		i.style.top = (c.top + f[1] * c.height) + 'px';
 		i.style.width = (f[2] * c.width) + 'px';
-		i.style.height = Math.max(f[3] * c.height, 32) + 'px';
+		var h = Math.max(f[3] * c.height, 32);
+		i.style.height = h + 'px';
+		i.style.fontSize = Math.max(%d, Math.round(h * 0.45)) + 'px';
 		i.style.display = 'block';
-	})();""" % [css, _id], true)
+	})();""" % [css, _id, CSS_FONT_PX], true)
 
 
 ## Zone visible du plus proche ScrollContainer (sinon tout l'écran).
@@ -115,5 +138,7 @@ func _clip_rect() -> Rect2:
 
 func _exit_tree() -> void:
 	if _id != "":
-		JavaScriptBridge.eval("var e = document.getElementById('%s'); if (e) e.remove();" % _id, true)
+		JavaScriptBridge.eval("""(function(){ var e = document.getElementById('%s'); if (!e) return;
+			var had = document.activeElement === e; e.remove();
+			if (had) { var c = document.querySelector('canvas'); if (c) c.focus(); } })();""" % _id, true)
 	_el = null

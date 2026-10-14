@@ -111,7 +111,8 @@ func _show_create(first: bool) -> void:
 	edit.text_submitted.connect(func(t: String) -> void: _create(t, err))
 	if not first:
 		_box.add_child(UiKit.button("Annuler", _show_list, 200))
-	edit.grab_focus.call_deferred()
+	if edit.focus_mode != Control.FOCUS_NONE:
+		edit.grab_focus.call_deferred()
 
 
 func _create(pseudo: String, err: Label) -> void:

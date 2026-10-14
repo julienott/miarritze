@@ -7,10 +7,10 @@ extends Control
 signal finished
 
 const STEPS: Array = [
-	{"title": "BOUGER", "pad": "Glisse le pouce à gauche de l'écran", "keys": "A / D (ou ← →)", "goal": "move"},
+	{"title": "BOUGER", "pad": "Glisse le pouce à gauche de l'écran", "keys": "Q / D (ou ← →)", "goal": "move"},
 	{"title": "FRAPPER", "pad": "Touche le bouton rouge (poing)", "keys": "J (POING) — 3 fois = combo !", "goal": "hit"},
 	{"title": "GARDER", "pad": "Garde le doigt sur le bouton bleu (bouclier)", "keys": "Espace (GARDE)", "goal": "block"},
-	{"title": "TXAPEL-CUT !", "pad": "Pouce en bas, vers l'arrière, + bouton rouge", "keys": "S + A + J (bas-arrière + POING)", "goal": "uppercut"},
+	{"title": "TXAPEL-CUT !", "pad": "Pouce en bas, vers l'arrière, + bouton rouge", "keys": "S + Q + J (bas-arrière + POING)", "goal": "uppercut"},
 	{"title": "SPÉCIAL", "pad": "Touche le bouton jaune (lauburu)", "keys": "L (SPÉCIAL)", "goal": "special"},
 	{"title": "SUPER !", "pad": "Touche le bouton MARÉE", "keys": "L + Espace (SPÉCIAL + GARDE)", "goal": "super"},
 	{"title": "K.O. !", "pad": "Vide la barre de vie de Hondar !", "keys": "Vide la barre de vie de Hondar !", "goal": "ko"},
