@@ -4,6 +4,7 @@
 Étapes :
   explore  <id> [--round N]  rd_fast i2i depuis la pose de garde du mannequin, 4 images
   final    <id> <choix.png>  rd_pro 128×128 (ou 160), remove_bg, palette du perso, référence
+  refine   <id> <pose.png> [--size 128] [--strength 0.3]  rd_pro fidèle, autre taille de case
   idle     <id>              rd_advanced_animation__idle sur la pose finale (8 frames)
   portrait <id>              rd_pro 96×96 buste, pose finale en référence
 Toutes les images sont contraintes à la palette du personnage (costume 1) :
@@ -92,6 +93,26 @@ def final(fid, choice_path, strength=0.5):
     return client.generate(payload, f"{fid}/final")
 
 
+def refine(fid, src_path, size=128, strength=0.3):
+    """Reprend une pose validée à une autre taille de case (échelle commune
+    des combattants) en restant fidèle : elle sert d'entrée et de référence."""
+    src = Image.open(src_path).convert("RGBA")
+    box = src.getbbox()
+    crop = src.crop(box)
+    k = (size - 10) / max(crop.size)
+    crop = crop.resize((max(1, round(crop.width * k)), max(1, round(crop.height * k))), Image.NEAREST)
+    canvas = Image.new("RGBA", (size, size), (255, 255, 255, 255))
+    canvas.alpha_composite(crop, ((size - crop.width) // 2, size - 4 - crop.height))
+    payload = {
+        "prompt": prompt(fid), "prompt_style": "rd_pro__default",
+        "width": size, "height": size, "num_images": 1, "seed": 7,
+        "input_image": client.b64_png(canvas.convert("RGB")), "strength": strength,
+        "reference_images": [client.b64_png(src)],
+        "input_palette": client.b64_png(palette_image(fid)), "remove_bg": True,
+    }
+    return client.generate(payload, f"{fid}/refine_{size}")
+
+
 def idle(fid, pose_path):
     img = Image.open(pose_path).convert("RGBA")
     payload = {
@@ -141,6 +162,11 @@ if __name__ == "__main__":
     elif step == "final":
         paths = final(fid, sys.argv[3])
         print(contact([sys.argv[3]] + paths, os.path.join(OUT, fid, "final.png")))
+    elif step == "refine":
+        size = int(sys.argv[sys.argv.index("--size") + 1]) if "--size" in sys.argv else 128
+        st = float(sys.argv[sys.argv.index("--strength") + 1]) if "--strength" in sys.argv else 0.3
+        paths = refine(fid, sys.argv[3], size, st)
+        print(contact([sys.argv[3]] + paths, os.path.join(OUT, fid, f"refine_{size}.png")))
     elif step == "idle":
         print(idle(fid, sys.argv[3]))
     elif step == "portrait":

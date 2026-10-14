@@ -33,7 +33,7 @@ from rig import vote_down  # noqa: E402
 OUTLINE_RGB = np.array([58, 38, 52])
 # yeux : boîtes (x0, y0, x1, y1) ; bouche : centre ; tête : boîte de recadrage carrée
 FACES = {
-    "louis": {"protect": (36, 24, 82, 60), "eyes": [(46, 35, 52, 42), (62, 36, 67, 42)], "mouth": (56, 51), "head": (28, 6, 84, 62)},
+    "louis": {"src": "tools/rd/cache/0fc7bc58c065dd0d941e1688f7ae9557822cef25_0.png", "protect": (28, 20, 68, 46), "eyes": [(40, 24, 48, 31), (58, 24, 64, 31)], "mouth": (52, 38), "head": (12, 0, 72, 60)},
     "maia": {"protect": (36, 24, 80, 62), "eyes": [(44, 38, 53, 46), (62, 38, 70, 46)], "mouth": (57, 53), "head": (30, 12, 86, 68)},
     "patxi": {"protect": (36, 27, 66, 52), "eyes": [(44, 32, 48, 37), (53, 32, 57, 37)], "mouth": (52, 47), "head": (20, 6, 76, 62)},
     "mattin": {"protect": (30, 16, 60, 40), "eyes": [(41, 21, 45, 25), (50, 21, 54, 25)], "mouth": (47, 31), "head": (20, 4, 76, 60)},
@@ -153,11 +153,14 @@ def skin_index(fid) -> int:
 
 
 def make(fid):
-    ps = json.load(open(os.path.join(ROOT, "tools", "rd", "out", "portraits.json")))
-    p7 = os.path.join(ROOT, "tools", "rd", "out", "p7_assets.json")
-    if fid not in ps and os.path.exists(p7):
-        ps[fid] = json.load(open(p7))[fid]["portrait"]
-    rgba = np.array(Image.open(os.path.join(ROOT, ps[fid])).convert("RGBA"))
+    src = FACES[fid].get("src")
+    if src is None:
+        ps = json.load(open(os.path.join(ROOT, "tools", "rd", "out", "portraits.json")))
+        p7 = os.path.join(ROOT, "tools", "rd", "out", "p7_assets.json")
+        if fid not in ps and os.path.exists(p7):
+            ps[fid] = json.load(open(p7))[fid]["portrait"]
+        src = ps[fid]
+    rgba = np.array(Image.open(os.path.join(ROOT, src)).convert("RGBA"))
     for x0, y0, x1, y1, h in FACES[fid].get("fills", []):
         rgba[y0:y1 + 1, x0:x1 + 1, :3] = [int(h[i:i + 2], 16) for i in (0, 2, 4)]
     bg = detour(rgba, FACES[fid].get("flood_ymax", 0), FACES[fid].get("keep"), FACES[fid].get("seal", 0))

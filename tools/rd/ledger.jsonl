@@ -104,3 +104,8 @@
 {"at": "2026-10-13T07:59:14", "label": "stage/cote_basques/panoi40_4", "style": "rd_plus__default", "size": "384x160", "num_images": 1, "balance_cost": 0.06, "cumul": 13.55, "task_id": "973dd224-d387-4946-b7d3-3a63a1e820ad"}
 {"at": "2026-10-13T07:59:26", "label": "stage/grande_plage/panoi40_3", "style": "rd_plus__default", "size": "384x160", "num_images": 1, "balance_cost": 0.06, "cumul": 13.61, "task_id": "12af7c14-02ce-4dc7-a5c3-22eb1493e091"}
 {"at": "2026-10-13T07:59:36", "label": "stage/grande_plage/panoi40_4", "style": "rd_plus__default", "size": "384x160", "num_images": 1, "balance_cost": 0.06, "cumul": 13.67, "task_id": "29690b66-c6cb-4226-a250-a9d22369fb8a"}
+{"at": "2026-10-14T11:25:01", "label": "louis/explore_1", "style": "rd_fast__default", "size": "160x160", "num_images": 4, "balance_cost": 0.12, "cumul": 13.79, "task_id": "bbd98863-5308-4201-9031-6f116571b7f9"}
+{"at": "2026-10-14T11:28:37", "label": "louis/final", "style": "rd_pro__default", "size": "160x160", "num_images": 1, "balance_cost": 0.18, "cumul": 13.97, "task_id": "ab9b1e9b-0286-4425-892d-ec13c37f7f4b"}
+{"at": "2026-10-14T11:32:39", "label": "louis/refine_128", "style": "rd_pro__default", "size": "128x128", "num_images": 1, "balance_cost": 0.18, "cumul": 14.15, "task_id": "e3ac3a05-0729-497e-94ff-3708ba44a234"}
+{"at": "2026-10-14T11:36:53", "label": "louis/idle", "style": "rd_advanced_animation__idle", "size": "128x128", "num_images": 1, "balance_cost": 0.14, "cumul": 14.29, "task_id": "b000393a-e20e-4caa-858f-07628a5ea42e"}
+{"at": "2026-10-14T11:42:37", "label": "louis/portrait", "style": "rd_pro__default", "size": "96x96", "num_images": 1, "balance_cost": 0.18, "cumul": 14.47, "task_id": "bb3f5ba3-80fb-4d54-9d40-5bdd37f7f889"}
