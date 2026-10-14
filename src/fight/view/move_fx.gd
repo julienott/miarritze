@@ -51,7 +51,9 @@ func _draw() -> void:
 			"sp_down":
 				_foam(def.id, p, f, on, md)
 			"sp_up":
-				_beam(p, on, md)
+				# Colonne de lumière du Saut du Phare : propre à Louis.
+				if def.id == "louis":
+					_beam(p, on, md)
 			"super":
 				_burst(def.id, p, t, md)
 

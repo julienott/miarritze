@@ -52,6 +52,16 @@ SOURCES = {
     "jump_kick": ("kick", None),
     "hit_air": ("knockdown", slice(0, 3)),
 }
+# Reprises propres à un perso (mouvement RD raté, image réussie ailleurs).
+SOURCES_BY = {
+    "maia": {
+        "crouch": ("sp_down", slice(0, 6)),
+        "crouch_idle": ("sp_down", "hold"),
+        "crouch_block": ("sp_down", "hold"),
+        "ko": ("knockdown", "end_hold"),
+        "getup": ("knockdown", "reverse"),
+    },
+}
 
 
 def frames_of(path):
@@ -73,11 +83,19 @@ def bbox(f):
 
 
 def reach(f, direction):
+    # Allonge du corps seul (plus grande composante) : les traits de vitesse
+    # et miettes que RD dessine devant le poing ne comptent pas.
+    comps = _comps(f[..., 3] > 0)
+    body = max(comps, key=len)
+    f = np.zeros_like(f)
+    ys, xs = zip(*body)
+    f[list(ys), list(xs), 3] = 255
     x0, y0, x1, y1 = bbox(f)
     if direction == "up":
         return -y0
     if direction == "low":
-        low = f[y1 - 30:y1 + 1, :, 3] > 0
+        mid = y0 + (y1 - y0) * 2 // 5
+        low = f[mid:y1 + 1, :, 3] > 0
         return np.nonzero(low.any(0))[0].max()
     return x1
 
@@ -188,14 +206,33 @@ def fix_light_specks(f, max_size=20):
     return out
 
 
+def _hsv(c):
+    import colorsys
+    h, sat, v = colorsys.rgb_to_hsv(*(int(x) / 255 for x in c[:3]))
+    return h * 360, sat, v
+
+
+# Groupes de couleurs recolorés par les costumes (rig.json « costumes »),
+# reconnus par teinte : les couleurs RD varient d'une image à l'autre.
+GROUP_RULES = {
+    "louis": [
+        ("hat", lambda c, h, s, v: c[0] > 120 and c[1] < 90 and c[2] < 90),
+        ("pants", lambda c, h, s, v: c[2] > c[0] + 20 and c[2] > c[1] and c[2] > 60),
+        ("shirt", lambda c, h, s, v: min(c) > 160 and max(c) - min(c) < 60),
+    ],
+    "maia": [
+        ("suit", lambda c, h, s, v: 165 <= h <= 250 and s > 0.25),
+    ],
+}
+FID = None
+
+
 def group_of(c):
-    r, g, b = int(c[0]), int(c[1]), int(c[2])
-    if r > 120 and g < 90 and b < 90:
-        return "hat"
-    if b > r + 20 and b > g and b > 60:
-        return "pants"
-    if min(r, g, b) > 160 and max(r, g, b) - min(r, g, b) < 60:
-        return "shirt"
+    c = tuple(int(x) for x in c[:3])
+    h, s, v = _hsv(c)
+    for g, rule in GROUP_RULES.get(FID, []):
+        if rule(c, h, s, v):
+            return g
     return "fixed"
 
 
@@ -260,7 +297,9 @@ def place(f, dx, air):
 
 
 def main():
+    global FID
     fid = sys.argv[1]
+    FID = fid
     d = rd_rig.fighter_dir(fid)
     reg = json.load(open(os.path.join(ROOT, "tools", "rd", "out", fid, "anims.json")))
     old = json.load(open(os.path.join(d, "anims.json")))
@@ -276,13 +315,20 @@ def main():
     with open(os.path.join(d, "rig.json"), "w") as fh:
         json.dump(spec, fh, indent=1)
     rd_rig._write_palettes(fid, spec, slots)
-    cells, report = {}, {}
+    cells, report, cleaned = {}, {}, {}
     for name in [n for n in meta]:
-        src, sel = SOURCES.get(name, (name, None))
-        frames = frames_of(reg[src])
+        src, sel = SOURCES_BY.get(fid, {}).get(name) or SOURCES.get(name, (name, None))
+        if src not in cleaned:
+            cleaned[src] = [cb.fix(fix_light_specks(fix_red_skin(f))) for f in frames_of(reg[src])]
+        frames = cleaned[src]
         n = meta[name]["frames"]
         if sel == "hold":
             chosen = hold(frames, n)
+        elif sel == "reverse":
+            chosen = pick(frames[::-1], n)
+        elif sel == "end_hold":     # chute puis reste au sol
+            k = max(1, n - 3)
+            chosen = pick(frames, k) + [frames[-1]] * (n - k)
         elif isinstance(sel, slice):
             chosen = pick(frames[sel], n)
         else:
@@ -290,7 +336,6 @@ def main():
         out = []
         worst = 0
         for f in chosen:
-            f = cb.fix(fix_light_specks(fix_red_skin(f)))
             r = cb.analyse(f)
             worst = max(worst, int(r["slits"].sum() + r["islands"].sum()))
             out.append(final_clean(index(place(f, dx, name in AIR), slots)))

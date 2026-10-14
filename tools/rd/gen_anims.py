@@ -67,7 +67,39 @@ LOUIS = {
     "super": (C, 12, "flurry of fast punches and kicks ending with a big jumping uppercut", "neutral"),
     "finisher": (C, 12, "proudly raises both arms to the sky, then gives a big thumbs up and a happy wink, keeps his red beret on his head", "neutral"),
 }
-SPECS = {"louis": LOUIS}
+def _her(t):
+    return t.replace(" his ", " her ").replace(" him ", " her ").replace(" he ", " she ")
+
+
+MAIA = {k: (st, n, _her(" " + g + " ").strip(), start) for k, (st, n, g, start) in LOUIS.items()}
+MAIA.update({
+    "intro": (C, 8, "waves hello with a big smile, then takes a fighting guard", "neutral"),
+    "win": (C, 8, "jumps with joy and makes a surfer shaka hand sign, big smile", "neutral"),
+    "throw": (C, 8, "alone, mimes grabbing with both hands in front of her then swings both arms over her shoulder in a throwing motion, no other character, empty hands", "neutral"),
+    "sp_neutral": (C, 8, "pulls the surfboard off her back and swings it forward in a wide horizontal arc, then puts it back", "neutral"),
+    "sp_forward": (C, 8, "slides forward low on her knees as if surfing on the sand, arms spread for balance", "neutral"),
+    "sp_down": (C, 8, "crouches and pushes both palms forward low along the ground, launching a small rolling wave", "neutral"),
+    "sp_up": (C, 8, "leaps high into the air spinning like a surfer doing an aerial trick, knees tucked", "neutral"),
+    "super": (C, 12, "raises both arms as a giant wave rises behind her, then rides forward on her surfboard", "neutral"),
+    "finisher": (C, 12, "plants her surfboard upright in the sand and leans on it with a proud smile and a shaka sign", "neutral"),
+})
+NOFX = ", no glow, no halo, no aura, no bubble, no effects around her"
+MAIA.update({
+    "idle": (C, 8, "stands in fighting guard with fists up and breathes calmly, shoulders rising slightly" + NOFX, "neutral"),
+    "crouch": (C, 6, "bends both knees deeply and squats down very low until her head is at half height, fists up, then holds the low squat" + NOFX, "neutral"),
+    "block": (C, 4, "crosses both forearms in front of her face to shield it, elbows up, braced" + NOFX, "neutral"),
+    "crouch_block": (C, 4, "stays in the low squat and crosses both forearms in front of her face" + NOFX, ("crouch", "low")),
+    "punch_1": (C, 6, "throws a fast straight jab, the front arm shoots fully forward at face height then pulls back" + NOFX, "neutral"),
+    "punch_2": (C, 6, "throws a straight punch with the back arm, arm fully extended forward at chest height, body turning" + NOFX, "neutral"),
+    "hit_high": (C, 4, "head snaps backward and she staggers back one step with eyes squeezed shut, cartoon, no injury" + NOFX, "neutral"),
+    "knockdown": (C, 6, "falls backward and lands flat on her back lying on the ground, arms spread, cartoon, no injury" + NOFX, "neutral"),
+    "getup": (C, 6, "lying flat on her back, she sits up, then stands back up into a fighting guard" + NOFX, ("knockdown", "low")),
+    "ko": (C, 8, "falls backward and lies flat on the ground with closed eyes, cartoon, no injury" + NOFX, "neutral"),
+    "sp_down": (C, 8, "drops into a deep squat and sweeps both palms forward along the ground" + NOFX, "neutral"),
+    "super": (C, 12, "spins around once, then dashes forward and throws a big two-handed push with both arms fully extended" + NOFX, "neutral"),
+    "finisher": (C, 12, "jumps up and down with joy, then makes a big surfer shaka sign with one hand raised high and a wide smile" + NOFX, "neutral"),
+})
+SPECS = {"louis": LOUIS, "maia": MAIA}
 
 
 def out_dir(fid):

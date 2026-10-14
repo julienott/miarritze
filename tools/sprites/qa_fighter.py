@@ -10,6 +10,10 @@ Contrôles :
 - taille  : hauteur qui saute de plus de 12 % d'une image à la suivante ;
 - surface : surface opaque qui chute de plus de 25 % par rapport aux deux
             voisines (membre ou pan du corps disparu le temps d'une image) ;
+- coup    : à l'image d'impact, le membre qui frappe dépasse la 1re image du
+            coup de moins de 8 px ;
+- immobile: un mouvement dont les images changent à peine (RD n'a rien animé) ;
+- surface + : la silhouette gonfle de 40 % (halo, bulle, effet parasite) ;
 - tache   : petite tache crème sur la peau sans trait sombre au-dessus
             (pas une dent ni un blanc d'œil) : se lit comme un trou.
 Planches (tests/out/qa_fighter/<id>/) : toutes les images ×2 sur fond de
@@ -31,6 +35,8 @@ sys.path.insert(0, HERE)
 from build_rd_anims import _comps, is_pale, is_skin  # noqa: E402
 
 SKY = (214, 236, 246, 255)
+# Animations où rester presque immobile est normal (pose tenue, respiration).
+STILL_OK = {"idle", "block", "crouch_block", "crouch_idle", "fall", "dizzy", "crouch"}
 RED = (230, 40, 40, 255)
 
 
@@ -91,6 +97,7 @@ def check(idx, pal):
 def main():
     fid = sys.argv[1]
     allf, pal = frames(fid)
+    meta = json.load(open(os.path.join(ROOT, "assets", "fighters", fid, "anims.json")))["anims"]
     out = os.path.join(ROOT, "tests", "out", "qa_fighter", fid)
     os.makedirs(out, exist_ok=True)
     font = ImageFont.load_default()
@@ -107,6 +114,8 @@ def main():
                 issues.append(f"taille {heights[i - 1]}→{heights[i]}")
             if 0 < i < len(fr) - 1 and areas[i] < 0.75 * min(areas[i - 1], areas[i + 1]):
                 issues.append(f"surface −{100 - 100 * areas[i] // min(areas[i - 1], areas[i + 1])}%")
+            if i and areas[i] > 1.4 * areas[0]:
+                issues.append(f"surface +{100 * areas[i] // areas[0] - 100}% (halo ?)")
             if issues:
                 total += len(issues)
                 report.append(f"{name}#{i}: " + ", ".join(issues))
@@ -125,6 +134,20 @@ def main():
             x1 = xs[ys < top + 60].max()
             face = img.crop((x1 - 44, top, x1 + 6, top + 60))
             faces.append(face.resize((face.width * 4, face.height * 4), Image.NEAREST))
+        hit = meta[name].get("hit_frame")
+        if hit is not None and hit < len(fr):
+            ref = np.nonzero(fr[0] > 0)
+            cur = np.nonzero(fr[hit] > 0)
+            d = meta[name].get("hit_dir", "fwd")
+            gain = (ref[0].min() - cur[0].min()) if d == "up" else (cur[1].max() - ref[1].max())
+            if gain < 8:
+                total += 1
+                report.append(f"{name}#{hit}: coup invisible (dépasse la garde de {gain}px seulement)")
+        if name not in STILL_OK and len(fr) > 2:
+            moved = max(int(((f > 0) != (fr[0] > 0)).sum()) for f in fr) / max(areas[0], 1)
+            if moved < 0.12:
+                total += 1
+                report.append(f"{name}: immobile (au plus {moved:.0%} de la silhouette change)")
         c = fr[0].shape[0]
         row = Image.new("RGBA", (12 * c, c + 12), (24, 16, 28, 255))
         ImageDraw.Draw(row).text((2, 0), name, fill=(244, 198, 62, 255), font=font)
