@@ -65,9 +65,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch or event is InputEventMouseButton \
 			or event is InputEventKey or event is InputEventJoypadButton:
 		_web_unlocked = true
-		# Le vrai unlock iOS est fait par web/pwa/audio-unlock.js dans le head
-		# (handler DOM synchrone, obligatoire pour iOS). Ici on relance juste la
-		# musique qui a tenté de jouer alors que le contexte était suspendu.
+		# Relance la musique qui a tenté de jouer avant le déblocage audio.
 		if _current_music != &"":
 			var track: StringName = _current_music
 			_current_music = &""

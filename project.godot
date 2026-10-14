@@ -25,6 +25,10 @@ SceneRouter="*res://src/autoload/scene_router.gd"
 QaCapture="*res://src/autoload/qa_capture.gd"
 OrientationOverlay="*res://src/autoload/orientation_overlay.gd"
 
+[audio]
+
+general/default_playback_type.web=0
+
 [display]
 
 window/size/viewport_width=384
