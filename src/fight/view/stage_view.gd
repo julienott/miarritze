@@ -49,6 +49,16 @@ func setup(id: String) -> void:
 	_build_props()
 	# Au-dessus du décor (caméra qui monte), le ciel prolonge le haut de l'image.
 	if not _layers.is_empty():
+		var far: Sprite2D = _layers[0]["node"]
+		# Rangée du haut étirée sur la marge que la caméra peut découvrir.
+		var cap: Sprite2D = Sprite2D.new()
+		cap.texture = far.texture
+		cap.centered = false
+		cap.region_enabled = true
+		cap.region_rect = Rect2(0, 0, far.texture.get_width(), 1)
+		cap.scale = Vector2(1.0, FightCamera.MAX_RISE + 8.0)
+		cap.position = Vector2(0, -(FightCamera.MAX_RISE + 8.0))
+		far.add_child(cap)
 		var img: Image = ((_layers[0]["node"] as Sprite2D).texture as Texture2D).get_image()
 		if img != null:
 			if img.is_compressed():

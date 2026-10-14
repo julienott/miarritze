@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Nettoyage procédural d'une sheet de combattant.
 
-- Bouche les petits trous d'alpha (pixel transparent avec ≥7/8 voisins opaques)
-  en reprenant la couleur dominante des voisins opaques.
+- Bouche les micro-trous d'alpha enclos (≤ MAX_HOLE px) avec la couleur
+  dominante des voisins opaques ; les trous plus grands sont de vrais vides.
 - Enlève les pixels isolés (opaque avec 0 voisin opaque).
 - Travaille cellule par cellule (160×160) : jamais à cheval entre deux frames.
 - Travaille sur une COPIE : la sheet originale est sauvegardée en
@@ -66,23 +66,27 @@ def _flood_labels(alpha: np.ndarray) -> tuple[np.ndarray, dict]:
     return labels, sizes
 
 
+# Au-delà, un trou enclos est un vrai vide (entre bras et corps…) : tous les
+# trous des sheets sont bordés de contour, on ne peut pas deviner leur couleur.
+MAX_HOLE = 3
+# Exception : un trou presque parfaitement rectangulaire est un artefact de
+# génération (rectangle découpé dans le maillot de Peio), pas une forme.
+RECT_MIN = 20
+RECT_FILL = 0.9
+# Peio : le rectangle du maillot est parfois un peu rogné (0,75–0,87).
+RECT_FILL_BY_FIGHTER = {"peio": 0.75}
+
+
 def _dilate(mask: np.ndarray) -> np.ndarray:
-    """Dilatation 8-voisins d'un masque booléen."""
     pad = np.pad(mask, 1, constant_values=False)
     return (pad[:-2, :-2] | pad[:-2, 1:-1] | pad[:-2, 2:]
-            | pad[1:-1, :-2] | pad[1:-1, 1:-1] | pad[1:-1, 2:]
-            | pad[2:, :-2] | pad[2:, 1:-1] | pad[2:, 2:])
+            | pad[1:-1, :-2] | pad[1:-1, 2:]
+            | pad[2:, :-2] | pad[2:, 1:-1] | pad[2:, 2:] | mask)
 
 
-def clean_cell(cell: np.ndarray) -> tuple[np.ndarray, int, int]:
-    """Nettoie une cellule.
-    Pipeline (du plus sûr au plus large) :
-    1. Bouche TOUT trou totalement enclos (composante transparente qui ne
-       touche aucun bord de la frame ET dont le bbox est à l'intérieur du
-       bbox du sprite) : les trous dans le corps, grands ou petits.
-    2. « Fermeture morphologique » légère de l'alpha (dilate puis erode 1 px)
-       pour recoller les quasi-trous d'1 px de large (effet « poil manquant »).
-    3. Enlève les pixels opaques isolés (0 voisin opaque 8).
+def clean_cell(cell: np.ndarray, rect_fill: float = RECT_FILL) -> tuple[np.ndarray, int, int]:
+    """Nettoie une cellule : bouche les micro-trous enclos (≤ MAX_HOLE px) avec
+    la couleur voisine dominante, enlève les pixels opaques isolés.
     Retourne (nouvelle_cellule, pixels gagnés, pixels isolés retirés).
     """
     out = cell.copy()
@@ -90,7 +94,6 @@ def clean_cell(cell: np.ndarray) -> tuple[np.ndarray, int, int]:
     alpha = out > 0
     if not alpha.any():
         return out, 0, 0
-    # 1. Trous enclos par le sprite (plus de limite de taille).
     inv_labels, inv_sizes = _flood_labels(~alpha)
     edge_labels: set[int] = set()
     for y in (0, h - 1):
@@ -102,19 +105,28 @@ def clean_cell(cell: np.ndarray) -> tuple[np.ndarray, int, int]:
             if inv_labels[y, x] != 0:
                 edge_labels.add(int(inv_labels[y, x]))
     enclosed = np.zeros_like(alpha)
-    for lab in inv_sizes:
-        if lab in edge_labels:
+    for lab, size in inv_sizes.items():
+        if lab in edge_labels or size > MAX_HOLE:
             continue
         enclosed |= inv_labels == lab
-    # 2. Fermeture morphologique : nouveaux pixels = (dilate ∩ erode-dilate)
-    # autrement dit, les transparents dont les 4 voisins cardinaux sont tous
-    # opaques (ou dilaté puis érodé). On garde une version ultra-conservatrice.
-    pad = np.pad(alpha, 1, constant_values=False).astype(int)
-    neigh4 = pad[:-2, 1:-1] + pad[2:, 1:-1] + pad[1:-1, :-2] + pad[1:-1, 2:]
-    close_fill = (~alpha) & (neigh4 == 4)
-    # Les trous enclos + la fermeture : on fusionne.
-    to_fill = enclosed | close_fill
+    to_fill = enclosed
     holes_filled = 0
+    for lab, size in inv_sizes.items():
+        if lab in edge_labels or size < RECT_MIN:
+            continue
+        m = inv_labels == lab
+        ys, xs = np.where(m)
+        if size / ((np.ptp(ys) + 1) * (np.ptp(xs) + 1)) < rect_fill:
+            continue
+        # Trou rectangulaire = artefact : on le comble, liseré de contour
+        # compris, avec la couleur dominante du tissu juste autour.
+        ring1 = _dilate(m) & ~m
+        far = _dilate(_dilate(_dilate(ring1))) & ~ring1 & ~m
+        votes = Counter(int(v) for v in out[far] if v > 1)
+        if votes:
+            patch = m | ring1
+            out[patch] = votes.most_common(1)[0][0]
+            holes_filled += int(m.sum())
     for y, x in zip(*np.where(to_fill)):
         votes = Counter()
         for ny, nx in neighbors8(y, x, h, w):
@@ -124,7 +136,7 @@ def clean_cell(cell: np.ndarray) -> tuple[np.ndarray, int, int]:
         if votes:
             out[y, x] = votes.most_common(1)[0][0]
             holes_filled += 1
-    # 3. Pixels opaques isolés (0 voisin opaque 8).
+    # Pixels opaques isolés (0 voisin opaque 8).
     pad = np.pad(out > 0, 1, constant_values=False).astype(int)
     neigh8 = (pad[:-2, :-2] + pad[:-2, 1:-1] + pad[:-2, 2:]
               + pad[1:-1, :-2] + pad[1:-1, 2:]
@@ -156,7 +168,7 @@ def process(fid: str) -> dict:
             frame = out[y0:y0 + cell, x0:x0 + cell]
             if (frame > 0).sum() == 0:
                 continue
-            new, f, i = clean_cell(frame)
+            new, f, i = clean_cell(frame, RECT_FILL_BY_FIGHTER.get(fid, RECT_FILL))
             out[y0:y0 + cell, x0:x0 + cell] = new
             total_filled += f
             total_isolated += i

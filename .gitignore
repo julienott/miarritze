@@ -34,3 +34,4 @@ node_modules/
 # (voir tools/sprites/clean_alpha.py). Les .orig restent en local pour
 # pouvoir rejouer un nettoyage ; la vérité versionnée est la sheet nettoyée.
 assets/fighters/*/sheet.orig.png
+assets/fighters/*/sheet.orig.png.import
