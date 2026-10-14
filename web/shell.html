@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="utf-8">
+		<title>$GODOT_PROJECT_NAME</title>
+		<!--
+			Shell HTML Miarritze (dérivé du shell par défaut de Godot 4.7).
+			Page d'accueil affichée tout de suite (fond de l'écran titre, logo,
+			gros bouton JOUER) pendant que le moteur se précharge en arrière-plan.
+			Le clic sur JOUER est un vrai geste utilisateur : le jeu démarre
+			dedans, donc l'audio est débloqué d'office (Safari/iOS).
+			Fichiers servis : landing/ (copié dans le build par deploy.yml).
+			Tout est same-origin (COOP/COEP) : aucun CDN, aucune police externe.
+		-->
+		<style>
+@font-face {
+	font-family: 'PressStart';
+	src: url('landing/press_start_2p.ttf') format('truetype');
+	font-display: block;
+}
+
+:root {
+	--rouge: #ce3434;
+	--rouge-sombre: #8f2228;
+	--rouge-clair: #ea6a5c;
+	--bleu: #174e76;
+	--encre: #3a2634;
+	--or: #f4c63e;
+	--creme: #f8f1e3;
+	/* taille d'un « pixel » d'interface, suit l'écran */
+	--px: clamp(3px, 0.8vmin, 6px);
+}
+
+html, body, #canvas {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	color: white;
+	background-color: var(--bleu);
+	overflow: hidden;
+	touch-action: none;
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+#canvas {
+	display: block;
+}
+
+#canvas:focus {
+	outline: none;
+}
+
+/* ---------- Page d'accueil ---------- */
+
+#landing {
+	position: fixed;
+	inset: 0;
+	z-index: 10;
+	overflow: hidden;
+	background: var(--bleu);
+	transition: opacity 0.35s ease-out;
+}
+
+#landing.gone {
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* Fond pixel art animé (3 frames à 3 i/s, comme PixelBg) en « cover »,
+   calé en bas comme dans le jeu. */
+.bg, .bg img {
+	position: absolute;
+	inset: 0;
+}
+
+.bg img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center bottom;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+	opacity: 0;
+	animation: frame 1s steps(1, end) infinite;
+}
+
+.bg img:nth-child(2) { animation-delay: -0.6667s; }
+.bg img:nth-child(3) { animation-delay: -0.3333s; }
+
+/* Voile léger en haut et en bas pour la lisibilité du logo et du bouton. */
+.bg::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to bottom, rgba(23, 78, 118, 0.25), rgba(23, 78, 118, 0) 35%, rgba(23, 78, 118, 0) 60%, rgba(58, 38, 52, 0.35));
+}
+
+@keyframes frame {
+	0% { opacity: 1; }
+	33.333% { opacity: 0; }
+	100% { opacity: 0; }
+}
+
+.content {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	box-sizing: border-box;
+	padding:
+		calc(env(safe-area-inset-top, 0px) + 5vh)
+		calc(env(safe-area-inset-right, 0px) + 16px)
+		calc(env(safe-area-inset-bottom, 0px) + 7vh)
+		calc(env(safe-area-inset-left, 0px) + 16px);
+}
+
+/* Logo animé (3 frames à 6 i/s, comme LogoView). 238×66 px source. */
+.logo {
+	position: relative;
+	width: min(88vw, 30vh * 238 / 66, 952px);
+	aspect-ratio: 238 / 66;
+	margin: 0;
+	filter: drop-shadow(0 var(--px) 0 rgba(58, 38, 52, 0.55));
+}
+
+.logo img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+	opacity: 0;
+	animation: frame 0.5s steps(1, end) infinite;
+}
+
+.logo img:nth-child(2) { animation-delay: -0.3333s; }
+.logo img:nth-child(3) { animation-delay: -0.1667s; }
+
+.play-zone {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: calc(var(--px) * 3);
+}
+
+/* Gros bouton JOUER : coins « pixel » en escalier (clip-path), contour encre,
+   face rouge avec reflet clair en haut et ombre sombre en bas. */
+#play {
+	--u: var(--px);
+	position: relative;
+	appearance: none;
+	-webkit-appearance: none;
+	border: 0;
+	margin: 0;
+	padding: calc(var(--u) * 1.5);
+	background: var(--encre);
+	cursor: pointer;
+	font: inherit;
+	clip-path: polygon(
+		0 calc(var(--u) * 2), var(--u) calc(var(--u) * 2), var(--u) var(--u), calc(var(--u) * 2) var(--u), calc(var(--u) * 2) 0,
+		calc(100% - var(--u) * 2) 0, calc(100% - var(--u) * 2) var(--u), calc(100% - var(--u)) var(--u), calc(100% - var(--u)) calc(var(--u) * 2), 100% calc(var(--u) * 2),
+		100% calc(100% - var(--u) * 2), calc(100% - var(--u)) calc(100% - var(--u) * 2), calc(100% - var(--u)) calc(100% - var(--u)), calc(100% - var(--u) * 2) calc(100% - var(--u)), calc(100% - var(--u) * 2) 100%,
+		calc(var(--u) * 2) 100%, calc(var(--u) * 2) calc(100% - var(--u)), var(--u) calc(100% - var(--u)), var(--u) calc(100% - var(--u) * 2), 0 calc(100% - var(--u) * 2)
+	);
+	animation: bob 1.2s steps(2, jump-none) infinite alternate;
+	outline: none;
+}
+
+.play-shadow {
+	filter: drop-shadow(0 calc(var(--px) * 1.5) 0 rgba(30, 20, 28, 0.55));
+}
+
+#play .face {
+	display: block;
+	padding:
+		calc(clamp(18px, min(4.2vw, 6.5vh), 40px) * 0.8)
+		calc(clamp(18px, min(4.2vw, 6.5vh), 40px) * 1.6)
+		calc(clamp(18px, min(4.2vw, 6.5vh), 40px) * 0.8 + var(--u));
+	background: var(--rouge);
+	box-shadow:
+		inset 0 calc(var(--u) * -1.5) 0 var(--rouge-sombre),
+		inset 0 var(--u) 0 var(--rouge-clair);
+	font-family: 'PressStart', monospace;
+	font-size: clamp(22px, min(6vw, 9.5vh), 52px);
+	line-height: 1;
+	letter-spacing: 0.08em;
+	color: var(--creme);
+	/* contour encre façon outline_size du jeu */
+	text-shadow:
+		calc(var(--u) * -0.7) 0 0 var(--encre), calc(var(--u) * 0.7) 0 0 var(--encre),
+		0 calc(var(--u) * -0.7) 0 var(--encre), 0 calc(var(--u) * 0.7) 0 var(--encre),
+		0 calc(var(--u) * 1.4) 0 var(--encre);
+	white-space: nowrap;
+}
+
+#play:hover .face, #play:focus-visible .face {
+	background: #dc4040;
+}
+
+#play:focus-visible {
+	background: var(--or);
+}
+
+#play:active {
+	animation: none;
+	transform: translateY(var(--u));
+}
+
+#play:active .face {
+	box-shadow: inset 0 var(--u) 0 var(--rouge-sombre);
+}
+
+#play[aria-busy="true"] .face {
+	font-size: clamp(14px, min(3.4vw, 5.5vh), 30px);
+	padding-top: calc(clamp(18px, min(4.2vw, 6.5vh), 40px) * 0.8 + (clamp(22px, min(6vw, 9.5vh), 52px) - clamp(14px, min(3.4vw, 5.5vh), 30px)) / 2);
+	padding-bottom: calc(clamp(18px, min(4.2vw, 6.5vh), 40px) * 0.8 + var(--u) + (clamp(22px, min(6vw, 9.5vh), 52px) - clamp(14px, min(3.4vw, 5.5vh), 30px)) / 2);
+}
+
+@keyframes bob {
+	from { transform: translateY(0); }
+	to { transform: translateY(calc(var(--u) * -1)); }
+}
+
+/* Chargement discret sous le bouton. */
+#loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: calc(var(--px) * 1.5);
+	font-family: 'PressStart', monospace;
+	font-size: clamp(8px, min(1.8vw, 2.6vh), 14px);
+	color: var(--creme);
+	text-shadow: 0 2px 0 var(--encre), 2px 0 0 var(--encre), -2px 0 0 var(--encre), 0 -2px 0 var(--encre);
+	transition: opacity 0.4s;
+}
+
+#loading.done {
+	opacity: 0;
+}
+
+.bar {
+	width: clamp(120px, 26vmin, 260px);
+	height: calc(var(--px) * 2);
+	padding: calc(var(--px) * 0.5);
+	background: var(--encre);
+}
+
+.bar span {
+	display: block;
+	width: 0;
+	height: 100%;
+	background: var(--or);
+	transition: width 0.15s linear;
+}
+
+#status-notice {
+	display: none;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	max-width: min(90vw, 560px);
+	box-sizing: border-box;
+	background-color: #5b3943;
+	border: 4px solid var(--encre);
+	color: #f0e6e6;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	line-height: 1.3;
+	padding: 1rem;
+	text-align: center;
+	z-index: 2;
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+#rotate-hint {
+	display: none;
+}
+
+/* Portrait (téléphone tenu droit) : un « cover » plein écran zoomerait trop
+   le décor. On le cale en bas sur 62 % de la hauteur, le ciel (couleur unie
+   de la 1re ligne du fond) prolonge vers le haut, et on invite à tourner. */
+@media (orientation: portrait) {
+	#landing {
+		background: #4fc7fa;
+	}
+	.bg {
+		top: auto;
+		height: 62vh;
+	}
+	.bg img {
+		object-position: 62% bottom;
+	}
+	.bg::after {
+		display: none; /* le voile marquerait la jonction ciel uni / décor */
+	}
+	.logo {
+		margin-top: 10vh;
+	}
+	#rotate-hint {
+		display: block;
+		font-family: 'PressStart', monospace;
+		font-size: clamp(9px, 2.6vw, 14px);
+		line-height: 1.6;
+		text-align: center;
+		color: var(--creme);
+		text-shadow: 0 2px 0 var(--encre), 2px 0 0 var(--encre), -2px 0 0 var(--encre), 0 -2px 0 var(--encre);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.bg img, .logo img, #play { animation: none; }
+	.bg img:first-child, .logo img:first-child { opacity: 1; }
+}
+		</style>
+		$GODOT_HEAD_INCLUDE
+	</head>
+	<body>
+		<canvas id="canvas">
+			Ton navigateur ne gère pas le canvas.
+		</canvas>
+
+		<noscript>
+			Il faut activer JavaScript pour jouer.
+		</noscript>
+
+		<div id="landing">
+			<div class="bg" aria-hidden="true">
+				<img src="landing/bg_menu_0.png" alt="">
+				<img src="landing/bg_menu_1.png" alt="">
+				<img src="landing/bg_menu_2.png" alt="">
+			</div>
+			<div class="content">
+				<h1 class="logo" aria-label="Miarritze Borroka">
+					<img src="landing/logo_0.png" alt="">
+					<img src="landing/logo_1.png" alt="">
+					<img src="landing/logo_2.png" alt="">
+				</h1>
+				<div class="play-zone">
+					<div class="play-shadow">
+						<button id="play" type="button" autofocus><span class="face" id="play-label">JOUER</span></button>
+					</div>
+					<div id="loading" aria-live="polite">
+						<div class="bar"><span id="loading-fill"></span></div>
+						<span id="loading-text">Chargement…</span>
+					</div>
+					<div id="rotate-hint">Tourne ton téléphone<br>pour jouer</div>
+				</div>
+			</div>
+			<div id="status-notice"></div>
+		</div>
+
+		<script src="$GODOT_URL"></script>
+		<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+
+(function () {
+	const landing = document.getElementById('landing');
+	const playButton = document.getElementById('play');
+	const playLabel = document.getElementById('play-label');
+	const loading = document.getElementById('loading');
+	const loadingFill = document.getElementById('loading-fill');
+	const loadingText = document.getElementById('loading-text');
+	const statusNotice = document.getElementById('status-notice');
+
+	// Démarrage automatique (comportement d'avant la landing) : liens profonds
+	// QA (#scene=…) et navigateurs pilotés (tests Playwright). « ?landing »
+	// force l'affichage de la page d'accueil.
+	const params = new URLSearchParams(window.location.search);
+	const autoStart = !params.has('landing') && (window.location.hash !== '' || navigator.webdriver === true);
+
+	let failed = false;
+	let ready = false; // moteur initialisé et .pck téléchargé
+	let wanted = autoStart; // le joueur a demandé à jouer
+	let started = false;
+
+	function onProgress(current, total) {
+		if (current > 0 && total > 0) {
+			const pct = Math.min(100, Math.floor((current * 100) / total));
+			loadingFill.style.width = `${pct}%`;
+			loadingText.textContent = `Chargement… ${pct} %`;
+		}
+	}
+
+	const engine = new Engine(Object.assign({}, GODOT_CONFIG, { onProgress }));
+	const executable = GODOT_CONFIG['executable'];
+	const mainPack = GODOT_CONFIG['mainPack'] || `${executable}.pck`;
+
+	function setStatusNotice(text) {
+		while (statusNotice.lastChild) {
+			statusNotice.removeChild(statusNotice.lastChild);
+		}
+		text.split('\n').forEach((line) => {
+			statusNotice.appendChild(document.createTextNode(line));
+			statusNotice.appendChild(document.createElement('br'));
+		});
+		statusNotice.style.display = 'block';
+	}
+
+	function displayFailureNotice(err) {
+		console.error(err);
+		failed = true;
+		loading.classList.add('done');
+		playButton.disabled = true;
+		if (err instanceof Error) {
+			setStatusNotice(err.message);
+		} else if (typeof err === 'string') {
+			setStatusNotice(err);
+		} else {
+			setStatusNotice('Une erreur inconnue est survenue.');
+		}
+	}
+
+	function hideLanding() {
+		landing.classList.add('gone');
+		setTimeout(() => landing.remove(), 400);
+	}
+
+	function launch() {
+		if (started || failed) {
+			return;
+		}
+		started = true;
+		playButton.disabled = true;
+		// Équivaut à la fin de engine.startGame() : init et préchargement du
+		// .pck sont déjà faits, il ne reste qu'à lancer le moteur.
+		engine.start({ 'args': ['--main-pack', mainPack].concat(GODOT_CONFIG['args'] || []) })
+			.then(() => {
+				// Laisse Godot dessiner sa première image avant de dévoiler le canvas.
+				requestAnimationFrame(() => requestAnimationFrame(hideLanding));
+			}, displayFailureNotice);
+	}
+
+	function onReady() {
+		ready = true;
+		loadingFill.style.width = '100%';
+		loadingText.textContent = 'Prêt !';
+		loading.classList.add('done');
+		playButton.removeAttribute('aria-busy');
+		playLabel.textContent = 'JOUER';
+		if (wanted) {
+			launch();
+		}
+	}
+
+	playButton.addEventListener('click', () => {
+		wanted = true;
+		if (ready) {
+			launch();
+		} else if (!failed) {
+			// Pas encore prêt : on lance tout seul dès que c'est chargé.
+			playButton.setAttribute('aria-busy', 'true');
+			playLabel.textContent = 'CHARGEMENT…';
+		}
+	});
+
+	const missing = Engine.getMissingFeatures({
+		threads: GODOT_THREADS_ENABLED,
+	});
+
+	if (missing.length !== 0) {
+		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
+			let serviceWorkerRegistrationPromise;
+			try {
+				serviceWorkerRegistrationPromise = navigator.serviceWorker.getRegistration();
+			} catch (err) {
+				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
+			}
+			// There's a chance that installing the service worker would fix the issue
+			Promise.race([
+				serviceWorkerRegistrationPromise.then((registration) => {
+					if (registration != null) {
+						return Promise.reject(new Error('Service worker already exists.'));
+					}
+					return registration;
+				}).then(() => engine.installServiceWorker()),
+				// For some reason, `getRegistration()` can stall
+				new Promise((resolve) => {
+					setTimeout(() => resolve(), 2000);
+				}),
+			]).then(() => {
+				// Reload if there was no error.
+				window.location.reload();
+			}).catch((err) => {
+				console.error('Error while registering service worker:', err);
+			});
+		} else {
+			const missingMsg = 'Oups ! Ce navigateur ne peut pas lancer le jeu.\nIl manque :\n';
+			displayFailureNotice(missingMsg + missing.join('\n'));
+		}
+	} else {
+		// Préchargement dès l'arrivée : .wasm (compilé et instancié) + .pck.
+		Promise.all([
+			engine.init(executable),
+			engine.preloadFile(mainPack, mainPack),
+		]).then(onReady, displayFailureNotice);
+	}
+}());
+		</script>
+	</body>
+</html>

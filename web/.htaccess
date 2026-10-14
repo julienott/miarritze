@@ -11,6 +11,8 @@
 
 <IfModule mod_mime.c>
 	AddType application/wasm .wasm
+	AddType application/manifest+json .webmanifest
+	AddType font/ttf .ttf
 </IfModule>
 
 # Compression conseillée (le .wasm et le .pck sont volumineux).

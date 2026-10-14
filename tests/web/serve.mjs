@@ -7,6 +7,7 @@ import path from 'node:path';
 const MIME = {
   '.html': 'text/html', '.js': 'application/javascript', '.wasm': 'application/wasm',
   '.pck': 'application/octet-stream', '.png': 'image/png', '.json': 'application/json',
+  '.ttf': 'font/ttf', '.webmanifest': 'application/manifest+json',
 };
 
 export function serve(root, port, apiPort = 0) {
