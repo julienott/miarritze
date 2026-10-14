@@ -34,7 +34,7 @@ OUTLINE_RGB = np.array([58, 38, 52])
 # yeux : boîtes (x0, y0, x1, y1) ; bouche : centre ; tête : boîte de recadrage carrée
 FACES = {
     "louis": {"src": "tools/rd/cache/0fc7bc58c065dd0d941e1688f7ae9557822cef25_0.png", "protect": (28, 20, 68, 46), "eyes": [(40, 24, 48, 31), (58, 24, 64, 31)], "mouth": (52, 38), "head": (12, 0, 72, 60)},
-    "maia": {"src": "assets/fighters/maia/rd_portrait.png", "protect": (40, 20, 76, 56), "eyes": [(48, 36, 57, 42), (66, 36, 70, 42)], "mouth": (60, 51), "head": (16, 0, 80, 64)},
+    "maia": {"src": "assets/fighters/maia/rd_portrait.png", "protect": (40, 20, 76, 56), "eyes": [(48, 36, 57, 42), (66, 36, 70, 42)], "mouth": (60, 51), "head": (28, 6, 84, 62)},
     "patxi": {"protect": (36, 27, 66, 52), "eyes": [(44, 32, 48, 37), (53, 32, 57, 37)], "mouth": (52, 47), "head": (20, 6, 76, 62)},
     "mattin": {"protect": (30, 16, 60, 40), "eyes": [(41, 21, 45, 25), (50, 21, 54, 25)], "mouth": (47, 31), "head": (20, 4, 76, 60)},
     "amaia": {"protect": (36, 24, 66, 52), "eyes": [(42, 34, 47, 40), (56, 34, 60, 40)], "mouth": (52, 46), "head": (22, 8, 78, 64)},
