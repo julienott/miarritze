@@ -11,7 +11,10 @@ static func on_fight_end(result: Dictionary) -> void:
 		int(result.get("winner", -1)) == 0, str(last.get("stage", "")),
 		int(result.get("finisher", 0)) != 0 and int(result.get("winner", -1)) == 0,
 		bool(result.get("perfect", false)) and int(result.get("winner", -1)) == 0)
-	SceneRouter.goto(&"results", {"mode": "versus", "result": result, "fight": last, "unlocks": unlocks})
+	# Combat rapide : même chemin que le versus contre l'ordi, écran de
+	# résultats adapté (« Rejouer » le même trio, « Changer »).
+	SceneRouter.goto(&"results", {"mode": "quick" if str(last.get("mode", "")) == "quick" else "versus",
+		"result": result, "fight": last, "unlocks": unlocks})
 
 
 static func rematch() -> void:
