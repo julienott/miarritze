@@ -350,6 +350,13 @@ function showDetail(a) {
       sources.map((s) => el('source', { src: fileUrl(s), type: s.endsWith('.mp3') ? 'audio/mpeg' : 'audio/ogg' })));
     stage.append(audio);
     stage.classList.add('audio-stage');
+    if (a.credits && a.credits.length) {
+      const part = (p) => (p.url && /^https:\/\//.test(p.url)
+        ? el('a', { href: p.url, target: '_blank', rel: 'noopener noreferrer', text: p.t })
+        : document.createTextNode(p.t));
+      controls.append(el('dl', { class: 'credits' },
+        a.credits.flatMap((c) => [el('dt', { text: c.label }), el('dd', {}, c.parts.map(part))])));
+    }
   } else if (a.type === 'sprite') {
     const animSel = el('select', { 'aria-label': 'Animation' },
       a.anims.map((x) => el('option', { value: x.name, text: `${x.name} (${x.frames})` })));

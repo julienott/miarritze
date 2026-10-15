@@ -198,7 +198,52 @@ class Builder:
                      file=f, preview=f, note="")
 
     # ----------------------------------------------------------------------- audio
+    @staticmethod
+    def _md_parts(cell: str) -> list:
+        """Cellule markdown → [{t}, {t, url}] (liens https seulement, gras retiré)."""
+        import re
+        cell = cell.replace("**", "").replace("*", "").replace("`", "").strip()
+        parts, pos = [], 0
+        for m in re.finditer(r"\[([^\]]+)\]\((https://[^)\s]+)\)", cell):
+            if m.start() > pos:
+                parts.append({"t": cell[pos:m.start()]})
+            parts.append({"t": m.group(1), "url": m.group(2)})
+            pos = m.end()
+        if pos < len(cell):
+            parts.append({"t": cell[pos:]})
+        return parts
+
+    def music_credits(self) -> dict:
+        """Attribution par morceau, lue dans les tableaux de docs/MUSIC.md."""
+        doc = ROOT / "docs" / "MUSIC.md"
+        out: dict = {}
+        if not doc.exists():
+            return out
+        header = None
+        for line in doc.read_text(encoding="utf-8").splitlines():
+            if not line.startswith("|"):
+                header = None
+                continue
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if header is None:
+                header = cells
+                continue
+            if set(line) <= set("|-: "):
+                continue
+            key = cells[0].strip("`").removeprefix("music/").removesuffix(".ogg")
+            if not key or " " in key:
+                continue
+            out[key] = [{"label": h.replace("`", ""), "parts": self._md_parts(c)}
+                        for h, c in zip(header[1:], cells[1:]) if c]
+        out.setdefault("hegoak", [
+            {"label": "Air", "parts": [{"t": "Hegoak (Txoria txori), musique de Mikel Laboa"}]},
+            {"label": "Droits", "parts": [{"t": "Œuvre protégée : arrangement de l'ancien jeu, rétabli sur l'accueil à la demande de Julien (2026-10-13)"}]},
+        ])
+        return out
+
     def audio(self, sub: str, cat: str) -> None:
+        credits = self.music_credits() if sub == "music" else {}
+        original = [{"label": "Origine", "parts": [{"t": "Composition et synthèse originales (tools/gen_audio.py)"}]}]
         base = ASSETS / "audio" / sub
         if not base.exists():
             return
@@ -216,7 +261,7 @@ class Builder:
                     self.files.remove(mp3_rel)
             self.add(id=rel, cat=cat, group=sub, name=src.stem, type="audio",
                      version=short_hash(src), file=sources[0], sources=sources,
-                     preview="", note="")
+                     preview="", note="", credits=credits.get(src.stem, original))
 
     def run(self) -> None:
         if self.out.exists():
