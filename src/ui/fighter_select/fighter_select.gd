@@ -2,10 +2,15 @@ extends Control
 ## Sélection des combattants (SPEC §10.5) : grille 6×2 de portraits,
 ## curseur J1 rouge / J2 vert, grand aperçu animé de chaque côté, nom,
 ## titre, archétype en 3 jauges, costume avec Haut/Bas (verrous visibles).
-## Modes : "tower" (J1 + difficulté), "versus" (J1 + J2), "training" (J1).
+## Modes : "tower" (J1 + difficulté), "versus" (J1 + J2), "training" (J1),
+## "quick" (combat rapide : mon combattant, puis l'adversaire piloté par
+## l'ordi, puis le décor ; une case « Au hasard » termine la grille).
 
 const CELL: int = 30
 const COLS: int = 6
+## Case « Au hasard » de la grille (combat rapide).
+const RANDOM_ID: String = "?"
+const QUICK_TITLES: PackedStringArray = ["Choisis ton combattant", "Choisis ton adversaire"]
 
 var mode: String = "versus"
 var ids: PackedStringArray = []
@@ -29,17 +34,27 @@ var _count_label: Label
 ## Versus sur appareil tactile sans manette : J2 est l'ordinateur (SPEC §3.3 :
 ## pas de place pour deux manettes virtuelles sur iPhone).
 var _vs_cpu: bool = false
+## Combat rapide : une seule personne choisit J1 puis J2 (l'ordi), à la suite.
+var _quick: bool = false
+var _cols: int = COLS
+var _head: Label
+var _marks: Control
 
 
 func _ready() -> void:
 	AudioManager.play_music(&"select")
 	mode = str(SceneRouter.params.get("mode", "versus"))
-	_players = 2 if mode == "versus" else 1
+	_quick = mode == "quick"
+	_players = 2 if mode == "versus" or _quick else 1
 	_vs_cpu = mode == "versus" and Settings.touch_enabled() and Input.get_connected_joypads().is_empty()
 	_font = load("res://assets/fonts/press_start_2p.ttf")
 	ids = Roster.FIGHTERS.duplicate()
 	if bool(Profiles.active().get("unlocks", {}).get("boss", false)) or OS.get_cmdline_user_args().has("--unlock-all"):
 		ids.append(Roster.BOSS)
+	if _quick:
+		ids.append(RANDOM_ID)
+	# Toujours deux rangées : la grille s'élargit plutôt que de déborder (boss, « ? »).
+	_cols = maxi(COLS, ceili(ids.size() / 2.0))
 	_stage_bg = Sprite2D.new()
 	_stage_bg.centered = false
 	_stage_bg.modulate = Color(0.55, 0.55, 0.65)
@@ -49,11 +64,12 @@ func _ready() -> void:
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(shade)
-	var head: Label = UiKit.title({"tower": "PYRAMIDE DU PHARE", "versus": "VERSUS",
-		"training": "ENTRAÎNEMENT", "online": "EN LIGNE"}.get(mode, "CHOIX"))
-	head.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	head.position.y = 4
-	add_child(head)
+	_head = UiKit.title({"tower": "PYRAMIDE DU PHARE", "versus": "VERSUS",
+		"training": "ENTRAÎNEMENT", "online": "EN LIGNE"}.get(mode, QUICK_TITLES[0]),
+		UiKit.C_GOLD if _quick else UiKit.C_RED)
+	_head.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_head.position.y = 4
+	add_child(_head)
 	_overlay = Control.new()
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -68,6 +84,13 @@ func _ready() -> void:
 	add_child(_grid)
 	_grid.draw.connect(_draw_grid)
 	_build_cells()
+	# Curseurs et étiquettes PAR-DESSUS les portraits (le dessin de la grille
+	# elle-même passe sous ses cases).
+	_marks = Control.new()
+	_marks.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_marks.draw.connect(_draw_cursors)
+	_grid.add_child(_marks)
+	_grid.draw.connect(_marks.queue_redraw)
 	add_child(_overlay)
 	for p: int in 2:
 		var info: Label = UiKit.label("", 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT if p == 0 else HORIZONTAL_ALIGNMENT_RIGHT)
@@ -79,7 +102,7 @@ func _ready() -> void:
 		InputHub.set_versus()
 	else:
 		InputHub.set_solo()
-	var back: Button = UiKit.button("Retour", func() -> void: SceneRouter.goto(&"main_menu"), 60)
+	var back: Button = UiKit.button("Retour", _back, 60)
 	back.position = Vector2(4, 4)
 	back.focus_mode = Control.FOCUS_NONE
 	add_child(back)
@@ -89,8 +112,11 @@ func _ready() -> void:
 	add_child(ok)
 	get_viewport().size_changed.connect(_layout)
 	_layout()
-	for p: int in _players:
-		_refresh(p)
+	if _quick:
+		_restore_quick()
+	else:
+		for p: int in _players:
+			_refresh(p)
 	if _vs_cpu:
 		var sub: Label = UiKit.label("contre l'ordi", 8, UiKit.C_GOLD)
 		sub.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -128,8 +154,8 @@ func _process(delta: float) -> void:
 
 func _layout() -> void:
 	var w: float = get_viewport_rect().size.x
-	_grid.position = Vector2(floorf((w - COLS * CELL) * 0.5), get_viewport_rect().size.y - 2 * CELL - 8)
-	_grid.size = Vector2(COLS * CELL, 2 * CELL)
+	_grid.position = Vector2(floorf((w - _cols * CELL) * 0.5), get_viewport_rect().size.y - 2 * CELL - 8)
+	_grid.size = Vector2(_cols * CELL, 2 * CELL)
 	for p: int in 2:
 		if _previews[p] != null:
 			_previews[p].position = Vector2(48 if p == 0 else w - 48, 204)
@@ -144,7 +170,7 @@ func _build_cells() -> void:
 		var clip: Control = Control.new()
 		clip.clip_contents = true
 		clip.size = Vector2(CELL - 2, CELL - 2)
-		clip.position = Vector2((i % COLS) * CELL + 1, (i / COLS) * CELL + 1)
+		clip.position = Vector2((i % _cols) * CELL + 1, (i / _cols) * CELL + 1)
 		clip.mouse_filter = Control.MOUSE_FILTER_STOP
 		clip.gui_input.connect(_on_cell_input.bind(i))
 		var bg: ColorRect = ColorRect.new()
@@ -152,8 +178,17 @@ func _build_cells() -> void:
 		bg.size = clip.size
 		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		clip.add_child(bg)
-		var face: PortraitView = PortraitView.create(ids[i])
-		clip.add_child(face)
+		if ids[i] == RANDOM_ID:
+			# Case « Au hasard » : gros point d'interrogation doré sur fond mer.
+			bg.color = UiKit.C_SEA
+			var q: Label = UiKit.label("?", 16, UiKit.C_GOLD)
+			q.size = clip.size
+			q.position.y = 2
+			q.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			q.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			clip.add_child(q)
+		else:
+			clip.add_child(PortraitView.create(ids[i]))
 		_grid.add_child(clip)
 
 
@@ -162,32 +197,53 @@ func _on_cell_input(event: InputEvent, index: int) -> void:
 		or (event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed)
 	# Sur iPhone, Godot émule aussi un clic souris à partir du toucher : sans ce
 	# filtre, un seul tap choisissait ET validait le perso.
-	if event is InputEventMouseButton and (event as InputEventMouseButton).device == InputEvent.DEVICE_ID_EMULATION:
+	# Inversement, à la souris (web sur ordinateur), le projet émule un toucher
+	# (emulate_touch_from_mouse) : un clic valait deux taps.
+	if event.device == InputEvent.DEVICE_ID_EMULATION:
 		return
 	if not tapped or _picking_difficulty:
 		return
 	var p: int = 0 if not _done[0] else (1 if _players == 2 else 0)
+	if _done[p]:
+		return
 	if _cursor[p] == index:
 		_confirm(p)
 	else:
 		_cursor[p] = index
 		_costume[p] = 0
+		AudioManager.sfx(&"ui_move")
 		_refresh(p)
+
+
+func _is_random(p: int) -> bool:
+	return ids[_cursor[p]] == RANDOM_ID
 
 
 func _refresh(p: int) -> void:
 	var id: String = ids[_cursor[p]]
+	var random: bool = id == RANDOM_ID
+	# Combat rapide en miroir : l'ordi prend d'office un autre costume.
+	if _quick and p == 1 and id == ids[_cursor[0]] and _costume[1] == _costume[0]:
+		_costume[1] = (_costume[0] + 1) % 4
 	if _previews[p] != null:
 		_previews[p].queue_free()
-	_previews[p] = UiKit.fighter_preview(id, _costume[p], "idle", 1 if p == 0 else -1)
+	# « Au hasard » : silhouette mystère (noire, contour doré).
+	var shown: String = ids[p] if random else id
+	_previews[p] = UiKit.fighter_preview(shown, 0 if random else _costume[p], "idle", 1 if p == 0 else -1)
 	_previews[p].z_index = 2
+	if random:
+		_previews[p].set_silhouette(true)
 	add_child(_previews[p])
-	var data: Dictionary = FighterDb.load_json(id)
+	var data: Dictionary = {"name": "Au hasard"} if random else FighterDb.load_json(id)
 	var stats: Dictionary = data.get("stats", {})
 	_stats[p] = [int(stats.get("power", 2)), int(stats.get("speed", 2)), int(stats.get("reach", 2))]
-	_locked[p] = not _costume_ok(id, _costume[p])
-	_info[p].text = "%s\nCostume %d/4%s" % [str(data.get("title", "")), _costume[p] + 1,
-		"  (touche-moi)" if Settings.touch_enabled() and not _done[p] else ""]
+	_locked[p] = not _costume_allowed(p)
+	if random:
+		_info[p].text = "Surprise !"
+	else:
+		_info[p].text = "%s\nCostume %d/4%s" % [str(data.get("title", "")), _costume[p] + 1,
+			"  (touche-moi)" if Settings.touch_enabled() and not _done[p] else ""]
+	_info[p].visible = true
 	_overlay.queue_redraw()
 	while _names.size() <= p:
 		var nl: Label = UiKit.title("")
@@ -195,13 +251,72 @@ func _refresh(p: int) -> void:
 		add_child(nl)
 		_names.append(nl)
 	_names[p].text = UiKit.euskal_text(str(data.get("name", id)))
+	_names[p].visible = true
 	_names[p].horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if p == 0 else HORIZONTAL_ALIGNMENT_RIGHT
 	# Nom en lettrage basque, au-dessus de la tête du grand aperçu.
 	_names[p].position = Vector2(4 if p == 0 else get_viewport_rect().size.x - 154, 28)
-	if p == 0:
+	if p == 0 and not random:
 		_show_home_stage(id)
 	_layout()
 	_grid.queue_redraw()
+
+
+## Combat rapide : efface le côté de l'adversaire (retour à la 1re étape).
+func _hide_side(p: int) -> void:
+	if _previews[p] != null:
+		_previews[p].queue_free()
+		_previews[p] = null
+	if p < _names.size():
+		_names[p].visible = false
+	_info[p].visible = false
+	_overlay.queue_redraw()
+	_grid.queue_redraw()
+
+
+## Combat rapide : étape 0 (mon combattant) ou 1 (l'adversaire).
+func _quick_step(step: int) -> void:
+	_head.text = UiKit.euskal_text(QUICK_TITLES[step])
+	if step == 0:
+		_hide_side(1)
+	else:
+		_refresh(1)
+
+
+## Combat rapide : état initial (favori du profil) ou rétabli au retour du
+## choix du décor (`sel1`/`sel2` = choix d'origine, « ? » compris).
+func _restore_quick() -> void:
+	var params: Dictionary = SceneRouter.params
+	_cursor[0] = maxi(ids.find(str(params.get("sel1", Profiles.active().get("fighter", "louis")))), 0)
+	_costume[0] = int(params.get("cc1", Profiles.active().get("costume", 0)))
+	if _is_random(0) or not _costume_ok(ids[_cursor[0]], _costume[0]):
+		_costume[0] = 0
+	# L'adversaire démarre sur « Au hasard » : trois validations = l'ancien
+	# combat rapide (mon perso, adversaire et décor au hasard).
+	var opp: int = ids.find(str(params.get("sel2", RANDOM_ID)))
+	_cursor[1] = opp if opp >= 0 else ids.size() - 1
+	_costume[1] = int(params.get("cc2", 0))
+	_refresh(0)
+	if int(params.get("step", 0)) == 1:
+		_done[0] = true
+		_previews[0].play_preview("win", 1)
+		_quick_step(1)
+	else:
+		_quick_step(0)
+
+
+## Retour : annule l'étape en cours (combat rapide), sinon menu principal.
+func _back() -> void:
+	if _picking_difficulty:
+		return
+	if mode == "online":
+		OnlineMode.leave()
+	elif _quick and _done[0]:
+		_done[0] = false
+		AudioManager.sfx(&"ui_move")
+		_previews[0].play_preview("idle", 1)
+		_quick_step(0)
+	else:
+		SceneRouter.goto(&"main_menu")
 
 
 ## Toucher le grand aperçu d'un joueur change son costume (pas de flèches au doigt).
@@ -218,11 +333,10 @@ func _gui_input(event: InputEvent) -> void:
 		p = 0
 	elif pos.x > w - 110.0 and _players == 2:
 		p = 1
-	if p < 0 or _done[p] or (p == 1 and not _done[0]):
+	if p < 0 or _done[p] or (p == 1 and not _done[0]) or _is_random(p):
 		return
-	_costume[p] = (_costume[p] + 1) % 4
 	AudioManager.sfx(&"ui_move")
-	_refresh(p)
+	_cycle_costume(p, 1)
 	accept_event()
 
 
@@ -260,7 +374,10 @@ func _show_home_stage(id: String) -> void:
 func _draw_overlay() -> void:
 	var w: float = get_viewport_rect().size.x
 	var labels: PackedStringArray = ["Puissance", "Vitesse", "Portée"]
-	for p: int in (_players if mode == "versus" else 1):
+	var shown: int = _players if mode == "versus" else (2 if _quick and _done[0] else 1)
+	for p: int in shown:
+		if _is_random(p):
+			continue
 		var right: bool = p == 1
 		for row: int in 3:
 			var y: float = 84.0 + row * 9.0
@@ -288,22 +405,45 @@ func _costume_ok(id: String, c: int) -> bool:
 	return (unlocks.get(id, [0]) as Array).has(c)
 
 
+## Costume jouable ? « Au hasard » toujours ; l'ordi du combat rapide peut
+## porter n'importe quel costume (les verrous récompensent le joueur).
+func _costume_allowed(p: int) -> bool:
+	if _is_random(p) or (_quick and p == 1):
+		return true
+	return _costume_ok(ids[_cursor[p]], _costume[p])
+
+
 func _draw_grid() -> void:
 	for i: int in ids.size():
-		var r: Rect2 = Rect2((i % COLS) * CELL, (i / COLS) * CELL, CELL, CELL)
+		var r: Rect2 = Rect2((i % _cols) * CELL, (i / _cols) * CELL, CELL, CELL)
 		_grid.draw_rect(r, UiKit.C_OUTLINE, false, 1.0)
+
+
+func _draw_cursors() -> void:
 	var colors: Array[Color] = [UiKit.C_RED, UiKit.C_GREEN]
-	for p: int in _players:
+	var tags: PackedStringArray = ["TOI", "IA"] if _quick else ["J1", "J2"]
+	var cursors: int = (2 if _done[0] else 1) if _quick else _players
+	for p: int in cursors:
 		var i2: int = _cursor[p]
-		var r2: Rect2 = Rect2((i2 % COLS) * CELL, (i2 / COLS) * CELL, CELL, CELL).grow(-p)
-		_grid.draw_rect(r2, colors[p], false, 2.0)
+		var r2: Rect2 = Rect2((i2 % _cols) * CELL, (i2 / _cols) * CELL, CELL, CELL).grow(-p * 2)
 		if _done[p]:
-			_grid.draw_rect(r2.grow(-3), Color(colors[p], 0.35))
-		_grid.draw_string(_font, r2.position + Vector2(2, 9), "J%d" % (p + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, colors[p])
+			_marks.draw_rect(r2.grow(-2), Color(colors[p], 0.35))
+		_marks.draw_rect(r2.grow(-1), colors[p], false, 2.0)
+		# Étiquette en bas de case (J2 / IA), en haut pour J1 / TOI : lisibles
+		# même quand les deux curseurs sont sur le même perso.
+		var at: Vector2 = r2.position + (Vector2(3, 11) if p == 0 else Vector2(3, r2.size.y - 3))
+		_marks.draw_string_outline(_font, at, tags[p], HORIZONTAL_ALIGNMENT_LEFT, -1, 8, 3, UiKit.C_OUTLINE)
+		_marks.draw_string(_font, at, tags[p], HORIZONTAL_ALIGNMENT_LEFT, -1, 8, colors[p].lightened(0.25))
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _picking_difficulty:
+		return
+	if _quick:
+		# Une seule personne choisit : toutes les touches pilotent l'étape en cours.
+		var active: int = 1 if _done[0] else 0
+		if not _done[active]:
+			_handle_cursor(event, active, ["p1", "p2", "ui"])
 		return
 	for p: int in _players:
 		var prefixes: Array[String] = []
@@ -316,30 +456,40 @@ func _unhandled_input(event: InputEvent) -> void:
 				_done[p] = false
 				_grid.queue_redraw()
 			continue
-		var moved: bool = false
-		if _pressed(event, prefixes, ["_left"]):
-			_cursor[p] = (_cursor[p] + ids.size() - 1) % ids.size()
-			moved = true
-		elif _pressed(event, prefixes, ["_right"]):
-			_cursor[p] = (_cursor[p] + 1) % ids.size()
-			moved = true
-		elif _pressed(event, prefixes, ["_up"]):
-			_costume[p] = (_costume[p] + 3) % 4
-			_refresh(p)
-		elif _pressed(event, prefixes, ["_down"]):
-			_costume[p] = (_costume[p] + 1) % 4
-			_refresh(p)
-		elif _pressed(event, prefixes, ["_punch", "_accept"]):
-			_confirm(p)
-		elif _pressed(event, prefixes, ["_kick", "_cancel"]):
-			if mode == "online":
-				OnlineMode.leave()
-			else:
-				SceneRouter.goto(&"main_menu")
-		if moved:
-			_costume[p] = 0
-			AudioManager.sfx(&"ui_move")
-			_refresh(p)
+		_handle_cursor(event, p, prefixes)
+
+
+## Curseur d'un joueur : gauche/droite = perso, haut/bas = costume,
+## coup de poing / Entrée = valider, coup de pied / Échap = retour.
+func _handle_cursor(event: InputEvent, p: int, prefixes: Array[String]) -> void:
+	var moved: bool = false
+	if _pressed(event, prefixes, ["_left"]):
+		_cursor[p] = (_cursor[p] + ids.size() - 1) % ids.size()
+		moved = true
+	elif _pressed(event, prefixes, ["_right"]):
+		_cursor[p] = (_cursor[p] + 1) % ids.size()
+		moved = true
+	elif _pressed(event, prefixes, ["_up"]) and not _is_random(p):
+		_cycle_costume(p, 3)
+	elif _pressed(event, prefixes, ["_down"]) and not _is_random(p):
+		_cycle_costume(p, 1)
+	elif _pressed(event, prefixes, ["_punch", "_accept"]):
+		_confirm(p)
+	elif _pressed(event, prefixes, ["_kick", "_cancel"]):
+		_back()
+	if moved:
+		_costume[p] = 0
+		AudioManager.sfx(&"ui_move")
+		_refresh(p)
+
+
+## Costume suivant (step 1) ou précédent (step 3) ; en miroir (combat rapide),
+## on saute le costume déjà porté par mon combattant.
+func _cycle_costume(p: int, step: int) -> void:
+	_costume[p] = (_costume[p] + step) % 4
+	if _quick and p == 1 and ids[_cursor[1]] == ids[_cursor[0]] and _costume[1] == _costume[0]:
+		_costume[p] = (_costume[p] + step) % 4
+	_refresh(p)
 
 
 func _pressed(event: InputEvent, prefixes: Array[String], suffixes: Array) -> bool:
@@ -351,8 +501,9 @@ func _pressed(event: InputEvent, prefixes: Array[String], suffixes: Array) -> bo
 
 
 func _confirm(p: int) -> void:
-	var id: String = ids[_cursor[p]]
-	if not _costume_ok(id, _costume[p]):
+	if _done[p] or _picking_difficulty:
+		return
+	if not _costume_allowed(p):
 		AudioManager.sfx(&"ui_no")
 		return
 	_done[p] = true
@@ -360,6 +511,9 @@ func _confirm(p: int) -> void:
 	_grid.queue_redraw()
 	if _previews[p] != null:
 		_previews[p].play_preview("win", 1 if p == 0 else -1)
+	if _quick and p == 0:
+		_quick_step(1)
+		return
 	for q: int in _players:
 		if not _done[q]:
 			return
@@ -378,6 +532,8 @@ func _proceed() -> void:
 			OnlineMode.my_pick = {"fighter": p1, "costume": _costume[0],
 				"pseudo": str(Profiles.active().get("pseudo", "?")), "express": Settings.express_fights}
 			SceneRouter.goto(&"stage_select", {"mode": "online"})
+		"quick":
+			_start_quick()
 		_:
 			if _vs_cpu:
 				_ask_difficulty()
@@ -387,6 +543,33 @@ func _proceed() -> void:
 			if p2 == p1 and c2 == _costume[0]:
 				c2 = (c2 + 1) % 4
 			SceneRouter.goto(&"stage_select", {"p1": p1, "c1": _costume[0], "p2": p2, "c2": c2})
+
+
+## Combat rapide : tire les « Au hasard », puis passe au choix du décor.
+## L'ordi joue au niveau de la difficulté par défaut des réglages.
+func _start_quick() -> void:
+	var p1: String = ids[_cursor[0]]
+	var c1: int = _costume[0]
+	if p1 == RANDOM_ID:
+		p1 = Roster.FIGHTERS[randi() % Roster.FIGHTERS.size()]
+		c1 = 0
+	var p2: String = ids[_cursor[1]]
+	var c2: int = _costume[1]
+	if p2 == RANDOM_ID:
+		var others: Array[String] = []
+		for id: String in Roster.FIGHTERS:
+			if id != p1:
+				others.append(id)
+		p2 = others[randi() % others.size()]
+		c2 = 0
+	# Miroir : costume différent pour qu'on se reconnaisse.
+	if p2 == p1 and c2 == c1:
+		c2 = (c2 + 1) % 4
+	var r: Array = TowerMode.SKILL_RANGE[clampi(Settings.default_difficulty, 0, TowerMode.SKILL_RANGE.size() - 1)]
+	InputHub.set_solo()
+	SceneRouter.goto(&"stage_select", {"mode": "quick", "p1": p1, "c1": c1, "p2": p2, "c2": c2,
+		"ai_level": (int(r[0]) + int(r[1])) / 2,
+		"sel1": ids[_cursor[0]], "cc1": _costume[0], "sel2": ids[_cursor[1]], "cc2": _costume[1]})
 
 
 func _ask_difficulty() -> void:

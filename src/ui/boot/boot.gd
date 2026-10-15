@@ -35,6 +35,9 @@ func _route() -> void:
 		SceneRouter.goto(&"versus_splash", {"p1": "patxi", "p2": "xabi", "c1": 0, "c2": 1,
 			"stage": "port_pecheurs", "mode": "qa"})
 		return
+	if target == "quick":
+		SceneRouter.goto(&"fighter_select", {"mode": "quick"})
+		return
 	if target.begins_with("ending:"):
 		SceneRouter.goto(&"ending", {"fighter": target.trim_prefix("ending:"), "score": 12345,
 			"unlocked": ["Costume 3", "Titre : Txapeldun"]})

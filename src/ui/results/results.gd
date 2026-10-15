@@ -43,6 +43,17 @@ func _ready() -> void:
 	if str(params.get("mode", "")) == "online":
 		_online_buttons(params)
 		return
+	if str(params.get("mode", "")) == "quick":
+		# Combat rapide : même trio (perso, adversaire, décor), ou on rechoisit
+		# en retrouvant ses sélections précédentes.
+		UiKit.menu_column(self, [
+			UiKit.button("Rejouer", VersusMode.rematch),
+			UiKit.button("Changer", func() -> void:
+				SceneRouter.goto(&"fighter_select", {"mode": "quick", "sel1": fight.get("sel1", ""),
+					"cc1": fight.get("cc1", 0), "sel2": fight.get("sel2", "?"), "cc2": fight.get("cc2", 0)})),
+			UiKit.button("Menu", func() -> void: SceneRouter.goto(&"main_menu")),
+		], 80)
+		return
 	UiKit.menu_column(self, [
 		UiKit.button("Revanche", VersusMode.rematch),
 		UiKit.button("Changer de combattant", func() -> void:

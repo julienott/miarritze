@@ -59,26 +59,11 @@ func _on_training() -> void:
 	SceneRouter.goto(&"fighter_select", {"mode": "training"})
 
 
-## Combat rapide : perso du profil contre un adversaire aléatoire sur un
-## stage aléatoire, 3 rounds, IA Normal. Un seul clic pour jouer.
+## Combat rapide : mon combattant → l'adversaire (l'ordi) → le décor, chaque
+## étape avec « Au hasard » (présélectionné pour l'adversaire et le décor :
+## trois validations suffisent, comme l'ancien combat rapide).
 func _on_quick() -> void:
-	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
-	rng.randomize()
-	var me: String = str(Profiles.active().get("fighter", "louis"))
-	var others: Array[String] = []
-	for id: String in Roster.FIGHTERS:
-		if id != me:
-			others.append(id)
-	var opp: String = others[rng.randi() % others.size()]
-	var stages: Array[String] = []
-	for s: String in Roster.STAGES:
-		if s != "phare_sommet":
-			stages.append(s)
-	var stage: String = stages[rng.randi() % stages.size()]
-	InputHub.set_solo()
-	SceneRouter.goto(&"fight", {"p1": me, "p2": opp, "c1": 0, "c2": 0,
-		"stage": stage, "rounds": 3, "ai": [0, 2],
-		"mode": "quick", "return_to": "main_menu"})
+	SceneRouter.goto(&"fighter_select", {"mode": "quick"})
 
 
 func _on_online() -> void:
