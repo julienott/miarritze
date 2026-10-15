@@ -41,36 +41,8 @@ OUTLINE = (58, 38, 52)
 AIR = {"jump_up", "jump_fwd", "fall", "jump_punch", "jump_kick", "hit_air", "thrown"}
 
 # anim du jeu -> (anim RD source, sélection d'images ou None)
-SOURCES = {
-    "jump_up": ("jump", slice(1, 5)),
-    "fall": ("jump", slice(4, 6)),
-    "crouch_idle": ("crouch", "hold"),
-    "block": ("block", "hold"),
-    "crouch_block": ("crouch_block", "hold"),
-    # RD anime mal un perso en l'air : on reprend des images au sol réussies,
-    # placées en l'air (jambe tendue du coup de pied, début de chute arrière).
-    "jump_kick": ("kick", None),
-    "hit_air": ("knockdown", slice(0, 3)),
-}
-# Reprises propres à un perso (mouvement RD raté, image réussie ailleurs).
-SOURCES_BY = {
-    "peio": {
-        "run": ("walk", None),
-        "kick_high": ("kick", None),
-        "crouch_idle": ("crouch", "hold"),
-        "crouch_block": ("crouch", "hold"),
-        "hit_air": ("knockdown", slice(0, 3)),
-        "ko": ("knockdown", "end_hold"),
-        "getup": ("knockdown", "reverse"),
-    },
-    "maia": {
-        "crouch": ("sp_down", slice(0, 6)),
-        "crouch_idle": ("sp_down", "hold"),
-        "crouch_block": ("sp_down", "hold"),
-        "ko": ("knockdown", "end_hold"),
-        "getup": ("knockdown", "reverse"),
-    },
-}
+# Reprises d'images (mouvement RD raté ou absent → images réussies ailleurs) :
+# section « reprises » de la fiche du perso.
 
 
 def frames_of(path):
@@ -221,41 +193,54 @@ def _hsv(c):
     return h * 360, sat, v
 
 
-# Groupes de couleurs recolorés par les costumes (rig.json « costumes »),
-# reconnus par teinte : les couleurs RD varient d'une image à l'autre.
-GROUP_RULES = {
-    "louis": [
-        ("hat", lambda c, h, s, v: c[0] > 120 and c[1] < 90 and c[2] < 90),
-        ("pants", lambda c, h, s, v: c[2] > c[0] + 20 and c[2] > c[1] and c[2] > 60),
-        ("shirt", lambda c, h, s, v: min(c) > 160 and max(c) - min(c) < 60),
-    ],
-    "peio": [
-        ("jersey", lambda c, h, s, v: (h < 12 or h > 345) and s > 0.45 and v > 0.3),
-    ],
-    "maia": [
-        ("suit", lambda c, h, s, v: 165 <= h <= 250 and s > 0.25),
-    ],
-}
+sys.path.insert(0, os.path.join(ROOT, "tools", "specs"))
+import spec as fiche  # noqa: E402
+
 FID = None
+_RULES: dict = {}
 
 
 def group_of(c):
     c = tuple(int(x) for x in c[:3])
     h, s, v = _hsv(c)
-    for g, rule in GROUP_RULES.get(FID, []):
-        if rule(c, h, s, v):
+    if FID not in _RULES:
+        _RULES[FID] = fiche.group_rules(FID) if fiche.exists(FID) else []
+    for g, rule in _RULES[FID]:
+        if rule(c):
             return g
     return "fixed"
 
 
+def group_map(f):
+    """Groupe de couleur de chaque pixel. Un groupe avec « composante_min »
+    dans la fiche ne garde que ses zones d'un seul tenant assez grandes
+    (le béret, pas la bouche ni la ceinture qui ont les mêmes rouges)."""
+    op = f[..., 3] > 0
+    g = np.full(f.shape[:2], "", dtype=object)
+    cache = {}
+    for y, x in zip(*np.nonzero(op)):
+        c = tuple(int(v) for v in f[y, x, :3])
+        if c not in cache:
+            cache[c] = group_of(c)
+        g[y, x] = cache[c]
+    mins = fiche.min_components(FID) if fiche.exists(FID) else {}
+    for grp, n in mins.items():
+        for pts in _comps(g == grp):
+            if len(pts) < n:
+                for q in pts:
+                    g[q] = "fixed"
+    return g
+
+
 def palette_slots(neutral):
     op = neutral[..., 3] > 0
+    gm = group_map(neutral)
     counts = {}
-    for c in neutral[op][:, :3]:
-        t = tuple(int(v) for v in c)
+    for y, x in zip(*np.nonzero(op)):
+        t = (gm[y, x], tuple(int(v) for v in neutral[y, x, :3]))
         counts[t] = counts.get(t, 0) + 1
     keys = sorted(counts, key=lambda t: -counts[t])
-    slots = [("fixed", OUTLINE)] + [(group_of(c), c) for c in keys if c != OUTLINE][:30]
+    slots = [("fixed", OUTLINE)] + [k for k in keys if k[1] != OUTLINE][:30]
     return slots
 
 
@@ -264,9 +249,10 @@ def index(f, slots):
     groups = [g for g, _ in slots]
     out = np.zeros(f.shape[:2], np.uint8)
     op = f[..., 3] > 0
+    gm = group_map(f)
     for y, x in zip(*np.nonzero(op)):
         c = f[y, x, :3].astype(int)
-        g = group_of(c)
+        g = gm[y, x]
         cand = [j for j, gg in enumerate(groups) if gg == g] or list(range(len(slots)))
         d = ((arr[cand] - c) ** 2).sum(1)
         out[y, x] = cand[int(d.argmin())] + 1
@@ -362,8 +348,9 @@ def main():
         json.dump(spec, fh, indent=1)
     rd_rig._write_palettes(fid, spec, slots)
     cells, report, cleaned = {}, {}, {}
+    reuses = fiche.reuses(fid)
     for name in [n for n in meta]:
-        src, sel = SOURCES_BY.get(fid, {}).get(name) or SOURCES.get(name, (name, None))
+        src, sel = reuses.get(name, (name, None))
         if src not in cleaned:
             cleaned[src] = [cb.fix(fix_light_specks(vote_scale(cb.fix(fix_light_specks(fix_red_skin(f))), scale))) for f in frames_of(reg[src])]
         frames = cleaned[src]

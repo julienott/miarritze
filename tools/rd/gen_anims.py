@@ -19,6 +19,8 @@ from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import client  # noqa: E402
+sys.path.insert(0, os.path.join(HERE, "..", "specs"))
+import spec as fiche  # noqa: E402
 import gen_fighter as gf  # noqa: E402
 
 CELL = 160
@@ -154,6 +156,8 @@ def start_image(fid, start, done):
 
 def main():
     fid = sys.argv[1]
+    if fiche.exists(fid):
+        SPECS[fid] = fiche.moves(fid)
     names = [a for a in sys.argv[2:] if not a.startswith("--")] or list(SPECS[fid])
     dry = "--dry" in sys.argv
     reg_path = os.path.join(out_dir(fid), "anims.json")
