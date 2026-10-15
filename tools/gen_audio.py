@@ -5,10 +5,14 @@ Moteur maison : carré (rapport cyclique variable), triangle, bruit LFSR
 15 bits façon NES, « steel pan » additif. Synthèse vectorisée (numpy),
 export OGG Vorbis via soundfile/libsndfile (ffmpeg n'est pas requis).
 
-Toutes les mélodies sont des COMPOSITIONS ORIGINALES écrites dans des formes
-traditionnelles basques du domaine public (fandango, arin-arin, zortziko,
-aurresku, kalejira, berceuse) : aucune œuvre à auteur identifié, aucune
-partition ni MIDI tiers (voir docs/MUSIC.md). Hegoak est exclu.
+Thèmes de stage : chacun est bâti sur un AIR TRADITIONNEL ANONYME basque,
+relevé note à note dans un recueil vérifiable (Azkue, Aita Donostia, Iztueta,
+Salaberry, via la base Doinutegia de Bertsozale ou la Wikipédia basque), avec
+harmonisation et orchestration originales et des timbres basques évoqués en
+synthèse (txistu, trikitixa, alboka, chœur, txalaparta, pandero, atabal).
+Les autres morceaux (titre, menus, pyramide, fins, jingles) restent des
+compositions originales dans des formes traditionnelles. Aucune œuvre à auteur
+protégée, aucun échantillon tiers (voir docs/MUSIC.md). Hegoak est exclu.
 
 Usage : .venv/bin/python tools/gen_audio.py [music|sfx|voice|all] [nom…]
 """
@@ -238,9 +242,9 @@ def write_ogg(path, buf, quality, peak=PEAK):
         sf.write(path, normalize(buf, target), SR, format="OGG", subtype="VORBIS", compression_level=quality)
         decoded, _sr = sf.read(path)
         real = float(np.max(np.abs(decoded)))
-        if real <= PEAK * 1.06:
+        if real <= PEAK:
             return
-        target *= PEAK / real
+        target *= PEAK / real * 0.995
 
 
 def blank(beats, bpm, tail=0.0):
@@ -337,198 +341,721 @@ def song_tower():
     return loop_fix(buf, beats, bpm)
 
 
-def fight_song(key_root, bpm, lead_a, lead_b, prog_a, prog_b, drums, step,
-               duty=0.25, arp_duty=0.125, bass_style="octave", swing=0.0, minor=False):
-    """Gabarit des thèmes de stage : A B A B, arpèges + basse + batterie."""
-    lead = lead_a + lead_b + lead_a + lead_b
-    prog = prog_a + prog_b + prog_a + prog_b
-    roots = [key_root + i for i in prog]
-    quals = ["m" if minor and i % 12 in (0, 5, 7) else "M" for i in prog]
-    beats = lead_beats(lead)
-    buf = blank(beats, bpm, 1.0)
-    render_track(buf, lead, bpm, "square", 0.24, duty=duty, vibrato=0.007, swing=swing)
-    render_track(buf, bass_line([r - 12 for r in roots], 4, bass_style), bpm, "triangle", 0.30)
-    render_track(buf, chord_arp(roots, quals, 4, 0.25 if bpm < 140 else 0.5), bpm, "square", 0.055,
-                 duty=arp_duty, gate=0.6)
-    render_drums(buf, drums, step, bpm, beats, 0.30)
-    return loop_fix(buf, beats, bpm)
+# ================================================================ instruments basques
+# Timbres ÉVOQUÉS en synthèse pure (numpy), sans aucun échantillon tiers :
+#   txistu   flûte à 3 trous : fondamentale pure, souffle, attaque « par en dessous », vibrato
+#   trikitixa accordéon diatonique : deux anches désaccordées (battement = trémolo)
+#   alboka   anche double en corne : spectre nasal (harmoniques impairs + formant), bourdon
+#   abesbatza chœur : 3 voix « a / o » par formants
+#   txalaparta planches frappées : partiels inharmoniques d'une poutre libre
+#   pandero  tambourin à cymbalettes ; atabal (caisse claire) ; bombo (grosse caisse)
+#   ttun-ttun tambour à cordes souletin (corde pincée tonique/quinte)
+#   tronpeta cuivre de fanfare (stade)
+
+_NOTE_CACHE = {}
+_NOISE_CACHE = {}
+
+
+def band_noise(n, lo, hi, seed=0):
+    """Bruit blanc filtré passe-bande (FFT) ; banque de 4 s tirée en boucle."""
+    key = (lo, hi, seed)
+    if key not in _NOISE_CACHE:
+        rng = np.random.default_rng(1000 + seed)
+        m = 4 * SR
+        spec = np.fft.rfft(rng.standard_normal(m))
+        f = np.fft.rfftfreq(m, 1 / SR)
+        resp = 1.0 / (1 + ((f - (lo + hi) / 2) / max(1.0, (hi - lo) / 2)) ** 4)
+        x = np.fft.irfft(spec * resp, m)
+        _NOISE_CACHE[key] = x / (np.max(np.abs(x)) + 1e-9)
+    bank = _NOISE_CACHE[key]
+    return bank[np.arange(n) % len(bank)]
+
+
+def _gate_env(n, n_gate, attack, release):
+    """Enveloppe : montée `attack`, tenue jusqu'à `n_gate`, extinction `release`."""
+    env = np.zeros(n)
+    a = max(1, min(n_gate, int(attack * SR)))
+    env[:a] = np.linspace(0, 1, a)
+    env[a:n_gate] = 1.0
+    r = n - n_gate
+    if r > 0:
+        env[n_gate:] = np.linspace(1, 0, r)
+    return env
+
+
+def _additive(f, amps):
+    """Somme d'harmoniques k·f d'amplitudes `amps` (coupées sous Nyquist)."""
+    phase = 2 * np.pi * np.cumsum(f) / SR
+    out = np.zeros(len(f))
+    fmax = float(np.max(f))
+    for k, a in enumerate(amps, 1):
+        if a and k * fmax < SR * 0.45:
+            out += a * np.sin(k * phase)
+    return out
+
+
+def _vibrato(t, depth, rate=5.2, delay=0.15):
+    return 1 + np.clip((t - delay) / 0.2, 0, 1) * depth * np.sin(2 * np.pi * rate * t)
+
+
+def inst_txistu(m, dur, soft=False):
+    """Txistu : flûte à bec à 3 trous, son pur et aigu, souffle audible."""
+    rel = 0.07
+    n, ng = int((dur + rel) * SR), max(1, int(dur * SR))
+    t = np.arange(n) / SR
+    f = freq(m) * (1 - 0.010 * np.exp(-t * 45)) * _vibrato(t, 0.004 if soft else 0.006)
+    amps = (1, 0.10, 0.04) if soft else (1, 0.22, 0.10, 0.04, 0.02)
+    s = _additive(f, amps)
+    chiff = band_noise(n, 2500, 7000, 1) * (0.05 + (0.15 if soft else 0.35) * np.exp(-t * 40))
+    return (s + chiff) * _gate_env(n, ng, 0.03 if soft else 0.02, rel)
+
+
+_REED = tuple(0.9 / k ** 1.1 * (1.0 if k % 2 else 0.75) for k in range(1, 13))
+
+
+def inst_trikitixa(m, dur):
+    """Trikitixa : deux anches légèrement désaccordées → trémolo de battement."""
+    rel = 0.05
+    n, ng = int((dur + rel) * SR), max(1, int(dur * SR))
+    f = np.full(n, freq(m))
+    s = _additive(f, _REED) + 0.8 * _additive(f * 1.0042, _REED)
+    return s * 0.55 * _gate_env(n, ng, 0.012, rel)
+
+
+def _nasal_amps(f0, n_h=16, centre=1500.0, width=700.0):
+    amps = []
+    for k in range(1, n_h + 1):
+        base = (1.0 if k % 2 else 0.35) / k
+        amps.append(base * (1 + 2.2 * np.exp(-((k * f0 - centre) / width) ** 2)))
+    return amps
+
+
+def inst_alboka(m, dur):
+    """Alboka : double chalumeau en corne, timbre nasal et perçant, très lié."""
+    rel = 0.04
+    n, ng = int((dur + rel) * SR), max(1, int(dur * SR))
+    t = np.arange(n) / SR
+    f = np.full(n, freq(m)) * _vibrato(t, 0.002, 6.0)
+    s = _additive(f, _nasal_amps(freq(m)))
+    accent = 1 + 0.35 * np.exp(-t * 25)                 # coup de langue appuyé
+    return s * 0.45 * accent * _gate_env(n, ng, 0.015, rel)
+
+
+_VOWELS = {"a": ((700, 130, 1.0), (1220, 150, 0.5), (2600, 250, 0.18)),
+           "o": ((450, 110, 1.0), (800, 130, 0.45), (2830, 250, 0.06))}
+
+
+def inst_choir(m, dur, vowel="a"):
+    """Chœur : trois voix légèrement désaccordées, voyelle par formants."""
+    rel = 0.35
+    n, ng = int((dur + rel) * SR), max(1, int(dur * SR))
+    t = np.arange(n) / SR
+    f0 = freq(m)
+    out = np.zeros(n)
+    n_h = int(4200 // f0)
+    amps = []
+    for k in range(1, n_h + 1):
+        fk = k * f0
+        w = sum(a / (1 + ((fk - fc) / bw) ** 2) for fc, bw, a in _VOWELS[vowel])
+        amps.append(w / k ** 0.5)
+    for cents, rate, ph in ((-7, 4.6, 0.0), (0, 5.3, 1.3), (6, 5.0, 2.1)):
+        f = f0 * 2 ** (cents / 1200) * (1 + 0.005 * np.sin(2 * np.pi * rate * t + ph))
+        out += _additive(f, amps)
+    return out * 0.22 * _gate_env(n, ng, 0.14, rel)
+
+
+def inst_tronpeta(m, dur):
+    """Cuivre de fanfare : dent de scie qui « s'ouvre » à l'attaque."""
+    rel = 0.06
+    n, ng = int((dur + rel) * SR), max(1, int(dur * SR))
+    t = np.arange(n) / SR
+    f = np.full(n, freq(m)) * _vibrato(t, 0.004, 5.5, 0.2)
+    bright = 1 - np.exp(-t * 30)
+    s = _additive(f, [1 / k for k in range(1, 4)]) + bright * _additive(f, [0, 0, 0] + [1 / k for k in range(4, 12)])
+    return s * 0.5 * _gate_env(n, ng, 0.02, rel)
+
+
+def inst_bass(m, dur):
+    """Basse ronde (sinus + 2e harmonique), pincée."""
+    rel = 0.06
+    n, ng = int((dur + rel) * SR), max(1, int(dur * SR))
+    t = np.arange(n) / SR
+    s = _additive(np.full(n, freq(m)), (1, 0.35, 0.12))
+    return s * np.exp(-t * 2.2) * _gate_env(n, ng, 0.008, rel)
+
+
+def inst_pluck(m, dur):
+    """Corde pincée (ttun-ttun, harpe des « bulles ») : harmoniques à extinction rapide."""
+    n = int((dur + 0.4) * SR)
+    t = np.arange(n) / SR
+    f0 = freq(m)
+    phase = 2 * np.pi * f0 * t
+    s = sum(np.sin(k * phase) / k * np.exp(-t * (3 + 4 * k)) for k in range(1, 9) if k * f0 < SR * 0.45)
+    return s * _gate_env(n, n - int(0.02 * SR), 0.002, 0.02)
+
+
+def inst_bell(m, dur):
+    """Cloche du port : partiels inharmoniques, longue résonance."""
+    n = int((dur + 1.0) * SR)
+    t = np.arange(n) / SR
+    f0 = freq(m)
+    s = sum(a * np.sin(2 * np.pi * f0 * r * t) * np.exp(-t * d)
+            for r, a, d in ((1, 1, 1.2), (2.0, 0.5, 1.8), (2.4, 0.35, 2.4), (3.0, 0.25, 3.0), (4.5, 0.15, 4.5)))
+    return s * _gate_env(n, n - int(0.05 * SR), 0.003, 0.05)
+
+
+INSTRUMENTS = {"txistu": inst_txistu, "txistu_soft": lambda m, d: inst_txistu(m, d, True),
+               "trikitixa": inst_trikitixa, "alboka": inst_alboka,
+               "choir_a": lambda m, d: inst_choir(m, d, "a"), "choir_o": lambda m, d: inst_choir(m, d, "o"),
+               "tronpeta": inst_tronpeta, "bass": inst_bass, "pluck": inst_pluck, "bell": inst_bell}
+
+
+def note_sound(inst, m, dur):
+    key = (inst, m, round(dur, 4))
+    if key not in _NOTE_CACHE:
+        _NOTE_CACHE[key] = INSTRUMENTS[inst](m, dur)
+    return _NOTE_CACHE[key]
+
+
+def _hit(kind):
+    """Percussions basques (sons courts, mis en cache)."""
+    if kind in _NOTE_CACHE:
+        return _NOTE_CACHE[kind]
+    t = np.arange(int(0.5 * SR)) / SR
+    if kind.startswith("txala"):          # txalaparta : poutre libre (1 ; 2,76 ; 5,40 ; 8,93)
+        base = {"txala_hi": 520.0, "txala_mid": 440.0, "txala_lo": 340.0,
+                "txala_soft_hi": 300.0, "txala_soft_lo": 240.0}[kind]
+        soft = "soft" in kind
+        parts = ((1, 1.0, 22), (2.76, 0.45, 40), (5.40, 0.18, 70)) if not soft else ((1, 1.0, 14), (2.76, 0.2, 30))
+        s = sum(a * np.sin(2 * np.pi * base * r * t) * np.exp(-t * d) for r, a, d in parts)
+        click = band_noise(len(t), 1500, 5000, 2) * np.exp(-t * (400 if not soft else 900)) * (0.4 if not soft else 0.1)
+        s = s + click
+    elif kind in ("pandero", "pandero_acc"):
+        jingle = band_noise(len(t), 6000, 11000, 3) * np.exp(-t * 28)
+        metal = sum(np.sin(2 * np.pi * fr * t) for fr in (5230, 6870, 8120)) * np.exp(-t * 35) * 0.15
+        s = (jingle + metal) * (0.55 if kind == "pandero" else 1.0)
+        if kind == "pandero_acc":          # peau frappée
+            s = s + np.sin(2 * np.pi * 190 * t) * np.exp(-t * 30) * 0.9
+    elif kind in ("atabal", "atabal_s"):
+        wires = band_noise(len(t), 1800, 7000, 4) * np.exp(-t * 30)
+        body = np.sin(2 * np.pi * 210 * t) * np.exp(-t * 35)
+        s = (wires * 0.8 + body * 0.7) * (1.0 if kind == "atabal" else 0.45)
+    elif kind == "bombo":
+        f = 75 * np.exp(-t * 6) + 48
+        s = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 9) * 1.2
+    elif kind == "pelota":               # « pok » sec + rebond sur le mur du fronton
+        pok = (band_noise(len(t), 900, 3500, 5) * np.exp(-t * 120) + np.sin(2 * np.pi * 1150 * t) * np.exp(-t * 90))
+        s = pok.copy()
+        d = int(0.13 * SR)
+        s[d:] += pok[:-d] * 0.4
+    elif kind == "claps":                # applaudissements de tribune (plusieurs mains)
+        s = np.zeros(len(t))
+        for j, off in enumerate((0, 0.007, 0.013, 0.021, 0.028)):
+            k = int(off * SR)
+            s[k:] += band_noise(len(t) - k, 900, 4000, 6 + j) * np.exp(-t[:len(t) - k] * 45) * 0.35
+    elif kind in ("ttun_g", "ttun_d"):   # ttun-ttun : corde grave pincée + peau
+        s = inst_pluck(43 if kind == "ttun_g" else 50, 0.1)[:len(t)] * 0.9
+        s = s + np.sin(2 * np.pi * 110 * t[:len(s)]) * np.exp(-t[:len(s)] * 25) * 0.3
+    else:
+        raise ValueError(kind)
+    _NOTE_CACHE[kind] = s
+    return s
+
+
+# ---------------------------------------------------------------- écriture
+
+def chord_list(spec, octave=3):
+    """« G:2 C:2 D7:1 Em:1 » → [(fondamentale MIDI, qualité, temps), …]."""
+    out = []
+    for tok in spec.split():
+        name, d = tok.split(":")
+        i = 1
+        acc = 0
+        if len(name) > 1 and name[1] in "#b":
+            acc = 1 if name[1] == "#" else -1
+            i = 2
+        q = name[i:] or "M"
+        out.append((12 * (octave + 1) + NOTE_INDEX[name[0]] + acc, q, float(d)))
+    return out
+
+
+def events(notes, start=0.0, transpose=0):
+    """Séquence (note, durée) → événements (temps, note, durée) à partir de `start`."""
+    out, b = [], start
+    for m, d in notes:
+        if m is not None:
+            out.append((b, m + transpose, d))
+        b += d
+    return out
+
+
+class Song:
+    """Morceau bouclable : tout est placé en temps (noires), la boucle finit
+    exactement sur `beats` et la queue est repliée au début (loop_fix)."""
+
+    def __init__(self, bpm, beats, tail=2.5):
+        self.bpm = bpm
+        self.beats = int(round(beats)) if abs(beats - round(beats)) < 1e-9 else beats
+        self.beat = 60.0 / bpm
+        self.buf = blank(beats, bpm, tail)
+
+    def put(self, at_beat, sound, vol):
+        s = int(at_beat * self.beat * SR)
+        if s >= len(self.buf):
+            return
+        k = min(len(sound), len(self.buf) - s)
+        self.buf[s:s + k] += sound[:k] * vol
+
+    def play(self, evs, inst, vol, gate=0.95):
+        for b, m, d in evs:
+            self.put(b, note_sound(inst, m, d * self.beat * gate), vol)
+
+    def hits(self, pattern, step, vol, start=0.0, end=None):
+        """Motif de percussions répété (« a+b » = simultanés, None = silence)."""
+        end = self.beats if end is None else end
+        b = start
+        while b < end - 1e-6:
+            for j, k in enumerate(pattern):
+                at = b + j * step
+                if k and at < end - 1e-6:
+                    for part in k.split("+"):
+                        self.put(at, _hit(part), vol)
+            b += len(pattern) * step
+
+    def swell(self, at_beat, dur_beats, lo, hi, vol, seed=0):
+        """Souffle de bruit filtré en cloche (vagues, foule, embruns)."""
+        n = int(dur_beats * self.beat * SR)
+        x = np.linspace(0, 1, n)
+        self.put(at_beat, band_noise(n, lo, hi, seed) * np.sin(np.pi * x) ** 2, vol)
+
+    def done(self):
+        return loop_fix(self.buf, self.beats, self.bpm)
+
+
+def chord_events(chords, start, style):
+    """Accompagnement à partir d'une grille d'accords.
+    style : « root » (basse tenue), « umpa » (basse sur le temps, accord au contretemps,
+    pour la main gauche de la trikitixa), « alt » (basse fondamentale/quinte par temps),
+    « pad » (accord tenu), « arp » (arpège en croches)."""
+    bass, chord = [], []
+    b = start
+    for root, q, d in chords:
+        sh = SHAPES[q]
+        if style == "root":
+            bass.append((b, root - 12, d))
+        elif style == "alt":
+            k = 0
+            while k < d - 1e-6:
+                bass.append((b + k, root - 12 + (0 if int(k) % 2 == 0 else 7), min(1.0, d - k)))
+                k += 1
+        elif style == "umpa":
+            k = 0
+            while k < d - 1e-6:
+                bass.append((b + k, root - 12 + (0 if int(k) % 2 == 0 else 7), 0.45))
+                for iv in sh[:3]:
+                    chord.append((b + k + 0.5, root + iv, 0.35))
+                k += 1
+        elif style == "pad":
+            for iv in sh[:3]:
+                chord.append((b, root + iv, d))
+        elif style == "arp":
+            k, j = 0.0, 0
+            pat = (0, 1, 2, 3, 2, 1)
+            while k < d - 1e-6:
+                chord.append((b + k, root + 12 + sh[pat[j % 6]], 0.5))
+                k += 0.5
+                j += 1
+        b += d
+    return bass, chord
+
+
+MINOR = (0, 2, 3, 5, 7, 8, 10)
+DORIAN = (0, 2, 3, 5, 7, 9, 10)
+
+
+def harmony_below(notes, tonic, scale=MAJOR):
+    """Seconde voix à la tierce inférieure, dans le mode donné."""
+    pcs = {(tonic + d) % 12 for d in scale}
+    out = []
+    for m, d in notes:
+        if m is None:
+            out.append((None, d))
+        else:
+            out.append((m - 3 if (m - 3) % 12 in pcs else m - 4, d))
+    return out
+
+
+# ================================================================ thèmes de stage
+# Chaque décor est construit autour d'un AIR TRADITIONNEL ANONYME, relevé note à
+# note dans une source vérifiable (voir docs/MUSIC.md) :
+#   BDB = Bertsozale Elkartea, « Doinutegia » (bdb.bertsozale.eus/web/doinutegia),
+#         qui publie la partition et le MIDI de la transcription des cancioneros
+#         (Azkue 1922, Aita Donostia, Iztueta 1824, Salaberry 1870…).
+#   EU  = partition LilyPond de l'article de la Wikipédia en basque.
+# L'harmonisation, l'introduction et l'orchestration sont originales (créées pour
+# le jeu) ; seules les MÉLODIES viennent de la tradition. Les rares retouches
+# (note finale allongée pour fermer la boucle) sont signalées en commentaire.
+
+# « O Pello Pello » — BDB 2169 (Azkue, Cancionero 875 ; relevé à Azkaine, XIXe s.).
+PELLO_PELLO = ("G4:1 G4:.5 A4:.5 B4:1 B4:1 A4:.5 B4:.5 C5:.5 A4:.5 G4:1 D4:1 B4:1.5 C5:.5 D5:1 E5:1 "
+               "D5:1.5 C5:.5 B4:1 r:1 B4:.5 D5:.5 D5:.5 D5:.5 E5:1 C5:1 C5:.5 E5:.5 E5:.5 E5:.5 D5:1 B4:1 "
+               "B4:.5 D5:.5 D5:.5 D5:.5 C5:1 E5:1 D5:.5 D5:.5 D5:.5 C5:.5 B4:2")      # dernière note : 1 → 2
+PELLO_PELLO_CH = "G:2 G:2 D:2 G:2 G:2 C:2 G:2 G:2 G:2 C:2 C:2 G:2 G:2 C:2 D:2 G:2"
 
 
 def song_grande_plage():
-    """Grande Plage : arin-arin (danse vive en 2/4) en do majeur, plein soleil."""
-    a = seq("G4:.5 C5:.5 E5:.5 C5:.5 G5:1 E5:1 | F5:.5 E5:.5 D5:.5 C5:.5 D5:1 G4:1 | A4:.5 B4:.5 C5:.5 D5:.5 E5:.5 F5:.5 G5:1 | "
-            "E5:.5 D5:.5 C5:1 C5:2 | G4:.5 C5:.5 E5:.5 C5:.5 G5:1 E5:1 | A5:.5 G5:.5 F5:.5 E5:.5 D5:1 B4:1 | "
-            "C5:.5 E5:.5 D5:.5 B4:.5 G4:.5 A4:.5 B4:1 | C5:2 r:2")
-    b = seq("E5:1 E5:.5 F5:.5 G5:1 G5:1 | A5:.5 G5:.5 F5:.5 E5:.5 F5:2 | D5:1 D5:.5 E5:.5 F5:1 F5:1 | G5:.5 F5:.5 E5:.5 D5:.5 E5:2 |"
-            "C5:1 C5:.5 D5:.5 E5:1 C5:1 | F5:.5 E5:.5 D5:.5 C5:.5 A4:2 | B4:.5 C5:.5 D5:.5 E5:.5 F5:.5 E5:.5 D5:1 | G5:2 r:2")
-    return fight_song(48, 152, a, b, [0, 7, 9, 0, 0, 5, 7, 0], [0, 5, 2, 0, 0, 5, 7, 7],
-                      ["kick", "hat", "snare", "hat", "kick", "kick", "snare", "hat"], 0.5)
+    """Grande Plage : « O Pello Pello » en arin-arin ensoleillé (sol majeur, 2/4).
+    Txistu + trikitixa (main gauche um-pa) + pandero, comme une fête sur la promenade."""
+    mel = seq(PELLO_PELLO)
+    span = lead_beats(mel)                                  # 32 temps
+    intro = 8
+    s = Song(136, intro + 3 * span)
+    ch = chord_list(PELLO_PELLO_CH)
+    for start, grid in [(0, ch[-4:])] + [(intro + p * span, ch) for p in range(3)]:
+        bass, chord = chord_events(grid, start, "umpa")
+        s.play(bass, "bass", 0.30)
+        s.play(chord, "trikitixa", 0.07)
+    s.play(events(mel, intro, 12), "txistu", 0.30)                          # tour 1 : txistu seul
+    s.play(events(mel, intro + span, 12), "trikitixa", 0.16)                # tour 2 : trikitixa…
+    s.play(events(harmony_below(mel, 7), intro + span, 12), "trikitixa", 0.09)  # …à la tierce
+    s.play(events(mel, intro + 2 * span, 12), "txistu", 0.28)               # tour 3 : tutti
+    s.play(events(harmony_below(mel, 7), intro + 2 * span, 12), "trikitixa", 0.08)
+    s.hits(["pandero_acc", "pandero", "pandero", "pandero"], 0.25, 0.10)
+    s.hits(["bombo", None, None, None], 0.5, 0.25, start=0)
+    return s.done()
+
+
+# « Untziak eder du bela » (variante de « Uso xuria errazu ») — BDB 2826
+# (Azkue, manuscrits n° 274 ; relevé à Hazparne, XIXe s.). La mer, le bateau et ses voiles.
+UNTZIAK = ("A4:1 A4:.5 B4:.5 C#5:1 C#5:1 D5:1 D5:1 C#5:1.5 r:.5 B4:1 C#5:.5 B4:.5 A4:1 A4:1 B4:1 B4:1 A4:1 r:1 "
+           "C#5:1 C#5:1 B4:1 B4:1 A4:.5 A4:.5 A4:.5 A4:.5 G#4:1 A4:1 B4:1 C#5:1 D5:.5 C#5:.5 B4:.5 A4:.5 "
+           "G#4:1 F#4:1 E4:1 r:1 A4:1 A4:.5 B4:.5 C#5:1 C#5:1 D5:.5 D5:.5 E5:.5 D5:.5 C#5:.5 B4:.5 C#5:1 "
+           "B4:1 C#5:.5 B4:.5 A4:1 A4:1 B4:1 B4:1 A4:2")                         # dernière note : 1 → 2
+UNTZIAK_CH = ("A:2 A:2 D:2 A:2 E:2 A:2 E:2 A:2 A:2 E:2 D:2 E:2 E:2 D:2 E:2 E:2 "
+              "A:2 A:2 D:2 A:2 E:2 A:2 E:2 A:2")
 
 
 def song_cote_basques():
-    """Côte des Basques : fandango « surf » en la mixolydien, 6/8 balancé, ressac."""
-    bpm = 132
-    a = seq("E5:1.5 D5:.5 C#5:.5 B4:.5 | A4:1.5 E4:1.5 | F#4:.5 G4:.5 A4:.5 B4:1 C#5:.5 | D5:3 |"
-            "E5:1.5 D5:.5 C#5:.5 B4:.5 | A4:1.5 C#5:1.5 | B4:.5 A4:.5 G4:.5 F#4:1 G4:.5 | A4:3")
-    b = seq("A5:1 G5:.5 F#5:1 E5:.5 | D5:1.5 B4:1.5 | G5:1 F#5:.5 E5:1 D5:.5 | C#5:3 |"
-            "D5:1 E5:.5 F#5:1 G5:.5 | A5:1.5 E5:1.5 | F#5:.5 E5:.5 D5:.5 C#5:1 B4:.5 | A4:3")
-    lead = a + b + a + b
-    roots = [57, 57, 55, 50, 57, 57, 55, 57, 50, 55, 55, 57, 50, 57, 52, 57] * 2
-    beats = lead_beats(lead)
-    buf = blank(beats, bpm, 1.0)
-    render_track(buf, lead, bpm, "square", 0.24, duty=0.125, vibrato=0.012)
-    render_track(buf, [(r - 24, 1.5) for r in roots for _ in range(2)], bpm, "triangle", 0.30)
-    render_track(buf, chord_arp(roots, ["M"] * len(roots), 3, 0.5, (0, 1, 2, 3, 2, 1)), bpm, "square", 0.05,
-                 duty=0.25, gate=0.5)
-    render_drums(buf, ["kick", "hat", "hat", "snare", "hat", "shaker"], 0.5, bpm, beats, 0.28)
-    beat = 60.0 / bpm
-    for k in range(int(beats // 6)):          # vagues : souffle grave toutes les 2 mesures
-        start = int(k * 6 * beat * SR)
-        n = int(2.5 * beat * SR)
-        t = np.arange(n) / n
-        if start + n < len(buf):
-            buf[start:start + n] += lfsr_noise(n, 6) * np.sin(np.pi * t) * 0.05
-    return loop_fix(buf, beats, bpm)
+    """Côte des Basques : « Untziak eder du bela », la majeur, balancé ; ressac
+    toutes les deux mesures. Txistu, puis trikitixa, arpèges « écume »."""
+    mel = seq(UNTZIAK)
+    span = lead_beats(mel)                                  # 48 temps
+    intro = 8
+    s = Song(118, intro + 2 * span)
+    ch = chord_list(UNTZIAK_CH)
+    for start, grid in ((0, ch[-4:]), (intro, ch), (intro + span, ch)):
+        bass, _ = chord_events(grid, start, "alt")
+        _, arp = chord_events(grid, start, "arp")
+        s.play(bass, "bass", 0.30)
+        s.play(arp, "pluck", 0.07)
+    s.play(events(mel, intro, 12), "txistu", 0.28)
+    s.play(events(mel, intro + span, 12), "trikitixa", 0.15)
+    s.play(events(harmony_below(mel, 9), intro + span, 12), "trikitixa", 0.08)
+    s.hits(["bombo", "pandero", "atabal_s", "pandero"], 0.5, 0.12)
+    for k in range(0, s.beats, 4):                          # vagues (une toutes les 2 mesures)
+        s.swell(k, 4, 120, 900, 0.10, seed=k % 3)
+        s.swell(k + 1.5, 2.0, 3000, 8000, 0.03, seed=7)     # écume
+    return s.done()
+
+
+# « Itsasoa laino dago » (Itsasoan lano dago) — BDB 1993 (Azkue, conférence de Bilbao
+# 1901 ; Aita Donostia, « Itsasoetan » 33). Chant de marins, 3/4, mi mineur.
+ITSASOA = ("B4:1 B4:1 C5:1 B4:3 A4:1 G4:1 A4:1 F#4:3 B4:1 B4:1 C5:1 B4:3 A4:1 F#4:1 G4:1 E4:3 "
+           "F#4:1 A4:1 D#4:1 E4:3 G4:1 B4:1 G4:1 F#4:3 B4:.75 B4:.25 B4:1 C5:1 B4:3 "
+           "A4:.75 G4:.25 F#4:1 G4:1 E4:3")
+ITSASOA_CH = "Em:3 Em:3 Am:3 B:3 Em:3 Em:3 Am:3 Em:3 B:3 Em:3 G:3 D:3 Em:3 Em:3 B:3 Em:3"
 
 
 def song_port_pecheurs():
-    """Port des Pêcheurs : chant de rameurs (forme arraun-kanta), valse calme
-    en mi mineur, cloche du port."""
-    bpm = 92
-    a = seq("E4:1 G4:1 B4:1 | A4:2 G4:1 | F#4:1 A4:1 B4:1 | G4:2 E4:1 | D4:1 F#4:1 A4:1 | G4:1.5 F#4:.5 E4:1 | "
-            "F#4:1 G4:1 A4:1 | B4:3")
-    b = seq("B4:1 C5:1 D5:1 | E5:2 D5:1 | C5:1 B4:1 A4:1 | B4:2 G4:1 | A4:1 B4:1 C5:1 | B4:1.5 A4:.5 G4:1 | "
-            "F#4:1 E4:1 D#4:1 | E4:3")
-    lead = a + b + a + b
-    roots = [40, 45, 47, 40, 38, 40, 42, 47, 43, 40, 45, 43, 45, 40, 47, 40] * 2
-    beats = lead_beats(lead)
-    buf = blank(beats, bpm, 1.5)
-    render_track(buf, lead, bpm, "triangle", 0.30, vibrato=0.012, release=0.2)
-    render_track(buf, lead, bpm, "square", 0.07, duty=0.5, vibrato=0.012)
-    render_track(buf, bass_line([r - 12 for r in roots], 3, "waltz"), bpm, "triangle", 0.22)
-    render_track(buf, [(r + 24, 12) for r in roots[::4]], bpm, "steel", 0.12)   # cloche du port
-    return loop_fix(buf, beats, bpm)
+    """Port des Pêcheurs : « Itsasoa laino dago », chant de marins calme.
+    Tour 1 : chœur d'hommes (voyelle « o ») ; tour 2 : txistu doux, le chœur
+    passe en accords tenus. Bourdon d'alboka très discret, cloche du port, clapot."""
+    mel = seq(ITSASOA)
+    span = lead_beats(mel)                                  # 48 temps
+    intro = 6
+    s = Song(96, intro + 2 * span, tail=3.5)
+    ch = chord_list(ITSASOA_CH)
+    for start, grid in ((0, ch[-2:]), (intro, ch), (intro + span, ch)):
+        bass, _ = chord_events(grid, start, "root")
+        s.play(bass, "bass", 0.32)
+    s.play(events(mel, intro, -12), "choir_o", 0.55)
+    s.play(events(harmony_below(mel, 4, MINOR), intro, -12), "choir_o", 0.25)
+    _, pad = chord_events(ch, intro + span, "pad")
+    s.play(pad, "choir_o", 0.20)
+    s.play(events(mel, intro + span, 12), "txistu_soft", 0.26)
+    s.play([(b, 52, 2.9) for b in np.arange(0, s.beats, 3.0)], "alboka", 0.025)     # bourdon mi
+    s.play([(b, 76, 1) for b in range(0, s.beats, 12)], "bell", 0.10)              # cloche du port
+    s.hits(["txala_soft_lo", None, None], 1.0, 0.05)                              # coque contre le quai
+    for k in range(0, s.beats, 3):                          # clapot continu (fondus croisés)
+        s.swell(k, 6, 100, 700, 0.045, seed=k % 2)
+    return s.done()
+
+
+# « Ene mutilik tipiena » (Nere seme ttipiena) — EU, d'après Aita Donostia, « Gure Herrian »
+# 1924 p. 231 (chanson de marins du Labourd relevée à Azkaine). Mesures 2/4 avec une 3/4.
+ENE_MUTILIK = ("B4:1 D5:.5 D5:.5 B4:.5 A4:.5 G4:.5 A4:.5 B4:1 G4:1 B4:1 D5:.5 D5:.5 A4:.5 C5:.5 B4:.5 A4:.5 "
+               "G4:1 r:1 A4:.5 A4:.5 B4:.5 B4:.5 D5:.5 B4:.5 A4:.5 A4:.5 A4:.5 A4:.25 A4:.25 "
+               "B4:.5 B4:.5 D5:.5 B4:.5 A4:1 r:1 D5:1 E5:.5 D5:.5 B4:.5 A4:.5 G4:.5 A4:.25 A4:.25 "
+               "B4:1 G4:1 D5:1 E5:.5 D5:.5 B4:.5 A4:.5 C5:.5 A4:.5 G4:1 r:1")
+ENE_MUTILIK_CH = "G:2 G:2 G:2 G:2 D:2 G:3 G:2 D:2 G:2 D:2 G:2 Em:2 G:2 C:2 D:2 G:2"
 
 
 def song_rocher_vierge():
-    """Rocher de la Vierge : zortziko (5/8, 2+3), ré mineur, embruns tendus.
-    Unité de temps = la croche (bpm en croches)."""
-    bpm = 300
-    a = seq("D5:2 F5:1 E5:1 D5:1 | C5:2 A4:3 | Bb4:2 C5:1 D5:1 E5:1 | F5:2 E5:3 |"
-            "D5:2 F5:1 E5:1 D5:1 | C5:2 E5:1 F5:1 G5:1 | A5:2 G5:1 F5:1 E5:1 | D5:5")
-    b = seq("A5:2 G5:1 F5:1 E5:1 | F5:2 D5:3 | G5:2 F5:1 E5:1 D5:1 | E5:2 C#5:3 |"
-            "D5:2 E5:1 F5:1 G5:1 | A5:2 F5:3 | E5:2 D5:1 C#5:1 E5:1 | D5:5")
-    lead = (a + b) * 3
-    roots = [50, 45, 46, 45, 50, 48, 45, 50, 45, 50, 43, 45, 50, 41, 45, 50] * 3
-    beats = lead_beats(lead)
-    buf = blank(beats, bpm, 1.0)
-    render_track(buf, lead, bpm, "square", 0.24, duty=0.25, vibrato=0.006)
-    bass = []
-    for r in roots:
-        bass += [(r - 24, 2), (r - 17, 1), (r - 24, 1), (r - 12, 1)]
-    render_track(buf, bass, bpm, "triangle", 0.30)
-    render_drums(buf, ["kick", "hat", "snare", "hat", "hat"], 1.0, bpm, beats, 0.30)
-    return loop_fix(buf, beats, bpm)
+    """Rocher de la Vierge : « Ene mutilik tipiena », l'enfant envoyé en haut du
+    mât guetter la terre. Alboka nasale sur txalaparta (rythme alterné « ttakun »),
+    puis txistu, puis les deux à la tierce ; embruns sur la passerelle."""
+    mel = seq(ENE_MUTILIK)
+    span = lead_beats(mel)                                  # 33 temps
+    intro = 8
+    s = Song(116, intro + 3 * span)
+    ch = chord_list(ENE_MUTILIK_CH)
+    for p in range(3):
+        bass, _ = chord_events(ch, intro + p * span, "alt")
+        s.play(bass, "bass", 0.30)
+    s.play([(0, 43, 4), (4, 50, 4)], "bass", 0.30)
+    s.play(events(mel, intro, 12), "alboka", 0.22)
+    s.play(events(mel, intro + span, 12), "txistu", 0.27)
+    s.play(events(mel, intro + 2 * span, 12), "alboka", 0.17)
+    s.play(events(harmony_below(mel, 7), intro + 2 * span, 12), "txistu", 0.17)
+    s.play([(b, 55, 1.95) for b in np.arange(0, s.beats - 1, 2.0)], "alboka", 0.04)  # bourdon sol
+    # txalaparta : deux joueurs qui se répondent (ta-kun / ta-kun), en doubles croches
+    s.hits(["txala_hi", "txala_lo", "txala_mid", None, "txala_hi", "txala_lo", None, "txala_mid"], 0.25, 0.10)
+    s.hits(["bombo", None, None, None], 1.0, 0.18)
+    for k in range(0, s.beats - 3, 8):
+        s.swell(k, 5, 100, 800, 0.10, seed=k % 3)
+        s.swell(k + 3, 3, 3500, 9000, 0.05, seed=5)         # embruns
+    return s.done()
+
+
+# « Ama begira zazu » — BDB (Aita Donostia ; « Gure Herria » 1924, 5 ; « Itsasoetan » ;
+# dansée). Levée d'une croche ; note finale allongée (1 → 1,5) pour fermer la mesure.
+AMA_BEGIRA = ("D4:.5 G4:.5 G4:.5 B4:.5 B4:.5 D5:1 G4:.5 B4:.5 A4:.5 C5:.5 F#4:.5 A4:.5 G4:1 r:.5 "
+              "D4:.5 G4:.5 G4:.5 B4:.5 B4:.5 D5:1 G4:.5 B4:.5 A4:.5 C5:.5 F#4:.5 A4:.5 G4:1 r:1 "
+              "D5:1 B4:1 G4:1.5 D4:.5 E4:.5 G4:.5 F#4:.5 A4:.5 G4:1.5")
+AMA_BEGIRA_CH = "G:.5 G:2 G:2 D:2 G:2 G:2 G:2 D:2 G:2 G:2 G:2 C:1 D:1 G:1.5"
 
 
 def song_port_vieux():
-    """Port Vieux : kalejira (défilé festif de rue) en fa majeur, balancé."""
-    a = seq("C5:.5 F5:.5 A5:.5 F5:.5 C5:1 A4:1 | Bb4:.5 D5:.5 F5:.5 D5:.5 C5:2 | A4:.5 C5:.5 F5:.5 E5:.5 D5:.5 C5:.5 Bb4:1 | "
-            "A4:1 G4:1 F4:2 | C5:.5 F5:.5 A5:.5 F5:.5 C6:1 A5:1 | Bb5:.5 A5:.5 G5:.5 F5:.5 G5:2 | "
-            "A5:.5 G5:.5 F5:.5 E5:.5 D5:.5 E5:.5 F5:.5 G5:.5 | F5:2 r:2")
-    b = seq("D5:1 D5:.5 E5:.5 F5:1 D5:1 | C5:1 C5:.5 D5:.5 E5:1 C5:1 | Bb4:1 Bb4:.5 C5:.5 D5:1 Bb4:1 | A4:2 C5:2 |"
-            "D5:1 E5:.5 F5:.5 G5:1 E5:1 | F5:1 G5:.5 A5:.5 Bb5:1 G5:1 | A5:.5 Bb5:.5 A5:.5 G5:.5 F5:1 E5:1 | F5:4")
-    return fight_song(53, 144, a, b, [0, 5, 0, 7, 0, 5, 7, 0], [2, 0, 5, 0, 2, 5, 7, 0],
-                      ["kick", "hat", "snare", "hat"], 0.5, duty=0.5, swing=0.04)
+    """Port-Vieux : « Ama begira zazu » (« Maman, regarde-moi danser sur la place »).
+    Petite crique, baignade : xirula/txistu en duo à la tierce sur ttun-ttun
+    (tambour à cordes souletin : tonique et quinte pincées en rythme)."""
+    mel = seq(AMA_BEGIRA)
+    span = lead_beats(mel)                                  # 24 temps
+    intro = 8
+    s = Song(120, intro + 4 * span)
+    ch = chord_list(AMA_BEGIRA_CH)
+    for p in range(4):
+        bass, _ = chord_events(ch, intro + p * span, "alt")
+        s.play(bass, "bass", 0.26)
+    s.play([(0, 43, 2), (2, 50, 2), (4, 43, 2), (6, 50, 2)], "bass", 0.26)
+    # ttun-ttun : sol et ré pincés (croche, croche-croche)
+    s.hits(["ttun_g", "ttun_d", "ttun_d", None], 0.5, 0.14)
+    s.play(events(mel, intro, 12), "txistu", 0.27)
+    s.play(events(mel, intro + span, 12), "txistu", 0.24)
+    s.play(events(harmony_below(mel, 7), intro + span, 12), "txistu", 0.15)
+    s.play(events(mel, intro + 2 * span, 24), "txistu_soft", 0.18)          # xirula, une octave au-dessus
+    s.play(events(mel, intro + 2 * span, 12), "pluck", 0.10)
+    s.play(events(mel, intro + 3 * span, 12), "txistu", 0.25)
+    s.play(events(harmony_below(mel, 7), intro + 3 * span, 12), "txistu", 0.15)
+    s.hits([None, "pandero", None, "pandero"], 0.5, 0.08, start=intro + span)
+    for k in range(0, s.beats, 8):
+        s.swell(k, 8, 150, 900, 0.05, seed=k % 2)
+    return s.done()
+
+
+# « Maritxu nora zoaz » — BDB 501 (Aita Donostia ; Santesteban « Aires vascongados » 64 ;
+# relevé à Gartzain, Baztan) et EU (même relevé). Zortziko txiki 2/4.
+MARITXU = ("D4:.5 G4:.5 G4:1 F#4:.5 G4:.5 A4:.5 B4:.5 G4:.5 A4:.5 B4:.5 C5:.5 B4:1 A4:1 "
+           "D4:.5 G4:.5 G4:1 F#4:.5 G4:.5 A4:.5 B4:.5 C5:.5 D5:.5 B4:.5 C5:.5 A4:1 G4:1 "
+           "B4:.5 C5:.5 D5:1 E5:.5 D5:.5 C5:.5 B4:.5 G4:.5 A4:.5 B4:.5 C5:.5 B4:1 A4:1 "
+           "D4:.5 G4:.5 G4:1 F#4:.5 G4:.5 A4:.5 B4:.5 C5:.5 D5:.5 B4:.5 C5:.5 A4:1 G4:1")  # fin : 0,5 → 1
+MARITXU_CH = "G:2 G:2 G:2 D:2 G:2 G:2 C:2 D:1 G:1 G:2 C:2 G:2 D:2 G:2 G:2 C:2 D:1 G:1"
 
 
 def song_halles():
-    """Les Halles : arin-arin de marché, sol majeur, accordéon simulé (deux carrés en tierce)."""
-    bpm = 160
-    a = seq("D5:.5 B4:.5 D5:.5 G5:.5 F#5:.5 E5:.5 D5:1 | C5:.5 A4:.5 C5:.5 E5:.5 D5:.5 C5:.5 B4:1 | "
-            "A4:.5 B4:.5 C5:.5 D5:.5 E5:.5 F#5:.5 G5:.5 E5:.5 | D5:2 r:2 |"
-            "D5:.5 B4:.5 D5:.5 G5:.5 F#5:.5 E5:.5 D5:1 | E5:.5 C5:.5 E5:.5 A5:.5 G5:.5 F#5:.5 E5:1 | "
-            "D5:.5 C5:.5 B4:.5 A4:.5 B4:.5 C5:.5 A4:1 | G4:2 r:2")
-    b = seq("B4:1 G4:1 B4:1 D5:1 | C5:1 A4:1 C5:1 E5:1 | D5:1 B4:1 G5:1 F#5:1 | E5:2 D5:2 |"
-            "B4:1 G4:1 B4:1 D5:1 | C5:1 E5:1 G5:1 E5:1 | D5:1 F#4:1 A4:1 C5:1 | B4:2 G4:2")
-    lead = a + b + a + b
-    roots = [55, 48, 50, 55, 55, 48, 50, 55, 55, 48, 55, 48, 55, 48, 50, 55] * 2
-    beats = lead_beats(lead)
-    buf = blank(beats, bpm, 1.0)
-    render_track(buf, lead, bpm, "square", 0.20, duty=0.25, vibrato=0.01)
-    render_track(buf, third_below(lead, 7), bpm, "square", 0.09, duty=0.5, vibrato=0.01)
-    render_track(buf, bass_line([r - 12 for r in roots], 4, "alt"), bpm, "triangle", 0.30)
-    render_drums(buf, ["kick", "hat", "snare", "hat", "kick", "hat", "snare", "wood"], 0.5, bpm, beats, 0.28)
-    return loop_fix(buf, beats, bpm)
+    """Les Halles : « Maritxu nora zoaz » en trikitixa et pandero, au tempo
+    d'arin-arin : l'ambiance d'un marché couvert un jour de fête."""
+    mel = seq(MARITXU)
+    span = lead_beats(mel)                                  # 32 temps
+    intro = 8
+    s = Song(144, intro + 4 * span)
+    ch = chord_list(MARITXU_CH)
+    for start, grid in [(0, chord_list("G:2 C:2 D:2 G:2"))] + [(intro + p * span, ch) for p in range(4)]:
+        bass, chord = chord_events(grid, start, "umpa")
+        s.play(bass, "trikitixa", 0.14)
+        s.play(chord, "trikitixa", 0.06)
+    for p, (tr, harm) in enumerate(((12, False), (12, True), (24, False), (12, True))):
+        st = intro + p * span
+        s.play(events(mel, st, tr), "trikitixa", 0.17 if tr == 12 else 0.11)
+        if harm:
+            s.play(events(harmony_below(mel, 7), st, tr), "trikitixa", 0.10)
+    s.play(events(mel, intro + 2 * span, 12), "txistu_soft", 0.12)
+    s.hits(["pandero_acc", "pandero", "pandero", "pandero", "pandero_acc", "pandero", "pandero_acc", "pandero"],
+           0.25, 0.13)
+    s.hits(["bombo", None, None, None], 0.5, 0.16, start=intro)
+    return s.done()
+
+
+# « Alpargatak urratuta » / Azeri-dantza — BDB 2088 (Iztueta, « Gipuzkoako dantzak » 49,
+# « Esku-aldatzeko soinua », XVIIIe s.). Air de txistu ; les silences de danse sont
+# remplis par l'atabal et la pelote. Dernière note allongée (1 → 1 + 3 temps de pause).
+AZERI = ("G4:1.5 A4:.5 G4:1 F4:1 E4:1.5 F4:.5 G4:1 A4:1 G4:1.5 A4:.5 G4:1 A4:1 G4:1 r:3 "
+         "G4:1.5 A4:.5 G4:1 F4:1 E4:1.5 F4:.5 G4:1 C5:1 G4:1.5 F4:.5 E4:1 D4:1 C4:1 r:2 C4:1 "
+         "E4:1.5 D4:.5 E4:1 F4:1 E4:1 r:2 C4:1 E4:1.5 D4:.5 E4:1 F4:1 G4:1 r:3 "
+         "G4:1.5 A4:.5 B4:1 G4:1 A4:1.5 B4:.5 C5:1 A4:1 B4:1.5 C5:.5 D5:1 B4:1 C5:1 r:3")
+AZERI_CH = "C:4 C:4 C:4 G7:4 C:4 C:4 G:2 G7:2 C:4 C:4 C:4 C:4 G7:4 G:4 Am:4 G:4 C:4"
 
 
 def song_fronton():
-    """Fronton : fandango à palmas, mi mineur, claquements de pelote."""
-    bpm = 150
-    a = seq("E5:1 B4:.5 E5:.5 G5:1 | F#5:.5 E5:.5 D#5:1 B4:1 | C5:1 A4:.5 C5:.5 E5:1 | D#5:2 B4:1 |"
-            "E5:1 B4:.5 E5:.5 G5:1 | A5:.5 G5:.5 F#5:1 E5:1 | F#5:.5 E5:.5 D#5:.5 C#5:.5 D#5:1 | E5:3")
-    b = seq("G5:1 F#5:.5 E5:.5 D5:1 | E5:1 D5:.5 C5:.5 B4:1 | C5:1 B4:.5 A4:.5 G4:1 | F#4:2 B4:1 |"
-            "E5:1 F#5:.5 G5:.5 A5:1 | B5:1 A5:.5 G5:.5 F#5:1 | G5:.5 F#5:.5 E5:.5 D#5:.5 F#5:1 | E5:3")
-    lead = (a + b) * 2 + a
-    roots = [52, 47, 45, 47, 52, 45, 47, 52, 55, 52, 48, 47, 52, 47, 47, 52] * 2 + [52, 47, 45, 47, 52, 45, 47, 52]
-    beats = lead_beats(lead)
-    buf = blank(beats, bpm, 1.0)
-    render_track(buf, lead, bpm, "square", 0.24, duty=0.25, vibrato=0.008)
-    render_track(buf, bass_line([r - 12 for r in roots], 3, "waltz"), bpm, "triangle", 0.28)
-    render_drums(buf, ["kick", "clap", "clap"], 1.0, bpm, beats, 0.28)
-    render_drums(buf, [None, "wood", None, None, "wood", None], 0.5, bpm, beats, 0.22)
-    return loop_fix(buf, beats, bpm)
+    """Fronton : Azeri-dantza d'Iztueta, txistu et atabal (tamboril) comme sur
+    une place de village ; claquements de pelote contre le mur (avec rebond)."""
+    mel = seq(AZERI)
+    span = lead_beats(mel)                                  # 64 temps
+    intro = 8
+    s = Song(168, intro + 2 * span)
+    ch = chord_list(AZERI_CH)
+    s.play([(0, 36, 4), (4, 43, 4)], "bass", 0.30)
+    for p in range(2):
+        bass, _ = chord_events(ch, intro + p * span, "alt")
+        s.play(bass, "bass", 0.28)
+    s.play(events(mel, intro, 12), "txistu", 0.30)
+    s.play(events(mel, intro + span, 12), "txistu", 0.27)
+    s.play(events(mel, intro + span, 24), "txistu_soft", 0.07)              # silbote : doublure aiguë
+    s.hits(["atabal", None, "atabal_s", "atabal_s"], 0.25, 0.16)
+    s.hits(["bombo", None, None, None, "bombo", None, None, None], 0.5, 0.14)
+    # la pelote claque dans les silences de la danse (fin des phrases)
+    for at in (13.5, 14.5, 29.5, 37.5, 45, 46, 47.5, 61, 62.5):
+        for p in range(2):
+            s.put(intro + p * span + at, _hit("pelota"), 0.30)
+    s.put(1, _hit("pelota"), 0.30)
+    s.put(5, _hit("pelota"), 0.30)
+    return s.done()
+
+
+# « Pello Josepe tabernan dela » — BDB 1551 (Aita Donostia ; Santesteban « Aires
+# vascongados » 61 ; relevé à Sare, XIXe s.). Une mesure de silence ajoutée en fin de tour.
+PELLO_JOSEPE = ("r:.5 D4:.5 E4:.5 F#4:.5 G4:1 G4:1 r:.5 G4:.5 B4:.5 G4:.5 E4:1 E4:1 r:.5 C5:.5 C5:.5 A4:.5 "
+                "F#4:1 D4:1 E4:.5 F#4:.5 G4:1 r:.5 D4:.5 E4:.5 F#4:.5 G4:1 G4:1 r:.5 G4:.5 B4:.5 G4:.5 "
+                "E4:1 E4:1 r:.5 C5:.5 C5:.5 A4:.5 F#4:1 D4:1 E4:.5 F#4:.5 G4:1 r:.5 G4:.5 F#4:.5 G4:.5 "
+                "A4:1 A4:1 r:.5 F#4:.5 G4:.5 A4:.5 B4:1 B4:1 r:.5 G4:.5 A4:.5 B4:.5 C5:1 C5:1 B4:.5 B4:.5 A4:1 "
+                "r:.5 D5:.5 D5:.5 B4:.5 G4:1 G4:1 r:.5 G4:.5 A4:.5 B4:.5 C5:1 E4:1 r:.5 G4:.5 F#4:.5 E4:.5 "
+                "D4:1 G4:1 F#4:1 A4:1 G4:2 r:2")
+PELLO_JOSEPE_CH = ("D:2 G:2 G:2 C:2 D:2 D:2 G:2 D:2 G:2 G:2 C:2 D:2 D:2 G:2 G:2 D:2 D:2 G:2 G:2 C:2 "
+                   "G:1 D:1 G:2 G:2 G:2 C:2 C:2 G:2 D:2 G:2 G:2")
 
 
 def song_stade():
-    """Stade : marche festive de tribune, si bémol majeur, tambours, énergique."""
-    a = seq("F4:.5 Bb4:.5 D5:.5 F5:.5 F5:1 D5:1 | Eb5:.5 D5:.5 C5:.5 Bb4:.5 C5:2 | G4:.5 C5:.5 Eb5:.5 G5:.5 G5:1 Eb5:1 | "
-            "F5:.5 Eb5:.5 D5:.5 C5:.5 D5:2 | F4:.5 Bb4:.5 D5:.5 F5:.5 Bb5:1 F5:1 | G5:.5 F5:.5 Eb5:.5 D5:.5 Eb5:1 C5:1 | "
-            "D5:.5 C5:.5 Bb4:.5 A4:.5 C5:1 A4:1 | Bb4:2 r:2")
-    b = seq("D5:1 D5:1 D5:.5 Eb5:.5 F5:1 | Eb5:1 Eb5:1 Eb5:.5 F5:.5 G5:1 | F5:1 F5:1 F5:.5 G5:.5 A5:1 | Bb5:2 F5:2 |"
-            "G5:1 Eb5:1 C5:1 Eb5:1 | F5:1 D5:1 Bb4:1 D5:1 | Eb5:.5 D5:.5 C5:.5 Bb4:.5 A4:1 C5:1 | Bb4:4")
-    return fight_song(46, 156, a, b, [0, 5, 2, 7, 0, 5, 7, 0], [0, 5, 7, 0, 5, 0, 7, 0],
-                      ["kick+snare", "hat", "kick", "hat", "kick+snare", "tom", "tom", "snare"], 0.5, duty=0.5)
+    """Stade : « Pello Josepe » en fanfare de tribune (peña) : cuivres à la tierce,
+    grosse caisse, tambours, applaudissements et clameur de la foule."""
+    mel = seq(PELLO_JOSEPE)
+    span = lead_beats(mel)                                  # 60 temps
+    intro = 8
+    s = Song(144, intro + 2 * span)
+    ch = chord_list(PELLO_JOSEPE_CH)
+    for p in range(2):
+        bass, chord = chord_events(ch, intro + p * span, "umpa")
+        s.play(bass, "tronpeta", 0.10)
+        s.play(chord, "tronpeta", 0.035)
+    s.play([(0, 43, 1), (2, 43, 1), (4, 50, 1), (6, 43, 1)], "tronpeta", 0.12)
+    for p in range(2):                                      # mesure de pause : coups de fanfare
+        end = intro + (p + 1) * span
+        s.play([(end - 2, m, 0.5) for m in (67, 71, 74)] + [(end - 1, m, 0.5) for m in (67, 71, 74)],
+               "tronpeta", 0.07)
+    s.play(events(mel, intro, 12), "tronpeta", 0.20)
+    s.play(events(harmony_below(mel, 7), intro, 12), "tronpeta", 0.11)
+    s.play(events(mel, intro + span, 12), "tronpeta", 0.18)
+    s.play(events(harmony_below(mel, 7), intro + span, 12), "tronpeta", 0.11)
+    s.play(events(mel, intro + span, 24), "txistu", 0.12)                   # le txistu de la peña
+    s.hits(["bombo+atabal", "atabal_s", "atabal", "atabal_s"], 0.5, 0.15)
+    s.hits([None, "claps"], 1.0, 0.18, start=intro)
+    for k in range(0, s.beats, 4):                          # clameur continue (fondus croisés)
+        s.swell(k, 8, 300, 2500, 0.06, seed=k % 4)
+    s.swell(0, 8, 400, 3500, 0.09, seed=9)
+    s.swell(intro + span - 4, 8, 400, 3500, 0.09, seed=9)
+    return s.done()
+
+
+# « Haurtxo txikia negarrez dago » I — BDB 1468 (Manuel Lekuona ; « Mariya » 35 ;
+# « Donostiko kantu zaharrak » 111). Berceuse, sol mineur (2/4).
+HAURTXO = ("r:1 D4:.5 D4:.5 D4:1 E4:.5 F#4:.5 G4:1 G4:.5 F#4:.5 A4:1 G4:1 r:1 F#4:.5 G4:.5 A4:1 C5:.5 Bb4:.5 "
+           "A4:1 G4:1 F#4:2 r:1 A4:.5 A4:.5 Bb4:1 A4:.5 G4:.5 G4:1 F#4:.5 G4:.5 A4:1 D4:1 r:1 F4:.5 F4:.5 "
+           "G4:1 A4:.5 G4:.5 F4:1 Eb4:1 D4:2 r:1 D4:.5 D4:.5 D5:1 D5:.5 D5:.5 D5:1 C5:.5 Bb4:.5 D5:1 C5:1 "
+           "r:1 A4:.5 Bb4:.5 C5:1 C5:.5 C5:.5 C5:1 A4:1 Bb4:2 r:1 G4:.5 A4:.5 Bb4:1 Bb4:.5 Bb4:.5 "
+           "Bb4:1 A4:.5 G4:.5 Bb4:1 A4:1 r:1 F#4:.5 G4:.5 A4:1 A4:.5 A4:.5 G4:1 F#4:1 G4:2")
+HAURTXO_CH = ("Gm:2 D:2 Gm:2 D:2 D:2 D:2 D:2 D:2 D:2 Gm:2 Gm:2 D:2 F:2 F:2 Cm:2 D:2 "
+              "Gm:2 Bb:2 Bb:2 F:2 F:2 F:2 F:2 Bb:2 Gm:2 Gm:2 Gm:2 D:2 D:2 D:2 D:2 Gm:2")
 
 
 def song_aquarium():
-    """Aquarium : nappe aquatique, ré majeur 6/8, steel pan et bulles."""
-    bpm = 108
-    a = seq("A4:1.5 F#5:1.5 | E5:1 D5:.5 C#5:1.5 | B4:1.5 G5:1.5 | F#5:3 | A4:1.5 F#5:1.5 | G5:1 F#5:.5 E5:1.5 | "
-            "D5:1 E5:.5 F#5:1 C#5:.5 | D5:3")
-    b = seq("B5:1.5 A5:1.5 | G5:1 F#5:.5 E5:1.5 | A5:1.5 G5:1.5 | F#5:1 E5:.5 D5:1.5 | G5:1.5 F#5:1.5 | "
-            "E5:1 D5:.5 C#5:1.5 | B4:1 C#5:.5 D5:1 E5:.5 | D5:3")
-    lead = a + b + a + b
-    roots = [50, 45, 43, 50, 50, 43, 45, 50, 47, 43, 45, 50, 43, 45, 43, 50] * 2
-    beats = lead_beats(lead)
-    buf = blank(beats, bpm, 1.5)
-    render_track(buf, lead, bpm, "steel", 0.32)
-    render_track(buf, lead, bpm, "triangle", 0.10, vibrato=0.015)
-    render_track(buf, chord_arp(roots, ["M"] * len(roots), 3, 0.25, (0, 1, 2, 3, 2, 1)), bpm, "square",
-                 0.045, duty=0.125, gate=0.4)
-    render_track(buf, [(r - 12, 3) for r in roots], bpm, "triangle", 0.26)
-    render_drums(buf, ["kick", None, "shaker", None, "shaker", None], 0.5, bpm, beats, 0.22)
-    return loop_fix(buf, beats, bpm)
+    """Aquarium : la berceuse « Haurtxo txikia », très douce et un peu
+    mystérieuse : flûte feutrée, chœur « o » lointain, txalaparta en sourdine,
+    arpèges de harpe et bulles. Deuxième moitié à l'octave, plus lumineuse."""
+    mel = seq(HAURTXO)
+    span = lead_beats(mel)                                  # 64 temps
+    intro = 8
+    s = Song(84, intro + span, tail=3.5)
+    ch = chord_list(HAURTXO_CH)
+    for start, grid in ((0, ch[-4:]), (intro, ch)):
+        bass, _ = chord_events(grid, start, "root")
+        _, arp = chord_events(grid, start, "arp")
+        _, pad = chord_events(grid, start, "pad")
+        s.play(bass, "bass", 0.30)
+        s.play(arp, "pluck", 0.06)
+        s.play(pad, "choir_o", 0.07)
+    half = 32
+    first = [e for e in events(mel, intro, 12) if e[0] < intro + half]
+    second = [e for e in events(mel, intro, 12) if e[0] >= intro + half]
+    s.play(first, "txistu_soft", 0.28)
+    s.play(second, "txistu_soft", 0.22)
+    s.play([(b, m + 12, d) for b, m, d in second], "bell", 0.025)          # reflets sur la vitre
+    s.hits(["txala_soft_lo", None, "txala_soft_hi", "txala_soft_lo"], 0.5, 0.06)
+    rng = np.random.default_rng(42)
+    beat = 60.0 / s.bpm
+    for k in range(int(s.beats * 0.75)):                    # bulles qui montent
+        at = float(rng.uniform(0, s.beats - 1))
+        n = int(0.07 * SR)
+        t = np.arange(n) / SR
+        f = float(rng.uniform(500, 900)) * (1 + 6 * t)
+        s.put(at, np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / t[-1]), 0.03)
+    return s.done()
+
+
+# « Haltzak ez du bihotzik » (Berterretxen kantoria, ballade du XVe s.) — BDB 1843
+# (Salaberry, « Chants populaires du Pays Basque » 1870, p. 211 ; Azkue 417 ;
+# Aita Donostia). Mode de mi dorien (do#). Le « r:0.125 » du relevé est fondu dans la note.
+BERTERRETXE = ("E4:.5 G4:.25 F#4:.25 E4:.5 D4:.5 G4:.5 A4:.5 B4:1 E5:1 E5:.5 E5:.5 D5:.5 B4:.25 C#5:.25 D5:.5 C#5:.5 B4:2 "
+               "E4:.5 G4:.25 F#4:.25 E4:.5 D4:.5 G4:.5 A4:.5 B4:1 E5:1 E5:.5 E5:.5 D5:.5 B4:.25 C#5:.25 D5:.5 C#5:.5 B4:2 "
+               "B4:.5 B4:.25 C5:.25 D5:.5 B4:.5 A4:.25 G4:.25 A4:.25 B4:.25 G4:.5 E4:.5 A4:1 B4:.75 A4:.25 "
+               "G4:.5 E4:.5 A4:.5 G4:.5 F#4:2 B4:.5 B4:.25 C5:.25 D5:.5 B4:.5 A4:.25 G4:.25 A4:.25 B4:.25 G4:.5 E4:.5 "
+               "A4:1 B4:.75 A4:.25 G4:.5 A4:.5 G4:.5 F#4:.5 E4:2")
+BERTERRETXE_CH = ("Em:2 G:2 Em:2 A:2 Bm:2 Em:2 G:2 Em:2 A:2 B:2 G:2 Am:2 D:2 C:2 B:2 G:2 Am:2 D:2 C:1 B:1 Em:2")
 
 
 def song_phare_sommet():
-    """Sommet du Phare (boss) : aurresku nocturne, ré mineur harmonique, martial."""
-    bpm = 126
-    a = seq("D4:1 A4:1 F4:.5 A4:.5 D5:1 | C#5:1 A4:1 E5:2 | D5:1 F5:1 E5:.5 D5:.5 C#5:1 | D5:3 r:1 |"
-            "Bb4:1 D5:1 A4:.5 D5:.5 F5:1 | E5:1 C#5:1 A4:2 | G4:1 Bb4:1 A4:.5 G4:.5 F4:1 | E4:3 r:1")
-    b = seq("A5:1 G5:.5 F5:.5 E5:1 D5:1 | C#5:1 E5:1 A4:2 | Bb5:1 A5:.5 G5:.5 F5:1 E5:1 | F5:2 E5:2 |"
-            "D5:1 F5:1 A5:1 F5:1 | G5:1 E5:1 C#5:1 A4:1 | D5:1 C#5:.5 B4:.5 C#5:1 A4:1 | D5:4")
-    lead = a + b + a
-    roots = [38, 45, 38, 38, 46, 45, 43, 45, 41, 45, 46, 45, 38, 45, 45, 38, 38, 45, 38, 38, 46, 45, 43, 45]
-    quals = ["m" if (r % 12) in (2, 7, 5) else "M" for r in roots]
-    beats = lead_beats(lead)
-    buf = blank(beats, bpm, 1.0)
-    render_track(buf, lead, bpm, "square", 0.24, duty=0.5, vibrato=0.012)
-    render_track(buf, [(m - 12 if m else None, d) for m, d in lead], bpm, "saw", 0.05)
-    render_track(buf, bass_line([r - 12 for r in roots], 4, "octave"), bpm, "triangle", 0.32)
-    render_track(buf, chord_arp(roots, quals, 4, 0.25, (3, 2, 1, 0)), bpm, "square", 0.05, duty=0.125, gate=0.5)
-    render_drums(buf, ["kick+snare", "hat", "hat", "snare", "kick", "hat", "tom", "tom"], 0.5, bpm, beats, 0.30)
-    return loop_fix(buf, beats, bpm)
+    """Sommet du Phare (boss) : la vieille ballade souletine de Berterretxe,
+    sombre et épique au crépuscule. Tour 1 : chœur d'hommes et alboka sur
+    tambours de guerre ; tour 2 : tutti, txistu à l'octave, txalaparta lancée."""
+    mel = seq(BERTERRETXE)
+    span = lead_beats(mel)                                  # 40 temps
+    intro = 8
+    s = Song(104, intro + 2 * span)
+    ch = chord_list(BERTERRETXE_CH)
+    s.play([(0, 28, 4), (4, 28, 4)], "bass", 0.34)
+    for p in range(2):
+        bass, _ = chord_events(ch, intro + p * span, "alt")
+        _, pad = chord_events(ch, intro + p * span, "pad")
+        s.play(bass, "bass", 0.32)
+        s.play(pad, "choir_a", 0.10)
+    s.play(events(mel, intro, -12), "choir_a", 0.42)
+    s.play(events(mel, intro, 12), "alboka", 0.15)
+    s.play(events(mel, intro + span, 0), "choir_a", 0.40)
+    s.play(events(harmony_below(mel, 4, DORIAN), intro + span, 0), "choir_a", 0.18)
+    s.play(events(mel, intro + span, 12), "txistu", 0.22)
+    s.play([(b, 40, 1.95) for b in np.arange(0, s.beats - 1, 2.0)], "alboka", 0.035)   # bourdon mi
+    s.hits(["bombo", None, "atabal_s", "atabal_s", "bombo", "atabal_s", "atabal", "atabal_s"], 0.25, 0.16)
+    s.hits(["txala_lo", "txala_hi", "txala_mid", "txala_hi"], 0.25, 0.08, start=intro + span)
+    s.hits(["txala_lo", None, None, "txala_hi"], 0.25, 0.06, start=0, end=intro + span)
+    return s.done()
 
 
 def song_victory():
