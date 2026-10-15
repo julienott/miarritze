@@ -142,7 +142,7 @@ def neutral(fid, src_path, size=128, strength=0.55):
 # Hauteur commune des combattants régénérés (pose neutre, en px). Les
 # animations RD gardent l'échelle de leur image de départ : fixer la pose
 # neutre suffit à donner la même taille à tout le monde. Boss : × BOSS_SCALE.
-TARGET_H = 120
+TARGET_H = 112
 BOSS_SCALE = {"itsasargi": 1.15}
 
 

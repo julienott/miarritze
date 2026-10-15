@@ -295,6 +295,32 @@ def final_clean(idx, hole_max=6, island_max=60):
     return idx
 
 
+def vote_scale(f, k):
+    """Réduction d'un facteur k < 1 sans casser le pixel art : chaque pixel
+    d'arrivée prend la couleur majoritaire des pixels source qu'il couvre
+    (transparent si moins de la moitié est opaque). Taille de case gardée,
+    pieds conservés en bas."""
+    if k >= 0.999:
+        return f
+    h, w = f.shape[:2]
+    nh, nw = round(h * k), round(w * k)
+    out = np.zeros((nh, nw, 4), np.uint8)
+    for y in range(nh):
+        y0, y1 = int(y / k), max(int(y / k) + 1, int((y + 1) / k))
+        for x in range(nw):
+            x0, x1 = int(x / k), max(int(x / k) + 1, int((x + 1) / k))
+            blk = f[y0:y1, x0:x1].reshape(-1, 4)
+            op = blk[blk[:, 3] > 0]
+            if len(op) * 2 < len(blk):
+                continue
+            u, n = np.unique(op, axis=0, return_counts=True)
+            out[y, x] = u[n.argmax()]
+    cell = np.zeros_like(f)
+    oy, ox = h - nh, (w - nw) // 2
+    cell[oy:oy + nh, ox:ox + nw] = out
+    return cb.fix(cell)
+
+
 def place(f, dx, air):
     x0, y0, x1, y1 = bbox(f)
     cell = np.zeros((CELL, CELL, 4), np.uint8)
@@ -317,6 +343,14 @@ def main():
     old = json.load(open(os.path.join(d, "anims.json")))
     meta = {k: {kk: vv for kk, vv in v.items() if kk not in ("first", "row")} for k, v in old["anims"].items()}
     neutral = np.array(Image.open(os.path.join(ROOT, "tools", "rd", "out", fid, "neutral_160.png")).convert("RGBA"))
+    # Hauteur commune (gen_fighter.TARGET_H) : toutes les images sont réduites
+    # du même facteur que la pose neutre.
+    sys.path.insert(0, os.path.join(ROOT, "tools", "rd"))
+    from gen_fighter import TARGET_H, BOSS_SCALE
+    _, ny0, _, ny1_ = bbox(neutral)
+    scale = min(1.0, round(TARGET_H * BOSS_SCALE.get(fid, 1.0)) / (ny1_ - ny0 + 1))
+    neutral = vote_scale(neutral, scale)
+    print(f"{fid}: échelle {scale:.3f} vers {TARGET_H} px")
     nx0, _, nx1, ny1 = bbox(neutral)
     low = neutral[ny1 - 19:ny1 + 1, :, 3] > 0
     ref_cx = int(round(np.nonzero(low)[1].mean()))
@@ -331,7 +365,7 @@ def main():
     for name in [n for n in meta]:
         src, sel = SOURCES_BY.get(fid, {}).get(name) or SOURCES.get(name, (name, None))
         if src not in cleaned:
-            cleaned[src] = [cb.fix(fix_light_specks(fix_red_skin(f))) for f in frames_of(reg[src])]
+            cleaned[src] = [cb.fix(fix_light_specks(vote_scale(cb.fix(fix_light_specks(fix_red_skin(f))), scale))) for f in frames_of(reg[src])]
         frames = cleaned[src]
         n = meta[name]["frames"]
         if sel == "hold":
@@ -370,6 +404,10 @@ def main():
         json.dump(data, fh, ensure_ascii=False, separators=(",", ":"))
     print(f"{fid}: {total} images ; défauts de bord restants (pire image) :",
           {k: v for k, v in report.items() if v})
+    # La palette vient d'être réécrite : les portraits indexés doivent suivre.
+    import make_rd_portraits
+    if fid in make_rd_portraits.FACES:
+        make_rd_portraits.make(fid)
     for p in contact_sheet.main(fid):
         print("  ", p)
 
