@@ -49,26 +49,59 @@ func setup(id: String) -> void:
 	_build_props()
 	# Au-dessus du décor (caméra qui monte), le ciel prolonge le haut de l'image.
 	if not _layers.is_empty():
-		var far: Sprite2D = _layers[0]["node"]
-		# Rangée du haut étirée sur la marge que la caméra peut découvrir.
-		var cap: Sprite2D = Sprite2D.new()
-		cap.texture = far.texture
-		cap.centered = false
-		cap.region_enabled = true
-		cap.region_rect = Rect2(0, 0, far.texture.get_width(), 1)
-		cap.scale = Vector2(1.0, FightCamera.MAX_RISE + 8.0)
-		cap.position = Vector2(0, -(FightCamera.MAX_RISE + 8.0))
-		far.add_child(cap)
-		var img: Image = ((_layers[0]["node"] as Sprite2D).texture as Texture2D).get_image()
-		if img != null:
-			if img.is_compressed():
-				img.decompress()
-			RenderingServer.set_default_clear_color(img.get_pixel(img.get_width() / 2, 0))
+		# Marges hors image : copies en miroir de chaque calque à gauche et à
+		# droite (écrans très larges, tremblement), et ciel prolongé vers le haut
+		# (caméra qui monte, écrans plus hauts que 16:9).
+		for i: int in _layers.size():
+			_add_mirrors(_layers[i]["node"])
+		_add_sky(_layers[0]["node"])
 	if not _ambient.is_empty():
 		_fx = Node2D.new()
 		_fx.z_index = -7
 		_fx.draw.connect(_draw_ambient)
 		add_child(_fx)
+
+
+## Hauteur de ciel ajoutée au-dessus du plan lointain : montée de la caméra
+## plus la hauteur gagnée sur un écran carré (384 − 216).
+const SKY_MARGIN: float = FightCamera.MAX_RISE + 8.0 + 170.0
+
+
+func _add_mirrors(sprite: Sprite2D) -> void:
+	var w: float = sprite.texture.get_width()
+	for dx: float in [-w, w]:
+		var m: Sprite2D = Sprite2D.new()
+		m.name = "miroir"
+		m.texture = sprite.texture
+		m.centered = false
+		m.flip_h = true
+		m.position = Vector2(dx, 0)
+		sprite.add_child(m)
+
+
+func _add_sky(far: Sprite2D) -> void:
+	var img: Image = far.texture.get_image()
+	if img == null:
+		return
+	if img.is_compressed():
+		img.decompress()
+	# Couleur dominante des 3 rangées du haut : un aplat uni, sans traînées.
+	var counts: Dictionary = {}
+	for y: int in 3:
+		for x: int in range(0, img.get_width(), 2):
+			var c: Color = img.get_pixel(x, y)
+			counts[c] = int(counts.get(c, 0)) + 1
+	var sky: Color = counts.keys()[0]
+	for c: Variant in counts:
+		if int(counts[c]) > int(counts[sky]):
+			sky = c
+	var rect: ColorRect = ColorRect.new()
+	rect.color = sky
+	rect.position = Vector2(-WORLD_W, -SKY_MARGIN)
+	rect.size = Vector2(WORLD_W * 3.0, SKY_MARGIN + 2.0)
+	rect.z_index = far.z_index - 1
+	add_child(rect)
+	RenderingServer.set_default_clear_color(sky)
 
 
 ## Repli tant que le stage n'a pas ses calques : ancien décor i2i le plus proche.
@@ -166,7 +199,17 @@ func _process(delta: float) -> void:
 	if _anim_sprite == null or _anim_frames.size() < 2:
 		return
 	var index: int = int(_anim_t * _anim_fps) % _anim_frames.size()
-	_anim_sprite.texture = _anim_frames[index]
+	_set_texture_deep(_anim_sprite, _anim_frames[index])
+
+
+## Change la texture d'un calque et de ses miroirs / ciel.
+func _set_texture_deep(sprite: Sprite2D, tex: Texture2D) -> void:
+	if sprite.texture == tex:
+		return
+	sprite.texture = tex
+	for c: Node in sprite.get_children():
+		if c is Sprite2D:
+			_set_texture_deep(c as Sprite2D, tex)
 
 
 
