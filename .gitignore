@@ -35,3 +35,7 @@ node_modules/
 # pouvoir rejouer un nettoyage ; la vérité versionnée est la sheet nettoyée.
 assets/fighters/*/sheet.orig.png
 assets/fighters/*/sheet.orig.png.import
+
+# Service /producer : données serveur et jeton local de l'agent (jamais versionnés)
+producer/data/
+.producer_token

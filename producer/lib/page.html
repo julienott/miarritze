@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Miarritze Producer</title>
+<link rel="stylesheet" href="static/app.css">
+<script src="static/app.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <h1 class="brand">PRODUCER</h1>
+  <nav class="tabs" id="tabs" hidden>
+    <a href="#/assets" data-tab="assets">Assets</a>
+    <a href="#/kanban" data-tab="kanban">Kanban</a>
+    <a href="#/comments" data-tab="comments">Commentaires</a>
+  </nav>
+  <div class="top-actions">
+    <button type="button" id="theme" class="ghost" title="Fond clair / sombre">◐</button>
+    <button type="button" id="logout" class="ghost" hidden>Déconnexion</button>
+  </div>
+</header>
+
+<main id="app">
+  <section id="login" class="login" hidden>
+    <form id="login-form" class="panel">
+      <h2>Connexion</h2>
+      <label>Mot de passe
+        <input type="password" id="password" autocomplete="current-password" required>
+      </label>
+      <button type="submit" class="primary">Entrer</button>
+      <p class="error" id="login-error" role="alert"></p>
+    </form>
+  </section>
+
+  <section id="view-assets" class="view" hidden>
+    <aside class="sidebar">
+      <input type="search" id="search" placeholder="Rechercher (maia, idle, fronton…)" aria-label="Rechercher">
+      <ul id="cats" class="cats"></ul>
+    </aside>
+    <div class="assets-main">
+      <div id="grid" class="grid"></div>
+      <div id="detail" class="detail" hidden></div>
+    </div>
+  </section>
+
+  <section id="view-kanban" class="view" hidden>
+    <div class="kanban-bar">
+      <button type="button" id="new-card" class="primary">+ Nouvelle carte</button>
+    </div>
+    <div id="board" class="board"></div>
+  </section>
+
+  <section id="view-comments" class="view" hidden>
+    <div class="kanban-bar">
+      <label class="inline"><input type="checkbox" id="only-open" checked> Ouverts seulement</label>
+    </div>
+    <div id="comment-list" class="comment-list"></div>
+  </section>
+</main>
+
+<dialog id="card-dialog">
+  <form id="card-form" method="dialog" class="card-form">
+    <h2 id="card-dialog-title">Carte</h2>
+    <div class="row">
+      <label>Type
+        <select id="cf-type"><option value="feature">Feature</option><option value="bug">Bug</option></select>
+      </label>
+      <label>Priorité
+        <select id="cf-priority">
+          <option value="">—</option><option value="basse">Basse</option>
+          <option value="normale">Normale</option><option value="haute">Haute</option>
+        </select>
+      </label>
+    </div>
+    <label>Titre <input id="cf-title" maxlength="200" required></label>
+    <label>Description <textarea id="cf-desc" rows="5" maxlength="8000"></textarea></label>
+    <label>Asset lié (optionnel) <input id="cf-asset" list="asset-ids" placeholder="fighters/maia/sheet.png"></label>
+    <datalist id="asset-ids"></datalist>
+    <div id="cf-notes" class="notes"></div>
+    <label id="cf-note-label">Ajouter une note <textarea id="cf-note" rows="2" maxlength="8000"></textarea></label>
+    <p class="error" id="card-error" role="alert"></p>
+    <div class="row end">
+      <button type="button" id="cf-delete" class="danger">Supprimer</button>
+      <span class="spacer"></span>
+      <button type="button" id="cf-cancel" class="ghost">Annuler</button>
+      <button type="submit" id="cf-save" class="primary">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
