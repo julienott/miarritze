@@ -28,6 +28,14 @@ const state = {
 
 // ------------------------------------------------------------------ utilitaires
 
+// Zoom entier le plus grand qui tient en largeur ET en hauteur (≈ 55 % de
+// l'écran) : les commandes et les commentaires restent visibles sur mobile.
+function autoZoom(stage, w, h, max) {
+  const fitW = (Math.min(stage.clientWidth, 900) - 24) / w;
+  const fitH = Math.max(160, window.innerHeight * 0.55) / h;
+  return Math.max(1, Math.min(max, Math.floor(Math.min(fitW, fitH))));
+}
+
 function store(key, value) {
   try {
     if (value === undefined) return localStorage.getItem(key);
@@ -371,7 +379,7 @@ function showDetail(a) {
       p.timer = setTimeout(tick, delay);
     };
     applyZoom = () => {
-      const z = state.zoom || Math.max(1, Math.min(4, Math.floor(Math.min(stage.clientWidth - 24, 640) / p.anim.w)));
+      const z = state.zoom || autoZoom(stage, p.anim.w, p.anim.h, 4);
       canvas.style.width = p.anim.w * z + 'px';
       canvas.style.height = p.anim.h * z + 'px';
     };
@@ -409,7 +417,7 @@ function showDetail(a) {
     const img = el('img', { src: fileUrl(a.file), alt: a.name, width: a.w, height: a.h });
     stage.append(img);
     applyZoom = () => {
-      const z = state.zoom || Math.max(1, Math.min(8, Math.floor(Math.min(stage.clientWidth - 24, 900) / a.w)));
+      const z = state.zoom || autoZoom(stage, a.w, a.h, 8);
       img.style.width = a.w * z + 'px';
       img.style.height = a.h * z + 'px';
     };
