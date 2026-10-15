@@ -5,6 +5,8 @@
   explore  <id> [--round N]  rd_fast i2i depuis la pose de garde du mannequin, 4 images
   final    <id> <choix.png>  rd_pro 128×128 (ou 160), remove_bg, palette du perso, référence
   refine   <id> <pose.png> [--size 128] [--strength 0.3]  rd_pro fidèle, autre taille de case
+  neutral  <id> <choix.png>  pose neutre de garde (départ de toutes les animations)
+  prep_neutral <id> <neutre_rd.png>  bordures + hauteur commune TARGET_H → neutral_160.png
   idle     <id>              rd_advanced_animation__idle sur la pose finale (8 frames)
   portrait <id>              rd_pro 96×96 buste, pose finale en référence
 Toutes les images sont contraintes à la palette du personnage (costume 1) :
@@ -137,6 +139,39 @@ def neutral(fid, src_path, size=128, strength=0.55):
     return client.generate(payload, f"{fid}/neutral_{size}")
 
 
+# Hauteur commune des combattants régénérés (pose neutre, en px). Les
+# animations RD gardent l'échelle de leur image de départ : fixer la pose
+# neutre suffit à donner la même taille à tout le monde. Boss : × BOSS_SCALE.
+TARGET_H = 120
+BOSS_SCALE = {"itsasargi": 1.15}
+
+
+def prep_neutral(fid, rd_path):
+    """Pose neutre RD → tools/rd/out/<id>/neutral_160.png : bordures
+    corrigées, ramenée à TARGET_H (plus proche voisin), pieds en bas de case."""
+    sys.path.insert(0, os.path.join(ROOT, "tools", "sprites"))
+    import check_borders as cb
+    a = np.array(Image.open(rd_path).convert("RGBA"))
+    a[a[..., 3] < 128] = 0
+    a[a[..., 3] >= 128, 3] = 255
+    a = cb.fix(a)
+    ys, xs = np.nonzero(a[..., 3])
+    body = Image.fromarray(a[ys.min():ys.max() + 1, xs.min():xs.max() + 1], "RGBA")
+    target = round(TARGET_H * BOSS_SCALE.get(fid, 1.0))
+    if body.height != target:
+        k = target / body.height
+        body = body.resize((max(1, round(body.width * k)), target), Image.NEAREST)
+        body = Image.fromarray(cb.fix(np.array(body)), "RGBA")
+    cell = 160
+    out = Image.new("RGBA", (cell, cell), (0, 0, 0, 0))
+    out.alpha_composite(body, ((cell - body.width) // 2, cell - 4 - body.height))
+    path = os.path.join(OUT, fid, "neutral_160.png")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    out.save(path)
+    print(f"{fid}: pose neutre {body.width}×{body.height} px → {path}")
+    return path
+
+
 def animate(fid, pose_path, anim, style, prompt_text, frames):
     """Animation RD d'un mouvement à partir de la pose neutre (case élargie
     pour laisser de la place au geste)."""
@@ -209,6 +244,8 @@ if __name__ == "__main__":
         print(contact([sys.argv[3]] + paths, os.path.join(OUT, fid, f"refine_{size}.png")))
     elif step == "neutral":
         print(neutral(fid, sys.argv[3]))
+    elif step == "prep_neutral":
+        prep_neutral(fid, sys.argv[3])
     elif step == "animate":
         # animate <id> <pose.png> <anim> <style> <frames> "<description du geste>"
         print(animate(fid, sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[7], int(sys.argv[6])))

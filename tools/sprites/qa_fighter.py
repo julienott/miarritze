@@ -14,6 +14,7 @@ Contrôles :
             coup de moins de 8 px ;
 - immobile: un mouvement dont les images changent à peine (RD n'a rien animé) ;
 - surface + : la silhouette gonfle de 40 % (halo, bulle, effet parasite) ;
+- hauteur : la garde s'écarte de plus de 4 % de la hauteur commune ;
 - tache   : petite tache crème sur la peau sans trait sombre au-dessus
             (pas une dent ni un blanc d'œil) : se lit comme un trou.
 Planches (tests/out/qa_fighter/<id>/) : toutes les images ×2 sur fond de
@@ -170,6 +171,13 @@ def main():
         for i, f in enumerate(part):
             W.paste(f, ((i % per) * fw, (i // per) * fh))
         W.save(os.path.join(out, f"visages_{p // (per * 6) + 1}.png"))
+    sys.path.insert(0, os.path.join(ROOT, "tools", "rd"))
+    from gen_fighter import TARGET_H, BOSS_SCALE
+    target = round(TARGET_H * BOSS_SCALE.get(fid, 1.0))
+    idle_h = int(np.median([np.ptp(np.nonzero((f > 0).any(1))[0]) + 1 for f in allf["idle"]]))
+    if abs(idle_h - target) > 0.04 * target:
+        total += 1
+        report.append(f"hauteur : {idle_h} px en garde, cible {target} px (gen_fighter.TARGET_H)")
     with open(os.path.join(out, "rapport.txt"), "w") as fh_:
         fh_.write("\n".join(report) or "aucun défaut détecté")
     print(f"{fid}: {total} défaut(s) sur {sum(len(v) for v in allf.values())} images")
