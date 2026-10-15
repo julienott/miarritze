@@ -87,6 +87,7 @@ def group_rules(fid: str):
     """Liste [(groupe, fonction(rgb) -> bool)] : couleurs recolorées par les costumes."""
     rules = []
     for g, r in (load(fid).get("groupes_couleur") or {}).items():
+        r = r or {}
         def rule(c, r=r):
             h, s, v = colorsys.rgb_to_hsv(*(int(x) / 255 for x in c[:3]))
             h *= 360

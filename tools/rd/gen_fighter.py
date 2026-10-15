@@ -172,7 +172,7 @@ def prep_neutral(fid, rd_path):
     return path
 
 
-def animate(fid, pose_path, anim, style, prompt_text, frames):
+def animate(fid, pose_path, anim, style, prompt_text, frames, attempt=0, description=None):
     """Animation RD d'un mouvement à partir de la pose neutre (case élargie
     pour laisser de la place au geste)."""
     pose = Image.open(pose_path).convert("RGBA")
@@ -180,12 +180,13 @@ def animate(fid, pose_path, anim, style, prompt_text, frames):
     canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     canvas.alpha_composite(pose, ((size - pose.width) // 2, size - pose.height))
     payload = {
-        "prompt": f"{prompt_text}, {PROMPTS['fighters'][fid]}",
+        "prompt": f"{prompt_text}, {description or PROMPTS['fighters'][fid]}",
         "prompt_style": style, "width": size, "height": size, "num_images": 1,
+        **({"seed": 1000 + attempt} if attempt else {}),
         "frames_duration": frames, "input_image": client.b64_png(canvas),
         "return_spritesheet": True, "input_palette": client.b64_png(palette_image(fid)), "remove_bg": True,
     }
-    return client.generate(payload, f"{fid}/anim_{anim}")
+    return client.generate(payload, f"{fid}/anim_{anim}" + (f"_essai{attempt}" if attempt else ""))
 
 
 def idle(fid, pose_path):

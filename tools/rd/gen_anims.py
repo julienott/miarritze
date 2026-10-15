@@ -6,7 +6,11 @@ Bonne pratique RD : chaque mouvement part d'une pose neutre (garde, membres
 groupés) ; les mouvements qui commencent ailleurs (au sol, en l'air,
 accroupi) partent d'une image d'une animation déjà générée.
 
-Usage : gen_anims.py <id> [anim …] [--dry]   (sans anim : toutes)
+Usage : gen_anims.py <id> [anim …] [--dry] [--essais N] [--budget $]
+  (sans anim : toutes). Chaque animation passe des contrôles immédiats
+  (immobile, halo, coup invisible) ; ratée, elle est relancée avec une autre
+  graine, au plus --essais fois, sans dépasser --budget pour le lancement.
+  Journal : tools/rd/out/<id>/gen_log.jsonl.
 Les sorties brutes vont dans le cache ; tools/rd/out/<id>/anims.json liste
 la planche RD de chaque animation pour build_rd_anims.py.
 """
@@ -154,15 +158,48 @@ def start_image(fid, start, done):
     return path
 
 
+def raw_checks(sheet_path, hit_dir=None, start_h=None):
+    """Contrôles immédiats d'une animation RD (avant de payer la suivante).
+    Renvoie la liste des défauts bloquants."""
+    import numpy as np
+    frames = [np.array(f)[..., 3] > 127 for f in frames_of(sheet_path)]
+    if len(frames) < 2:
+        return ["animation vide"]
+    f0 = frames[0]
+    area0 = f0.sum()
+    errs = []
+    moved = max((f != f0).sum() for f in frames) / max(area0, 1)
+    if moved < 0.12:
+        errs.append(f"immobile ({moved:.0%} de la silhouette change)")
+    big = max(f.sum() for f in frames) / max(area0, 1)
+    if big > 1.45:
+        errs.append(f"halo ou effet parasite (surface ×{big:.2f})")
+    if hit_dir:
+        def ext(f):
+            ys, xs = np.nonzero(f)
+            return {"up": -ys.min(), "low": xs.max(), "fwd": xs.max()}.get(hit_dir, xs.max())
+        gain = max(ext(f) for f in frames) - ext(f0)
+        if gain < 8:
+            errs.append(f"coup invisible (le membre dépasse de {gain} px seulement)")
+    return errs
+
+
 def main():
     fid = sys.argv[1]
     if fiche.exists(fid):
         SPECS[fid] = fiche.moves(fid)
     names = [a for a in sys.argv[2:] if not a.startswith("--")] or list(SPECS[fid])
     dry = "--dry" in sys.argv
+    opt = lambda k, d: type(d)(sys.argv[sys.argv.index(k) + 1]) if k in sys.argv else d
+    retries = opt("--essais", 2)          # relances automatiques par mouvement
+    budget = opt("--budget", 12.0)        # plafond de dépense de CE lancement ($)
+    desc = fiche.load(fid)["apparence"] if fiche.exists(fid) else None
+    meta_path = os.path.join(HERE, "..", "..", "assets", "fighters", fid, "anims.json")
+    game = json.load(open(meta_path))["anims"] if os.path.exists(meta_path) else {}
     reg_path = os.path.join(out_dir(fid), "anims.json")
+    log_path = os.path.join(out_dir(fid), "gen_log.jsonl")
     done = json.load(open(reg_path)) if os.path.exists(reg_path) else {}
-    total = 0.0
+    total, spent0 = 0.0, client.spent()
     for name in names:
         style, n, gesture, start = SPECS[fid][name]
         if not isinstance(start, str) and start[0] not in done:
@@ -170,16 +207,31 @@ def main():
             continue
         src = start_image(fid, start, done)
         prompt = f"{gesture}, {SIDE}"
+        unit = 0.25 if style == C else 0.14
         if dry:
-            total += 0.25 if style in (C,) else 0.14
+            total += unit
             print(f"{name}: {style} {n} images depuis {os.path.basename(src)}")
             continue
-        paths = gf.animate(fid, src, name, style, prompt, n)
-        done[name] = paths[0]
+        hit_dir = game.get(name, {}).get("hit_dir") if "hit_frame" in game.get(name, {}) else None
+        for attempt in range(retries + 1):
+            if client.spent() - spent0 + unit > budget:
+                print(f"{name}: budget de ce lancement atteint ({budget:.2f} $), arrêt")
+                json.dump(done, open(reg_path, "w"), indent=1)
+                return
+            paths = gf.animate(fid, src, name, style, prompt, n, attempt, desc)
+            errs = raw_checks(paths[0], hit_dir)
+            with open(log_path, "a") as fh:
+                fh.write(json.dumps({"anim": name, "essai": attempt, "fichier": paths[0], "defauts": errs},
+                                    ensure_ascii=False) + "\n")
+            print(f"{name} essai {attempt}: {'OK' if not errs else ' ; '.join(errs)}")
+            if not errs or attempt == retries:
+                done[name] = paths[0]
+                break
         json.dump(done, open(reg_path, "w"), indent=1)
-        print(f"{name}: {paths[0]}")
     if dry:
-        print(f"coût estimé : {total:.2f} $")
+        print(f"coût estimé : {total:.2f} $ (+ relances : au plus {retries} par mouvement raté)")
+    else:
+        print(f"dépensé pendant ce lancement : {client.spent() - spent0:.2f} $")
 
 
 if __name__ == "__main__":
