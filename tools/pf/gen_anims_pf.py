@@ -8,12 +8,16 @@ une autre graine. Si tous les essais ratent, on garde le moins mauvais.
 
 Usage : gen_anims_pf.py <id> [anim …] [--essais N] [--qualite high] [--refaire] [--dry]
   (sans anim : toutes ; une anim déjà réussie n'est pas refaite sans --refaire)
+Poses clés : un mouvement de la fiche peut donner « poses » (une consigne
+anglaise par pose, générées par Kontext, bien plus fidèle que Wan) et
+« sequence » (indices des poses, « g » = garde) au lieu d'une animation Wan.
 Départ : tools/rd/out/<id>/neutral_160.png (perso de 160×160 tourné à droite).
 Sorties : tools/rd/out/<id>/pf/<anim>_s<graine>.png (planche en ligne, cases
 de 160) ; tools/rd/out/<id>/anims.json pour build_rd_anims.py ; journal
 tools/rd/out/<id>/gen_log.jsonl ; planche de recette tests/out/pf/<id>.png.
 Service : PF_URL (défaut https://stellar.tailbeda4d.ts.net) ; jeton PF_TOKEN ou .pf_token.
 """
+import base64
 import glob
 import hashlib
 import io
@@ -106,6 +110,30 @@ def animate(url, action, prompt, n, seed, quality="high"):
     return [Image.open(io.BytesIO(urllib.request.urlopen(urllib.request.Request(u, headers=AUTH), timeout=120).read())).convert("RGBA") for u in urls]
 
 
+def keyframes(img, poses, seed, quality="high"):
+    """Poses clés par Kontext (style pf_anim__keyframes) : une case de 160 par pose."""
+    buf = io.BytesIO()
+    img.save(buf, "PNG")
+    r = _post_json(PF + "/v1/inferences", {
+        "prompt_style": "pf_anim__keyframes", "input_image": base64.b64encode(buf.getvalue()).decode(),
+        "poses": poses, "facing": "right", "seed": seed, "quality": quality})
+    sheet = Image.open(io.BytesIO(base64.b64decode(r["base64_images"][0]))).convert("RGBA")
+    cols = min(len(poses), 8)
+    return [sheet.crop(((k % cols) * CELL, (k // cols) * CELL, (k % cols + 1) * CELL, (k // cols + 1) * CELL))
+            for k in range(len(poses))]
+
+
+def sequence(guard, poses, n, order=None):
+    """Enchaîne garde et poses clés sur n images. order : indices des poses,
+    « g » pour la garde (par défaut : garde, poses, la dernière tenue, garde)."""
+    if order:
+        return [guard if k == "g" else poses[int(k)] for k in order][:n]
+    seq = [guard] + poses
+    while len(seq) < n - 1:
+        seq.insert(len(poses), poses[-1] if len(poses) < 3 else poses[len(poses) // 2])
+    return (seq + [guard])[:n]
+
+
 def trim_frozen(frames, n):
     """Retire la fin figée (images identiques) puis garde n images réparties."""
     def diff(a, b):
@@ -120,7 +148,7 @@ def trim_frozen(frames, n):
     return frames
 
 
-def wan_checks(frames):
+def wan_checks(frames, keys=False):
     arr = [np.array(f) for f in frames]
     def mean_col(a):
         op = a[..., 3] > 127
@@ -141,7 +169,7 @@ def wan_checks(frames):
         errs.append(f"objet étranger ({foreign} px gris/blancs/bleus)")
     if ident > IDENT_MAX:
         errs.append(f"change de perso (couleur {ident:.0f})")
-    if jump > JUMP_MAX:
+    if jump > JUMP_MAX and not keys:   # des poses clés sautent par nature
         errs.append(f"image qui saute ({jump:.0%})")
     return errs
 
@@ -209,7 +237,9 @@ def main():
         if start != "neutral" and start[0] not in done:
             print(f"{name}: départ {start[0]} pas encore généré, ignoré")
             continue
-        action = s["mouvements"][name].get("pf_action") or ACTIONS.get(s["mouvements"][name]["mode"], "custom")
+        m = s["mouvements"][name]
+        poses = m.get("poses")        # poses clés (Kontext) à la place de Wan
+        action = "keyframes" if poses else (m.get("pf_action") or ACTIONS.get(m["mode"], "custom"))
         prompt = f"{gesture}, {SIDE}"
         if "--dry" in sys.argv:
             print(f"{name}: {action} {n} images, départ {start}")
@@ -225,7 +255,11 @@ def main():
             seed = int(hashlib.sha1(f"{fid}:{name}".encode()).hexdigest()[:6], 16) + attempt
             t = time.time()
             try:
-                frames = trim_frozen(animate(url, action, prompt, n + EXTRA, seed, quality), n)
+                if poses:
+                    guard = start_image(od, start, done)
+                    frames = sequence(guard, keyframes(guard, poses, seed, quality), n, m.get("sequence"))
+                else:
+                    frames = trim_frozen(animate(url, action, prompt, n + EXTRA, seed, quality), n)
             except Exception as e:  # service coupé : on attend, l'essai ne compte pas
                 failures += 1
                 print(f"{name} essai {attempt}: erreur {e}", flush=True)
@@ -239,7 +273,7 @@ def main():
             for i, f in enumerate(frames):
                 sheet.paste(f, (i * CELL, 0))
             sheet.save(path)
-            errs = ga.raw_checks(path, hit_dir) + wan_checks(frames)
+            errs = ga.raw_checks(path, hit_dir) + wan_checks(frames, bool(poses))
             with open(log_path, "a") as fh:
                 fh.write(json.dumps({"anim": name, "outil": "pixelforge", "action": action, "essai": attempt,
                                      "graine": seed, "fichier": path, "defauts": errs,

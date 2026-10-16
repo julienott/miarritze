@@ -30,18 +30,24 @@ mouvements:
     images: 8
     geste: stands in place with both pincers raised in guard, bobbing gently up and down on its legs, pincers opening and closing slowly
     depart: neutre
+    poses: ["body slightly lowered, legs a bit more bent, pincers lowered a little", "body slightly raised on straight legs, pincers raised a little higher"]
+    sequence: [g, g, 0, 0, g, g, 1, 1]
   walk:
     intention: marche de côté, les pattes s'agitent vite
     mode: action
     images: 8
     geste: scuttles sideways to the right, its thin legs lifting and stepping in a fast alternating rhythm, body bobbing up and down, pincers swaying
     depart: neutre
+    poses: ["walking sideways mid-step: front legs stretched wide apart, back legs bent close under the body", "walking sideways mid-step: front legs bent close under the body, back legs stretched wide apart"]
+    sequence: [0, 0, g, g, 1, 1, g, g]
   run:
     intention: court de côté très vite, corps bas
     mode: action
     images: 8
     geste: scuttles sideways to the right very fast, body low, legs a blur of quick steps, pincers held forward
     depart: neutre
+    poses: ["scuttling fast mid-step: body low, front legs stretched far forward, back legs pushing far back", "scuttling fast mid-step: body low, legs gathered close under the body, pincers forward"]
+    sequence: [0, 0, 1, 1, 0, 0, 1, 1]
   crouch:
     intention: se plaque au sol, pattes repliées, pinces devant
     mode: action
@@ -54,12 +60,16 @@ mouvements:
     images: 8
     geste: crouches on its legs then jumps straight up high, legs tucked, then lands on its legs
     depart: neutre
+    poses: ["crouching low before a jump, all legs deeply bent, body close to the ground", "in mid-air, all eight legs tucked up under the body, pincers raised high"]
+    sequence: [g, 0, 1, 1, 1, 1, 0, g]
   jump_fwd:
     intention: bond vers l'avant, pattes repliées
     mode: action
     images: 6
     geste: leaps forward to the right through the air with legs tucked under its body, pincers forward
     depart: neutre
+    poses: ["in mid-air leaning forward, legs tucked under the body, both pincers pointing forward"]
+    sequence: [g, 0, 0, 0, 0, g]
   block:
     intention: ferme les deux pinces devant le visage comme un bouclier
     mode: action
@@ -91,10 +101,10 @@ mouvements:
     geste: swings both pincers forward to the right together and snaps them shut at full extension in a big double strike
     depart: neutre
   kick:
-    intention: coup de patte avant tendue à hauteur du ventre
+    intention: crochet bas de la pince avant, à hauteur du ventre (un crabe ne donne pas de coup de pied)
     mode: attaque
     images: 6
-    geste: kicks one thin front leg straight forward to the right at belly height, leg fully extended, then pulls it back
+    geste: swings its front pincer low and forward to the right in a hook at belly height, pincer fully extended and snapping shut, then pulls it back
     depart: neutre
   kick_high:
     intention: pince levée qui frappe de haut en bas
