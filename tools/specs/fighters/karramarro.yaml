@@ -1,0 +1,237 @@
+# Fiche de conception — Karramarro, le crabe des rochers (archétype défensif).
+# Modèle validé par Julien le 2026-10-16 : candidat « M » (pixelforge, 8 pattes,
+# deux pinces, trois-quarts face à droite). Généré avec pixelforge (Wan 2.2) :
+# tools/pf/gen_anims_pf.py. Les « intention » sont pour Julien (français) ;
+# les « geste » sont les consignes envoyées au générateur (anglais).
+id: karramarro
+statut: brouillon
+apparence: >-
+  the same orange cartoon crab with eight thin legs, two big orange pincers, eyes on stalks, yellow belly,
+  big happy open mouth, kid friendly
+porte:
+  garde: rien (deux pinces levées)
+  sp_neutral: des bulles qui sortent de sa bouche
+hauteur: 112
+groupes_couleur:
+  carapace:    # carapace et pinces orange → recolorées par les costumes
+    teinte: [0, 32]
+    sat: [0.55, 1]
+    val: [0.45, 1]
+    composante_min: 150
+  # ventre jaune et pattes brun-rouge foncé : gardés tels quels
+costumes:
+  1: {carapace: purple}
+  2: {carapace: green}
+  3: {carapace: navy}
+mouvements:
+  idle:
+    intention: garde, pinces levées, il se dandine sur ses pattes
+    mode: action
+    images: 8
+    geste: stands in place with both pincers raised in guard, bobbing gently up and down on its legs, pincers opening and closing slowly
+    depart: neutre
+  walk:
+    intention: marche de côté, les pattes s'agitent vite
+    mode: action
+    images: 8
+    geste: scuttles sideways to the right, its thin legs lifting and stepping in a fast alternating rhythm, body bobbing up and down, pincers swaying
+    depart: neutre
+  run:
+    intention: court de côté très vite, corps bas
+    mode: action
+    images: 8
+    geste: scuttles sideways to the right very fast, body low, legs a blur of quick steps, pincers held forward
+    depart: neutre
+  crouch:
+    intention: se plaque au sol, pattes repliées, pinces devant
+    mode: action
+    images: 6
+    geste: lowers its body flat to the ground by folding all its legs, pincers held in front of its face, then holds the low pose
+    depart: neutre
+  jump:
+    intention: bondit droit en l'air sur ses pattes
+    mode: action
+    images: 8
+    geste: crouches on its legs then jumps straight up high, legs tucked, then lands on its legs
+    depart: neutre
+  jump_fwd:
+    intention: bond vers l'avant, pattes repliées
+    mode: action
+    images: 6
+    geste: leaps forward to the right through the air with legs tucked under its body, pincers forward
+    depart: neutre
+  block:
+    intention: ferme les deux pinces devant le visage comme un bouclier
+    mode: action
+    images: 4
+    geste: brings both big pincers together in front of its face like a shield, braced on its legs
+    depart: neutre
+  crouch_block:
+    intention: plaqué au sol, pinces devant le visage
+    mode: action
+    images: 4
+    geste: stays flat on the ground and brings both pincers together in front of its face like a shield
+    depart: crouch:au_plus_bas
+  punch_1:
+    intention: petit coup de pince rapide vers l'avant
+    mode: attaque
+    images: 6
+    geste: jabs its front pincer straight forward to the right, the pincer opens and snaps shut at full extension, then returns to guard
+    depart: neutre
+  punch_2:
+    intention: coup de l'autre pince, bien tendue
+    mode: attaque
+    images: 6
+    geste: swings its back pincer forward to the right in a straight punch, pincer fully extended at chest height, snapping shut
+    depart: neutre
+  punch_3:
+    intention: grand coup des deux pinces qui claquent ensemble
+    mode: action
+    images: 6
+    geste: swings both pincers forward to the right together and snaps them shut at full extension in a big double strike
+    depart: neutre
+  kick:
+    intention: coup de patte avant tendue à hauteur du ventre
+    mode: attaque
+    images: 6
+    geste: kicks one thin front leg straight forward to the right at belly height, leg fully extended, then pulls it back
+    depart: neutre
+  kick_high:
+    intention: pince levée qui frappe de haut en bas
+    mode: action
+    images: 6
+    geste: raises its front pincer high and chops it down forward to the right at head height, pincer fully extended
+    depart: neutre
+  crouch_punch:
+    intention: plaqué au sol, petit coup de pince bas
+    mode: attaque
+    images: 6
+    geste: from the low pose flat on the ground, jabs one pincer forward low along the ground to the right, then pulls it back
+    depart: crouch:au_plus_bas
+  sweep:
+    intention: plaqué au sol, balaie le sol avec ses pattes
+    mode: action
+    images: 6
+    geste: from the low pose flat on the ground, sweeps its legs and front pincer far forward along the ground to the right
+    depart: crouch:au_plus_bas
+  uppercut:
+    intention: se détend d'un coup, pince tendue vers le ciel
+    mode: action
+    images: 6
+    geste: springs up on its legs and thrusts its front pincer straight up above its head, pincer fully extended upward, snapping
+    depart: neutre
+  jump_punch:
+    intention: en l'air, coup de pince plongeant
+    mode: action
+    images: 4
+    geste: in mid-air, legs tucked, thrusts one pincer diagonally down and forward to the right, fully extended
+    depart: jump:en_l_air
+  throw:
+    intention: seul, mime d'attraper et de jeter par-dessus sa carapace
+    mode: action
+    images: 8
+    geste: alone, grabs with both pincers in front then flings them up and back over its shell in a throwing motion, no other character
+    depart: neutre
+  thrown:
+    intention: projeté, il tournoie sur lui-même, pattes en l'air
+    mode: action
+    images: 6
+    geste: is lifted and spins backward through the air upside down, legs flailing, surprised face, cartoon, no injury
+    depart: neutre
+  hit_high:
+    intention: les yeux se rétractent, il recule d'un pas
+    mode: action
+    images: 4
+    geste: gets bopped, eyes squeezed shut, body tilts backward and it staggers back one step, cartoon, no injury
+    depart: neutre
+  hit_low:
+    intention: plié en avant, pinces sur le ventre
+    mode: action
+    images: 4
+    geste: bends forward holding its belly with both pincers, eyes squeezed shut, staggers back, cartoon, no injury
+    depart: neutre
+  knockdown:
+    intention: bascule et tombe sur le dos, pattes en l'air
+    mode: action
+    images: 6
+    geste: tips over backward and lands upside down on its round shell, legs and pincers waving in the air, cartoon, no injury
+    depart: neutre
+  dizzy:
+    intention: étourdi, il tourne sur place, des étoiles autour des yeux
+    mode: action
+    images: 6
+    geste: dizzy and wobbling in place with swirly eyes, little cartoon stars above its eyes
+    depart: neutre
+  win:
+    intention: claque des pinces en rythme et danse de côté
+    mode: action
+    images: 8
+    geste: dances happily side to side clapping its two pincers together above its head, big smile
+    depart: neutre
+  intro:
+    intention: sort du sable puis se met en garde
+    mode: action
+    images: 8
+    geste: pops up from the sand, shakes the sand off, then raises both pincers into a fighting guard
+    depart: neutre
+  sp_neutral:
+    mode: action
+    images: 8
+    geste: puffs its cheeks and blows forward to the right, mouth open in a round O, body leaning forward, pincers raised
+    depart: neutre
+  sp_forward:
+    mode: action
+    images: 8
+    geste: dashes sideways to the right in a lightning fast scuttle, body low, legs blurred
+    depart: neutre
+  sp_down:
+    mode: action
+    images: 8
+    geste: pulls its eyes and legs in and hides behind both pincers held together, then snaps both pincers forward to the right
+    depart: neutre
+  sp_up:
+    mode: action
+    images: 8
+    geste: crouches then springs straight up thrusting both pincers high above its head, snapping them open and shut
+    depart: neutre
+  super:
+    mode: action
+    images: 12
+    geste: grabs forward with both pincers, lifts up and tosses upward like flipping a pancake, then catches and tosses again, no other character
+    depart: neutre
+  finisher:
+    mode: action
+    images: 12
+    geste: snaps its pincers proudly, then pinches the air in front of it and wiggles happily, big grin
+    depart: neutre
+reprises:
+  jump_up: {depuis: jump, images: images 1-5}
+  fall: {depuis: jump, images: images 4-6}
+  crouch_idle: {depuis: crouch, images: tenue}
+  jump_kick: {depuis: kick, images: tout}
+  hit_air: {depuis: knockdown, images: images 0-3}
+  getup: {depuis: knockdown, images: a_l_envers}
+  ko: {depuis: knockdown, images: chute_puis_sol}
+speciaux:
+  sp_neutral:
+    nom: Bulles
+    intention: souffle une grosse bulle lente qui flotte vers l'adversaire
+    effet: bulles qui éclatent en « pop » à l'impact
+    projectile: {nom: bulles, description: grosse bulle bleue transparente avec un reflet, 20 px}
+    son: bulles « blop »
+  sp_forward:
+    nom: Pas de côté
+    intention: déplacement latéral éclair, il passe à travers l'adversaire
+    effet: traînée de sable derrière lui
+  sp_down:
+    nom: Carapace
+    intention: se cache derrière ses pinces ; s'il est frappé, il riposte d'un coup de pince
+    effet: éclat brillant sur les pinces quand le contre se déclenche
+  sp_up:
+    nom: Pince-ciel
+    intention: anti-aérien, bondit pinces vers le ciel
+    effet: petit éclat d'écume au sommet
+  super:
+    nom: Crêpe de crabe
+    intention: pince l'adversaire et le fait sauter comme une crêpe
+    effet: étoiles et écume à chaque lancer

@@ -40,6 +40,18 @@ immobile (moins de 12 % de la silhouette change), halo ou effet parasite
 elle est relancée avec une autre graine, au plus `--essais` fois, sans dépasser
 `--budget` pour le lancement. Journal : `tools/rd/out/<id>/gen_log.jsonl`.
 
+### Variante gratuite : pixelforge (Wan 2.2 local)
+
+`tools/pf/gen_anims_pf.py <id> [anim …] [--essais 4] [--refaire]` lit la même
+fiche, part de `tools/rd/out/<id>/neutral_160.png` (perso tourné à droite) et
+écrit au même endroit que `gen_anims.py` (`anims.json`, `gen_log.jsonl`) :
+l'assemblage et la recette ne changent pas. Toujours l'action « custom »
+(« attack » invente des armes, « walking » reste immobile). En plus des
+contrôles RD, deux rejets propres à Wan : le perso change en cours d'animation
+(couleur moyenne), une image saute (silhouette), et un objet inventé apparaît
+(pixels gris, blancs ou bleus). La fin figée est coupée. Planche :
+`tests/out/pf/<id>.png` ; les mouvements jamais réussis y sont « À REVOIR ».
+
 ### Recette après assemblage
 
 `qa_fighter.py` vérifie image par image : trous, morceaux détachés, bord de
