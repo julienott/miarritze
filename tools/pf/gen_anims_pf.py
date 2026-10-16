@@ -6,13 +6,13 @@ automatiques : chaque essai passe les contrôles de gen_anims.raw_checks
 change en cours d'animation, image qui saute) ; raté, il est relancé avec
 une autre graine. Si tous les essais ratent, on garde le moins mauvais.
 
-Usage : gen_anims_pf.py <id> [anim …] [--essais N] [--refaire] [--dry]
+Usage : gen_anims_pf.py <id> [anim …] [--essais N] [--qualite high] [--refaire] [--dry]
   (sans anim : toutes ; une anim déjà réussie n'est pas refaite sans --refaire)
 Départ : tools/rd/out/<id>/neutral_160.png (perso de 160×160 tourné à droite).
 Sorties : tools/rd/out/<id>/pf/<anim>_s<graine>.png (planche en ligne, cases
 de 160) ; tools/rd/out/<id>/anims.json pour build_rd_anims.py ; journal
 tools/rd/out/<id>/gen_log.jsonl ; planche de recette tests/out/pf/<id>.png.
-Service : PF_URL (défaut https://stellar.tailbeda4d.ts.net).
+Service : PF_URL (défaut https://stellar.tailbeda4d.ts.net) ; jeton PF_TOKEN ou .pf_token.
 """
 import glob
 import hashlib
@@ -35,6 +35,10 @@ import gen_anims as ga  # noqa: E402
 import spec as fiche  # noqa: E402
 
 PF = os.environ.get("PF_URL", "https://stellar.tailbeda4d.ts.net")
+# Jeton Bearer : PF_TOKEN, sinon le fichier .pf_token à la racine (gitignoré).
+_tok_path = os.path.join(ROOT, ".pf_token")
+PF_TOKEN = os.environ.get("PF_TOKEN") or (open(_tok_path).read().strip() if os.path.exists(_tok_path) else "")
+AUTH = {"Authorization": f"Bearer {PF_TOKEN}"} if PF_TOKEN else {}
 CELL = 160
 # Action pixelforge : « custom » partout. « attack » invente des armes
 # (pistolet, canon, lance-flammes) et « walking » reste immobile (essais du
@@ -50,10 +54,25 @@ EXTRA = 2          # images demandées en plus (la fin de Wan reste souvent fig�
 
 def _post_json(url, payload, timeout=900):
     req = urllib.request.Request(url, json.dumps(payload).encode(), {
-        "Content-Type": "application/json", "Accept": "application/json, text/event-stream"})
+        "Content-Type": "application/json", "Accept": "application/json, text/event-stream", **AUTH})
     raw = urllib.request.urlopen(req, timeout=timeout).read().decode()
     lines = [ln[6:] if ln.startswith("data: ") else ln for ln in raw.splitlines()]
     return json.loads([ln for ln in lines if ln.startswith("{")][-1])
+
+
+def wait_ready(max_s=3600):
+    """Attend que le service réponde (redémarrage, déploiement) au plus max_s secondes."""
+    t = time.time()
+    while True:
+        try:
+            st = json.loads(urllib.request.urlopen(PF + "/v2/status", timeout=15).read())
+            if st.get("status") == "ok":
+                return
+        except Exception:
+            pass
+        if time.time() - t > max_s:
+            raise RuntimeError("pixelforge injoignable")
+        time.sleep(30)
 
 
 def upload(img, cache):
@@ -69,21 +88,22 @@ def upload(img, cache):
     bnd = "----pf" + key[:16]
     body = (f"--{bnd}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{key}.png\"\r\n"
             "Content-Type: image/png\r\n\r\n").encode() + data + f"\r\n--{bnd}--\r\n".encode()
-    req = urllib.request.Request(PF + "/api/upload", body, {"Content-Type": f"multipart/form-data; boundary={bnd}"})
+    req = urllib.request.Request(PF + "/api/upload", body, {"Content-Type": f"multipart/form-data; boundary={bnd}", **AUTH})
     cache[key] = json.loads(urllib.request.urlopen(req, timeout=120).read())["url"]
     return cache[key]
 
 
-def animate(url, action, prompt, n, seed):
+def animate(url, action, prompt, n, seed, quality="high"):
     r = _post_json(PF + "/mcp", {"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {
         "name": "animate_sprite", "arguments": {"action": action, "prompt": prompt, "image_url": url,
                                                 "width": CELL, "height": CELL, "frames": n, "seed": seed,
+                                                "quality": quality,
                                                 "wait": True}}})
     txt = json.dumps(r)
     urls = sorted(set(re.findall(r"https://[^\\\s\"')\]]+_frame\d+\.png", txt)))
     if not urls:
         raise RuntimeError("pixelforge : " + txt[:300])
-    return [Image.open(io.BytesIO(urllib.request.urlopen(u, timeout=120).read())).convert("RGBA") for u in urls]
+    return [Image.open(io.BytesIO(urllib.request.urlopen(urllib.request.Request(u, headers=AUTH), timeout=120).read())).convert("RGBA") for u in urls]
 
 
 def trim_frozen(frames, n):
@@ -167,6 +187,7 @@ def main():
     names = [a for a in sys.argv[2:] if not a.startswith("--") and not a.isdigit()] or list(mv)
     opt = lambda k, d: type(d)(sys.argv[sys.argv.index(k) + 1]) if k in sys.argv else d
     retries = opt("--essais", 4)
+    quality = opt("--qualite", "high")    # standard | high | max (pixelforge)
     od = ga.out_dir(fid)
     pd = os.path.join(od, "pf")
     os.makedirs(pd, exist_ok=True)
@@ -193,18 +214,25 @@ def main():
         if "--dry" in sys.argv:
             print(f"{name}: {action} {n} images, départ {start}")
             continue
+        wait_ready()
         url = upload(start_image(od, start, done), ups)
         json.dump(ups, open(up_path, "w"), indent=1)
         g = game.get(name, {})
         hit_dir = g.get("hit_dir") if "hit_frame" in g else None
         best = None
-        for attempt in range(retries + 1):
+        attempt, failures = 0, 0
+        while attempt <= retries:
             seed = int(hashlib.sha1(f"{fid}:{name}".encode()).hexdigest()[:6], 16) + attempt
             t = time.time()
             try:
-                frames = trim_frozen(animate(url, action, prompt, n + EXTRA, seed), n)
-            except Exception as e:  # service indisponible : on passe au suivant
-                print(f"{name} essai {attempt}: erreur {e}")
+                frames = trim_frozen(animate(url, action, prompt, n + EXTRA, seed, quality), n)
+            except Exception as e:  # service coupé : on attend, l'essai ne compte pas
+                failures += 1
+                print(f"{name} essai {attempt}: erreur {e}", flush=True)
+                if failures > 5:
+                    break
+                wait_ready()
+                url = upload(start_image(od, start, done), {})
                 continue
             path = os.path.join(pd, f"{name}_s{seed}.png")
             sheet = Image.new("RGBA", (CELL * len(frames), CELL), (0, 0, 0, 0))
@@ -222,6 +250,7 @@ def main():
                 best = (path, errs)
             if not errs:
                 break
+            attempt += 1
         if best:
             done[name] = best[0]
             verdicts[name] = "OK" if not best[1] else "À REVOIR : " + " ; ".join(best[1])
