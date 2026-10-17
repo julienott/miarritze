@@ -42,7 +42,7 @@ FACES = {
     # Kaio : décor chargé (détourage depuis le haut) ; texte CHIPS aplati
     "kaio": {"flood_ymax": 60, "fills": [(33, 59, 53, 68, "ed6054")], "protect": (34, 14, 80, 44),
              "eyes": [(41, 22, 49, 29)], "mouth": (62, 38), "head": (24, 4, 80, 60)},
-    "karramarro": {"protect": (46, 10, 70, 28), "eyes": [(47, 15, 53, 23), (62, 15, 68, 23)], "mouth": (58, 48), "head": (30, 4, 86, 60)},
+    "karramarro": {"src": "tools/rd/out/karramarro/pf_portrait_103.png", "diag": 8, "fills": [(16, 92, 17, 93, "9e2a1f")], "protect": (44, 40, 72, 70), "eyes": [(47, 44, 55, 52), (61, 44, 69, 52)], "mouth": (55, 64), "head": (30, 30, 86, 86)},
     "ramuntxo": {"seal": 1, "protect": (36, 40, 64, 64), "eyes": [(46, 44, 51, 50), (54, 45, 59, 50)], "mouth": (52, 57), "head": (22, 10, 78, 66)},
     "itsaso": {"protect": (46, 28, 76, 56), "eyes": [(56, 36, 62, 41), (66, 37, 70, 41)], "mouth": (61, 49), "head": (28, 8, 84, 64)},
     "peio": {"src": "tools/rd/cache/834a7be0c9a517acf2f99be79ba12848e44c1371_0.png", "protect": (34, 26, 76, 66), "eyes": [(42, 40, 51, 49), (64, 40, 72, 49)], "mouth": (58, 58), "head": (22, 10, 78, 66), "big_x0": 16},
@@ -51,10 +51,12 @@ FACES = {
 }
 
 
-def detour(rgba: np.ndarray, flood_ymax: int = 0, keep=None, seal: int = 0) -> np.ndarray:
+def detour(rgba: np.ndarray, flood_ymax: int = 0, keep=None, seal: int = 0, diag: int = 0) -> np.ndarray:
     """Masque des pixels de fond (connexes au bord, couleurs de fond).
     flood_ymax > 0 : fond chargé (décor) → tout ce qui n'est pas contour,
-    connexe aux bords haut/latéraux au-dessus de flood_ymax."""
+    connexe aux bords haut/latéraux au-dessus de flood_ymax.
+    diag > 0 : couleurs de fond lues sur les diag premiers pixels de la
+    diagonale seulement (le perso touche la diagonale avant tout contour)."""
     rgb = rgba[..., :3].astype(int)
     H, W = rgb.shape[:2]
     if flood_ymax:
@@ -82,7 +84,7 @@ def detour(rgba: np.ndarray, flood_ymax: int = 0, keep=None, seal: int = 0) -> n
             bg[:flood_ymax, x] |= ~is_bg[:flood_ymax, x] & bg[:flood_ymax, x - 1 if x == 1 else x + 1]
         return bg
     seeds = []
-    for k in range(min(H, W)):
+    for k in range(diag or min(H, W)):
         c = rgb[k, k]
         if np.abs(c - OUTLINE_RGB).sum() < 60:
             break
@@ -172,7 +174,7 @@ def make(fid):
     rgba = np.array(Image.open(os.path.join(ROOT, src)).convert("RGBA"))
     for x0, y0, x1, y1, h in FACES[fid].get("fills", []):
         rgba[y0:y1 + 1, x0:x1 + 1, :3] = [int(h[i:i + 2], 16) for i in (0, 2, 4)]
-    bg = detour(rgba, FACES[fid].get("flood_ymax", 0), FACES[fid].get("keep"), FACES[fid].get("seal", 0))
+    bg = detour(rgba, FACES[fid].get("flood_ymax", 0), FACES[fid].get("keep"), FACES[fid].get("seal", 0), FACES[fid].get("diag", 0))
     rgba[bg, 3] = 0
     face0 = FACES[fid]
     prot = np.zeros(rgba.shape[:2], bool)

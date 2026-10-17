@@ -1150,16 +1150,13 @@
  ],
  "costumes": {
   "1": {
-   "shell": "purple",
-   "red": "navy"
+   "carapace": "purple"
   },
   "2": {
-   "shell": "sea",
-   "red": "navy"
+   "carapace": "green"
   },
   "3": {
-   "shell": "green",
-   "red": "yellow"
+   "carapace": "navy"
   }
  },
  "keep_arms": [
@@ -1198,5 +1195,183 @@
   }
  ],
  "prep": "rd_prep.py karramarro 0.8 --cell 160 \u2192 copie dans tests/out/rig/karramarro_raw.png, puis rd_clean.py karramarro (pattes sous la pince effac\u00e9es)",
- "clean_pieces": true
+ "clean_pieces": true,
+ "palette_slots": [
+  [
+   "fixed",
+   [
+    58,
+    38,
+    52
+   ]
+  ],
+  [
+   "carapace",
+   [
+    255,
+    122,
+    48
+   ]
+  ],
+  [
+   "carapace",
+   [
+    235,
+    75,
+    43
+   ]
+  ],
+  [
+   "carapace",
+   [
+    158,
+    42,
+    31
+   ]
+  ],
+  [
+   "fixed",
+   [
+    53,
+    10,
+    12
+   ]
+  ],
+  [
+   "carapace",
+   [
+    121,
+    18,
+    12
+   ]
+  ],
+  [
+   "fixed",
+   [
+    255,
+    201,
+    100
+   ]
+  ],
+  [
+   "carapace",
+   [
+    247,
+    128,
+    89
+   ]
+  ],
+  [
+   "carapace",
+   [
+    255,
+    163,
+    58
+   ]
+  ],
+  [
+   "fixed",
+   [
+    100,
+    13,
+    9
+   ]
+  ],
+  [
+   "fixed",
+   [
+    158,
+    42,
+    31
+   ]
+  ],
+  [
+   "fixed",
+   [
+    121,
+    18,
+    12
+   ]
+  ],
+  [
+   "fixed",
+   [
+    0,
+    17,
+    19
+   ]
+  ],
+  [
+   "carapace",
+   [
+    165,
+    36,
+    20
+   ]
+  ],
+  [
+   "fixed",
+   [
+    253,
+    190,
+    145
+   ]
+  ],
+  [
+   "fixed",
+   [
+    253,
+    254,
+    255
+   ]
+  ],
+  [
+   "carapace",
+   [
+    186,
+    28,
+    17
+   ]
+  ],
+  [
+   "fixed",
+   [
+    235,
+    75,
+    43
+   ]
+  ],
+  [
+   "fixed",
+   [
+    254,
+    202,
+    198
+   ]
+  ],
+  [
+   "fixed",
+   [
+    255,
+    182,
+    180
+   ]
+  ],
+  [
+   "fixed",
+   [
+    186,
+    28,
+    17
+   ]
+  ],
+  [
+   "fixed",
+   [
+    165,
+    36,
+    20
+   ]
+  ]
+ ]
 }

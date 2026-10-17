@@ -52,6 +52,43 @@ contrôles RD, deux rejets propres à Wan : le perso change en cours d'animation
 (pixels gris, blancs ou bleus). La fin figée est coupée. Planche :
 `tests/out/pf/<id>.png` ; les mouvements jamais réussis y sont « À REVOIR ».
 
+### Méthode retenue : animation par morceaux + guidé (pixelforge)
+
+Wan seul rate les non-humains ; la méthode validée le 2026-10-17 :
+
+1. `tools/pf/choreo/<id>.py` découpe la garde en pièces (masques, pivots,
+   ordre de dessin, bras qui relient une pince écartée) et décrit chaque
+   mouvement en poses clés (rotation, décalage, échelle par pièce).
+   `pieces.py <id> --controle` en tire la planche `tests/out/pf/<id>_pieces.png`.
+2. `pieces.py <id> [anim …] [--graine D] [--refaire]` envoie les silhouettes à
+   `pf_anim__guided`, qui redessine le perso en suivant exactement le geste.
+   Rejets automatiques (relance avec une autre graine) : identité qui dérive,
+   silhouette qui ne suit pas le contrôle, morceaux détachés, objet étranger,
+   images manquantes (les mouvements de plus de 8 images partent par morceaux).
+   Après les essais, ou pour les mouvements `mode="pieces"` (grosses
+   rotations : le guidé perd le visage d'un perso retourné), on garde le
+   rendu des pièces. Toujours relire la planche : un rendu « OK » peut garder
+   un fantôme (voir `--graine`).
+3. Assemblage et recette inchangés (`build_rd_anims.py`, `build_fighter.py`,
+   `qa_fighter.py`). Les costumes viennent de la fiche quand ses groupes de
+   couleur sont ceux de la palette.
+
+Redessiner une feuille existante (`tools/pf/redraw.py`) n'améliore pas les
+persos RD déjà propres (essai Louis : espadrilles devenues marron) : non retenu.
+
+### Portrait, fin et effets (pixelforge)
+
+`tools/pf/extras_pf.py portrait|fin|effets <id>` écrit des candidats et une
+planche de choix `tests/out/pf/<id>_<commande>.png` ; puis
+`extras_pf.py installer <id> fin=102 proj_x=101 sp_forward=trail:elem_a.101
+sp_down=arc:elem_a.101+elem_b.102 super=ring:elem_a.101+elem_b.102`.
+Le générateur réussit les petits objets isolés (32 px) mais rate traînées,
+cercles et formats étroits : ces effets sont assemblés à partir de deux
+éléments (traînée, arc au sol, couronne). Les projectiles de moins de 24 px
+sont générés ×2 puis réduits. Le portrait passe par `make_rd_portraits.py`
+(FACES : source, yeux et bouche du K.O., `diag` si le perso touche la
+diagonale du fond, `fills` pour un trou de fond enfermé).
+
 ### Recette après assemblage
 
 `qa_fighter.py` vérifie image par image : trous, morceaux détachés, bord de

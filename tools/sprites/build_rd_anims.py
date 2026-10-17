@@ -38,6 +38,9 @@ CELL = 192
 FOOT = (96, 184)
 SHEET_W = 1920
 OUTLINE = (58, 38, 52)
+# Persos sans peau humaine : la retouche des plis rouges sur la peau repeindrait
+# leurs zones rouges légitimes (pattes et bras du crabe).
+NO_SKIN = {"karramarro"}
 AIR = {"jump_up", "jump_fwd", "fall", "jump_punch", "jump_kick", "hit_air", "thrown"}
 
 # anim du jeu -> (anim RD source, sélection d'images ou None)
@@ -344,6 +347,12 @@ def main():
     slots = palette_slots(neutral)
     spec = rd_rig.load_spec(fid)
     spec["palette_slots"] = [[g, list(c)] for g, c in slots]
+    # Costumes de la fiche (tools/specs) quand ses groupes de couleur sont ceux des slots.
+    if fiche.exists(fid):
+        cos = fiche.load(fid).get("costumes") or {}
+        names = {g for g, _ in slots}
+        if cos and all(set(v) <= names for v in cos.values()):
+            spec["costumes"] = {str(k): v for k, v in cos.items()}
     with open(os.path.join(d, "rig.json"), "w") as fh:
         json.dump(spec, fh, indent=1)
     rd_rig._write_palettes(fid, spec, slots)
@@ -352,7 +361,8 @@ def main():
     for name in [n for n in meta]:
         src, sel = reuses.get(name, (name, None))
         if src not in cleaned:
-            cleaned[src] = [cb.fix(fix_light_specks(vote_scale(cb.fix(fix_light_specks(fix_red_skin(f))), scale))) for f in frames_of(reg[src])]
+            skin = (lambda f: f) if fid in NO_SKIN else fix_red_skin
+            cleaned[src] = [cb.fix(fix_light_specks(vote_scale(cb.fix(fix_light_specks(skin(f))), scale))) for f in frames_of(reg[src])]
         frames = cleaned[src]
         n = meta[name]["frames"]
         if sel == "hold":
