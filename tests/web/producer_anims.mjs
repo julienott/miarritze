@@ -49,6 +49,14 @@ for (const [label, opts] of [['ordi', { viewport: { width: 1280, height: 900 } }
   await page.fill('#password', PASSWORD);
   await page.click('#login-form button[type=submit]');
   await page.waitForSelector('.tile');
+  // Vue d'ensemble : une section par combattant, tuiles rangées par famille.
+  await page.waitForSelector('.group .group-head');
+  const heads = await page.$$eval('.group .group-name', (h) => h.map((x) => x.textContent));
+  check(`${label} : une section par combattant à l'ouverture`, heads.length >= 13 && heads.includes(FID), heads.join(','));
+  const kinds = await page.$eval(`.group:has(.group-name:text-is("${FID}"))`, (g) => [...g.querySelectorAll('.kind')].map((k) => k.textContent));
+  check(`${label} : familles dans l'ordre de la review`,
+    kinds[0] === 'Animations' && kinds[1] === 'Portraits' && kinds.includes('Effets des spéciaux'), kinds.join(','));
+  await page.screenshot({ path: path.join(OUT, `anims_${label}_combattants.png`) });
   await page.click('.cats button:has-text("Combattants")');
   await page.click(`.cats li.sub button:has(span:text-is("${FID}"))`);
   await page.waitForTimeout(800);

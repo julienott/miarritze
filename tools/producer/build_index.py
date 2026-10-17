@@ -44,7 +44,7 @@ CATEGORIES = [CAT_FIGHTERS, CAT_VFX, CAT_STAGES, CAT_SPRITES, CAT_UI,
               CAT_MUSIC, CAT_SFX, CAT_VOICE]
 
 # Fichiers de combattants ignorés (obsolètes, remplacés par les sheets RD).
-SKIP_FIGHTER_FILES = {"sheet_mannequin.png"}
+SKIP_FIGHTER_FILES = {"sheet_mannequin.png", "sheet.orig.png"}   # + sauvegarde avant nettoyage
 
 
 def short_hash(*paths: Path) -> str:

@@ -6,7 +6,7 @@ Service privé : https://miarritze.ijulien.com/producer/
 
 - **Connexion** : mot de passe unique. Après 5 échecs, l'adresse IP est bloquée 15 minutes. La session dure 30 jours.
 - **Assets** : les catégories sont à gauche (sur iPhone, en haut). On peut aussi chercher par nom (`maia`, `idle`, `fronton`…).
-  - Les persos sont colorisés avec le costume 0. Chaque perso a sa page (Combattants → son nom) : animations, portraits, image de fin puis effets de ses spéciaux ; sa vignette joue son attente.
+  - La page s'ouvre sur les combattants : une section par perso (cliquer son nom n'affiche que lui), et dans chaque section les tuiles rangées par famille — animations, portraits, image de fin, projectiles, effets des spéciaux, palettes, sources. Les persos sont colorisés avec le costume 0 ; la vignette des animations joue l'attente.
   - Sur « animations », toutes les animations du perso tournent en aperçu sous le lecteur ; un clic en ouvre une dans le lecteur, où l'on peut avancer image par image avec ◀ ▶.
   - Le fond se choisit entre clair, sombre et damier ; le zoom est en pixels nets.
   - Musiques, SFX et voix ont un lecteur audio.

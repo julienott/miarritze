@@ -187,6 +187,8 @@ async function enter() {
   const [index] = await Promise.all([api('index'), reloadComments(), reloadCards()]);
   state.index = index;
   state.assetsById = new Map(index.assets.map((a) => [a.id, a]));
+  // Première ouverture : les combattants, une section par perso.
+  if (!state.cat && !state.group && index.categories.includes('Combattants')) state.cat = 'Combattants';
   const dl = $('asset-ids');
   dl.replaceChildren(...index.assets.map((a) => el('option', { value: a.id })));
   renderCats();
@@ -291,11 +293,60 @@ function showGrid() {
   const grid = $('grid');
   grid.hidden = false;
   const list = filteredAssets();
+  grid.classList.remove('grouped');
   if (!list.length) {
     grid.replaceChildren(el('p', { class: 'empty', text: 'Aucun asset ne correspond.' }));
     return;
   }
-  grid.replaceChildren(...list.map(tile));
+  // Sans sous-groupe choisi : une section par combattant (ou par catégorie
+  // pour « Tout »), pour voir tous les assets d'un perso d'un coup d'œil.
+  const key = state.group ? null : state.cat ? (a) => a.group : (a) => a.cat;
+  const keys = key ? [...new Set(list.map(key))] : [];
+  const byKind = state.cat === 'Combattants';
+  if (keys.length < 2) {
+    if (byKind) { grid.classList.add('grouped'); grid.replaceChildren(...kindBlocks(list)); }
+    else grid.replaceChildren(...list.map(tile));
+    return;
+  }
+  grid.classList.add('grouped');
+  grid.replaceChildren(...keys.map((k) => {
+    const items = list.filter((a) => key(a) === k);
+    const fighter = state.cat === 'Combattants';
+    const face = fighter && state.assetsById.get(`fighters/${k}/portrait_small.png`);
+    const open = () => {
+      if (fighter || state.cat) { state.group = k; } else { state.cat = k; state.group = ''; }
+      renderCats(); showGrid(); window.scrollTo(0, 0);
+    };
+    return el('section', { class: 'group' },
+      el('button', { type: 'button', class: 'group-head', onclick: open, title: 'Voir seulement ' + k },
+        face ? el('img', { src: fileUrl(face.file), alt: '' }) : null,
+        el('span', { class: 'group-name', text: k }),
+        el('span', { class: 'muted', text: items.length + ' asset' + (items.length > 1 ? 's' : '') })),
+      byKind ? kindBlocks(items) : el('div', { class: 'group-tiles' }, items.map(tile)));
+  }));
+}
+
+// Familles d'assets d'un combattant, dans l'ordre de la review.
+const KINDS = [
+  ['anim', 'Animations'], ['portrait', 'Portraits'], ['ending', 'Image de fin'],
+  ['proj', 'Projectiles'], ['fx', 'Effets des spéciaux'], ['palette', 'Palettes'], ['src', 'Sources'],
+];
+
+function kindOf(a) {
+  const n = a.id.split('/').pop();
+  if (a.type === 'sprite') return 'anim';
+  if (a.id.startsWith('vfx/')) return n.startsWith('proj_') ? 'proj' : 'fx';
+  if (n.startsWith('portrait')) return 'portrait';
+  if (n.startsWith('ending')) return 'ending';
+  if (n.startsWith('palettes')) return 'palette';
+  return 'src';
+}
+
+function kindBlocks(items) {
+  return KINDS.flatMap(([k, label]) => {
+    const sub = items.filter((a) => kindOf(a) === k);
+    return sub.length ? [el('h4', { class: 'kind', text: label }), el('div', { class: 'group-tiles' }, sub.map(tile))] : [];
+  });
 }
 
 function tile(a) {

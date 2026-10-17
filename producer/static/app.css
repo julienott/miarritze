@@ -109,6 +109,17 @@ main { padding: 16px; }
 .cats li.sub.show { display: block; }
 .cats li.sub button { padding-left: 22px; font-size: 13px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+.grid.grouped { display: block; }
+.group { margin-bottom: 18px; }
+.group-head {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  background: none; border: 0; border-bottom: 2px solid var(--line); padding: 4px 2px 6px; margin-bottom: 8px; cursor: pointer;
+}
+.group-head:hover .group-name, .group-head:focus-visible .group-name { color: var(--red); }
+.group-head img { width: 40px; height: 40px; image-rendering: pixelated; background: var(--stage-light); border-radius: 4px; }
+.group-name { font-size: 17px; font-weight: 700; text-transform: capitalize; flex: 1; }
+.kind { margin: 8px 0 6px; font-size: 13px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.group-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
 .tile {
   background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px;
   cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 4px; min-height: 0;
@@ -234,7 +245,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .45); }
   .tabs { order: 3; flex-basis: 100%; }
   .top { padding: 8px 16px; }
   .cats li.sub button { padding-left: 8px; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .grid, .group-tiles { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
   .tile .thumb { height: 72px; }
   .board { grid-template-columns: 1fr; }
   .column { min-height: 0; }
