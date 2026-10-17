@@ -1,0 +1,40 @@
+# Fiche minimale — Xabi (écrite par tools/pf/prep_from_rig.py pour
+# from_rig.py : modèle = pose RD propre, gestes = ceux du rig). Groupes de couleur
+# déduits du rig : à relire (apparence en anglais pour pixelforge).
+id: xabi
+statut: brouillon
+apparence: a cartoon basque pelota player boy, white shirt and white trousers, red sash, a long curved wicker chistera basket glove on his hand, kid friendly
+hauteur: 112
+groupes_couleur:
+  kimono:
+    sat:
+    - 0.0
+    - 0.29
+    val:
+    - 0.61
+    - 1
+    composante_min: 60
+    teinte:
+    - 23
+    - 52
+  sash:
+    sat:
+    - 0.67
+    - 0.85
+    val:
+    - 0.32
+    - 0.66
+    composante_min: 60
+    teinte:
+    - 342
+    - 7
+costumes:
+  1:
+    kimono: sand
+    sash: green
+  2:
+    kimono: navy
+    sash: linen
+  3:
+    kimono: sky
+    sash: yellow

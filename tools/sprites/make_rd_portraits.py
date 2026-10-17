@@ -35,19 +35,19 @@ OUTLINE_RGB = np.array([58, 38, 52])
 FACES = {
     "louis": {"src": "tools/rd/cache/0fc7bc58c065dd0d941e1688f7ae9557822cef25_0.png", "protect": (28, 20, 68, 46), "eyes": [(40, 24, 48, 31), (58, 24, 64, 31)], "mouth": (52, 38), "head": (12, 0, 72, 60)},
     "maia": {"src": "assets/fighters/maia/rd_portrait.png", "protect": (40, 20, 76, 56), "eyes": [(48, 36, 57, 42), (66, 36, 70, 42)], "mouth": (60, 51), "head": (28, 6, 84, 62)},
-    "patxi": {"protect": (36, 27, 66, 52), "eyes": [(44, 32, 48, 37), (53, 32, 57, 37)], "mouth": (52, 47), "head": (20, 6, 76, 62)},
-    "mattin": {"protect": (30, 16, 60, 40), "eyes": [(41, 21, 45, 25), (50, 21, 54, 25)], "mouth": (47, 31), "head": (20, 4, 76, 60)},
-    "amaia": {"protect": (36, 24, 66, 52), "eyes": [(42, 34, 47, 40), (56, 34, 60, 40)], "mouth": (52, 46), "head": (22, 8, 78, 64)},
+    "patxi": {"src": "tools/rd/out/patxi/portrait_src.png", "protect": (36, 27, 66, 52), "eyes": [(44, 32, 48, 37), (53, 32, 57, 37)], "mouth": (52, 47), "head": (20, 6, 76, 62)},
+    "mattin": {"src": "tools/rd/out/mattin/portrait_src.png", "protect": (30, 16, 60, 40), "eyes": [(41, 21, 45, 25), (50, 21, 54, 25)], "mouth": (47, 31), "head": (20, 4, 76, 60)},
+    "amaia": {"src": "tools/rd/out/amaia/portrait_src.png", "protect": (36, 24, 66, 52), "eyes": [(42, 34, 47, 40), (56, 34, 60, 40)], "mouth": (52, 46), "head": (22, 8, 78, 64)},
     "txomin": {"flood_ymax": 76, "protect": (30, 28, 70, 64), "eyes": [(35, 33, 52, 40), (56, 33, 66, 40)], "mouth": (54, 57), "head": (16, 6, 72, 62)},
     # Kaio : décor chargé (détourage depuis le haut) ; texte CHIPS aplati
-    "kaio": {"flood_ymax": 60, "fills": [(33, 59, 53, 68, "ed6054")], "protect": (34, 14, 80, 44),
+    "kaio": {"src": "tools/rd/out/kaio/portrait_src.png", "flood_ymax": 60, "fills": [(33, 59, 53, 68, "ed6054")], "protect": (34, 14, 80, 44),
              "eyes": [(41, 22, 49, 29)], "mouth": (62, 38), "head": (24, 4, 80, 60)},
     "karramarro": {"src": "tools/rd/out/karramarro/pf_portrait_103.png", "diag": 8, "fills": [(16, 92, 17, 93, "9e2a1f")], "protect": (44, 40, 72, 70), "eyes": [(47, 44, 55, 52), (61, 44, 69, 52)], "mouth": (55, 64), "head": (30, 30, 86, 86)},
-    "ramuntxo": {"seal": 1, "protect": (36, 40, 64, 64), "eyes": [(46, 44, 51, 50), (54, 45, 59, 50)], "mouth": (52, 57), "head": (22, 10, 78, 66)},
+    "ramuntxo": {"src": "tools/rd/out/ramuntxo/portrait_src.png", "seal": 1, "protect": (36, 40, 64, 64), "eyes": [(46, 44, 51, 50), (54, 45, 59, 50)], "mouth": (52, 57), "head": (22, 10, 78, 66)},
     "itsaso": {"src": "tools/rd/out/itsaso/portrait_src.png", "protect": (46, 28, 76, 56), "eyes": [(56, 36, 62, 41), (66, 37, 70, 41)], "mouth": (61, 49), "head": (28, 8, 84, 64)},
     "peio": {"src": "tools/rd/cache/834a7be0c9a517acf2f99be79ba12848e44c1371_0.png", "protect": (34, 26, 76, 66), "eyes": [(42, 40, 51, 49), (64, 40, 72, 49)], "mouth": (58, 58), "head": (22, 10, 78, 66), "big_x0": 16},
     "itsasargi": {"protect": (24, 16, 58, 48), "eyes": [(33, 24, 37, 28), (41, 24, 46, 28)], "mouth": (45, 36), "head": (12, 2, 68, 58)},
-    "xabi": {"big_x0": 32, "protect": (24, 22, 58, 52), "eyes": [(34, 32, 40, 40)], "mouth": (44, 50), "head": (12, 2, 68, 58)},
+    "xabi": {"src": "tools/rd/out/xabi/portrait_src.png", "big_x0": 32, "protect": (24, 22, 58, 52), "eyes": [(34, 32, 40, 40)], "mouth": (44, 50), "head": (12, 2, 68, 58)},
 }
 
 

@@ -1,0 +1,40 @@
+# Fiche minimale — Amaia (écrite par tools/pf/prep_from_rig.py pour
+# from_rig.py : modèle = pose RD propre, gestes = ceux du rig). Groupes de couleur
+# déduits du rig : à relire (apparence en anglais pour pixelforge).
+id: amaia
+statut: brouillon
+apparence: a cartoon basque dancer girl, red headscarf, green vest over a white blouse, red skirt, holding a wooden makila walking stick, kid friendly
+hauteur: 112
+groupes_couleur:
+  vest:
+    sat:
+    - 0.36
+    - 0.7
+    val:
+    - 0.21
+    - 0.75
+    composante_min: 60
+    teinte:
+    - 110
+    - 151
+  skirt:
+    sat:
+    - 0.57
+    - 0.85
+    val:
+    - 0.32
+    - 1
+    composante_min: 60
+    teinte:
+    - 350
+    - 7
+costumes:
+  1:
+    vest: navy
+    skirt: red
+  2:
+    vest: red
+    skirt: green
+  3:
+    vest: purple
+    skirt: yellow

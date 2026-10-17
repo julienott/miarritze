@@ -1,0 +1,40 @@
+# Fiche minimale — Ramuntxo (écrite par tools/pf/prep_from_rig.py pour
+# from_rig.py : modèle = pose RD propre, gestes = ceux du rig). Groupes de couleur
+# déduits du rig : à relire (apparence en anglais pour pixelforge).
+id: ramuntxo
+statut: brouillon
+apparence: a cartoon basque chef, tall white chef hat, white jacket, red scarf, holding a frying pan, kid friendly
+hauteur: 112
+groupes_couleur:
+  jacket:
+    sat:
+    - 0.06
+    - 0.29
+    val:
+    - 0.61
+    - 1
+    composante_min: 60
+    teinte:
+    - 23
+    - 49
+  scarf:
+    sat:
+    - 0.57
+    - 0.85
+    val:
+    - 0.32
+    - 1
+    composante_min: 60
+    teinte:
+    - 355
+    - 7
+costumes:
+  1:
+    jacket: night
+    scarf: yellow
+  2:
+    jacket: sky
+    scarf: navy
+  3:
+    jacket: stone
+    scarf: green

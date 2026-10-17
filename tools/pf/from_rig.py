@@ -65,6 +65,43 @@ def window(f, foot):
     return out
 
 
+# Poses accroupies cassées dans certains rigs (bras étiré, pierre hors case chez
+# Mattin) : --accroupi refait le contrôle depuis la pose debout correspondante,
+# jambes écrasées à la hauteur de l'accroupi d'origine (accessoire compris).
+ACCROUPI = {"crouch": "idle", "crouch_idle": "idle", "crouch_block": "block", "crouch_punch": "punch_1"}
+WAIST = 0.55                # part du haut du corps gardée telle quelle
+
+
+def squash(f, height):
+    """Image (case de 160, pied en FOOT) → même image, jambes écrasées pour que
+    le perso fasse `height` px de haut ; le haut du corps est gardé, abaissé."""
+    bb = f.getbbox()
+    if not bb:
+        return f
+    t, b = bb[1], FOOT[1]
+    yw = t + int(WAIST * (b - t))
+    lower = max(int(0.3 * (b - yw)), height - (yw - t))
+    out = Image.new(f.mode, f.size)
+    out.paste(f.crop((0, yw, f.width, b)).resize((f.width, lower), Image.NEAREST), (0, b - lower))
+    up = f.crop((0, 0, f.width, yw))
+    out.paste(up, (0, b - lower - yw), up if f.mode == "RGBA" else None)
+    return out
+
+
+def crouch_from_standing(old_target, src_frames, src_masks):
+    """Contrôles (et masques d'accessoire) d'un accroupi depuis la pose debout."""
+    hs = sorted(FOOT[1] - f.getbbox()[1] for f in old_target if f.getbbox())
+    h = hs[len(hs) // 2]
+    n = len(old_target)
+    pick = [src_frames[min(len(src_frames) - 1, i * len(src_frames) // n)] for i in range(n)]
+    frames = [squash(f, h) for f in pick]
+    masks = None
+    if src_masks:
+        mk = [src_masks[min(len(src_masks) - 1, i * len(src_masks) // n)] for i in range(n)]
+        masks = [squash(m, h) for m in mk]
+    return frames, masks
+
+
 def clean_control(f):
     a = np.array(f)
     op = a[..., 3] > 0
@@ -104,6 +141,9 @@ def main():
     os.makedirs(pd, exist_ok=True)
     ref = model(fid)
     ref.save(os.path.join(od, "neutral_160.png"))
+    sans = os.path.join(od, "modele_sans_acc.png")      # model_sans_acc.py : pas d'accessoire fantôme
+    if os.path.exists(sans):
+        ref = Image.open(sans).convert("RGBA")
     if "--rig" in sys.argv:
         # Garder les images du rig d'origine pour ces animations (pirouettes,
         # transformations : le guidé perd le perso la tête en bas).
@@ -150,6 +190,16 @@ def main():
         masks = accm.get(name)
         keep = [window(Image.fromarray(np.where(m, 255, 0).astype(np.uint8)).convert("RGBA"), foot) for m in masks] \
             if masks else None
+        if "--accroupi" in sys.argv and name in ACCROUPI:
+            src = ACCROUPI[name]
+            sm = accm.get(src)
+            skeep = [window(Image.fromarray(np.where(m, 255, 0).astype(np.uint8)).convert("RGBA"), foot)
+                     for m in sm] if sm else None
+            old, keep = crouch_from_standing(old, [window(f, foot) for f in redraw.frames(meta, idx, pal, src)], skeep)
+            seed += 7000
+            pieces.strip(old).save(os.path.join(pd, f"{name}_r{seed}_ctl.png"))   # pour fix_lot.py
+            if keep:
+                pieces.strip(keep).save(os.path.join(pd, f"{name}_r{seed}_msk.png"))
         for tries in range(3):      # coupure du service : on attend et on recommence
             t = time.time()
             pf.wait_ready()

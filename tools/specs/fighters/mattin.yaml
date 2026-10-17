@@ -1,0 +1,40 @@
+# Fiche minimale — Mattin (écrite par tools/pf/prep_from_rig.py pour
+# from_rig.py : modèle = pose RD propre, gestes = ceux du rig). Groupes de couleur
+# déduits du rig : à relire (apparence en anglais pour pixelforge).
+id: mattin
+statut: brouillon
+apparence: a cartoon strong basque stone lifter man, black mustache, red beret, red and white striped shirt, navy trousers, kid friendly
+hauteur: 112
+groupes_couleur:
+  shirt:
+    sat:
+    - 0.06
+    - 0.85
+    val:
+    - 0.51
+    - 1
+    composante_min: 60
+    teinte:
+    - 350
+    - 7
+  pants:
+    sat:
+    - 0.5
+    - 0.68
+    val:
+    - 0.18
+    - 0.57
+    composante_min: 60
+    teinte:
+    - 213
+    - 241
+costumes:
+  1:
+    shirt: green
+    pants: wood
+  2:
+    shirt: navy
+    pants: red
+  3:
+    shirt: yellow
+    pants: green
