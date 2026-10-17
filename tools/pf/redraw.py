@@ -28,6 +28,7 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, HERE)
 import gen_anims_pf as pf  # noqa: E402
 import pieces  # noqa: E402
+import acc_mask  # noqa: E402
 
 MIN_FRAMES = 5   # le guidé travaille mal sur 2-3 images : on complète en répétant la dernière
 KEEP = ("same character, same face, same clothes, same colors, side view facing right, "
@@ -69,7 +70,19 @@ def reindex(im, pal):
 
 
 def run_guided(ref, controls, prompt, seed, lora):
-    """Comme pieces.guided, à la taille de la case (le guidé accepte jusqu'à 384)."""
+    """Par morceaux de pieces.CHUNK images (au-delà le guidé en renvoie moins)."""
+    frames, drift = [], 0.0
+    for k in range(0, len(controls), pieces.CHUNK):
+        part = controls[k:k + pieces.CHUNK]
+        part = part + [part[-1]] * max(0, MIN_FRAMES - len(part))
+        f, d = _run_guided(ref, part, prompt, seed, lora)
+        frames += f[:len(controls[k:k + pieces.CHUNK])]
+        drift = max(drift, d)
+    return frames, drift
+
+
+def _run_guided(ref, controls, prompt, seed, lora):
+    """Comme pieces._guided, à la taille de la case (le guidé accepte jusqu'à 256)."""
     import base64
     import io
     def sil(im):
@@ -96,6 +109,25 @@ def lora_for(anim, a):
     if anim in ("walk", "run"):
         return "walk"
     return "attack" if "hit_frame" in a else None
+
+
+def keep_acc(new, old, masks, grow=3):
+    """Accessoire recollé tel quel (le guidé déforme ou fend chistera, makila…) ;
+    autour (grow px), ce que le rendu ajoute là où l'original est vide est effacé."""
+    out = []
+    for n, o, m in zip(new, old, masks):
+        a, b = np.array(n), np.array(o)
+        if m.shape != a.shape[:2] or not m.any() or not (b[m][:, 3] > 0).all():
+            out.append(n)          # masque non aligné (idle RD…) : rien à protéger
+            continue
+        zone = m.copy()
+        for _ in range(grow):
+            p = np.pad(zone, 1)
+            zone = zone | p[:-2, 1:-1] | p[2:, 1:-1] | p[1:-1, :-2] | p[1:-1, 2:]
+        a[m] = b[m]
+        a[zone & (b[..., 3] == 0)] = 0
+        out.append(Image.fromarray(a))
+    return out
 
 
 def follow(fr, ctl):
@@ -167,10 +199,12 @@ def main():
         return
     opt = lambda k, d: type(d)(sys.argv[sys.argv.index(k) + 1]) if k in sys.argv else d
     retries = opt("--essais", 2)
+    shift = opt("--graine", 0)
     names = [a for a in sys.argv[2:] if not a.startswith("--") and not a.isdigit()] or list(meta["anims"])
     new_idx = np.array(Image.open(out_path)) if os.path.exists(out_path) else idx.copy()
     ref = frames(meta, idx, pal, "idle")[0]
     who = data.get("name", fid)
+    accm = acc_mask.masks(fid)
     log = open(os.path.join(od, "redraw.jsonl"), "a")
     state_path = os.path.join(od, "verdicts.json")
     verdicts = json.load(open(state_path)) if os.path.exists(state_path) else {}
@@ -180,10 +214,10 @@ def main():
         a = meta["anims"][name]
         old = frames(meta, idx, pal, name)
         n = len(old)
-        ctl = old + [old[-1]] * max(0, MIN_FRAMES - n)
+        ctl = old
         best, errs = None, []
         for attempt in range(retries + 1):
-            seed = int(hashlib.sha1(f"{fid}:{name}:redraw".encode()).hexdigest()[:6], 16) + attempt
+            seed = int(hashlib.sha1(f"{fid}:{name}:redraw".encode()).hexdigest()[:6], 16) + attempt + shift
             t = time.time()
             pf.wait_ready()
             try:
@@ -191,12 +225,17 @@ def main():
             except Exception as e:
                 print(f"{name} essai {attempt}: erreur {e}", flush=True)
                 continue
-            fr = fr[:n]
+            fr = pieces.unfill(fr[:n], old)
+            if name in accm:
+                fr = keep_acc(fr, old, accm[name])
             if len(fr) < n:
                 errs = [f"{len(fr)} images au lieu de {n}"]
             else:
                 fol = follow(fr, old)
                 errs = checks(fr, old)
+                lo, lo_ref = pieces.loose(fr), pieces.loose(old)
+                if lo > lo_ref + pieces.LOOSE_MAX:
+                    errs.append(f"morceaux détachés ({lo} px)")
                 if drift > pieces.DRIFT_MAX:
                     errs.append(f"identité qui dérive ({drift:.2f})")
                 if fol < pieces.FOLLOW_MIN:

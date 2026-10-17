@@ -79,9 +79,9 @@ VFX = {
         ("elem_b", *ELEM, "a single small grey pebble"),
     ],
     "patxi": [
-        ("proj_sardines", 26, 30, "three small silver sardine fish flying together"),
-        ("proj_hamecon", 14, 14, "a single silver fishing hook"),
-        ("proj_filet", 26, 38, "a cast fishing net, brown rope mesh spread open"),
+        ("proj_sardines", 26, 30, "a bundle of three shiny silver sardine fish side by side, cartoon"),
+        ("proj_hamecon", 14, 14, "a single big shiny silver fishing hook, J shape, thick outline"),
+        ("proj_filet", 26, 38, "a square brown rope fishing net mesh with small cork floats, flat, no frame, no basket"),
         ("elem_a", *ELEM, "a single small silver sardine fish"),
         ("elem_b", *ELEM, "a single blue water droplet with a white shine"),
     ],
