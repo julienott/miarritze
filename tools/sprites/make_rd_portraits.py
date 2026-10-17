@@ -44,7 +44,7 @@ FACES = {
              "eyes": [(41, 22, 49, 29)], "mouth": (62, 38), "head": (24, 4, 80, 60)},
     "karramarro": {"src": "tools/rd/out/karramarro/pf_portrait_103.png", "diag": 8, "fills": [(16, 92, 17, 93, "9e2a1f")], "protect": (44, 40, 72, 70), "eyes": [(47, 44, 55, 52), (61, 44, 69, 52)], "mouth": (55, 64), "head": (30, 30, 86, 86)},
     "ramuntxo": {"seal": 1, "protect": (36, 40, 64, 64), "eyes": [(46, 44, 51, 50), (54, 45, 59, 50)], "mouth": (52, 57), "head": (22, 10, 78, 66)},
-    "itsaso": {"protect": (46, 28, 76, 56), "eyes": [(56, 36, 62, 41), (66, 37, 70, 41)], "mouth": (61, 49), "head": (28, 8, 84, 64)},
+    "itsaso": {"src": "tools/rd/out/itsaso/portrait_src.png", "protect": (46, 28, 76, 56), "eyes": [(56, 36, 62, 41), (66, 37, 70, 41)], "mouth": (61, 49), "head": (28, 8, 84, 64)},
     "peio": {"src": "tools/rd/cache/834a7be0c9a517acf2f99be79ba12848e44c1371_0.png", "protect": (34, 26, 76, 66), "eyes": [(42, 40, 51, 49), (64, 40, 72, 49)], "mouth": (58, 58), "head": (22, 10, 78, 66), "big_x0": 16},
     "itsasargi": {"protect": (24, 16, 58, 48), "eyes": [(33, 24, 37, 28), (41, 24, 46, 28)], "mouth": (45, 36), "head": (12, 2, 68, 58)},
     "xabi": {"big_x0": 32, "protect": (24, 22, 58, 52), "eyes": [(34, 32, 40, 40)], "mouth": (44, 50), "head": (12, 2, 68, 58)},

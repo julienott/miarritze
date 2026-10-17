@@ -16,7 +16,8 @@ Le meilleur essai est gardé ; s'il rate un seuil, il est « À REVOIR » sur la
 Sorties comme pieces.py : tools/rd/out/<id>/pf/<anim>_r<graine>.png,
 anims.json (noms du jeu), pf/verdicts.json, planche tests/out/pf/<id>.png ;
 puis build_rd_anims.py <id> et build_fighter.py <id>.
-Usage : from_rig.py <id> [anim …] [--essais N] [--graine D] [--refaire] [--modele]
+Usage : from_rig.py <id> [anim …] [--essais N] [--graine D] [--refaire] [--modele] [--rig]
+  (--rig : garder les images du rig d'origine pour les anims citées)
   (--modele : écrit seulement neutral_160.png)
 """
 import hashlib
@@ -103,6 +104,22 @@ def main():
     os.makedirs(pd, exist_ok=True)
     ref = model(fid)
     ref.save(os.path.join(od, "neutral_160.png"))
+    if "--rig" in sys.argv:
+        # Garder les images du rig d'origine pour ces animations (pirouettes,
+        # transformations : le guidé perd le perso la tête en bas).
+        meta, data, idx, pal = redraw.load(fid)
+        reg_path, ok_path = os.path.join(od, "anims.json"), os.path.join(pd, "verdicts.json")
+        done = json.load(open(reg_path)) if os.path.exists(reg_path) else {}
+        verdicts = json.load(open(ok_path)) if os.path.exists(ok_path) else {}
+        for name in [a for a in sys.argv[2:] if not a.startswith("--")]:
+            path = os.path.join(pd, f"{name}_rig.png")
+            pieces.strip([window(f, tuple(meta["foot"])) for f in redraw.frames(meta, idx, pal, name)]).save(path)
+            done[name], verdicts[name] = path, "OK (rig d'origine)"
+            print(f"{name}: images du rig d'origine")
+        json.dump(done, open(reg_path, "w"), indent=1)
+        json.dump(verdicts, open(ok_path, "w"), indent=1, ensure_ascii=False)
+        print("planche :", pf.contact_sheet(fid, done, verdicts))
+        return
     if "--modele" in sys.argv:
         print("modèle :", os.path.join(od, "neutral_160.png"))
         return
