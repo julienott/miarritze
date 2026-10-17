@@ -186,7 +186,58 @@ def b64(im):
     return base64.b64encode(b.getvalue()).decode()
 
 
-CHUNK = 8   # au-delà, le guidé renvoie moins d'images que de contrôles (12 → 6)
+CHUNK = 8   # ancien découpage (avant le 2026-10-17 la planche passait sur 2 lignes au-delà de 8)
+
+# Seuils de la QA serveur (pixelforge, guided_qa) ; relances faites par le serveur.
+QA = {"min_iou": 0.72, "max_drift": 0.25, "max_detached": 12, "max_foreign": 220}
+
+
+def guided_server(ref, controls, prompt, seed, lora=None, clean=False, keep_frames=None, keep_masks=None,
+                  retries=3, qa=None):
+    """Un seul appel pf_anim__guided : une image par contrôle (planche sur une ligne),
+    fond enfermé retiré, contrôle nettoyé (clean : sprite couleur → silhouette),
+    accessoires recollés (keep_frames/keep_masks), relances serveur avec seuils.
+    Renvoie (images, guided_qa)."""
+    p = {"prompt_style": "pf_anim__guided", "input_image": b64(ref),
+         "control_frames": [b64(c) for c in controls], "prompt": prompt, "seed": seed,
+         "return_spritesheet": True, "sheet_cols": len(controls), "control_clean": clean,
+         "retries": retries, **(qa or QA)}
+    if lora:
+        p["sprite_lora"] = lora
+    if keep_masks:
+        p["keep_masks"] = [b64(m) for m in keep_masks]
+        if keep_frames:
+            p["keep_frames"] = [b64(f) for f in keep_frames]
+    r = pf._post_json(pf.PF + "/v1/inferences", p, timeout=7200)
+    sheet = Image.open(io.BytesIO(base64.b64decode(r["base64_images"][0]))).convert("RGBA")
+    info = r.get("pixelforge", {}).get("info", {})
+    w, h = controls[0].size
+    frames = [sheet.crop((i * w, 0, (i + 1) * w, h)) for i in range(sheet.width // w)][:len(controls)]
+    return frames, info.get("guided_qa", {})
+
+
+def qa_errors(gqa):
+    """Défauts lisibles d'après guided_qa (essai retenu)."""
+    pf_ = gqa.get("per_frame") or []
+    if not pf_:
+        return []
+    errs = []
+    iou = min(f.get("iou", 1) for f in pf_)
+    drift = max(f.get("drift", 0) for f in pf_)
+    det = max(f.get("detached_px", 0) for f in pf_)
+    fo = max(f.get("foreign_px", 0) for f in pf_)
+    extra = max(f.get("extra_area_vs_control", 0) for f in pf_)
+    if iou < QA["min_iou"]:
+        errs.append(f"ne suit pas le contrôle ({iou:.0%})")
+    if drift > QA["max_drift"]:
+        errs.append(f"identité qui dérive ({drift:.2f})")
+    if det > QA["max_detached"]:
+        errs.append(f"morceaux détachés ({det} px)")
+    if fo > QA["max_foreign"]:
+        errs.append(f"objet étranger ({fo} px)")
+    if extra > 0.15:
+        errs.append(f"silhouette débordante, fantôme ? ({extra:.0%})")
+    return errs
 
 
 def guided(rig, controls, prompt, seed, lora=None):

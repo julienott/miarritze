@@ -1,0 +1,20 @@
+# Fiche minimale — Itsaso, l'esprit de la vague (refaite le 2026-10-17 avec
+# tools/pf/from_rig.py : modèle = pose RD propre, gestes = ceux du rig existant).
+# Pas de « mouvements » : les animations suivent les silhouettes du rig.
+id: itsaso
+statut: brouillon
+apparence: >-
+  a cartoon girl made of sea water, pale cyan skin, long wavy aqua hair, a dress of deep blue waves
+  edged with white sea foam, barefoot, kid friendly
+hauteur: 112
+groupes_couleur:
+  robe:        # vagues bleu profond de la robe → recolorées par les costumes
+    teinte: [180, 212]
+    sat: [0.6, 1]
+    val: [0.38, 0.8]
+    composante_min: 80
+  # peau et cheveux cyan pâle, écume blanche : gardés tels quels
+costumes:
+  1: {robe: pink}
+  2: {robe: yellow}
+  3: {robe: purple}

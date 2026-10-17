@@ -22,9 +22,9 @@ STAGES = {
     "port_vieux": {"floor": "sand", "particles": "sand", "music": "port_vieux",
                    "props": [{"kind": "gull", "y": 44, "speed": -6, "parallax": 0.5}]},
     "halles": {"floor": "tiles", "particles": "flour", "music": "halles", "props": []},
-    "fronton": {"floor": "parquet", "particles": "wood", "music": "fronton",
+    "fronton": {"floor": "court", "particles": "wood", "music": "fronton",
                 "props": [{"kind": "gull", "y": 30, "speed": 7, "parallax": 0.4}]},
-    "stade": {"floor": "grass", "particles": "sand", "music": "stade", "props": [{"kind": "confetti"}]},
+    "stade": {"floor": "bandeau_bo", "particles": "sand", "music": "stade", "props": [{"kind": "confetti"}]},
     "aquarium": {"floor": "aqua_tiles", "particles": "water", "music": "aquarium", "props": [{"kind": "bubbles"}]},
     "phare_sommet": {"floor": "balcony", "particles": "wood", "music": "phare_sommet",
                      "props": [{"kind": "beam", "x": 96, "y": 58, "dot": False}]},
@@ -121,6 +121,40 @@ def floor(kind, seed=7):
             x, y = rnd.randrange(w), rnd.randrange(4, h)
             if px[x, y] != ramp[2]:
                 px[x, y] = ramp[1]
+    elif kind == "bandeau_bo":
+        # Bandeau rouge du stade (photo de Julien), inscription et écusson BO au centre.
+        from PIL import ImageDraw, ImageFont
+        red, dark, light, white = (208, 26, 30), (150, 14, 22), (236, 70, 64), (250, 246, 238)
+        for y in range(h):
+            for x in range(w):
+                px[x, y] = light if y < 2 else dark if y in (2, h - 1) else red
+        for x in range(0, w, 96):          # jointures des panneaux
+            for y in range(3, h - 1):
+                px[x, y] = dark
+        d = ImageDraw.Draw(img)
+        font = ImageFont.truetype(os.path.join(ROOT, "assets", "fonts", "press_start_2p.ttf"), 8)
+        cx = w // 2
+        # écusson : pentagone blanc, « BO » rouge
+        sx = cx - 74
+        # remonté : le bas du sol passe sous les jauges du HUD
+        d.polygon([(sx, 4), (sx + 28, 4), (sx + 28, 19), (sx + 14, 28), (sx, 19)], fill=white)
+        d.polygon([(sx + 3, 7), (sx + 25, 7), (sx + 25, 18), (sx + 14, 24), (sx + 3, 18)], fill=red)
+        d.text((sx + 6, 10), "BO", font=font, fill=white)
+        d.text((sx + 36, 5), "BIARRITZ", font=font, fill=white)
+        d.text((sx + 36, 16), "OLYMPIQUE", font=font, fill=white)
+    elif kind == "court":
+        # Terrain de fronton en béton gris (photo de Julien), lignes blanches de jeu.
+        ramp = RAMPS["stone"]
+        for y in range(h):
+            for x in range(w):
+                px[x, y] = ramp[0] if (x * 7 + y * 13) % 29 else ramp[1]
+        for _ in range(400):
+            px[rnd.randrange(w), rnd.randrange(2, h)] = ramp[1]
+        for x in range(w):
+            px[x, 0] = ramp[2]
+            px[x, 14] = RAMPS["linen"][0]
+        for y in range(15, h):
+            px[w // 2, y] = RAMPS["linen"][0]
     elif kind == "stone_night":
         ramp = RAMPS["night"]
         for y in range(h):
@@ -161,8 +195,8 @@ def build_variant(vid):
     d = os.path.join(ROOT, "assets", "stages", vid)
     os.makedirs(d, exist_ok=True)
     data = json.load(open(os.path.join(src, "stage.json")))
-    for i in range(3):
-        recolor(Image.open(os.path.join(src, f"far_v_{i}.png")).convert("RGB"), mode).save(os.path.join(d, f"far_v_{i}.png"))
+    for f in [l for l in data["layers"] if "frames" in l][0]["frames"]:
+        recolor(Image.open(os.path.join(src, f)).convert("RGB"), mode).save(os.path.join(d, f))
     recolor(Image.open(os.path.join(src, "floor.png")).convert("RGB"), mode).save(os.path.join(d, "floor.png"))
     data["id"] = vid
     json.dump(data, open(os.path.join(d, "stage.json"), "w"), indent=1)
@@ -176,7 +210,10 @@ def build(sid):
     d = os.path.join(ROOT, "assets", "stages", sid)
     cfg = STAGES[sid]
     frames = []
-    for i in range(3):
+    n = 0
+    while os.path.exists(os.path.join(d, f"far_{n}.png")):   # 3 images d'eau, ou 4 d'animate_far.py
+        n += 1
+    for i in range(n):
         src = os.path.join(d, f"far_{i}.png")
         out = os.path.join(d, f"far_v_{i}.png")
         veil(Image.open(src).convert("RGB")).save(out)
