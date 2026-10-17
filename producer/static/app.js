@@ -300,9 +300,12 @@ function showGrid() {
 
 function tile(a) {
   const n = openCount(a.id);
+  const idle = a.type === 'sprite' && (a.anims.find((x) => x.name === 'idle') || a.anims[0]);
   const thumb = a.type === 'audio'
     ? el('div', { class: 'thumb audio', text: '♪' })
-    : el('div', { class: 'thumb' }, el('img', { src: fileUrl(a.preview), alt: '', loading: 'lazy' }));
+    : idle
+      ? el('div', { class: 'thumb' }, miniAnim(idle, 0))
+      : el('div', { class: 'thumb' }, el('img', { src: fileUrl(a.preview), alt: '', loading: 'lazy' }));
   return el('button', {
     type: 'button', class: 'tile', 'data-id': a.id,
     onclick: () => { location.hash = '#/assets/' + encodeURIComponent(a.id); },
@@ -315,6 +318,48 @@ function stopPlayer() {
     clearTimeout(state.player.timer);
     state.player = null;
   }
+}
+
+// Mini-animations (vignettes des persos, galerie des animations) : une seule
+// boucle requestAnimationFrame ; une vignette retirée de la page est oubliée.
+const minis = new Set();
+let minisRunning = false;
+
+function miniAnim(anim, box) {
+  const canvas = el('canvas', { width: anim.w, height: anim.h });
+  const m = { anim, canvas, ctx: canvas.getContext('2d'), img: null, frame: 0, next: 0 };
+  const img = new Image();
+  img.onload = () => { m.img = img; drawMini(m); };
+  img.src = fileUrl(anim.file);
+  // Taille d'affichage : zoom entier qui tient dans la case (pixels nets) ;
+  // sans case, c'est la feuille de style qui ajuste (vignettes de la grille).
+  if (box) {
+    const z = Math.max(1, Math.floor(Math.min(box / anim.w, box / anim.h)));
+    canvas.style.width = anim.w * z + 'px';
+    canvas.style.height = anim.h * z + 'px';
+  }
+  minis.add(m);
+  if (!minisRunning) { minisRunning = true; requestAnimationFrame(tickMinis); }
+  return canvas;
+}
+
+function drawMini(m) {
+  m.ctx.clearRect(0, 0, m.anim.w, m.anim.h);
+  m.ctx.drawImage(m.img, m.frame * m.anim.w, 0, m.anim.w, m.anim.h, 0, 0, m.anim.w, m.anim.h);
+}
+
+function tickMinis(t) {
+  for (const m of minis) {
+    if (!m.canvas.isConnected && m.img) { minis.delete(m); continue; }
+    if (!m.img || t < m.next) continue;
+    const last = m.frame === m.anim.frames - 1;
+    m.frame = (m.frame + 1) % m.anim.frames;
+    drawMini(m);
+    // Comme le lecteur : une animation sans boucle marque une pause avant de recommencer.
+    m.next = t + 1000 / m.anim.fps + (last && !m.anim.loop ? 500 : 0);
+  }
+  if (minis.size) requestAnimationFrame(tickMinis);
+  else minisRunning = false;
 }
 
 function showDetail(a) {
@@ -339,6 +384,7 @@ function showDetail(a) {
   zoomSel.value = String(state.zoom);
 
   const controls = el('div', { class: 'controls' });
+  let gallery = null;
   let context = () => '';
   let applyZoom = () => {};
 
@@ -404,6 +450,12 @@ function showDetail(a) {
       img.src = fileUrl(anim.file);
     };
     animSel.addEventListener('change', () => load(a.anims.find((x) => x.name === animSel.value)));
+    // Toutes les animations du perso en même temps ; un clic l'ouvre dans le lecteur.
+    gallery = el('div', { class: 'anim-gallery' }, a.anims.map((x) =>
+      el('button', {
+        type: 'button', class: 'anim-cell', title: `${x.name} (${x.frames} images)`,
+        onclick: () => { animSel.value = x.name; load(x); stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); },
+      }, el('div', { class: 'anim-box' }, miniAnim(x, 88)), el('span', { text: x.name }))));
     playBtn.addEventListener('click', () => {
       p.playing = !p.playing;
       playBtn.textContent = p.playing ? '⏸ Pause' : '▶ Lecture';
@@ -451,6 +503,8 @@ function showDetail(a) {
     toolbar,
     stage,
     controls,
+    gallery ? el('h3', { text: 'Toutes les animations' }) : null,
+    gallery,
     el('p', { class: 'meta' },
       `${a.id} · version ${a.version} · build ${state.index.commit}` +
       (a.w ? ` · ${a.w}×${a.h}` : '') + (a.note ? ' · ' + a.note : '')),

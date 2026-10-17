@@ -7,7 +7,8 @@ Usage : build_index.py <dossier_sortie>   (ex. web/build/producer/files)
 - Sheets de combattants (PNG « L » indexé) : une planche par animation,
   colorisée avec palettes.png (costume 0), recadrée sur l'union des frames.
 - Portraits indexés : colorisés de la même façon.
-- Autres images : copiées telles quelles.
+- Autres images : copiées telles quelles ; les effets d'un perso (assets/vfx/<id>)
+  sont rangés dans son groupe de la catégorie Combattants.
 - Audio : .ogg copié ; si ffmpeg est présent, un .mp3 est ajouté (Safari iOS
   ne lit pas toujours le Vorbis).
 - index.json : liste des assets (id = chemin relatif à assets/), version =
@@ -193,7 +194,10 @@ class Builder:
             img = Image.open(png)
             f = self.copy(png, rel)
             group = png.parent.name if group_from_dir else sub
-            self.add(id=rel, cat=cat, group=group, name=f"{group} · {png.stem}" if group_from_dir else png.stem,
+            c = cat
+            if sub == "vfx" and (ASSETS / "fighters" / group).is_dir():
+                c = CAT_FIGHTERS     # effets d'un perso : sur sa page, avec ses animations
+            self.add(id=rel, cat=c, group=group, name=f"{group} · {'effet · ' if c != cat else ''}{png.stem}" if group_from_dir else png.stem,
                      type="image", version=short_hash(png), w=img.width, h=img.height,
                      file=f, preview=f, note="")
 
@@ -275,6 +279,14 @@ class Builder:
         self.audio("music", CAT_MUSIC)
         self.audio("sfx", CAT_SFX)
         self.audio("voice", CAT_VOICE)
+        def rank(a):
+            if a["cat"] != CAT_FIGHTERS:
+                return (1, "", 0, a["id"])
+            n = a["id"].rsplit("/", 1)[-1]
+            k = 0 if a["type"] == "sprite" else 1 if n.startswith("portrait") else 2 if n.startswith("ending") \
+                else 4 if a["id"].startswith("vfx/") else 3
+            return (0, a["group"], k, a["id"])
+        self.assets.sort(key=rank)
         index = {
             "commit": git_commit(),
             "generated_at": int(time.time()),

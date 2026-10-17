@@ -6,7 +6,8 @@ Service privé : https://miarritze.ijulien.com/producer/
 
 - **Connexion** : mot de passe unique. Après 5 échecs, l'adresse IP est bloquée 15 minutes. La session dure 30 jours.
 - **Assets** : les catégories sont à gauche (sur iPhone, en haut). On peut aussi chercher par nom (`maia`, `idle`, `fronton`…).
-  - Les persos sont colorisés avec le costume 0. Chaque animation est jouable, et on peut avancer image par image avec ◀ ▶.
+  - Les persos sont colorisés avec le costume 0. Chaque perso a sa page (Combattants → son nom) : animations, portraits, image de fin puis effets de ses spéciaux ; sa vignette joue son attente.
+  - Sur « animations », toutes les animations du perso tournent en aperçu sous le lecteur ; un clic en ouvre une dans le lecteur, où l'on peut avancer image par image avec ◀ ▶.
   - Le fond se choisit entre clair, sombre et damier ; le zoom est en pixels nets.
   - Musiques, SFX et voix ont un lecteur audio.
 - **Commentaires** : sur chaque asset, choisis « Amélioration » ou « Validé », puis écris un texte (obligatoire pour une amélioration).
@@ -104,6 +105,7 @@ PRODUCER_PASSWORD=test-local PRODUCER_TOKEN=tok_local_0123456789abcdefghij PRODU
 php -S 127.0.0.1:8099 -t /tmp/producer-site &
 PRODUCER_URL=http://127.0.0.1:8099/producer/ PRODUCER_TEST_PASSWORD=test-local \
   PRODUCER_TOKEN=tok_local_0123456789abcdefghij node tests/web/producer.mjs   # base vide requise
+PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_anims.mjs   # page d'un perso + galerie animée
 ```
 
 Le test (Chromium, 36 vérifications) couvre :
