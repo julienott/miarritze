@@ -61,7 +61,7 @@ def walk(n, amp=16, lift=5, low=0.0, cycles=1, lean=0):
     return keys
 
 
-def spin(n, turns=1.0, peak=45):
+def spin(n, turns=1.0, peak=14):
     keys = {}
     for i in range(n):
         u = i / (n - 1)
@@ -75,7 +75,7 @@ def knockdown():
     seq = [(0, P()), (-20, P(pf=dict(rot=-25), pb=dict(rot=-20))), (-60, P(pf=dict(rot=-35), pb=dict(rot=-30))),
            (-120, P(pf=dict(rot=-30), pb=dict(rot=-25))), (-180, P(lb=dict(rot=12), lf=dict(rot=-12))),
            (-180, P(lb=dict(rot=-12), lf=dict(rot=12), pf=dict(rot=15), pb=dict(rot=-15)))]
-    return {i: merge(p, P(tilt=t, tilt_pivot=(60, 120), all=dict(dx=-3 * min(i, 3)))) for i, (t, p) in enumerate(seq)}
+    return {i: merge(p, P(tilt=t, tilt_pivot=(60, 120))) for i, (t, p) in enumerate(seq)}
 
 
 MOVES = {

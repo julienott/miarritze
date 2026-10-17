@@ -103,6 +103,15 @@ class Rig:
         if tilt:
             c = tuple(v + CELL for v in pose.get("tilt_pivot", (77, self.ground)))
             big = big.rotate(-tilt, resample=Image.NEAREST, center=c)
+            # recentré sur l'axe du corps : la rotation déporte le perso (pinces coupées au bord)
+            bb = big.getbbox()
+            if bb:
+                want = CELL + self.pivot["body"][0] + g.get("dx", 0)
+                shift = round(want - (bb[0] + bb[2]) / 2)
+                shift = max(CELL - bb[0] - CELL, min(shift, 2 * CELL - bb[2]))
+                moved = Image.new("RGBA", big.size)
+                moved.paste(big, (shift, 0), big)
+                big = moved
             feet = big   # retourné : c'est le bas du perso entier qui touche le sol
         fb = feet.getbbox() or big.getbbox()
         # pieds au sol, puis élévation ; abscisse : celle de la pose (pas de recentrage)
