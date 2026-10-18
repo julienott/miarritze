@@ -1,45 +1,45 @@
 extends Node
 ## Updater — mise à jour automatique de la version Steam Deck (Linux).
 ##
-## Actif seulement dans l'export « SteamDeck » (fonctionnalité `steamdeck`),
-## jamais en web ni dans l'éditeur. Au lancement :
-##   1. si une version plus récente a déjà été téléchargée (user://update/),
-##      le jeu se relance dessus avec `--main-pack` ;
-##   2. sinon il lit le manifeste du site ; si une version plus récente
-##      existe, il télécharge son .pck, vérifie taille + sha256, l'installe
-##      dans user://update/ puis se relance dessus ;
-##   3. si le moteur Godot a changé (le .pck ne suffit plus), il télécharge
-##      le paquet complet .tar.gz et le décompresse dans le dossier du jeu.
-## Toute erreur (pas de réseau, fichier corrompu, dossier en lecture seule)
+## Actif seulement dans l'export « SteamDeck » (fonctionnalité `steamdeck`,
+## modèle d'export), jamais en web ni depuis l'éditeur. Au lancement, il lit
+## le manifeste du site (tools/steamdeck/package.sh) ; si un build plus
+## récent existe :
+##   - même moteur Godot : il télécharge le nouveau .pck, vérifie taille et
+##     sha256, le met à la place de celui du jeu, puis relance le jeu ;
+##   - moteur différent : il télécharge le paquet complet .tar.gz, le vérifie,
+##     le décompresse dans le dossier du jeu, puis relance le jeu.
+## Le .pck est remplacé à côté de l'exécutable (et pas chargé depuis user://)
+## parce que les modèles d'export officiels refusent `--main-pack` et qu'un
+## `load_resource_pack()` à chaud ne recharge ni les autoloads ni le cache
+## des classes globales. Remplacer un fichier ouvert est sans risque sous
+## Linux (renommage atomique ; l'ancien reste lisible par le processus).
+## Les sauvegardes (user://) ne sont jamais touchées.
+##
+## Toute erreur (pas de réseau, fichier abîmé, dossier en lecture seule)
 ## laisse démarrer la version présente : on ne bloque jamais le joueur.
-## Garde-fou : une version téléchargée qui ne démarre pas (2 essais sans
-## confirmation) est écartée et n'est plus jamais retentée.
 ##
 ## Le numéro de build et la version sont injectés par la CI dans
 ## project.godot (application/config/build, application/config/version).
-## Arguments utiles (tests) : `--no-update`, `--force-updater`,
-## `--update-manifest=<url>`.
+## Arguments : `--no-update` (désactive), `--update-manifest=<url>` (tests).
 
 ## Émis quand le démarrage peut continuer (pas de mise à jour, ou échec).
 ## En cas de mise à jour réussie, le jeu se relance et ce signal n'est pas émis.
 signal finished
 
 const MANIFEST_URL: String = "https://miarritze.ijulien.com/steamdeck/manifest.json"
-const UPDATE_DIR: String = "user://update"
-const STATE_PATH: String = "user://update/state.json"
 const MANIFEST_TIMEOUT_S: float = 5.0
 const DOWNLOAD_TIMEOUT_S: float = 600.0
-## Lancements sans confirmation au-delà desquels une version est écartée.
-const MAX_TRIES: int = 2
-## Durée de jeu après laquelle une version téléchargée est jugée saine.
-const CONFIRM_DELAY_S: float = 8.0
+## Passé au jeu relancé : s'il ne tourne pas ce build-là, on n'insiste pas
+## (évite une boucle téléchargement / relance).
+const UPDATED_ARG: String = "--updated-to="
 
 ## Vrai tant que la vérification est en cours (boot attend `finished`).
 var busy: bool = false
 
 var _manifest_url: String = MANIFEST_URL
 var _build: int = 0
-var _state: Dictionary = {}
+var _install_dir: String = ""
 var _http: HTTPRequest
 var _layer: CanvasLayer
 var _label: Label
@@ -50,25 +50,23 @@ func _ready() -> void:
 	if not _enabled():
 		return
 	_build = int(ProjectSettings.get_setting("application/config/build", 0))
+	_install_dir = OS.get_executable_path().get_base_dir()
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--update-manifest="):
 			_manifest_url = arg.trim_prefix("--update-manifest=")
+		elif arg.begins_with(UPDATED_ARG) and int(arg.trim_prefix(UPDATED_ARG)) > _build:
+			push_warning("Updater: la mise à jour n'a pas pris, on démarre tel quel")
+			return
+	if not _install_dir_writable():
+		return
 	busy = true
-	_start.call_deferred()
-
-
-## Version lisible (affichée dans les réglages, par exemple).
-static func version_text() -> String:
-	return str(ProjectSettings.get_setting("application/config/version", "dev"))
+	_fetch_manifest.call_deferred()
 
 
 func _enabled() -> bool:
-	var args: PackedStringArray = OS.get_cmdline_user_args()
-	if args.has("--no-update"):
+	if OS.get_cmdline_user_args().has("--no-update"):
 		return false
-	if args.has("--force-updater"):
-		return true
-	return OS.has_feature("steamdeck") and not OS.has_feature("editor")
+	return OS.has_feature("steamdeck") and OS.has_feature("template") and OS.has_feature("linux")
 
 
 func _engine_version() -> String:
@@ -76,59 +74,17 @@ func _engine_version() -> String:
 	return "%d.%d.%d" % [int(info["major"]), int(info["minor"]), int(info["patch"])]
 
 
-func _start() -> void:
-	DirAccess.make_dir_recursive_absolute(UPDATE_DIR)
-	_state = _load_state()
-	if _redirect_to_downloaded():
-		return
-	_confirm_running_build()
-	_fetch_manifest()
-
-
-# --- 1. Version déjà téléchargée -------------------------------------------
-
-## Relance sur le .pck téléchargé s'il est plus récent que celui qui tourne.
-func _redirect_to_downloaded() -> bool:
-	var state_build: int = int(_state.get("build", 0))
-	var pck: String = str(_state.get("pck", ""))
-	if state_build <= _build or pck == "":
-		# Version installée à jour (ou réinstallée depuis le site) : ménage.
-		if state_build > 0 and state_build < _build:
-			_forget_downloaded()
+func _install_dir_writable() -> bool:
+	var probe: String = _install_dir.path_join(".miarritze_write_test")
+	var file: FileAccess = FileAccess.open(probe, FileAccess.WRITE)
+	if file == null:
 		return false
-	if not FileAccess.file_exists(pck) or str(_state.get("godot", "")) != _engine_version():
-		_forget_downloaded()
-		return false
-	if not bool(_state.get("confirmed", false)) and int(_state.get("tries", 0)) >= MAX_TRIES:
-		# Cette version n'a jamais réussi à démarrer : on l'écarte.
-		_state["bad_build"] = state_build
-		_forget_downloaded()
-		return false
-	_relaunch(pck)
+	file.close()
+	DirAccess.remove_absolute(probe)
 	return true
 
 
-## La version téléchargée tourne : après quelques secondes sans plantage,
-## on la déclare saine.
-func _confirm_running_build() -> void:
-	if int(_state.get("build", 0)) != _build or bool(_state.get("confirmed", false)):
-		return
-	get_tree().create_timer(CONFIRM_DELAY_S).timeout.connect(func() -> void:
-		_state["confirmed"] = true
-		_state["tries"] = 0
-		_save_state())
-
-
-func _forget_downloaded() -> void:
-	var pck: String = str(_state.get("pck", ""))
-	if pck != "" and FileAccess.file_exists(pck):
-		DirAccess.remove_absolute(pck)
-	for key: String in ["build", "pck", "godot", "tries", "confirmed"]:
-		_state.erase(key)
-	_save_state()
-
-
-# --- 2. Manifeste ------------------------------------------------------------
+# --- Manifeste -----------------------------------------------------------------
 
 func _fetch_manifest() -> void:
 	_http = HTTPRequest.new()
@@ -151,7 +107,7 @@ func _on_manifest(result: int, code: int, _headers: PackedStringArray, body: Pac
 		return
 	var manifest: Dictionary = data
 	var remote_build: int = int(manifest.get("build", 0))
-	if remote_build <= _build or remote_build == int(_state.get("bad_build", 0)):
+	if remote_build <= _build:
 		_done()
 		return
 	var same_engine: bool = str(manifest.get("godot", "")) == _engine_version()
@@ -159,18 +115,15 @@ func _on_manifest(result: int, code: int, _headers: PackedStringArray, body: Pac
 	if not entry is Dictionary:
 		_done()
 		return
-	if not same_engine and not _install_dir_writable():
-		_done()
-		return
-	_download(entry as Dictionary, remote_build, same_engine, str(manifest.get("version", "")))
+	_download(entry as Dictionary, remote_build, same_engine)
 
 
-# --- 3. Téléchargement -------------------------------------------------------
+# --- Téléchargement ------------------------------------------------------------
 
-func _download(entry: Dictionary, remote_build: int, is_pck: bool, version: String) -> void:
+func _download(entry: Dictionary, remote_build: int, is_pck: bool) -> void:
 	var url: String = _resolve(str(entry.get("url", "")))
-	var target: String = "%s/miarritze-%d.%s" % [UPDATE_DIR, remote_build, "pck" if is_pck else "tar.gz"]
-	var part: String = target + ".part"
+	# Fichier temporaire dans le dossier du jeu : le renommage final est atomique.
+	var part: String = _install_dir.path_join(".update-%d.%s.part" % [remote_build, "pck" if is_pck else "tar.gz"])
 	_show("Nouvelle version du jeu !\nTéléchargement…")
 	_http = HTTPRequest.new()
 	_http.timeout = DOWNLOAD_TIMEOUT_S
@@ -183,17 +136,16 @@ func _download(entry: Dictionary, remote_build: int, is_pck: bool, version: Stri
 		func(result: int, code: int, _h: PackedStringArray, _b: PackedByteArray) -> void:
 			_http.queue_free()
 			_http = null
-			if result != HTTPRequest.RESULT_SUCCESS or code != 200 or not _verify(part, entry):
+			set_process(false)
+			var ok: bool = result == HTTPRequest.RESULT_SUCCESS and code == 200 and _verify(part, entry)
+			if ok:
+				ok = _install_pck(part) if is_pck else _install_package(part)
+			if FileAccess.file_exists(part):
 				DirAccess.remove_absolute(part)
-				_done()
-				return
-			if FileAccess.file_exists(target):
-				DirAccess.remove_absolute(target)
-			DirAccess.rename_absolute(part, target)
-			if is_pck:
-				_install_pck(target, remote_build)
+			if ok:
+				_relaunch(remote_build)
 			else:
-				_install_package(target, version))
+				_done())
 	if _http.request(url) != OK:
 		_http.queue_free()
 		_http = null
@@ -201,7 +153,7 @@ func _download(entry: Dictionary, remote_build: int, is_pck: bool, version: Stri
 
 
 func _process(_delta: float) -> void:
-	if _http == null or _label == null or _http.download_file == "":
+	if _http == null or _label == null:
 		return
 	var total: int = _http.get_body_size()
 	if total > 0:
@@ -219,68 +171,40 @@ func _verify(path: String, entry: Dictionary) -> bool:
 	return FileAccess.get_sha256(path) == str(entry.get("sha256", "")).to_lower()
 
 
-func _install_pck(pck: String, remote_build: int) -> void:
-	var previous: String = str(_state.get("pck", ""))
-	if previous != "" and previous != pck and FileAccess.file_exists(previous):
-		DirAccess.remove_absolute(previous)
-	_state["build"] = remote_build
-	_state["pck"] = pck
-	_state["godot"] = _engine_version()
-	_state["tries"] = 0
-	_state["confirmed"] = false
-	_save_state()
-	_relaunch(pck)
+## Même moteur : le nouveau .pck remplace celui que charge l'exécutable.
+func _install_pck(part: String) -> bool:
+	var pck: String = OS.get_executable_path().get_basename() + ".pck"
+	return DirAccess.rename_absolute(part, pck) == OK
 
 
-## Moteur différent : on remplace le jeu entier dans son dossier (Linux
-## autorise l'écrasement d'un exécutable en cours d'exécution).
-func _install_package(archive: String, _version: String) -> void:
+## Moteur différent : on décompresse le paquet complet sur le dossier du jeu.
+func _install_package(part: String) -> bool:
 	_show("Installation de la nouvelle version…")
-	var install_dir: String = OS.get_executable_path().get_base_dir()
 	var output: Array = []
-	var code: int = OS.execute("tar", ["-xzf", ProjectSettings.globalize_path(archive),
-		"-C", install_dir, "--strip-components=1"], output, true)
-	DirAccess.remove_absolute(archive)
+	var code: int = OS.execute("tar", ["-xzf", part, "-C", _install_dir, "--strip-components=1"],
+		output, true)
 	if code != 0:
 		push_warning("Updater: échec de tar (%d) %s" % [code, str(output)])
-		_done()
-		return
-	# Le nouveau paquet contient déjà le dernier .pck : l'ancien téléchargé ne sert plus.
-	_forget_downloaded()
-	_relaunch("")
+	return code == 0
 
 
-func _install_dir_writable() -> bool:
-	if not OS.has_feature("linux"):
-		return false
-	var probe: String = OS.get_executable_path().get_base_dir().path_join(".miarritze_write_test")
-	var file: FileAccess = FileAccess.open(probe, FileAccess.WRITE)
-	if file == null:
-		return false
-	file.close()
-	DirAccess.remove_absolute(probe)
-	return true
+# --- Relance -------------------------------------------------------------------
 
-
-# --- Relance -----------------------------------------------------------------
-
-func _relaunch(pck: String) -> void:
+func _relaunch(new_build: int) -> void:
 	_show("C'est prêt !\nLe jeu redémarre…")
 	var args: PackedStringArray = []
-	if pck != "":
-		args.append_array(["--main-pack", ProjectSettings.globalize_path(pck)])
-		_state["tries"] = int(_state.get("tries", 0)) + 1
-		_save_state()
-	var user_args: PackedStringArray = OS.get_cmdline_user_args()
-	if not user_args.is_empty():
-		args.append("--")
-		args.append_array(user_args)
-	# Une frame pour afficher le message, puis on passe la main.
+	if DisplayServer.get_name() == "headless":
+		args.append("--headless")
+	args.append("--")
+	for arg: String in OS.get_cmdline_user_args():
+		if not arg.begins_with(UPDATED_ARG):
+			args.append(arg)
+	args.append(UPDATED_ARG + str(new_build))
+	# Deux frames pour afficher le message, puis on passe la main.
 	await get_tree().process_frame
 	await get_tree().process_frame
 	if OS.create_process(OS.get_executable_path(), args) == -1:
 		push_warning("Updater: relance impossible")
-		_hide()
 		_done()
 		return
 	get_tree().quit()
@@ -292,25 +216,12 @@ func _done() -> void:
 	finished.emit()
 
 
-# --- État + affichage ----------------------------------------------------------
+# --- Affichage -------------------------------------------------------------------
 
 func _resolve(url: String) -> String:
 	if url.begins_with("http://") or url.begins_with("https://"):
 		return url
 	return _manifest_url.get_base_dir().path_join(url)
-
-
-func _load_state() -> Dictionary:
-	if not FileAccess.file_exists(STATE_PATH):
-		return {}
-	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(STATE_PATH))
-	return data if data is Dictionary else {}
-
-
-func _save_state() -> void:
-	var file: FileAccess = FileAccess.open(STATE_PATH, FileAccess.WRITE)
-	if file != null:
-		file.store_string(JSON.stringify(_state))
 
 
 func _show(text: String) -> void:

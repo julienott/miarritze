@@ -41,7 +41,8 @@ echo "$VERSION" > "$STAGE/$NAME/VERSION"
 
 TAR="$NAME-$VERSION.tar.gz"
 PCK="$NAME-$VERSION.pck"
-tar -czf "$OUT/$TAR" -C "$STAGE" "$NAME"
+# COPYFILE_DISABLE : pas de fichiers « ._* » quand on empaquette depuis macOS.
+COPYFILE_DISABLE=1 tar -czf "$OUT/$TAR" -C "$STAGE" "$NAME"
 cp "$EXPORT_DIR/$NAME.pck" "$OUT/$PCK"
 
 NAME="$NAME" OUT="$OUT" TAR="$TAR" PCK="$PCK" BUILD="$BUILD" VERSION="$VERSION" \
