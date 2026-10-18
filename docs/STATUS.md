@@ -4,6 +4,10 @@ Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
 ## Phase atteinte : 8 ✅ (polissage) — v1 en prod sur https://miarritze.ijulien.com (main = borroka, déployé le 2026-10-13)
 
+### Version Recalbox (branche `recalbox`, 2026-10-18, à relire et fusionner)
+- Raspberry Pi 4/5 (Recalbox 64 bits) et PC x86_64 : presets « Recalbox » / « Recalbox x86_64 », système utilisateur ES rangé dans Ports (`systemlist.xml`), lanceur `MiarritzeBorroka.sh` (copie hors exFAT, dwl sur Pi), quitter par Select+Start, job CI `recalbox` (publication dans `/recalbox/` : un .zip par architecture, .pck commun, `manifest.json`), page + `install.sh` SSH, mise à jour automatique (même `Updater`). Pi 3 et moins : impossible (GLES 2). Voir `docs/RECALBOX.md`.
+- Testé : exports locaux, 26 scénarios lanceur + updater en conteneur arm64 et x86_64 sur une vraie partition exFAT, `install.sh`, non-régression Steam Deck et web. **Pas testé sur une vraie Recalbox** (checklist dans la doc).
+
 ### Version Steam Deck (branche `steamdeck`, 2026-10-18, à relire et fusionner)
 - Preset « SteamDeck » (Linux x86_64), job CI `steamdeck` dans `deploy.yml` (publication dans `/steamdeck/` : archive, `.pck`, `manifest.json`), page d'installation + `install.sh`, mise à jour automatique au lancement (autoload `Updater`). Voir `docs/STEAMDECK.md`.
 - Testé : export local, rendu 1280×800, auto-update de bout en bout dans un conteneur Linux x86_64 (7 scénarios), `install.sh` local. **Pas encore testé sur un vrai Deck ni en CI réelle** (checklist dans la doc).

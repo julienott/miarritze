@@ -1,0 +1,16 @@
+# /recalbox/ — page d'installation et paquets de la version Recalbox.
+# Hérite des en-têtes du .htaccess racine (COOP/COEP, no-cache).
+
+<IfModule mod_mime.c>
+	AddType application/zip .zip
+	AddType application/octet-stream .pck
+	AddType text/x-shellscript .sh
+	AddType application/json .json
+</IfModule>
+
+<IfModule mod_headers.c>
+	# Le script et les paquets se téléchargent au lieu de s'afficher.
+	<FilesMatch "\.(sh|pck|zip)$">
+		Header set Content-Disposition "attachment"
+	</FilesMatch>
+</IfModule>

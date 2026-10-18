@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./MiarritzeBorroka.sh</path>
+    <name>Miarritze Borroka</name>
+    <desc>Le jeu de combat de Biarritz ! Choisis ton champion, affronte la tour ou un copain, sur la Grande Plage, au port des pêcheurs et ailleurs. Pour quitter : maintiens Select (ou Hotkey) + Start.</desc>
+    <image>./media/titre.png</image>
+    <thumbnail>./media/icone.png</thumbnail>
+    <developer>Miarritze</developer>
+    <publisher>Miarritze</publisher>
+    <genre>Combat</genre>
+    <players>1-2</players>
+    <releasedate>20261018T000000</releasedate>
+  </game>
+</gameList>
