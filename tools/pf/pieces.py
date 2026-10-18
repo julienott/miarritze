@@ -216,8 +216,9 @@ def guided_server(ref, controls, prompt, seed, lora=None, clean=False, keep_fram
     return frames, info.get("guided_qa", {})
 
 
-def qa_errors(gqa):
+def qa_errors(gqa, qa=None):
     """Défauts lisibles d'après guided_qa (essai retenu)."""
+    QA_ = qa or QA
     pf_ = gqa.get("per_frame") or []
     if not pf_:
         return []
@@ -227,13 +228,13 @@ def qa_errors(gqa):
     det = max(f.get("detached_px", 0) for f in pf_)
     fo = max(f.get("foreign_px", 0) for f in pf_)
     extra = max(f.get("extra_area_vs_control", 0) for f in pf_)
-    if iou < QA["min_iou"]:
+    if iou < QA_["min_iou"]:
         errs.append(f"ne suit pas le contrôle ({iou:.0%})")
-    if drift > QA["max_drift"]:
+    if drift > QA_["max_drift"]:
         errs.append(f"identité qui dérive ({drift:.2f})")
-    if det > QA["max_detached"]:
+    if det > QA_["max_detached"]:
         errs.append(f"morceaux détachés ({det} px)")
-    if fo > QA["max_foreign"]:
+    if fo > QA_["max_foreign"]:
         errs.append(f"objet étranger ({fo} px)")
     if extra > 0.15:
         errs.append(f"silhouette débordante, fantôme ? ({extra:.0%})")

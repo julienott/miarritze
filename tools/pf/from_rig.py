@@ -142,8 +142,10 @@ def main():
     ref = model(fid)
     ref.save(os.path.join(od, "neutral_160.png"))
     sans = os.path.join(od, "modele_sans_acc.png")      # model_sans_acc.py : pas d'accessoire fantôme
+    qa = dict(pieces.QA)
     if os.path.exists(sans):
         ref = Image.open(sans).convert("RGBA")
+        qa["max_drift"] = 0.45      # l'accessoire recollé n'est pas dans le modèle : dérive mesurée plus forte
     if "--rig" in sys.argv:
         # Garder les images du rig d'origine pour ces animations (pirouettes,
         # transformations : le guidé perd le perso la tête en bas).
@@ -207,12 +209,12 @@ def main():
                 # relances, nettoyage du contrôle et accessoire recollé : côté serveur (pixelforge)
                 fr, gqa = pieces.guided_server(ref, old, f"{look}, {name.replace('_', ' ')}, {keep_txt}", seed, lora,
                                                clean=True, keep_frames=old if keep else None, keep_masks=keep,
-                                               retries=retries)
+                                               retries=retries, qa=qa)
                 break
             except Exception as e:
                 print(f"{name}: erreur {e}", flush=True)
                 fr, gqa = [], {}
-        errs = pieces.qa_errors(gqa) if len(fr) == n else [f"{len(fr)} images au lieu de {n}"]
+        errs = pieces.qa_errors(gqa, qa) if len(fr) == n else [f"{len(fr)} images au lieu de {n}"]
         path = os.path.join(pd, f"{name}_r{seed}.png")
         if len(fr) == n:
             pieces.strip(fr).save(path)

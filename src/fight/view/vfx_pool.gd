@@ -178,12 +178,14 @@ func _draw_projectile(pr: ProjectileState) -> void:
 		"faisceau":
 			draw_rect(Rect2(p + Vector2(-40, -5), Vector2(80, 10)), Color(1.0, 0.95, 0.6, 0.55))
 			draw_rect(Rect2(p + Vector2(-40, -2), Vector2(80, 4)), Color(1.0, 1.0, 0.9, 0.9))
-		"bouee":
-			draw_arc(p, 8, 0, TAU, 14, C_OUTLINE, 5.0)
-			draw_arc(p, 8, 0, TAU, 14, Color8(238, 140, 58), 3.0)
-			for k: int in 4:
-				var a: float = k * PI * 0.5 + pr.age * 0.2
-				draw_rect(Rect2(p + Vector2(cos(a), sin(a)) * 8 - Vector2(1, 1), Vector2(2, 2)), C_LINEN)
+		"palme":
+			# palme de plongée qui tournoie (secours si proj_palme.png manque)
+			var ax: Vector2 = Vector2(1, 0).rotated(spin * PI * 0.5) * f
+			var ay: Vector2 = Vector2(-ax.y, ax.x)
+			var fin: PackedVector2Array = PackedVector2Array([p - ax * 10 - ay * 3, p + ax * 8 - ay * 7, p + ax * 10 + ay * 7, p - ax * 10 + ay * 3])
+			draw_colored_polygon(fin, C_OUTLINE)
+			draw_colored_polygon(PackedVector2Array([fin[0] + ax, fin[1] - ax + ay, fin[2] - ax - ay, fin[3] + ax]), Color8(52, 120, 212))
+			draw_rect(Rect2(p - ax * 8 - Vector2(2, 2), Vector2(4, 4)), Color8(30, 60, 120))
 		"pavillon":
 			draw_rect(Rect2(p + Vector2(-1, -58), Vector2(2, 58)), C_OUTLINE)
 			var wave: float = sin(pr.age * 0.2) * 2.0

@@ -36,14 +36,14 @@
   },
   "sp_forward": {
    "anim": "sp_forward",
-   "name": "Bouée lasso",
+   "name": "Lancer de palmes",
    "classic": "B,F+P",
    "startup": 12,
    "active": 1,
    "recovery": 24,
    "spawn": {
     "frame": 11,
-    "projectile": "bouee",
+    "projectile": "palme",
     "offset": [
      22,
      -60
@@ -143,20 +143,19 @@
   }
  },
  "projectiles": {
-  "bouee": {
-   "anim": "proj_bouee",
-   "speed": 1500,
+  "palme": {
+   "anim": "proj_palme",
+   "speed": 1700,
    "damage": 45,
-   "hitstun": 30,
+   "hitstun": 26,
    "blockstun": 10,
    "hitbox": [
-    -9,
-    -9,
-    18,
-    18
+    -11,
+    -7,
+    22,
+    14
    ],
    "life": 32,
-   "pull_on_hit": 4400,
    "hitstop": 8
   },
   "pavillon": {

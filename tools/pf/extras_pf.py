@@ -95,7 +95,7 @@ VFX = {
         ("elem_b", *ELEM, "a single small red espelette pepper"),
     ],
     "txomin": [
-        ("proj_bouee", 22, 22, "a red and white lifebuoy ring"),
+        ("proj_palme", 28, 16, "a single blue rubber swimming fin flipper seen from the side"),
         ("proj_pavillon", 50, 64, "a red beach warning flag on a wooden pole planted in sand"),
         ("elem_a", *ELEM, "a single blue water droplet with a white shine"),
         ("elem_b", *ELEM, "a single bright golden four pointed star sparkle"),
