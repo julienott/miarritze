@@ -17,6 +17,7 @@ config/icon="res://assets/ui/app_icon.png"
 
 [autoload]
 
+Updater="*res://src/autoload/updater.gd"
 Settings="*res://src/autoload/settings.gd"
 Profiles="*res://src/autoload/profiles.gd"
 Api="*res://src/autoload/api.gd"
@@ -36,6 +37,7 @@ window/size/viewport_width=384
 window/size/viewport_height=216
 window/size/window_width_override=1152
 window/size/window_height_override=648
+window/size/mode.steamdeck=3
 window/handheld/orientation=4
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"

@@ -8,6 +8,10 @@ func _ready() -> void:
 
 
 func _route() -> void:
+	# Version Steam Deck : on attend la vérification de mise à jour (quelques
+	# secondes au plus ; en cas de mise à jour, le jeu se relance tout seul).
+	if Updater.busy:
+		await Updater.finished
 	var target: String = ""
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--autofight=") or arg.begins_with("--autotower="):
