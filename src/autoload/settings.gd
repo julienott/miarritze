@@ -81,6 +81,7 @@ func remap(action: String, keycodes: Array) -> void:
 func reset_keys() -> void:
 	key_overrides.clear()
 	InputMap.load_from_project_settings()
+	InputDevice.install_menu_actions()
 	save()
 
 

@@ -49,6 +49,9 @@ func _route() -> void:
 	if target == "tutorial":
 		SceneRouter.goto(&"fight", TrainingMode.tutorial_params())
 		return
+	if target == "training":
+		SceneRouter.goto(&"fight", TrainingMode.fight_params("louis", 0))
+		return
 	if target.begins_with("res://"):
 		SceneRouter.goto_path(target)
 	elif target != "":
