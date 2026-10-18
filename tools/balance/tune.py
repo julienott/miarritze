@@ -8,7 +8,7 @@ de 100 %, un rapide en dessous). Boucle : matrice (matrix.py) → taux global pa
 perso → pas amorti vers 50 % → reconstruction des data.json (build_fighter.py,
 données seules). S'arrête quand tous les persos sont dans [45 %, 55 %].
 
-Usage : .venv/bin/python tools/balance/tune.py [--iters 5] [--n 60] [--ai 80] [--gain 0.35]
+Usage : .venv/bin/python tools/balance/tune.py [--iters 5] [--n 60] [--ai 50,80] [--gain 0.35]
 """
 import argparse, json, os, subprocess, sys
 
@@ -29,8 +29,18 @@ def rebuild():
 
 
 def totals(args):
+    """Taux global par perso, moyenné sur les niveaux d'IA demandés."""
+    levels = [int(x) for x in str(args.ai).split(",")]
+    acc = {}
+    for lv in levels:
+        for fid, r in _totals_at(args.n, lv).items():
+            acc[fid] = acc.get(fid, 0.0) + r / len(levels)
+    return acc
+
+
+def _totals_at(n, ai):
     subprocess.run([sys.executable, os.path.join(ROOT, "tools", "balance", "matrix.py"),
-                    "--n", str(args.n), "--ai", str(args.ai)], check=True, stdout=subprocess.DEVNULL)
+                    "--n", str(n), "--ai", str(ai)], check=True, stdout=subprocess.DEVNULL)
     m = json.load(open(os.path.join(ROOT, "tests", "out", "balance.json")))
     out = {}
     for fid in m["ids"]:
@@ -48,7 +58,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--n", type=int, default=60)
-    ap.add_argument("--ai", type=int, default=80)
+    ap.add_argument("--ai", default="50,80", help="niveaux d'IA (moyenne), ex. 50,80")
     ap.add_argument("--gain", type=float, default=0.35, help="points de damage_pct par point d'écart")
     args = ap.parse_args()
     for it in range(args.iters + 1):

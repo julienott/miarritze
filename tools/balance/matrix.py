@@ -12,7 +12,7 @@ chacun), fusionne et affiche :
 --md FICHIER, un résumé Markdown.
 
 Usage : matrix.py [--n 100] [--ai 80] [--seed 1000] [--jobs 9] [--boss]
-                  [--ids a,b] [--save NOM] [--md FICHIER] [--from FICHIER.json]
+                  [--ids a,b] [--only a:b,c:d] [--save NOM] [--md FICHIER] [--from FICHIER.json]
 """
 import argparse, json, os, subprocess, sys, time
 
@@ -35,6 +35,8 @@ def run(args):
             cmd.append("--boss")
         if args.ids:
             cmd.append(f"--ids={args.ids}")
+        if args.only:
+            cmd.append(f"--only={args.only}")
         procs.append(subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE))
     for p in procs:
         _, err = p.communicate()
@@ -68,7 +70,8 @@ def winrate(pairs, a, b):
 
 
 def report(m):
-    ids, pairs, fs = m["ids"], m["pairs"], m["fighters"]
+    pairs, fs = m["pairs"], m["fighters"]
+    ids = [i for i in m["ids"] if i in fs]  # --only : seulement les persos joués
     lines = []
     out = lines.append
     games = sum(p["games"] for p in pairs)
@@ -131,6 +134,27 @@ def report(m):
     return "\n".join(lines), totals, bad
 
 
+def pair_detail(m, a, b):
+    """Détail d'une paire : par côté, dégâts/s, touches/s, coups gardés, dégâts par coup."""
+    p = next((p for p in m["pairs"] if {p["a"], p["b"]} == {a, b}), None)
+    if p is None or "stats_a" not in p:
+        return f"{a}:{b} : pas de détail"
+    sec = max(p["fight_frames"] / FPS, 1)
+    lines = [f"{a} contre {b} : {winrate(m['pairs'], a, b):.0f} % sur {p['games']} matchs"]
+    for fid, st in ((p["a"], p["stats_a"]), (p["b"], p["stats_b"])):
+        md = st["move_dmg"]
+        tot = max(sum(md.values()), 1)
+        top = sorted(md.items(), key=lambda kv: -kv[1])[:6]
+        lines.append(f"  {fid}: dégâts/s {st['dmg'] / sec:.1f}, touches/s {st['hits'] / sec:.2f}, "
+                     f"gardés {100.0 * st['blocked'] / max(st['hits'] + st['blocked'], 1):.0f} %, "
+                     f"garde {100.0 * st['blocks'] / max(st['blocks'] + st['hits_taken'], 1):.0f} %, "
+                     f"projections {st['throws']}, spéciaux {st['move_use']}")
+        lines.append("    dégâts : " + ", ".join(f"{k} {100.0 * v / tot:.0f} %" for k, v in top))
+        wh = sorted(st.get("move_whiff", {}).items(), key=lambda kv: -kv[1])[:6]
+        lines.append("    coups dans le vide : " + ", ".join(f"{k} {v}" for k, v in wh))
+    return "\n".join(lines)
+
+
 def _guard_pct(a, m):
     """% des coups reçus par a qu'il a gardés : ses gardes / (gardes + touches subies)."""
     st = m["fighters"][a]
@@ -148,6 +172,8 @@ def main():
     ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) - 1))
     ap.add_argument("--boss", action="store_true")
     ap.add_argument("--ids", default="")
+    ap.add_argument("--only", default="", help="paires a:b,c:d seules (vérifier des paires suspectes à grand n)")
+    ap.add_argument("--detail", default="", help="détail des paires a:b,c:d")
     ap.add_argument("--save", default="", help="copie le résultat dans tests/out/balance_<NOM>.json")
     ap.add_argument("--md", default="", help="écrit le résumé Markdown dans ce fichier")
     ap.add_argument("--from", dest="src", default="", help="relit un JSON au lieu de simuler")
@@ -156,6 +182,8 @@ def main():
     m = json.load(open(args.src)) if args.src else run(args)
     text, totals, bad = report(m)
     print(text)
+    for spec in filter(None, args.detail.split(",")):
+        print(pair_detail(m, *spec.split(":")))
     if not args.src:
         print(f"\n({time.time() - t0:.0f} s)")
         json.dump(m, open(os.path.join(OUT, "balance.json"), "w"), indent=1)
@@ -170,9 +198,9 @@ def main():
                     if a == b:
                         row.append("")
                         continue
-                    p = next(p for p in m["pairs"] if {p["a"], p["b"]} == {a, b})
-                    row.append(str(p["wins_a"] if p["a"] == a else p["wins_b"]))
-                f.write(f"{a}," + ",".join(row) + f",{totals[a]:.1f}\n")
+                    p = next((p for p in m["pairs"] if {p["a"], p["b"]} == {a, b}), None)
+                    row.append("" if p is None else str(p["wins_a"] if p["a"] == a else p["wins_b"]))
+                f.write(f"{a}," + ",".join(row) + f",{totals.get(a, 0.0):.1f}\n")
     if args.md:
         open(args.md, "w").write(text + "\n")
 
