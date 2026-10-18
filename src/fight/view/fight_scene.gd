@@ -226,7 +226,10 @@ func _play_stage_music() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"debug_boxes") and OS.is_debug_build():
 		_debug.visible = not _debug.visible
-	elif event.is_action_pressed(&"ui_cancel") or InputDevice.is_start(event):
+	# B de la manette = SPÉCIAL en combat : il ne met en pause que s'il ferme
+	# la pause (START ou Échap l'ouvrent).
+	elif InputDevice.is_start(event) or (event.is_action_pressed(&"ui_cancel")
+			and (paused or not InputDevice.is_pad(event))):
 		if str(params.get("mode", "")) != "online":
 			get_viewport().set_input_as_handled()
 			_toggle_pause()

@@ -86,15 +86,23 @@ static func pad_slot(event: InputEvent) -> int:
 	return Input.get_connected_joypads().find(event.device)
 
 
-## Manette : START valide aussi dans les menus (ui_accept). À rappeler après
-## InputMap.load_from_project_settings() (réinitialisation des touches).
+## Godot ne met AUCUN bouton de manette dans ui_accept / ui_cancel par
+## défaut (seulement la croix et le stick dans ui_up…) : A et B ne faisaient
+## donc rien dans les menus. On ajoute A + START (valider) et B (retour).
+## À rappeler après InputMap.load_from_project_settings() (réinitialisation).
 static func install_menu_actions() -> void:
-	if not InputMap.has_action(&"ui_accept"):
+	_add_pad_button(&"ui_accept", JOY_BUTTON_A)
+	_add_pad_button(&"ui_accept", JOY_BUTTON_START)
+	_add_pad_button(&"ui_cancel", JOY_BUTTON_B)
+
+
+static func _add_pad_button(action: StringName, button: JoyButton) -> void:
+	if not InputMap.has_action(action):
 		return
-	for ev: InputEvent in InputMap.action_get_events(&"ui_accept"):
-		if ev is InputEventJoypadButton and (ev as InputEventJoypadButton).button_index == JOY_BUTTON_START:
+	for ev: InputEvent in InputMap.action_get_events(action):
+		if ev is InputEventJoypadButton and (ev as InputEventJoypadButton).button_index == button:
 			return
-	var start: InputEventJoypadButton = InputEventJoypadButton.new()
-	start.device = -1
-	start.button_index = JOY_BUTTON_START
-	InputMap.action_add_event(&"ui_accept", start)
+	var jb: InputEventJoypadButton = InputEventJoypadButton.new()
+	jb.device = -1
+	jb.button_index = button
+	InputMap.action_add_event(action, jb)
