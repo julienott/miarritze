@@ -8,6 +8,11 @@ Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 - Preset « SteamDeck » (Linux x86_64), job CI `steamdeck` dans `deploy.yml` (publication dans `/steamdeck/` : archive, `.pck`, `manifest.json`), page d'installation + `install.sh`, mise à jour automatique au lancement (autoload `Updater`). Voir `docs/STEAMDECK.md`.
 - Testé : export local, rendu 1280×800, auto-update de bout en bout dans un conteneur Linux x86_64 (7 scénarios), `install.sh` local. **Pas encore testé sur un vrai Deck ni en CI réelle** (checklist dans la doc).
 
+### Équilibrage par archétype (branche `equilibrage`, 2026-10-18, à relire et fusionner)
+- IA : distances vues entre boîtes de poussée (elle ne frappait presque plus au contact). Allonge des normaux bornée au build. Fiches : identité par archétype et `damage_pct` borné. Outils `tools/balance/` (matrice parallèle, détail par paire, réglage fin, profils).
+- IA 80 : 46–53 % par perso, 5 paires sur 66 hors 40/60 (avant : 35). IA 50 : 45–58 %, 7 paires (avant : 40). Voir `docs/EQUILIBRAGE.md`.
+- **À refaire après la refonte graphique** : `python3 tools/balance/matrix.py` puis `.venv/bin/python tools/balance/tune.py` (les boîtes viennent des sprites).
+
 ### Après la mise en prod (retours de Julien sur iPhone, 2026-10-13)
 - Corrigés et déployés :
   - tap de l'écran titre ;
