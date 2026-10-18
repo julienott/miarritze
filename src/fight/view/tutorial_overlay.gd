@@ -6,14 +6,42 @@ extends Control
 
 signal finished
 
+## Consigne de chaque étape selon l'appareil (Prompts.pick) : clavier et
+## manette avec les vrais boutons ({punch}…), manette tactile, gestes.
 const STEPS: Array = [
-	{"title": "BOUGER", "pad": "Glisse le pouce à gauche de l'écran", "keys": "Q / D (ou ← →)", "goal": "move"},
-	{"title": "FRAPPER", "pad": "Touche le bouton rouge (poing)", "keys": "J (POING) — 3 fois = combo !", "goal": "hit"},
-	{"title": "GARDER", "pad": "Garde le doigt sur le bouton bleu (bouclier)", "keys": "Espace (GARDE)", "goal": "block"},
-	{"title": "TXAPEL-CUT !", "pad": "Pouce en bas, vers l'arrière, + bouton rouge", "keys": "S + Q + J (bas-arrière + POING)", "goal": "uppercut"},
-	{"title": "SPÉCIAL", "pad": "Touche le bouton jaune (lauburu)", "keys": "L (SPÉCIAL)", "goal": "special"},
-	{"title": "SUPER !", "pad": "Touche le bouton MARÉE", "keys": "L + Espace (SPÉCIAL + GARDE)", "goal": "super"},
-	{"title": "K.O. !", "pad": "Vide la barre de vie de Hondar !", "keys": "Vide la barre de vie de Hondar !", "goal": "ko"},
+	{"title": "BOUGER", "goal": "move", "how": {
+		"keyboard": "{left} / {right} (ou ← →)",
+		"gamepad": "Pousse le stick (ou la croix) ← →",
+		"touch": "Glisse le pouce à gauche de l'écran",
+		"gestures": "Pose le pouce à gauche de l'écran et glisse"}},
+	{"title": "FRAPPER", "goal": "hit", "how": {
+		"keyboard": "{punch} (POING) — 3 fois = combo !",
+		"gamepad": "{punch} (POING) — 3 fois = combo !",
+		"touch": "Touche le bouton rouge (poing)",
+		"gestures": "Tape à droite de l'écran — 3 fois = combo !"}},
+	{"title": "GARDER", "goal": "block", "how": {
+		"keyboard": "{guard} (GARDE)",
+		"gamepad": "Garde {guard} enfoncé (GARDE)",
+		"touch": "Garde le doigt sur le bouton bleu (bouclier)",
+		"gestures": "Garde le doigt appuyé à droite de l'écran"}},
+	{"title": "TXAPEL-CUT !", "goal": "uppercut", "how": {
+		"keyboard": "{down} + {left} + {punch} (bas-arrière + POING)",
+		"gamepad": "Stick en bas vers l'arrière + {punch} (POING)",
+		"touch": "Pouce en bas, vers l'arrière, + bouton rouge",
+		"gestures": "Pouce gauche en bas vers l'arrière + tape à droite"}},
+	{"title": "SPÉCIAL", "goal": "special", "how": {
+		"keyboard": "{special} (SPÉCIAL)",
+		"gamepad": "{special} (SPÉCIAL)",
+		"touch": "Touche le bouton jaune (lauburu)",
+		"gestures": "Glisse le doigt vers le haut, à droite de l'écran"}},
+	{"title": "SUPER !", "goal": "super", "how": {
+		"keyboard": "{special} + {guard} (SPÉCIAL + GARDE)",
+		"gamepad": "{special} + {guard} ensemble (SPÉCIAL + GARDE)",
+		"touch": "Touche le bouton MARÉE",
+		"gestures": "Tape avec deux doigts en même temps"}},
+	{"title": "K.O. !", "goal": "ko", "how": {
+		"keyboard": "Vide la barre de vie de Hondar !",
+		"touch": "Vide la barre de vie de Hondar !"}},
 ]
 
 ## Vie de départ du mannequin à l'étape K.O. (en %), pour un K.O. rapide.
@@ -56,6 +84,7 @@ func _ready() -> void:
 	# Bas-droit : loin du bouton PAUSE (haut-centre) et des portraits du HUD.
 	skip.position = Vector2(size.x - 68, size.y - 28)
 	add_child(skip)
+	InputHub.device_changed.connect(_render)
 	_enter(0)
 
 
@@ -66,8 +95,7 @@ func _enter(i: int) -> void:
 		get_tree().create_timer(2.5).timeout.connect(func() -> void: finished.emit())
 		return
 	var st: Dictionary = STEPS[step]
-	var how: String = st["pad"] if Settings.touch_enabled() else st["keys"]
-	_label.text = "%d/%d  %s\n%s" % [step + 1, STEPS.size(), st["title"], how]
+	_render()
 	_start_x = sim.f[0].x
 	sim.ai_level[1] = AiBrain.DUMMY_ATTACK if st["goal"] == "block" else AiBrain.DUMMY_IDLE
 	if st["goal"] == "super":
@@ -75,6 +103,15 @@ func _enter(i: int) -> void:
 	if st["goal"] == "ko":
 		sim.training_ko = true
 		sim.f[1].health = mini(sim.f[1].health, sim.f[1].max_health * KO_START_PCT / 100)
+
+
+## Consigne de l'étape en cours pour l'appareil utilisé (rappelé quand on
+## change d'appareil : manette prise en main, iPhone…).
+func _render(_device: int = 0) -> void:
+	if step >= STEPS.size() or _done_t > 0.0:
+		return
+	var st: Dictionary = STEPS[step]
+	_label.text = "%d/%d  %s\n%s" % [step + 1, STEPS.size(), st["title"], Prompts.pick(st["how"])]
 
 
 func _physics_process(_delta: float) -> void:

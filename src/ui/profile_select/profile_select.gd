@@ -106,13 +106,21 @@ func _show_create(first: bool) -> void:
 	WebTextField.attach(edit)
 	var err: Label = UiKit.label("", 8, UiKit.C_RED)
 	_box.add_child(err)
+	# Manette : choisir les lettres une à une (clavier à l'écran).
+	var pad_btn: Button = PadKeyboard.pad_button(_box, edit, "Ton pseudo (pas ton vrai nom !)", true,
+		func(t: String) -> void: _create(t, err))
 	var ok: Button = UiKit.button("C'est parti !", func() -> void: _create(edit.text, err), 200)
 	_box.add_child(ok)
 	edit.text_submitted.connect(func(t: String) -> void: _create(t, err))
 	if not first:
 		_box.add_child(UiKit.button("Annuler", _show_list, 200))
-	if edit.focus_mode != Control.FOCUS_NONE:
+	if InputHub.using_gamepad():
+		pad_btn.grab_focus.call_deferred()
+	elif edit.focus_mode != Control.FOCUS_NONE:
 		edit.grab_focus.call_deferred()
+	else:
+		# Web : le champ HTML a le clavier ; le bouton garde un focus visible.
+		ok.grab_focus.call_deferred()
 
 
 func _create(pseudo: String, err: Label) -> void:

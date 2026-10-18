@@ -5,6 +5,13 @@ extends Control
 
 func _ready() -> void:
 	var params: Dictionary = SceneRouter.params
+	_mode = str(params.get("mode", ""))
+	# Les boutons du combat (A = PIED, B = SPÉCIAL à la manette, Espace) ne
+	# doivent pas valider ou quitter cet écran à peine arrivé.
+	_opened_ms = Time.get_ticks_msec()
+	get_viewport().gui_disable_input = true
+	get_tree().create_timer(INPUT_GRACE_MS / 1000.0).timeout.connect(func() -> void:
+		get_viewport().gui_disable_input = false)
 	var result: Dictionary = params.get("result", {})
 	var fight: Dictionary = params.get("fight", {})
 	UiKit.backdrop(self, "bg_beach", 0.35)
@@ -60,6 +67,28 @@ func _ready() -> void:
 			SceneRouter.goto(&"fighter_select", {"mode": "versus"}), 150),
 		UiKit.button("Menu", func() -> void: SceneRouter.goto(&"main_menu")),
 	], 80)
+
+
+var _mode: String = ""
+
+
+## B / Échap : en ligne, retour au salon ; sinon menu principal.
+const INPUT_GRACE_MS: int = 700
+var _opened_ms: int = 0
+
+
+func _exit_tree() -> void:
+	get_viewport().gui_disable_input = false
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed(&"ui_cancel") or Time.get_ticks_msec() - _opened_ms < INPUT_GRACE_MS:
+		return
+	get_viewport().set_input_as_handled()
+	if _mode == "online":
+		OnlineMode.leave()
+	else:
+		SceneRouter.goto(&"main_menu")
 
 
 # ------------------------------------------------------------------ en ligne

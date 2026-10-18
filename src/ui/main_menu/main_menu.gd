@@ -36,11 +36,12 @@ func _ready() -> void:
 	if OS.has_feature("web") and Input.get_connected_joypads().is_empty() and not Settings.touch_enabled():
 		_pad_hint = UiKit.label("Manette ? Appuie sur un de ses boutons", 8, UiKit.C_LINEN)
 		_pad_hint.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-		_pad_hint.position.y = -12
+		_pad_hint.position.y = -22
 		add_child(_pad_hint)
 		Input.joy_connection_changed.connect(func(_d: int, connected: bool) -> void:
 			if connected and is_instance_valid(_pad_hint):
 				_pad_hint.text = "Manette détectée !")
+	UiKit.prompt_bar(self)
 	AudioManager.play_music(&"hegoak")
 
 

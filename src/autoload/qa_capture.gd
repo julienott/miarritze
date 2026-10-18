@@ -9,6 +9,12 @@ extends Node
 ##                                       5e champ d'--autofight, 0 = inerte)
 ##   --touchidx=random                   index tactiles aléatoires (régression iOS)
 ##   --meter=full                        jauge de J1 pleine au départ (supers)
+##   --device=gamepad[:famille]|touch|keyboard   appareil figé pour les indications
+##                                       (famille : xbox, playstation, nintendo, steamdeck ;
+##                                       lu par InputHub)
+##   --press=ui_cancel@3,joy:start@4     appuis simulés (action de l'InputMap, ou bouton
+##                                       de manette joy:a|b|x|y|start|up|down|left|right)
+##                                       à l'instant donné (s), pour capturer menus/pause
 ## Web : `?qa=1` dans l'URL publie `window.__qa` (scène + boutons visibles en
 ## fractions d'écran) pour les tests Playwright qui touchent par libellé.
 
@@ -59,6 +65,11 @@ func _ready() -> void:
 			touch_random = true
 		elif arg == "--meter=full":
 			_meter_full = true
+		elif arg.begins_with("--press="):
+			for part: String in arg.trim_prefix("--press=").split(","):
+				var at: PackedStringArray = part.split("@")
+				if at.size() == 2:
+					get_tree().create_timer(float(at[1])).timeout.connect(_press.bind(at[0]))
 	if autofight != "":
 		_start_autofight.call_deferred(autofight)
 	elif _inputs != "":
@@ -80,6 +91,30 @@ func _ready() -> void:
 		return
 	if _frames.is_empty() and _autotower == "":
 		get_tree().create_timer(_delay).timeout.connect(_capture.bind(_shot_path, true))
+
+
+const _JOY_NAMES: Dictionary = {"a": JOY_BUTTON_A, "b": JOY_BUTTON_B, "x": JOY_BUTTON_X, "y": JOY_BUTTON_Y,
+	"start": JOY_BUTTON_START, "up": JOY_BUTTON_DPAD_UP, "down": JOY_BUTTON_DPAD_DOWN,
+	"left": JOY_BUTTON_DPAD_LEFT, "right": JOY_BUTTON_DPAD_RIGHT}
+
+
+## Appui + relâché simulés (QA) : action de l'InputMap ou bouton de manette.
+func _press(what: String) -> void:
+	for pressed: bool in [true, false]:
+		var ev: InputEvent
+		if what.begins_with("joy:"):
+			var jb: InputEventJoypadButton = InputEventJoypadButton.new()
+			jb.button_index = _JOY_NAMES.get(what.trim_prefix("joy:"), JOY_BUTTON_A)
+			jb.pressed = pressed
+			ev = jb
+		else:
+			var ac: InputEventAction = InputEventAction.new()
+			ac.action = StringName(what)
+			ac.pressed = pressed
+			ev = ac
+		Input.parse_input_event(ev)
+		await get_tree().process_frame
+	print("qa_capture: appui %s" % what)
 
 
 func _start_autofight(spec: String) -> void:

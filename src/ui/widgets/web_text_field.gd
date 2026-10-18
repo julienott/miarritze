@@ -66,6 +66,10 @@ func _ready() -> void:
 	_cb_key = JavaScriptBridge.create_callback(_on_key)
 	_el.addEventListener("input", _cb_input)
 	_el.addEventListener("keydown", _cb_key)
+	# Texte écrit côté Godot (clavier manette PadKeyboard) : recopié dans le <input>.
+	_edit.text_changed.connect(func(t: String) -> void:
+		if _el != null and str(_el.value) != t:
+			_el.value = t)
 	_focus_input.call_deferred()
 
 
@@ -96,7 +100,7 @@ func _process(_delta: float) -> void:
 	if _el == null:
 		return
 	var css: String = "none"
-	if _edit.is_visible_in_tree() and not get_tree().paused:
+	if _edit.is_visible_in_tree() and not get_tree().paused and PadKeyboard.opened == 0:
 		# Le viewport logique remplit toute la fenêtre (aspect expand) :
 		# on passe par des fractions, converties en CSS côté navigateur.
 		var view: Vector2 = get_viewport().get_visible_rect().size

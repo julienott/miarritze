@@ -71,6 +71,22 @@ static func title(text: String, color: Color = C_RED) -> Label:
 	return l
 
 
+## Rappel des boutons de menu (bas d'écran), selon l'appareil ; rien au doigt.
+const MENU_PROMPTS: Dictionary = {"keyboard": "{ok} : valider   {back} : retour",
+	"gamepad": "{ok} : valider   {back} : retour"}
+
+
+static func prompt_bar(parent: Control, variants: Dictionary = MENU_PROMPTS, bottom: float = -11.0) -> Label:
+	var l: Label = label("", 8, C_LINEN)
+	l.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	l.position.y += bottom
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	l.modulate.a = 0.85
+	parent.add_child(l)
+	Prompts.bind(l, func() -> String: return Prompts.pick(variants))
+	return l
+
+
 ## Fond animé d'un écran (décor i2i existant, plein écran « cover »).
 static func backdrop(parent: Node, bg_name: String = "bg_menu", dim: float = 0.35) -> void:
 	var bg: PixelBg = PixelBg.new()

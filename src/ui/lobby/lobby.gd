@@ -26,9 +26,7 @@ func _ready() -> void:
 	head.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	head.position.y = 4
 	add_child(head)
-	var back: Button = UiKit.button("Retour", func() -> void:
-		Api.call_api(HTTPClient.METHOD_POST, "/presence", {"status": "busy"}, func(_o: bool, _c: int, _d: Variant) -> void: pass)
-		SceneRouter.goto(&"main_menu"), 60)
+	var back: Button = UiKit.button("Retour", _leave, 60)
 	back.position = Vector2(4, 4)
 	add_child(back)
 	_info = UiKit.label("", 8, UiKit.C_LINEN)
@@ -45,6 +43,12 @@ func _ready() -> void:
 	var board: Button = UiKit.button("Classement", _show_board, 90)
 	board.position = Vector2(4, get_viewport_rect().size.y - 28)
 	add_child(board)
+	# Clavier / manette : on ne peut pas « toucher » un copain → liste à choisir.
+	var pick: Button = UiKit.button("Défier un copain", _show_pick, 130)
+	pick.position = Vector2(roundf(get_viewport_rect().size.x * 0.5 - 65), get_viewport_rect().size.y - 28)
+	add_child(pick)
+	_pick_button = pick
+	Prompts.on_change(pick, func() -> void: pick.visible = not InputHub.using_touch())
 	OnlineMode.reset_net()
 	OnlineMode.current = {}
 	if int(Profiles.active().get("player_id", 0)) <= 0:
@@ -55,9 +59,73 @@ func _ready() -> void:
 		# Sans groupe, le serveur refuse : pas de recherche sans fin ni classement vide.
 		quick.disabled = true
 		board.disabled = true
+		pick.disabled = true
+		go.grab_focus.call_deferred()
 		set_process(false)
 		return
-	_info.text = "Groupe %s — touche un copain pour le défier" % str(Profiles.active().get("group_code", ""))
+	Prompts.bind(_info, func() -> String:
+		return "Groupe %s — %s" % [str(Profiles.active().get("group_code", "")),
+			"touche un copain pour le défier" if InputHub.using_touch() else "choisis « Défier un copain »"])
+	quick.grab_focus.call_deferred()
+
+
+var _pick_button: Button
+var _pick_box: Control
+
+
+func _leave() -> void:
+	Api.call_api(HTTPClient.METHOD_POST, "/presence", {"status": "busy"}, func(_o: bool, _c: int, _d: Variant) -> void: pass)
+	SceneRouter.goto(&"main_menu")
+
+
+## Liste des copains disponibles (clavier, manette, ou au doigt aussi).
+func _show_pick() -> void:
+	_close_pick()
+	var buttons: Array = []
+	for m: Variant in _members:
+		var md: Dictionary = m
+		if bool(md.get("me", false)) or str(md.get("status", "")) != "lobby":
+			continue
+		var pid: int = int(md.get("player_id", 0))
+		buttons.append(UiKit.button("%s (%d pts)" % [str(md.get("pseudo", "?")), int(md.get("rating", 1000))],
+			func() -> void:
+				_close_pick()
+				_challenge(pid), 180))
+	if buttons.is_empty():
+		_info.text = "Aucun copain disponible pour l'instant"
+		AudioManager.sfx(&"ui_no")
+		return
+	buttons.append(UiKit.button("Annuler", _close_pick, 180))
+	_pick_box = Control.new()
+	_pick_box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_pick_box.z_index = 300
+	add_child(_pick_box)
+	var shade: ColorRect = ColorRect.new()
+	shade.color = Color(0.05, 0.04, 0.1, 0.7)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_pick_box.add_child(shade)
+	var col: VBoxContainer = UiKit.menu_column(_pick_box, buttons.slice(0, 7), 40)
+	col.position.x -= 20
+
+
+func _close_pick() -> void:
+	if _pick_box != null:
+		_pick_box.queue_free()
+		_pick_box = null
+		if is_instance_valid(_pick_button):
+			_pick_button.grab_focus.call_deferred()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed(&"ui_cancel"):
+		return
+	get_viewport().set_input_as_handled()
+	if _pick_box != null:
+		_close_pick()
+	elif _invite_box != null:
+		_respond(_shown_invite, false)
+	else:
+		_leave()
 
 
 func _process(delta: float) -> void:
@@ -210,9 +278,11 @@ func _show_invite(inv: Dictionary) -> void:
 	col.add_child(UiKit.label("%s te défie ! %s" % [str(from.get("pseudo", "?")),
 		Profiles.EMOTES[clampi(int(from.get("emote", 0)), 0, 3)]], 8, UiKit.C_GOLD))
 	var row: HBoxContainer = HBoxContainer.new()
-	row.add_child(UiKit.button("Accepter", _respond.bind(mid, true), 100))
+	var accept: Button = UiKit.button("Accepter", _respond.bind(mid, true), 100)
+	row.add_child(accept)
 	row.add_child(UiKit.button("Refuser", _respond.bind(mid, false), 100))
 	col.add_child(row)
+	accept.grab_focus.call_deferred()
 	AudioManager.sfx(&"round")
 
 
@@ -220,6 +290,8 @@ func _respond(mid: int, accept: bool) -> void:
 	if _invite_box != null:
 		_invite_box.queue_free()
 		_invite_box = null
+		if is_instance_valid(_pick_button) and _pick_button.visible:
+			_pick_button.grab_focus.call_deferred()
 	Api.call_api(HTTPClient.METHOD_POST, "/match/respond", {"match_id": mid, "accept": accept},
 		func(ok: bool, _c: int, data: Variant) -> void:
 			if ok and accept and data is Dictionary and (data as Dictionary).get("match") is Dictionary:
