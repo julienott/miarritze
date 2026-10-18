@@ -33,10 +33,23 @@ func _ready() -> void:
 	_build_keys_help()
 
 
-## Petit panneau clavier : rappel des touches par défaut, affiché en bas à
-## gauche pendant 6 s puis masqué (bouton « Touches » pour le rouvrir).
+## Petit panneau d'aide : rappel des commandes de l'appareil utilisé
+## (clavier, manette, manette tactile ou gestes), affiché en bas à gauche
+## pendant 6 s puis masqué (bouton « Aide » pour le rouvrir). Mis à jour à la
+## volée quand on change d'appareil.
 var _keys_panel: PanelContainer
 var _keys_toggle: Button
+
+const HELP_LINES: Dictionary = {
+	"keyboard": ["TOUCHES  J1", "{move} : bouger / sauter / s'accroupir", "{punch} : POING    {kick} : PIED",
+		"{special} : SPÉCIAL    {guard} : GARDE", "{pause} : pause"],
+	"gamepad": ["MANETTE", "{move} ou croix : bouger / sauter", "{punch} : POING    {kick} : PIED",
+		"{special} : SPÉCIAL    {guard} : GARDE", "{pause} : pause (mannequin, coups)"],
+	"touch": ["MANETTE TACTILE", "Pouce gauche : bouger / sauter", "ROUGE : POING    VERT : PIED",
+		"JAUNE : SPÉCIAL    BLEU : GARDE", "PAUSE (en haut) : pause"],
+	"gestures": ["GESTES", "Pouce gauche : bouger / sauter", "Tape à droite : POING",
+		"Glisse arrière/haut/bas : SPÉCIAL", "Appui long à droite : GARDE"],
+}
 
 
 func _build_keys_help() -> void:
@@ -51,18 +64,18 @@ func _build_keys_help() -> void:
 	var v: VBoxContainer = VBoxContainer.new()
 	v.add_theme_constant_override(&"separation", 1)
 	_keys_panel.add_child(v)
-	for line: String in [
-		"TOUCHES  J1",
-		"ZQSD : bouger / sauter / s'accroupir",
-		"J : POING    K : PIED",
-		"L : SPÉCIAL    I : GARDE",
-		"Échap : pause",
-	]:
-		var l: Label = UiKit.label(line, 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT)
+	for i: int in 5:
+		var l: Label = UiKit.label("", 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT)
 		v.add_child(l)
+		Prompts.bind(l, func() -> String:
+			var lines: Array = HELP_LINES.get(Prompts.kind(), HELP_LINES["keyboard"])
+			return Prompts.fmt(str(lines[i])))
 	add_child(_keys_panel)
+	# Recalé en bas quand sa taille change (texte d'un autre appareil).
+	_keys_panel.resized.connect(func() -> void:
+		_keys_panel.position = Vector2(6, size.y - _keys_panel.size.y - 6))
 	_keys_panel.position = Vector2(6, size.y - 72)
-	_keys_toggle = UiKit.button("Touches", _toggle_keys, 60)
+	_keys_toggle = UiKit.button("Aide", _toggle_keys, 60)
 	_keys_toggle.focus_mode = Control.FOCUS_NONE
 	_keys_toggle.position = Vector2(size.x - 128, 70)
 	add_child(_keys_toggle)
@@ -74,6 +87,11 @@ func _build_keys_help() -> void:
 func _toggle_keys() -> void:
 	if is_instance_valid(_keys_panel):
 		_keys_panel.visible = not _keys_panel.visible
+
+
+## Comportement suivant (aussi depuis le menu pause, à la manette).
+func cycle_behavior() -> void:
+	_cycle()
 
 
 func _cycle() -> void:
@@ -113,10 +131,19 @@ func _describe(mask: int, facing: int) -> String:
 	var dir: int = InputBuffer.numpad(mask, facing)
 	var dirs: Dictionary = {1: "BAr", 2: "B", 3: "BAv", 4: "Ar", 5: "", 6: "Av", 7: "HAr", 8: "H", 9: "HAv"}
 	var out: String = str(dirs.get(dir, ""))
-	for pair: Array in [[SimConst.PUNCH, "P"], [SimConst.KICK, "K"], [SimConst.SPECIAL, "S"], [SimConst.GUARD, "G"]]:
+	for pair: Array in [[SimConst.PUNCH, "punch"], [SimConst.KICK, "kick"], [SimConst.SPECIAL, "special"],
+			[SimConst.GUARD, "guard"]]:
 		if mask & int(pair[0]):
-			out += ("+" if out != "" else "") + str(pair[1])
+			out += ("+" if out != "" else "") + _short(str(pair[1]))
 	return out
+
+
+## Bouton dans l'historique : la touche / le bouton réel (clavier, manette),
+## le nom du coup au doigt.
+func _short(action: String) -> String:
+	if Prompts.kind() in [Prompts.KEYBOARD, Prompts.GAMEPAD]:
+		return Prompts.key(action)
+	return str({"punch": "POING", "kick": "PIED", "special": "SPÉ", "guard": "GARDE"}[action])
 
 
 func _draw() -> void:

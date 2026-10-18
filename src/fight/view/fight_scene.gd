@@ -30,6 +30,7 @@ var _ui: CanvasLayer
 var _pause_box: Control
 var _training: TrainingOverlay
 var _touch: TouchControls
+var _tutorial: TutorialOverlay
 ## En ligne : session rollback + lien P2P (SPEC §8.6).
 var session: RollbackSession
 var _online: bool = false
@@ -173,6 +174,7 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 		ui.add_child(_training)
 	if bool(params.get("tutorial", false)):
 		var tuto: TutorialOverlay = TutorialOverlay.new()
+		_tutorial = tuto
 		tuto.sim = sim
 		tuto.finished.connect(func() -> void:
 			Profiles.update_active({"tutorial_done": true})
@@ -224,9 +226,9 @@ func _play_stage_music() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"debug_boxes") and OS.is_debug_build():
 		_debug.visible = not _debug.visible
-	elif event.is_action_pressed(&"ui_cancel") or (event is InputEventJoypadButton
-			and (event as InputEventJoypadButton).button_index == JOY_BUTTON_START and event.is_pressed()):
+	elif event.is_action_pressed(&"ui_cancel") or InputDevice.is_start(event):
 		if str(params.get("mode", "")) != "online":
+			get_viewport().set_input_as_handled()
 			_toggle_pause()
 
 
@@ -248,18 +250,42 @@ func _toggle_pause() -> void:
 	head.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	head.position.y = 30
 	_pause_box.add_child(head)
-	UiKit.menu_column(_pause_box, [
+	var buttons: Array = [
 		UiKit.button("Reprendre", _toggle_pause),
 		UiKit.button("Liste des coups", _show_move_list),
-		UiKit.button("Quitter", _leave),
-	], 64)
+	]
+	# Entraînement : le mannequin se règle aussi à la manette / au clavier
+	# (ses boutons à l'écran ne se pilotent qu'au doigt ou à la souris).
+	if _training != null and _training.visible:
+		var dummy: Button = UiKit.button("Mannequin : " + TrainingMode.BEHAVIORS[_training.behavior],
+			func() -> void: pass, 160)
+		dummy.pressed.connect(func() -> void:
+			_training.cycle_behavior()
+			dummy.text = "Mannequin : " + TrainingMode.BEHAVIORS[_training.behavior])
+		buttons.append(dummy)
+	if _tutorial != null:
+		buttons.append(UiKit.button("Passer le tutoriel", func() -> void:
+			_toggle_pause()
+			_tutorial.finished.emit()))
+	buttons.append(UiKit.button("Quitter", _leave))
+	for b: Variant in buttons:
+		(b as Control).custom_minimum_size.x = 160
+	UiKit.menu_column(_pause_box, buttons, 58).position.x -= 10
+	UiKit.prompt_bar(_pause_box, {"keyboard": "{ok} : valider   {back} : reprendre",
+		"gamepad": "{ok} : valider   {back} : reprendre"})
 
 
 func _show_move_list() -> void:
 	var was_paused: bool = paused
 	paused = true
 	var list: MoveList = MoveList.create(sim.defs[0].id)
-	list.closed.connect(func() -> void: paused = was_paused)
+	list.closed.connect(func() -> void:
+		paused = was_paused
+		# Retour au menu pause : le focus revient sur « Liste des coups ».
+		if _pause_box != null and is_instance_valid(_pause_box):
+			for b: Node in _pause_box.find_children("*", "Button", true, false):
+				if (b as Button).text == "Liste des coups":
+					(b as Button).grab_focus.call_deferred())
 	_ui.add_child(list)
 
 
