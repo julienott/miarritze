@@ -2,8 +2,13 @@ extends Control
 ## Choix du profil (SPEC §3.1) : jusqu'à 4 profils locaux sur l'appareil
 ## (frères, sœurs, copains). Créer, choisir, supprimer.
 
+## Contenu centré sous le titre, quelle que soit la taille de l'écran
+## (Steam Deck 16:10 = 384×240, iPhone plus large que 384).
+var _wrap: CenterContainer
 var _box: VBoxContainer
 var _creating: bool = false
+
+const TOP: float = 28.0
 
 
 func _ready() -> void:
@@ -20,9 +25,25 @@ func _ready() -> void:
 
 
 func _clear() -> void:
-	if _box != null:
-		_box.queue_free()
+	if _wrap != null:
+		_wrap.queue_free()
+	_wrap = null
 	_box = null
+
+
+func _column(buttons: Array, separation: int = 4) -> VBoxContainer:
+	_wrap = CenterContainer.new()
+	_wrap.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_wrap.offset_top = TOP
+	add_child(_wrap)
+	var box: VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override(&"separation", separation)
+	_wrap.add_child(box)
+	for b: Variant in buttons:
+		box.add_child(b as Control)
+	if not buttons.is_empty():
+		(buttons[0] as Control).grab_focus.call_deferred()
+	return box
 
 
 func _show_list() -> void:
@@ -37,8 +58,7 @@ func _show_list() -> void:
 	if Profiles.profiles.size() < Profiles.MAX_PROFILES:
 		buttons.append(UiKit.button("+ Nouveau profil", func() -> void: _show_create(false), 200))
 	buttons.append(UiKit.button("Supprimer un profil", _show_delete, 200))
-	_box = UiKit.menu_column(self, buttons, 40)
-	_box.position.x -= 30
+	_box = _column(buttons)
 
 
 func _choose(i: int) -> void:
@@ -53,15 +73,14 @@ func _show_delete() -> void:
 		buttons.append(UiKit.button("Supprimer %s" % str(Profiles.profiles[i].get("pseudo", "?")),
 			_confirm_delete.bind(i), 200))
 	buttons.append(UiKit.button("Annuler", _show_list, 200))
-	_box = UiKit.menu_column(self, buttons, 40)
-	_box.position.x -= 30
+	_box = _column(buttons)
 
 
 ## Confirmation : un enfant ne doit pas effacer le profil de son frère par erreur.
 func _confirm_delete(i: int) -> void:
 	_clear()
 	var pseudo: String = str(Profiles.profiles[i].get("pseudo", "?"))
-	_box = UiKit.menu_column(self, [
+	_box = _column([
 		UiKit.button("Non, garder %s" % pseudo, _show_list, 220),
 		UiKit.button("Oui, effacer %s pour toujours" % pseudo, func() -> void:
 			Profiles.remove(i)
@@ -69,18 +88,13 @@ func _confirm_delete(i: int) -> void:
 				_show_create(true)
 			else:
 				_show_list(), 220),
-	], 60)
-	_box.position.x -= 40
+	])
 
 
 func _show_create(first: bool) -> void:
 	_clear()
-	_box = VBoxContainer.new()
-	_box.add_theme_constant_override(&"separation", 6)
-	_box.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_box.position = Vector2(-100, 44)
+	_box = _column([], 6)
 	_box.custom_minimum_size = Vector2(200, 0)
-	add_child(_box)
 	_box.add_child(UiKit.label("Ton pseudo (pas ton vrai nom !)", 8, UiKit.C_GOLD))
 	_box.add_child(UiKit.label("Lettres et chiffres, sans espace", 8, UiKit.C_LINEN))
 	var edit: LineEdit = LineEdit.new()

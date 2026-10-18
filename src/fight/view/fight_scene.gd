@@ -189,6 +189,7 @@ func _build(def1: FighterDef, def2: FighterDef, c1: int, c2: int) -> void:
 			and int(ai_pair[0]) == 0:
 		_touch = TouchControls.new()
 		var me_slot: int = int(params.get("local_slot", 0))
+		_touch.fighter_id = str(params.get("p%d" % (me_slot + 1), ""))
 		_touch.facing_getter = func() -> int: return sim.f[me_slot].facing
 		_touch.meter_full_getter = func() -> bool: return sim.f[me_slot].meter >= SimConst.METER_MAX
 		_touch.fighter_rects_getter = func() -> Array:

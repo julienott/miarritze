@@ -5,6 +5,7 @@ extends RefCounted
 ## rattachés à l'autoload Api pour survivre aux changements de scène).
 
 const PICK_SECONDS: int = 30
+const STAGE_SECONDS: int = 20      # l'hôte choisit la map pendant que l'invité attend
 
 static var current: Dictionary = {}       # match_id, host, opponent, stage, seed, state
 static var my_pick: Dictionary = {}     # fighter, costume, pseudo, express

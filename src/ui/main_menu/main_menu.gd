@@ -17,7 +17,6 @@ func _ready() -> void:
 		add_child(who)
 	var buttons: Array = [
 		UiKit.button("Pyramide du Phare", _on_tower),
-		UiKit.button("Combat rapide", _on_quick),
 		UiKit.button("Versus", _on_versus),
 	]
 	var online: Button = UiKit.button("En ligne", _on_online)
@@ -58,13 +57,6 @@ func _on_versus() -> void:
 
 func _on_training() -> void:
 	SceneRouter.goto(&"fighter_select", {"mode": "training"})
-
-
-## Combat rapide : mon combattant → l'adversaire (l'ordi) → le décor, chaque
-## étape avec « Au hasard » (présélectionné pour l'adversaire et le décor :
-## trois validations suffisent, comme l'ancien combat rapide).
-func _on_quick() -> void:
-	SceneRouter.goto(&"fighter_select", {"mode": "quick"})
 
 
 func _on_online() -> void:

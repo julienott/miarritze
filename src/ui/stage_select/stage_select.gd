@@ -15,6 +15,9 @@ var _bg: Sprite2D
 var _name: Label
 var _cards: Array[Button] = []
 var _opened_ms: int = 0
+var _countdown: float = -1.0       # en ligne : l'invité attend, la map se choisit en temps limité
+var _count_label: Label
+var _sent: bool = false
 
 
 func _ready() -> void:
@@ -62,8 +65,14 @@ func _ready() -> void:
 	back.position = Vector2(4, 4)
 	back.focus_mode = Control.FOCUS_NONE
 	add_child(back)
-	if str(_params.get("mode", "")) == "online" and not OnlineMode.qa.is_empty():
-		get_tree().create_timer(0.8).timeout.connect(_pick.bind("grande_plage"))
+	if str(_params.get("mode", "")) == "online":
+		_countdown = float(OnlineMode.STAGE_SECONDS)
+		_count_label = UiKit.label("", 16, UiKit.C_GOLD)
+		_count_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+		_count_label.position = Vector2(-28, 4)
+		add_child(_count_label)
+		if not OnlineMode.qa.is_empty():
+			get_tree().create_timer(0.8).timeout.connect(_pick.bind("grande_plage"))
 	var rounds: Label = UiKit.label("Meilleur des 3 rounds", 8, UiKit.C_LINEN)
 	rounds.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	rounds.position.y = -14
@@ -148,19 +157,34 @@ func _show(id: String) -> void:
 	_bg.position = Vector2(roundf((view.x - _bg.texture.get_width() * f) * 0.5), 0)
 
 
+func _process(delta: float) -> void:
+	if _countdown < 0.0 or _sent:
+		return
+	_countdown -= delta
+	_count_label.text = str(ceili(maxf(_countdown, 0.0)))
+	if _countdown <= 0.0:
+		_opened_ms = -GHOST_TAP_MS
+		_pick("")
+
+
 func _pick(id: String) -> void:
 	# Garde anti « tap fantôme » : le 2e tap qui validait l'adversaire ne
 	# doit pas choisir aussi le décor sous le doigt.
-	if Time.get_ticks_msec() - _opened_ms < GHOST_TAP_MS:
+	if Time.get_ticks_msec() - _opened_ms < GHOST_TAP_MS or _sent:
 		return
 	if id == "":
 		# Au hasard : jamais le Sommet du Phare (dernier, réservé au boss).
 		id = Roster.STAGES[randi() % (Roster.STAGES.size() - 1)]
 	if str(_params.get("mode", "")) == "online":
-		# Chacun propose ; le serveur tire entre les deux propositions (§3.4).
+		# Seul celui qui a défié choisit la map ; l'invité attend déjà la connexion.
+		_sent = true
 		Api.call_api(HTTPClient.METHOD_POST, "/match/stage",
 			{"match_id": int(OnlineMode.current.get("match_id", 0)), "stage": id},
-			func(_ok: bool, _c: int, _d: Variant) -> void: SceneRouter.goto(&"online_connect"))
+			func(ok: bool, _c: int, _d: Variant) -> void:
+				if ok:
+					SceneRouter.goto(&"online_connect")
+				else:
+					OnlineMode.leave())
 		return
 	var params: Dictionary = _params.duplicate()
 	params["stage"] = id

@@ -5,6 +5,11 @@ extends Control
 var _card: PlayerCard
 var _list: VBoxContainer
 var _status: Label
+## Costume affiché sur la carte : on peut voir les costumes verrouillés (et
+## comment les gagner) ; seul un costume débloqué est enregistré.
+var _shown_costume: int = -1
+
+const COSTUME_HOW: PackedStringArray = ["", "5 victoires avec lui", "finir la Pyramide", "Pyramide difficile"]
 
 
 func _ready() -> void:
@@ -44,18 +49,19 @@ func _build() -> void:
 	_cycler("Favori", func() -> String: return Roster.display_name(str(Profiles.active().get("fighter", "louis"))),
 		func(d: int) -> void:
 			var i: int = (ids.find(str(Profiles.active().get("fighter", "louis"))) + d + ids.size()) % ids.size()
+			_shown_costume = -1
 			Profiles.update_active({"fighter": ids[i], "costume": 0}))
 	_cycler("Costume", func() -> String:
-			var p2: Dictionary = Profiles.active()
-			var c: int = int(p2.get("costume", 0))
-			return "%d%s" % [c + 1, "" if Profiles.costume_unlocked(str(p2.get("fighter")), c) else " (verrouillé)"],
+			var c: int = _costume_shown()
+			if Profiles.costume_unlocked(str(Profiles.active().get("fighter")), c):
+				return "%d / 4" % (c + 1)
+			return "%d / 4 à gagner\n%s" % [c + 1, COSTUME_HOW[c]],
 		func(d: int) -> void:
-			var p3: Dictionary = Profiles.active()
-			for step: int in range(1, 5):
-				var c2: int = (int(p3.get("costume", 0)) + d * step + 8) % 4
-				if Profiles.costume_unlocked(str(p3.get("fighter")), c2):
-					Profiles.update_active({"costume": c2})
-					return)
+			# Les 4 costumes défilent ; un costume verrouillé se montre sans s'enregistrer.
+			var c2: int = (_costume_shown() + d + 4) % 4
+			_shown_costume = c2
+			if Profiles.costume_unlocked(str(Profiles.active().get("fighter")), c2):
+				Profiles.update_active({"costume": c2}))
 	_cycler("Bannière", func() -> String: return "%d" % (int(Profiles.active().get("banner", 0)) + 1),
 		func(d: int) -> void: Profiles.update_active({"banner": (int(Profiles.active().get("banner", 0)) + d + Profiles.BANNERS) % Profiles.BANNERS}))
 	_cycler("Titre", func() -> String: return str(Profiles.TITLES.get(str(Profiles.active().get("title", "")), ["Sans titre"])[0]),
@@ -149,8 +155,14 @@ func _cycler(label_text: String, value: Callable, change: Callable) -> void:
 	_list.add_child(row)
 
 
+func _costume_shown() -> int:
+	return _shown_costume if _shown_costume >= 0 else int(Profiles.active().get("costume", 0))
+
+
 func _refresh_card() -> void:
-	_card.data = Profiles.active()
+	_card.data = Profiles.active().duplicate()
+	_card.data["costume"] = _costume_shown()
+	_card.locked = not Profiles.costume_unlocked(str(_card.data.get("fighter")), _costume_shown())
 	_card.refresh()
 	Api.sync_profile()
 

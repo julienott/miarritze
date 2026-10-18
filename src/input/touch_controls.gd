@@ -54,6 +54,8 @@ var _scale_pt: float = 0.55        # px logiques par point
 var _font: Font
 var _safe: Vector4 = Vector4.ZERO
 var _icons: Dictionary = {}
+## Perso joué : le bouton spécial montre l'objet de son coup (assets/ui/special/<id>.png).
+var fighter_id: String = ""
 var _tap_releases: Array[int] = []    # gestes : instants des derniers taps courts
 
 
@@ -111,6 +113,9 @@ func _layout() -> void:
 		var path: String = "res://assets/ui/icon_%s.png" % str(_buttons[name]["icon"])
 		if ResourceLoader.exists(path):
 			_icons[name] = load(path)
+	var own: String = "res://assets/ui/special/%s.png" % fighter_id
+	if fighter_id != "" and ResourceLoader.exists(own):
+		_icons["special"] = load(own)
 
 
 func stick_radius() -> float:

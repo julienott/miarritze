@@ -127,7 +127,7 @@ Titre ─► Profil (créer / choisir) ─► Menu principal
   - **Défier** un copain : il reçoit une invitation, avec 20 secondes pour accepter.
   - **Match rapide** : appariement automatique avec n'importe quel membre du groupe en attente.
   - **Code de salle** : salle privée à 4 lettres, pour un ami qui n'est pas dans le groupe. **[À trancher]** si utile en v1.
-- **Choix de la map** : chacun propose une map. Si les choix sont identiques, c'est celle-là ; sinon, une roulette visuelle tire entre les deux. Chacun choisit librement son combattant et son costume, avec un compte à rebours de 30 s. À la fin du chrono, le favori du profil est sélectionné.
+- **Choix du combattant et de la map** (simplifié le 2026-10-18, demande de Julien) : chacun choisit son combattant et son costume, avec un compte à rebours de 30 s ; à la fin du chrono, le favori du profil est sélectionné. Celui qui a défié (ou l'hôte d'un match rapide) choisit ensuite la map, en 20 s au plus (au hasard sinon). L'invité ne choisit que son combattant et attend directement la connexion.
 - Le match se joue au meilleur des 3 rounds. À la fin : « Revanche ? » (les deux doivent accepter) ou retour au salon.
 - **Classement de groupe** : un score Elo simplifié (K=32, départ 1000), plus les victoires et défaites. Le résultat n'est enregistré que si **les deux clients rapportent le même vainqueur**, avec le même checksum final (§9.5).
 

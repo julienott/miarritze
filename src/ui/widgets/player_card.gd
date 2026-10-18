@@ -6,6 +6,7 @@ extends Control
 const CARD_SIZE: Vector2 = Vector2(96, 120)
 
 var data: Dictionary = {}
+var locked: bool = false        # aperçu d'un costume pas encore gagné (profil)
 var _font: Font
 
 
@@ -38,8 +39,29 @@ func refresh() -> void:
 	var cell: int = int(FighterDb.load_json(fighter).get("cell", 128))
 	view.position = Vector2(48, 112 if cell == 128 else 116)
 	view.scale = Vector2(0.75, 0.75) if cell > 128 else Vector2.ONE
+	if locked:
+		view.modulate = Color(0.35, 0.35, 0.42)
 	add_child(view)
+	add_child(_emote_bubble())
 	queue_redraw()
+
+
+## Emote du joueur : bulle en haut à droite, devant le combattant.
+func _emote_bubble() -> Control:
+	var emote: String = Profiles.EMOTES[clampi(int(data.get("emote", 0)), 0, Profiles.EMOTES.size() - 1)]
+	var font: Font = load("res://assets/fonts/press_start_2p.ttf")
+	var w: float = font.get_string_size(emote, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x + 6.0
+	var bubble: Control = Control.new()
+	bubble.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bubble.position = Vector2(CARD_SIZE.x - w + 4.0, -5.0)   # dépasse du coin : ne cache pas le visage
+	bubble.size = Vector2(w, 12.0)
+	bubble.draw.connect(func() -> void:
+		bubble.draw_rect(Rect2(Vector2.ZERO, bubble.size), Color8(58, 38, 52))
+		bubble.draw_rect(Rect2(Vector2(1, 1), bubble.size - Vector2(2, 2)), Color8(247, 241, 227))
+		# Petite queue de bulle vers la tête.
+		bubble.draw_rect(Rect2(Vector2(4, 11), Vector2(3, 2)), Color8(58, 38, 52))
+		bubble.draw_string(font, Vector2(3, 10), emote, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color8(58, 38, 52)))
+	return bubble
 
 
 func _draw() -> void:
@@ -50,6 +72,8 @@ func _draw() -> void:
 		draw_rect(Rect2(p, Vector2(2, 2)), Color8(244, 198, 62))
 	var pseudo: String = str(data.get("pseudo", "?"))
 	_center_text(pseudo, 104, Color8(247, 241, 227))
+	if locked:
+		_center_text("verrouillé", 70, Color8(244, 198, 62))
 	var title_id: String = str(data.get("title", ""))
 	if title_id != "" and Profiles.TITLES.has(title_id):
 		_center_text(str(Profiles.TITLES[title_id][0]), 114, Color8(244, 198, 62), 8)

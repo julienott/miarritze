@@ -39,6 +39,12 @@ ACCROUPI = ("the same character squatting down very low like a crouching fightin
 RETIRE = ("remove only the {acc}; the hand that held it stays exactly at the same place as a small closed fist "
           "of normal size, same arm length and thickness; do not change anything else: same character, face, hair, "
           "clothes, colors, pose, proportions and pixel art style, plain white background")
+# Depuis un modèle « retire » : le bras resté tendu (il tenait l'objet) est replié en garde,
+# poing inchangé (Xabi 1001, retour de Julien : « pourquoi un bras aussi long ? »).
+BRAS = ("bend the front arm into a fighting guard: elbow bent close to the body, short forearm, the fist "
+        "raised just in front of the chest at shoulder height, the arm no longer than the other arm; keep the "
+        "fist exactly the same small size; do not change anything else: same character, face, hair, clothes, "
+        "colors, legs, stance and pixel art style, plain white background")
 BOULE = ("cannonball pose: the same character crouched into a compact round ball, knees bent tight against "
          "the chest, feet tucked under, both arms wrapped around the knees, head down on the knees, no leg "
          "extended, compact tucked body, no bubble, no circle drawn around, side view facing right, same face, hair, clothes and "
@@ -101,6 +107,10 @@ def main():
         seeds = [int(x) for x in sys.argv[4:]] or [991, 992, 993]
         print(run(fid, "garde", from_rig.model(fid), RETIRE.format(acc=acc), seeds,
                   {"remove_held_object": acc}))
+    elif cmd == "bras":
+        seeds = [int(x) for x in sys.argv[3:]] or [1011, 1012, 1013, 1014]
+        src = Image.open(os.path.join(od(fid), "modele_sans_acc.png")).convert("RGBA")
+        print(run(fid, "garde", src, BRAS, seeds))
     elif cmd == "accroupi":
         seeds = [int(x) for x in sys.argv[3:]] or [981, 982, 983]
         src = Image.open(os.path.join(od(fid), "modele_sans_acc.png")).convert("RGBA")

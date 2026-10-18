@@ -130,7 +130,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	_hb_t += delta
-	var period: float = QUICK_HEARTBEAT if (_status == "queue" or not OnlineMode.qa.is_empty()) else HEARTBEAT
+	# Défi envoyé : on guette l'acceptation de près.
+	var waiting: bool = _status == "queue" or not OnlineMode.current.is_empty() or not OnlineMode.qa.is_empty()
+	var period: float = QUICK_HEARTBEAT if waiting else HEARTBEAT
 	if _hb_t >= period:
 		_hb_t = 0.0
 		_heartbeat()
@@ -272,6 +274,7 @@ func _show_invite(inv: Dictionary) -> void:
 	_invite_box = PanelContainer.new()
 	_invite_box.position = Vector2(roundf(get_viewport_rect().size.x * 0.5 - 110), 70)
 	_invite_box.custom_minimum_size = Vector2(220, 0)
+	_invite_box.z_index = 300      # au-dessus des copains qui se promènent (z = leur y)
 	add_child(_invite_box)
 	var col: VBoxContainer = VBoxContainer.new()
 	_invite_box.add_child(col)

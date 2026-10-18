@@ -199,8 +199,10 @@ function handlePresence(PDO $pdo): void
 {
     $body = jsonBody();
     $me = auth($pdo, $body);
-    rateLimit($pdo, 'presence:p' . $me['id'], 20);
-    rateLimit($pdo, 'presence:' . clientIp(), 60);
+    // Écran de connexion et match rapide interrogent toutes les secondes ; une classe
+    // ou une famille partage la même adresse IP.
+    rateLimit($pdo, 'presence:p' . $me['id'], 90);
+    rateLimit($pdo, 'presence:' . clientIp(), 900);
     $status = (string) ($body['status'] ?? 'lobby');
     if (!in_array($status, ['lobby', 'queue', 'busy'], true)) {
         $status = 'lobby';
@@ -326,7 +328,10 @@ function handleRespond(PDO $pdo): void
     ok(['match' => matchView($pdo, loadMatch($pdo, (int) $m['id']), (int) $me['id'])]);
 }
 
-/** Chacun propose une map ; identiques → celle-là, sinon tirage entre les deux. */
+/**
+ * L'hôte (celui qui a défié, p1) choisit la map ; l'invité ne choisit que son
+ * combattant. La map fixée, le match passe en signalisation.
+ */
 function handleStage(PDO $pdo): void
 {
     $body = jsonBody();
@@ -337,20 +342,16 @@ function handleStage(PDO $pdo): void
     if (!Validation::isStage($stage)) {
         fail(400, 'Map inconnue');
     }
+    if ((int) $m['p1'] !== (int) $me['id']) {
+        fail(403, "C'est ton copain qui choisit la map");
+    }
     if (!in_array($m['state'], ['accepted', 'signaling'], true)) {
         fail(409, 'Match terminé');
     }
-    $col = (int) $m['p1'] === (int) $me['id'] ? 'stage_p1' : 'stage_p2';
-    $pdo->prepare("UPDATE matches SET $col = ?, updated_at = ? WHERE id = ?")->execute([$stage, time(), $m['id']]);
-    $m = loadMatch($pdo, (int) $m['id']);
-    if ($m['stage_p1'] !== null && $m['stage_p2'] !== null && $m['stage'] === null) {
-        $pick = $m['stage_p1'] === $m['stage_p2'] ? $m['stage_p1'] : (random_int(0, 1) === 0 ? $m['stage_p1'] : $m['stage_p2']);
-        // WHERE stage IS NULL : un seul des deux appels concurrents fixe la map.
-        $pdo->prepare("UPDATE matches SET stage = ?, state = 'signaling', updated_at = ? WHERE id = ? AND stage IS NULL")
-            ->execute([$pick, time(), $m['id']]);
-        $m = loadMatch($pdo, (int) $m['id']);
-    }
-    ok(['match' => matchView($pdo, $m, (int) $me['id'])]);
+    // WHERE stage IS NULL : la map ne change plus une fois fixée.
+    $pdo->prepare("UPDATE matches SET stage_p1 = ?, stage = ?, state = 'signaling', updated_at = ? WHERE id = ? AND stage IS NULL")
+        ->execute([$stage, $stage, time(), $m['id']]);
+    ok(['match' => matchView($pdo, loadMatch($pdo, (int) $m['id']), (int) $me['id'])]);
 }
 
 function handleCancel(PDO $pdo): void
@@ -465,8 +466,8 @@ function handlePostSignal(PDO $pdo): void
     $body = json_decode($raw, true);
     $body = is_array($body) ? $body : [];
     $me = auth($pdo, $body);
-    rateLimit($pdo, 'signal:p' . $me['id'], 240);
-    rateLimit($pdo, 'signal:' . clientIp(), 480);
+    rateLimit($pdo, 'signal:p' . $me['id'], 600);
+    rateLimit($pdo, 'signal:' . clientIp(), 3000);
     $m = myMatch($pdo, $body, (int) $me['id']);
     $payload = $body['payload'] ?? null;
     if (!is_array($payload) || !in_array($payload['kind'] ?? '', ['offer', 'answer', 'ice', 'hello', 'bye'], true)) {
@@ -485,7 +486,7 @@ function handlePostSignal(PDO $pdo): void
 function handleGetSignal(PDO $pdo): void
 {
     $me = auth($pdo, $_GET);
-    rateLimit($pdo, 'signal:p' . $me['id'], 240);
+    rateLimit($pdo, 'signal:p' . $me['id'], 600);
     $matchId = (int) ($_GET['match_id'] ?? 0);
     $after = (int) ($_GET['after'] ?? 0);
     $stmt = $pdo->prepare('SELECT id, payload FROM signals WHERE to_player = ? AND match_id = ? AND id > ? ORDER BY id LIMIT 100');

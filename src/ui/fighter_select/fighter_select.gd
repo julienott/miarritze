@@ -249,11 +249,8 @@ func _refresh(p: int) -> void:
 	if random:
 		_info[p].text = "Surprise !"
 	else:
-		# Comment changer de costume : toucher l'aperçu, ou haut/bas (clavier, manette).
-		var how: String = ""
-		if not _done[p]:
-			how = "  (touche-moi)" if InputHub.using_touch() else "  ↑↓"
-		_info[p].text = "%s\nCostume %d/4%s" % [str(data.get("title", "")), _costume[p] + 1, how]
+		# Le costume se change toujours en touchant l'aperçu ou haut/bas, sans libellé.
+		_info[p].text = str(data.get("title", ""))
 	_info[p].visible = true
 	_overlay.queue_redraw()
 	while _names.size() <= p:
@@ -573,7 +570,11 @@ func _proceed() -> void:
 		"online":
 			OnlineMode.my_pick = {"fighter": p1, "costume": _costume[0],
 				"pseudo": str(Profiles.active().get("pseudo", "?")), "express": Settings.express_fights}
-			SceneRouter.goto(&"stage_select", {"mode": "online"})
+			# Celui qui a défié choisit la map ; l'autre attend directement la connexion.
+			if OnlineMode.is_host():
+				SceneRouter.goto(&"stage_select", {"mode": "online"})
+			else:
+				SceneRouter.goto(&"online_connect")
 		"quick":
 			_start_quick()
 		_:

@@ -1,9 +1,10 @@
 extends Control
-## Mise en relation (SPEC §9.2) : attend le tirage de la map, échange les
+## Mise en relation (SPEC §9.2) : attend la map choisie par l'hôte, échange les
 ## choix de combattants par la signalisation (« hello »), ouvre le lien
 ## WebRTC, mesure le RTT (délai d'entrée), puis lance le combat.
 
 const PING_COUNT: int = 4
+const POLL_SECONDS: float = 1.0
 
 var _label: Label
 var _poll_t: float = 0.0
@@ -20,7 +21,8 @@ var _lauburu: Sprite2D
 func _ready() -> void:
 	UiKit.backdrop(self, "bg_menu", 0.5)
 	var opp: Dictionary = OnlineMode.current.get("opponent", {})
-	_label = UiKit.label("Connexion à %s…" % str(opp.get("pseudo", "ton copain")), 8, UiKit.C_LINEN)
+	var who: String = str(opp.get("pseudo", "ton copain"))
+	_label = UiKit.label(("Connexion à %s…" if OnlineMode.is_host() else "%s choisit la map…") % who, 8, UiKit.C_LINEN)
 	_label.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	add_child(_label)
@@ -50,7 +52,7 @@ func _process(delta: float) -> void:
 		return
 	if not _connecting:
 		_poll_t += delta
-		if _poll_t >= 0.7:
+		if _poll_t >= POLL_SECONDS:
 			_poll_t = 0.0
 			Api.call_api(HTTPClient.METHOD_POST, "/presence", {"status": "busy"}, _on_presence)
 		return
