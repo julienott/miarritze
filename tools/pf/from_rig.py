@@ -175,6 +175,12 @@ def main():
     keep_txt = "same character, same face, same colors, side view facing right, clean pixel art, no weapon, no object, no effects"
     import acc_mask
     accm = acc_mask.masks(fid)
+    bare = None
+    if "--sans-acc" in sys.argv:
+        # accessoire retiré du perso (bouée de Txomin → palmes du modèle) : contrôles
+        # rendus sans lui, rien de recollé
+        bare = acc_mask.renders(fid)[1]
+        accm = {}
     reg_path, ok_path, log_path = (os.path.join(od, "anims.json"), os.path.join(pd, "verdicts.json"),
                                    os.path.join(od, "gen_log.jsonl"))
     done = json.load(open(reg_path)) if os.path.exists(reg_path) else {}
@@ -185,6 +191,8 @@ def main():
             continue
         a = meta["anims"][name]
         old = [window(f, foot) for f in redraw.frames(meta, idx, pal, name)]
+        if bare:
+            old = [window(Image.fromarray(pal[b].astype(np.uint8), "RGBA"), foot) for b in bare[name]]
         n = len(old)
         lora = redraw.lora_for(name, a)
         best = None

@@ -23,12 +23,22 @@ ACC = ("acc", "accf", "accb")
 
 def masks(fid):
     """{anim: [masque booléen (cell, cell)]} ; {} si le perso n'a pas de rig RD ou d'accessoire."""
-    if not rd_rig.has_rd_rig(fid):
+    full, bare = renders(fid)
+    if not full:
         return {}
+    return {a: [np.asarray(f) != np.asarray(b) for f, b in zip(full[a], bare[a])] for a in full}
+
+
+def renders(fid):
+    """(rendu complet, rendu sans accessoire) {anim: [image]} du rig ; ({}, {}) sans rig ou
+    sans accessoire. Le rendu sans accessoire sert de contrôle quand l'accessoire est
+    retiré du perso (bouée de Txomin remplacée par des palmes, from_rig.py --sans-acc)."""
+    if not rd_rig.has_rd_rig(fid):
+        return {}, {}
     rig, guard = rd_rig.build_rig(fid)
     keys = [k for k in rig.draw_order if k.split(":")[0] in ACC or k in ACC]
     if not keys:
-        return {}
+        return {}, {}
     poses = animate.load_poses(fid, guard_override=guard)
     over = rd_rig.pose_overrides(fid)
     for name, anim in over.get("anims", {}).items():
@@ -45,4 +55,4 @@ def masks(fid):
     rig._cache8 = {}
     bare = animate.render_all(rig, amp, poses, C, foot)
     rig.draw_order = order
-    return {a: [np.asarray(f) != np.asarray(b) for f, b in zip(full[a], bare[a])] for a in full}
+    return full, bare

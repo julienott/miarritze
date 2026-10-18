@@ -27,8 +27,22 @@ def clean(im):
     """Fond du rendu Kontext retiré (couleur du coin), alpha binaire, pieds en FOOT."""
     a = np.array(im.convert("RGBA"))
     bg = a[2, 2, :3].astype(int)
-    far = np.abs(a[..., :3].astype(int) - bg).sum(-1) > 40
-    a[..., 3] = np.where(far, 255, 0)
+    near = np.abs(a[..., :3].astype(int) - bg).sum(-1) <= 40
+    # fond = pixels proches de la couleur du coin RELIÉS AU BORD (un vêtement blanc
+    # enclos dans le perso reste opaque)
+    H, W = near.shape
+    seen = np.zeros_like(near)
+    stack = [(y, x) for y in (0, H - 1) for x in range(W) if near[y, x]] + \
+            [(y, x) for x in (0, W - 1) for y in range(H) if near[y, x]]
+    for y, x in stack:
+        seen[y, x] = True
+    while stack:
+        y, x = stack.pop()
+        for ny, nx in ((y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)):
+            if 0 <= ny < H and 0 <= nx < W and near[ny, nx] and not seen[ny, nx]:
+                seen[ny, nx] = True
+                stack.append((ny, nx))
+    a[..., 3] = np.where(seen, 0, 255)
     sys.path.insert(0, os.path.join(ROOT, "tools", "sprites"))
     from despeck_sheet import comps
     m = a[..., 3] > 0
@@ -65,6 +79,7 @@ def main():
                        "prompt": f"remove the {obj} completely, empty hands, arms relaxed at the sides, "
                                  f"keep the exact same character, face, clothes, colors, pose and pixel art style, "
                                  f"plain white background"})[0]
+        im.save(os.path.join(od, f"sans_acc_{s}_brut.png"))     # brut : détourage refaisable
         im = clean(im.resize((160, 160), Image.NEAREST))
         im.save(os.path.join(od, f"sans_acc_{s}.png"))
         items.append((str(s), im))
