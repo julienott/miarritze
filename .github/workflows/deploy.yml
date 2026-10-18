@@ -112,3 +112,109 @@ jobs:
           sshpass -e rsync -avz -e "$SSH_OPTS" \
             --exclude='*.sqlite*' --exclude='config.php' \
             backend/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/api/"
+
+  # Version Steam Deck (Linux x86_64), voir docs/STEAMDECK.md : export,
+  # archive + .pck + manifest.json, publiés dans /steamdeck/ à côté du jeu
+  # web. Job indépendant : un échec ici ne bloque jamais le déploiement web.
+  # Le numéro de build (run_number de CE workflow) est ce que le jeu compare
+  # pour se mettre à jour : il doit rester croissant (ne pas renommer le
+  # fichier sans relever le compteur, cf. doc).
+  steamdeck:
+    runs-on: ubuntu-latest
+    # Deux pushs rapprochés : on publie dans l'ordre, jamais un manifeste plus ancien en dernier.
+    concurrency:
+      group: steamdeck-deploy
+      cancel-in-progress: false
+    env:
+      SITE_URL: https://miarritze.ijulien.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Godot + Linux templates
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot-bin
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-linux
+
+      - name: Install Godot + Linux export templates
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot-bin
+          curl -sL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" ~/godot-bin/godot
+          chmod +x ~/godot-bin/godot
+
+          TPL_DIR="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$TPL_DIR"
+          curl -sL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          # Seul le modèle Linux x86_64 release est utile (~70 Mo).
+          unzip -q templates.tpz "templates/linux_release.x86_64" "templates/version.txt" -d /tmp/tpz
+          mv /tmp/tpz/templates/* "$TPL_DIR/"
+
+      # Version = numéro de run + SHA court, injectée dans la copie de travail
+      # de la CI (project.godot versionné reste sans numéro : « dev »).
+      - name: Version du build
+        id: version
+        run: |
+          BUILD="${{ github.run_number }}"
+          VERSION="${BUILD}-${GITHUB_SHA::7}"
+          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          python3 - "$BUILD" "$VERSION" <<'PY'
+          import sys
+          path = "project.godot"
+          text = open(path).read()
+          line = 'config/name="Miarritze Borroka"\n'
+          assert line in text, "config/name introuvable dans project.godot"
+          text = text.replace(line, line + f'config/build={sys.argv[1]}\nconfig/version="{sys.argv[2]}"\n', 1)
+          open(path, "w").write(text)
+          PY
+          grep -n '^config/' project.godot
+
+      - name: Import project resources
+        run: ~/godot-bin/godot --headless --import || true
+
+      - name: Export SteamDeck (release)
+        run: |
+          mkdir -p exports/steamdeck
+          ~/godot-bin/godot --headless --export-release "SteamDeck" exports/steamdeck/MiarritzeBorroka.x86_64
+          test -x exports/steamdeck/MiarritzeBorroka.x86_64 && test -f exports/steamdeck/MiarritzeBorroka.pck
+
+      # .tar.gz plutôt qu'AppImage : l'auto-update doit pouvoir réécrire le
+      # jeu sur place, et une AppImage est en lecture seule (squashfs + FUSE).
+      - name: Package (archive + pck + manifeste)
+        run: |
+          tools/steamdeck/package.sh exports/steamdeck web/build/steamdeck \
+            "${{ steps.version.outputs.build }}" "${{ steps.version.outputs.version }}" \
+            "$GODOT_VERSION" "$SITE_URL/steamdeck"
+          cp web/steamdeck/index.html web/steamdeck/install.sh web/steamdeck/.htaccess web/build/steamdeck/
+          bash -n web/build/steamdeck/install.sh
+          ls -la web/build/steamdeck
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MiarritzeBorroka-steamdeck-${{ steps.version.outputs.version }}
+          path: web/build/steamdeck/*.tar.gz
+          retention-days: 14
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      # Même hébergement et mêmes secrets que le job deploy. Ordre : d'abord
+      # les fichiers (sans le manifeste), puis le manifeste et le ménage des
+      # anciennes versions (--delete limité à steamdeck/) : un client ne lit
+      # jamais un manifeste qui pointe vers un fichier pas encore envoyé.
+      - name: Deploy /steamdeck via rsync over SSH
+        env:
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          SSH_OPTS="ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1"
+          DEST="${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/steamdeck/"
+          sshpass -e rsync -az -e "$SSH_OPTS" --exclude='manifest.json' web/build/steamdeck/ "$DEST"
+          sshpass -e rsync -az --delete -e "$SSH_OPTS" web/build/steamdeck/ "$DEST"
