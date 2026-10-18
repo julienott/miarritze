@@ -16,6 +16,9 @@ var _ping_sent_at: float = 0.0
 var _done: bool = false
 var _spin: float = 0.0
 var _lauburu: Sprite2D
+var _ice: Array = []
+var _relay: bool = false       # le serveur fournit un relais TURN
+var _attempt: int = 1
 
 
 func _ready() -> void:
@@ -86,14 +89,24 @@ func _connect() -> void:
 			OnlineMode.their_pick = payload.get("pick", {}))
 	OnlineMode.signaling.send({"kind": "hello", "pick": OnlineMode.my_pick})
 	Api.call_api(HTTPClient.METHOD_GET, "/net/config", {}, func(ok: bool, _c: int, data: Variant) -> void:
-		var ice: Array = (data as Dictionary).get("ice_servers", []) if ok and data is Dictionary else []
-		OnlineMode.link = P2PLink.new()
-		Api.add_child(OnlineMode.link)
-		OnlineMode.link.connected.connect(_on_linked)
-		OnlineMode.link.failed.connect(_on_failed)
-		OnlineMode.link.ctrl_received.connect(_on_ctrl)
-		OnlineMode.link.ctrl_received.connect(OnlineMode.handle_ctrl)
-		OnlineMode.link.start(OnlineMode.is_host(), OnlineMode.signaling, ice), false)
+		if ok and data is Dictionary:
+			_ice = (data as Dictionary).get("ice_servers", [])
+			_relay = bool((data as Dictionary).get("relay", false))
+		_open_link(), false)
+
+
+## Un essai de lien P2P ; le 2e essai passe par le relais (TURN) s'il existe.
+func _open_link() -> void:
+	if OnlineMode.link != null and is_instance_valid(OnlineMode.link):
+		OnlineMode.link.close()
+		OnlineMode.link.queue_free()
+	OnlineMode.link = P2PLink.new()
+	Api.add_child(OnlineMode.link)
+	OnlineMode.link.connected.connect(_on_linked)
+	OnlineMode.link.failed.connect(_on_failed)
+	OnlineMode.link.ctrl_received.connect(_on_ctrl)
+	OnlineMode.link.ctrl_received.connect(OnlineMode.handle_ctrl)
+	OnlineMode.link.start(OnlineMode.is_host(), OnlineMode.signaling, _ice, _attempt, _attempt > 1 and _relay)
 
 
 func _on_linked() -> void:
@@ -118,8 +131,15 @@ func _on_ctrl(d: Dictionary) -> void:
 
 
 func _on_failed(_reason: String) -> void:
+	if _attempt == 1 and not _linked:
+		# Les deux appareils échouent à peu près ensemble : chacun relance l'essai 2.
+		_attempt = 2
+		_label.text = "Connexion difficile… on passe par un autre chemin"
+		OnlineMode.signaling.active = true
+		_open_link()
+		return
 	_done = true
-	_label.text = "Impossible de relier vos deux appareils.\nEssayez sur le même Wi-Fi, ou réessayez."
+	_label.text = "Impossible de relier vos deux appareils.\nRéessayez dans un instant."
 	get_tree().create_timer(4.0).timeout.connect(OnlineMode.leave)
 
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * Routeur unique de l'API Miarritze Borroka (SPEC-BORROKA §9.4).
  *
- * Sans auth : POST /group, POST /group/join, GET /net/config, POST /net/report,
+ * Sans auth : POST /group, POST /group/join, GET /net/config, POST /net/report, GET /net/reports,
  *             GET /leaderboard
  * Avec auth (player_id + secret) : /profile, /presence, /match/*, /signal,
  *             /tower/score
@@ -24,6 +24,11 @@ const ELO_K = 32;
 
 $configFile = __DIR__ . '/../config.php';
 $config = is_file($configFile) ? require $configFile : [];
+// Relais TURN : fichier écrit au déploiement depuis les secrets GitHub (jamais dans le dépôt).
+$turnFile = __DIR__ . '/../turn.php';
+if (is_file($turnFile)) {
+    $config = array_merge($config, require $turnFile);
+}
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -56,6 +61,7 @@ try {
         $method === 'POST' && $route === '/group/join' => handleJoinGroup($pdo),
         $method === 'GET' && $route === '/net/config' => handleNetConfig($config),
         $method === 'POST' && $route === '/net/report' => handleNetReport($pdo),
+        $method === 'GET' && $route === '/net/reports' => handleNetReports($pdo),
         $method === 'GET' && $route === '/leaderboard' => handleLeaderboard($pdo),
         $method === 'GET' && $route === '/profile' => handleGetProfile($pdo),
         $method === 'POST' && $route === '/profile' => handlePostProfile($pdo),
@@ -506,14 +512,75 @@ function handleNetConfig(array $config): void
     foreach (($config['turn_servers'] ?? []) as $turn) {
         $ice[] = $turn;   // TURN optionnels ajoutés sans recompiler le jeu (§9.2)
     }
-    ok(['ice_servers' => $ice]);
+    foreach (cloudflareTurn($config) as $turn) {
+        $ice[] = $turn;
+    }
+    $relay = false;
+    foreach ($ice as $s) {
+        $relay = $relay || isset($s['credential']);
+    }
+    // relay : le client peut retenter en forçant le relais (4G, NAT strict).
+    ok(['ice_servers' => $ice, 'relay' => $relay]);
+}
+
+/**
+ * Relais TURN Cloudflare (gratuit jusqu'à 1 To/mois) : identifiants temporaires
+ * générés côté serveur (la clé ne quitte jamais le serveur), mis en cache 1 h.
+ */
+function cloudflareTurn(array $config): array
+{
+    $cf = $config['cloudflare_turn'] ?? null;
+    if (!is_array($cf) || ($cf['key_id'] ?? '') === '' || ($cf['api_token'] ?? '') === '') {
+        return [];
+    }
+    $cache = __DIR__ . '/../db/turn_cache.json';
+    if (is_file($cache)) {
+        $c = json_decode((string) file_get_contents($cache), true);
+        if (is_array($c) && (int) ($c['until'] ?? 0) > time() && is_array($c['servers'] ?? null)) {
+            return $c['servers'];
+        }
+    }
+    $ttl = 4 * 3600;
+    $url = 'https://rtc.live.cloudflare.com/v1/turn/keys/' . rawurlencode((string) $cf['key_id']) . '/credentials/generate-ice-servers';
+    $ctx = stream_context_create(['http' => [
+        'method' => 'POST', 'timeout' => 4, 'ignore_errors' => true,
+        'header' => "Authorization: Bearer {$cf['api_token']}\r\nContent-Type: application/json\r\n",
+        'content' => json_encode(['ttl' => $ttl]),
+    ]]);
+    $raw = @file_get_contents($url, false, $ctx);
+    $data = is_string($raw) ? json_decode($raw, true) : null;
+    $list = $data['iceServers'] ?? [];
+    if (isset($list['urls'])) {
+        $list = [$list];   // ancienne forme de l'API : un seul objet
+    }
+    $servers = [];
+    foreach ((array) $list as $s) {
+        if (is_array($s) && isset($s['urls'], $s['username'], $s['credential'])) {
+            // Ports 53/80/443 : passent les pare-feu d'école ; on garde turn: et turns:.
+            $urls = array_values(array_filter((array) $s['urls'], fn($u) => str_starts_with((string) $u, 'turn')));
+            $servers[] = ['urls' => $urls, 'username' => $s['username'], 'credential' => $s['credential']];
+        }
+    }
+    if ($servers !== []) {
+        @file_put_contents($cache, json_encode(['until' => time() + $ttl - 1800, 'servers' => $servers]));
+    }
+    return $servers;
+}
+
+/** Derniers échecs de connexion (diagnostic) : raison, navigateur, date. Rien de personnel. */
+function handleNetReports(PDO $pdo): void
+{
+    rateLimit($pdo, 'netreports:' . clientIp(), 20);
+    $rows = $pdo->query('SELECT kind, browser, created_at FROM net_reports ORDER BY id DESC LIMIT 30')->fetchAll();
+    ok(array_map(fn($r) => ['kind' => $r['kind'], 'browser' => $r['browser'],
+        'at' => gmdate('Y-m-d H:i', (int) $r['created_at'])], $rows));
 }
 
 function handleNetReport(PDO $pdo): void
 {
     rateLimit($pdo, 'netreport:' . clientIp(), 10);
     $body = jsonBody();
-    $kind = substr(preg_replace('/[^a-z_]/', '', (string) ($body['kind'] ?? 'inconnu')) ?? '', 0, 32);
+    $kind = substr(preg_replace('/[^a-z0-9_]/', '', (string) ($body['kind'] ?? 'inconnu')) ?? '', 0, 40);
     $browser = substr(preg_replace('/[^A-Za-z0-9 ._\/-]/', '', (string) ($body['browser'] ?? '')) ?? '', 0, 64);
     $pdo->prepare('INSERT INTO net_reports (kind, browser, created_at) VALUES (?, ?, ?)')->execute([$kind, $browser, time()]);
     ok(['ok' => true]);

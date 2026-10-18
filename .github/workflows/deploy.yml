@@ -94,6 +94,20 @@ jobs:
           cp web/landing/* web/build/landing/
           test -f web/build/landing/bg_menu_0.png && test -f web/build/landing/press_start_2p.ttf
 
+      # Relais TURN (connexion en 4G / NAT strict) : identifiants Cloudflare lus dans
+      # les secrets, écrits dans backend/turn.php (gitignoré) ; absents = STUN seul.
+      - name: TURN config
+        env:
+          CF_TURN_KEY_ID: ${{ secrets.CF_TURN_KEY_ID }}
+          CF_TURN_API_TOKEN: ${{ secrets.CF_TURN_API_TOKEN }}
+        run: |
+          if [ -n "$CF_TURN_KEY_ID" ] && [ -n "$CF_TURN_API_TOKEN" ]; then
+            php -r 'file_put_contents("backend/turn.php", "<?php\nreturn " . var_export(["cloudflare_turn" => ["key_id" => getenv("CF_TURN_KEY_ID"), "api_token" => getenv("CF_TURN_API_TOKEN")]], true) . ";\n");'
+            php -l backend/turn.php
+          else
+            echo "Pas de relais TURN configuré (secrets CF_TURN_KEY_ID / CF_TURN_API_TOKEN)"
+          fi
+
       - name: Deploy via rsync over SSH
         env:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
