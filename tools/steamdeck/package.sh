@@ -20,12 +20,6 @@ BASE_URL=${6:-}
 NAME=MiarritzeBorroka
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 
-# « 4.7 » -> « 4.7.0 » (le jeu compare major.minor.patch)
-case "$GODOT" in
-  *.*.*) ;;
-  *.*) GODOT="$GODOT.0" ;;
-esac
-
 test -f "$EXPORT_DIR/$NAME.x86_64"
 test -f "$EXPORT_DIR/$NAME.pck"
 
@@ -45,35 +39,6 @@ PCK="$NAME-$VERSION.pck"
 COPYFILE_DISABLE=1 tar -czf "$OUT/$TAR" -C "$STAGE" "$NAME"
 cp "$EXPORT_DIR/$NAME.pck" "$OUT/$PCK"
 
-NAME="$NAME" OUT="$OUT" TAR="$TAR" PCK="$PCK" BUILD="$BUILD" VERSION="$VERSION" \
-GODOT="$GODOT" BASE_URL="$BASE_URL" python3 - <<'EOF'
-import datetime, hashlib, json, os
-
-out = os.environ["OUT"]
-base = os.environ["BASE_URL"].rstrip("/")
-
-
-def entry(name: str) -> dict:
-    path = os.path.join(out, name)
-    data = open(path, "rb").read()
-    return {
-        "url": f"{base}/{name}" if base else name,
-        "sha256": hashlib.sha256(data).hexdigest(),
-        "size": len(data),
-    }
-
-
-manifest = {
-    "name": "Miarritze Borroka",
-    "platform": "linux-x86_64 (Steam Deck)",
-    "build": int(os.environ["BUILD"]),
-    "version": os.environ["VERSION"],
-    "godot": os.environ["GODOT"],
-    "date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-    "package": entry(os.environ["TAR"]),
-    "pck": entry(os.environ["PCK"]),
-}
-with open(os.path.join(out, "manifest.json"), "w") as f:
-    json.dump(manifest, f, indent=2)
-print(json.dumps(manifest, indent=2))
-EOF
+python3 "$ROOT/tools/release/manifest.py" "$OUT" --platform "linux-x86_64 (Steam Deck)" \
+  --build "$BUILD" --version "$VERSION" --godot "$GODOT" --base-url "$BASE_URL" \
+  --package "$TAR" --pck "$PCK"
