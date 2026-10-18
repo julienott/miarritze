@@ -16,6 +16,10 @@ const ROWS_CODE: PackedStringArray = ["ABCDEFGHIJ", "KLMNOPQRST", "UVWXYZ", "234
 const CELL_W: float = 24.0
 const CELL_H: float = 20.0
 
+## Claviers manette ouverts : le champ HTML du web (WebTextField) se cache
+## tant qu'il y en a un, sinon il passe par-dessus la grille.
+static var opened: int = 0
+
 var _edit: LineEdit
 var _allow_lower: bool = true
 var _lower: bool = false
@@ -139,6 +143,14 @@ func _wire(rows: Array) -> void:
 ## Colonne correspondante dans une rangée d'une autre longueur.
 static func _near(c: int, from_size: int, to_size: int) -> int:
 	return clampi(int(roundf(float(c) * float(to_size - 1) / maxf(float(from_size - 1), 1.0))), 0, to_size - 1)
+
+
+func _enter_tree() -> void:
+	opened += 1
+
+
+func _exit_tree() -> void:
+	opened -= 1
 
 
 func _refresh() -> void:

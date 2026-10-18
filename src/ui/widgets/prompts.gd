@@ -117,7 +117,10 @@ static func key_name(action: String) -> String:
 		var k: InputEventKey = ev
 		var code: Key = k.physical_keycode if k.physical_keycode != KEY_NONE else k.keycode
 		var shown: Key = code
-		if k.physical_keycode != KEY_NONE:
+		# Web : la traduction physique → disposition n'existe pas (erreur
+		# « Not supported ») ; on garde la touche physique, puis l'AZERTY.
+		if k.physical_keycode != KEY_NONE and not OS.has_feature("web") \
+				and DisplayServer.get_name() != "headless":
 			shown = DisplayServer.keyboard_get_keycode_from_physical(code)
 			if shown == KEY_NONE:
 				shown = code
