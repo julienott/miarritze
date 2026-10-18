@@ -37,7 +37,7 @@ FACES = {
     "maia": {"src": "assets/fighters/maia/rd_portrait.png", "protect": (40, 20, 76, 56), "eyes": [(48, 36, 57, 42), (66, 36, 70, 42)], "mouth": (60, 51), "head": (28, 6, 84, 62)},
     "patxi": {"src": "tools/rd/out/patxi/portrait_src.png", "protect": (36, 27, 66, 52), "eyes": [(44, 32, 48, 37), (53, 32, 57, 37)], "mouth": (52, 47), "head": (20, 6, 76, 62)},
     "mattin": {"src": "tools/rd/out/mattin/portrait_src.png", "protect": (30, 16, 60, 40), "eyes": [(41, 21, 45, 25), (50, 21, 54, 25)], "mouth": (47, 31), "head": (20, 4, 76, 60)},
-    "amaia": {"src": "tools/rd/out/amaia/portrait_src.png", "protect": (36, 24, 66, 52), "eyes": [(42, 34, 47, 40), (56, 34, 60, 40)], "mouth": (52, 46), "head": (22, 8, 78, 64)},
+    "amaia": {"src": "tools/rd/out/amaia/pf_portrait_102.png", "protect": (40, 34, 70, 56), "eyes": [(57, 39, 64, 47)], "mouth": (57, 52), "head": (16, 12, 74, 58)},
     "txomin": {"flood_ymax": 76, "protect": (30, 28, 70, 64), "eyes": [(35, 33, 52, 40), (56, 33, 66, 40)], "mouth": (54, 57), "head": (16, 6, 72, 62)},
     # Kaio : décor chargé (détourage depuis le haut) ; texte CHIPS aplati
     "kaio": {"src": "tools/rd/out/kaio/portrait_src.png", "flood_ymax": 60, "fills": [(33, 59, 53, 68, "ed6054")], "protect": (34, 14, 80, 44),

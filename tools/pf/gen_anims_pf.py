@@ -26,6 +26,7 @@ import os
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 
 import numpy as np
@@ -59,7 +60,10 @@ EXTRA = 2          # images demandées en plus (la fin de Wan reste souvent fig�
 def _post_json(url, payload, timeout=900):
     req = urllib.request.Request(url, json.dumps(payload).encode(), {
         "Content-Type": "application/json", "Accept": "application/json, text/event-stream", **AUTH})
-    raw = urllib.request.urlopen(req, timeout=timeout).read().decode()
+    try:
+        raw = urllib.request.urlopen(req, timeout=timeout).read().decode()
+    except urllib.error.HTTPError as e:     # message du serveur dans l'erreur (sinon « 500 » muet)
+        raise RuntimeError(f"HTTP {e.code} : {e.read().decode(errors='replace')[:600]}") from None
     lines = [ln[6:] if ln.startswith("data: ") else ln for ln in raw.splitlines()]
     return json.loads([ln for ln in lines if ln.startswith("{")][-1])
 

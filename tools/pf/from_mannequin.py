@@ -14,7 +14,7 @@ Rien n'est repris des anciennes images ni du rig découpé :
     devant (accf/acc) ou derrière (accb) le corps → fidèle, jamais redessiné.
 Sorties : tools/rd/out/<id>/pf/<anim>_m<graine>.png, anims.json, verdicts.json,
 planche tests/out/pf/<id>.png ; ensuite build_rd_anims.py / build_fighter.py.
-Usage : from_mannequin.py <id> [anim …] [--essais 3] [--graine D] [--refaire] [--sec]
+Usage : from_mannequin.py <id> [anim …] [--essais 3] [--graine D] [--refaire]
 """
 import hashlib
 import json
@@ -40,12 +40,17 @@ import gen_anims_pf as pf  # noqa: E402
 
 fiche = pf.fiche
 
-CELL = pieces.CELL
-FOOT = (80, 152)
+CELL = 256           # case des persos refaits (jeu et génération) : chistera à bout de bras,
+FOOT = (128, 240)    # perso couché ou tourné, rien n'est rogné (le jeu lit cell/foot par perso)
+AIR_MARGIN = 14      # px (case) gardés sous un perso en l'air : la boule tournée est plus large
+ROT_LIFT = 32        # px : remontée des images tournées (couché, salto) dans la case
 TILT = 40            # au-delà (degrés d'inclinaison du buste), le contrôle est rendu corps droit
 CANVAS = (CELL * 2, CELL * 2)
 ROOTPOS = (float(CELL), CELL * 150.0 / 128.0)
 QA = dict(pieces.QA, max_drift=0.45)
+# Animations où l'accessoire est caché (le bras redessiné ne suit pas la main du
+# mannequin et l'objet barre le visage) : relecture de la planche.
+NO_ACC_ANIMS = {"amaia": {"jump_kick"}}
 # Accessoire du rig RD abandonné par le nouveau design (bouée de Txomin → palmes).
 NO_RD_ACC = {"txomin"}
 # Accessoires dessinés accrochés au bassin : (image, point d'accroche dans l'image,
@@ -58,13 +63,26 @@ def out_dir(fid):
     return os.path.join(ROOT, "tools", "rd", "out", fid)
 
 
-def model(fid):
-    """Modèle propre sans accessoire (model_sans_acc.py) ou pose RD d'origine."""
-    p = os.path.join(out_dir(fid), "modele_sans_acc.png")
-    if os.path.exists(p):
-        return Image.open(p).convert("RGBA")
-    import from_rig
-    return from_rig.model(fid)
+# Animations accroupies : le guidé ne plie pas un modèle debout (il recopie la pose
+# debout) → référence = modèle accroupi (prep_refonte.py accroupi) s'il existe.
+CROUCH_ANIMS = {"crouch", "crouch_idle", "crouch_block", "crouch_punch", "sweep"}
+
+
+def model(fid, name="modele_sans_acc.png"):
+    """Modèle propre sans accessoire (prep_refonte.py), dans une case du jeu, pieds en FOOT."""
+    p = os.path.join(out_dir(fid), name)
+    im = Image.open(p).convert("RGBA")
+    im = im.crop(im.getbbox())
+    out = Image.new("RGBA", (CELL, CELL))
+    out.paste(im, (FOOT[0] - im.width // 2, FOOT[1] - im.height), im)
+    return out
+
+
+def strip(frames):
+    s = Image.new("RGBA", (CELL * len(frames), CELL))
+    for i, f in enumerate(frames):
+        s.paste(f, (i * CELL, 0))
+    return s
 
 
 class Mannequin:
@@ -102,6 +120,7 @@ def place(canvas_img, name, scale, ref_rows=None):
         return Image.new("RGBA", (CELL, CELL)), (scale, 0, 0)
     if name in animate.AIR_ANIMS:
         ground = (rows.max() + rows.min()) / 2 - IDLE_MID[0]
+        ground = max(ground, rows.max() + AIR_MARGIN / scale)    # en l'air : jamais sous le sol de la case
     else:
         ground = rows.max()
     # pied (sol, bassin en x) → FOOT, échelle autour de ce point
@@ -116,71 +135,14 @@ def place(canvas_img, name, scale, ref_rows=None):
 IDLE_MID = [0.0]
 
 
-def centroid(im):
-    a = np.array(im)[..., 3] > 127
-    ys, xs = np.nonzero(a)
-    return (xs.mean(), ys.mean()) if len(xs) else (CELL / 2, CELL / 2)
-
-
-def iou(a, b):
-    a, b = np.array(a)[..., 3] > 127, np.array(b)[..., 3] > 127
-    return (a & b).sum() / max((a | b).sum(), 1)
-
-
-def rotsprite(im, angle, center):
-    """Rotation propre d'un sprite RGBA (méthode du rig : ×8 par scale2x, rotation,
-    vote ×8 → 1) autour de `center` ; pas de dents de scie du plus proche voisin."""
-    import rig as rigmod
-    a = np.array(im)
-    op = a[..., 3] > 127
-    cols, inv = np.unique(a[op][:, :3], axis=0, return_inverse=True)
-    idx = np.zeros(op.shape, np.uint8)
-    idx[op] = (inv.reshape(-1) % 254) + 1
-    pc = rigmod.Piece(img=idx, pivot=(center[0], center[1]), shade=False)
-    r = rigmod.Rig([], {"s": pc}, [], {})
-    layer, x0, y0 = r.render_piece("s", pc, angle, (center[0], center[1]), (1.0, 1.0))
-    out = np.zeros((CELL, CELL, 4), np.uint8)
-    if layer is None:
-        return Image.fromarray(out)
-    lut = np.zeros((256, 4), np.uint8)
-    lut[1:len(cols) + 1, :3] = cols[:255]
-    lut[1:len(cols) + 1, 3] = 255
-    rgba = lut[layer]
-    h, w = layer.shape
-    ys, xs = slice(max(0, y0), min(CELL, y0 + h)), slice(max(0, x0), min(CELL, x0 + w))
-    src = rgba[ys.start - y0:ys.stop - y0, xs.start - x0:xs.stop - x0]
-    out[ys, xs] = src
-    return Image.fromarray(out)
-
-
-def turn(drawn, upright_ctrl, target_ctrl, angle):
-    """Perso redessiné droit → tourné comme le contrôle d'origine (sens choisi par
-    recouvrement), centroïde recalé sur celui de la silhouette cible."""
-    best = None
-    for sgn in (1, -1):
-        c = rotsprite(upright_ctrl, sgn * angle, centroid(upright_ctrl))
-        sc = iou_shift(c, target_ctrl)
-        if best is None or sc[0] > best[0]:
-            best = (sc[0], sgn, sc[1])
-    _, sgn, (dx, dy) = best
-    r = rotsprite(drawn, sgn * angle, centroid(upright_ctrl))
-    out = Image.new("RGBA", (CELL, CELL))
-    out.paste(r, (round(dx), round(dy)), r)
-    return out
-
-
-def iou_shift(c, target):
-    cx, cy = centroid(c)
-    tx, ty = centroid(target)
-    dx, dy = tx - cx, ty - cy
-    moved = Image.new("RGBA", (CELL, CELL))
-    moved.paste(c, (round(dx), round(dy)), c)
-    return iou(moved, target), (dx, dy)
+def b64(im):
+    return pieces.b64(im)
 
 
 class Accessory:
-    """Accessoire découpé dans le modèle propre (pièce du rig RD) et posé sur la main
-    du mannequin : position de l'os du mannequin, angle de l'os du rig RD (même pose)."""
+    """Accessoire découpé dans le modèle propre (pièce du rig RD), posé par le serveur
+    (overlays) sur la main du mannequin : position de l'os du mannequin, angle de l'os
+    du rig RD pour la même pose. Jamais redessiné (Julien : « chistera fidèle »)."""
 
     def __init__(self, fid, man):
         self.ok = rd_rig.has_rd_rig(fid) and bool(man.acc) and fid not in NO_RD_ACC
@@ -198,165 +160,183 @@ class Accessory:
         self.man_bone = man.acc[0]
         self.front = not self.rd_bone.name.startswith("accb")
         from redraw import load
-        self.pal = load(fid)[3]
+        import rig as rigmod
+        pal = load(fid)[3]
+        piece = self.rd.pieces[self.rd_bone.piece]
+        idx = np.pad(piece.img, 1)                       # place pour le contour
+        self.image = Image.fromarray(pal[rigmod.add_outline(idx)].astype(np.uint8), "RGBA")
+        self.pivot = [float(piece.pivot[0]) + 1, float(piece.pivot[1]) + 1]
+        self.base = piece.base
         self.man = man
 
-    def layer(self, pose, rd_pose, tf):
-        """Accessoire seul (RGBA, case de 160) pour une pose du mannequin."""
+    def overlay(self, pose, rd_pose, tf):
         s, tx, ty = tf
-        man_solved = self.man.rig.solve(pose, ROOTPOS)
-        # l'os d'accessoire du mannequin n'est plus dessiné mais reste dans la cinématique
-        pos, _, _ = man_solved[self.man_bone]
-        _, ang, st = self.rd.solve(rd_pose, ROOTPOS)[self.rd_bone.name]
-        piece = self.rd.pieces[self.rd_bone.piece]
-        cell_pos = (pos[0] * s + tx, pos[1] * s + ty)
-        img, x0, y0 = self.rd.render_piece(self.rd_bone.piece, piece, ang, cell_pos, st)
-        out = Image.new("RGBA", (CELL, CELL))
-        if img is None:
-            return out
-        img = rd_rig_outline(img)
-        out.paste(Image.fromarray(self.pal[img].astype(np.uint8), "RGBA"), (x0, y0))
-        return out
+        pos = self.man.rig.solve(pose, ROOTPOS)[self.man_bone][0]
+        ang = self.rd.solve(rd_pose, ROOTPOS)[self.rd_bone.name][1]
+        return {"image": 0, "pivot": self.pivot, "position": [float(pos[0] * s + tx), float(pos[1] * s + ty)],
+                "angle": float(ang - self.base), "front": bool(self.front)}
 
 
-def rd_rig_outline(layer):
+def acc_dummy():
+    """Image vide pour garder l'indice 1 des palmes quand il n'y a pas d'accessoire RD."""
+    return Image.new("RGBA", (1, 1))
+
+
+def hip_overlay(fid, man, pose, tf):
+    """Accessoire accroché au bassin (palmes de Txomin), tourne avec le bassin."""
     import rig as rigmod
-    return rigmod.add_outline(layer)
-
-
-def hip_layer(fid, man, pose, tf):
-    """Accessoire accroché au bassin (palmes de Txomin), tourné avec le bassin."""
-    path, grip, off, _ = HIP_ACC[fid]
-    im = Image.open(os.path.join(ROOT, path)).convert("RGBA")
+    _, grip, off, front = HIP_ACC[fid]
     s, tx, ty = tf
     pos, ang, _ = man.rig.solve(pose, ROOTPOS)["pel"]
-    px_, py_ = pos[0] * s + tx, pos[1] * s + ty
-    import rig as rigmod
     ox, oy = rigmod.rotate(off, ang)
-    big = Image.new("RGBA", (CELL, CELL))
-    big.paste(im, (round(px_ + ox - grip[0]), round(py_ + oy - grip[1])), im)
-    if abs(ang) < 1:
-        return big
-    return rotsprite(big, ang, (px_ + ox, py_ + oy))
+    return {"image": 1, "pivot": [float(g) for g in grip],
+            "position": [float(pos[0] * s + tx + ox), float(pos[1] * s + ty + oy)],
+            "angle": float(ang), "front": bool(front)}
 
 
-def tuck_sprite(fid, ctrl):
-    """Position groupée d'un salto : la boule dessinée une fois par Kontext
-    (tools/rd/out/<id>/boule.png) mise à la hauteur du contrôle, centrée dessus ;
-    le guidé rate les jambes repliées (lambeaux). None si pas de boule."""
-    p = os.path.join(out_dir(fid), "boule.png")
-    if not os.path.exists(p):
-        return None
-    b = Image.open(p).convert("RGBA")
-    bb = ctrl.getbbox()
-    h = bb[3] - bb[1]
-    b = b.resize((max(1, round(b.width * h / b.height)), h), Image.NEAREST)
-    cx, cy = centroid(ctrl)
-    out = Image.new("RGBA", (CELL, CELL))
-    out.paste(b, (round(cx - b.width / 2), round(cy - b.height / 2)), b)
-    return out
+class Perso:
+    """Un perso à refaire : prépare les requêtes guidées (une par animation) et
+    enregistre les résultats ; utilisé en direct (main) ou par la file (file_pf.py)."""
 
+    def __init__(self, fid, retries=3, shift=0):
+        self.fid, self.retries, self.shift = fid, retries, shift
+        self.od = out_dir(fid)
+        self.pd = os.path.join(self.od, "pf")
+        os.makedirs(self.pd, exist_ok=True)
+        self.ref = model(fid)
+        cp = os.path.join(self.od, "modele_accroupi.png")
+        self.ref_crouch = model(fid, "modele_accroupi.png") if os.path.exists(cp) else None
+        self.ref.save(os.path.join(self.od, f"neutral_{CELL}.png"))   # pour build_rd_anims (échelle, centrage)
+        self.man = Mannequin(fid)
+        IDLE_MID[0] = self.man.idle_mid
+        mh = self.ref.getbbox()
+        self.scale = (mh[3] - mh[1]) / self.man.height
+        self.acc = Accessory(fid, self.man)
+        bp = os.path.join(self.od, "boule.png")
+        self.boule = Image.open(bp).convert("RGBA") if os.path.exists(bp) else None
+        s = fiche.load(fid) if fiche.exists(fid) else {}
+        self.look = (s.get("apparence") or fid).strip()
+        self.reg_path = os.path.join(self.od, "anims.json")
+        self.ok_path = os.path.join(self.pd, "verdicts.json")
+        self.log_path = os.path.join(self.od, "gen_log.jsonl")
 
-def compose(body, acc, front):
-    if acc is None:
-        return body
-    out = Image.new("RGBA", (CELL, CELL))
-    if front:
-        out.alpha_composite(body)
-        out.alpha_composite(acc)
-    else:
-        out.alpha_composite(acc)
-        out.alpha_composite(body)
-    return out
+    def state(self):
+        done = json.load(open(self.reg_path)) if os.path.exists(self.reg_path) else {}
+        verdicts = json.load(open(self.ok_path)) if os.path.exists(self.ok_path) else {}
+        return done, verdicts
 
-
-def main():
-    fid = sys.argv[1]
-    od = out_dir(fid)
-    pd = os.path.join(od, "pf")
-    os.makedirs(pd, exist_ok=True)
-    opt = lambda k, d: type(d)(sys.argv[sys.argv.index(k) + 1]) if k in sys.argv else d
-    retries, shift = opt("--essais", 3), opt("--graine", 0)
-    ref = model(fid)
-    man = Mannequin(fid)
-    IDLE_MID[0] = man.idle_mid
-    mh = ref.getbbox()
-    scale = (mh[3] - mh[1]) / man.height
-    acc = Accessory(fid, man)
-    names = [a for a in sys.argv[2:] if not a.startswith("--") and not a.lstrip("-").isdigit()] or list(animate.ANIM_ORDER)
-    s = fiche.load(fid) if fiche.exists(fid) else {}
-    look = (s.get("apparence") or fid).strip()
-    keep_txt = "same character, same face, same colors, side view facing right, clean pixel art, no weapon, no object, no effects"
-    reg_path, ok_path, log_path = (os.path.join(od, "anims.json"), os.path.join(pd, "verdicts.json"),
-                                   os.path.join(od, "gen_log.jsonl"))
-    done = json.load(open(reg_path)) if os.path.exists(reg_path) else {}
-    verdicts = json.load(open(ok_path)) if os.path.exists(ok_path) else {}
-    for name in names:
-        if verdicts.get(name) == "OK" and name in done and "--refaire" not in sys.argv:
-            print(f"{name}: déjà réussi, gardé")
-            continue
+    def prepare(self, name):
+        """→ (requête, graine, contrôles)."""
+        fid, man, acc = self.fid, self.man, self.acc
+        IDLE_MID[0] = man.idle_mid
         poses = man.expand(name)
         rd_poses = animate.expand(acc.rd_poses["anims"][name], acc.rd_poses["named"], man.amp) if acc.ok else poses
-        targets, controls, turned, tfs = [], [], [], []
-        for p in poses:
-            full = man.rgba(man.rig.render(p, CANVAS, ROOTPOS))
-            cell, tf = place(full, name, scale)
-            targets.append(cell)
-            tfs.append(tf)
+        targets, controls, angles, overlays, tucks = [], [], [], [], []
+        for i, p in enumerate(poses):
+            cell, tf = place(man.rgba(man.rig.render(p, CANVAS, ROOTPOS)), name, self.scale)
             # inclinaison du buste dans le monde (bassin + buste) : couché, salto…
             ang = float(man.rig.solve(p, ROOTPOS)["tor"][1])
             if abs(ang) > TILT:
                 q = dict(p)
                 q["pel"] = float(p.get("pel", 0.0)) - ang
-                up, _ = place(man.rgba(man.rig.render(q, CANVAS, ROOTPOS)), name, scale)
+                up, _ = place(man.rgba(man.rig.render(q, CANVAS, ROOTPOS)), name, self.scale)
                 controls.append(up)
-                turned.append(ang)
+                # cible remontée : le perso redessiné, plus épais que le mannequin, déborderait
+                # sous la case (build_rd_anims recale ensuite chaque image sur le sol)
+                lifted = Image.new("RGBA", (CELL, CELL))
+                lifted.paste(cell, (0, -ROT_LIFT), cell)
+                targets.append(lifted)
+                angles.append(float(ang))
+                if name in animate.AIR_ANIMS and self.boule is not None:
+                    tucks.append(int(i))                 # salto : la boule tourne
             else:
                 controls.append(cell)
-                turned.append(None)
-        seed = int(hashlib.sha1(f"{fid}:{name}:mannequin".encode()).hexdigest()[:6], 16) + shift
-        lora = None
+                targets.append(None)
+                angles.append(0.0)
+            ov = []
+            if angles[-1] or name in NO_ACC_ANIMS.get(fid, ()):
+                # perso couché ou en salto (redessiné droit puis tourné) : l'accessoire posé sur la
+                # main du mannequin flotterait à côté du corps → caché (il « lâche » son objet)
+                overlays.append(None)
+                continue
+            if acc.ok:
+                ov.append(acc.overlay(p, rd_poses[i], tf))
+            if fid in HIP_ACC:
+                ov.append(hip_overlay(fid, man, p, tf))
+            overlays.append(ov or None)
+        extra = {"frame_angles": angles, "target_frames": [b64(t) if t else None for t in targets],
+                 "ignore_masks": True}
+        imgs = []
+        if acc.ok:
+            imgs.append(b64(acc.image))
+        if fid in HIP_ACC:
+            if not acc.ok:
+                imgs.append(b64(acc_dummy()))
+            imgs.append(b64(Image.open(os.path.join(ROOT, HIP_ACC[fid][0])).convert("RGBA")))
+        if imgs:
+            extra["overlay_images"] = imgs
+            extra["overlays"] = overlays
+        if tucks:
+            extra["tuck_image"] = b64(self.boule)
+            extra["tuck_frames"] = tucks
+        seed = int(hashlib.sha1(f"{fid}:{name}:mannequin".encode()).hexdigest()[:6], 16) + self.shift
+        keep_txt = "same character, same face, same colors, side view facing right, clean pixel art, no weapon, no object, no effects"
+        ref = self.ref_crouch if name in CROUCH_ANIMS and self.ref_crouch is not None else self.ref
+        payload = pieces.guided_payload(ref, controls, f"{self.look}, {name.replace('_', ' ')}, {keep_txt}",
+                                        seed, None, clean=True, retries=self.retries, qa=QA, extra=extra)
+        return payload, seed, controls
+
+    def store(self, name, seed, controls, fr, gqa, seconds=0.0):
+        """Enregistre le résultat d'une animation ; renvoie la liste des défauts."""
+        n = len(controls)
+        errs = pieces.qa_errors(gqa, QA) if len(fr) == n else [f"{len(fr)} images au lieu de {n}"]
+        done, verdicts = self.state()
+        if len(fr) == n:
+            path = os.path.join(self.pd, f"{name}_m{seed}.png")
+            strip(fr).save(path)
+            strip(controls).save(os.path.join(self.pd, f"{name}_m{seed}_ctl.png"))
+            done[name] = path
+            verdicts[name] = "OK" if not errs else "À REVOIR : " + " ; ".join(errs)
+            json.dump(done, open(self.reg_path, "w"), indent=1)
+            json.dump(verdicts, open(self.ok_path, "w"), indent=1, ensure_ascii=False)
+        with open(self.log_path, "a") as fh:
+            fh.write(json.dumps({"anim": name, "outil": "pixelforge depuis le mannequin (refait entièrement)",
+                                 "graine": seed, "defauts": errs, "essais": gqa.get("attempts"),
+                                 "tournees": gqa.get("rotated"), "boules": gqa.get("tucked"),
+                                 "secondes": round(seconds, 1)}, ensure_ascii=False) + "\n")
+        return errs
+
+    def report(self):
+        done, verdicts = self.state()
+        print("planche :", pf.contact_sheet(self.fid, done, verdicts))
+        bad = [k for k, v in verdicts.items() if v != "OK"]
+        print(f"réussis : {len(verdicts) - len(bad)}/{len(verdicts)}" + (f" ; à revoir : {', '.join(bad)}" if bad else ""))
+
+
+def main():
+    fid = sys.argv[1]
+    opt = lambda k, d: type(d)(sys.argv[sys.argv.index(k) + 1]) if k in sys.argv else d
+    job = Perso(fid, opt("--essais", 3), opt("--graine", 0))
+    names = [a for a in sys.argv[2:] if not a.startswith("--") and not a.lstrip("-").isdigit()] or list(animate.ANIM_ORDER)
+    done, verdicts = job.state()
+    for name in names:
+        if verdicts.get(name) == "OK" and name in done and "--refaire" not in sys.argv:
+            print(f"{name}: déjà réussi, gardé")
+            continue
+        payload, seed, controls = job.prepare(name)
         t = time.time()
         fr, gqa = [], {}
-        for tries in range(0 if "--sec" in sys.argv else 3):     # --sec : sans serveur (contrôle redessiné = contrôle)
+        for tries in range(3):
             pf.wait_ready()
             try:
-                fr, gqa = pieces.guided_server(ref, controls, f"{look}, {name.replace('_', ' ')}, {keep_txt}", seed,
-                                               lora, clean=True, retries=retries, qa=QA)
+                r = pf._post_json(pf.PF + "/v1/inferences", payload, timeout=7200)
+                fr, gqa = pieces.guided_parse(r, controls[0].size, len(controls))
                 break
             except Exception as e:
                 print(f"{name}: erreur {e}", flush=True)
-        if "--sec" in sys.argv:
-            fr = [c.copy() for c in controls]
-        n = len(poses)
-        errs = pieces.qa_errors(gqa, QA) if len(fr) == n else [f"{len(fr)} images au lieu de {n}"]
-        if len(fr) == n:
-            out = []
-            for i, f in enumerate(fr):
-                if turned[i] is not None and name in animate.AIR_ANIMS:
-                    f = tuck_sprite(fid, controls[i]) or f      # salto : la boule tourne
-                body = turn(f, controls[i], targets[i], abs(turned[i])) if turned[i] is not None else f
-                a = acc.layer(poses[i], rd_poses[i], tfs[i]) if acc.ok else None
-                body = compose(body, a, acc.front if acc.ok else True)
-                if fid in HIP_ACC:
-                    body = compose(body, hip_layer(fid, man, poses[i], tfs[i]), HIP_ACC[fid][3])
-                out.append(body)
-            path = os.path.join(pd, f"{name}_m{seed}.png")
-            pieces.strip(out).save(path)
-            pieces.strip(controls).save(os.path.join(pd, f"{name}_m{seed}_ctl.png"))
-            done[name] = path
-            verdicts[name] = "OK" if not errs else "À REVOIR : " + " ; ".join(errs)
-            json.dump(done, open(reg_path, "w"), indent=1)
-            json.dump(verdicts, open(ok_path, "w"), indent=1, ensure_ascii=False)
-        with open(log_path, "a") as fh:
-            fh.write(json.dumps({"anim": name, "outil": "pixelforge depuis le mannequin (refait entièrement)",
-                                 "graine": seed, "defauts": errs, "essais": gqa.get("attempts"),
-                                 "tournees": sum(1 for x in turned if x is not None),
-                                 "secondes": round(time.time() - t, 1)}, ensure_ascii=False) + "\n")
+        errs = job.store(name, seed, controls, fr, gqa, time.time() - t)
         print(f"{name} ({time.time() - t:.0f} s): {'OK' if not errs else ' ; '.join(errs)}", flush=True)
-    print("planche :", pf.contact_sheet(fid, done, verdicts))
-    bad = [k for k, v in verdicts.items() if v != "OK"]
-    print(f"réussis : {len(verdicts) - len(bad)}/{len(verdicts)}" + (f" ; à revoir : {', '.join(bad)}" if bad else ""))
+    job.report()
 
 
 if __name__ == "__main__":

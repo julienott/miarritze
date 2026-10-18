@@ -115,16 +115,51 @@ def b64(im):
     return base64.b64encode(b.getvalue()).decode()
 
 
-def infer(payload):
+def infer(payload, poll=5, max_s=6 * 3600, relances=2):
+    """Comme _infer, mais une tâche tombée sur une panne passagère du moteur
+    (ComfyUI injoignable, redémarrage) est redéposée (au plus `relances` fois)."""
+    for k in range(relances + 1):
+        try:
+            return _infer(payload, poll, max_s)
+        except RuntimeError as e:
+            if k == relances or "injoignable" not in str(e) and "interrupted" not in str(e):
+                raise
+            print(f"panne passagère, nouvel essai : {e}", flush=True)
+            import time as _t
+            _t.sleep(30)
+
+
+def _infer(payload, poll=5, max_s=6 * 3600):
+    """Requête pixelforge par la file asynchrone (/v2 + relevé) : survit aux files
+    longues et aux redémarrages du serveur (file persistante), contrairement à un
+    appel /v1 qui perd sa connexion."""
+    import json as _json
+    import time as _time
+    import urllib.request as _ur
     pf.wait_ready()
-    r = pf._post_json(pf.PF + "/v1/inferences", payload, timeout=3600)
-    return [Image.open(io.BytesIO(base64.b64decode(x))).convert("RGBA") for x in r["base64_images"]]
+    tid = pf._post_json(pf.PF + "/v2/inferences", payload, timeout=300)["task_id"]
+    t0 = _time.time()
+    while _time.time() - t0 < max_s:
+        try:
+            r = _json.loads(_ur.urlopen(f"{pf.PF}/v2/inferences/tasks/{tid}", timeout=60).read().decode())
+        except Exception:
+            _time.sleep(20)                 # redémarrage du serveur (~20 s) : on réessaie
+            continue
+        if r.get("status") == "succeeded":
+            res = r["result"]
+            return [Image.open(io.BytesIO(base64.b64decode(x))).convert("RGBA") for x in res["base64_images"]]
+        if r.get("status") in ("failed", "canceled", "cancelled", "expired"):
+            raise RuntimeError(f"tâche {tid} : {r.get('status')} {str(r.get('error', ''))[:300]}")
+        _time.sleep(poll)
+    raise TimeoutError(f"tâche {tid} : pas finie après {max_s} s")
 
 
 def guard(fid):
-    p = os.path.join(ROOT, "tools", "rd", "out", fid, "neutral_160.png")
-    if os.path.exists(p):
-        return Image.open(p).convert("RGBA")
+    # perso refait entièrement (from_mannequin.py) : son nouveau modèle, pas l'ancienne pose
+    for n in ("neutral_256.png", "neutral_160.png"):
+        p = os.path.join(ROOT, "tools", "rd", "out", fid, n)
+        if os.path.exists(p):
+            return Image.open(p).convert("RGBA")
     meta, _, idx, pal = redraw.load(fid)
     return redraw.frames(meta, idx, pal, "idle")[0]
 
@@ -157,8 +192,9 @@ def portrait(fid, seeds):
     os.makedirs(od, exist_ok=True)
     items = []
     for s in seeds:
-        im = infer({"prompt_style": "pf__edit", "input_image": b64(src), "width": 96, "height": 96, "seed": s,
-                    "quality": "high", "prompt": "close-up bust portrait of this exact same character, facing the viewer "
+        im = infer({"prompt_style": "pf__edit", "input_image": b64(src),
+                    "width": 96, "height": 96, "seed": s, "quality": "high", "priority": "high",
+                    "keep_proportions": True, "prompt": "close-up bust portrait of this exact same character, facing the viewer "
                     "three-quarter view, head and upper body filling the frame, happy friendly expression, plain flat "
                     "light sky blue background, same colors, same pixel art style"})[0]
         im.save(os.path.join(od, f"pf_portrait_{s}.png"))
@@ -189,7 +225,7 @@ def fin(fid, seeds):
     items = [("composition", comp)]
     for s in seeds:
         im = infer({"prompt_style": "pf__edit", "input_image": b64(comp.convert("RGB")), "width": 320, "height": 180,
-                    "seed": s, "quality": "high",
+                    "seed": s, "quality": "high", "priority": "high", "keep_proportions": True,
                     "prompt": f"turn this into a polished 16-bit pixel art summer postcard: the same character {name} "
                     "celebrating victory, wearing a small red basque beret (txapela) on its head, happy, same place, "
                     "keep the exact composition, warm sunny light, no text"})[0]

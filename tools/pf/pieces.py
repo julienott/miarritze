@@ -192,34 +192,47 @@ CHUNK = 8   # ancien découpage (avant le 2026-10-17 la planche passait sur 2 li
 QA = {"min_iou": 0.72, "max_drift": 0.25, "max_detached": 12, "max_foreign": 220}
 
 
-def guided_server(ref, controls, prompt, seed, lora=None, clean=False, keep_frames=None, keep_masks=None,
-                  retries=3, qa=None):
-    """Un seul appel pf_anim__guided : une image par contrôle (planche sur une ligne),
-    fond enfermé retiré, contrôle nettoyé (clean : sprite couleur → silhouette),
-    accessoires recollés (keep_frames/keep_masks), relances serveur avec seuils.
-    Renvoie (images, guided_qa)."""
+def guided_payload(ref, controls, prompt, seed, lora=None, clean=False, keep_frames=None, keep_masks=None,
+                   retries=3, qa=None, extra=None):
+    """Requête pf_anim__guided : une image par contrôle (planche sur une ligne), fond
+    enfermé retiré, contrôle nettoyé (clean), accessoires recollés (keep_*), relances
+    serveur avec seuils ; `extra` : champs du 2026-10-18 (frame_angles, overlays, tuck…)."""
     p = {"prompt_style": "pf_anim__guided", "input_image": b64(ref),
          "control_frames": [b64(c) for c in controls], "prompt": prompt, "seed": seed,
          "return_spritesheet": True, "sheet_cols": len(controls), "control_clean": clean,
          "retries": retries, **(qa or QA)}
     if lora:
         p["sprite_lora"] = lora
+    p.update(extra or {})
     if keep_masks:
         p["keep_masks"] = [b64(m) for m in keep_masks]
         if keep_frames:
             p["keep_frames"] = [b64(f) for f in keep_frames]
-    r = pf._post_json(pf.PF + "/v1/inferences", p, timeout=7200)
+    return p
+
+
+def guided_parse(r, size, n):
+    """Réponse (v1 ou résultat d'une tâche v2) → (images, guided_qa)."""
     sheet = Image.open(io.BytesIO(base64.b64decode(r["base64_images"][0]))).convert("RGBA")
     info = r.get("pixelforge", {}).get("info", {})
-    w, h = controls[0].size
-    frames = [sheet.crop((i * w, 0, (i + 1) * w, h)) for i in range(sheet.width // w)][:len(controls)]
+    w, h = size
+    frames = [sheet.crop((i * w, 0, (i + 1) * w, h)) for i in range(sheet.width // w)][:n]
     return frames, info.get("guided_qa", {})
+
+
+def guided_server(ref, controls, prompt, seed, lora=None, clean=False, keep_frames=None, keep_masks=None,
+                  retries=3, qa=None, extra=None):
+    """Un seul appel synchrone (v1). Renvoie (images, guided_qa)."""
+    p = guided_payload(ref, controls, prompt, seed, lora, clean, keep_frames, keep_masks, retries, qa, extra)
+    r = pf._post_json(pf.PF + "/v1/inferences", p, timeout=7200)
+    return guided_parse(r, controls[0].size, len(controls))
 
 
 def qa_errors(gqa, qa=None):
     """Défauts lisibles d'après guided_qa (essai retenu)."""
     QA_ = qa or QA
-    pf_ = gqa.get("per_frame") or []
+    # images hors QA (boule de salto, image imposée : in_qa false) non comptées
+    pf_ = [f for f in (gqa.get("per_frame") or []) if f.get("in_qa", True)]
     if not pf_:
         return []
     errs = []

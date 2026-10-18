@@ -51,9 +51,10 @@ AIR = {"jump_up", "jump_fwd", "fall", "jump_punch", "jump_kick", "hit_air", "thr
 def frames_of(path):
     im = np.array(Image.open(os.path.join(ROOT, path)).convert("RGBA"))
     out = []
-    for y in range(0, im.shape[0], SRC):
-        for x in range(0, im.shape[1], SRC):
-            f = im[y:y + SRC, x:x + SRC].copy()
+    src = im.shape[0] if im.shape[0] in (160, 192, 256) else SRC      # bande d'une ligne : case = hauteur
+    for y in range(0, im.shape[0], src):
+        for x in range(0, im.shape[1], src):
+            f = im[y:y + src, x:x + src].copy()
             f[f[..., 3] < 128] = 0
             f[f[..., 3] >= 128, 3] = 255
             if f[..., 3].any():
@@ -317,21 +318,28 @@ def place(f, dx, air):
         ty = min((FOOT[1] - 63) - (y0 + y1) // 2, (FOOT[1] - 1) - y1)
     else:
         ty = (FOOT[1] - 1) - y1
-    sy0, sy1 = max(0, -ty), min(SRC, CELL - ty)
-    sx0, sx1 = max(0, -dx), min(SRC, CELL - dx)
+    h, w = f.shape[:2]
+    sy0, sy1 = max(0, -ty), min(h, CELL - ty)
+    sx0, sx1 = max(0, -dx), min(w, CELL - dx)
     cell[sy0 + ty:sy1 + ty, sx0 + dx:sx1 + dx] = f[sy0:sy1, sx0:sx1]
     return cell
 
 
 def main():
-    global FID
+    global FID, CELL, FOOT
     fid = sys.argv[1]
     FID = fid
     d = rd_rig.fighter_dir(fid)
     reg = json.load(open(os.path.join(ROOT, "tools", "rd", "out", fid, "anims.json")))
     old = json.load(open(os.path.join(d, "anims.json")))
     meta = {k: {kk: vv for kk, vv in v.items() if kk not in ("first", "row")} for k, v in old["anims"].items()}
-    neutral = np.array(Image.open(os.path.join(ROOT, "tools", "rd", "out", fid, "neutral_160.png")).convert("RGBA"))
+    # pose neutre dans le repère des images : 256 (from_mannequin.py, persos refaits :
+    # case du jeu 256 aussi, pieds en (128, 240)) ou 160 (anciens lots, case 192)
+    np256 = os.path.join(ROOT, "tools", "rd", "out", fid, "neutral_256.png")
+    if os.path.exists(np256):
+        CELL, FOOT = 256, (128, 240)
+    neutral = np.array(Image.open(np256 if os.path.exists(np256) else
+                                  os.path.join(ROOT, "tools", "rd", "out", fid, "neutral_160.png")).convert("RGBA"))
     # Hauteur commune (gen_fighter.TARGET_H) : toutes les images sont réduites
     # du même facteur que la pose neutre.
     sys.path.insert(0, os.path.join(ROOT, "tools", "rd"))
