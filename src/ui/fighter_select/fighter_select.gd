@@ -124,6 +124,11 @@ func _ready() -> void:
 		add_child(sub)
 	if _players == 1:
 		_refresh_cpu()
+	_hint = UiKit.label("", 8, UiKit.C_LINEN)
+	_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_hint)
+	Prompts.bind(_hint, _hint_text)
+	_layout()
 	if mode == "online":
 		# Favori du profil présélectionné ; 30 s pour choisir (§3.4).
 		var fav: int = ids.find(str(Profiles.active().get("fighter", "louis")))
@@ -160,6 +165,9 @@ func _layout() -> void:
 		if _previews[p] != null:
 			_previews[p].position = Vector2(48 if p == 0 else w - 48, 204)
 		_info[p].position = Vector2(4 if p == 0 else w - 154, 46)
+	if _hint != null:
+		_hint.position = Vector2(0, _grid.position.y - 12)
+		_hint.size = Vector2(w, 10)
 	var ok: Node = get_node_or_null("OkButton")
 	if ok != null:
 		(ok as Control).position = Vector2(w - 52, 4)
@@ -241,8 +249,11 @@ func _refresh(p: int) -> void:
 	if random:
 		_info[p].text = "Surprise !"
 	else:
-		_info[p].text = "%s\nCostume %d/4%s" % [str(data.get("title", "")), _costume[p] + 1,
-			"  (touche-moi)" if Settings.touch_enabled() and not _done[p] else ""]
+		# Comment changer de costume : toucher l'aperçu, ou haut/bas (clavier, manette).
+		var how: String = ""
+		if not _done[p]:
+			how = "  (touche-moi)" if InputHub.using_touch() else "  ↑↓"
+		_info[p].text = "%s\nCostume %d/4%s" % [str(data.get("title", "")), _costume[p] + 1, how]
 	_info[p].visible = true
 	_overlay.queue_redraw()
 	while _names.size() <= p:
@@ -305,6 +316,18 @@ func _restore_quick() -> void:
 
 
 ## Retour : annule l'étape en cours (combat rapide), sinon menu principal.
+## Rappel des commandes au-dessus de la grille (rien au doigt : on touche).
+## Versus au clavier : chacun ses touches, pas de place pour les deux.
+func _hint_text() -> String:
+	if mode == "versus" and _players == 2 and Prompts.kind() == Prompts.KEYBOARD:
+		return ""
+	return Prompts.pick({Prompts.GAMEPAD: "{ok} : choisir  {back} : retour",
+		Prompts.KEYBOARD: "{punch} : choisir  {kick} : retour"})
+
+
+var _hint: Label
+
+
 func _back() -> void:
 	if _picking_difficulty:
 		return
@@ -438,6 +461,9 @@ func _draw_cursors() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _picking_difficulty:
+		if event.is_action_pressed(&"ui_cancel"):
+			get_viewport().set_input_as_handled()
+			_cancel_difficulty()
 		return
 	if _quick:
 		# Une seule personne choisit : toutes les touches pilotent l'étape en cours.
@@ -492,7 +518,23 @@ func _cycle_costume(p: int, step: int) -> void:
 	_refresh(p)
 
 
+## Manette : actions de menu (stick/croix, A = valider, B = retour). En
+## versus, la 1re manette pilote J1 et la 2e J2 (comme InputHub.set_versus).
+const PAD_ACTIONS: Dictionary = {"_left": &"ui_left", "_right": &"ui_right", "_up": &"ui_up",
+	"_down": &"ui_down", "_punch": &"ui_accept", "_accept": &"ui_accept", "_kick": &"ui_cancel",
+	"_cancel": &"ui_cancel"}
+
+
 func _pressed(event: InputEvent, prefixes: Array[String], suffixes: Array) -> bool:
+	if InputDevice.is_pad(event):
+		var slot: int = InputDevice.pad_slot(event)
+		var shared: bool = prefixes.has("ui") or (prefixes.has("p1") and prefixes.has("p2"))
+		if not shared and not ((prefixes.has("p1") and slot == 0) or (prefixes.has("p2") and slot == 1)):
+			return false
+		for suffix: String in suffixes:
+			if PAD_ACTIONS.has(suffix) and event.is_action_pressed(PAD_ACTIONS[suffix]):
+				return true
+		return false
 	for prefix: String in prefixes:
 		for suffix: String in suffixes:
 			if InputMap.has_action(prefix + suffix) and event.is_action_pressed(prefix + suffix):
@@ -574,19 +616,42 @@ func _start_quick() -> void:
 
 func _ask_difficulty() -> void:
 	_picking_difficulty = true
+	_difficulty_box = Control.new()
+	_difficulty_box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_difficulty_box.z_index = 10
+	add_child(_difficulty_box)
 	var shade: ColorRect = ColorRect.new()
 	shade.color = Color(0.05, 0.04, 0.1, 0.7)
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(shade)
+	_difficulty_box.add_child(shade)
 	var label: Label = UiKit.label("Difficulté ?", 16, UiKit.C_GOLD)
 	label.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	label.position.y = 40
-	add_child(label)
+	_difficulty_box.add_child(label)
 	var buttons: Array = []
 	for d: int in 3:
 		buttons.append(UiKit.button(TowerMode.DIFFICULTY_NAMES[d],
 			(_start_vs_cpu if _vs_cpu else _start_tower).bind(d)))
-	UiKit.menu_column(self, buttons, 70)
+	buttons.append(UiKit.button("Retour", _cancel_difficulty))
+	UiKit.menu_column(_difficulty_box, buttons, 66)
+	UiKit.prompt_bar(_difficulty_box)
+
+
+var _difficulty_box: Control
+
+
+## Retour depuis le choix de difficulté : on rechoisit son combattant.
+func _cancel_difficulty() -> void:
+	if _difficulty_box != null:
+		_difficulty_box.queue_free()
+		_difficulty_box = null
+	_picking_difficulty = false
+	for p: int in 2:
+		if _done[p]:
+			_done[p] = false
+			if _previews[p] != null:
+				_previews[p].play_preview("idle", 1 if p == 0 else -1)
+	_grid.queue_redraw()
 
 
 func _start_vs_cpu(difficulty: int) -> void:

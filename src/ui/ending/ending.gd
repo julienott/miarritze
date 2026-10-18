@@ -160,7 +160,8 @@ func _show_summary() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if _done or not _skip_ready:
 		return
-	if event.is_action_pressed(&"ui_accept") or event.is_action_pressed(&"p1_punch"):
+	if event.is_action_pressed(&"ui_accept") or event.is_action_pressed(&"p1_punch") \
+			or event.is_action_pressed(&"ui_cancel") or InputDevice.is_tap(event):
 		_skip_ready = false
 		get_tree().create_timer(0.3).timeout.connect(func() -> void: _skip_ready = true)
 		for child: Node in get_children():

@@ -19,6 +19,10 @@ func _ready() -> void:
 	add_child(logo)
 	get_viewport().size_changed.connect(func() -> void:
 		logo.position.x = get_viewport_rect().size.x * 0.5)
+	Prompts.bind(_press_label, func() -> String:
+		return {Prompts.GAMEPAD: Prompts.fmt("Appuie sur {ok} pour commencer"),
+			Prompts.TOUCH: "Touche l'écran pour commencer", Prompts.GESTURES: "Touche l'écran pour commencer",
+			}.get(Prompts.kind(), "Appuie sur une touche pour commencer"))
 	AudioManager.play_music(&"hegoak")
 
 
@@ -28,11 +32,8 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	var pressed: bool = (event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed) \
-		or (event is InputEventMouseButton and (event as InputEventMouseButton).pressed) \
-		or (event is InputEventKey and (event as InputEventKey).pressed) \
-		or (event is InputEventJoypadButton and (event as InputEventJoypadButton).pressed)
-	if pressed and not _started:
+	# N'importe quel appui (touche, bouton, toucher, clic, stick poussé).
+	if InputDevice.classify(event) != InputDevice.NONE and not _started:
 		_started = true
 		_on_start_pressed()
 

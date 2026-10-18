@@ -86,9 +86,8 @@ func _ready() -> void:
 	go.position = Vector2(roundf(w * 0.5 - 50), get_viewport_rect().size.y - 28)
 	add_child(go)
 	go.grab_focus.call_deferred()
-	var quit: Button = UiKit.button("Abandonner", func() -> void:
-		TowerMode.run = null
-		SceneRouter.goto(&"main_menu"), 80)
+	_go_button = go
+	var quit: Button = UiKit.button("Abandonner", _ask_quit, 80)
 	quit.position = Vector2(4, 4)
 	quit.focus_mode = Control.FOCUS_NONE
 	add_child(quit)
@@ -160,6 +159,51 @@ func _fight() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"p1_punch") or event.is_action_pressed(&"ui_accept") \
-			or (event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed):
+	if _quit_box != null:
+		if event.is_action_pressed(&"ui_cancel"):
+			get_viewport().set_input_as_handled()
+			_close_quit()
+		return
+	if event.is_action_pressed(&"ui_cancel"):
+		get_viewport().set_input_as_handled()
+		_ask_quit()
+	elif event.is_action_pressed(&"p1_punch") or event.is_action_pressed(&"ui_accept") \
+			or InputDevice.is_tap(event):
 		_fight()
+
+
+var _go_button: Button
+var _quit_box: Control
+
+
+## Abandon (B / Échap / bouton) : on demande d'abord, un appui de trop ne
+## doit pas effacer toute la pyramide d'un enfant.
+func _ask_quit() -> void:
+	if _quit_box != null:
+		return
+	_quit_box = Control.new()
+	_quit_box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_quit_box.z_index = 20
+	add_child(_quit_box)
+	var shade: ColorRect = ColorRect.new()
+	shade.color = Color(0.05, 0.04, 0.1, 0.75)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_quit_box.add_child(shade)
+	var q: Label = UiKit.label("Abandonner la pyramide ?", 8, UiKit.C_GOLD)
+	q.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	q.position.y = 60
+	_quit_box.add_child(q)
+	UiKit.menu_column(_quit_box, [
+		UiKit.button("Non, je continue", _close_quit, 160),
+		UiKit.button("Oui, abandonner", func() -> void:
+			TowerMode.run = null
+			SceneRouter.goto(&"main_menu"), 160),
+	], 80).position.x -= 10
+	UiKit.prompt_bar(_quit_box)
+
+
+func _close_quit() -> void:
+	if _quit_box != null:
+		_quit_box.queue_free()
+		_quit_box = null
+		_go_button.grab_focus.call_deferred()

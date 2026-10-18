@@ -33,6 +33,13 @@ func _ready() -> void:
 	var cancel: Button = UiKit.button("Annuler", OnlineMode.leave, 80)
 	cancel.position = Vector2(4, 4)
 	add_child(cancel)
+	cancel.grab_focus.call_deferred()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel") and not _done:
+		get_viewport().set_input_as_handled()
+		OnlineMode.leave()
 
 
 func _process(delta: float) -> void:

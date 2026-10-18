@@ -31,7 +31,14 @@ func _ready() -> void:
 	scroll.offset_left = 40
 	scroll.offset_right = -40
 	scroll.offset_bottom = -4
+	# Manette / clavier : la liste défile pour suivre le bouton sélectionné.
+	scroll.follow_focus = true
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(scroll)
+	# Le changement d'appareil (iPhone ↔ clavier, famille de manette) refait la liste.
+	InputHub.device_changed.connect(func(_d: int) -> void:
+		if _waiting_action == "" and (InputHub.using_touch() != _built_touch or InputHub.pad_family != _built_family):
+			_build())
 	_list = VBoxContainer.new()
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override(&"separation", 3)
@@ -40,8 +47,15 @@ func _ready() -> void:
 	_build()
 
 
+var _built_touch: bool = false
+var _built_family: String = ""
+
+
 func _build() -> void:
+	_built_touch = InputHub.using_touch()
+	_built_family = InputHub.pad_family
 	for c: Node in _list.get_children():
+		_list.remove_child(c)
 		c.queue_free()
 	_section("CONTRÔLES TACTILES")
 	_cycle("Mode", ["Manette virtuelle", "Gestes"], ["pad", "gestures"], "touch_mode")
@@ -54,19 +68,36 @@ func _build() -> void:
 	_cycle("Voix", ["Coupées", "Faibles", "Moyennes", "Fortes"], [0.0, 0.4, 0.7, 1.0], "voice_volume")
 	_section("JEU")
 	_cycle("Difficulté par défaut", ["Facile", "Normal", "Expert"], [0, 1, 2], "default_difficulty")
-	_cycle("Combats express (sans finish en ligne)", ["Non", "Oui"], [false, true], "express_fights")
+	_cycle("En ligne : express (sans finish)", ["Non", "Oui"], [false, true], "express_fights")
 	_section("ACCESSIBILITÉ")
 	_cycle("Couleurs pour daltoniens", ["Non", "Oui"], [false, true], "colorblind")
 	_cycle("Vibrations", ["Oui", "Non"], [true, false], "vibrations")
-	_section("CLAVIER")
-	for pair: Array in KEY_ACTIONS:
-		_key_row(pair[0], pair[1])
-	_list.add_child(UiKit.button("Réinitialiser les touches", func() -> void:
-		Settings.reset_keys()
-		_build(), 200))
+	_section("MANETTE")
+	for line: String in _pad_lines():
+		_list.add_child(UiKit.label(line, 8, UiKit.C_LINEN, HORIZONTAL_ALIGNMENT_LEFT))
+	# Touches du clavier : inutiles (et déroutantes) sur iPhone.
+	if not InputHub.using_touch():
+		_section("CLAVIER")
+		for pair: Array in KEY_ACTIONS:
+			_key_row(pair[0], pair[1])
+		_list.add_child(UiKit.button("Réinitialiser les touches", func() -> void:
+			Settings.reset_keys()
+			_build(), 200))
 	var first: Control = _list.get_child(1) as Control
 	if first != null:
 		first.grab_focus.call_deferred()
+
+
+## Boutons de la manette (fixes, voir GamepadSource), avec les noms de la
+## famille de manette utilisée en dernier.
+func _pad_lines() -> PackedStringArray:
+	var l: Dictionary = Prompts.PAD_LABELS.get(InputHub.pad_family, Prompts.PAD_LABELS["generic"])
+	return PackedStringArray([
+		"Bouger : stick gauche ou croix",
+		"%s : POING   %s : PIED" % [l["punch"], l["kick"]],
+		"%s : SPÉCIAL   %s : GARDE" % [l["special"], l["guard"]],
+		"%s : pause   %s : retour" % [l["pause"], l["back"]],
+	])
 
 
 func _section(text: String) -> void:
@@ -116,7 +147,16 @@ func _key_names(action: String) -> String:
 
 
 func _input(event: InputEvent) -> void:
-	if _waiting_action == "" or not event is InputEventKey or not event.is_pressed():
+	if _waiting_action == "":
+		return
+	# Un bouton de manette (ou un toucher) annule l'attente d'une touche.
+	var from: int = InputDevice.classify(event)
+	if from == InputDevice.GAMEPAD or from == InputDevice.TOUCH:
+		get_viewport().set_input_as_handled()
+		_waiting_button.text = "%s : %s" % [str(_waiting_button.get_meta(&"label")), _key_names(_waiting_action)]
+		_waiting_action = ""
+		return
+	if not event is InputEventKey or not event.is_pressed():
 		return
 	var key: InputEventKey = event
 	get_viewport().set_input_as_handled()
