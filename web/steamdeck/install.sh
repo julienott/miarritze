@@ -85,8 +85,8 @@ done
 chmod +x "$INSTALL_DIR/$NAME.x86_64"
 [ -f "$INSTALL_DIR/install.sh" ] && chmod +x "$INSTALL_DIR/install.sh"
 
-# Une version téléchargée par la mise à jour automatique serait plus ancienne
-# que celle qu'on vient d'installer : le jeu la retire tout seul au lancement.
+# Ensuite, le jeu se met à jour tout seul dans ce dossier (src/autoload/updater.gd).
+rm -f "$INSTALL_DIR"/.update-*.part
 
 # Raccourci : menu des applications + Bureau.
 DESKTOP_FILE="$USER_HOME/.local/share/applications/$DESKTOP_ID"

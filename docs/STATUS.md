@@ -4,6 +4,10 @@ Mis à jour à chaque fin de phase. Reprendre ici après une interruption.
 
 ## Phase atteinte : 8 ✅ (polissage) — v1 en prod sur https://miarritze.ijulien.com (main = borroka, déployé le 2026-10-13)
 
+### Version Steam Deck (branche `steamdeck`, 2026-10-18, à relire et fusionner)
+- Preset « SteamDeck » (Linux x86_64), job CI `steamdeck` dans `deploy.yml` (publication dans `/steamdeck/` : archive, `.pck`, `manifest.json`), page d'installation + `install.sh`, mise à jour automatique au lancement (autoload `Updater`). Voir `docs/STEAMDECK.md`.
+- Testé : export local, rendu 1280×800, auto-update de bout en bout dans un conteneur Linux x86_64 (7 scénarios), `install.sh` local. **Pas encore testé sur un vrai Deck ni en CI réelle** (checklist dans la doc).
+
 ### Après la mise en prod (retours de Julien sur iPhone, 2026-10-13)
 - Corrigés et déployés :
   - tap de l'écran titre ;
