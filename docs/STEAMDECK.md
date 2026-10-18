@@ -9,7 +9,7 @@ Build Linux x86_64 du jeu, construit à chaque push sur `main`, installable depu
 | Preset d'export « SteamDeck » (Linux x86_64, binaire + `.pck` séparé, fonctionnalité `steamdeck`) | `export_presets.cfg` |
 | Plein écran sur le Deck (`display/window/size/mode.steamdeck=3`) | `project.godot` |
 | Mise à jour automatique | `src/autoload/updater.gd` (autoload `Updater`), attendue par `src/ui/boot/boot.gd` |
-| Empaquetage : archive, `.pck`, `manifest.json` | `tools/steamdeck/package.sh` |
+| Empaquetage : archive, `.pck`, `manifest.json` | `tools/steamdeck/package.sh` (manifeste : `tools/release/manifest.py`, partagé avec Recalbox) |
 | Page d'installation, script `install.sh`, `.htaccess` | `web/steamdeck/` → servi dans `/steamdeck/` |
 | Build et publication | job `steamdeck` de `.github/workflows/deploy.yml` |
 
@@ -19,8 +19,8 @@ L'écran du Deck fait 1280×800 (16:10). Le jeu garde sa résolution logique de 
 
 À chaque push sur `main` (ou en lancement manuel), le job `steamdeck` de `deploy.yml`, indépendant du job web :
 
-1. installe Godot `GODOT_VERSION` avec le seul modèle `linux_release.x86_64`, mis en cache ;
-2. calcule la version `<run_number>-<sha7>` (ex. `57-a1b2c3d`) et l'injecte dans `project.godot` (`application/config/build` et `application/config/version`), dans la copie de travail de la CI uniquement ;
+1. installe Godot `GODOT_VERSION` avec le seul modèle `linux_release.x86_64` (`tools/release/install_godot.sh`), mis en cache ;
+2. calcule la version `<run_number>-<sha7>` (ex. `57-a1b2c3d`) et l'injecte dans `project.godot` (`application/config/build` et `application/config/version`) avec `tools/release/set_version.py`, dans la copie de travail de la CI uniquement ;
 3. exporte avec `--export-release "SteamDeck"` ;
 4. lance `tools/steamdeck/package.sh`, qui produit :
    - `MiarritzeBorroka-<version>.tar.gz` : le jeu complet (binaire, `.pck`, `icon.png`, `install.sh`, `VERSION`) ;
@@ -51,7 +51,7 @@ Les sauvegardes restent dans `~/.local/share/godot/app_userdata/Miarritze Borrok
 
 ## Mise à jour automatique (`Updater`)
 
-L'updater n'est actif que dans un export avec les fonctionnalités `steamdeck`, `template` et `linux`. Il ne tourne jamais en web ni dans l'éditeur. `--no-update` le coupe.
+L'updater n'est actif que dans un export avec les fonctionnalités `steamdeck` (ou `recalbox`, voir `docs/RECALBOX.md`), `template` et `linux`. Il ne tourne jamais en web ni dans l'éditeur. `--no-update` le coupe.
 
 1. Au démarrage, le boot attend `Updater.finished`. Le manifeste a un délai de 5 s ; hors ligne, la réponse est immédiate.
 2. Si `manifest.build` est supérieur au build qui tourne :
