@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b01ywam6kvrsd"
-path="res://.godot/imported/proj_bouee.png-52ebdc80c9fecdf1f5dae6d72ad2d2db.ctex"
+uid="uid://krevilbx4t63"
+path="res://.godot/imported/proj_palme.png-f09bfe77f9e8b31201ee5b96d3f4af83.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/vfx/txomin/proj_bouee.png"
-dest_files=["res://.godot/imported/proj_bouee.png-52ebdc80c9fecdf1f5dae6d72ad2d2db.ctex"]
+source_file="res://assets/vfx/txomin/proj_palme.png"
+dest_files=["res://.godot/imported/proj_palme.png-f09bfe77f9e8b31201ee5b96d3f4af83.ctex"]
 
 [params]
 
