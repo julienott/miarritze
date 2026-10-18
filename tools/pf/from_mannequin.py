@@ -51,6 +51,10 @@ QA = dict(pieces.QA, max_drift=0.45)
 # Animations où l'accessoire est caché (le bras redessiné ne suit pas la main du
 # mannequin et l'objet barre le visage) : relecture de la planche.
 NO_ACC_ANIMS = {"amaia": {"jump_kick"}}
+# Accessoire montré SEULEMENT dans ces animations (Julien, 2026-10-18 : Mattin se bat aux
+# poings et ne sort sa pierre que pour ses grands coups ; en garde elle cachait son visage).
+ACC_ONLY = {"mattin": {"intro", "win", "sp_neutral", "sp_forward", "sp_down", "sp_up", "super", "finisher"}}
+ACC_OFFSET = {}
 # Accessoire du rig RD abandonné par le nouveau design (bouée de Txomin → palmes).
 NO_RD_ACC = {"txomin"}
 # Accessoires dessinés accrochés au bassin : (image, point d'accroche dans l'image,
@@ -173,7 +177,8 @@ class Accessory:
         s, tx, ty = tf
         pos = self.man.rig.solve(pose, ROOTPOS)[self.man_bone][0]
         ang = self.rd.solve(rd_pose, ROOTPOS)[self.rd_bone.name][1]
-        return {"image": 0, "pivot": self.pivot, "position": [float(pos[0] * s + tx), float(pos[1] * s + ty)],
+        dx, dy = ACC_OFFSET.get(self.man.fid, (0, 0))
+        return {"image": 0, "pivot": self.pivot, "position": [float(pos[0] * s + tx + dx), float(pos[1] * s + ty + dy)],
                 "angle": float(ang - self.base), "front": bool(self.front)}
 
 
@@ -254,7 +259,8 @@ class Perso:
                 targets.append(None)
                 angles.append(0.0)
             ov = []
-            if angles[-1] or name in NO_ACC_ANIMS.get(fid, ()):
+            if angles[-1] or name in NO_ACC_ANIMS.get(fid, ()) or \
+                    (fid in ACC_ONLY and name not in ACC_ONLY[fid]):
                 # perso couché ou en salto (redessiné droit puis tourné) : l'accessoire posé sur la
                 # main du mannequin flotterait à côté du corps → caché (il « lâche » son objet)
                 overlays.append(None)

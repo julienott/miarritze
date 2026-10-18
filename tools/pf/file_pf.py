@@ -5,7 +5,7 @@ du serveur (POST /v2/inferences, 50 places), relevées au fil de l'eau
 (GET /v2/inferences/tasks/{id}) et enregistrées ; plus de temps mort entre deux
 appels ni de session à surveiller.
 
-  file_pf.py <id> [<id> …] [--refaire] [--max 40]
+  file_pf.py <id> [<id> …] [--refaire] [--max 40] [--anims a,b,c]
 État reprenable par perso : tools/rd/out/<id>/file_pf.json ({anim: tâche}) ; journal
 tools/rd/out/file_pf.log. Plusieurs files (persos différents) peuvent tourner ensemble.
 Tâches marquées tag « miarritze/<id> » : annuler le lot d'un perso (modèle refusé) =
@@ -53,7 +53,9 @@ def log(msg):
 
 
 def main():
-    fids = [a for a in sys.argv[1:] if not a.startswith("--") and not a.isdigit()]
+    only = set(sys.argv[sys.argv.index("--anims") + 1].split(",")) if "--anims" in sys.argv else None
+    skip = {sys.argv[sys.argv.index(k) + 1] for k in ("--anims", "--max") if k in sys.argv}
+    fids = [a for a in sys.argv[1:] if not a.startswith("--") and not a.isdigit() and a not in skip]
     limit = int(sys.argv[sys.argv.index("--max") + 1]) if "--max" in sys.argv else 40
     state = {}
     for f in fids:
@@ -65,9 +67,11 @@ def main():
     for f in fids:
         done, verdicts = jobs[f].state()
         for name in fm.animate.ANIM_ORDER:
+            if only is not None and name not in only:
+                continue
             key = f"{f}/{name}"
-            if key in state and state[key]["status"] in ("pending", "running"):
-                continue                        # déjà en file (reprise)
+            if key in state and state[key]["status"] in ("pending", "running") and only is None:
+                continue                        # déjà en file (reprise) ; --anims : on redépose
             if verdicts.get(name) == "OK" and name in done and "--refaire" not in sys.argv:
                 continue
             todo.append((f, name, 0))

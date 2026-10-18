@@ -36,7 +36,7 @@ FACES = {
     "louis": {"src": "tools/rd/cache/0fc7bc58c065dd0d941e1688f7ae9557822cef25_0.png", "protect": (28, 20, 68, 46), "eyes": [(40, 24, 48, 31), (58, 24, 64, 31)], "mouth": (52, 38), "head": (12, 0, 72, 60)},
     "maia": {"src": "assets/fighters/maia/rd_portrait.png", "protect": (40, 20, 76, 56), "eyes": [(48, 36, 57, 42), (66, 36, 70, 42)], "mouth": (60, 51), "head": (28, 6, 84, 62)},
     "patxi": {"src": "tools/rd/out/patxi/portrait_src.png", "protect": (36, 27, 66, 52), "eyes": [(44, 32, 48, 37), (53, 32, 57, 37)], "mouth": (52, 47), "head": (20, 6, 76, 62)},
-    "mattin": {"src": "tools/rd/out/mattin/portrait_src.png", "protect": (30, 16, 60, 40), "eyes": [(41, 21, 45, 25), (50, 21, 54, 25)], "mouth": (47, 31), "head": (20, 4, 76, 60)},
+    "mattin": {"src": "tools/rd/out/mattin/pf_portrait_102.png", "protect": (48, 28, 76, 60), "eyes": [(54, 33, 62, 41), (66, 33, 71, 39)], "mouth": (60, 57), "head": (24, 11, 74, 62)},
     "amaia": {"src": "tools/rd/out/amaia/pf_portrait_102.png", "protect": (40, 34, 70, 56), "eyes": [(57, 39, 64, 47)], "mouth": (57, 52), "head": (16, 12, 74, 58)},
     "txomin": {"flood_ymax": 76, "protect": (30, 28, 70, 64), "eyes": [(35, 33, 52, 40), (56, 33, 66, 40)], "mouth": (54, 57), "head": (16, 6, 72, 62)},
     # Kaio : décor chargé (détourage depuis le haut) ; texte CHIPS aplati

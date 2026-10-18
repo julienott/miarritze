@@ -9,7 +9,7 @@ Prêts (modèle + boule + accroupi choisis), à remettre en file :
 
 | Perso | État | À faire |
 |---|---|---|
-| Mattin | ~ moitié des 37 anims générées (avant la règle « accessoire caché couché ») | relancer le reste ; refaire les chutes (jump_fwd, thrown, hit_air, knockdown, getup, ko) |
+| Mattin | **en ligne le 2026-10-18** (pierre seulement pour ses grands coups) | sp_down : bras détaché images 4–5 ; sp_up/super : coups peu lisibles |
 | Ramuntxo | quelques anims générées | idem |
 | Patxi | quelques anims générées | idem |
 | Kaio | file annulée | tout relancer |

@@ -196,7 +196,7 @@ def portrait(fid, seeds):
                     "width": 96, "height": 96, "seed": s, "quality": "high", "priority": "high",
                     "keep_proportions": True, "prompt": "close-up bust portrait of this exact same character, facing the viewer "
                     "three-quarter view, head and upper body filling the frame, happy friendly expression, plain flat "
-                    "light sky blue background, same colors, same pixel art style"})[0]
+                    "light sky blue background with no clouds and nothing else, same colors, same pixel art style"})[0]
         im.save(os.path.join(od, f"pf_portrait_{s}.png"))
         items.append((str(s), im))
     return sheet(fid, "portrait", items, 4)
@@ -227,7 +227,7 @@ def fin(fid, seeds):
         im = infer({"prompt_style": "pf__edit", "input_image": b64(comp.convert("RGB")), "width": 320, "height": 180,
                     "seed": s, "quality": "high", "priority": "high", "keep_proportions": True,
                     "prompt": f"turn this into a polished 16-bit pixel art summer postcard: the same character {name} "
-                    "celebrating victory, wearing a small red basque beret (txapela) on its head, happy, same place, "
+                    "celebrating victory, wearing a small flat round red basque beret (txapela, a wool beret, NOT a cap, no visor) on its head, happy, same place, same face and same drawing style as the input, "
                     "keep the exact composition, warm sunny light, no text"})[0]
         im.save(os.path.join(od, f"pf_fin_{s}.png"))
         items.append((str(s), im))
