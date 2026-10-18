@@ -55,6 +55,8 @@ def build(fid):
     common = json.load(open(os.path.join(FIGHTERS, "_common.json")))
     common.pop("_doc", None)
     own = json.load(open(os.path.join(FIGHTERS, f"{fid}.json")))
+    # Les clés « _ » (notes d'équilibrage, bornes) restent dans la fiche.
+    own = {k: v for k, v in own.items() if not k.startswith("_")}
     data = deep_merge(common, own)
     out_dir = os.path.join(ASSETS, fid)
     anims_path = os.path.join(out_dir, "anims.json")
@@ -93,7 +95,8 @@ def build(fid):
         "outfit_b": [14, 15, 16, 17], "hat": [18, 19, 20, 21], "acc_b": [22, 23, 24, 25],
         "acc_c": [26, 27, 28], "extra": [29, 30, 31]})
     data.setdefault("ending", ["ending_0.png", "ending_1.png", "ending_2.png"])
-    # Équilibrage : multiplicateur de dégâts par perso (tools/balance_tune.py).
+    # Équilibrage : multiplicateur de dégâts par perso, réglage fin dans les
+    # bornes de l'archétype (tools/balance/tune.py, docs/EQUILIBRAGE.md).
     pct = int(data.get("damage_pct", 100))
     if pct != 100:
         for mv in data["moves"].values():
