@@ -7,6 +7,9 @@ on:
 
 env:
   GODOT_VERSION: "4.7.2"
+  # Extension WebRTC native (addons/webrtc_native) : fait partie du « moteur » pour
+  # l'auto-update (paquet complet si elle change). Égal à RUNTIME_TAG de updater.gd.
+  WEBRTC_TAG: "webrtc1.2.2"
 
 jobs:
   deploy:
@@ -186,7 +189,7 @@ jobs:
         run: |
           tools/steamdeck/package.sh exports/steamdeck web/build/steamdeck \
             "${{ steps.version.outputs.build }}" "${{ steps.version.outputs.version }}" \
-            "$GODOT_VERSION" "$SITE_URL/steamdeck"
+            "$GODOT_VERSION+$WEBRTC_TAG" "$SITE_URL/steamdeck"
           cp web/steamdeck/index.html web/steamdeck/install.sh web/steamdeck/.htaccess web/build/steamdeck/
           bash -n web/build/steamdeck/install.sh
           ls -la web/build/steamdeck
@@ -270,7 +273,7 @@ jobs:
           bash -n tools/recalbox/MiarritzeBorroka.sh
           python3 tools/recalbox/package.py exports/recalbox web/build/recalbox \
             "${{ steps.version.outputs.build }}" "${{ steps.version.outputs.version }}" \
-            "$GODOT_VERSION" "$SITE_URL/recalbox"
+            "$GODOT_VERSION+$WEBRTC_TAG" "$SITE_URL/recalbox"
           cp web/recalbox/index.html web/recalbox/install.sh web/recalbox/.htaccess web/build/recalbox/
           bash -n web/build/recalbox/install.sh
           ls -la web/build/recalbox

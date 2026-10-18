@@ -113,9 +113,15 @@ func _game_name() -> String:
 	return OS.get_executable_path().get_file().get_basename()
 
 
+## Bibliothèques natives livrées à côté de l'exécutable (addons/webrtc_native) : les
+## changer impose le paquet complet, comme un changement de moteur. À garder égal à
+## WEBRTC_TAG dans .github/workflows/deploy.yml.
+const RUNTIME_TAG: String = "webrtc1.2.2"
+
+
 func _engine_version() -> String:
 	var info: Dictionary = Engine.get_version_info()
-	return "%d.%d.%d" % [int(info["major"]), int(info["minor"]), int(info["patch"])]
+	return "%d.%d.%d+%s" % [int(info["major"]), int(info["minor"]), int(info["patch"]), RUNTIME_TAG]
 
 
 func _install_dir_writable() -> bool:

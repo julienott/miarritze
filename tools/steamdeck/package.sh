@@ -27,6 +27,11 @@ STAGE=$(mktemp -d)
 trap 'rm -rf "$STAGE"' EXIT
 mkdir -p "$STAGE/$NAME" "$OUT"
 cp "$EXPORT_DIR/$NAME.x86_64" "$EXPORT_DIR/$NAME.pck" "$STAGE/$NAME/"
+# Bibliothèques des extensions (WebRTC natif pour le jeu en ligne), posées par l'export.
+for so in "$EXPORT_DIR"/*.so; do
+  [ -f "$so" ] && cp "$so" "$STAGE/$NAME/"
+done
+ls "$STAGE/$NAME"/libwebrtc_native*.so >/dev/null
 chmod +x "$STAGE/$NAME/$NAME.x86_64"
 cp "$ROOT/assets/ui/app_icon.png" "$STAGE/$NAME/icon.png"
 cp "$ROOT/web/steamdeck/install.sh" "$STAGE/$NAME/install.sh"

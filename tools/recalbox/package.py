@@ -75,6 +75,12 @@ def main() -> None:
         with zipfile.ZipFile(os.path.join(out, zip_name), "w") as zf:
             add(zf, GAME_DIR + f"{NAME}.sh", os.path.join(HERE, f"{NAME}.sh"), executable=True)
             add(zf, GAME_DIR + f"{NAME}.{arch}", binary, executable=True)
+            # Bibliothèques des extensions (WebRTC natif : jeu en ligne), posées par l'export.
+            libs = sorted(f for f in os.listdir(os.path.join(export_dir, arch)) if f.endswith(".so"))
+            if not any(f.startswith("libwebrtc_native") for f in libs):
+                sys.exit(f"WebRTC natif absent de l'export {arch}")
+            for lib in libs:
+                add(zf, GAME_DIR + lib, os.path.join(export_dir, arch, lib))
             # Le même .pck pour toutes les architectures : celui qui est publié seul.
             add(zf, GAME_DIR + f"{NAME}.pck", pck_src)
             add(zf, GAME_DIR + "gamelist.xml", os.path.join(HERE, "gamelist.xml"))

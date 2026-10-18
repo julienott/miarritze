@@ -76,7 +76,8 @@ fi
 
 echo "Installation dans ${INSTALL_DIR}…"
 mkdir -p "$INSTALL_DIR"
-for f in "$NAME.x86_64" "$NAME.pck" icon.png VERSION install.sh; do
+# + bibliothèques des extensions (WebRTC natif : jeu en ligne).
+for f in "$NAME.x86_64" "$NAME.pck" icon.png VERSION install.sh $(cd "$SRC" && ls *.so 2>/dev/null); do
   if [ -f "$SRC/$f" ]; then
     cp -f "$SRC/$f" "$INSTALL_DIR/$f.new"
     mv -f "$INSTALL_DIR/$f.new" "$INSTALL_DIR/$f"
