@@ -24,6 +24,7 @@ func _ready() -> void:
 	var scroll: ScrollContainer = ScrollContainer.new()
 	scroll.position = Vector2(120, 30)
 	scroll.size = Vector2(get_viewport_rect().size.x - 126, 182)
+	scroll.follow_focus = true
 	add_child(scroll)
 	_list = VBoxContainer.new()
 	_list.add_theme_constant_override(&"separation", 3)
@@ -34,6 +35,7 @@ func _ready() -> void:
 
 func _build() -> void:
 	for c: Node in _list.get_children():
+		_list.remove_child(c)
 		c.queue_free()
 	var prof: Dictionary = Profiles.active()
 	var ids: PackedStringArray = Roster.FIGHTERS.duplicate()
@@ -84,6 +86,9 @@ func _build() -> void:
 	row.add_child(UiKit.button("Rejoindre", func() -> void: _join(edit.text.strip_edges().to_upper()), 80))
 	row.add_child(UiKit.button("Créer", _create_group, 60))
 	_list.add_child(row)
+	# Manette : le code se compose lettre par lettre ; à la validation, on rejoint.
+	PadKeyboard.pad_button(_list, edit, "Code du groupe (6 caractères)", false,
+		func(t: String) -> void: _join(t.strip_edges().to_upper()), 200, "Écrire le code à la manette", false)
 	_list.add_child(UiKit.label("STATISTIQUES", 8, UiKit.C_GOLD, HORIZONTAL_ALIGNMENT_LEFT))
 	var stats: Dictionary = prof.get("stats", {})
 	var tx: Dictionary = stats.get("txapelas", {})
@@ -108,6 +113,12 @@ func _build() -> void:
 								int((data as Array)[i].get("rating", 1000))], false)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel"):
+		get_viewport().set_input_as_handled()
+		SceneRouter.goto(&"main_menu")
+
+
 func _sum(d: Dictionary) -> int:
 	var t: int = 0
 	for k: Variant in d:
@@ -129,6 +140,9 @@ func _cycler(label_text: String, value: Callable, change: Callable) -> void:
 		change.call(1)
 		name_label.text = "%s : %s" % [label_text, value.call()]
 		_refresh_card(), 24)
+	# Manette / clavier : focus visible dès l'arrivée (premier « > »).
+	if _list.get_child_count() == 0 and get_viewport().gui_get_focus_owner() == null:
+		next.grab_focus.call_deferred()
 	row.add_child(prev)
 	row.add_child(next)
 	row.add_child(name_label)

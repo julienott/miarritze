@@ -66,6 +66,10 @@ func _ready() -> void:
 	_cb_key = JavaScriptBridge.create_callback(_on_key)
 	_el.addEventListener("input", _cb_input)
 	_el.addEventListener("keydown", _cb_key)
+	# Texte écrit côté Godot (clavier manette PadKeyboard) : recopié dans le <input>.
+	_edit.text_changed.connect(func(t: String) -> void:
+		if _el != null and str(_el.value) != t:
+			_el.value = t)
 	_focus_input.call_deferred()
 
 
