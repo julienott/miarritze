@@ -183,5 +183,13 @@
   "Les Halles font la queue pour goûter.",
   "La recette, elle, reste un secret de famille…"
  ],
- "damage_pct": 105
+ "damage_pct": 103,
+ "_equilibrage": {
+  "archetype": "polyvalent, pièges",
+  "damage_pct": [
+   90,
+   110
+  ],
+  "intention": "Moyen partout ; gâteau piège au sol, jambon à grande portée, poêle qui renvoie les projectiles."
+ }
 }

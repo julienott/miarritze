@@ -15,7 +15,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 8,
-   "damage": 42,
+   "damage": 41,
    "hitstun": 14,
    "blockstun": 10,
    "pushback": 6,
@@ -30,7 +30,7 @@
     [
      14,
      -70,
-     60,
+     50,
      26
     ]
    ],
@@ -43,7 +43,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 9,
-   "damage": 47,
+   "damage": 46,
    "hitstun": 15,
    "blockstun": 10,
    "pushback": 7,
@@ -58,7 +58,7 @@
     [
      14,
      -66,
-     65,
+     52,
      31
     ]
    ],
@@ -71,7 +71,7 @@
    "startup": 6,
    "active": 3,
    "recovery": 14,
-   "damage": 63,
+   "damage": 62,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 22,
@@ -85,7 +85,7 @@
     [
      14,
      -72,
-     63,
+     56,
      41
     ]
    ],
@@ -98,7 +98,7 @@
    "startup": 7,
    "active": 3,
    "recovery": 12,
-   "damage": 74,
+   "damage": 72,
    "hitstun": 18,
    "blockstun": 12,
    "pushback": 10,
@@ -112,7 +112,7 @@
     [
      14,
      -92,
-     36,
+     44,
      54
     ]
    ],
@@ -125,7 +125,7 @@
    "startup": 9,
    "active": 3,
    "recovery": 14,
-   "damage": 84,
+   "damage": 82,
    "hitstun": 19,
    "blockstun": 12,
    "pushback": 12,
@@ -136,7 +136,7 @@
     [
      16,
      -96,
-     40,
+     48,
      26
     ]
    ],
@@ -149,7 +149,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 7,
-   "damage": 32,
+   "damage": 31,
    "hitstun": 12,
    "blockstun": 8,
    "pushback": 5,
@@ -163,7 +163,7 @@
     [
      12,
      -51,
-     65,
+     50,
      21
     ]
    ],
@@ -176,7 +176,7 @@
    "startup": 8,
    "active": 3,
    "recovery": 18,
-   "damage": 74,
+   "damage": 72,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 8,
@@ -205,7 +205,7 @@
    "startup": 6,
    "active": 4,
    "recovery": 22,
-   "damage": 136,
+   "damage": 134,
    "hitstun": 30,
    "blockstun": 16,
    "pushback": 10,
@@ -221,7 +221,7 @@
     [
      4,
      -150,
-     40,
+     48,
      116
     ]
    ],
@@ -234,7 +234,7 @@
    "startup": 5,
    "active": 6,
    "recovery": 6,
-   "damage": 63,
+   "damage": 62,
    "hitstun": 16,
    "blockstun": 10,
    "pushback": 6,
@@ -245,7 +245,7 @@
     [
      10,
      -62,
-     59,
+     50,
      40
     ]
    ],
@@ -258,7 +258,7 @@
    "startup": 6,
    "active": 8,
    "recovery": 6,
-   "damage": 74,
+   "damage": 72,
    "hitstun": 18,
    "blockstun": 10,
    "pushback": 8,
@@ -269,7 +269,7 @@
     [
      10,
      -40,
-     32,
+     40,
      30
     ]
    ],
@@ -282,7 +282,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 30,
-   "damage": 116,
+   "damage": 113,
    "hit_level": "throw",
    "hitstop": 8,
    "meter_gain": 8,
@@ -290,7 +290,7 @@
     [
      8,
      -70,
-     67,
+     48,
      40
     ]
    ],
@@ -327,7 +327,7 @@
    "startup": 12,
    "active": 4,
    "recovery": 22,
-   "damage": 110,
+   "damage": 108,
    "hitstun": 24,
    "blockstun": 14,
    "pushback": 20,
@@ -373,7 +373,7 @@
    "startup": 5,
    "active": 10,
    "recovery": 20,
-   "damage": 100,
+   "damage": 98,
    "hitstun": 26,
    "blockstun": 14,
    "knockdown": true,
@@ -403,7 +403,7 @@
    "startup": 8,
    "active": 40,
    "recovery": 24,
-   "damage": 63,
+   "damage": 62,
    "hitstun": 26,
    "blockstun": 14,
    "hits": 5,
@@ -458,7 +458,7 @@
   "gateau": {
    "anim": "proj_gateau",
    "speed": 0,
-   "damage": 63,
+   "damage": 62,
    "hit_level": "low",
    "knockdown": true,
    "launch": [
@@ -487,7 +487,7 @@
   "Les Halles font la queue pour goûter.",
   "La recette, elle, reste un secret de famille…"
  ],
- "damage_pct": 105,
+ "damage_pct": 103,
  "anims": {
   "intro": {
    "row": 0,

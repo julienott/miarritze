@@ -1,6 +1,6 @@
 {
  "health": 1100,
- "walk_fwd": 560,
+ "walk_fwd": 576,
  "walk_back": 560,
  "run": 1100,
  "jump_v": -2100,
@@ -15,7 +15,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 8,
-   "damage": 43,
+   "damage": 36,
    "hitstun": 14,
    "blockstun": 10,
    "pushback": 6,
@@ -30,7 +30,7 @@
     [
      14,
      -70,
-     69,
+     58,
      62
     ]
    ],
@@ -43,7 +43,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 9,
-   "damage": 49,
+   "damage": 40,
    "hitstun": 15,
    "blockstun": 10,
    "pushback": 7,
@@ -58,7 +58,7 @@
     [
      14,
      -66,
-     69,
+     60,
      26
     ]
    ],
@@ -71,7 +71,7 @@
    "startup": 6,
    "active": 3,
    "recovery": 14,
-   "damage": 65,
+   "damage": 53,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 22,
@@ -85,7 +85,7 @@
     [
      14,
      -72,
-     69,
+     64,
      63
     ]
    ],
@@ -98,7 +98,7 @@
    "startup": 7,
    "active": 3,
    "recovery": 12,
-   "damage": 76,
+   "damage": 62,
    "hitstun": 18,
    "blockstun": 12,
    "pushback": 10,
@@ -125,7 +125,7 @@
    "startup": 9,
    "active": 3,
    "recovery": 14,
-   "damage": 86,
+   "damage": 71,
    "hitstun": 19,
    "blockstun": 12,
    "pushback": 12,
@@ -149,7 +149,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 7,
-   "damage": 32,
+   "damage": 27,
    "hitstun": 12,
    "blockstun": 8,
    "pushback": 5,
@@ -163,7 +163,7 @@
     [
      12,
      -46,
-     66,
+     58,
      45
     ]
    ],
@@ -176,7 +176,7 @@
    "startup": 8,
    "active": 3,
    "recovery": 18,
-   "damage": 76,
+   "damage": 62,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 8,
@@ -205,7 +205,7 @@
    "startup": 6,
    "active": 4,
    "recovery": 22,
-   "damage": 140,
+   "damage": 116,
    "hitstun": 30,
    "blockstun": 16,
    "pushback": 10,
@@ -221,7 +221,7 @@
     [
      4,
      -110,
-     40,
+     48,
      76
     ]
    ],
@@ -234,7 +234,7 @@
    "startup": 5,
    "active": 6,
    "recovery": 6,
-   "damage": 65,
+   "damage": 53,
    "hitstun": 16,
    "blockstun": 10,
    "pushback": 6,
@@ -258,7 +258,7 @@
    "startup": 6,
    "active": 8,
    "recovery": 6,
-   "damage": 76,
+   "damage": 62,
    "hitstun": 18,
    "blockstun": 10,
    "pushback": 8,
@@ -269,7 +269,7 @@
     [
      10,
      -63,
-     66,
+     64,
      41
     ]
    ],
@@ -282,7 +282,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 30,
-   "damage": 119,
+   "damage": 98,
    "hit_level": "throw",
    "hitstop": 8,
    "meter_gain": 8,
@@ -290,7 +290,7 @@
     [
      8,
      -70,
-     75,
+     56,
      61
     ]
    ],
@@ -376,7 +376,7 @@
    "startup": 2,
    "active": 6,
    "recovery": 18,
-   "damage": 119,
+   "damage": 98,
    "hitstun": 28,
    "blockstun": 14,
    "knockdown": true,
@@ -402,7 +402,7 @@
    "startup": 5,
    "active": 8,
    "recovery": 22,
-   "damage": 119,
+   "damage": 98,
    "hitstun": 28,
    "blockstun": 14,
    "knockdown": true,
@@ -431,7 +431,7 @@
    "startup": 8,
    "active": 40,
    "recovery": 24,
-   "damage": 65,
+   "damage": 53,
    "hitstun": 26,
    "blockstun": 14,
    "hits": 5,
@@ -475,7 +475,7 @@
    "anim": "proj_bulles",
    "speed": 500,
    "vy": -80,
-   "damage": 54,
+   "damage": 44,
    "hitstun": 18,
    "blockstun": 10,
    "hitbox": [
@@ -498,9 +498,10 @@
   "Les crabes du Rocher défilent en son honneur.",
   "Personne n'ose lui demander de la rendre…"
  ],
- "damage_pct": 108,
- "push_front": 54,
- "push_back": 34,
+ "damage_pct": 89,
+ "push_front": 44,
+ "push_back": 30,
+ "allonge": 8,
  "anims": {
   "intro": {
    "frames": 8,

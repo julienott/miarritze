@@ -3,7 +3,7 @@
  "name": "Xabi",
  "title": "Pelotari",
  "archetype": "zoneur",
- "health": 980,
+ "health": 950,
  "walk_fwd": 620,
  "walk_back": 520,
  "ladder_rival": "peio",
@@ -187,5 +187,13 @@
   "Le public entonne un chant en son honneur.",
   "La pelote, elle, rebondit encore quelque part…"
  ],
- "damage_pct": 115
+ "damage_pct": 120,
+ "_equilibrage": {
+  "archetype": "zoneur",
+  "damage_pct": [
+   85,
+   120
+  ],
+  "intention": "Quatre projectiles (pelote très rapide, rasante, rebond, cloche) : il gagne de loin. Moins de PV (950) : fragile si on le rattrape."
+ }
 }

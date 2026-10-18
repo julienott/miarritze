@@ -196,5 +196,13 @@
   "Baignade autorisée : drapeau vert pour tout l'été !",
   "Mais qui a encore laissé un poisson sur sa chaise ?"
  ],
- "damage_pct": 114
+ "damage_pct": 118,
+ "_equilibrage": {
+  "archetype": "contrôle, étourdissement",
+  "damage_pct": [
+   90,
+   120
+  ],
+  "intention": "Vitesse et PV moyens ; il gagne par le contrôle : sifflet qui étourdit, palme lancée, pavillon qui ralentit."
+ }
 }

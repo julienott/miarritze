@@ -112,7 +112,7 @@
     [
      14,
      -52,
-     36,
+     44,
      28
     ]
    ],
@@ -221,7 +221,7 @@
     [
      4,
      -167,
-     40,
+     48,
      133
     ]
    ],
@@ -464,6 +464,7 @@
   "Les bateaux du large saluent d'un coup de corne.",
   "Il veille, encore et toujours, sur Biarritz…"
  ],
+ "allonge": 16,
  "anims": {
   "intro": {
    "row": 0,

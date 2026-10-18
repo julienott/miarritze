@@ -4,7 +4,7 @@
  "title": "Leveur de pierre",
  "archetype": "lourd",
  "health": 1100,
- "walk_fwd": 500,
+ "walk_fwd": 512,
  "walk_back": 420,
  "run": 900,
  "jump_v": -2100,
@@ -20,12 +20,12 @@
  },
  "moves": {
   "punch_1": {
-   "startup": 5,
-   "damage": 50
+   "startup": 7,
+   "recovery": 11
   },
   "kick": {
-   "startup": 8,
-   "damage": 85
+   "startup": 9,
+   "recovery": 16
   },
   "sp_neutral": {
    "anim": "sp_neutral",
@@ -47,9 +47,9 @@
    "anim": "sp_forward",
    "name": "Bélier",
    "classic": "B,F+P",
-   "startup": 10,
+   "startup": 14,
    "active": 14,
-   "recovery": 20,
+   "recovery": 26,
    "damage": 110,
    "hitstun": 24,
    "blockstun": 16,
@@ -152,6 +152,27 @@
      110
     ]
    ]
+  },
+  "punch_2": {
+   "startup": 7,
+   "recovery": 12
+  },
+  "punch_3": {
+   "startup": 9,
+   "recovery": 18,
+   "damage": 50
+  },
+  "kick_high": {
+   "startup": 11,
+   "recovery": 18
+  },
+  "sweep": {
+   "startup": 10,
+   "recovery": 22
+  },
+  "crouch_punch": {
+   "startup": 4,
+   "recovery": 9
   }
  },
  "projectiles": {
@@ -220,5 +241,14 @@
   "Les Halles applaudissent à tout rompre.",
   "Il cherche déjà quelque chose de plus lourd à soulever…"
  ],
- "damage_pct": 75
+ "damage_pct": 101,
+ "_equilibrage": {
+  "archetype": "lourd",
+  "damage_pct": [
+   95,
+   125
+  ],
+  "intention": "Le plus lent (marche 512, course 900, poings en 7 frames au lieu de 4) et endurant (1100 PV). Allonge de bras +8 px (la plus longue avec Karramarro). Ses poings gardent les dégâts communs (fin d'auto-combo allégée à 50), partent tard et se ratent cher (+3/+4 de récupération) ; les gros coups sont ses spéciaux : Bélier à armure (lent à partir, 14 frames, punissable), pierre lourde, Soulevé à 130."
+ },
+ "allonge": 8
 }

@@ -15,7 +15,7 @@ func _initialize() -> void:
 		test_lint_sim, test_data_valid, test_save_load_identity, test_determinism,
 		test_rollback, test_frame_data, test_chip_never_kills, test_training_ko, test_combo_forced_knockdown,
 		test_timer_and_draw, test_wave_return_once, test_throw_and_tech, test_full_match_ends,
-		test_inputs_to_moves, test_fuzz_roster, test_reflect_projectile,
+		test_inputs_to_moves, test_fuzz_roster, test_reflect_projectile, test_ai_contact_normals, test_roster_spread,
 		test_netcode_lossy, test_netcode_desync_detected, test_netcode_final_checksum,
 	]
 	for t: Callable in tests:
@@ -354,6 +354,40 @@ func test_inputs_to_moves() -> void:
 
 ## Chaque combattant contre chacun : entrées aléatoires + IA, sans erreur,
 ## et la sim reste déterministe (deux passes identiques).
+## SPEC §5.2 : marche avant et PV à ±10 % de Louis (la référence), ±20 % pour
+## Mattin et Kaio. L'identité passe par les autres leviers (frame data, portée…).
+const SPEC_SPREAD_PCT: int = 10
+const SPEC_SPREAD_WIDE_PCT: int = 20
+const SPEC_WIDE_IDS: PackedStringArray = ["mattin", "kaio"]
+
+
+func test_roster_spread() -> void:
+	var ref: FighterDef = FighterDb.get_def("louis")
+	for id: String in Roster.FIGHTERS:
+		var def: FighterDef = FighterDb.get_def(id)
+		var spread: int = SPEC_SPREAD_WIDE_PCT if SPEC_WIDE_IDS.has(id) else SPEC_SPREAD_PCT
+		for pair: Array in [["walk_fwd", def.walk_fwd, ref.walk_fwd], ["health", def.health, ref.health]]:
+			var delta: int = absi(int(pair[1]) - int(pair[2])) * 100
+			check(delta <= int(pair[2]) * spread, "%s : %s %d hors ±%d %% de Louis (%d)" % [id, pair[0], pair[1], spread, pair[2]])
+
+
+## L'IA au contact utilise ses coups normaux, quelle que soit la largeur de
+## sa boîte de poussée (Karramarro : 54 px ; seuils réglés pour 2 × 22 px).
+func test_ai_contact_normals() -> void:
+	for id: String in ["louis", "karramarro", "mattin"]:
+		var sim: FightSim = make_sim(id, Roster.DUMMY, {"seed": 7, "ai": [AiBrain.SKILL_EXPERT, AiBrain.DUMMY_IDLE]})
+		var def: FighterDef = sim.defs[0]
+		var normals: int = 0
+		var prev: int = -1
+		for i: int in 1500:
+			sim.step(0, 0)
+			var mi: int = sim.f[0].move if sim.f[0].state == SimConst.ST_MOVE else -1
+			if mi >= 0 and mi != prev and not def.moves[mi].is_special and not def.moves[mi].air_ok:
+				normals += 1
+			prev = mi
+		check(normals >= 5, "%s : l'IA ne frappe pas au contact (%d coups normaux)" % [id, normals])
+
+
 func test_fuzz_roster() -> void:
 	var ids: PackedStringArray = Roster.FIGHTERS.duplicate()
 	ids.append(Roster.BOSS)

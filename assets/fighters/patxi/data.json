@@ -15,7 +15,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 8,
-   "damage": 31,
+   "damage": 34,
    "hitstun": 14,
    "blockstun": 10,
    "pushback": 6,
@@ -43,7 +43,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 9,
-   "damage": 35,
+   "damage": 38,
    "hitstun": 15,
    "blockstun": 10,
    "pushback": 7,
@@ -58,7 +58,7 @@
     [
      14,
      -99,
-     65,
+     52,
      45
     ]
    ],
@@ -71,7 +71,7 @@
    "startup": 6,
    "active": 3,
    "recovery": 14,
-   "damage": 47,
+   "damage": 51,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 22,
@@ -85,7 +85,7 @@
     [
      14,
      -94,
-     61,
+     56,
      38
     ]
    ],
@@ -98,7 +98,7 @@
    "startup": 7,
    "active": 3,
    "recovery": 12,
-   "damage": 55,
+   "damage": 60,
    "hitstun": 18,
    "blockstun": 12,
    "pushback": 10,
@@ -112,7 +112,7 @@
     [
      14,
      -92,
-     65,
+     60,
      54
     ]
    ],
@@ -125,7 +125,7 @@
    "startup": 9,
    "active": 3,
    "recovery": 14,
-   "damage": 62,
+   "damage": 68,
    "hitstun": 19,
    "blockstun": 12,
    "pushback": 12,
@@ -149,7 +149,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 7,
-   "damage": 23,
+   "damage": 26,
    "hitstun": 12,
    "blockstun": 8,
    "pushback": 5,
@@ -176,7 +176,7 @@
    "startup": 8,
    "active": 3,
    "recovery": 18,
-   "damage": 55,
+   "damage": 60,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 8,
@@ -205,7 +205,7 @@
    "startup": 6,
    "active": 4,
    "recovery": 22,
-   "damage": 101,
+   "damage": 110,
    "hitstun": 30,
    "blockstun": 16,
    "pushback": 10,
@@ -221,7 +221,7 @@
     [
      4,
      -151,
-     40,
+     48,
      117
     ]
    ],
@@ -234,7 +234,7 @@
    "startup": 5,
    "active": 6,
    "recovery": 6,
-   "damage": 47,
+   "damage": 51,
    "hitstun": 16,
    "blockstun": 10,
    "pushback": 6,
@@ -258,7 +258,7 @@
    "startup": 6,
    "active": 8,
    "recovery": 6,
-   "damage": 55,
+   "damage": 60,
    "hitstun": 18,
    "blockstun": 10,
    "pushback": 8,
@@ -282,7 +282,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 30,
-   "damage": 86,
+   "damage": 136,
    "hit_level": "throw",
    "hitstop": 8,
    "meter_gain": 8,
@@ -290,7 +290,7 @@
     [
      8,
      -103,
-     64,
+     48,
      73
     ]
    ],
@@ -376,7 +376,7 @@
    "startup": 5,
    "active": 12,
    "recovery": 20,
-   "damage": 43,
+   "damage": 47,
    "hitstun": 24,
    "blockstun": 12,
    "hits": 2,
@@ -407,7 +407,7 @@
    "startup": 8,
    "active": 40,
    "recovery": 24,
-   "damage": 47,
+   "damage": 51,
    "hitstun": 26,
    "blockstun": 14,
    "hits": 5,
@@ -462,7 +462,7 @@
   "sardines": {
    "anim": "proj_sardines",
    "speed": 1100,
-   "damage": 20,
+   "damage": 21,
    "hits": 3,
    "rehit_interval": 6,
    "hitstun": 12,
@@ -479,7 +479,7 @@
   "hamecon": {
    "anim": "proj_hamecon",
    "speed": 1700,
-   "damage": 39,
+   "damage": 42,
    "hitstun": 34,
    "blockstun": 10,
    "hitbox": [
@@ -495,7 +495,7 @@
   "filet": {
    "anim": "proj_filet",
    "speed": 900,
-   "damage": 23,
+   "damage": 26,
    "hitstun": 10,
    "stun_on_hit": 40,
    "blockstun": 12,
@@ -518,7 +518,7 @@
   "Ce soir, sardines grillées pour tout le Port !",
   "Une mouette, perchée sur le béret, réclame sa part…"
  ],
- "damage_pct": 78,
+ "damage_pct": 85,
  "anims": {
   "intro": {
    "row": 0,

@@ -15,7 +15,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 8,
-   "damage": 52,
+   "damage": 48,
    "hitstun": 14,
    "blockstun": 10,
    "pushback": 6,
@@ -43,7 +43,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 9,
-   "damage": 58,
+   "damage": 54,
    "hitstun": 15,
    "blockstun": 10,
    "pushback": 7,
@@ -58,7 +58,7 @@
     [
      14,
      -66,
-     54,
+     52,
      26
     ]
    ],
@@ -71,7 +71,7 @@
    "startup": 6,
    "active": 3,
    "recovery": 14,
-   "damage": 78,
+   "damage": 72,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 22,
@@ -98,7 +98,7 @@
    "startup": 7,
    "active": 3,
    "recovery": 12,
-   "damage": 91,
+   "damage": 84,
    "hitstun": 18,
    "blockstun": 12,
    "pushback": 10,
@@ -112,7 +112,7 @@
     [
      14,
      -52,
-     42,
+     44,
      20
     ]
    ],
@@ -125,7 +125,7 @@
    "startup": 9,
    "active": 3,
    "recovery": 14,
-   "damage": 104,
+   "damage": 96,
    "hitstun": 19,
    "blockstun": 12,
    "pushback": 12,
@@ -136,7 +136,7 @@
     [
      16,
      -86,
-     40,
+     48,
      58
     ]
    ],
@@ -149,7 +149,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 7,
-   "damage": 39,
+   "damage": 36,
    "hitstun": 12,
    "blockstun": 8,
    "pushback": 5,
@@ -163,7 +163,7 @@
     [
      12,
      -55,
-     52,
+     50,
      21
     ]
    ],
@@ -176,7 +176,7 @@
    "startup": 8,
    "active": 3,
    "recovery": 18,
-   "damage": 91,
+   "damage": 84,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 8,
@@ -192,7 +192,7 @@
     [
      10,
      -26,
-     46,
+     50,
      26
     ]
    ],
@@ -205,7 +205,7 @@
    "startup": 6,
    "active": 4,
    "recovery": 22,
-   "damage": 169,
+   "damage": 156,
    "hitstun": 30,
    "blockstun": 16,
    "pushback": 10,
@@ -221,7 +221,7 @@
     [
      -6,
      -140,
-     50,
+     58,
      106
     ]
    ],
@@ -234,7 +234,7 @@
    "startup": 5,
    "active": 6,
    "recovery": 6,
-   "damage": 78,
+   "damage": 72,
    "hitstun": 16,
    "blockstun": 10,
    "pushback": 6,
@@ -258,7 +258,7 @@
    "startup": 6,
    "active": 8,
    "recovery": 6,
-   "damage": 91,
+   "damage": 84,
    "hitstun": 18,
    "blockstun": 10,
    "pushback": 8,
@@ -282,7 +282,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 30,
-   "damage": 143,
+   "damage": 132,
    "hit_level": "throw",
    "hitstop": 8,
    "meter_gain": 8,
@@ -290,7 +290,7 @@
     [
      8,
      -70,
-     54,
+     48,
      40
     ]
    ],
@@ -373,7 +373,7 @@
    "startup": 10,
    "active": 10,
    "recovery": 20,
-   "damage": 124,
+   "damage": 114,
    "hitstun": 26,
    "blockstun": 14,
    "knockdown": true,
@@ -398,7 +398,7 @@
    "startup": 8,
    "active": 40,
    "recovery": 24,
-   "damage": 78,
+   "damage": 72,
    "hitstun": 26,
    "blockstun": 14,
    "hits": 5,
@@ -441,7 +441,7 @@
   "perle": {
    "anim": "proj_perle",
    "speed": 1000,
-   "damage": 65,
+   "damage": 60,
    "hitstun": 18,
    "blockstun": 10,
    "slow_on_hit": 90,
@@ -457,7 +457,7 @@
   "flaque": {
    "anim": "proj_flaque",
    "speed": 0,
-   "damage": 52,
+   "damage": 48,
    "hit_level": "low",
    "hitstun": 34,
    "blockstun": 10,
@@ -481,7 +481,7 @@
   "Chaque vague de la Côte des Basques la salue.",
   "À marée basse, on dit qu'on la voit briller…"
  ],
- "damage_pct": 130,
+ "damage_pct": 120,
  "anims": {
   "intro": {
    "frames": 8,

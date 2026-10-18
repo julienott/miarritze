@@ -163,5 +163,13 @@
   "Chaque vague de la Côte des Basques la salue.",
   "À marée basse, on dit qu'on la voit briller…"
  ],
- "damage_pct": 130
+ "damage_pct": 120,
+ "_equilibrage": {
+  "archetype": "mystique, téléportation",
+  "damage_pct": [
+   95,
+   120
+  ],
+  "intention": "La moins endurante (950 PV) mais insaisissable : téléportation, perle qui ralentit, piège de marée, geyser."
+ }
 }

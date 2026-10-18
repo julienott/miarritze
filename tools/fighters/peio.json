@@ -206,5 +206,13 @@
   "Tout le stade entonne « Allez le BO ! ».",
   "La troisième mi-temps durera jusqu'à l'aube…"
  ],
- "damage_pct": 98
+ "damage_pct": 104,
+ "_equilibrage": {
+  "archetype": "puissant, charges",
+  "damage_pct": [
+   100,
+   120
+  ],
+  "intention": "Robuste (1080 PV), course rapide (1200) et charges qui renversent ; coups plus forts que la moyenne, plaquage lent à partir."
+ }
 }

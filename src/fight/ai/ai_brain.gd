@@ -30,6 +30,21 @@ static func guard_permille(skill: int) -> int:
 		return 100 + 50 * clampi(skill, 1, 34) / 34
 	return 100 + 720 * clampi(skill, 1, 100) / 100
 
+## Somme des boîtes de poussée (px) pour laquelle les seuils de distance de
+## l'IA (contact 60, mi-distance 130…) ont été réglés : 2 × 22 px. Les boîtes
+## mesurées sur les sprites sont plus larges (30 à 54 px chacune) ; sans
+## correction, deux combattants collés restaient « à mi-distance » et l'IA
+## n'utilisait jamais ses coups au contact.
+const REF_PUSH_PX: int = 44
+
+
+## Distance (px) vue par l'IA : écart entre les boîtes de poussée, ramené à
+## l'échelle des seuils (REF_PUSH_PX).
+static func gap_px(sim: FightSim, p: int) -> int:
+	var raw: int = absi(sim.f[1 - p].x - sim.f[p].x)
+	var push: int = sim.defs[p].push_front + sim.defs[1 - p].push_front
+	return maxi(0, (raw - push) / SimConst.SUB + REF_PUSH_PX)
+
 const PLAN_NONE: int = 0
 const PLAN_COMBO: int = 1
 
@@ -52,8 +67,7 @@ static func think(sim: FightSim, p: int) -> int:
 	# tirée au sort une seule fois par coup adverse.
 	if o.state == SimConst.ST_MOVE and o.move >= 0 and me.actionable() and me.ai_plan != -(o.move + 2):
 		var omv: MoveDef = sim.defs[1 - p].moves[o.move]
-		var dist: int = absi(o.x - me.x)
-		if dist < 110 * SimConst.SUB or omv.spawn_projectile >= 0:
+		if gap_px(sim, p) < 110 or omv.spawn_projectile >= 0:
 			me.ai_plan = -(o.move + 2)
 			if sim.rng.chance(guard_permille(lv)):
 				var low: bool = omv.hit_level == SimConst.LVL_LOW and (lv >= 65 or sim.rng.chance(300))
@@ -75,7 +89,7 @@ static func _decide(sim: FightSim, p: int, lv: int, fwd: int, back: int) -> int:
 	var o: FighterState = sim.f[1 - p]
 	var def: FighterDef = sim.defs[p]
 	var rng: XRng = sim.rng
-	var dist: int = absi(o.x - me.x) / SimConst.SUB
+	var dist: int = gap_px(sim, p)
 	var react: int = reaction(lv)
 	var out: int = 0
 	me.ai_plan = PLAN_NONE

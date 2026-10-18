@@ -4,7 +4,7 @@ Case (ligne i, colonne j) = victoires de i contre j ; vert = favorable."""
 import csv, os
 from PIL import Image, ImageDraw, ImageFont
 
-ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 rows = list(csv.reader(open(os.path.join(ROOT, "tests", "out", "balance.csv"))))
 ids = rows[0][1:-1]
 n = len(ids)

@@ -218,5 +218,13 @@
   "speed": 2,
   "reach": 2
  },
- "damage_pct": 93
+ "damage_pct": 96,
+ "_equilibrage": {
+  "archetype": "équilibré",
+  "damage_pct": [
+   90,
+   110
+  ],
+  "intention": "Référence : valeurs communes partout (vitesse, PV, frame data). Projectile qui revient, charge, uppercut invulnérable."
+ }
 }

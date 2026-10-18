@@ -4,7 +4,7 @@
  "title": "Le crabe des rochers",
  "archetype": "defensif",
  "health": 1100,
- "walk_fwd": 560,
+ "walk_fwd": 576,
  "walk_back": 560,
  "jump_v": -2100,
  "push_w": 30,
@@ -183,7 +183,16 @@
   "Les crabes du Rocher défilent en son honneur.",
   "Personne n'ose lui demander de la rendre…"
  ],
- "damage_pct": 108,
- "push_front": 54,
- "push_back": 34
+ "damage_pct": 89,
+ "push_front": 44,
+ "push_back": 30,
+ "_equilibrage": {
+  "archetype": "défensif, armure",
+  "damage_pct": [
+   70,
+   95
+  ],
+  "intention": "Lent (marche 576), le plus endurant avec Mattin (1100 PV), grandes pinces (allonge +8 px) et carapace qui contre ; ses coups font peu de dégâts : il gagne à l'usure. Boîte de poussée ramenée de 54 à 44 px : à 54 px il tenait tout le monde à distance et ses matchs basculaient selon l'allonge de l'adversaire (de 23 % à 77 %)."
+ },
+ "allonge": 8
 }
