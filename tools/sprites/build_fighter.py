@@ -27,6 +27,10 @@ DEFAULT_FRAMES = dict(intro=8, idle=8, walk=8, run=6, crouch=3, crouch_idle=4, j
     kick_high=6, crouch_punch=4, sweep=6, uppercut=6, jump_punch=3, jump_kick=3, throw=8,
     thrown=6, hit_high=3, hit_low=3, hit_air=4, knockdown=6, getup=6, dizzy=6, ko=8, win=8,
     sp_neutral=8, sp_forward=8, sp_down=8, sp_up=8, super=12, finisher=12)
+# Portée des coups normaux (px au-delà de la boîte de référence de _common) :
+# au moins MIN (tolérance enfant), au plus MAX + « allonge » de la fiche.
+REACH_EXTRA_MIN = 8
+REACH_EXTRA_MAX = 24
 LOOPS = {"idle", "walk", "run", "crouch_idle", "dizzy", "win", "block", "crouch_block", "fall"}
 
 
@@ -87,6 +91,14 @@ def build(fid):
                 x0, y0 = min(box[0], ref[0]), min(box[1], ref[1])
                 x1 = max(box[0] + box[2], ref[0] + ref[2])
                 y1 = max(box[1] + box[3], ref[1] + ref[3])
+                # Allonge bornée (équilibrage, docs/EQUILIBRAGE.md) : la boîte
+                # du sprite (bras, canne, pinces…) dépasse la référence de 0 à
+                # 55 px selon le dessin ; on la ramène dans [MIN, MAX] + l'allonge
+                # d'archétype de la fiche, pour que la portée ne dépende pas
+                # du dessin (refonte graphique en cours).
+                ref_x1 = ref[0] + ref[2]
+                x1 = max(ref_x1 + REACH_EXTRA_MIN,
+                         min(x1, ref_x1 + REACH_EXTRA_MAX + int(own.get("allonge", 0))))
                 box = [x0, y0, x1 - x0, y1 - y0]
             mv["hitboxes"] = [box]
     data.setdefault("palettes", "palettes.png")

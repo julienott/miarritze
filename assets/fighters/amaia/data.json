@@ -15,7 +15,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 8,
-   "damage": 43,
+   "damage": 42,
    "hitstun": 14,
    "blockstun": 10,
    "pushback": 6,
@@ -112,7 +112,7 @@
     [
      14,
      -52,
-     41,
+     44,
      17
     ]
    ],
@@ -125,7 +125,7 @@
    "startup": 8,
    "active": 3,
    "recovery": 14,
-   "damage": 91,
+   "damage": 90,
    "hitstun": 19,
    "blockstun": 12,
    "pushback": 12,
@@ -136,7 +136,7 @@
     [
      16,
      -86,
-     40,
+     48,
      41
     ]
    ],
@@ -163,7 +163,7 @@
     [
      12,
      -46,
-     33,
+     34,
      42
     ]
    ],
@@ -176,7 +176,7 @@
    "startup": 8,
    "active": 3,
    "recovery": 18,
-   "damage": 75,
+   "damage": 74,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 8,
@@ -205,7 +205,7 @@
    "startup": 6,
    "active": 4,
    "recovery": 22,
-   "damage": 139,
+   "damage": 138,
    "hitstun": 30,
    "blockstun": 16,
    "pushback": 10,
@@ -221,7 +221,7 @@
     [
      4,
      -148,
-     40,
+     48,
      114
     ]
    ],
@@ -245,7 +245,7 @@
     [
      10,
      -62,
-     33,
+     34,
      38
     ]
    ],
@@ -258,7 +258,7 @@
    "startup": 6,
    "active": 8,
    "recovery": 6,
-   "damage": 75,
+   "damage": 74,
    "hitstun": 18,
    "blockstun": 10,
    "pushback": 8,
@@ -282,7 +282,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 30,
-   "damage": 118,
+   "damage": 117,
    "hit_level": "throw",
    "hitstop": 8,
    "meter_gain": 8,
@@ -327,7 +327,7 @@
    "startup": 8,
    "active": 10,
    "recovery": 14,
-   "damage": 86,
+   "damage": 85,
    "hitstun": 20,
    "blockstun": 12,
    "hit_level": "air",
@@ -393,7 +393,7 @@
    "startup": 4,
    "active": 10,
    "recovery": 22,
-   "damage": 118,
+   "damage": 117,
    "hitstun": 28,
    "blockstun": 14,
    "knockdown": true,
@@ -430,7 +430,7 @@
    "startup": 8,
    "active": 48,
    "recovery": 24,
-   "damage": 41,
+   "damage": 40,
    "hitstun": 26,
    "blockstun": 14,
    "hits": 8,
@@ -479,7 +479,7 @@
   "Toute la passerelle du Rocher danse avec elle.",
   "La Vierge, sur son rocher, semble battre la mesure…"
  ],
- "damage_pct": 107,
+ "damage_pct": 106,
  "anims": {
   "intro": {
    "row": 0,

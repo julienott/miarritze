@@ -194,5 +194,13 @@
   "Toute la passerelle du Rocher danse avec elle.",
   "La Vierge, sur son rocher, semble battre la mesure…"
  ],
- "damage_pct": 107
+ "damage_pct": 106,
+ "_equilibrage": {
+  "archetype": "technique, coups de pied",
+  "damage_pct": [
+   90,
+   115
+  ],
+  "intention": "Coups de pied plus rapides et plus forts que la moyenne, spéciaux à plusieurs touches, uppercut invulnérable. PV un peu bas (970)."
+ }
 }

@@ -1,5 +1,5 @@
 {
- "health": 1040,
+ "health": 1000,
  "walk_fwd": 600,
  "walk_back": 560,
  "run": 1200,
@@ -15,7 +15,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 8,
-   "damage": 52,
+   "damage": 43,
    "hitstun": 14,
    "blockstun": 10,
    "pushback": 6,
@@ -29,9 +29,9 @@
    "hitboxes": [
     [
      14,
-     -70,
-     26,
-     12
+     -66,
+     32,
+     14
     ]
    ],
    "sfx": "hit_light",
@@ -43,7 +43,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 9,
-   "damage": 58,
+   "damage": 49,
    "hitstun": 15,
    "blockstun": 10,
    "pushback": 7,
@@ -57,9 +57,9 @@
    "hitboxes": [
     [
      14,
-     -66,
-     28,
-     12
+     -64,
+     34,
+     14
     ]
    ],
    "sfx": "hit_light",
@@ -71,7 +71,7 @@
    "startup": 6,
    "active": 3,
    "recovery": 14,
-   "damage": 78,
+   "damage": 65,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 22,
@@ -98,7 +98,7 @@
    "startup": 7,
    "active": 3,
    "recovery": 12,
-   "damage": 91,
+   "damage": 76,
    "hitstun": 18,
    "blockstun": 12,
    "pushback": 10,
@@ -112,7 +112,7 @@
     [
      14,
      -52,
-     36,
+     44,
      29
     ]
    ],
@@ -125,7 +125,7 @@
    "startup": 9,
    "active": 3,
    "recovery": 14,
-   "damage": 104,
+   "damage": 86,
    "hitstun": 19,
    "blockstun": 12,
    "pushback": 12,
@@ -136,7 +136,7 @@
     [
      16,
      -86,
-     40,
+     48,
      24
     ]
    ],
@@ -149,7 +149,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 7,
-   "damage": 39,
+   "damage": 32,
    "hitstun": 12,
    "blockstun": 8,
    "pushback": 5,
@@ -163,7 +163,7 @@
     [
      12,
      -46,
-     63,
+     50,
      22
     ]
    ],
@@ -176,7 +176,7 @@
    "startup": 8,
    "active": 3,
    "recovery": 18,
-   "damage": 91,
+   "damage": 76,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 8,
@@ -192,7 +192,7 @@
     [
      10,
      -31,
-     69,
+     66,
      31
     ]
    ],
@@ -205,7 +205,7 @@
    "startup": 6,
    "active": 4,
    "recovery": 22,
-   "damage": 169,
+   "damage": 140,
    "hitstun": 30,
    "blockstun": 16,
    "pushback": 10,
@@ -221,7 +221,7 @@
     [
      -3,
      -147,
-     47,
+     55,
      113
     ]
    ],
@@ -234,7 +234,7 @@
    "startup": 5,
    "active": 6,
    "recovery": 6,
-   "damage": 78,
+   "damage": 76,
    "hitstun": 16,
    "blockstun": 10,
    "pushback": 6,
@@ -258,7 +258,7 @@
    "startup": 6,
    "active": 8,
    "recovery": 6,
-   "damage": 91,
+   "damage": 86,
    "hitstun": 18,
    "blockstun": 10,
    "pushback": 8,
@@ -269,7 +269,7 @@
     [
      10,
      -40,
-     36,
+     40,
      33
     ]
    ],
@@ -282,7 +282,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 30,
-   "damage": 143,
+   "damage": 119,
    "hit_level": "throw",
    "hitstop": 8,
    "meter_gain": 8,
@@ -329,7 +329,7 @@
    "startup": 6,
    "active": 14,
    "recovery": 16,
-   "damage": 110,
+   "damage": 92,
    "hitstun": 20,
    "blockstun": 12,
    "hitstop": 8,
@@ -358,7 +358,7 @@
    "startup": 7,
    "active": 5,
    "recovery": 18,
-   "damage": 26,
+   "damage": 22,
    "hitstun": 14,
    "blockstun": 8,
    "steal_meter": 30,
@@ -415,7 +415,7 @@
    "startup": 8,
    "active": 40,
    "recovery": 24,
-   "damage": 78,
+   "damage": 65,
    "hitstun": 26,
    "blockstun": 14,
    "hits": 5,
@@ -434,8 +434,8 @@
   }
  },
  "ai": {
-  "aggression": 0.6,
-  "zoning": 0.4,
+  "aggression": 0.5,
+  "zoning": 0.6,
   "anti_air": 0.4,
   "favorite_moves": [
    "sp_forward",
@@ -460,7 +460,7 @@
    "speed": 600,
    "vy": -400,
    "gravity": 70,
-   "damage": 72,
+   "damage": 59,
    "hitstun": 20,
    "blockstun": 10,
    "hit_level": "air",
@@ -483,7 +483,7 @@
   "Il la cache dans son nid, sur la falaise.",
   "Tout le Port Vieux le cherche encore…"
  ],
- "damage_pct": 130,
+ "damage_pct": 108,
  "anims": {
   "intro": {
    "row": 0,

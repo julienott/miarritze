@@ -1,6 +1,6 @@
 {
  "health": 1100,
- "walk_fwd": 500,
+ "walk_fwd": 512,
  "walk_back": 420,
  "run": 900,
  "jump_v": -2100,
@@ -12,10 +12,10 @@
   "punch_1": {
    "anim": "punch_1",
    "input": "P",
-   "startup": 5,
+   "startup": 7,
    "active": 2,
-   "recovery": 8,
-   "damage": 38,
+   "recovery": 11,
+   "damage": 40,
    "hitstun": 14,
    "blockstun": 10,
    "pushback": 6,
@@ -30,7 +30,7 @@
     [
      14,
      -70,
-     73,
+     58,
      19
     ]
    ],
@@ -40,10 +40,10 @@
   "punch_2": {
    "anim": "punch_2",
    "input": "P,P",
-   "startup": 4,
+   "startup": 7,
    "active": 2,
-   "recovery": 9,
-   "damage": 34,
+   "recovery": 12,
+   "damage": 45,
    "hitstun": 15,
    "blockstun": 10,
    "pushback": 7,
@@ -58,7 +58,7 @@
     [
      14,
      -66,
-     73,
+     60,
      35
     ]
    ],
@@ -68,10 +68,10 @@
   "punch_3": {
    "anim": "punch_3",
    "input": "P,P,P",
-   "startup": 6,
+   "startup": 9,
    "active": 3,
-   "recovery": 14,
-   "damage": 45,
+   "recovery": 18,
+   "damage": 50,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 22,
@@ -85,7 +85,7 @@
     [
      14,
      -72,
-     73,
+     64,
      40
     ]
    ],
@@ -95,10 +95,10 @@
   "kick": {
    "anim": "kick",
    "input": "K",
-   "startup": 8,
+   "startup": 9,
    "active": 3,
-   "recovery": 12,
-   "damage": 64,
+   "recovery": 16,
+   "damage": 71,
    "hitstun": 18,
    "blockstun": 12,
    "pushback": 10,
@@ -122,10 +122,10 @@
   "kick_high": {
    "anim": "kick_high",
    "input": "F+K",
-   "startup": 9,
+   "startup": 11,
    "active": 3,
-   "recovery": 14,
-   "damage": 60,
+   "recovery": 18,
+   "damage": 81,
    "hitstun": 19,
    "blockstun": 12,
    "pushback": 12,
@@ -146,10 +146,10 @@
   "crouch_punch": {
    "anim": "crouch_punch",
    "input": "D+P",
-   "startup": 3,
+   "startup": 4,
    "active": 2,
-   "recovery": 7,
-   "damage": 22,
+   "recovery": 9,
+   "damage": 30,
    "hitstun": 12,
    "blockstun": 8,
    "pushback": 5,
@@ -163,7 +163,7 @@
     [
      12,
      -46,
-     72,
+     58,
      24
     ]
    ],
@@ -173,10 +173,10 @@
   "sweep": {
    "anim": "sweep",
    "input": "D+K",
-   "startup": 8,
+   "startup": 10,
    "active": 3,
-   "recovery": 18,
-   "damage": 52,
+   "recovery": 22,
+   "damage": 71,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 8,
@@ -192,7 +192,7 @@
     [
      10,
      -61,
-     77,
+     74,
      61
     ]
    ],
@@ -205,7 +205,7 @@
    "startup": 6,
    "active": 4,
    "recovery": 22,
-   "damage": 98,
+   "damage": 131,
    "hitstun": 30,
    "blockstun": 16,
    "pushback": 10,
@@ -221,7 +221,7 @@
     [
      4,
      -135,
-     74,
+     72,
      101
     ]
    ],
@@ -234,7 +234,7 @@
    "startup": 5,
    "active": 6,
    "recovery": 6,
-   "damage": 45,
+   "damage": 61,
    "hitstun": 16,
    "blockstun": 10,
    "pushback": 6,
@@ -245,7 +245,7 @@
     [
      10,
      -62,
-     77,
+     58,
      49
     ]
    ],
@@ -258,7 +258,7 @@
    "startup": 6,
    "active": 8,
    "recovery": 6,
-   "damage": 52,
+   "damage": 71,
    "hitstun": 18,
    "blockstun": 10,
    "pushback": 8,
@@ -282,7 +282,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 30,
-   "damage": 82,
+   "damage": 111,
    "hit_level": "throw",
    "hitstop": 8,
    "meter_gain": 8,
@@ -290,7 +290,7 @@
     [
      8,
      -70,
-     79,
+     56,
      40
     ]
    ],
@@ -325,10 +325,10 @@
    "anim": "sp_forward",
    "name": "Bélier",
    "classic": "B,F+P",
-   "startup": 10,
+   "startup": 14,
    "active": 14,
-   "recovery": 20,
-   "damage": 82,
+   "recovery": 26,
+   "damage": 111,
    "hitstun": 24,
    "blockstun": 16,
    "pushback": 24,
@@ -392,7 +392,7 @@
    "startup": 6,
    "active": 6,
    "recovery": 24,
-   "damage": 98,
+   "damage": 131,
    "hitstun": 30,
    "blockstun": 14,
    "hit_level": "mid",
@@ -422,7 +422,7 @@
    "startup": 8,
    "active": 40,
    "recovery": 24,
-   "damage": 45,
+   "damage": 61,
    "hitstun": 26,
    "blockstun": 14,
    "hits": 5,
@@ -467,7 +467,7 @@
    "speed": 800,
    "vy": -600,
    "gravity": 30,
-   "damage": 82,
+   "damage": 111,
    "hitstun": 24,
    "blockstun": 14,
    "knockdown": true,
@@ -488,7 +488,7 @@
   "onde": {
    "anim": "proj_onde",
    "speed": 1000,
-   "damage": 52,
+   "damage": 71,
    "hit_level": "low",
    "knockdown": true,
    "launch": [
@@ -517,7 +517,8 @@
   "Les Halles applaudissent à tout rompre.",
   "Il cherche déjà quelque chose de plus lourd à soulever…"
  ],
- "damage_pct": 75,
+ "damage_pct": 101,
+ "allonge": 8,
  "anims": {
   "intro": {
    "row": 0,

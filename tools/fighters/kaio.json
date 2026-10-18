@@ -3,7 +3,7 @@
  "name": "Kaio",
  "title": "Le goéland voleur",
  "archetype": "aerien",
- "health": 1040,
+ "health": 1000,
  "walk_fwd": 600,
  "walk_back": 560,
  "run": 1200,
@@ -138,6 +138,32 @@
      120
     ]
    ]
+  },
+  "jump_kick": {
+   "damage": 80
+  },
+  "jump_punch": {
+   "damage": 70
+  },
+  "punch_1": {
+   "hitboxes": [
+    [
+     14,
+     -66,
+     32,
+     14
+    ]
+   ]
+  },
+  "punch_2": {
+   "hitboxes": [
+    [
+     14,
+     -64,
+     34,
+     14
+    ]
+   ]
   }
  },
  "projectiles": {
@@ -161,8 +187,8 @@
   }
  },
  "ai": {
-  "aggression": 0.6,
-  "zoning": 0.4,
+  "aggression": 0.5,
+  "zoning": 0.6,
   "anti_air": 0.4,
   "favorite_moves": [
    "sp_forward",
@@ -179,5 +205,13 @@
   "Il la cache dans son nid, sur la falaise.",
   "Tout le Port Vieux le cherche encore…"
  ],
- "damage_pct": 130
+ "damage_pct": 108,
+ "_equilibrage": {
+  "archetype": "aérien, harcèlement",
+  "damage_pct": [
+   90,
+   125
+  ],
+  "intention": "Saut le plus haut et le plus long (gravité 100, saut de 50 frames), coups sautés plus forts (70/80), piqué aérien, fiente en cloche, vol de jauge. Au sol : petits poings (peu d'allonge) et PV moyens (1000)."
+ }
 }

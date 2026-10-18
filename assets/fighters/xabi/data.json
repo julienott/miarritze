@@ -1,5 +1,5 @@
 {
- "health": 980,
+ "health": 950,
  "walk_fwd": 620,
  "walk_back": 520,
  "run": 1100,
@@ -15,7 +15,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 8,
-   "damage": 46,
+   "damage": 48,
    "hitstun": 14,
    "blockstun": 10,
    "pushback": 6,
@@ -30,7 +30,7 @@
     [
      14,
      -70,
-     54,
+     50,
      42
     ]
    ],
@@ -43,7 +43,7 @@
    "startup": 4,
    "active": 2,
    "recovery": 9,
-   "damage": 52,
+   "damage": 54,
    "hitstun": 15,
    "blockstun": 10,
    "pushback": 7,
@@ -58,7 +58,7 @@
     [
      14,
      -66,
-     57,
+     52,
      47
     ]
    ],
@@ -71,7 +71,7 @@
    "startup": 6,
    "active": 3,
    "recovery": 14,
-   "damage": 69,
+   "damage": 72,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 22,
@@ -98,7 +98,7 @@
    "startup": 7,
    "active": 3,
    "recovery": 12,
-   "damage": 80,
+   "damage": 84,
    "hitstun": 18,
    "blockstun": 12,
    "pushback": 10,
@@ -125,7 +125,7 @@
    "startup": 9,
    "active": 3,
    "recovery": 14,
-   "damage": 92,
+   "damage": 96,
    "hitstun": 19,
    "blockstun": 12,
    "pushback": 12,
@@ -136,7 +136,7 @@
     [
      16,
      -97,
-     43,
+     48,
      27
     ]
    ],
@@ -149,7 +149,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 7,
-   "damage": 34,
+   "damage": 36,
    "hitstun": 12,
    "blockstun": 8,
    "pushback": 5,
@@ -163,7 +163,7 @@
     [
      12,
      -46,
-     56,
+     50,
      34
     ]
    ],
@@ -176,7 +176,7 @@
    "startup": 8,
    "active": 3,
    "recovery": 18,
-   "damage": 80,
+   "damage": 84,
    "hitstun": 20,
    "blockstun": 12,
    "pushback": 8,
@@ -192,7 +192,7 @@
     [
      10,
      -44,
-     69,
+     66,
      44
     ]
    ],
@@ -205,7 +205,7 @@
    "startup": 6,
    "active": 4,
    "recovery": 22,
-   "damage": 150,
+   "damage": 156,
    "hitstun": 30,
    "blockstun": 16,
    "pushback": 10,
@@ -234,7 +234,7 @@
    "startup": 5,
    "active": 6,
    "recovery": 6,
-   "damage": 69,
+   "damage": 72,
    "hitstun": 16,
    "blockstun": 10,
    "pushback": 6,
@@ -258,7 +258,7 @@
    "startup": 6,
    "active": 8,
    "recovery": 6,
-   "damage": 80,
+   "damage": 84,
    "hitstun": 18,
    "blockstun": 10,
    "pushback": 8,
@@ -282,7 +282,7 @@
    "startup": 3,
    "active": 2,
    "recovery": 30,
-   "damage": 126,
+   "damage": 132,
    "hit_level": "throw",
    "hitstop": 8,
    "meter_gain": 8,
@@ -290,7 +290,7 @@
     [
      8,
      -70,
-     58,
+     48,
      40
     ]
    ],
@@ -399,7 +399,7 @@
    "startup": 8,
    "active": 40,
    "recovery": 24,
-   "damage": 69,
+   "damage": 72,
    "hitstun": 26,
    "blockstun": 14,
    "hits": 5,
@@ -442,7 +442,7 @@
   "pelote": {
    "anim": "proj_pelote",
    "speed": 2200,
-   "damage": 63,
+   "damage": 66,
    "hitstun": 16,
    "blockstun": 10,
    "hitbox": [
@@ -457,7 +457,7 @@
   "rasante": {
    "anim": "proj_pelote",
    "speed": 1800,
-   "damage": 58,
+   "damage": 60,
    "hit_level": "low",
    "hitstun": 16,
    "blockstun": 10,
@@ -474,7 +474,7 @@
   "rebond": {
    "anim": "proj_pelote",
    "speed": -1500,
-   "damage": 63,
+   "damage": 66,
    "hitstun": 18,
    "blockstun": 10,
    "hitbox": [
@@ -491,7 +491,7 @@
    "speed": 700,
    "vy": -1500,
    "gravity": 60,
-   "damage": 69,
+   "damage": 72,
    "hitstun": 18,
    "blockstun": 10,
    "hitbox": [
@@ -513,7 +513,7 @@
   "Le public entonne un chant en son honneur.",
   "La pelote, elle, rebondit encore quelque part…"
  ],
- "damage_pct": 115,
+ "damage_pct": 120,
  "anims": {
   "intro": {
    "row": 0,

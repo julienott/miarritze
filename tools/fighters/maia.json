@@ -3,7 +3,7 @@
  "name": "Maïa",
  "title": "Surfeuse de la Côte des Basques",
  "archetype": "rapide",
- "health": 960,
+ "health": 1000,
  "walk_fwd": 700,
  "walk_back": 560,
  "run": 1250,
@@ -11,7 +11,9 @@
  "home_stage": "cote_basques",
  "moves": {
   "punch_1": {
-   "startup": 3
+   "startup": 3,
+   "recovery": 7,
+   "blockstun": 12
   },
   "sp_neutral": {
    "anim": "sp_neutral",
@@ -163,6 +165,15 @@
      100
     ]
    ]
+  },
+  "punch_2": {
+   "startup": 3,
+   "recovery": 8,
+   "blockstun": 12
+  },
+  "kick": {
+   "startup": 6,
+   "recovery": 10
   }
  },
  "projectiles": {
@@ -190,7 +201,7 @@
   "anti_air": 0.5,
   "favorite_moves": [
    "sp_forward",
-   "punch_1",
+   "sp_neutral",
    "sp_up"
   ]
  },
@@ -208,5 +219,13 @@
   "speed": 3,
   "reach": 1
  },
- "damage_pct": 99
+ "damage_pct": 96,
+ "_equilibrage": {
+  "archetype": "rapide, rushdown",
+  "damage_pct": [
+   80,
+   100
+  ],
+  "intention": "La plus rapide (marche 700, course 1250), poings en 3 frames qui laissent l'avantage à la garde (+2 de blockstun) : elle colle. En échange, ses coups sont un peu plus légers (damage_pct ≤ 100) et sa portée courte."
+ }
 }
