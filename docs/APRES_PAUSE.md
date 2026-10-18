@@ -41,9 +41,12 @@ Pour chacun, après les 37 anims :
   « Gestes »), Steam Deck (`docs/STEAMDECK.md`), Recalbox Pi 4/5 64 bits (`docs/RECALBOX.md`).
 - Libellé « En ligne : express (sans finish) », épaisseur du focus doré (1 px) assez visible ?
 
-## En cours ailleurs
+## Équilibrage (fusionné le 2026-10-18, docs/EQUILIBRAGE.md)
 
-- Équilibrage des combats (sous-agent, branche `equilibrage`) : relire et fusionner à son retour.
+- Après chaque perso refait : relancer `tools/balance/matrix.py` puis `tune.py` (boîtes de corps et
+  hauteur des coups viennent des sprites ; sensibles : Karramarro, Mattin, Patxi, Kaio).
+- Restent > 60/40 : Kaio > Ramuntxo, Maïa > Amaia, Patxi > Maïa.
+- À ressentir en jeu : IA de la Pyramide plus active au contact ; poussée de Karramarro 54 → 44 px.
 
 ## Pixelforge (côté serveur)
 
