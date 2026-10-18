@@ -131,7 +131,7 @@
    ]
   },
   "throw": {
-   "damage": 130
+   "damage": 160
   }
  },
  "projectiles": {
@@ -204,13 +204,13 @@
   "Ce soir, sardines grillées pour tout le Port !",
   "Une mouette, perchée sur le béret, réclame sa part…"
  ],
- "damage_pct": 87,
+ "damage_pct": 85,
  "_equilibrage": {
   "archetype": "lutteur, contrôle",
   "damage_pct": [
    80,
    115
   ],
-  "intention": "Lent (marche 580) mais solide (1040 PV). Ses frappes font un peu moins mal (damage_pct < 100) mais sa projection est la plus forte du jeu (130 avant damage_pct), l'hameçon ramène et le filet immobilise : il attire l'adversaire au contact."
+  "intention": "Lent (marche 580) mais solide (1040 PV). Ses frappes font moins mal (damage_pct 85) mais sa projection est la plus forte du jeu (160 avant damage_pct, 136 en jeu ; 96 à 132 pour les autres), l'hameçon ramène et le filet immobilise : il attire l'adversaire au contact."
  }
 }
