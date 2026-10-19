@@ -26,7 +26,7 @@ var _cone: ImmediateMesh
 var _fx: ImmediateMesh
 var _actors: Dictionary = {}       # id → {root, body, legs, label}
 var _cachettes: Array[Node3D] = []
-var _lids: Array[MeshInstance3D] = []
+var _lids: Array = []                 # couvercle (MeshInstance3D) ou null pour un modèle généré
 var _exit_mat: StandardMaterial3D
 var _exit_labels: Array[Label3D] = []
 var _mats: Dictionary = {}
@@ -121,6 +121,27 @@ func tex_mat(name: String, meters: float, outline: bool = false) -> StandardMate
 		m.next_pass = _outline
 	_mats[key] = m
 	return m
+
+
+## Modèle généré par pixelforge (assets/gordeka/models/<nom>.glb, face avant vers +Z, pivot au
+## sol, mètres), ou null s'il n'est pas encore livré : on garde alors le remplaçant fait en code.
+func model(name: String) -> Node3D:
+	var path: String = "res://assets/gordeka/models/%s.glb" % name
+	if not ResourceLoader.exists(path):
+		return null
+	var n: Node3D = (load(path) as PackedScene).instantiate()
+	return n
+
+
+## Place un modèle généré à `pos`, mis à l'échelle de l'emprise `size` (mètres) s'il est donné.
+func place_model(name: String, pos: Vector3, yaw: float = 0.0) -> Node3D:
+	var n: Node3D = model(name)
+	if n == null:
+		return null
+	n.position = pos
+	n.rotation.y = yaw
+	add_child(n)
+	return n
 
 
 ## Texture du sol selon le motif de la zone (vide : couleur unie).
@@ -436,6 +457,8 @@ func _crates(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> void:
 		for z: int in int(sz.z):
 			var p: Vector3 = Vector3(c.x - sz.x * 0.5 + 0.5 + x, 0, c.z - sz.z * 0.5 + 0.5 + z)
 			var h: float = 0.7 if rng.randf() < 0.6 else 1.25
+			if place_model("caisse", p, float(rng.randi() % 4) * PI * 0.5) != null:
+				continue
 			box(self, Vector3(0.9, h, 0.9), p + Vector3(0, h * 0.5, 0), Color("d29a55")).material_override = tex_mat("bois_caisse", 1.2, true)
 			box(self, Vector3(0.94, 0.08, 0.94), p + Vector3(0, h - 0.04, 0), Color("a8743a"), false)
 
@@ -524,7 +547,13 @@ func _build_cachettes() -> void:
 		var n: Node3D = Node3D.new()
 		n.position = p3(cdata["pos"])
 		add_child(n)
-		# Casier de pêcheur vert basque, avec couvercle.
+		# Casier de pêcheur vert basque, avec couvercle (modèle « casier » de pixelforge s'il existe).
+		var gen: Node3D = model("casier")
+		if gen != null:
+			n.add_child(gen)
+			_cachettes.append(n)
+			_lids.append(null)
+			continue
 		box(n, Vector3(0.8, 1.05, 0.8), Vector3(0, 0.52, 0), BASQUE_GREEN)
 		for i: int in 3:
 			box(n, Vector3(0.82, 0.05, 0.82), Vector3(0, 0.25 + i * 0.3, 0), BASQUE_GREEN.darkened(0.3), false)
@@ -706,7 +735,8 @@ func refresh(dt: float) -> void:
 			lid_col = game.actors[occ].color
 		elif float(cdata["lock"]) > 0.0:
 			lid_col = Color("7a7a7a")
-		_lids[i].material_override = mat(lid_col, false, true)
+		if _lids[i] != null:
+			_lids[i].material_override = mat(lid_col, false, true)
 	# Sorties.
 	var open: bool = game.exits_open()
 	_exit_mat.albedo_color = Color(0.3, 0.95, 0.45, 0.45 + 0.15 * sin(_t * 4.0)) if open else Color(0.5, 0.5, 0.5, 0.3)
