@@ -1,4 +1,11 @@
-# CLAUDE.md — Miarritze Borroka
+# CLAUDE.md — Miarritze Gordeka (ex-Borroka)
+
+> **Pivot du 2026-10-19** : le jeu devient **Miarritze Gordeka**, un cache-cache façon Among Us.
+> **La source de vérité est désormais `SPEC-GORDEKA.md`.** Ce qui suit décrit le jeu de combat
+> (`SPEC-BORROKA.md`, archivé) : la stack, les conventions, le backend, le réseau et les plateformes
+> restent valables. En revanche, la sim de combat déterministe, le pixel art 384×216 et le pipeline
+> de sprites de combat ne s'appliquent plus au nouveau jeu (style HD lisse, hôte-autorité). État de la
+> refonte des combattants arrêtée : `docs/APRES_PAUSE.md`.
 
 Résumé opérationnel pour Claude Code. **La source de vérité est `SPEC-BORROKA.md`** ; en cas de doute, elle prime. Le *quoi/pourquoi* est résumé dans `DESIGN.md`. État d'avancement : `docs/STATUS.md`. Choix tranchés : `docs/DECISIONS.md`. Revues visuelles : `docs/REVIEWS.md`.
 

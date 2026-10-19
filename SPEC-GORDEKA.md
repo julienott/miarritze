@@ -1,0 +1,361 @@
+# Miarritze Gordeka — spécification
+
+> Cache-cache en ligne pour enfants, façon *Among Us*, dans les décors de Biarritz.
+> Brouillon du 2026-10-19 (pivot décidé par Julien). Remplace `SPEC-BORROKA.md` (jeu de combat),
+> gardée en archive. Les points **[À trancher]** attendent une décision de Julien.
+
+---
+
+## 1. Pitch et piliers
+
+À chaque round, un joueur tiré au sort devient **le chasseur**. Les autres sont **les chassés** : ils
+ont quelques secondes pour se cacher derrière les cabines de plage, les étals des Halles ou les
+bateaux du port. Le chasseur voit seulement devant lui, dans un cône que les objets bloquent. Un
+chassé qui entre dans ce cône est **trouvé**. Les chassés voient toute la carte, y compris le cône du
+chasseur : tout le jeu consiste à rester hors de vue. Chacun a un pouvoir, un **piège** quand il est
+chassé et une **détection** quand il est chasseur. Les rounds s'enchaînent jusqu'à ce qu'on quitte la
+partie.
+
+**Piliers**
+1. **Lisible en une seconde.** Le cône rouge du chasseur se voit sur le sol, chez tout le monde.
+   Un enfant de 9 ans comprend sans tutoriel : « s'il me voit, je suis trouvé ».
+2. **Contrôles simples.** Se déplacer, plus un seul bouton de pouvoir. Le même bouton pose un piège
+   ou lance une détection selon le rôle.
+3. **Jamais punitif.** Personne n'est « tué » : on est *trouvé*. Un joueur trouvé devient un petit
+   fantôme qui continue de regarder et d'encourager, et le round suivant arrive vite (2 à 3 min).
+4. **Entre copains.** On joue en salon avec son groupe, ou seul contre l'IA. Pas de joueurs inconnus,
+   pas de chat libre.
+5. **Biarritz.** Les cartes sont des lieux de la ville, les personnages viennent de Miarritze Borroka.
+
+## 2. Boucle de jeu
+
+### 2.1 Une partie
+`Accueil → choix du personnage et de la couleur → (solo : réglages IA | en ligne : salon) →
+round → scores du round → round suivant … → quitter → scores de la partie`.
+
+### 2.2 Un round
+| Phase | Durée (données) | Ce qui se passe |
+|---|---|---|
+| Tirage | 3 s | Une roulette désigne le chasseur. Il voit « Tu es le CHASSEUR », les autres « Cache-toi ! ». |
+| Cachette | 15 s | Le chasseur compte, écran voilé et immobile (« Bat, bi, hiru… » en basque). Les chassés courent se cacher. |
+| Chasse | 90 s | Le chasseur cherche. Pouvoirs actifs. Sorties ouvertes à 30 s. |
+| Fin | 6 s | Le round finit quand plus aucun chassé n'est libre, ou au chrono. **Victoires individuelles** : chaque chassé extrait ou encore libre au chrono gagne ; le chasseur gagne s'il en a trouvé plus de la moitié. Révélation des cachettes, puis scores. |
+
+- **Points d'extraction** (demande de Julien) : chaque carte a un ou plusieurs points de sortie
+  difficiles à atteindre (bout de jetée, échelle du phare, barque, porte de la chambre froide).
+  - Un chassé qui l'atteint et y reste **3 s** sans être vu est **extrait** : il a gagné son round,
+    marque des points et devient spectateur.
+  - Les points s'**ouvrent** après 30 s de chasse, pour que tout le monde ne file pas dès le départ.
+    Chaque carte en a **2, fixes et connues**, qui s'ouvrent ensemble (*décidé le 2026-10-19*).
+  - Ils sont placés dans des zones exposées : longues lignes droites, peu d'objets. Le chasseur peut
+    les garder, mais il laisse alors le reste de la carte libre.
+- **Tirage du chasseur** : au hasard, mais en « sac ». Chacun est chasseur une fois avant qu'un
+  joueur le redevienne. Jamais deux rounds de suite le même.
+- **Joueurs** : 2 à 8 par salon, toujours **un seul chasseur** ; des IA complètent si besoin
+  (*décidé le 2026-10-19*).
+- Le round suivant démarre seul après les scores. Un bouton « Quitter » est toujours accessible.
+
+### 2.3 Score
+Les scores sont cumulés sur la partie, affichés entre les rounds et à la fin. Ils ne servent qu'à
+s'amuser, sans classement en ligne en v1.
+
+| Action | Points |
+|---|---|
+| Chassé : par tranche de 10 s non trouvé | +1 |
+| Chassé : encore caché à la fin du round | +5 |
+| Chassé : extrait par un point de sortie | +8 |
+| Chassé : piège qui ralentit le chasseur | +2 |
+| Chasseur : chassé trouvé | +3 |
+| Chasseur : tous trouvés avant la fin | +5 |
+
+## 3. Rôles et règles
+
+### 3.1 Vision
+- **Chasseur**
+  - Vision limitée à un **cône** de 90°, d'une portée de 7 cases, plus un petit cercle de 1,5 case
+    tout autour de lui, pour qu'on ne puisse pas le frôler impunément.
+  - Le cône est **bloqué par les objets** : murs, cabines, étals, bateaux. Hors de sa vision,
+    l'écran est assombri, mais le décor reste visible pour qu'il puisse s'orienter. Les chassés hors
+    vue sont invisibles pour lui.
+- **Chassés**
+  - Vision **illimitée** : ils voient toute la carte, les autres chassés, le chasseur et **son cône
+    dessiné au sol en rouge translucide**.
+  - **Pas de mini-carte** (*décidé le 2026-10-19*) : la caméra des chassés est large. Quand le
+    chasseur est hors champ, une flèche au bord de l'écran indique sa direction.
+
+### 3.2 Être trouvé
+- Un chassé est trouvé quand son corps reste **0,3 s** dans la zone de vision du chasseur (cône ou
+  cercle), sans objet entre les deux. Une petite jauge se remplit au-dessus de lui et se vide dès qu'il
+  sort de la vue. C'est plus juste en ligne (~100 ms de retard) et ça permet des fuites de justesse.
+  *Décidé le 2026-10-19.*
+- Les chassés se voient entre eux et communiquent seulement par **emotes** prédéfinies, comme
+  « Par ici ! » ou « Attention ! » : bulle au-dessus de la tête, visible des chassés et des fantômes,
+  jamais du chasseur (*décidé le 2026-10-19*).
+- Le chassé trouvé crie un « Trouvé ! » rigolo et devient un **fantôme** translucide, simple
+  spectateur (*décidé le 2026-10-19*). Il se déplace
+  librement, traverse les murs, voit tout, mais ne peut plus rien faire ni être vu par le chasseur.
+  Il peut envoyer les emotes prédéfinies.
+- Un chassé ne peut pas « sauver » un autre en v1. **[Plus tard]** Idée : toucher un fantôme le
+  ranime, une fois par round.
+
+### 3.3 Vitesses (données)
+| | Vitesse |
+|---|---|
+| Chassé | 100 % |
+| Chasseur | 105 % |
+| Fantôme | 120 % |
+| Chasseur dans un piège de ralentissement | 50 % pendant la durée du piège |
+
+## 4. Pouvoirs
+
+Un seul bouton **Pouvoir** pour tout le monde. Son effet dépend du rôle et du personnage.
+L'icône du bouton montre le pouvoir du moment et se remplit pendant le cooldown.
+
+### 4.1 Règles communes (données, par personnage)
+- **Piège** (quand on est chassé)
+  - Posé aux pieds du chassé ou lancé un peu devant lui.
+  - Cooldown 20 s. 2 pièges actifs au plus par joueur ; le plus ancien disparaît.
+  - Les chassés voient les pièges. Le chasseur ne voit un piège que dans son cône et seulement à
+    moins de 2 cases : il peut l'éviter s'il est attentif.
+  - Un piège se déclenche une fois, sur le chasseur uniquement.
+- **Détection** (quand on est chasseur)
+  - Cooldown 25 s.
+  - Donne une **indication**, jamais une capture directe : une silhouette, une flèche, des traces ou
+    une onde, pendant 2 à 4 s.
+  - Les chassés voient qu'une détection a été lancée (son et icône), pour garder le jeu juste.
+
+### 4.2 Par personnage (premières idées, à équilibrer en test)
+| Perso | Piège (chassé) | Détection (chasseur) |
+|---|---|---|
+| Louis — l'enfant du pays | **Copain en carton** : un leurre à son image ; si le chasseur le « trouve », il est étourdi 1 s | **Pelote** : lancée tout droit, elle rebondit sur les murs et révèle les chassés qu'elle frôle |
+| Maïa — surfeuse | **Flaque de wax** : le chasseur glisse, direction imprécise 2 s | **Vague** : onde circulaire de 5 cases qui révèle les silhouettes 1 s, même derrière les objets |
+| Peio — rugbyman | **Plots** : barrière de plots qui bloque un passage 5 s | **Coup d'œil de l'ailier** : flèche vers le chassé le plus proche 3 s |
+| Karramarro — crabe | **Pince** : immobilise 1,5 s | **Pas de côté** : vision à travers les objets 2 s |
+| Kaio — goéland | **Fiente** : ralentit 3 s | **Vue du ciel** : portée du cône ×2 pendant 3 s |
+| Patxi — pêcheur | **Filet** : immobilise 2 s | **Sonar** : les chassés apparaissent 2 s sur la mini-carte |
+| Mattin — leveur de pierre | **Pierre** : rocher qui bloque un passage 6 s | **Secousse** : les chassés à moins de 6 cases laissent des traces de pas 4 s |
+| Amaia — dantzari | **Ruban** : le chasseur tourne sur lui-même 1 s | **Makila** : frappe le sol ; onde de 4 cases qui révèle 1,5 s |
+| Itsaso — esprit de l'écume | **Écume** : nuage qui bloque la vision du chasseur 4 s | **Perle** : roule vers le chassé le plus proche et l'éclaire 2 s |
+| Ramuntxo — chef des Halles | **Gâteau collant** : ralentit 4 s | **Odorat** : traces de tous les chassés des 5 dernières secondes, pendant 3 s |
+| Xabi — pelotari | **Chistera** : renvoie le chasseur 2 cases en arrière | **Rebond** : sa pelote suit les murs et s'arrête près d'un chassé caché |
+| Txomin — maître-nageur | **Bouée** : le chasseur coincé dans une bouée, ralenti 3 s | **Sifflet** : les chassés qui **bougent** dans 6 cases sont révélés 2 s |
+
+Familles d'effets à garder équilibrées entre elles :
+- pour les pièges : ralentir, immobiliser court, bloquer un passage, brouiller la vue, leurrer ;
+- pour les détections : onde, direction, traces, vision élargie.
+
+## 5. Contrôles
+
+| | Déplacement | Pouvoir | Emote / menu |
+|---|---|---|---|
+| Tactile (iPhone, paysage) | joystick virtuel à gauche, flottant là où le pouce se pose | gros bouton à droite | petit bouton en haut à droite |
+| Manette | stick gauche ou croix | A | Y / Start |
+| Clavier | flèches ou ZQSD | Espace | E / Échap |
+
+- Le personnage regarde **là où il va**. Le cône du chasseur suit donc sa direction de marche, avec
+  une rotation lissée et rapide. Pas de second stick pour viser.
+- Vibration courte sur iPhone et manette quand on est trouvé ou quand on déclenche un piège.
+
+## 6. Modes
+
+### 6.1 Solo contre l'IA
+- Hors ligne, sans compte.
+- Réglages : nombre de joueurs (4 à 8, complétés par des IA), difficulté (Facile, Normal, Malin),
+  carte (ou au hasard).
+- Le joueur est chasseur à son tour comme les autres, grâce au sac du tirage.
+
+### 6.2 Salon entre copains (en ligne)
+- **Créer un salon** : l'hôte choisit la carte et le nombre de places (4 à 8). Les places vides
+  peuvent être remplies par des IA, au choix de l'hôte.
+- **Rejoindre** : depuis le groupe, avec la liste des copains connectés et des salons ouverts du
+  groupe. On reprend le système existant :
+  - code de groupe, « Créer un groupe », « J'ai un code » ;
+  - « Salons actifs » avec demande acceptée par un membre.
+- Arriver pendant un round : on attend en fantôme et on joue au round suivant.
+- L'hôte quitte : la partie s'arrête pour tous, avec un message gentil. **[Plus tard]** Un autre
+  joueur reprend le rôle d'hôte.
+
+### 6.3 Pas de jeu à plusieurs sur un même écran
+La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même écran. Les copains
+dans la même pièce jouent chacun sur leur appareil, en salon.
+
+## 7. Personnages et couleurs
+
+- On choisit **un personnage du roster** : les 12 de Miarritze Borroka, redessinés dans le nouveau
+  style (*décidé le 2026-10-19*).
+- On choisit **sa couleur** parmi 12, qui teinte la tenue principale (palette). Dans un salon, chaque
+  couleur est unique, comme dans Among Us ; la couleur sert à se reconnaître de loin.
+- Le profil garde le pseudo, le personnage favori, la couleur favorite et l'emote. On reprend
+  l'existant : pseudo, code de groupe, aucune donnée personnelle.
+- Le personnage ne change que l'apparence et les pouvoirs. Pas de différence de vitesse ni de taille
+  de hitbox : tous ont la même empreinte au sol.
+
+### 7.1 Progression légère (*décidé le 2026-10-19*)
+- Tous les personnages et pouvoirs sont disponibles dès le début.
+- En jouant, on débloque des **chapeaux**, des **couleurs spéciales** et des **emotes** : txapela,
+  béret, bob, couronne en château de sable, couleurs à motifs (rayé Biarritz, écume…).
+- Les déblocages viennent de défis simples : être extrait 3 fois, trouver 10 chassés, poser 20
+  pièges… Ils sont enregistrés dans le profil local et synchronisés avec le groupe, comme les stats
+  actuelles.
+
+### 7.2 Premier lancement (*décidé le 2026-10-19*)
+Un **round guidé contre l'IA**, sur le Port des Pêcheurs. On joue une fois chassé, puis une fois
+chasseur, avec des bulles d'aide : « cache-toi derrière le bateau », « évite le cône rouge »,
+« appuie pour poser un piège », « entre dans le casier ». On peut le refaire depuis le menu.
+
+## 8. Cartes
+
+Vue **de dessus en 3/4**, comme Among Us : le sol vu d'en haut, les personnages et les objets
+légèrement de face. Une carte fait environ 2 à 3 écrans de large et 2 de haut, avec plusieurs zones
+reliées par des passages, pour pouvoir se cacher et tourner autour des obstacles.
+
+**Première carte : Port des Pêcheurs** (*décidé le 2026-10-19*), pour le prototype gris puis le
+style final.
+
+| Carte (v1) | Zones | Objets qui cachent | Sorties |
+|---|---|---|---|
+| Port des Pêcheurs | quais, crampottes, bateaux à sec, rampe | bateaux, filets, casiers, caisses, crampottes | bout de la jetée, barque au pied de la rampe |
+| Grande Plage | sable, promenade, cabines, poste de secours | cabines rayées, parasols, rochers, châteaux de sable | poste du maître-nageur, escalier du casino |
+| Les Halles | allées d'étals, chambre froide, terrasse | étals, caisses, piles de cagettes, comptoirs | porte de la chambre froide, quai de livraison |
+
+À venir : Aquarium (bassins, tunnel), Phare (escalier en colimaçon, plusieurs étages), Rocher de la
+Vierge, Fronton.
+
+- Chaque objet a une **forme d'occlusion** (polygone) qui bloque la vision et une **forme de
+  collision** qui bloque le passage. Elles sont souvent identiques. Les données sont dans
+  `assets/maps/<id>/map.json`.
+- **Cachettes dans les objets dès la v1** (*décidé le 2026-10-19*) : cabines, poubelles, casiers,
+  coffres de bateau, comme les bouches d'aération d'Among Us.
+  - Près d'une cachette, le bouton Pouvoir d'un chassé devient **Entrer**, puis **Sortir** une fois
+    dedans.
+  - Une seule personne par cachette. Dedans, on est invisible et on voit autour de soi.
+  - On reste **20 s au plus** dedans ; ensuite on est éjecté et la cachette est fermée 10 s, pour
+    qu'on ne puisse pas camper.
+  - Près d'une cachette, le bouton du chasseur devient **Fouiller** : 1 s d'animation, et s'il y a
+    quelqu'un dedans, il est trouvé. Ailleurs, le bouton reste la détection.
+  - L'objet tremble légèrement quand quelqu'un y entre. C'est un indice si le chasseur regarde.
+
+## 9. Direction artistique
+
+- **Cartoon propre** : formes rondes, gros contours, aplats de couleur avec une ombre douce,
+  personnages trapus et expressifs. Même esprit qu'Among Us et Fall Guys : mignon, lisible de loin,
+  jamais inquiétant.
+- **HD lisse façon Among Us** (*décidé le 2026-10-19*) : fin du pixel art et de la résolution
+  384×216. Résolution logique 1280×720, filtre lissé. Le pipeline d'images est à refaire (§16).
+- Animations courtes et simples (vue de dessus) : immobile, marche (4 directions, gauche et droite
+  en miroir), pouvoir, trouvé (surprise), fantôme, victoire.
+- Le cône de vision et l'assombrissement sont faits par shader, avec les occulteurs 2D de Godot
+  (`LightOccluder2D`).
+- Son : pas feutrés, « Bat, bi, hiru… » au début, petit jingle de panique quand le chasseur
+  approche (chassés à moins de 4 cases), « Trouvé ! » rigolo. Musique : *Hegoak* au menu, airs
+  originaux pendant les rounds, de plus en plus pressants dans les 20 dernières secondes.
+
+## 10. IA
+
+- **Chassés IA**
+  - Pendant la cachette : choisir une cachette (point derrière un objet, à l'abri des grands axes),
+    différente de celles des autres.
+  - Pendant la chasse : surveiller le cône, fuir dès qu'il approche, changer de cachette quand le
+    chasseur s'éloigne, poser un piège sur le chemin du chasseur quand c'est pertinent.
+- **Chasseur IA**
+  - Patrouiller entre les zones, regarder derrière les gros objets, réagir aux sons des pièges, et
+    utiliser sa détection au bon moment, puis aller vers l'indice obtenu.
+- **Difficultés**
+  - Facile : chasseur lent à tourner la tête, chassés qui bougent trop.
+  - Malin : chasseur qui fouille méthodiquement, chassés qui changent de cachette dans son dos.
+- Navigation : graphe de navigation Godot, `NavigationRegion2D`, généré depuis la carte.
+
+## 11. Réseau
+
+- **Modèle hôte-autorité** : l'appareil qui crée le salon fait tourner la vraie partie, y compris
+  les IA. Les autres envoient leurs entrées, 20 fois par seconde ; l'hôte renvoie l'état
+  (positions, rôles, pièges, chrono), 20 fois par seconde. Chaque client lisse les positions par
+  interpolation (~100 ms).
+- **Pas de simulation déterministe ni de rollback.** Le cache-cache tolère la latence ; la règle
+  « trouvé » est décidée **uniquement par l'hôte**.
+- **Triche limitée** : un client chasseur ne reçoit pas la position des chassés hors de sa vue. On
+  ne peut donc pas « voir à travers » en trafiquant son client.
+- **Transport** : WebRTC en étoile, l'hôte relié à chacun (2 à 8 joueurs). On réutilise :
+  - la signalisation PHP par polling ;
+  - les serveurs STUN et le relais TURN Cloudflare ;
+  - l'extension WebRTC native (Steam Deck, Mac, Recalbox) et le diagnostic d'échec.
+- **Serveur PHP** : groupes, présence, salons (création, liste, places), invitations, demandes
+  d'entrée, signalisation. Pas de partie côté serveur.
+
+## 12. Plateformes et technique
+
+- Godot 4.7, GDScript typé. v1 : **web (navigateur et iPhone en paysage) et Steam Deck**, Mac en
+  bonus (même build). Recalbox plus tard, si le cône se lit bien sur une télé (*décidé le
+  2026-10-19*).
+- Résolution et rendu : selon la décision du §9.
+- Tout réglage de jeu est une donnée : durées, vitesses, cône, cooldowns, effets des pouvoirs,
+  points. Fichiers `data/rules.json` et `data/characters/<id>.json`.
+- Tests :
+  - règles en headless : vision et occlusion, capture, pièges, fin de round, tirage en sac ;
+  - IA contre IA sur chaque carte (un round se termine, pas de blocage de navigation) ;
+  - deux navigateurs Playwright pour le salon en ligne (comme `tests/web/online_two.mjs`).
+
+## 13. Ce qu'on garde de Miarritze Borroka, ce qu'on laisse
+
+| On garde | On laisse (archivé) |
+|---|---|
+| Projet Godot, autoloads (profils, API, entrées, audio, navigation entre écrans, QA, mise à jour Steam Deck) | La simulation de combat déterministe, le rollback, les hitboxes |
+| Pad virtuel et manettes (à simplifier : joystick + 1 bouton) | Les feuilles de sprites de combat (37 animations par personnage) |
+| Backend PHP : groupes, présence, invitations, salons actifs, signalisation, TURN, limites de débit | Pyramide, entraînement, combat rapide, équilibrage des coups |
+| Lien WebRTC, extension native, diagnostics réseau | Spéciaux, super, finish |
+| Les 12 personnages, leur caractère et leurs couleurs (à redessiner) | |
+| Les lieux de Biarritz (photos de référence, décors comme inspiration) | |
+| Déploiement (GitHub Actions, web, paquet Steam Deck), *Hegoak* | |
+| Kit d'interface, profils (pseudo, carte de joueur, emotes) | |
+
+## 14. Jalons
+
+1. **Prototype gris (fun d'abord)**
+   - Une carte en blocs, des personnages en capsules de couleur.
+   - Cône de vision avec occlusion, capture, rounds enchaînés, tirage en sac.
+   - Un chasseur IA et des chassés IA, au clavier et au tactile.
+   - Test avec Louis : **est-ce que c'est drôle ?**
+2. **Pouvoirs** : 2 pièges et 2 détections génériques, cooldowns, scores, sons de base.
+3. **Style final sur une carte** : Port des Pêcheurs et 4 personnages dans la direction choisie (§9).
+4. **En ligne** : salon jusqu'à 8, hôte-autorité, IA de remplissage, test à deux navigateurs, puis
+   iPhone contre Steam Deck.
+5. **Contenu v1** : 12 personnages et leurs pouvoirs, 3 cartes, IA Facile, Normal et Malin,
+   finitions (menus, musique, vibrations).
+
+## 15. Décisions à trancher
+
+Décidé le 2026-10-19 : style HD lisse, les 12 du roster redessinés, fantôme spectateur, jauge de
+capture de 0,3 s.
+
+Décidé ensuite : 2 sorties fixes ouvertes après 45 s, victoires individuelles, 2 à 8 joueurs avec un
+seul chasseur, pas de mini-carte.
+
+Puis : chasse de 90 s, progression légère (chapeaux, couleurs, emotes), round guidé au premier
+lancement, Port des Pêcheurs en premier, cachettes dans les objets dès la v1, entraide par emotes seulement, nom **Miarritze Gordeka**,
+web, iPhone et Steam Deck d'abord.
+
+## 16. Pipeline d'images (HD lisse)
+
+Les outils actuels (pixelforge, Retro Diffusion) sont faits pour le **pixel art**. Pour le style
+retenu, il faut un modèle qui produit du **dessin cartoon lisse** : contours épais réguliers, aplats et
+ombre douce, fond transparent. Il doit aussi garder un personnage identique d'une image à l'autre.
+
+- **Demande à pixelforge** (Julien, 2026-10-19 : « faire évoluer son modèle ou en trouver un plus
+  adapté ») :
+  - un style `cartoon_clean` : même modèle d'édition guidée, sans pixellisation, avec une LoRA ou un
+    modèle « flat cartoon / vector » ;
+  - sortie en 512 px ou plus, détourée, avec des **couleurs par zones** pour pouvoir teinter la tenue
+    (la couleur choisie par le joueur) ;
+  - l'animation guidée par silhouette (mannequin) qui marche déjà en pixel art, en vue de dessus 3/4.
+- **Besoins par personnage** (bien plus légers que pour le combat) :
+  - une fiche de face en 3/4 et un portrait ;
+  - 6 animations : immobile, marche, pouvoir, trouvé, victoire, fantôme ;
+  - 2 directions (gauche en miroir) ;
+  - les icônes de piège et de détection.
+- **Décors** : cartes vues de dessus en 3/4. Les objets sont des sprites séparés (pour l'occlusion et
+  l'ordre d'affichage), le sol est une grande image peinte.
+- **Teinte par couleur** : la tenue est dessinée dans une couleur repère, puis recolorée par shader
+  (12 couleurs). Les autres zones (peau, cheveux, accessoires) gardent leur couleur.
+- **Prototype** (jalon 1) : aucune image nécessaire, des capsules de couleur suffisent. Le pipeline
+  se met en place pendant le jalon 3.
+
