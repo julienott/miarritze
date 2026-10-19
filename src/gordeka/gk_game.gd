@@ -12,6 +12,17 @@ const COUNT_WORDS: PackedStringArray = ["bat", "bi", "hiru", "lau", "bost", "sei
 ## (icônes dessinées par GkDraw.emote_icon). Permises seulement hors de l'action (`emotes_allowed`).
 const EMOTES: PackedStringArray = ["emote_salut", "emote_rire", "emote_danse", "emote_pouce",
 	"emote_chut", "emote_langue"]
+## Tremblement d'une cachette (entrée, sortie, fouille) et frémissement quand quelqu'un est dedans.
+const SHAKE_FREQ: float = 60.0
+const SHAKE_PX: float = 4.0
+const SHIVER_FREQ: float = 45.0
+const SHIVER_PX: float = 1.5
+## Caisse procédurale (sans image) : couvercle ouvert, en part de la hauteur de la caisse.
+const LID_K: float = 0.35
+const LID_OPEN_K: float = 0.5
+## QA `--gk-qa-cachette` : temps passé dedans, puis dehors, avant la prochaine entrée (s).
+const QA_OUT_S: float = 2.0
+const QA_GAP_S: float = 2.0
 
 ## Réglages de la partie, posés par le menu (gk_menu.gd).
 static var config: Dictionary = {"players": 6, "level": "normal", "map": "port_pecheurs",
@@ -28,7 +39,12 @@ var phase_t: float = 0.0
 var hunt_elapsed: float = 0.0
 var round_no: int = 0
 var hunter: GkActor
-var cachettes: Array = []            # [{tile, pos, occupant, lock, shake}]
+## Cachettes : {tile, pos, occupant, lock, shake} et leur animation (`_open_cachette`) : open (0 → 1),
+## delay (attente avant d'ouvrir), hold (reste ouverte), close_shake (tremblement à la fermeture),
+## jiggle (tremblement dessiné ; `shake`, lui, est l'indice que lit l'IA du chasseur : entrée, sortie,
+## fin de fouille),
+## squash_t (écrasement en cours), shiver / shiver_wait (frémissement quand quelqu'un est dedans).
+var cachettes: Array = []
 var traps: Array = []                # [{pos, owner}]
 ## Sorties tirées au sort pour ce round (parmi les sorties possibles de la carte).
 var open_exits: Array[Vector2i] = []
@@ -69,6 +85,14 @@ var _last_dt: float = 0.0
 ## `--gk-qa-podium` passe directement au podium.
 var _qa_emotes: bool = false
 var _qa_podium: bool = false
+## QA : `--gk-qa-cachette=<zone>[@t]` : des chassés entrent dans les cachettes de la zone de sorte
+## que la capture (`--delay`) tombe `t` s après l'entrée (0,35 par défaut), ressortent QA_OUT_S s plus
+## tard, et ainsi de suite. À lancer avec `--gk-rules=phase_draw:60` (tout le monde reste figé).
+var _qa_cachette: String = ""
+var _qa_cachette_t: float = 0.35
+var _qa_next: float = -1.0
+var _qa_inside: bool = false
+var _qa_clock: float = 0.0
 
 
 func _ready() -> void:
@@ -99,6 +123,13 @@ func _ready() -> void:
 			_qa_emotes = true
 		elif arg == "--gk-qa-podium":
 			_qa_podium = true
+		elif arg.begins_with("--gk-qa-cachette="):
+			var spec: PackedStringArray = arg.trim_prefix("--gk-qa-cachette=").split("@")
+			_qa_cachette = spec[0]
+			if spec.size() > 1:
+				_qa_cachette_t = float(spec[1])
+		elif arg.begins_with("--delay="):
+			_qa_next = float(arg.trim_prefix("--delay="))
 		elif arg.begins_with("--gk-local-role="):
 			_force_role = arg.trim_prefix("--gk-local-role=")
 	map = GkMap.new()
@@ -111,7 +142,10 @@ func _ready() -> void:
 		map.add_child(water)
 		map.move_child(water, 0)
 	for t: Vector2i in map.cachettes:
-		cachettes.append({"tile": t, "pos": map.center(t), "occupant": -1, "lock": 0.0, "shake": 0.0})
+		cachettes.append({"tile": t, "pos": map.center(t)})
+	_reset_cachettes()
+	# QA : première entrée calée pour que la capture tombe `_qa_cachette_t` s après.
+	_qa_next = maxf(0.5, (_qa_next if _qa_next > 0.0 else 3.0) - _qa_cachette_t)
 	var people: Node2D = Node2D.new()
 	people.y_sort_enabled = true
 	add_child(people)
@@ -251,9 +285,7 @@ func _start_round() -> void:
 	traps.clear()
 	reveals.clear()
 	_search_target.clear()
-	for c: Dictionary in cachettes:
-		c["occupant"] = -1
-		c["lock"] = 0.0
+	_reset_cachettes()
 	hunter = _draw_hunter()
 	_pick_exits()
 	_round_hiders = actors.size() - 1
@@ -285,6 +317,8 @@ func _start_round() -> void:
 		a.end_pose = ""
 		a.scared = false
 		a.hidden_in = -1
+		a.vanish_left = 0.0
+		a.pop_left = 0.0
 		a.search_left = 0.0
 		a.slow_left = 0.0
 		a.power_cd = 0.0
@@ -393,6 +427,8 @@ func go_menu() -> void:
 func _physics_process(dt: float) -> void:
 	_last_dt = dt
 	_update_emotes(dt)
+	if _qa_cachette != "":
+		_qa_cachettes(dt)
 	if phase == Phase.PODIUM:
 		_update_view()
 		return
@@ -480,6 +516,10 @@ func act_for(a: GkActor) -> void:
 			if c2 >= 0:
 				a.search_left = GkRules.f("search_time")
 				_search_target[a.id] = c2
+				# Elle tremble, s'ouvre pendant la fouille, puis se referme (fin de fouille).
+				var sh: float = GkRules.f("cachette_shake_search")
+				cachettes[c2]["jiggle"] = sh
+				_open_cachette(cachettes[c2], sh, a.search_left - sh, GkRules.f("cachette_shake_found"))
 			elif a.power_cd <= 0.0:
 				_detect(a)
 
@@ -639,12 +679,17 @@ func near_cachette(a: GkActor, free_only: bool) -> int:
 func _enter_cachette(a: GkActor, i: int) -> void:
 	var c: Dictionary = cachettes[i]
 	c["occupant"] = a.id
-	c["shake"] = 0.6
 	a.hidden_in = i
 	a.hidden_t = 0.0
 	a.gauge = 0.0
 	a.position = c["pos"]
+	a.pop_left = 0.0
 	a.play_once("hide_in")
+	# Elle s'ouvre d'un coup, le perso plonge (durée de son hide_in, bornée), elle se referme et tremble.
+	var dive: float = clampf(a.once_length("hide_in"), GkRules.f("cachette_dive_min"), GkRules.f("cachette_dive_max"))
+	a.vanish_left = dive
+	c["shake"] = GkRules.f("cachette_shake_in")
+	_open_cachette(c, 0.0, dive, GkRules.f("cachette_shake_in"))
 	if _stats and phase == Phase.HUNT:
 		_st["entrees_cachette"] += 1
 
@@ -655,11 +700,16 @@ func _leave_cachette(a: GkActor, forced: bool) -> void:
 		return
 	var c: Dictionary = cachettes[i]
 	c["occupant"] = -1
-	c["shake"] = 0.4
 	if forced:
 		c["lock"] = GkRules.f("hide_lock")
 	a.hidden_in = -1
+	a.vanish_left = 0.0
 	a.play_once("hide_out")
+	# Elle s'ouvre, le perso jaillit (dessiné de la cachette jusqu'à sa case), elle se referme.
+	a.pop_from = c["pos"]
+	a.pop_left = GkRules.f("cachette_out_s")
+	c["shake"] = GkRules.f("cachette_shake_out")
+	_open_cachette(c, 0.0, a.pop_left, GkRules.f("cachette_shake_out"))
 	# Ressort sur la case libre voisine la plus loin du chasseur.
 	var best: Vector2 = c["pos"]
 	var bd: float = -1.0
@@ -673,11 +723,70 @@ func _leave_cachette(a: GkActor, forced: bool) -> void:
 	a.position = best
 
 
+func _reset_cachettes() -> void:
+	for c: Dictionary in cachettes:
+		c.merge({"occupant": -1, "lock": 0.0, "shake": 0.0, "jiggle": 0.0, "open": 0.0, "delay": 0.0, "hold": 0.0,
+			"close_shake": 0.0, "squash_t": 0.0, "shiver": 0.0,
+			"shiver_wait": GkRules.f("cachette_shiver_gap") * randf_range(1.0, 2.0)}, true)
+
+
+## Ouvre la cachette après `delay` s, la garde ouverte `hold` s, puis la referme en tremblant
+## `close_shake` s. Chaque ouverture et chaque fermeture l'écrasent un peu (squash and stretch).
+func _open_cachette(c: Dictionary, delay: float, hold: float, close_shake: float) -> void:
+	c["delay"] = delay
+	c["hold"] = maxf(hold, 0.0)
+	c["close_shake"] = close_shake
+	if delay <= 0.0:
+		c["squash_t"] = GkRules.f("cachette_squash_s")
+
+
+## Ce qu'on dessine d'une cachette (calque de jeu et images du décor) : ouverture (0 → 1),
+## écrasement (> 0 écrasée, < 0 étirée), décalage horizontal du tremblement et du frémissement (px).
+func cachette_look(i: int) -> Dictionary:
+	if i < 0 or i >= cachettes.size():
+		return {"open": 0.0, "squash": 0.0, "dx": 0.0}
+	var c: Dictionary = cachettes[i]
+	var squash: float = 0.0
+	var ss: float = GkRules.f("cachette_squash_s")
+	if float(c["squash_t"]) > 0.0 and ss > 0.0:
+		# Écrasée, puis étirée, puis un petit rebond qui s'éteint.
+		var p: float = 1.0 - float(c["squash_t"]) / ss
+		squash = GkRules.f("cachette_squash") * sin(p * TAU * 1.5) * (1.0 - p)
+	var shake: float = float(c["jiggle"])
+	var dx: float = sin(shake * SHAKE_FREQ) * SHAKE_PX * signf(shake) \
+		+ sin(float(c["shiver"]) * SHIVER_FREQ) * SHIVER_PX
+	return {"open": float(c["open"]), "squash": squash, "dx": dx}
+
+
 func _update_cachettes(dt: float) -> void:
 	for c: Dictionary in cachettes:
 		c["lock"] = maxf(0.0, float(c["lock"]) - dt)
 		c["shake"] = maxf(0.0, float(c["shake"]) - dt)
+		c["jiggle"] = maxf(0.0, float(c["jiggle"]) - dt)
+		c["squash_t"] = maxf(0.0, float(c["squash_t"]) - dt)
+		c["shiver"] = maxf(0.0, float(c["shiver"]) - dt)
+		if float(c["delay"]) > 0.0:
+			c["delay"] = float(c["delay"]) - dt
+			if float(c["delay"]) <= 0.0:
+				c["squash_t"] = GkRules.f("cachette_squash_s")
+		elif float(c["hold"]) > 0.0:
+			c["open"] = move_toward(float(c["open"]), 1.0, dt / maxf(GkRules.f("cachette_open_s"), 0.01))
+			c["hold"] = float(c["hold"]) - dt
+			if float(c["hold"]) <= 0.0:
+				c["squash_t"] = GkRules.f("cachette_squash_s")
+				c["jiggle"] = maxf(float(c["jiggle"]), float(c["close_shake"]))
+		else:
+			c["open"] = move_toward(float(c["open"]), 0.0, dt / maxf(GkRules.f("cachette_close_s"), 0.01))
+			# Quelqu'un dedans : un petit frémissement de temps en temps. Ce n'est pas `shake` : l'IA
+			# du chasseur, qui fouille les cachettes qui tremblent, ne s'y fie pas.
+			if int(c["occupant"]) >= 0:
+				c["shiver_wait"] = float(c["shiver_wait"]) - dt
+				if float(c["shiver_wait"]) <= 0.0:
+					c["shiver"] = GkRules.f("cachette_shiver_s")
+					c["shiver_wait"] = GkRules.f("cachette_shiver_gap") * randf_range(1.0, 2.0)
 	for a: GkActor in actors:
+		a.vanish_left = maxf(0.0, a.vanish_left - dt)
+		a.pop_left = maxf(0.0, a.pop_left - dt)
 		if a.hidden_in >= 0:
 			a.hidden_t += dt
 			if a.hidden_t >= GkRules.f("hide_max"):
@@ -688,6 +797,31 @@ func _update_cachettes(dt: float) -> void:
 					_say("Trop longtemps caché : dehors !", Color("ffcf4a"), 2.0)
 
 
+## QA (`--gk-qa-cachette`) : entrées et sorties à heure fixe dans les cachettes d'une zone.
+func _qa_cachettes(dt: float) -> void:
+	_qa_clock += dt
+	if _qa_clock < _qa_next:
+		return
+	if _qa_inside:
+		for a: GkActor in actors:
+			if a.hidden_in >= 0:
+				_leave_cachette(a, false)
+		_qa_next += QA_GAP_S
+	else:
+		var free: Array[GkActor] = []
+		for a: GkActor in actors:
+			if a != hunter and a.role == GkActor.Role.HIDER and a.hidden_in < 0:
+				free.append(a)
+		for i: int in cachettes.size():
+			var z: int = map.zone_of(cachettes[i]["tile"])
+			if free.is_empty() or z < 0 or not GkMap._plain(str(map.zones[z]["name"])).begins_with(GkMap._plain(_qa_cachette)):
+				continue
+			if int(cachettes[i]["occupant"]) < 0:
+				_enter_cachette(free.pop_front(), i)
+		_qa_next += QA_OUT_S
+	_qa_inside = not _qa_inside
+
+
 func _update_searches(dt: float) -> void:
 	for a: GkActor in actors:
 		if a.search_left <= 0.0:
@@ -696,7 +830,7 @@ func _update_searches(dt: float) -> void:
 		if a.search_left <= 0.0:
 			var c: Dictionary = cachettes[int(_search_target.get(a.id, 0))]
 			var occ: int = int(c["occupant"])
-			c["shake"] = 0.5
+			c["shake"] = GkRules.f("cachette_shake_found")
 			if occ >= 0:
 				if _stats:
 					_st["fouille_ok"] += 1
@@ -916,18 +1050,19 @@ func _draw_overlay(ci: CanvasItem) -> void:
 		ci.draw_rect(px, Color("6fe08a") if open else Color("8a8a8a"), false, 4.0)
 		ci.draw_string(font, px.position + Vector2(0, px.size.y * 0.5 + 8), "SORTIE" if open else "FERMÉE",
 			HORIZONTAL_ALIGNMENT_CENTER, px.size.x, 22, Color.WHITE)
-	# Cachettes : caisse orange, qui tremble quand on y entre ou qu'on la fouille.
-	for c: Dictionary in cachettes:
-		var shake: float = float(c["shake"])
-		var off: Vector2 = Vector2(sin(shake * 60.0) * 4.0 * signf(shake), 0)
-		var px2: Rect2 = Rect2((c["pos"] as Vector2) - Vector2(map.tile, map.tile) * 0.42 + off, Vector2(map.tile, map.tile) * 0.84)
-		# Cachette dessinée par pixelforge : l'image du décor (qui tremble elle-même) remplace la caisse.
+	# Cachettes : caisse orange qui s'ouvre, s'écrase et tremble (entrée, sortie, fouille).
+	for i: int in cachettes.size():
+		var c: Dictionary = cachettes[i]
+		var look: Dictionary = cachette_look(i)
+		var sq: float = float(look["squash"])
+		var size: Vector2 = Vector2(map.tile, map.tile) * 0.84 * Vector2(1.0 + sq * 0.6, 1.0 - sq)
+		var bottom: Vector2 = (c["pos"] as Vector2) + Vector2(float(look["dx"]), map.tile * 0.42)
+		var px2: Rect2 = Rect2(bottom - Vector2(size.x * 0.5, size.y), size)
+		# Cachette dessinée par pixelforge : l'image du décor (animée par GkDecor) remplace la caisse.
 		if not map.decor.has_image_at(c["tile"]):
-			ci.draw_rect(px2, Color("e08a2e") if float(c["lock"]) <= 0.0 else Color("8a6a4a"))
-			ci.draw_rect(px2, Color("5a3410"), false, 4.0)
-			ci.draw_line(px2.position + Vector2(6, px2.size.y * 0.35), Vector2(px2.end.x - 6, px2.position.y + px2.size.y * 0.35), Color("5a3410"), 3.0)
+			_draw_crate(ci, px2, float(look["open"]), float(c["lock"]) > 0.0)
 		var occ: int = int(c["occupant"])
-		if occ >= 0 and not as_hunter:
+		if occ >= 0 and not as_hunter and actors[occ].inside():
 			# Les chassés savent qui est dedans : deux yeux de la couleur du joueur.
 			ci.draw_circle(px2.get_center() + Vector2(-9, 8), 6, actors[occ].color)
 			ci.draw_circle(px2.get_center() + Vector2(9, 8), 6, actors[occ].color)
@@ -963,6 +1098,27 @@ func _draw_overlay(ci: CanvasItem) -> void:
 		if a.extract_t > 0.0 and a.role == GkActor.Role.HIDER and (not as_hunter or bool(_seen.get(a.id, false))):
 			ci.draw_arc(a.position, a.radius + 14, -PI * 0.5, -PI * 0.5 + TAU * a.extract_t / GkRules.f("extract_hold"),
 				32, Color("6fe08a"), 6.0)
+
+
+## Caisse orange procédurale (cachette sans image) : le couvercle, sur le dessus, bascule vers
+## l'arrière quand elle s'ouvre (`open` 0 → 1) et montre l'intérieur sombre.
+func _draw_crate(ci: CanvasItem, r: Rect2, open: float, locked: bool) -> void:
+	var ink: Color = Color("5a3410")
+	var lid_h: float = r.size.y * LID_K
+	ci.draw_rect(r, Color("e08a2e") if not locked else Color("8a6a4a"))
+	ci.draw_rect(r, ink, false, 4.0)
+	if open <= 0.01:
+		ci.draw_line(r.position + Vector2(6, lid_h), Vector2(r.end.x - 6, r.position.y + lid_h), ink, 3.0)
+		return
+	# Intérieur sombre à la place du dessus, puis le couvercle levé derrière la charnière.
+	var inside: Rect2 = Rect2(r.position + Vector2(5, 5), Vector2(r.size.x - 10, lid_h - 3))
+	ci.draw_rect(inside, Color("2a1606").lerp(Color("e08a2e"), 1.0 - open))
+	var up: float = r.size.y * LID_OPEN_K * open
+	var lid: PackedVector2Array = [r.position + Vector2(-2, 2), Vector2(r.end.x + 2, r.position.y + 2),
+		Vector2(r.end.x - 1, r.position.y - up), r.position + Vector2(1, -up)]
+	ci.draw_colored_polygon(lid, Color("c46e1c"))
+	lid.append(lid[0])
+	ci.draw_polyline(lid, ink, 3.0)
 
 
 ## Flèche d'indice de l'onde : part du chasseur dans la direction du chassé le plus proche.

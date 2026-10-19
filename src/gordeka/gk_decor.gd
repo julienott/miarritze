@@ -6,7 +6,7 @@ extends Node2D
 ##
 ## index.json (assets/gordeka/decor/) : {carte, elements: {id: {type, categorie, caractere, zones,
 ## taille_cases, debord_haut_cases, animation, fichiers: [chemins relatifs], ombre, ombre_decalage,
-## ouvert}}}.
+## ouvert, ouvert_decalage}}}.
 ## - tuile_sol : texture répétée sur les cases du caractère dans ses zones (taille_cases cases par
 ##   tuile ; plusieurs fichiers = variantes mélangées de façon déterministe) ;
 ## - objet : une instance par groupe de cases contiguës du caractère dans une zone, à l'échelle de
@@ -23,9 +23,8 @@ const SWAY_DEG: float = 2.2
 const SWAY_SPEED: float = 1.1
 const BOB_PX: float = 3.0
 const BOB_SPEED: float = 1.7
-## Tremblement des cachettes, calqué sur la caisse orange du calque de jeu (gk_game).
-const SHAKE_FREQ: float = 60.0
-const SHAKE_PX: float = 4.0
+## Fondu fermé → ouvert : l'image ouverte est pleine dès open = 1 / OPEN_FADE (bascule franche).
+const OPEN_FADE: float = 2.0
 
 var map: GkMap
 var under: Node2D
@@ -106,18 +105,20 @@ func has_image_at(t: Vector2i) -> bool:
 	return _instance_at(t) >= 0
 
 
-## Point d'accroche de l'état ouvert (cachette, sortie) : prend l'image `ouvert` de l'index si
-## elle existe, sinon garde l'image fermée.
-func set_open(t: Vector2i, open: bool) -> void:
+## État ouvert d'une cachette (0 fermée → 1 ouverte) : l'image `ouvert` de l'index, si elle existe,
+## se fond par-dessus l'image fermée (calée par `ouvert_decalage`, comme l'ombre) ; sans elle, seule
+## l'image fermée reste (elle s'écrase et tremble quand même).
+func set_open(t: Vector2i, k: float) -> void:
 	var i: int = _instance_at(t)
 	if i < 0:
 		return
 	var inst: Dictionary = instances[i]
-	var el: Dictionary = elements[inst["id"]]
-	var rel: String = str(el.get("ouvert", "")) if open else str((el["fichiers"] as Array)[0])
-	var tex: Texture2D = _texture(rel)
-	if tex:
-		(inst["sprite"] as Sprite2D).texture = tex
+	var op: Sprite2D = inst.get("open_sprite")
+	if op == null:
+		return
+	op.visible = k > 0.01
+	op.modulate.a = clampf(k * OPEN_FADE, 0.0, 1.0)
+	(inst["sprite"] as Sprite2D).modulate.a = 1.0 - clampf((k - 0.5) * OPEN_FADE, 0.0, 1.0)
 
 
 # ---------------------------------------------------------------- sols
@@ -304,7 +305,20 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void
 		kind = "tremble" if cat == "cachette" else "tangage"
 	var inst: Dictionary = {"id": id, "cells": cells, "rect": rect, "zone": zone, "holder": holder, "sprite": sp,
 		"kind": kind, "base": sp.position, "phase": float(_hash(rect.position) % 628) / 100.0}
+	# Image de l'état ouvert (cachette) : même échelle, calée sur le coin haut gauche de la fermée.
+	var open_tex: Texture2D = _texture(str(el.get("ouvert", "")))
+	if open_tex:
+		var off2: Array = el.get("ouvert_decalage", [0, 0])
+		var op: Sprite2D = Sprite2D.new()
+		op.texture = open_tex
+		op.centered = false
+		op.scale = Vector2(s, s)
+		op.position = sp.position - size * s * 0.5 + Vector2(float(off2[0]), float(off2[1])) * s
+		op.visible = false
+		holder.add_child(op)
+		inst["open_sprite"] = op
 	instances.append(inst)
+	inst["x0"] = holder.position.x
 	if kind != "":
 		_animated.append(inst)
 
@@ -321,7 +335,6 @@ func _instance_at(t: Vector2i) -> int:
 func _process(dt: float) -> void:
 	_t += dt
 	var game: Node = map.get_parent()
-	var caches: Variant = game.get("cachettes") if game else null
 	for inst: Dictionary in _animated:
 		var sp: Sprite2D = inst["sprite"]
 		var base: Vector2 = inst["base"]
@@ -331,12 +344,18 @@ func _process(dt: float) -> void:
 				sp.rotation = deg_to_rad(SWAY_DEG) * sin(_t * SWAY_SPEED + ph)
 				sp.position = base + Vector2(0, BOB_PX * sin(_t * BOB_SPEED + ph))
 			"tremble":
-				# Le jeu arme `shake` quand on entre, sort ou fouille (gk_game, cachettes[i]).
-				var shake: float = 0.0
-				var i: int = map.cachettes.find((inst["cells"] as Array)[0])
-				if caches is Array and i >= 0 and i < (caches as Array).size():
-					shake = float(((caches as Array)[i] as Dictionary).get("shake", 0.0))
-				sp.position = base + Vector2(sin(shake * SHAKE_FREQ) * SHAKE_PX * signf(shake), 0)
+				# Ouverture, écrasement et tremblement décidés par la partie (gk_game.cachette_look),
+				# appliqués au porteur : l'échelle part du bas de l'objet, posé au sol.
+				var cell: Vector2i = (inst["cells"] as Array)[0]
+				var i: int = map.cachettes.find(cell)
+				if i < 0 or game == null or not game.has_method("cachette_look"):
+					continue
+				var look: Dictionary = game.cachette_look(i)
+				var sq: float = float(look["squash"])
+				var holder: Node2D = inst["holder"]
+				holder.scale = Vector2(1.0 + sq * 0.6, 1.0 - sq)
+				holder.position.x = float(inst["x0"]) + float(look["dx"])
+				set_open(cell, float(look["open"]))
 
 
 # ---------------------------------------------------------------- outils

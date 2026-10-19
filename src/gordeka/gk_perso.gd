@@ -14,6 +14,8 @@ const HEIGHT_PX: float = 88.0
 ## Hauteur du perso dans une case pixelforge (px), pour l'échelle.
 const CELL_PERSO_PX: float = 199.0
 const GHOST_ALPHA: float = 0.5
+## Hauteur du petit saut quand le perso jaillit de sa cachette (px).
+const POP_JUMP_PX: float = 22.0
 ## Durée visée d'un cycle de déplacement (s) à la vitesse d'un chassé (0,5 s faisait courir, Julien) :
 ## les planches pixelforge (mouvements Quaternius) durent plus longtemps, on les accélère, et la
 ## cadence suit la vitesse réelle (piège, chasseur plus rapide) pour que les pieds ne glissent pas.
@@ -159,6 +161,15 @@ func play_once(anim: String) -> void:
 	_set_anim(anim)
 
 
+## Durée d'une animation (s) : planche, chorégraphie du pantin ou profil fixe ; 0 si absente.
+func length(anim: String) -> float:
+	var d: Dictionary = _get_data(anim)
+	if d.is_empty():
+		return 0.0
+	var ends: PackedFloat32Array = d["ends"]
+	return ends[ends.size() - 1]
+
+
 ## Arrête une emote en cours ; l'animation d'état reprend à l'image suivante.
 func stop_emote() -> void:
 	if _once.begins_with("emote_"):
@@ -228,17 +239,19 @@ func _process(dt: float) -> void:
 	var ghost: bool = (actor.role == GkActor.Role.GHOST or actor.role == GkActor.Role.OUT) and _once != "found" \
 		and _once != "extract"
 	modulate.a = GHOST_ALPHA if ghost else 1.0
+	# Dans une cachette : visible pendant la plongée seulement (la cachette se referme dessus).
 	if _once != "":
-		visible = actor.draw_2d and _once_visible
+		visible = actor.draw_2d and _once_visible and not actor.inside()
 	else:
-		visible = actor.draw_2d and actor.shown and actor.hidden_in < 0
+		visible = actor.draw_2d and actor.shown and not actor.inside()
+	var pop: Vector2 = _pop_offset()
 	if pantin != null:
 		# Étonné dès que le chasseur le voit (la jauge de capture monte).
 		pantin.head_override = "surprised" if actor.gauge > 0.0 and actor.role == GkActor.Role.HIDER else ""
 		pantin.pose(f)
 		var k: float = HEIGHT_PX / pantin.height
 		scale = Vector2(k * face, k)
-		position = Vector2(-pantin.feet.x * scale.x, actor.radius * 0.6 - pantin.feet.y * k)
+		position = Vector2(-pantin.feet.x * scale.x, actor.radius * 0.6 - pantin.feet.y * k) + pop
 		# Mannequin gris teinté de la couleur du joueur, en attendant sa garde-robe.
 		pantin.modulate = actor.color.lerp(Color.WHITE, 0.35)
 		return
@@ -258,12 +271,22 @@ func _process(dt: float) -> void:
 		lift = BOUNCE_PX * (1.4 if _anim == "run_scared" else 1.0) * b
 		squash = SQUASH * pow(1.0 - b, 3.0)
 	scale = Vector2(k * (1.0 + squash * 0.6), k * (1.0 - squash))
-	position = Vector2(-fx * scale.x, actor.radius * 0.6 - feet.y * scale.y - lift)
+	position = Vector2(-fx * scale.x, actor.radius * 0.6 - feet.y * scale.y - lift) + pop
 	if ghost:
 		# Le fantôme (ailes d'ange) flotte au-dessus du sol.
 		_float_t += get_process_delta_time()
 		position.y -= 10.0 + 5.0 * sin(_float_t * 3.0)
 	(material as ShaderMaterial).set_shader_parameter("couleur", actor.color)
+
+
+## Sortie de cachette : décalage de dessin qui part de la cachette et rejoint l'acteur (posé sur
+## la case voisine) en sautant un peu, pendant `cachette_out_s`.
+func _pop_offset() -> Vector2:
+	if actor.pop_left <= 0.0:
+		return Vector2.ZERO
+	var p: float = 1.0 - clampf(actor.pop_left / maxf(GkRules.f("cachette_out_s"), 0.01), 0.0, 1.0)
+	var e: float = 1.0 - pow(1.0 - p, 3.0)
+	return (actor.pop_from - actor.position) * (1.0 - e) + Vector2(0, -POP_JUMP_PX * sin(p * PI))
 
 
 func _get_data(anim: String) -> Dictionary:

@@ -23,6 +23,11 @@ var slow_left: float = 0.0
 var power_cd: float = 0.0
 var hidden_in: int = -1              # index de cachette, -1 = dehors
 var hidden_t: float = 0.0
+## Plongée dans la cachette : encore visible dehors tant que > 0 (s), même si `hidden_in` est posé.
+var vanish_left: float = 0.0
+## Sortie de cachette : le perso jaillit de `pop_from` vers sa position pendant `pop_left` (s).
+var pop_from: Vector2 = Vector2.ZERO
+var pop_left: float = 0.0
 var search_left: float = 0.0
 var gauge: float = 0.0               # repérage par le chasseur (0 → 1 = trouvé)
 var extract_t: float = 0.0
@@ -72,6 +77,16 @@ func setup(p_id: int, p_name: String, p_color: Color, bot: bool) -> void:
 func play_once(anim: String) -> void:
 	if perso != null:
 		perso.play_once(anim)
+
+
+## Durée d'un geste ponctuel du perso dessiné (s), 0 sans perso ou sans cette animation.
+func once_length(anim: String) -> float:
+	return perso.length(anim) if perso != null else 0.0
+
+
+## Vrai si l'acteur est dans sa cachette et n'est plus visible (plongée terminée).
+func inside() -> bool:
+	return hidden_in >= 0 and vanish_left <= 0.0
 
 
 ## Coupe l'emote en cours (la partie reprend : on ne gêne pas la cachette).
@@ -126,7 +141,7 @@ func step(move: Vector2, look_dir: Vector2, dt: float) -> void:
 
 
 func _draw() -> void:
-	if not shown or hidden_in >= 0 or not draw_2d:
+	if not shown or inside() or not draw_2d:
 		return
 	var ghost: bool = role == Role.GHOST or role == Role.OUT
 	var u: float = radius / 10.0
