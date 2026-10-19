@@ -116,13 +116,16 @@ Titre ─► Profil (créer / choisir) ─► Menu principal
 - Le **score de pyramide** se calcule par combat : victoire, bonus de vie restante, bonus de temps, *Perfect* (×2) et finish réussi. Le total est envoyé au classement du groupe si c'est le meilleur.
 - **Fin** : la cinématique « TXAPELDUN ! » montre la remise de la txapela. Vient ensuite la **fin illustrée du personnage** : une image RD en 3 cadrages, avec 3 courts textes (§5.1, §11.5). On débloque un costume, plus le Gardien jouable après une première victoire, dans n'importe quelle difficulté.
 
-### 3.3 Versus local
-- J1 et J2 sur le même appareil : clavier gauche/droite, clavier plus manette, ou deux manettes. Les deux choisissent leur combattant et leur costume. Si les costumes sont identiques, J2 passe automatiquement à la palette suivante.
-- Choix de la map, avec une option « Aléatoire ». Le match se joue au meilleur des 3 rounds, configurable à 1, 3 ou 5.
-- Sur iPhone, le versus local n'est pas proposé, faute de place pour deux manettes virtuelles. **[À trancher en playtest]** : un mode « iPad à deux », avec une manette par côté.
+### 3.3 Combat rapide (contre l'ordi)
+- Décidé par Julien le 2026-10-19 : le menu propose **Combat rapide**, toujours contre l'ordinateur et sur toutes les plateformes. On choisit son combattant, puis l'adversaire (ou « Au hasard »), puis la difficulté (Facile, Normal ou Expert ; la dernière choisie est proposée en premier), puis la map.
+- Jouer contre un copain passe par **En ligne** (§3.4). Le versus local à deux sur le même appareil n'est plus dans le menu ; son code reste en place.
 
 ### 3.4 En ligne (« matchmaking sur le serveur »)
 - Le joueur ne voit **que** les membres de son groupe : son cercle de copains, via le code de groupe. **Il n'y a pas de matchmaking public avec des inconnus** (enfants, cf. pilier 5).
+- **Entrer dans un groupe** (simplifié le 2026-10-19, tout dans l'app, sans lien) : sans groupe, le salon propose directement :
+  - **Créer un groupe** : le code s'affiche en grand, à donner aux copains ;
+  - **J'ai un code** : on le tape (au doigt, au clavier ou lettre par lettre à la manette) ;
+  - **Salons actifs** : les groupes dont un membre est dans le salon en ce moment, présentés par les pseudos des connectés, jamais par leur code. On demande à entrer ; un membre connecté reçoit « X veut entrer dans ton groupe » et doit **accepter**. Sans réponse en 2 min, la demande expire. Personne n'entre dans un groupe sans l'accord d'un membre.
 - **Salon** : liste des membres du groupe en ligne (présence, §9.3) avec leur carte de joueur. Actions possibles :
   - **Défier** un copain : il reçoit une invitation, avec 20 secondes pour accepter.
   - **Match rapide** : appariement automatique avec n'importe quel membre du groupe en attente.

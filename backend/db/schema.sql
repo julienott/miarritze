@@ -87,3 +87,17 @@ CREATE TABLE IF NOT EXISTS rate_limits (
   hits         INTEGER NOT NULL,
   PRIMARY KEY (key, window_start)
 );
+
+-- Demandes pour entrer dans un groupe vu dans « Salons actifs » : un membre
+-- connecté accepte ou refuse ; le joueur n'est créé qu'à l'acceptation.
+CREATE TABLE IF NOT EXISTS join_requests (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  group_id    INTEGER NOT NULL REFERENCES groups(id),
+  pseudo      TEXT NOT NULL,
+  token       TEXT NOT NULL,
+  state       TEXT NOT NULL,
+  player_id   INTEGER,
+  secret      TEXT,
+  created_at  INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_join_requests_group ON join_requests(group_id, state);

@@ -1,6 +1,6 @@
 extends Control
-## Menu principal (SPEC §3) : Pyramide, Versus local, En ligne,
-## Entraînement, Profil, Réglages. Navigation clavier/manette + tactile.
+## Menu principal (SPEC §3) : Pyramide, Combat rapide (contre l'ordi), En ligne
+## (contre un copain), Entraînement, Profil, Réglages. Navigation clavier/manette + tactile.
 
 
 func _ready() -> void:
@@ -17,7 +17,7 @@ func _ready() -> void:
 		add_child(who)
 	var buttons: Array = [
 		UiKit.button("Pyramide du Phare", _on_tower),
-		UiKit.button("Versus", _on_versus),
+		UiKit.button("Combat rapide", _on_quick),
 	]
 	var online: Button = UiKit.button("En ligne", _on_online)
 	buttons.append(online)
@@ -51,8 +51,9 @@ func _on_tower() -> void:
 	SceneRouter.goto(&"fighter_select", {"mode": "tower"})
 
 
-func _on_versus() -> void:
-	SceneRouter.goto(&"fighter_select", {"mode": "versus"})
+## Combat rapide : mon combattant, l'adversaire (ou « Au hasard »), la difficulté, le décor.
+func _on_quick() -> void:
+	SceneRouter.goto(&"fighter_select", {"mode": "quick"})
 
 
 func _on_training() -> void:

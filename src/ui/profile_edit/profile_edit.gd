@@ -169,28 +169,17 @@ func _refresh_card() -> void:
 
 func _create_group() -> void:
 	_status.text = "Création…"
-	Api.call_api(HTTPClient.METHOD_POST, "/group", {}, func(ok: bool, _c: int, data: Variant) -> void:
-		if ok and data is Dictionary:
-			_join(str((data as Dictionary).get("code", "")))
-		else:
-			_status.text = "Serveur injoignable", false)
+	Api.create_group(_on_group)
 
 
 func _join(code: String) -> void:
-	if code.length() != 6:
-		_status.text = "Le code fait 6 caractères"
-		return
 	_status.text = "Connexion…"
-	var pseudo: String = str(Profiles.active().get("pseudo", ""))
-	Api.call_api(HTTPClient.METHOD_POST, "/group/join", {"code": code, "pseudo": pseudo},
-		func(ok: bool, _c: int, data: Variant) -> void:
-			if ok and data is Dictionary:
-				var d: Dictionary = data
-				Profiles.update_active({"group_code": code, "player_id": int(d.get("player_id", 0)),
-					"secret": str(d.get("secret", ""))})
-				Api.sync_profile()
-				_build()
-				_status.text = "Bienvenue dans le groupe %s !" % code
-			else:
-				var msg: String = str((data as Dictionary).get("error", "")) if data is Dictionary else ""
-				_status.text = "Impossible : %s" % (msg if msg != "" else "serveur injoignable"), false)
+	Api.join_group(code, _on_group)
+
+
+func _on_group(ok: bool, msg: String) -> void:
+	if not is_instance_valid(_status):
+		return
+	if ok:
+		_build()
+	_status.text = msg

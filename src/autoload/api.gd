@@ -83,3 +83,32 @@ func sync_profile() -> void:
 		"banner": int(p.get("banner", 0)), "title": str(p.get("title", "")),
 		"emote": int(p.get("emote", 0)), "stats": p.get("stats", {}),
 	}, func(_ok: bool, _c: int, _d: Variant) -> void: pass)
+
+
+## Crée un groupe et le rejoint. on_done(ok: bool, message: String).
+func create_group(on_done: Callable) -> void:
+	call_api(HTTPClient.METHOD_POST, "/group", {}, func(ok: bool, _c: int, data: Variant) -> void:
+		if ok and data is Dictionary:
+			join_group(str((data as Dictionary).get("code", "")), on_done)
+		else:
+			on_done.call(false, "Serveur injoignable"))
+
+
+## Rejoint le groupe `code` avec le profil actif. on_done(ok: bool, message: String).
+func join_group(code: String, on_done: Callable) -> void:
+	code = code.strip_edges().to_upper()
+	if code.length() != 6:
+		on_done.call(false, "Le code fait 6 caractères")
+		return
+	var pseudo: String = str(Profiles.active().get("pseudo", ""))
+	call_api(HTTPClient.METHOD_POST, "/group/join", {"code": code, "pseudo": pseudo},
+		func(ok: bool, _c: int, data: Variant) -> void:
+			if ok and data is Dictionary:
+				var d: Dictionary = data
+				Profiles.update_active({"group_code": code, "player_id": int(d.get("player_id", 0)),
+					"secret": str(d.get("secret", ""))})
+				sync_profile()
+				on_done.call(true, "Bienvenue dans le groupe %s !" % code)
+			else:
+				var msg: String = str((data as Dictionary).get("error", "")) if data is Dictionary else ""
+				on_done.call(false, "Impossible : %s" % (msg if msg != "" else "serveur injoignable")), false)

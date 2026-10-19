@@ -128,6 +128,11 @@ func _ready() -> void:
 	_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_hint)
 	Prompts.bind(_hint, _hint_text)
+	# Capture QA : --qa-confirm valide les choix (combat rapide : jusqu'à la difficulté).
+	if OS.get_cmdline_user_args().has("--qa-confirm"):
+		get_tree().create_timer(0.5).timeout.connect(func() -> void:
+			_confirm(0)
+			_confirm(1))
 	_layout()
 	if mode == "online":
 		# Favori du profil présélectionné ; 30 s pour choisir (§3.4).
@@ -576,7 +581,7 @@ func _proceed() -> void:
 			else:
 				SceneRouter.goto(&"online_connect")
 		"quick":
-			_start_quick()
+			_ask_difficulty()
 		_:
 			if _vs_cpu:
 				_ask_difficulty()
@@ -589,8 +594,8 @@ func _proceed() -> void:
 
 
 ## Combat rapide : tire les « Au hasard », puis passe au choix du décor.
-## L'ordi joue au niveau de la difficulté par défaut des réglages.
-func _start_quick() -> void:
+## L'ordi joue au niveau de difficulté choisi juste avant.
+func _start_quick(difficulty: int) -> void:
 	var p1: String = ids[_cursor[0]]
 	var c1: int = _costume[0]
 	if p1 == RANDOM_ID:
@@ -608,7 +613,8 @@ func _start_quick() -> void:
 	# Miroir : costume différent pour qu'on se reconnaisse.
 	if p2 == p1 and c2 == c1:
 		c2 = (c2 + 1) % 4
-	var r: Array = TowerMode.SKILL_RANGE[clampi(Settings.default_difficulty, 0, TowerMode.SKILL_RANGE.size() - 1)]
+	var r: Array = TowerMode.SKILL_RANGE[clampi(difficulty, 0, TowerMode.SKILL_RANGE.size() - 1)]
+	Settings.set_value("default_difficulty", difficulty)    # proposé en premier la fois suivante
 	InputHub.set_solo()
 	SceneRouter.goto(&"stage_select", {"mode": "quick", "p1": p1, "c1": c1, "p2": p2, "c2": c2,
 		"ai_level": (int(r[0]) + int(r[1])) / 2,
@@ -632,9 +638,11 @@ func _ask_difficulty() -> void:
 	var buttons: Array = []
 	for d: int in 3:
 		buttons.append(UiKit.button(TowerMode.DIFFICULTY_NAMES[d],
-			(_start_vs_cpu if _vs_cpu else _start_tower).bind(d)))
+			(_start_quick if _quick else (_start_vs_cpu if _vs_cpu else _start_tower)).bind(d)))
 	buttons.append(UiKit.button("Retour", _cancel_difficulty))
 	UiKit.menu_column(_difficulty_box, buttons, 66)
+	if _quick:
+		(buttons[clampi(Settings.default_difficulty, 0, 2)] as Control).grab_focus.call_deferred()
 	UiKit.prompt_bar(_difficulty_box)
 
 
@@ -647,6 +655,13 @@ func _cancel_difficulty() -> void:
 		_difficulty_box.queue_free()
 		_difficulty_box = null
 	_picking_difficulty = false
+	if _quick:
+		# Combat rapide : retour au choix de l'adversaire seulement.
+		_done[1] = false
+		if _previews[1] != null:
+			_previews[1].play_preview("idle", -1)
+		_grid.queue_redraw()
+		return
 	for p: int in 2:
 		if _done[p]:
 			_done[p] = false

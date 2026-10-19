@@ -4,9 +4,9 @@ declare(strict_types=1);
 /**
  * Routeur unique de l'API Miarritze Borroka (SPEC-BORROKA §9.4).
  *
- * Sans auth : POST /group, POST /group/join, GET /net/config, POST /net/report, GET /net/reports,
- *             GET /leaderboard
- * Avec auth (player_id + secret) : /profile, /presence, /match/*, /signal,
+ * Sans auth : POST /group, POST /group/join, GET /groups/active, POST|GET /group/request,
+ *             GET /net/config, POST /net/report, GET /net/reports, GET /leaderboard
+ * Avec auth (player_id + secret) : /profile, /presence, /group/decide, /match/*, /signal,
  *             /tower/score
  * Le serveur ne fait pas de temps réel : présence, invitations, matchs et
  * signalisation WebRTC par polling. Le combat passe en pair-à-pair.
@@ -21,6 +21,7 @@ const INVITE_SECONDS = 20;
 const SIGNAL_TTL = 600;
 const MATCH_TTL = 3600;
 const ELO_K = 32;
+const REQUEST_SECONDS = 120;   // une demande pour entrer dans un groupe attend 2 min
 
 $configFile = __DIR__ . '/../config.php';
 $config = is_file($configFile) ? require $configFile : [];
@@ -59,6 +60,10 @@ try {
     match (true) {
         $method === 'POST' && $route === '/group' => handleCreateGroup($pdo),
         $method === 'POST' && $route === '/group/join' => handleJoinGroup($pdo),
+        $method === 'GET' && $route === '/groups/active' => handleActiveGroups($pdo),
+        $method === 'POST' && $route === '/group/request' => handleJoinRequest($pdo),
+        $method === 'GET' && $route === '/group/request' => handleJoinRequestState($pdo),
+        $method === 'POST' && $route === '/group/decide' => handleJoinDecide($pdo),
         $method === 'GET' && $route === '/net/config' => handleNetConfig($config),
         $method === 'POST' && $route === '/net/report' => handleNetReport($pdo),
         $method === 'GET' && $route === '/net/reports' => handleNetReports($pdo),
@@ -134,6 +139,108 @@ function handleJoinGroup(PDO $pdo): void
     $playerId = (int) $pdo->lastInsertId();
     $pdo->prepare('INSERT INTO profiles (player_id, updated_at) VALUES (?, ?)')->execute([$playerId, time()]);
     ok(['player_id' => $playerId, 'secret' => $secret]);
+}
+
+/**
+ * Salons actifs : groupes dont au moins un membre est dans le salon en ce
+ * moment. Seuls les pseudos des connectés sont montrés, jamais le code.
+ */
+function handleActiveGroups(PDO $pdo): void
+{
+    rateLimit($pdo, 'groups:' . clientIp(), 60);
+    $stmt = $pdo->prepare(
+        "SELECT p.group_id, p.pseudo FROM players p JOIN presence s ON s.player_id = p.id
+         WHERE s.last_seen >= ? AND s.status IN ('lobby', 'queue') ORDER BY p.group_id, p.pseudo"
+    );
+    $stmt->execute([time() - ONLINE_SECONDS]);
+    $groups = [];
+    foreach ($stmt->fetchAll() as $row) {
+        $gid = (int) $row['group_id'];
+        $groups[$gid] ??= ['group_id' => $gid, 'members' => []];
+        $groups[$gid]['members'][] = (string) $row['pseudo'];
+    }
+    usort($groups, fn(array $a, array $b): int => count($b['members']) <=> count($a['members']));
+    ok(array_slice(array_values($groups), 0, 8));
+}
+
+/** Demande pour entrer dans un groupe (sans code) : un membre connecté doit accepter. */
+function handleJoinRequest(PDO $pdo): void
+{
+    rateLimit($pdo, 'request:' . clientIp(), 10);
+    $body = jsonBody();
+    $groupId = (int) ($body['group_id'] ?? 0);
+    $pseudo = trim((string) ($body['pseudo'] ?? ''));
+    if (!Validation::isValidPseudo($pseudo)) {
+        fail(400, 'Pseudo invalide (2 à 15 lettres ou chiffres)');
+    }
+    if (!Profanity::isClean($pseudo)) {
+        fail(400, 'Ce pseudo n\'est pas accepté, choisis-en un autre');
+    }
+    $stmt = $pdo->prepare('SELECT 1 FROM groups WHERE id = ?');
+    $stmt->execute([$groupId]);
+    if ($stmt->fetchColumn() === false) {
+        fail(404, 'Ce salon n\'existe plus');
+    }
+    $stmt = $pdo->prepare('SELECT 1 FROM players WHERE group_id = ? AND pseudo = ?');
+    $stmt->execute([$groupId, $pseudo]);
+    if ($stmt->fetchColumn() !== false) {
+        fail(409, 'Pseudo déjà pris dans ce groupe');
+    }
+    $token = bin2hex(random_bytes(16));
+    $pdo->prepare("INSERT INTO join_requests (group_id, pseudo, token, state, created_at) VALUES (?, ?, ?, 'pending', ?)")
+        ->execute([$groupId, $pseudo, $token, time()]);
+    ok(['request_id' => (int) $pdo->lastInsertId(), 'token' => $token]);
+}
+
+/** État d'une demande (le demandeur interroge) ; acceptée → identifiants du nouveau joueur. */
+function handleJoinRequestState(PDO $pdo): void
+{
+    rateLimit($pdo, 'reqstate:' . clientIp(), 120);
+    $stmt = $pdo->prepare('SELECT r.*, g.code FROM join_requests r JOIN groups g ON g.id = r.group_id WHERE r.id = ? AND r.token = ?');
+    $stmt->execute([(int) ($_GET['request_id'] ?? 0), (string) ($_GET['token'] ?? '')]);
+    $r = $stmt->fetch();
+    if ($r === false) {
+        fail(404, 'Demande inconnue');
+    }
+    $state = (string) $r['state'];
+    if ($state === 'pending' && (int) $r['created_at'] < time() - REQUEST_SECONDS) {
+        $state = 'expired';
+    }
+    if ($state !== 'accepted') {
+        ok(['state' => $state]);
+    }
+    ok(['state' => 'accepted', 'code' => (string) $r['code'], 'player_id' => (int) $r['player_id'],
+        'secret' => (string) $r['secret']]);
+}
+
+/** Un membre du groupe accepte ou refuse une demande. */
+function handleJoinDecide(PDO $pdo): void
+{
+    $body = jsonBody();
+    $me = auth($pdo, $body);
+    $stmt = $pdo->prepare("SELECT * FROM join_requests WHERE id = ? AND group_id = ? AND state = 'pending' AND created_at >= ?");
+    $stmt->execute([(int) ($body['request_id'] ?? 0), $me['group_id'], time() - REQUEST_SECONDS]);
+    $r = $stmt->fetch();
+    if ($r === false) {
+        fail(404, 'Demande expirée');
+    }
+    if (!(bool) ($body['accept'] ?? false)) {
+        $pdo->prepare("UPDATE join_requests SET state = 'refused' WHERE id = ?")->execute([(int) $r['id']]);
+        ok(['state' => 'refused']);
+    }
+    $secret = bin2hex(random_bytes(16));
+    try {
+        $pdo->prepare('INSERT INTO players (group_id, pseudo, secret, created_at) VALUES (?, ?, ?, ?)')
+            ->execute([(int) $r['group_id'], (string) $r['pseudo'], $secret, time()]);
+    } catch (PDOException $e) {
+        $pdo->prepare("UPDATE join_requests SET state = 'refused' WHERE id = ?")->execute([(int) $r['id']]);
+        fail(409, 'Pseudo déjà pris dans ce groupe');
+    }
+    $playerId = (int) $pdo->lastInsertId();
+    $pdo->prepare('INSERT INTO profiles (player_id, updated_at) VALUES (?, ?)')->execute([$playerId, time()]);
+    $pdo->prepare("UPDATE join_requests SET state = 'accepted', player_id = ?, secret = ? WHERE id = ?")
+        ->execute([$playerId, $secret, (int) $r['id']]);
+    ok(['state' => 'accepted']);
 }
 
 // ------------------------------------------------------------------ profil
@@ -240,7 +347,14 @@ function handlePresence(PDO $pdo): void
     foreach ($stmt->fetchAll() as $row) {
         $invites[] = ['match_id' => (int) $row['id'], 'from' => profileRow($pdo, (int) $row['p1'])];
     }
-    ok(['members' => $members, 'invites' => $invites, 'match' => currentMatch($pdo, (int) $me['id'])]);
+    $stmt = $pdo->prepare("SELECT id, pseudo FROM join_requests WHERE group_id = ? AND state = 'pending' AND created_at >= ? ORDER BY id");
+    $stmt->execute([$me['group_id'], $now - REQUEST_SECONDS]);
+    $requests = [];
+    foreach ($stmt->fetchAll() as $row) {
+        $requests[] = ['request_id' => (int) $row['id'], 'pseudo' => (string) $row['pseudo']];
+    }
+    ok(['members' => $members, 'invites' => $invites, 'requests' => $requests,
+        'match' => currentMatch($pdo, (int) $me['id'])]);
 }
 
 function currentMatch(PDO $pdo, int $playerId): ?array
@@ -713,6 +827,7 @@ function purge(PDO $pdo): void
     $pdo->prepare('DELETE FROM rate_limits WHERE window_start < ?')->execute([intdiv($now, 60) - 2]);
     $pdo->prepare('DELETE FROM presence WHERE last_seen < ?')->execute([$now - 86400]);
     $pdo->prepare('DELETE FROM net_reports WHERE created_at < ?')->execute([$now - 30 * 86400]);
+    $pdo->prepare('DELETE FROM join_requests WHERE created_at < ?')->execute([$now - 3600]);
 }
 
 /** Rate limiting fenêtre fixe de 60 s par clé. */
