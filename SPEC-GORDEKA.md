@@ -38,14 +38,14 @@ round → scores du round → round suivant … → quitter → scores de la par
 |---|---|---|
 | Tirage | 3 s | Une roulette désigne le chasseur. Il voit « Tu es le CHASSEUR », les autres « Cache-toi ! ». |
 | Cachette | 15 s | Le chasseur compte, écran voilé et immobile (« Bat, bi, hiru… » en basque). Les chassés courent se cacher. |
-| Chasse | 90 s | Le chasseur cherche. Pouvoirs actifs. Sorties ouvertes à 30 s. |
+| Chasse | 180 s | Le chasseur cherche. Pouvoirs actifs. Sorties ouvertes à 60 s. |
 | Fin | 6 s | Le round finit quand plus aucun chassé n'est libre, ou au chrono. **Victoires individuelles** : chaque chassé extrait ou encore libre au chrono gagne ; le chasseur gagne s'il en a trouvé plus de la moitié. Révélation des cachettes, puis scores. |
 
 - **Points d'extraction** (demande de Julien) : chaque carte a un ou plusieurs points de sortie
   difficiles à atteindre (bout de jetée, échelle du phare, barque, porte de la chambre froide).
   - Un chassé qui l'atteint et y reste **3 s** sans être vu est **extrait** : il a gagné son round,
     marque des points et devient spectateur.
-  - Les points s'**ouvrent** après 30 s de chasse, pour que tout le monde ne file pas dès le départ.
+  - Les points s'**ouvrent** après 60 s de chasse, pour que tout le monde ne file pas dès le départ.
     Chaque carte en a **2, fixes et connues**, qui s'ouvrent ensemble (*décidé le 2026-10-19*).
   - Ils sont placés dans des zones exposées : longues lignes droites, peu d'objets. Le chasseur peut
     les garder, mais il laisse alors le reste de la carte libre.
@@ -54,6 +54,12 @@ round → scores du round → round suivant … → quitter → scores de la par
 - **Joueurs** : 2 à 8 par salon, toujours **un seul chasseur** ; des IA complètent si besoin
   (*décidé le 2026-10-19*).
 - Le round suivant démarre seul après les scores. Un bouton « Quitter » est toujours accessible.
+- **Fin de partie** : il n'y a pas de nombre de rounds. Quand l'hôte quitte (ou le joueur, en solo),
+  un **podium** du cumul des points s'affiche (or, argent, bronze), puis on revient au menu.
+- **Départs** :
+  - si le chasseur quitte, le round s'arrête sans points et le suivant démarre ;
+  - si un chassé quitte, il disparaît et le round continue ;
+  - si l'hôte l'a activé, une IA prend la place libre au round suivant.
 
 ### 2.3 Score
 Les scores sont cumulés sur la partie, affichés entre les rounds et à la fin. Ils ne servent qu'à
@@ -80,17 +86,20 @@ s'amuser, sans classement en ligne en v1.
 - **Chassés**
   - Vision **illimitée** : ils voient toute la carte, les autres chassés, le chasseur et **son cône
     dessiné au sol en rouge translucide**.
-  - **Pas de mini-carte** (*décidé le 2026-10-19*) : la caméra des chassés est large. Quand le
-    chasseur est hors champ, une flèche au bord de l'écran indique sa direction.
+  - **Pas de mini-carte** (*décidé le 2026-10-19*). Quand le chasseur est hors champ, une flèche au
+    bord de l'écran indique sa direction.
+- **Caméra identique pour tous**, qui suit son joueur, au zoom d'Among Us : l'écran montre environ
+  une zone, et un personnage fait environ 1/9 de la hauteur d'écran.
 
 ### 3.2 Être trouvé
 - Un chassé est trouvé quand son corps reste **0,3 s** dans la zone de vision du chasseur (cône ou
   cercle), sans objet entre les deux. Une petite jauge se remplit au-dessus de lui et se vide dès qu'il
   sort de la vue. C'est plus juste en ligne (~100 ms de retard) et ça permet des fuites de justesse.
   *Décidé le 2026-10-19.*
-- Les chassés se voient entre eux et communiquent seulement par **emotes** prédéfinies, comme
-  « Par ici ! » ou « Attention ! » : bulle au-dessus de la tête, visible des chassés et des fantômes,
-  jamais du chasseur (*décidé le 2026-10-19*).
+- Les chassés se voient entre eux et communiquent seulement par **emotes** prédéfinies, en bulle
+  au-dessus de la tête, visibles des chassés et des fantômes, jamais du chasseur. Il y en a 6 au
+  départ : « Par ici ! », « Attention ! », « Bravo ! », « Haha ! », « Au secours ! », « Coucou ! ».
+  D'autres se débloquent. Les fantômes peuvent aussi en envoyer aux chassés (*décidé le 2026-10-19*).
 - Le chassé trouvé crie un « Trouvé ! » rigolo et devient un **fantôme** translucide, simple
   spectateur (*décidé le 2026-10-19*). Il se déplace
   librement, traverse les murs, voit tout, mais ne peut plus rien faire ni être vu par le chasseur.
@@ -102,7 +111,7 @@ s'amuser, sans classement en ligne en v1.
 | | Vitesse |
 |---|---|
 | Chassé | 100 % |
-| Chasseur | 105 % |
+| Chasseur | 115 % |
 | Fantôme | 120 % |
 | Chasseur dans un piège de ralentissement | 50 % pendant la durée du piège |
 
@@ -119,7 +128,7 @@ L'icône du bouton montre le pouvoir du moment et se remplit pendant le cooldown
     moins de 2 cases : il peut l'éviter s'il est attentif.
   - Un piège se déclenche une fois, sur le chasseur uniquement.
 - **Détection** (quand on est chasseur)
-  - Cooldown 25 s.
+  - Cooldown 15 s : la carte est grande, le chasseur a besoin d'indices souvent.
   - Donne une **indication**, jamais une capture directe : une silhouette, une flèche, des traces ou
     une onde, pendant 2 à 4 s.
   - Les chassés voient qu'une détection a été lancée (son et icône), pour garder le jeu juste.
@@ -152,6 +161,7 @@ Familles d'effets à garder équilibrées entre elles :
 | Manette | stick gauche ou croix | A | Y / Start |
 | Clavier | flèches ou ZQSD | Espace | E / Échap |
 
+- Les personnages **se traversent**, comme dans Among Us : personne ne bloque ni ne coince personne.
 - Le personnage regarde **là où il va**. Le cône du chasseur suit donc sa direction de marche, avec
   une rotation lissée et rapide. Pas de second stick pour viser.
 - Vibration courte sur iPhone et manette quand on est trouvé ou quand on déclenche un piège.
@@ -161,12 +171,17 @@ Familles d'effets à garder équilibrées entre elles :
 ### 6.1 Solo contre l'IA
 - Hors ligne, sans compte.
 - Réglages : nombre de joueurs (4 à 8, complétés par des IA), difficulté (Facile, Normal, Malin),
-  carte (ou au hasard).
+  carte (ou au hasard). Par défaut : **6 joueurs (toi et 5 IA), Normal, Port des Pêcheurs**.
 - Le joueur est chasseur à son tour comme les autres, grâce au sac du tirage.
 
 ### 6.2 Salon entre copains (en ligne)
-- **Créer un salon** : l'hôte choisit la carte et le nombre de places (4 à 8). Les places vides
-  peuvent être remplies par des IA, au choix de l'hôte.
+- **Créer un salon** : l'hôte choisit la carte et le nombre de places (4 à 8).
+- **Compléter par des IA** (Julien, 2026-10-19) : entre deux rounds, l'hôte peut ajouter ou retirer
+  des IA, avec leur difficulté. L'option « compléter automatiquement » remplit les places vides
+  jusqu'au nombre choisi à chaque round, y compris les places laissées par ceux qui partent.
+  Les IA ont un pseudo du roster suivi de « (IA) » et sont tirées comme chasseur à leur tour.
+- **On ne joue qu'entre membres du groupe.** Les « Salons actifs » servent seulement à demander à
+  entrer dans un groupe (un membre accepte), jamais à rejoindre directement une partie d'inconnus.
 - **Rejoindre** : depuis le groupe, avec la liste des copains connectés et des salons ouverts du
   groupe. On reprend le système existant :
   - code de groupe, « Créer un groupe », « J'ai un code » ;
@@ -206,8 +221,10 @@ chasseur, avec des bulles d'aide : « cache-toi derrière le bateau », « évit
 ## 8. Cartes
 
 Vue **de dessus en 3/4**, comme Among Us : le sol vu d'en haut, les personnages et les objets
-légèrement de face. Une carte fait environ 2 à 3 écrans de large et 2 de haut, avec plusieurs zones
-reliées par des passages, pour pouvoir se cacher et tourner autour des obstacles.
+légèrement de face. **Taille de The Skeld** (*décidé le 2026-10-19*) : environ 14 zones reliées par
+des couloirs, soit environ 5 écrans de large sur 3,5 de haut. C'est une estimation à partir du jeu,
+à vérifier sur le prototype. D'où une chasse de 3 min, un chasseur plus rapide et des détections
+fréquentes.
 
 **Première carte : Port des Pêcheurs** (*décidé le 2026-10-19*), pour le prototype gris puis le
 style final.
@@ -228,11 +245,12 @@ Vierge, Fronton.
   coffres de bateau, comme les bouches d'aération d'Among Us.
   - Près d'une cachette, le bouton Pouvoir d'un chassé devient **Entrer**, puis **Sortir** une fois
     dedans.
-  - Une seule personne par cachette. Dedans, on est invisible et on voit autour de soi.
+  - Une seule personne par cachette. Dedans, on est invisible et on voit autour de soi. On ne peut
+    pas poser de piège depuis une cachette.
   - On reste **20 s au plus** dedans ; ensuite on est éjecté et la cachette est fermée 10 s, pour
     qu'on ne puisse pas camper.
   - Près d'une cachette, le bouton du chasseur devient **Fouiller** : 1 s d'animation, et s'il y a
-    quelqu'un dedans, il est trouvé. Ailleurs, le bouton reste la détection.
+    quelqu'un dedans, il est trouvé. Une fouille vide ne coûte que cette seconde, sans cooldown. Ailleurs, le bouton reste la détection.
   - L'objet tremble légèrement quand quelqu'un y entre. C'est un indice si le chasseur regarde.
 
 ## 9. Direction artistique
@@ -310,6 +328,12 @@ Vierge, Fronton.
 
 ## 14. Jalons
 
+**Où** : même dépôt. Borroka est archivé sur la branche `borroka`, et Gordeka se développe sur
+`main`. Le site garde le Borroka actuel ; le déploiement web de Gordeka n'est activé que quand le
+prototype plaît à Julien (*décidé le 2026-10-19*). **Prototype gris d'abord**, sans aucune image
+avant l'avis de Louis.
+
+
 1. **Prototype gris (fun d'abord)**
    - Une carte en blocs, des personnages en capsules de couleur.
    - Cône de vision avec occlusion, capture, rounds enchaînés, tirage en sac.
@@ -322,17 +346,32 @@ Vierge, Fronton.
 5. **Contenu v1** : 12 personnages et leurs pouvoirs, 3 cartes, IA Facile, Normal et Malin,
    finitions (menus, musique, vibrations).
 
-## 15. Décisions à trancher
+## 15. Décisions prises (2026-10-19)
 
-Décidé le 2026-10-19 : style HD lisse, les 12 du roster redessinés, fantôme spectateur, jauge de
-capture de 0,3 s.
+Plus rien n'est à trancher avant le prototype. L'équilibrage des pouvoirs, le comportement des IA
+et les détails du réseau se règleront en jouant.
 
-Décidé ensuite : 2 sorties fixes ouvertes après 45 s, victoires individuelles, 2 à 8 joueurs avec un
-seul chasseur, pas de mini-carte.
-
-Puis : chasse de 90 s, progression légère (chapeaux, couleurs, emotes), round guidé au premier
-lancement, Port des Pêcheurs en premier, cachettes dans les objets dès la v1, entraide par emotes seulement, nom **Miarritze Gordeka**,
-web, iPhone et Steam Deck d'abord.
+- **Jeu** : *Miarritze Gordeka* ; web, iPhone et Steam Deck d'abord ; même dépôt (Borroka archivé en
+  branche) ; prototype gris d'abord, testé par Louis.
+- **Style** : HD lisse façon Among Us ; les 12 du roster redessinés, couleur au choix ; progression
+  légère (chapeaux, couleurs, emotes).
+- **Round** :
+  - 15 s pour se cacher, puis 180 s de chasse ;
+  - 2 sorties fixes ouvertes à 60 s ;
+  - victoires individuelles ;
+  - rounds sans limite, podium en quittant ;
+  - règles de départ (§2.2).
+- **Joueurs** : 2 à 8, un seul chasseur ; on peut compléter par des IA ; on ne joue qu'entre membres
+  du groupe ; solo par défaut à 6 joueurs en Normal.
+- **Règles** :
+  - capture après 0,3 s dans le cône ; un chassé trouvé devient fantôme spectateur ;
+  - le cône suit la marche ; les personnages se traversent ;
+  - chasseur à 115 % ; détection toutes les 15 s ;
+  - cachettes dans les objets dès la v1 (20 s au plus, fouille de 1 s) ; pas de piège depuis une
+    cachette.
+- **Vue** : même caméra pour tous, au zoom d'Among Us ; carte de la taille de The Skeld ; pas de
+  mini-carte ; emotes seulement (6 au départ, les fantômes peuvent en envoyer).
+- **Premier lancement** : round guidé ; première carte, le Port des Pêcheurs.
 
 ## 16. Pipeline d'images (HD lisse)
 
