@@ -72,7 +72,18 @@
     2
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "sols/sol_beton_atelier.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "6670bce3fd7c4927822e63587d421423",
+     "date": "2026-10-20"
+    }
+   ]
   },
   "sol_paves_ruelle": {
    "nom": "Pavés des ruelles",
