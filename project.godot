@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Miarritze Borroka"
-run/main_scene="res://src/ui/boot/boot.tscn"
+config/name="Miarritze Gordeka"
+run/main_scene="res://src/gordeka/gk_boot.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://assets/ui/app_icon.png"
 
@@ -34,20 +34,13 @@ general/default_playback_type.web=0
 
 [display]
 
-window/size/viewport_width=384
-window/size/viewport_height=216
-window/size/window_width_override=1152
-window/size/window_height_override=648
+window/size/viewport_width=1280
+window/size/viewport_height=720
 window/size/mode.steamdeck=3
 window/size/mode.recalbox=3
 window/handheld/orientation=4
-window/stretch/mode="viewport"
+window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
-window/stretch/scale_mode="fractional"
-
-[gui]
-
-theme/custom="res://assets/ui/theme.tres"
 
 [input]
 
@@ -134,7 +127,7 @@ common/physics_jitter_fix=0.0
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-textures/canvas_textures/default_texture_filter=0
+textures/canvas_textures/default_texture_filter=1
 textures/vram_compression/import_etc2_astc=true
 2d/snap/snap_2d_transforms_to_pixel=true
 2d/snap/snap_2d_vertices_to_pixel=true

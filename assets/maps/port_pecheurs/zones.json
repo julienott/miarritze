@@ -1,0 +1,140 @@
+{
+ "name": "Port des Pêcheurs",
+ "zones": [
+  {
+   "name": "Jetée",
+   "rect": [
+    1,
+    1,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Bassin ouest",
+   "rect": [
+    20,
+    1,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Bassin est",
+   "rect": [
+    39,
+    1,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Rampe des barques",
+   "rect": [
+    58,
+    1,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Criée",
+   "rect": [
+    77,
+    1,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Crampottes",
+   "rect": [
+    1,
+    14,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Quai des chalutiers",
+   "rect": [
+    20,
+    14,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Place du port",
+   "rect": [
+    39,
+    14,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Quai des barques",
+   "rect": [
+    58,
+    14,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Hangar à filets",
+   "rect": [
+    77,
+    14,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Parking",
+   "rect": [
+    1,
+    27,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Cale sèche",
+   "rect": [
+    20,
+    27,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Rue des pêcheurs",
+   "rect": [
+    39,
+    27,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Terrasse",
+   "rect": [
+    58,
+    27,
+    18,
+    12
+   ]
+  },
+  {
+   "name": "Atelier",
+   "rect": [
+    77,
+    27,
+    18,
+    12
+   ]
+  }
+ ]
+}
