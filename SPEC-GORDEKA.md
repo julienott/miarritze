@@ -111,8 +111,12 @@ s'amuser, sans classement en ligne en v1.
   spectateur (*décidé le 2026-10-19*). Il se déplace
   librement, traverse les murs, voit tout, mais ne peut plus rien faire ni être vu par le chasseur.
   Il peut envoyer les emotes prédéfinies.
-- Un chassé ne peut pas « sauver » un autre en v1. **[Plus tard]** Idée : toucher un fantôme le
-  ranime, une fois par round.
+- ~~Un chassé ne peut pas « sauver » un autre en v1.~~ **Délivrance** (*essai A/B du 2026-10-20, à
+  valider par Julien*) : un chassé libre et hors de vue qui reste 3 s près d'un fantôme le ramène en jeu
+  (anneau vert sur le fantôme), **une seule fois par round**, +2 points au sauveur.
+- **Chatouille** (*même essai*) : un fantôme qui touche le chasseur le fait rire (« hi hi ! ») et le
+  ralentit à 60 % pendant 1,5 s ; une fois par 15 s et par fantôme, 8 s de répit pour le chasseur, +1 point.
+  Le fantôme voit en bas de l'écran ce qu'il peut faire.
 
 ### 3.3 Vitesses (données)
 | | Vitesse |
@@ -163,6 +167,16 @@ L'icône du bouton montre le pouvoir du moment et se remplit pendant le cooldown
 Familles d'effets à garder équilibrées entre elles :
 - pour les pièges : ralentir, immobiliser court, bloquer un passage, brouiller la vue, leurrer ;
 - pour les détections : onde, direction, traces, vision élargie.
+
+### 4.3 Petits plus du port (*essai A/B du 2026-10-20, à valider par Julien*)
+Retenus après des rounds IA contre IA (`docs/GORDEKA_EQUILIBRAGE.md`), chacun derrière un drapeau
+`idee_*` de `rules.json` :
+- **Gâteaux basques** : 4 au sol, dans des coins dégagés. Le chassé qui en ramasse un marque 1 point et
+  file à 130 % pendant 4 s. Le chasseur les voit aussi : y aller est un risque.
+- **Mouettes** : 6 groupes posés. Un chassé qui passe trop près les fait s'envoler en criant « kaio ! »,
+  visible de tous : un indice sonore pour le chasseur. Elles reviennent après 20 s.
+- Essayées et écartées (drapeau à 0) : cachette qui grince après 8 s, chasseur plus rapide après 30 s
+  bredouille ; toutes deux renforçaient un chasseur déjà gagnant.
 
 ## 5. Contrôles
 

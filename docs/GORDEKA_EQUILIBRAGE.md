@@ -64,3 +64,53 @@ Changements :
   bruit (±10 points).
 - **Contre un humain**, l'écart ressenti tiendra surtout à la vitesse et à la réaction du chasseur IA, à vérifier en
   jouant.
+
+## 2026-10-20 (nuit) : idées de gameplay testées en A/B
+
+Chaque idée a son drapeau `idee_*` dans `data/gordeka/rules.json` (1 = active), réglable en A/B par
+`--gk-rules=idee_x:1`. 80 rounds par variante (deux séries de 40), chassés et chasseur « normal », 6 joueurs.
+`bilan_stats.py` donne maintenant aussi la part de rounds gagnés par le chasseur, le plus long « chou blanc »
+(plus longue période sans capture), l'attente d'un trouvé et le compte de chaque idée.
+
+**Correctif au passage** : le chasseur « malin » refouillait sans fin une cachette vide (il prenait le
+tremblement de fin de sa propre fouille pour un indice) : 24 fouilles par round, dont 99 % vides. Corrigé dans
+`gk_ai.gd`. Avec le correctif, le malin redevient le plus fort : 73 % de trouvés au lieu de 64 %.
+
+Situation de départ (normal / normal, 120 rounds) : 67 % trouvés, 30 % sortis, 3 % restés cachés ; **le
+chasseur gagne 78 % des rounds** ; 1,4 évasion par round ; plus long chou blanc 59 s (médiane) ; un trouvé
+attend 62 s en fantôme sans rien pouvoir faire.
+
+| idée (drapeau) | ce que c'est | trouvés | chasseur gagnant | autre effet | verdict |
+|---|---|---|---|---|---|
+| départ | — | 67 % | 78 % | évasions 1,4/round | — |
+| **chatouille** (`idee_chatouille`) | un fantôme qui touche le chasseur le fait rire : 60 % de vitesse pendant 1,5 s ; chaque fantôme une fois par 15 s, et le chasseur a 8 s de répit entre deux ; +1 point au fantôme | 66 % | 72 % | 6,5 chatouilles/round : les trouvés ont enfin quelque chose à faire | **retenue** (neutre pour l'équilibre, enlève le temps mort des fantômes) |
+| ↳ sans répit | | 66 % | 78 % | 9 chatouilles/round : harcèlement | répit ajouté |
+| **délivrance** (`idee_delivrance`) | un chassé libre et hors de vue qui reste 3 s près d'un fantôme le ramène en jeu ; **une seule par round** ; +2 points au sauveur | 56 % | 59 % | évasions 1,8/round ; 1 délivrance/round | **retenue** (rééquilibre en faveur des chassés, très « cache-cache de cour ») |
+| ↳ sans limite, 2 s | | 26 % | 16 % | 3,2 délivrances/round ; 26 rounds sur 80 sans aucun trouvé | trop fort : limitée à 1 |
+| ↳ 1 par round, 2 s | | 62 % | 69 % | | 3 s gardées (anneau plus lisible) |
+| **gâteaux basques** (`idee_gateaux`) | 4 gâteaux au sol, dans des coins dégagés : +1 point et sprint (130 %) 4 s pour le chassé qui le ramasse ; le chasseur les voit aussi | 67 % | 76 % | 2,4 gâteaux/round : on sort de sa planque, prise de risque | **retenue** (neutre, donne des buts aux chassés) |
+| **mouettes** (`idee_mouettes`) | 6 groupes de mouettes ; un chassé qui passe trop près les fait s'envoler en criant « kaio ! » (vu de tous, entendu par le chasseur IA à 12 cases) ; elles reviennent après 20 s | 61 % | 75 % | 3,2 envols/round ; le chasseur IA court après des indices déjà périmés | **retenue** (indice sonore lisible et drôle, légèrement favorable aux chassés) |
+| cachette qui grince (`idee_grince`) | après 8 s dedans, la cachette craque toutes les 3 s (« crac ! », entendu à 9 cases) | 68 % | 79 % | fouilles réussies 26 % au lieu de 15 % | **écartée** : aide le chasseur, déjà gagnant |
+| ↳ chassés IA qui sortent quand ça grince | | 72 % | 89 % | sortir expose davantage | écartée aussi (code retiré) |
+| chasseur bredouille (`idee_bredouille`) | sans capture depuis 30 s, le chasseur a « le vent dans le dos » : 112 % de vitesse | 71 % | 85 % | chou blanc 49 s au lieu de 59 s | **écartée** : raccourcit les temps morts mais déséquilibre |
+
+Sur 80 rounds, l'écart d'une série à l'autre est d'environ ±4 points sur les trouvés et ±6 points sur les
+rounds gagnés par le chasseur.
+
+### Réglage retenu : chatouille + délivrance (1 par round, 3 s) + gâteaux + mouettes
+
+| chassés / chasseur | trouvés avant → après | chasseur gagnant avant → après | évasions/round | plus long chou blanc | temps fantôme/round |
+|---|---|---|---|---|---|
+| normal / normal (120 rounds) | 67 % → **61 %** | 78 % → **67 %** | 1,4 → 1,9 | 59 s → 58 s | 229 s → 190 s |
+| normal / chasseur facile | 60 % → 52 % | 65 % → 58 % | 1,6 → 1,5 | 62 s → 69 s | |
+| normal / chasseur malin (corrigé) | 73 % → 68 % | 90 % → 75 % | 0,7 → 0,7 | 54 s → 51 s | |
+| facile / facile | 66 % → 59 % | 70 % → 62 % | 1,6 → 1,4 | 56 s → 61 s | |
+| malin / malin (corrigé) | 77 % → 62 % | 88 % → 78 % | 0,9 → 1,0 | 52 s → 54 s | |
+| 4 joueurs, normal / normal | 56 % → 52 % | 62 % → 52 % | 0,9 → 1,0 | 74 s → 66 s | 101 s → 83 s |
+
+- L'ordre des niveaux du chasseur est gardé (52 → 61 → 68 % de trouvés).
+- Le chasseur reste favori (2 rounds sur 3), mais moins écrasant : chaque chassé a plus d'une chance sur trois
+  de gagner son round.
+- Les trouvés ne se contentent plus de regarder : ils chatouillent (5/round) et un trouvé sur quatre environ revient en jeu.
+- À vérifier avec Louis : si la chatouille est perçue comme gênante par l'enfant chasseur, monter
+  `chatouille_repit`.
