@@ -25,20 +25,22 @@ from PIL import Image, ImageDraw  # noqa: E402
 FIN = ", smooth clean cartoon, no pixel art"
 PROMPTS = {
     "maia": "a young Basque surfer girl with wet brown hair in a ponytail, deep turquoise wetsuit with a navy panel, a small "
-            "yellow surfboard strapped flat on her back, barefoot, hands empty, confident cheerful smile",
+            "yellow surfboard carried upright behind her back with two shoulder straps, only its edge visible behind her "
+            "shoulder, nothing in front of her body, barefoot, hands empty, confident cheerful smile",
     "patxi": "a bearded Basque fisherman, blue beanie, yellow raincoat, navy trousers, black boots, a fishing rod strapped "
              "on his back, hands empty, friendly smile",
-    "xabi": "a Basque pelota player boy, white shirt and white trousers, red sash belt, a long curved wicker chistera "
-            "basket glove on his hand, cheerful smile",
+    "xabi": "a Basque pelota player boy with light peach skin and rosy cheeks, white shirt and white trousers, red sash belt, "
+            "a chistera on his right hand: a long narrow banana-shaped curved wicker scoop, twice as long as his forearm, "
+            "extending forward from his hand, cheerful smile",
     "mattin": "a strong Basque stone lifter man, black mustache, red beret, red and white horizontally striped shirt, "
               "navy trousers, big muscular arms, friendly smile",
     "amaia": "a Basque folk dancer girl, red headscarf, green vest over a white blouse, red skirt, white espadrilles, a "
              "wooden makila walking stick slung on her back, hands empty, cheerful smile",
     "kaio": "a cheeky anthropomorphic seagull standing upright on two orange webbed feet, big yellow beak with a red dot, "
             "white head and belly, light grey wings used as arms with feathered fingertips, small grey tail, mischievous grin",
-    "karramarro": "a cheerful orange cartoon crab standing on its eight thin legs, two big orange pincers raised, eyes on "
-                  "stalks, yellow belly, big happy open mouth",
-    "ramuntxo": "a jolly Basque chef, tall white chef hat, white chef jacket, red neck scarf, checkered trousers, a frying "
+    "karramarro": "a cheerful orange cartoon crab seen strictly from the side, in profile facing right, standing on its thin "
+                  "legs, two big orange pincers raised, eyes on stalks, yellow belly, big happy open mouth",
+    "ramuntxo": "a jolly Basque chef with light peach skin and rosy cheeks, tall white chef hat, white chef jacket, red neck scarf, checkered trousers, a frying "
                 "pan hanging from his belt, hands empty, big smile",
     "itsaso": "a girl made of sea water, pale cyan skin, long wavy aqua hair, a dress of deep blue waves edged with white "
               "sea foam, barefoot, gentle smile",
