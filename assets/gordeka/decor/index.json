@@ -235,7 +235,18 @@
    "animation": {
     "methode": "planche",
     "description": "vagues qui ondulent en boucle (4 à 8 images) ; repli : défilement lent des UV par shader"
-   }
+   },
+   "fichiers": [
+    "sols/eau_mer.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "545e1292803c44c2a2687ded049710df",
+     "date": "2026-10-20"
+    }
+   ]
   },
   "bord_quai_eau": {
    "nom": "Bord de quai sur l'eau",
