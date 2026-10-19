@@ -20,6 +20,10 @@ sys.path.insert(0, os.path.join(ROOT, "tools", "pf"))
 import gen_anims_pf as pf  # noqa: E402
 import extras_pf as ex  # noqa: E402
 
+# Priorité de file pixelforge (Julien) : 0 urgence = high, 1 persos et animations = normal, 2 décor = low.
+# PF_URGENT=1 passe la retouche en urgence.
+PRIORITE = "high" if os.environ.get("PF_URGENT") else "normal"
+
 
 def main():
     mode, pid = sys.argv[1], sys.argv[2]
@@ -30,13 +34,13 @@ def main():
         bg = Image.new("RGBA", im.size, "white")
         bg.alpha_composite(im)
         payload = {"prompt_style": "pf_hd__edit", "input_image": ex.b64(bg.convert("RGB")), "prompt": prompt,
-                   "num_images": n, "seed": 1, "tag": f"miarritze/gk2d_{pid}"}
+                   "num_images": n, "seed": 1, "tag": f"miarritze/gk2d_{pid}", "priority": PRIORITE}
         params = {"style": "pf_hd__edit", "entree": src, "prompt": prompt, "seed": 1, "num_images": n}
     else:
         prompt, out = sys.argv[3:5]
         n = int(sys.argv[5]) if len(sys.argv) > 5 else 3
         payload = {"prompt_style": "pf_2d__character", "prompt": prompt, "num_images": n, "seed": 1,
-                   "tag": f"miarritze/gk2d_{pid}"}
+                   "tag": f"miarritze/gk2d_{pid}", "priority": PRIORITE}
         params = {"style": "pf_2d__character", "entree": "aucune (description seule)", "prompt": prompt, "seed": 1,
                   "num_images": n}
     os.makedirs(out, exist_ok=True)

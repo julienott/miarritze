@@ -61,7 +61,8 @@
      "num_images": 3,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -109,7 +110,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -159,7 +161,8 @@
      "num_images": 3,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -209,7 +212,8 @@
      "num_images": 3,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -257,7 +261,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -305,7 +310,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -353,7 +359,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -401,7 +408,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -451,24 +459,28 @@
      "num_images": 4,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de eau_mer>",
-     "prompt": "same object, same style, but the wave crests shifted a little to the right (next animation frame)"
+     "prompt": "same object, same style, but the wave crests shifted a little to the right (next animation frame)",
+     "priority": "low"
     },
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de eau_mer>",
-     "prompt": "same object, same style, but the wave crests shifted a little to the right (next animation frame)"
+     "prompt": "same object, same style, but the wave crests shifted a little to the right (next animation frame)",
+     "priority": "low"
     },
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de eau_mer>",
-     "prompt": "same object, same style, but the wave crests shifted a little to the right (next animation frame)"
+     "prompt": "same object, same style, but the wave crests shifted a little to the right (next animation frame)",
+     "priority": "low"
     }
    ]
   },
@@ -518,7 +530,8 @@
      "num_images": 4,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -568,7 +581,8 @@
      "num_images": 4,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -616,7 +630,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -664,7 +679,8 @@
      "num_images": 4,
      "width": 1024,
      "height": 256,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -718,7 +734,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -732,7 +749,8 @@
      "num_images": 2,
      "width": 768,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -746,7 +764,8 @@
      "num_images": 2,
      "width": 640,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -760,7 +779,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 768,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -809,7 +829,8 @@
      "num_images": 2,
      "width": 832,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -859,14 +880,16 @@
      "num_images": 2,
      "width": 640,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de tour_phare>",
-     "prompt": "same object, same style, but the lantern light switched off"
+     "prompt": "same object, same style, but the lantern light switched off",
+     "priority": "low"
     }
    ]
   },
@@ -915,7 +938,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 320,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -968,7 +992,8 @@
      "num_images": 2,
      "width": 512,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -981,7 +1006,8 @@
      "num_images": 2,
      "width": 384,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -994,7 +1020,8 @@
      "num_images": 2,
      "width": 320,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1044,7 +1071,8 @@
      "num_images": 2,
      "width": 704,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1094,7 +1122,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 704,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1144,7 +1173,8 @@
      "num_images": 2,
      "width": 256,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1203,7 +1233,8 @@
      "num_images": 2,
      "width": 704,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -1216,7 +1247,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -1229,7 +1261,8 @@
      "num_images": 2,
      "width": 320,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1283,7 +1316,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 320,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -1297,7 +1331,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 320,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -1311,7 +1346,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 512,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1361,7 +1397,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 704,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1411,7 +1448,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 704,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1460,7 +1498,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1509,7 +1548,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 256,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1559,7 +1599,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1613,7 +1654,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 320,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     },
     {
      "taille_cases": [
@@ -1626,7 +1668,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 512,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1676,14 +1719,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de fontaine_place>",
-     "prompt": "same object, same style, but the water ripples and spout slightly changed (next animation frame)"
+     "prompt": "same object, same style, but the water ripples and spout slightly changed (next animation frame)",
+     "priority": "low"
     }
    ]
   },
@@ -1732,7 +1777,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 320,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1782,7 +1828,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 256,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1832,7 +1879,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 256,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1882,7 +1930,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 256,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1932,7 +1981,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 512,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -1981,7 +2031,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 320,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -2031,14 +2082,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 512,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de lavoir_bassin>",
-     "prompt": "same object, same style, but the water ripples slightly changed (next animation frame)"
+     "prompt": "same object, same style, but the water ripples slightly changed (next animation frame)",
+     "priority": "low"
     }
    ]
   },
@@ -2086,14 +2139,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_casier_homards>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2142,14 +2197,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_coffre_quai>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2197,14 +2254,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_caisse_glace>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2253,14 +2312,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_coffre_cordages>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2308,14 +2369,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_poubelle_ruelle>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2363,14 +2426,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_bac_poissons>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2419,14 +2484,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_malle_pelotes>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2474,14 +2541,16 @@
      "num_images": 2,
      "width": 512,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_tas_filets_cachette>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2530,14 +2599,16 @@
      "num_images": 2,
      "width": 512,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_confessionnal>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2586,14 +2657,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_barque_retournee>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2642,14 +2715,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_tonneau_cidre>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2697,14 +2772,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_panier_linge>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2753,14 +2830,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_caisse_voiles>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2809,14 +2888,16 @@
      "num_images": 2,
      "width": 512,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de cachette_cabine_plage>",
-     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside",
+     "priority": "low"
     }
    ]
   },
@@ -2865,14 +2946,16 @@
      "num_images": 2,
      "width": 704,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de sortie_barque_jetee>",
-     "prompt": "same object, same style, but the lantern lit and a small green pennant flying"
+     "prompt": "same object, same style, but the lantern lit and a small green pennant flying",
+     "priority": "low"
     }
    ]
   },
@@ -2921,14 +3004,16 @@
      "num_images": 2,
      "width": 704,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de sortie_echelle_phare>",
-     "prompt": "same object, same style, but the gate wide open"
+     "prompt": "same object, same style, but the gate wide open",
+     "priority": "low"
     }
    ]
   },
@@ -2977,14 +3062,16 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de sortie_barque_cale>",
-     "prompt": "same object, same style, but a small green pennant flying on the boat, rope untied"
+     "prompt": "same object, same style, but a small green pennant flying on the boat, rope untied",
+     "priority": "low"
     }
    ]
   },
@@ -3033,14 +3120,16 @@
      "num_images": 2,
      "width": 704,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": [
     {
      "prompt_style": "pf_hd__edit",
      "input_image": "<image validée de sortie_porte_ville>",
-     "prompt": "same object, same style, but the door wide open with warm light inside"
+     "prompt": "same object, same style, but the door wide open with warm light inside",
+     "priority": "low"
     }
    ]
   },
@@ -3089,7 +3178,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 512,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []
@@ -3138,7 +3228,8 @@
      "num_images": 2,
      "width": 1024,
      "height": 1024,
-     "seed": 1
+     "seed": 1,
+     "priority": "low"
     }
    ],
    "edits": []

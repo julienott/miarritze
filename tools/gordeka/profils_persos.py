@@ -56,7 +56,7 @@ def main():
         out = os.path.join(ROOT, "tools", "rd", "out", cid, "gk2d", "profil")
         os.makedirs(out, exist_ok=True)
         payload = {"prompt_style": "pf_2d__character", "prompt": PROMPTS[cid] + FIN, "num_images": 3, "seed": 1,
-                   "tag": f"miarritze/gk2d_{cid}"}
+                   "tag": f"miarritze/gk2d_{cid}", "priority": "normal"}
         tid = pf._post_json(pf.PF + "/v2/inferences", payload, timeout=300)["task_id"]
         json.dump({"style": "pf_2d__character", "prompt": payload["prompt"], "seed": 1, "num_images": 3,
                    "entree": "aucune (description seule)", "task": tid}, open(os.path.join(out, "params.json"), "w"),

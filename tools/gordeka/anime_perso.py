@@ -45,12 +45,12 @@ def main():
     for m in MOTIONS:
         if m not in taches:
             taches[m] = deposer({"prompt_style": "pf_2d__animate", "input_image": ex.b64(src), "motion": m,
-                                 "tenue": tenue, "description": desc, "tag": tag})
+                                 "tenue": tenue, "description": desc, "tag": tag, "priority": "normal"})
             print("déposé", m, taches[m], flush=True)
     # Le fantôme : d'abord son profil (même perso + ailes), puis ses deux animations.
     if "ghost_profil" not in taches:
         taches["ghost_profil"] = deposer({"prompt_style": "pf_2d__character", "input_image": ex.b64(src),
-                                          "prompt": fantome, "num_images": 1, "seed": 7, "tag": tag})
+                                          "prompt": fantome, "num_images": 1, "seed": 7, "tag": tag, "priority": "normal"})
         print("déposé ghost_profil", taches["ghost_profil"], flush=True)
     json.dump(taches, open(chemin, "w"), indent=1)
 
@@ -77,7 +77,7 @@ def main():
                     if m not in taches:
                         taches[m] = left[m] = deposer({
                             "prompt_style": "pf_2d__animate", "input_image": ex.b64(g), "motion": mot, "tenue": tenue,
-                            "expression": "mischievous sly smile", "tag": tag,
+                            "expression": "mischievous sly smile", "tag": tag, "priority": "normal",
                             "description": desc + " and small white angel wings on his back, the wings flapping"})
                         print("déposé", m, taches[m], flush=True)
                 json.dump(taches, open(chemin, "w"), indent=1)
