@@ -59,7 +59,7 @@ SECTIONS = [
 CATEGORIES = [c for s in SECTIONS for c in s["categories"]]
 
 GK = ASSETS / "gordeka"
-GK_CANDIDATS = ROOT / "tools" / "rd" / "out"     # gitignoré : absent en CI
+GK_CANDIDATS = ROOT / "tools" / "gordeka" / "candidats"   # copies réduites versionnées (sync_candidats.py)
 # Ordre des animations (tools/gordeka/anime_perso.py), les autres ensuite par nom.
 GK_ANIM_ORDER = ["idle", "walk", "run_scared", "hide_in", "hide_out", "found", "trap", "trapped",
                  "search", "detect", "extract", "victory", "sad", "ghost", "ghost_move"]
@@ -242,7 +242,7 @@ class Builder:
     # ==================================================================== Gordeka
     def gordeka(self) -> None:
         dirs = {p.name for p in (GK / "persos").iterdir() if p.is_dir()} if (GK / "persos").is_dir() else set()
-        cands = {p.parents[2].name for p in GK_CANDIDATS.glob("*/gk2d/profil/image_*_white.png")}
+        cands = {p.parents[1].name for p in GK_CANDIDATS.glob("*/*/image_*.png")}
         # Persos animés d'abord, puis ceux qui ont un profil validé, puis les candidats seuls.
         def rank(pid: str) -> tuple:
             d = GK / "persos" / pid
@@ -332,22 +332,25 @@ class Builder:
                      version=short_hash(png), w=img.width, h=img.height, file=f, preview=f, note="")
 
     def gk_candidats(self, pid: str) -> None:
-        pdir = GK_CANDIDATS / pid / "gk2d" / "profil"
-        prompt = ""
-        if (pdir / "params.json").exists():
-            try:
-                prompt = json.loads((pdir / "params.json").read_text()).get("prompt", "")
-            except ValueError:
-                pass
-        for png in sorted(pdir.glob("image_*_white.png")):
-            num = png.stem.split("_")[1]
-            img = Image.open(png).convert("RGB")
-            img.thumbnail((GK_CANDIDAT_MAX, GK_CANDIDAT_MAX), Image.LANCZOS)
-            f = self.save_png(img, f"gordeka/candidats/{pid}/image_{num}.png")
-            self.add(id=self.rel_src(png), cat=CAT_GK_PERSOS, group=pid, kind="candidat",
-                     name=f"{pid} · variante {int(num) + 1} (image_{num})", type="image", smooth=True,
-                     version=short_hash(png), w=img.width, h=img.height, file=f, preview=f,
-                     note="profil candidat, réduit" + (f" · prompt : {prompt}" if prompt else ""))
+        """Un lot par génération (profil, retouche…), le plus récent en premier."""
+        lots = sorted((d for d in (GK_CANDIDATS / pid).glob("*") if d.is_dir()),
+                      key=lambda d: d.stat().st_mtime, reverse=True)
+        for pdir in lots:
+            prompt = ""
+            if (pdir / "params.json").exists():
+                try:
+                    prompt = json.loads((pdir / "params.json").read_text()).get("prompt", "")
+                except ValueError:
+                    pass
+            for png in sorted(pdir.glob("image_*.png")):
+                num = png.stem.split("_")[1]
+                img = Image.open(png).convert("RGB")
+                img.thumbnail((GK_CANDIDAT_MAX, GK_CANDIDAT_MAX), Image.LANCZOS)
+                f = self.save_png(img, f"gordeka/candidats/{pid}/{pdir.name}/image_{num}.png")
+                self.add(id=self.rel_src(png), cat=CAT_GK_PERSOS, group=pid, kind="candidat",
+                         name=f"{pid} · {pdir.name} · variante {int(num) + 1}", type="image", smooth=True,
+                         version=short_hash(png), w=img.width, h=img.height, file=f, preview=f,
+                         note="candidat, réduit" + (f" · prompt : {prompt}" if prompt else ""))
 
     def gk_map(self) -> None:
         from PIL import ImageDraw, ImageFont
