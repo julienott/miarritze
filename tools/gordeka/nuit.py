@@ -63,12 +63,19 @@ def deposer(payload):
 
 
 def commit(chemins, message):
+    chemins = chemins + [c + ".import" for c in chemins if c.endswith(".png")]   # métadonnées d'import Godot
     chemins = [c for c in chemins if os.path.exists(os.path.join(ROOT, c))]
     if not chemins:
         return
     subprocess.run(["git", "add", "--"] + chemins, cwd=ROOT, check=False)
-    subprocess.run(["git", "commit", "-q", "-m", message + "\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n"
-                    "Claude-Session: https://claude.ai/code/session_01LXFHAN75rdxEcdsy5wKHqu"], cwd=ROOT, check=False)
+    # `-- chemins` : ne commite que nos fichiers, même si un autre agent a des fichiers indexés.
+    for _ in range(5):
+        p = subprocess.run(["git", "commit", "-q", "-m", message + "\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n"
+                            "Claude-Session: https://claude.ai/code/session_01LXFHAN75rdxEcdsy5wKHqu", "--"] + chemins,
+                           cwd=ROOT, capture_output=True, text=True)
+        if "index.lock" not in p.stderr:
+            return
+        time.sleep(3)
 
 
 def sur_blanc(src, dst):
