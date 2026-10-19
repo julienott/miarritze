@@ -13,7 +13,7 @@ const ROOF: Color = Color("c0533a")
 const STONE: Color = Color("cbbfa6")
 const SLAB_H: float = 0.35
 ## Caméra : environ 50° de plongée, assez pour voir les personnages de trois quarts.
-const CAM_OFFSET: Vector3 = Vector3(0, 10.0, 8.6)                        # épaisseur des quais au-dessus de l'eau
+var CAM_OFFSET: Vector3 = Vector3(0, 10.0, 8.6) * (0.4 if OS.get_cmdline_user_args().has("--gk-closeup") else 1.0)                        # épaisseur des quais au-dessus de l'eau
 
 var game: GkGame
 var map: GkMap
@@ -379,6 +379,8 @@ func _white_block(c: Vector3, sz: Vector3) -> void:
 ## Maison labourdine / crampotte : murs blanchis, colombages et volets rouges ou verts,
 ## toit de tuiles à deux pentes (faîte dans la longueur).
 func _house(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> void:
+	if _gen_house(c, sz, rng):
+		return
 	var red: bool = rng.randf() < 0.7
 	var trim: Color = BASQUE_RED if red else BASQUE_GREEN
 	var trim_tex: StandardMaterial3D = tex_mat("bois_rouge" if red else "bois_vert", 1.0)
@@ -412,6 +414,67 @@ func _house(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> void:
 	if not along_x:
 		roof.rotation.y = PI * 0.5
 	add_child(roof)
+
+
+## Maison du kit de pixelforge (maison_2x2 / 3x3 / 4x3) : le module le plus proche de l'emprise,
+## tourné si besoin, étiré en largeur et profondeur pour la remplir (la hauteur garde ses
+## proportions). Faux si aucun module n'est livré.
+func _gen_house(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> bool:
+	var best: String = ""
+	var turned: bool = false
+	var err: float = INF
+	for m: Array in [["maison_2x2", 2.0, 2.0], ["maison_3x3", 3.0, 3.0], ["maison_4x3", 4.0, 3.0]]:
+		for t: bool in [false, true]:
+			var mw: float = float(m[2]) if t else float(m[1])
+			var md: float = float(m[1]) if t else float(m[2])
+			var e: float = absf(log(sz.x / mw)) + absf(log(sz.z / md))
+			if e < err and ResourceLoader.exists("res://assets/gordeka/models/%s.glb" % m[0]):
+				err = e
+				best = str(m[0])
+				turned = t
+	if best == "":
+		return false
+	var n: Node3D = model(best)
+	var aabb: AABB = _model_aabb(n)
+	var size_x: float = aabb.size.z if turned else aabb.size.x
+	var size_z: float = aabb.size.x if turned else aabb.size.z
+	var kx: float = (sz.x - 0.1) / maxf(size_x, 0.01)
+	var kz: float = (sz.z - 0.1) / maxf(size_z, 0.01)
+	n.scale = Vector3(kz, minf(kx, kz) * 0.5 + 0.5, kx) if turned else Vector3(kx, minf(kx, kz) * 0.5 + 0.5, kz)
+	n.rotation.y = PI * 0.5 if turned else 0.0
+	n.position = c
+	add_child(n)
+	_outline_all(n)
+	return true
+
+
+## Boîte englobante d'un modèle (toutes ses mailles), dans son propre repère.
+func _model_aabb(root: Node3D) -> AABB:
+	var out: AABB = AABB()
+	var first: bool = true
+	for mi: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var m: MeshInstance3D = mi
+		var t: Transform3D = Transform3D.IDENTITY
+		var p: Node = m
+		while p != root and p != null:
+			t = (p as Node3D).transform * t if p is Node3D else t
+			p = p.get_parent()
+		var b: AABB = t * m.get_aabb()
+		out = b if first else out.merge(b)
+		first = false
+	return out
+
+
+## Contour sombre (style cartoon) sur toutes les mailles d'un modèle généré.
+func _outline_all(root: Node) -> void:
+	for mi: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var m: MeshInstance3D = mi
+		for i: int in m.mesh.get_surface_count():
+			var src: Material = m.get_active_material(i)
+			if src is BaseMaterial3D:
+				var copy: BaseMaterial3D = (src as BaseMaterial3D).duplicate()
+				copy.next_pass = _outline
+				m.set_surface_override_material(i, copy)
 
 
 ## Toit en prisme : faîte le long de X, à `ridge` (0..1) de la largeur ; pignons fermés.
@@ -594,6 +657,34 @@ func _build_actor(a: GkActor) -> void:
 	add_child(root)
 	var body: Node3D = Node3D.new()
 	root.add_child(body)
+	var gen: Node3D = model("perso_" + a.character)
+	if gen != null:
+		# Modèle de pixelforge : face avant +Z ; le jeu fait regarder les persos vers +X.
+		gen.rotation.y = PI * 0.5
+		body.add_child(gen)
+		# Pas de contour « grow » ici : sur un maillage TRELLIS il fait des bords déchiquetés
+		# (pixelforge peut intégrer le contour au modèle).
+		for mi: Node in gen.find_children("*", "MeshInstance3D", true, false):
+			var m: MeshInstance3D = mi
+			for i: int in m.mesh.get_surface_count():
+				var src: Material = m.mesh.surface_get_material(i)
+				if src != null and src.resource_name == "tenue":
+					var t: StandardMaterial3D = (m.get_active_material(i) as StandardMaterial3D).duplicate()
+					t.albedo_color = a.color
+					t.albedo_texture = null
+					t.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT
+					m.set_surface_override_material(i, t)
+		var ap: AnimationPlayer = gen.find_children("*", "AnimationPlayer", true, false)[0] if not gen.find_children("*", "AnimationPlayer", true, false).is_empty() else null
+		var lab: Label3D = Label3D.new()
+		lab.text = a.display_name
+		lab.font_size = 40
+		lab.outline_size = 12
+		lab.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		lab.no_depth_test = true
+		lab.position = Vector3(0, 1.55, 0)
+		root.add_child(lab)
+		_actors[a.id] = {"root": root, "body": body, "legs": [], "label": lab, "ghost": false, "anim": ap, "cur": ""}
+		return
 	var col: Color = a.color
 	var dark: Color = col.darkened(0.35)
 	var legs: Array[MeshInstance3D] = []
@@ -714,8 +805,22 @@ func refresh(dt: float) -> void:
 		var moving: bool = a.walk_phase != 0.0
 		body.position.y = absf(sin(a.walk_phase)) * 0.08 if moving else 0.0
 		var legs: Array = n["legs"]
-		(legs[0] as Node3D).rotation.z = sin(a.walk_phase) * 0.5
-		(legs[1] as Node3D).rotation.z = -sin(a.walk_phase) * 0.5
+		if not legs.is_empty():
+			(legs[0] as Node3D).rotation.z = sin(a.walk_phase) * 0.5
+			(legs[1] as Node3D).rotation.z = -sin(a.walk_phase) * 0.5
+		var ap: AnimationPlayer = n.get("anim")
+		if ap != null:
+			body.position.y = 0.0
+			var clip: String = "walk" if moving else "idle"
+			if a.role == GkActor.Role.GHOST:
+				clip = "found"
+			elif game.phase == GkGame.Phase.END and a.won_round:
+				clip = "victory"
+			if str(n["cur"]) != clip and ap.has_animation(clip):
+				n["cur"] = clip
+				var anim: Animation = ap.get_animation(clip)
+				anim.loop_mode = Animation.LOOP_NONE if clip == "found" else Animation.LOOP_LINEAR
+				ap.play(clip, 0.15)
 		var ghost: bool = a.role == GkActor.Role.GHOST or a.role == GkActor.Role.OUT
 		if ghost != bool(n["ghost"]):
 			n["ghost"] = ghost

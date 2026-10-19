@@ -42,6 +42,7 @@ var _near_light: PointLight2D
 var _bots_only: bool = false
 var _force_role: String = ""
 var _log: bool = false
+var _local_bot: bool = false          # QA : le joueur local est piloté par l'IA (garde son perso)
 ## Affichage 3D (SPEC-GORDEKA §9) ; `--gk-2d` garde l'ancien dessin à plat.
 var use_3d: bool = true
 var view: GkView3D
@@ -52,6 +53,8 @@ func _ready() -> void:
 	for arg: String in OS.get_cmdline_user_args():
 		if arg == "--gk-bots-only":
 			_bots_only = true
+		elif arg == "--gk-local-bot":
+			_local_bot = true
 		elif arg == "--gk-2d":
 			use_3d = false
 		elif arg == "--gk-log":
@@ -110,7 +113,7 @@ func _make_actors(parent: Node2D) -> void:
 	colors.shuffle()
 	for i: int in n:
 		var a: GkActor = GkActor.new()
-		var bot: bool = i > 0 or _bots_only
+		var bot: bool = i > 0 or _bots_only or _local_bot
 		var me: bool = i == 0 and not _bots_only
 		var k: int = picks[(i - (0 if _bots_only else 1)) % picks.size()] if not me else -1
 		var nm: String = my_name if me else str(all_names[k]) + " (IA)"
