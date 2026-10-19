@@ -14,10 +14,12 @@ const HEIGHT_PX: float = 88.0
 ## Hauteur du perso dans une case pixelforge (px), pour l'échelle.
 const CELL_PERSO_PX: float = 199.0
 const GHOST_ALPHA: float = 0.5
-## Durée visée d'un cycle de déplacement (s) à la vitesse d'un chassé, comme dans Among Us (~0,5 s) :
+## Durée visée d'un cycle de déplacement (s) à la vitesse d'un chassé (0,5 s faisait courir, Julien) :
 ## les planches pixelforge (mouvements Quaternius) durent plus longtemps, on les accélère, et la
 ## cadence suit la vitesse réelle (piège, chasseur plus rapide) pour que les pieds ne glissent pas.
-const CYCLE_S: Dictionary = {"walk": 0.5, "run_scared": 0.42, "ghost_move": 0.6}
+const BOUNCE_PX: float = 5.0        # hauteur du rebond de marche (px à l'écran)
+const SQUASH: float = 0.07          # écrasement vertical au contact du pied
+const CYCLE_S: Dictionary = {"walk": 0.85, "run_scared": 0.6, "ghost_move": 1.0}
 const SHADER: String = """
 shader_type canvas_item;
 uniform sampler2D tenue : filter_linear;
@@ -211,7 +213,17 @@ func _process(dt: float) -> void:
 	# Pieds de la case sur les pieds de l'acteur (même ligne que l'ombre au sol).
 	var feet: Vector2 = d["feet"]
 	var fx: float = cell.x - feet.x if flip_h else feet.x
-	position = Vector2(-fx * scale.x, actor.radius * 0.6 - feet.y * scale.y)
+	# Petit rebond façon Among Us à chaque pas, avec un léger écrasement quand le pied touche le sol
+	# (idée de Julien) : deux rebonds par cycle, au rythme de la planche.
+	var k: float = HEIGHT_PX / CELL_PERSO_PX
+	var lift: float = 0.0
+	var squash: float = 0.0
+	if CYCLE_S.has(_anim) and actor.velocity.length() > 5.0:
+		var b: float = absf(sin(_t / total * TAU))       # 0 au contact du pied, 1 en l'air
+		lift = BOUNCE_PX * (1.4 if _anim == "run_scared" else 1.0) * b
+		squash = SQUASH * pow(1.0 - b, 3.0)
+	scale = Vector2(k * (1.0 + squash * 0.6), k * (1.0 - squash))
+	position = Vector2(-fx * scale.x, actor.radius * 0.6 - feet.y * scale.y - lift)
 	if ghost:
 		# Le fantôme (ailes d'ange) flotte au-dessus du sol.
 		_float_t += get_process_delta_time()

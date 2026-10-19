@@ -1,179 +1,234 @@
 {
  "name": "Port des Pêcheurs",
- "version": 3,
+ "version": 2,
  "zones": [
   {
-   "name": "Grande jetée",
+   "name": "Jetée",
    "rect": [
-    17,
     1,
-    6,
-    21
-   ]
-  },
-  {
-   "name": "Bras nord",
-   "rect": [
-    23,
     1,
-    12,
-    9
-   ]
-  },
-  {
-   "name": "Quai du rocher",
-   "rect": [
-    35,
-    9,
-    10,
-    10
-   ]
-  },
-  {
-   "name": "Digues des bassins est",
-   "rect": [
-    45,
-    3,
-    19,
-    16
-   ]
-  },
-  {
-   "name": "Plage du port",
-   "rect": [
-    64,
-    8,
-    31,
-    12
-   ]
-  },
-  {
-   "name": "Quai est",
-   "rect": [
-    52,
-    19,
-    20,
-    6
-   ]
-  },
-  {
-   "name": "Terre-plein",
-   "rect": [
     22,
-    20,
-    23,
-    7
+    11
+   ]
+  },
+  {
+   "name": "Bassin",
+   "rect": [
+    24,
+    1,
+    34,
+    11
+   ]
+  },
+  {
+   "name": "Criée",
+   "rect": [
+    62,
+    1,
+    18,
+    11
+   ]
+  },
+  {
+   "name": "Phare",
+   "rect": [
+    82,
+    1,
+    13,
+    9
    ]
   },
   {
    "name": "Crampottes",
    "rect": [
+    1,
     14,
-    27,
-    28,
-    4
+    16,
+    12
    ]
   },
   {
-   "name": "Cale ouest",
+   "name": "Quai des chalutiers",
+   "rect": [
+    19,
+    14,
+    13,
+    11
+   ]
+  },
+  {
+   "name": "Place du fronton",
+   "rect": [
+    34,
+    14,
+    22,
+    11
+   ]
+  },
+  {
+   "name": "Hangar à filets",
+   "rect": [
+    58,
+    14,
+    18,
+    10
+   ]
+  },
+  {
+   "name": "Chapelle des marins",
+   "rect": [
+    80,
+    12,
+    15,
+    10
+   ]
+  },
+  {
+   "name": "Cale sèche",
    "rect": [
     1,
-    18,
-    13,
-    13
+    28,
+    19,
+    11
    ]
   },
   {
-   "name": "Descente du port",
+   "name": "Terrasse",
    "rect": [
-    42,
-    24,
-    8,
-    7
+    22,
+    34,
+    17,
+    5
+   ]
+  },
+  {
+   "name": "Lavoir",
+   "rect": [
+    41,
+    34,
+    15,
+    5
+   ]
+  },
+  {
+   "name": "Atelier",
+   "rect": [
+    59,
+    27,
+    17,
+    12
+   ]
+  },
+  {
+   "name": "Escalier de la ville",
+   "rect": [
+    79,
+    25,
+    16,
+    14
    ]
   }
  ],
  "exits": [
   {
-   "zone": "Bout de la grande jetée",
+   "zone": "Jetée",
    "tiles": [
     [
-     18,
-     1
+     1,
+     2
     ],
     [
-     19,
-     1
-    ]
-   ]
-  },
-  {
-   "zone": "Digue nord-est",
-   "tiles": [
+     1,
+     3
+    ],
     [
-     50,
+     1,
      4
     ],
     [
-     51,
+     2,
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     2,
      4
     ]
    ]
   },
   {
-   "zone": "Petite plage",
+   "zone": "Cale sèche",
    "tiles": [
     [
-     3,
-     20
+     1,
+     37
     ],
     [
-     4,
-     20
+     1,
+     38
     ],
     [
-     3,
-     21
+     2,
+     37
     ],
     [
-     4,
-     21
+     2,
+     38
     ]
    ]
   },
   {
-   "zone": "Plage du port",
+   "zone": "Escalier de la ville",
    "tiles": [
     [
-     90,
-     9
+     92,
+     36
     ],
     [
-     91,
-     9
+     92,
+     37
     ],
     [
-     90,
-     10
+     93,
+     36
     ],
     [
-     91,
-     10
+     93,
+     37
+    ]
+   ]
+  },
+  {
+   "zone": "Phare",
+   "tiles": [
+    [
+     93,
+     1
+    ],
+    [
+     93,
+     2
+    ],
+    [
+     93,
+     3
+    ],
+    [
+     94,
+     1
+    ],
+    [
+     94,
+     2
+    ],
+    [
+     94,
+     3
     ]
    ]
   }
- ],
- "source": {
-  "m_par_case": 3.47,
-  "bbox": [
-   43.4822,
-   -1.568,
-   43.485,
-   -1.5615
-  ],
-  "licences": [
-   "IGN BD ORTHO (licence ouverte Etalab 2.0)",
-   "OpenStreetMap (ODbL)"
-  ]
- }
+ ]
 }
