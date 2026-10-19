@@ -3,7 +3,15 @@
  "fps": 24.0,
  "frames": 6,
  "loop": true,
- "duration_s": 0.25,
+ "duration_s": 1.84,
+ "frame_ms": [
+  340,
+  340,
+  340,
+  140,
+  340,
+  340
+ ],
  "cell": [
   256,
   256

@@ -48,11 +48,19 @@ static func _data(character: String, anim: String) -> Dictionary:
 	var path: String = (DIR % character) + anim
 	if ResourceLoader.exists(path + ".png"):
 		var j: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path + ".json"))
+		var n: int = int(j.get("frames", 1))
+		# Fin de chaque image (s) : durées par image (`frame_ms`) ou cadence fixe (`fps`).
+		var ends: PackedFloat32Array = PackedFloat32Array()
+		var ms: Array = j.get("frame_ms", [])
+		var acc: float = 0.0
+		for i: int in n:
+			acc += float(ms[i]) / 1000.0 if i < ms.size() else 1.0 / float(j.get("fps", 24.0))
+			ends.append(acc)
 		d = {
+			"ends": ends,
 			"tex": load(path + ".png"),
 			"mask": load(path + "_tenue.png") if ResourceLoader.exists(path + "_tenue.png") else null,
-			"n": int(j.get("frames", 1)),
-			"fps": float(j.get("fps", 24.0)),
+			"n": n,
 			"loop": bool(j.get("loop", false)),
 			"cell": Vector2(j.get("cell", [256, 256])[0], j.get("cell", [256, 256])[1]),
 			"feet": Vector2(j.get("feet_anchor", [128, 236])[0], j.get("feet_anchor", [128, 236])[1]),
@@ -123,19 +131,20 @@ func _process(dt: float) -> void:
 		visible = false
 		return
 	_t += dt
-	var n: int = int(d["n"])
-	var f: int = int(_t * float(d["fps"]))
-	if f >= n:
+	var ends: PackedFloat32Array = d["ends"]
+	var total: float = ends[ends.size() - 1]
+	if _t >= total:
 		if _once != "":
 			_once = ""
 			_set_anim(_state_anim())
 			d = _data(actor.character, _anim)
-			n = int(d["n"])
-			f = 0
+			ends = d["ends"]
+			total = ends[ends.size() - 1]
 		elif bool(d["loop"]):
-			f = f % n
-		else:
-			f = n - 1
+			_t = fmod(_t, total)
+	var f: int = 0
+	while f < ends.size() - 1 and _t >= ends[f]:
+		f += 1
 	var cell: Vector2 = d["cell"]
 	region_rect = Rect2(Vector2(cell.x * float(f), 0.0), cell)
 	var face: float = 1.0 if cos(actor.look) >= 0.0 else -1.0
