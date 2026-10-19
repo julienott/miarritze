@@ -204,7 +204,18 @@
     2
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "sols/sol_rocher_phare.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "81d1e8d2e25d472faddc9c37f0705ac4",
+     "date": "2026-10-20"
+    }
+   ]
   },
   "eau_mer": {
    "nom": "Eau du port et de la mer",
