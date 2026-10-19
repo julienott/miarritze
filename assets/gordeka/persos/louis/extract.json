@@ -1,0 +1,30 @@
+{
+ "name": "extract",
+ "fps": 24.0,
+ "frames": 10,
+ "loop": false,
+ "duration_s": 0.417,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "head_by_frame": [
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral",
+  "happy",
+  "happy",
+  "happy",
+  "happy"
+ ],
+ "tenue": "shirt",
+ "variant": null
+}

@@ -1,0 +1,28 @@
+{
+ "name": "ghost_move",
+ "fps": 24.0,
+ "frames": 8,
+ "loop": true,
+ "duration_s": 0.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "head_by_frame": [
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral"
+ ],
+ "tenue": "shirt",
+ "variant": null
+}

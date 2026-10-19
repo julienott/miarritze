@@ -35,6 +35,12 @@ var shown: bool = true
 ## Dessin à plat (prototype) ; faux en 3D.
 var draw_2d: bool = true
 var radius: float = 20.0
+## Perso dessiné (planches pixelforge) ; null tant que ce perso n'a pas ses planches.
+var perso: GkPerso
+## Chassé qui fuit le chasseur tout proche (allure affolée).
+var scared: bool = false
+## Pose de fin de round : "victory", "sad" ou "" pendant le jeu.
+var end_pose: String = ""
 
 
 func setup(p_id: int, p_name: String, p_color: Color, bot: bool) -> void:
@@ -51,6 +57,16 @@ func setup(p_id: int, p_name: String, p_color: Color, bot: bool) -> void:
 	collision_layer = LAYER_ACTOR
 	collision_mask = GkMap.LAYER_MOVE
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
+	if GkPerso.available(character):
+		perso = GkPerso.new()
+		perso.setup(self)
+		add_child(perso)
+
+
+## Geste ponctuel du perso dessiné (piège, détection, trouvé, cachette, sortie).
+func play_once(anim: String) -> void:
+	if perso != null:
+		perso.play_once(anim)
 
 
 func set_role(r: Role) -> void:
@@ -101,11 +117,14 @@ func _draw() -> void:
 		var ring: PackedVector2Array = GkDraw.ellipse_points(Vector2(0, 5.5 * u), 13.0 * u, 5.0 * u, 32)
 		ring.append(ring[0])
 		draw_polyline(ring, Color("ff3b30"), 4.0, true)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2(face * u, u))
-	_draw_body(ghost)
-	draw_set_transform(Vector2.ZERO)
+	if perso == null:
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2(face * u, u))
+		_draw_body(ghost)
+		draw_set_transform(Vector2.ZERO)
 	var font: Font = ThemeDB.fallback_font
 	var top: float = (-34.0 if character == "ramuntxo" else -27.0) * u
+	if perso != null:
+		top = radius * 0.6 - GkPerso.HEIGHT_PX - 4.0
 	draw_string(font, Vector2(-120, top), display_name, HORIZONTAL_ALIGNMENT_CENTER, 240, 20,
 		Color(1, 1, 1, 0.5 if ghost else 1.0))
 	if slow_left > 0.0:

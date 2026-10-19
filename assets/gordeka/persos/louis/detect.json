@@ -1,0 +1,32 @@
+{
+ "name": "detect",
+ "fps": 24.0,
+ "frames": 12,
+ "loop": false,
+ "duration_s": 0.5,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "head_by_frame": [
+  "neutral",
+  "neutral",
+  "neutral",
+  "neutral",
+  "surprised",
+  "surprised",
+  "surprised",
+  "surprised",
+  "surprised",
+  "surprised",
+  "surprised",
+  "surprised"
+ ],
+ "tenue": "shirt",
+ "variant": null
+}

@@ -1,0 +1,28 @@
+{
+ "name": "hide_out",
+ "fps": 24.0,
+ "frames": 8,
+ "loop": false,
+ "duration_s": 0.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "head_by_frame": [
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "neutral",
+  "neutral"
+ ],
+ "tenue": "shirt",
+ "variant": null
+}

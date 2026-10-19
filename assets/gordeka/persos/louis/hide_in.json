@@ -1,0 +1,28 @@
+{
+ "name": "hide_in",
+ "fps": 24.0,
+ "frames": 8,
+ "loop": false,
+ "duration_s": 0.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "head_by_frame": [
+  "neutral",
+  "neutral",
+  "surprised",
+  "surprised",
+  "surprised",
+  "surprised",
+  "surprised",
+  "surprised"
+ ],
+ "tenue": "shirt",
+ "variant": null
+}

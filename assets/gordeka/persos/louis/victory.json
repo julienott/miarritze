@@ -1,0 +1,32 @@
+{
+ "name": "victory",
+ "fps": 24.0,
+ "frames": 12,
+ "loop": true,
+ "duration_s": 0.5,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "head_by_frame": [
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy",
+  "happy"
+ ],
+ "tenue": "shirt",
+ "variant": null
+}

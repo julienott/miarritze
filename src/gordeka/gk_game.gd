@@ -43,8 +43,11 @@ var _bots_only: bool = false
 var _force_role: String = ""
 var _log: bool = false
 var _local_bot: bool = false          # QA : le joueur local est piloté par l'IA (garde son perso)
-## Affichage 3D (SPEC-GORDEKA §9) ; `--gk-2d` garde l'ancien dessin à plat.
-var use_3d: bool = true
+## Affichage 3D abandonné le 2026-10-19 (docs/GORDEKA_STYLE_2D.md) : 2D par défaut, `--gk-3d`
+## rouvre l'ancienne vue 3D.
+var use_3d: bool = false
+## QA : `--gk-perso=louis` donne ce perso à tout le monde (voir ses animations sur toutes les IA).
+var _all_char: String = ""
 var view: GkView3D
 var _last_dt: float = 0.0
 
@@ -55,8 +58,10 @@ func _ready() -> void:
 			_bots_only = true
 		elif arg == "--gk-local-bot":
 			_local_bot = true
-		elif arg == "--gk-2d":
-			use_3d = false
+		elif arg == "--gk-3d":
+			use_3d = true
+		elif arg.begins_with("--gk-perso="):
+			_all_char = arg.trim_prefix("--gk-perso=")
 		elif arg == "--gk-log":
 			_log = true
 		elif arg.begins_with("--gk-local-role="):
@@ -117,8 +122,10 @@ func _make_actors(parent: Node2D) -> void:
 		var me: bool = i == 0 and not _bots_only
 		var k: int = picks[(i - (0 if _bots_only else 1)) % picks.size()] if not me else -1
 		var nm: String = my_name if me else str(all_names[k]) + " (IA)"
-		a.setup(i, nm, GkRules.color(my_color if i == 0 else colors[i - 1]), bot)
 		a.character = my_char if me else str(all_chars[k])
+		if _all_char != "":
+			a.character = _all_char
+		a.setup(i, nm, GkRules.color(my_color if i == 0 else colors[i - 1]), bot)
 		parent.add_child(a)
 		actors.append(a)
 		if bot:
@@ -215,6 +222,8 @@ func _start_round() -> void:
 		a.alive_t = 0.0
 		a.round_points = 0
 		a.won_round = false
+		a.end_pose = ""
+		a.scared = false
 		a.hidden_in = -1
 		a.search_left = 0.0
 		a.slow_left = 0.0
@@ -281,6 +290,9 @@ func _finish_round() -> void:
 	if _round_found >= _round_hiders and _round_hiders > 0:
 		_give(hunter, GkRules.score("hunter_all"))
 	hunter.won_round = _round_found * 2 > _round_hiders
+	for a: GkActor in actors:
+		if a.role == GkActor.Role.HIDER or a.role == GkActor.Role.HUNTER:
+			a.end_pose = "victory" if a.won_round else "sad"
 	if _log:
 		var out: int = actors.filter(func(a: GkActor) -> bool: return a.role == GkActor.Role.OUT).size()
 		print("[gk] round %d : chasseur %s, trouvés %d/%d, échappés %d, restés cachés %d, durée %.0f s" % [
@@ -474,6 +486,7 @@ func _update_capture(dt: float) -> void:
 func _found(a: GkActor) -> void:
 	if a.hidden_in >= 0:
 		_leave_cachette(a, false)
+	a.play_once("found")
 	a.set_role(GkActor.Role.GHOST)
 	a.gauge = 0.0
 	_round_found += 1
@@ -508,6 +521,7 @@ func _enter_cachette(a: GkActor, i: int) -> void:
 	a.hidden_t = 0.0
 	a.gauge = 0.0
 	a.position = c["pos"]
+	a.play_once("hide_in")
 
 
 func _leave_cachette(a: GkActor, forced: bool) -> void:
@@ -520,6 +534,7 @@ func _leave_cachette(a: GkActor, forced: bool) -> void:
 	if forced:
 		c["lock"] = GkRules.f("hide_lock")
 	a.hidden_in = -1
+	a.play_once("hide_out")
 	# Ressort sur la case libre voisine la plus loin du chasseur.
 	var best: Vector2 = c["pos"]
 	var bd: float = -1.0
@@ -569,6 +584,7 @@ func _place_trap(a: GkActor) -> void:
 	if mine.size() > int(GkRules.f("trap_max")):
 		traps.erase(mine[0])
 	a.power_cd = GkRules.f("trap_cooldown")
+	a.play_once("trap")
 
 
 func _update_traps() -> void:
@@ -587,6 +603,7 @@ func _update_traps() -> void:
 
 func _detect(h: GkActor) -> void:
 	h.power_cd = GkRules.f("detect_cooldown")
+	h.play_once("detect")
 	var found: Array[Vector2] = []
 	for a: GkActor in actors:
 		if a.role == GkActor.Role.HIDER and a.position.distance_to(h.position) <= GkRules.px("detect_radius"):
@@ -614,6 +631,7 @@ func _update_exits(dt: float) -> void:
 		if map.at(map.to_tile(a.position)) == "E" and a.gauge <= 0.0:
 			a.extract_t += dt
 			if a.extract_t >= GkRules.f("extract_hold"):
+				a.play_once("extract")
 				a.set_role(GkActor.Role.OUT)
 				_give(a, GkRules.score("hider_extract"))
 				_say("%s s'est échappé !" % a.display_name, Color("6fe08a"), 2.0)
@@ -638,7 +656,10 @@ func _update_view() -> void:
 		_cone_light.position = hunter.position
 		_cone_light.rotation = hunter.look
 		_near_light.position = hunter.position
+	var scare: float = GkRules.px("scared_range")
 	for a: GkActor in actors:
+		a.scared = phase == Phase.HUNT and a.role == GkActor.Role.HIDER \
+			and a.position.distance_to(hunter.position) < scare
 		var show: bool = true
 		if a.role == GkActor.Role.OUT:
 			show = a == local

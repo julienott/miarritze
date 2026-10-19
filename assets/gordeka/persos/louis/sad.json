@@ -1,0 +1,26 @@
+{
+ "name": "sad",
+ "fps": 24.0,
+ "frames": 6,
+ "loop": true,
+ "duration_s": 0.25,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "head_by_frame": [
+  "neutral",
+  "neutral",
+  "neutral",
+  "blink",
+  "blink",
+  "neutral"
+ ],
+ "tenue": "shirt",
+ "variant": null
+}
