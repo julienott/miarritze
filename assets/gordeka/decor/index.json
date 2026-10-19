@@ -178,7 +178,18 @@
     2
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "sols/sol_tomettes_chapelle.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "c872ec4a95264213adda03a962f36ae2",
+     "date": "2026-10-20"
+    }
+   ]
   },
   "sol_rocher_phare": {
    "nom": "Plateforme rocheuse du phare",
