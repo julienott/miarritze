@@ -647,7 +647,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_coffre_quai.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "2f92ed8cc0ae4aa3b7fcf4778e473ec0",
+     "date": "2026-10-19"
+    }
+   ],
+   "ombre": "objets/cachette_coffre_quai_ombre.png",
+   "ombre_decalage": [
+    14,
+    73
+   ]
   },
   "cachette_caisse_glace": {
    "nom": "Caisse à glace",
