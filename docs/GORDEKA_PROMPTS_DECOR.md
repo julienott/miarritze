@@ -6,10 +6,10 @@
 
 **Avec pixelforge**, le préambule est déjà intégré aux styles `pf_hd__prop` (objets, vue 3/4, fond transparent, 512 px par défaut, jusqu'à 1024), `pf_hd__ground` (sols sans couture vus de dessus, 1024 px, jamais de `theme`) et `pf_hd__texture` (même chose vue de face : façades). Les payloads du JSON (`payloads`) n'envoient donc que le prompt court et concret, couleurs nommées en hexa, avec `theme: "basque"` quand il y a boiseries, volets ou tuiles, `shadow` (`layer` pour les objets, `none` pour ce qui est à plat au sol), `num_images` (2 à 4), `width`/`height` et `seed`. Les variantes d'état (ouvert, allumé, image suivante de l'eau) passent par `pf_hd__edit` sur l'image validée (`edits`). Le préambule complet ci-dessous sert pour tout autre outil (champ `prompt`).
 
-Chaque prompt = **préambule** + **suffixe du type** + **description propre à l'élément**. Le préambule reprend ce qui a marché pour les persos (§16.2 : « Among Us », contour bleu marine épais et régulier, aplats et une ombre franche, « smooth clean cartoon, no pixel art »).
+Chaque prompt = **préambule** + **suffixe du type** + **description propre à l'élément**. Le préambule décrit notre propre style (contour bleu marine épais et régulier, aplats et une ombre franche, « no pixel art ») sans citer de jeu existant (Julien, 2026-10-20).
 
 ```text
-Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo.
+Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo.
 ```
 
 Suffixes par type :
@@ -32,7 +32,7 @@ Tailles : une case fait **64 px en jeu** (`rules.json` → `tile_px`) ; sortie c
 
 ### Caméra commune (ajoutée le 2026-10-20, demande de Julien)
 
-Pour un angle pseudo 3D identique façon Among Us sur tout le décor, chaque payload se termine par la
+Pour un angle pseudo 3D identique sur tout le décor, chaque payload se termine par la
 même consigne de caméra selon son style (`camera_commune` dans `tools/gordeka/prompts_decor.json`) :
 
 - objets (`pf_hd__prop`) : vue de 3/4 du dessus, de face, environ 40° au-dessus ; on voit le dessus et
@@ -41,6 +41,8 @@ même consigne de caméra selon son style (`camera_commune` dans `tools/gordeka/
 - façades (`pf_hd__texture`) : face avant seule, parallèle à l'écran.
 
 Lumière commune : en haut à gauche. Priorité de file : `low` (décor = 2).
+
+Les payloads ne citent aucun jeu existant : chacun se termine par la caméra et la description de notre style (`camera_commune`).
 
 ## 2. Liste des éléments
 
