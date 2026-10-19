@@ -23,18 +23,23 @@ SUR = 8                               # suréchantillonnage du dessin
 
 
 def drapeau():
+    """Dessiné et tourné en ×SUR, puis réduit d'un coup : bords lisses, trait régulier de 2 px comme le
+    contour du perso, croix coupées net à l'intérieur du cadre arrondi."""
     w, h = TAILLE[0] * SUR, TAILLE[1] * SUR
+    trait, rayon = 2 * SUR, 3 * SUR
+    fond = Image.new("RGBA", (w, h), ROUGE + (255,))
+    d = ImageDraw.Draw(fond)
+    d.line((0, 0, w, h), fill=VERT, width=int(SUR * 2.4))
+    d.line((0, h, w, 0), fill=VERT, width=int(SUR * 2.4))
+    d.line((w // 2, 0, w // 2, h), fill=BLANC, width=int(SUR * 2.2))
+    d.line((0, h // 2, w, h // 2), fill=BLANC, width=int(SUR * 2.2))
+    masque = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(masque).rounded_rectangle((0, 0, w - 1, h - 1), radius=rayon, fill=255)
     im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    d = ImageDraw.Draw(im)
-    t = SUR * 1.6                      # épaisseur des croix
-    d.rectangle((0, 0, w - 1, h - 1), fill=ROUGE)
-    d.line((0, 0, w, h), fill=VERT, width=int(t * 1.2))
-    d.line((0, h, w, 0), fill=VERT, width=int(t * 1.2))
-    d.line((w // 2, 0, w // 2, h), fill=BLANC, width=int(t))
-    d.line((0, h // 2, w, h // 2), fill=BLANC, width=int(t))
-    d.rounded_rectangle((0, 0, w - 1, h - 1), radius=SUR, outline=CONTOUR, width=int(SUR * 1.3))
-    im = im.resize(TAILLE, Image.LANCZOS)
-    return im.rotate(ANGLE, resample=Image.BICUBIC, expand=True)
+    im.paste(fond, (0, 0), masque)
+    ImageDraw.Draw(im).rounded_rectangle((0, 0, w - 1, h - 1), radius=rayon, outline=CONTOUR + (255,), width=trait)
+    im = im.rotate(ANGLE, resample=Image.BICUBIC, expand=True)
+    return im.resize((im.width // SUR, im.height // SUR), Image.LANCZOS)
 
 
 def main():
