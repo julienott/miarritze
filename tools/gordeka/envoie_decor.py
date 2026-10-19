@@ -37,7 +37,7 @@ PRIORITE = os.environ.get("PF_PRIORITE", "low")
 def en_2d(pl):
     if pl["prompt_style"] == "pf_hd__prop":
         q = {k: v for k, v in pl.items() if k != "height"}
-        q.update(prompt_style="pf_2d__prop", style_task=STYLE_TASK,
+        q.update(prompt_style="pf_2d__prop",
                  width=max(pl.get("width", 512), pl.get("height", 512)))
         return q
     if pl["prompt_style"] == "pf_hd__ground":
