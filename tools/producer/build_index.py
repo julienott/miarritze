@@ -9,6 +9,12 @@ Usage : build_index.py <dossier_sortie>   (ex. web/build/producer/files)
 - Portraits indexés : colorisés de la même façon.
 - Autres images : copiées telles quelles ; les effets d'un perso (assets/vfx/<id>)
   sont rangés dans son groupe de la catégorie Combattants.
+- Gordeka (assets/gordeka, assets/maps) : animations des persos (planches d'une
+  rangée de cases, recadrées sur l'union des frames) et leurs masques de tenue,
+  profil validé (modele.png), profils candidats (tools/rd/out/<id>/gk2d/profil,
+  réduits, seulement s'ils sont présents : dossier non versionné), pièces du
+  mannequin, chorégraphies et données JSON, textures, aperçu de la carte rendu
+  depuis map.txt.
 - Audio : .ogg copié ; si ffmpeg est présent, un .mp3 est ajouté (Safari iOS
   ne lit pas toujours le Vorbis).
 - index.json : liste des assets (id = chemin relatif à assets/), version =
@@ -40,8 +46,32 @@ CAT_UI = "UI"
 CAT_MUSIC = "Musique"
 CAT_SFX = "SFX"
 CAT_VOICE = "Voix"
-CATEGORIES = [CAT_FIGHTERS, CAT_VFX, CAT_STAGES, CAT_SPRITES, CAT_UI,
-              CAT_MUSIC, CAT_SFX, CAT_VOICE]
+CAT_GK_PERSOS = "Persos"
+CAT_GK_MAP = "Carte"
+CAT_GK_MANNEQUIN = "Mannequin"
+CAT_GK_DECOR = "Textures & modèles"
+# Sections de la barre latérale ; la page s'ouvre sur la première catégorie.
+SECTIONS = [
+    {"name": "Gordeka", "categories": [CAT_GK_PERSOS, CAT_GK_MAP, CAT_GK_MANNEQUIN, CAT_GK_DECOR]},
+    {"name": "Borroka", "categories": [CAT_FIGHTERS, CAT_VFX, CAT_STAGES, CAT_SPRITES, CAT_UI]},
+    {"name": "Audio", "categories": [CAT_MUSIC, CAT_SFX, CAT_VOICE]},
+]
+CATEGORIES = [c for s in SECTIONS for c in s["categories"]]
+
+GK = ASSETS / "gordeka"
+GK_CANDIDATS = ROOT / "tools" / "rd" / "out"     # gitignoré : absent en CI
+# Ordre des animations (tools/gordeka/anime_perso.py), les autres ensuite par nom.
+GK_ANIM_ORDER = ["idle", "walk", "run_scared", "hide_in", "hide_out", "found", "trap", "trapped",
+                 "search", "detect", "extract", "victory", "sad", "ghost", "ghost_move"]
+GK_CANDIDAT_MAX = 512            # côté max des profils candidats (1024 à la source)
+# Carte : couleurs de src/gordeka/gk_map.gd (COLORS, TILE_FLOORS, FLOOR_TINTS[0]) ;
+# sortie, départ et inconnu choisis pour se voir.
+MAP_TILE = 10
+MAP_FONT = ASSETS / "fonts" / "press_start_2p.ttf"     # accents (Criée, Hangar à filets)
+MAP_COLORS = {"#": "3b4253", "c": "a0703e", "B": "e8eef2", "H": "e08a2e", "t": "c9a873", "~": "2f7fb8",
+              "R": "8c6446", "r": "9a7a5c", "v": "5f8a4a", ":": "e6cf98", "=": "b8b2a6", ".": "d9d2c3",
+              "E": "3fae5a", "S": "8e5cc8"}
+MAP_UNKNOWN = "ff00ff"
 
 # Fichiers de combattants ignorés (obsolètes, remplacés par les sheets RD).
 SKIP_FIGHTER_FILES = {"sheet_mannequin.png", "sheet.orig.png"}   # + sauvegarde avant nettoyage
@@ -103,6 +133,14 @@ class Builder:
 
     def add(self, **entry) -> None:
         self.assets.append(entry)
+
+    @staticmethod
+    def rel_src(path: Path) -> str:
+        """Id d'un asset : chemin relatif à assets/, ou au dépôt s'il est ailleurs."""
+        try:
+            return path.relative_to(ASSETS).as_posix()
+        except ValueError:
+            return path.relative_to(ROOT).as_posix()
 
     # ---------------------------------------------------------------- combattants
     def fighters(self) -> None:
@@ -201,6 +239,190 @@ class Builder:
                      type="image", version=short_hash(png), w=img.width, h=img.height,
                      file=f, preview=f, note="")
 
+    # ==================================================================== Gordeka
+    def gordeka(self) -> None:
+        dirs = {p.name for p in (GK / "persos").iterdir() if p.is_dir()} if (GK / "persos").is_dir() else set()
+        cands = {p.parents[2].name for p in GK_CANDIDATS.glob("*/gk2d/profil/image_*_white.png")}
+        # Persos animés d'abord, puis ceux qui ont un profil validé, puis les candidats seuls.
+        def rank(pid: str) -> tuple:
+            d = GK / "persos" / pid
+            return (0 if any(d.glob("*.json")) else 1 if (d / "modele.png").exists() else 2, pid)
+        for pid in sorted(dirs | cands, key=rank):
+            if pid in dirs:
+                self.gk_perso(pid, GK / "persos" / pid)
+            self.gk_candidats(pid)
+        self.gk_map()
+        self.gk_mannequin()
+        self.gk_decor()
+
+    def gk_perso(self, pid: str, pdir: Path) -> None:
+        anims: list[dict] = []
+        masks: list[dict] = []
+        used: set[str] = set()
+        srcs: list[Path] = []
+        mask_srcs: list[Path] = []
+        preview = ""
+        jsons = [j for j in pdir.glob("*.json") if (pdir / f"{j.stem}.png").exists()]
+        order = {n: i for i, n in enumerate(GK_ANIM_ORDER)}
+        jsons.sort(key=lambda j: (order.get(j.stem, len(order)), j.stem))
+        for j in jsons:
+            name = j.stem
+            meta = json.loads(j.read_text())
+            cell = meta.get("cell", 256)
+            cw, ch = (int(cell[0]), int(cell[1])) if isinstance(cell, list) else (int(cell), int(cell))
+            png, tenue = pdir / f"{name}.png", pdir / f"{name}_tenue.png"
+            used |= {png.name, tenue.name}
+            strip = np.array(Image.open(png).convert("RGBA"))
+            n = min(int(meta.get("frames", strip.shape[1] // cw)), strip.shape[1] // cw)
+            if n <= 0:
+                continue
+            frames = [strip[:ch, i * cw:(i + 1) * cw] for i in range(n)]
+            # Recadrage sur l'union des pixels visibles (les frames restent alignées).
+            ys, xs = np.nonzero(np.any(np.stack(frames)[..., 3] > 0, axis=0))
+            if len(ys) == 0:
+                y0, y1, x0, x1 = 0, ch, 0, cw
+            else:
+                y0, y1 = max(ys.min() - 4, 0), min(ys.max() + 5, ch)
+                x0, x1 = max(xs.min() - 4, 0), min(xs.max() + 5, cw)
+            w, h = int(x1 - x0), int(y1 - y0)
+            fps = float(meta.get("fps", 24))
+            info = {"frames": n, "fps": int(fps) if fps.is_integer() else fps,
+                    "loop": bool(meta.get("loop", False)), "w": w, "h": h}
+            cut = Image.fromarray(np.concatenate([fr[y0:y1, x0:x1] for fr in frames], axis=1), "RGBA")
+            f = self.save_png(cut, f"gordeka/persos/{pid}/anims/{name}.png")
+            anims.append({"name": name, **info, "file": f})
+            srcs += [png, j]
+            if name == "idle" or not preview:
+                preview = self.save_png(Image.fromarray(frames[0][y0:y1, x0:x1], "RGBA"),
+                                        f"gordeka/persos/{pid}/anims/_preview.png")
+            if tenue.exists():
+                m = np.array(Image.open(tenue).convert("RGBA"))
+                mcut = np.concatenate([m[:ch, i * cw + x0:i * cw + x1][y0:y1] for i in range(n)], axis=1)
+                mf = self.save_png(Image.fromarray(mcut, "RGBA"), f"gordeka/persos/{pid}/masques/{name}.png")
+                masks.append({"name": name, **info, "file": mf})
+                mask_srcs.append(tenue)
+        if anims:
+            tenue_desc = ""
+            try:
+                tenue_desc = json.loads(jsons[0].read_text()).get("tenue", "")
+            except (OSError, ValueError):
+                pass
+            self.add(id=f"gordeka/persos/{pid}/animations", cat=CAT_GK_PERSOS, group=pid, kind="anim",
+                     name=f"{pid} · animations", type="sprite", smooth=True, version=short_hash(*srcs),
+                     w=anims[0]["w"], h=anims[0]["h"], file=preview, preview=preview, anims=anims,
+                     note=f"{len(anims)} animations, cases de 256 px recadrées sur l'union des frames")
+            if masks:
+                mprev = self.save_png(Image.open(self.out / masks[0]["file"]).crop(
+                    (0, 0, masks[0]["w"], masks[0]["h"])), f"gordeka/persos/{pid}/masques/_preview.png")
+                self.add(id=f"gordeka/persos/{pid}/masques", cat=CAT_GK_PERSOS, group=pid, kind="masque",
+                         name=f"{pid} · masques de tenue", type="sprite", smooth=True,
+                         version=short_hash(*mask_srcs), w=masks[0]["w"], h=masks[0]["h"], file=mprev,
+                         preview=mprev, anims=masks,
+                         note="<anim>_tenue.png, même recadrage que les animations"
+                              + (f" · tenue : {tenue_desc}" if tenue_desc else ""))
+        for png in sorted(pdir.glob("*.png")):
+            if png.name in used:
+                continue
+            img = Image.open(png).convert("RGBA")
+            rel = self.rel_src(png)
+            f = self.save_png(img, rel)
+            modele = png.name == "modele.png"
+            self.add(id=rel, cat=CAT_GK_PERSOS, group=pid, kind="modele" if modele else "src",
+                     name=f"{pid} · {'profil validé' if modele else png.stem}", type="image", smooth=True,
+                     version=short_hash(png), w=img.width, h=img.height, file=f, preview=f, note="")
+
+    def gk_candidats(self, pid: str) -> None:
+        pdir = GK_CANDIDATS / pid / "gk2d" / "profil"
+        prompt = ""
+        if (pdir / "params.json").exists():
+            try:
+                prompt = json.loads((pdir / "params.json").read_text()).get("prompt", "")
+            except ValueError:
+                pass
+        for png in sorted(pdir.glob("image_*_white.png")):
+            num = png.stem.split("_")[1]
+            img = Image.open(png).convert("RGB")
+            img.thumbnail((GK_CANDIDAT_MAX, GK_CANDIDAT_MAX), Image.LANCZOS)
+            f = self.save_png(img, f"gordeka/candidats/{pid}/image_{num}.png")
+            self.add(id=self.rel_src(png), cat=CAT_GK_PERSOS, group=pid, kind="candidat",
+                     name=f"{pid} · variante {int(num) + 1} (image_{num})", type="image", smooth=True,
+                     version=short_hash(png), w=img.width, h=img.height, file=f, preview=f,
+                     note="profil candidat, réduit" + (f" · prompt : {prompt}" if prompt else ""))
+
+    def gk_map(self) -> None:
+        from PIL import ImageDraw, ImageFont
+        for mdir in sorted(p for p in (ASSETS / "maps").glob("*") if p.is_dir()):
+            mid = mdir.name
+            pngs = sorted(mdir.glob("*.png"))
+            for png in pngs:
+                rel = self.rel_src(png)
+                img = Image.open(png)
+                f = self.copy(png, rel)
+                self.add(id=rel, cat=CAT_GK_MAP, group=mid, kind="carte", name=f"{mid} · {png.stem}",
+                         type="image", version=short_hash(png), w=img.width, h=img.height,
+                         file=f, preview=f, note="")
+            txt = mdir / "map.txt"
+            if not pngs and txt.exists():
+                rows = [r for r in txt.read_text(encoding="utf-8").splitlines() if r]
+                gw, gh = max(len(r) for r in rows), len(rows)
+                t = MAP_TILE
+                img = Image.new("RGB", (gw * t, gh * t), "#" + MAP_COLORS["#"])
+                draw = ImageDraw.Draw(img)
+                for y, row in enumerate(rows):
+                    for x, ch in enumerate(row):
+                        draw.rectangle((x * t, y * t, x * t + t - 1, y * t + t - 1),
+                                       fill="#" + MAP_COLORS.get(ch, MAP_UNKNOWN))
+                zones_path = mdir / "zones.json"
+                srcs = [txt]
+                if zones_path.exists():
+                    srcs.append(zones_path)
+                    font = ImageFont.truetype(str(MAP_FONT), 8)
+                    for z in json.loads(zones_path.read_text(encoding="utf-8")).get("zones", []):
+                        zx, zy, zw, zh = z["rect"]
+                        draw.rectangle((zx * t, zy * t, (zx + zw) * t - 1, (zy + zh) * t - 1),
+                                       outline="#ffffff")
+                        draw.text((zx * t + 4, zy * t + 4), z["name"], fill="#111111", font=font,
+                                  stroke_width=2, stroke_fill="#ffffff")
+                rel = f"maps/{mid}/map.txt"
+                f = self.save_png(img, f"maps/{mid}/apercu.png")
+                self.add(id=rel, cat=CAT_GK_MAP, group=mid, kind="carte", name=f"{mid} · aperçu",
+                         type="image", version=short_hash(*srcs), w=img.width, h=img.height, file=f, preview=f,
+                         note=f"rendu depuis map.txt ({gw}×{gh} cases, {t} px par case) et zones.json · "
+                              "mur gris, sol beige, eau bleue, bateau blanc, caisse brune, objet bas sable, "
+                              "cachette orange, sortie verte, départ violet")
+            for js in sorted(mdir.glob("*.json")):
+                self.data(js, CAT_GK_MAP, mid)
+
+    def data(self, js: Path, cat: str, group: str, kind: str = "data") -> None:
+        rel = self.rel_src(js)
+        f = self.copy(js, rel)
+        self.add(id=rel, cat=cat, group=group, kind=kind, name=f"{group} · {js.stem}", type="data",
+                 version=short_hash(js), file=f, preview="", note="JSON")
+
+    def gk_mannequin(self) -> None:
+        for mdir in sorted(p for p in (GK / "mannequin").glob("*") if p.is_dir()):
+            for png in sorted(mdir.glob("*.png")):
+                rel = self.rel_src(png)
+                img = Image.open(png)
+                f = self.copy(png, rel)
+                self.add(id=rel, cat=CAT_GK_MANNEQUIN, group=mdir.name, kind="piece",
+                         name=f"{mdir.name} · {png.stem}", type="image", smooth=True, version=short_hash(png),
+                         w=img.width, h=img.height, file=f, preview=f, note="pièce du pantin")
+            for js in sorted(mdir.glob("*.json")):
+                self.data(js, CAT_GK_MANNEQUIN, mdir.name)
+        for js in sorted((GK / "choreo").glob("*.json")):
+            self.data(js, CAT_GK_MANNEQUIN, "chorégraphies", "choreo")
+
+    def gk_decor(self) -> None:
+        for sub, group in (("textures", "textures"), ("models", "modèles")):
+            for png in sorted((GK / sub).glob("*.png")):
+                rel = self.rel_src(png)
+                img = Image.open(png)
+                f = self.copy(png, rel)
+                self.add(id=rel, cat=CAT_GK_DECOR, group=group, kind=sub, name=f"{group} · {png.stem}",
+                         type="image", smooth=True, version=short_hash(png), w=img.width, h=img.height,
+                         file=f, preview=f, note="texture de modèle 3D (.glb non affichable)" if sub == "models" else "")
+
     # ----------------------------------------------------------------------- audio
     @staticmethod
     def _md_parts(cell: str) -> list:
@@ -271,6 +493,7 @@ class Builder:
         if self.out.exists():
             shutil.rmtree(self.out)
         self.out.mkdir(parents=True)
+        self.gordeka()
         self.fighters()
         self.images("vfx", CAT_VFX, True)
         self.images("stages", CAT_STAGES, True)
@@ -279,18 +502,23 @@ class Builder:
         self.audio("music", CAT_MUSIC)
         self.audio("sfx", CAT_SFX)
         self.audio("voice", CAT_VOICE)
+        cat_rank = {c: i for i, c in enumerate(CATEGORIES)}
+        gordeka = set(SECTIONS[0]["categories"])
         def rank(a):
+            if a["cat"] in gordeka:
+                return (cat_rank[a["cat"]], "", 0, "")     # tri stable : ordre de construction
             if a["cat"] != CAT_FIGHTERS:
-                return (1, "", 0, a["id"])
+                return (cat_rank[a["cat"]], "", 0, a["id"])
             n = a["id"].rsplit("/", 1)[-1]
             k = 0 if a["type"] == "sprite" else 1 if n.startswith("portrait") else 2 if n.startswith("ending") \
                 else 4 if a["id"].startswith("vfx/") else 3
-            return (0, a["group"], k, a["id"])
+            return (cat_rank[a["cat"]], a["group"], k, a["id"])
         self.assets.sort(key=rank)
         index = {
             "commit": git_commit(),
             "generated_at": int(time.time()),
             "categories": CATEGORIES,
+            "sections": SECTIONS,
             "assets": self.assets,
             "files": sorted(set(self.files)),
         }

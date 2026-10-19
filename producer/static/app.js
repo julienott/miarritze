@@ -30,10 +30,12 @@ const state = {
 
 // Zoom entier le plus grand qui tient en largeur ET en hauteur (≈ 55 % de
 // l'écran) : les commandes et les commentaires restent visibles sur mobile.
+// Un asset plus grand que la scène (HD de Gordeka) est réduit, sans arrondi.
 function autoZoom(stage, w, h, max) {
   const fitW = (Math.min(stage.clientWidth, 900) - 24) / w;
   const fitH = Math.max(160, window.innerHeight * 0.55) / h;
-  return Math.max(1, Math.min(max, Math.floor(Math.min(fitW, fitH))));
+  const fit = Math.min(fitW, fitH);
+  return fit < 1 ? Math.max(0.1, fit) : Math.min(max, Math.floor(fit));
 }
 
 function store(key, value) {
@@ -187,8 +189,11 @@ async function enter() {
   const [index] = await Promise.all([api('index'), reloadComments(), reloadCards()]);
   state.index = index;
   state.assetsById = new Map(index.assets.map((a) => [a.id, a]));
-  // Première ouverture : les combattants, une section par perso.
-  if (!state.cat && !state.group && index.categories.includes('Combattants')) state.cat = 'Combattants';
+  // Première ouverture : la première catégorie non vide (les persos de Gordeka),
+  // une section par perso.
+  if (!state.cat && !state.group) {
+    state.cat = index.categories.find((c) => index.assets.some((a) => a.cat === c)) || '';
+  }
   const dl = $('asset-ids');
   dl.replaceChildren(...index.assets.map((a) => el('option', { value: a.id })));
   renderCats();
@@ -266,16 +271,35 @@ function renderCats() {
     items.push(li);
   };
   mk('Tout', '', '', assets.length, false);
-  for (const cat of state.index.categories) {
+  // Sections (Gordeka, Borroka, Audio) ; un index ancien n'a que les catégories.
+  const sections = state.index.sections || [{ name: '', categories: state.index.categories }];
+  for (const section of sections) {
+    if (!assets.some((a) => section.categories.includes(a.cat))) continue;
+    if (section.name) items.push(el('li', { class: 'section', text: section.name }));
+    for (const cat of section.categories) mkCat(cat);
+  }
+  ul.replaceChildren(...items);
+
+  function mkCat(cat) {
     const inCat = assets.filter((a) => a.cat === cat);
-    if (!inCat.length) continue;
+    if (!inCat.length) return;
     mk(cat, cat, '', inCat.length, false);
     const groups = [...new Set(inCat.map((a) => a.group))];
     if (groups.length > 1) {
       for (const g of groups) mk(g, cat, g, inCat.filter((a) => a.group === g).length, true);
     }
   }
-  ul.replaceChildren(...items);
+}
+
+// Catégories rangées par famille, une section par perso.
+const BY_KIND = ['Combattants', 'Persos'];
+
+// Visage d'un perso pour l'en-tête de sa section.
+function faceOf(cat, group) {
+  if (cat === 'Combattants') return state.assetsById.get(`fighters/${group}/portrait_small.png`);
+  if (cat !== 'Persos') return null;
+  const mine = state.index.assets.filter((x) => x.cat === cat && x.group === group);
+  return mine.find((x) => x.kind === 'modele') || mine.find((x) => x.kind === 'anim') || mine.find((x) => x.kind === 'candidat');
 }
 
 function filteredAssets() {
@@ -302,7 +326,7 @@ function showGrid() {
   // pour « Tout »), pour voir tous les assets d'un perso d'un coup d'œil.
   const key = state.group ? null : state.cat ? (a) => a.group : (a) => a.cat;
   const keys = key ? [...new Set(list.map(key))] : [];
-  const byKind = state.cat === 'Combattants';
+  const byKind = BY_KIND.includes(state.cat);
   if (keys.length < 2) {
     if (byKind) { grid.classList.add('grouped'); grid.replaceChildren(...kindBlocks(list)); }
     else grid.replaceChildren(...list.map(tile));
@@ -311,15 +335,15 @@ function showGrid() {
   grid.classList.add('grouped');
   grid.replaceChildren(...keys.map((k) => {
     const items = list.filter((a) => key(a) === k);
-    const fighter = state.cat === 'Combattants';
-    const face = fighter && state.assetsById.get(`fighters/${k}/portrait_small.png`);
+    const fighter = byKind;
+    const face = fighter && faceOf(state.cat, k);
     const open = () => {
       if (fighter || state.cat) { state.group = k; } else { state.cat = k; state.group = ''; }
       renderCats(); showGrid(); window.scrollTo(0, 0);
     };
     return el('section', { class: 'group' },
       el('button', { type: 'button', class: 'group-head', onclick: open, title: 'Voir seulement ' + k },
-        face ? el('img', { src: fileUrl(face.file), alt: '' }) : null,
+        face ? el('img', { src: fileUrl(face.preview), alt: '', class: face.smooth ? 'smooth' : null }) : null,
         el('span', { class: 'group-name', text: k }),
         el('span', { class: 'muted', text: items.length + ' asset' + (items.length > 1 ? 's' : '') })),
       byKind ? kindBlocks(items) : el('div', { class: 'group-tiles' }, items.map(tile)));
@@ -327,12 +351,15 @@ function showGrid() {
 }
 
 // Familles d'assets d'un combattant, dans l'ordre de la review.
+// Gordeka donne la famille dans l'index (a.kind).
 const KINDS = [
-  ['anim', 'Animations'], ['portrait', 'Portraits'], ['ending', 'Image de fin'],
+  ['anim', 'Animations'], ['masque', 'Masques'], ['modele', 'Profil validé'], ['candidat', 'Profils candidats'],
+  ['portrait', 'Portraits'], ['ending', 'Image de fin'],
   ['proj', 'Projectiles'], ['fx', 'Effets des spéciaux'], ['palette', 'Palettes'], ['src', 'Sources'],
 ];
 
 function kindOf(a) {
+  if (a.kind && KINDS.some(([k]) => k === a.kind)) return a.kind;
   const n = a.id.split('/').pop();
   if (a.type === 'sprite') return 'anim';
   if (a.id.startsWith('vfx/')) return n.startsWith('proj_') ? 'proj' : 'fx';
@@ -352,11 +379,14 @@ function kindBlocks(items) {
 function tile(a) {
   const n = openCount(a.id);
   const idle = a.type === 'sprite' && (a.anims.find((x) => x.name === 'idle') || a.anims[0]);
+  const cls = 'thumb' + (a.smooth ? ' smooth' : '');
   const thumb = a.type === 'audio'
     ? el('div', { class: 'thumb audio', text: '♪' })
-    : idle
-      ? el('div', { class: 'thumb' }, miniAnim(idle, 0))
-      : el('div', { class: 'thumb' }, el('img', { src: fileUrl(a.preview), alt: '', loading: 'lazy' }));
+    : a.type === 'data'
+      ? el('div', { class: 'thumb audio', text: '{ }' })
+      : idle
+        ? el('div', { class: cls }, miniAnim(idle, 0))
+        : el('div', { class: cls }, el('img', { src: fileUrl(a.preview), alt: '', loading: 'lazy' }));
   return el('button', {
     type: 'button', class: 'tile', 'data-id': a.id,
     onclick: () => { location.hash = '#/assets/' + encodeURIComponent(a.id); },
@@ -385,7 +415,8 @@ function miniAnim(anim, box) {
   // Taille d'affichage : zoom entier qui tient dans la case (pixels nets) ;
   // sans case, c'est la feuille de style qui ajuste (vignettes de la grille).
   if (box) {
-    const z = Math.max(1, Math.floor(Math.min(box / anim.w, box / anim.h)));
+    const fit = Math.min(box / anim.w, box / anim.h);
+    const z = fit < 1 ? fit : Math.floor(fit);
     canvas.style.width = anim.w * z + 'px';
     canvas.style.height = anim.h * z + 'px';
   }
@@ -418,13 +449,14 @@ function showDetail(a) {
   $('grid').hidden = true;
   const d = $('detail');
   d.hidden = false;
-  const stage = el('div', { class: 'stage ' + state.stageBg });
+  const smooth = a.smooth ? ' smooth' : '';
+  const stage = el('div', { class: 'stage ' + state.stageBg + smooth });
   const bgButtons = [['light', 'Clair'], ['dark', 'Sombre'], ['checker', 'Damier']].map(([v, label]) =>
     el('button', {
       type: 'button', class: 'small' + (state.stageBg === v ? ' primary' : ''),
       onclick: () => {
         state.stageBg = v; store('producer-stage', v); applyStageBg();
-        stage.className = 'stage ' + v;
+        stage.className = 'stage ' + v + smooth;
         for (const b of bgButtons) b.classList.toggle('primary', b.dataset.bg === v);
       },
       'data-bg': v,
@@ -454,6 +486,15 @@ function showDetail(a) {
       controls.append(el('dl', { class: 'credits' },
         a.credits.flatMap((c) => [el('dt', { text: c.label }), el('dd', {}, c.parts.map(part))])));
     }
+  } else if (a.type === 'data') {
+    // JSON (chorégraphie, rig, zones) : texte brut, jamais interprété comme HTML.
+    const pre = el('pre', { class: 'data', text: 'Chargement…' });
+    stage.append(pre);
+    stage.classList.add('data-stage');
+    fetch(fileUrl(a.file), { credentials: 'same-origin', cache: 'no-store' })
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error('Erreur ' + r.status))))
+      .then((t) => { pre.textContent = t; })
+      .catch((e) => { pre.textContent = e.message; });
   } else if (a.type === 'sprite') {
     const animSel = el('select', { 'aria-label': 'Animation' },
       a.anims.map((x) => el('option', { value: x.name, text: `${x.name} (${x.frames})` })));
@@ -536,7 +577,7 @@ function showDetail(a) {
   zoomSel.addEventListener('change', () => { state.zoom = Number(zoomSel.value); applyZoom(); });
 
   const toolbar = el('div', { class: 'controls' }, bgButtons,
-    a.type !== 'audio' ? zoomSel : null);
+    a.type !== 'audio' && a.type !== 'data' ? zoomSel : null);
 
   const commentsBox = el('div', { class: 'asset-comments' });
   const renderAssetComments = () => {

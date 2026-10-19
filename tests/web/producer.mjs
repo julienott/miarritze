@@ -56,7 +56,7 @@ await shot('03_assets_grille');
 
 // ------------------------------------------------------ perso colorisé
 await page.click('.cats button:has-text("Combattants")');
-await page.click('.cats li.sub button:has(span:text-is("maia"))');
+await page.click('.cats li.sub.show button:has(span:text-is("maia"))');
 await page.click('.tile[data-id="fighters/maia/sheet.png"]');
 await page.waitForSelector('.stage canvas');
 await page.waitForTimeout(600);

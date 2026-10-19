@@ -6,7 +6,10 @@ Service privé : https://miarritze.ijulien.com/producer/
 
 - **Connexion** : mot de passe unique. Après 5 échecs, l'adresse IP est bloquée 15 minutes. La session dure 30 jours.
 - **Assets** : les catégories sont à gauche (sur iPhone, en haut). On peut aussi chercher par nom (`maia`, `idle`, `fronton`…).
-  - La page s'ouvre sur les combattants : une section par perso (cliquer son nom n'affiche que lui), et dans chaque section les tuiles rangées par famille — animations, portraits, image de fin, projectiles, effets des spéciaux, palettes, sources. Les persos sont colorisés avec le costume 0 ; la vignette des animations joue l'attente.
+  - Les catégories sont rangées en trois sections : **Gordeka** (Persos, Carte, Mannequin, Textures & modèles), **Borroka** (Combattants, VFX, Décors, Fonds & sprites, UI) et **Audio**.
+  - La page s'ouvre sur les persos de Gordeka : une section par perso (cliquer son nom n'affiche que lui), les persos animés d'abord. Dans chaque section, les familles : animations, masques (masque de tenue `<anim>_tenue.png`, même recadrage que l'animation), profil validé (`modele.png`), profils candidats (`tools/rd/out/<id>/gk2d/profil/image_0N_white.png`, réduits à 512 px, « variante N » = `image_0(N-1)`, avec le prompt). Les candidats ne viennent que d'un build local : `tools/rd/out/` n'est pas versionné, le build du déploiement GitHub ne les a pas.
+  - Carte : aperçu rendu depuis `map.txt` (une couleur par tuile, celles de `gk_map.gd`, zones de `zones.json` encadrées et nommées), sauf si un PNG existe dans le dossier de la carte. Mannequin : pièces du pantin, `rig.json` et chorégraphies (JSON affichés en texte). Textures & modèles : textures du décor et des `.glb`.
+  - Combattants de Borroka : une section par perso, et dans chaque section les tuiles rangées par famille — animations, portraits, image de fin, projectiles, effets des spéciaux, palettes, sources. Les persos sont colorisés avec le costume 0 ; la vignette des animations joue l'attente.
   - Sur « animations », toutes les animations du perso tournent en aperçu sous le lecteur ; un clic en ouvre une dans le lecteur, où l'on peut avancer image par image avec ◀ ▶.
   - Le fond se choisit entre clair, sombre et damier ; le zoom est en pixels nets.
   - Musiques, SFX et voix ont un lecteur audio.
@@ -47,7 +50,7 @@ Routine conseillée :
 
 Les ids d'asset sont les chemins relatifs à `assets/`, par exemple `fighters/maia/sheet.png`, qui regroupe les animations de Maia. La version d'un asset est un hash court de ses sources.
 
-Pour une sheet, ces sources sont `sheet.png`, `palettes.png` et `anims.json`. Un commentaire dont la version diffère de la version actuelle porte sur une version précédente.
+Pour une sheet, ces sources sont `sheet.png`, `palettes.png` et `anims.json`. Pour Gordeka, les animations d'un perso ont l'id `gordeka/persos/<id>/animations` (sources : les `<anim>.png` et `<anim>.json`), ses masques `gordeka/persos/<id>/masques` (les `<anim>_tenue.png`), la carte `maps/<carte>/map.txt` et un profil candidat son chemin dans le dépôt (`tools/rd/out/<id>/gk2d/profil/image_00_white.png`). Un commentaire dont la version diffère de la version actuelle porte sur une version précédente.
 
 ### API (HTTP)
 
@@ -106,6 +109,7 @@ php -S 127.0.0.1:8099 -t /tmp/producer-site &
 PRODUCER_URL=http://127.0.0.1:8099/producer/ PRODUCER_TEST_PASSWORD=test-local \
   PRODUCER_TOKEN=tok_local_0123456789abcdefghij node tests/web/producer.mjs   # base vide requise
 PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_anims.mjs   # page d'un perso + galerie animée
+PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_gordeka.mjs # ouverture sur Gordeka, Louis, masques, carte
 ```
 
 Le test (Chromium, 36 vérifications) couvre :
