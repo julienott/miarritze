@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://hrsjwejrghom"
-path="res://.godot/imported/dalles.png-fea772afd70865d5f899ebb88291740e.ctex"
+uid="uid://dqi8mwwbakcbl"
+path="res://.godot/imported/eau.png-36aeed367341833a4e1051aacac91a7c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/gordeka/textures/dalles.png"
-dest_files=["res://.godot/imported/dalles.png-fea772afd70865d5f899ebb88291740e.ctex"]
+source_file="res://assets/gordeka/textures/eau.png"
+dest_files=["res://.godot/imported/eau.png-36aeed367341833a4e1051aacac91a7c.ctex"]
 
 [params]
 

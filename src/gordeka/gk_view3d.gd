@@ -111,9 +111,6 @@ func tex_mat(name: String, meters: float, outline: bool = false) -> StandardMate
 		return _mats[key]
 	var m: StandardMaterial3D = StandardMaterial3D.new()
 	m.albedo_texture = load("res://assets/gordeka/textures/%s.png" % name)
-	# Sols plus doux que les personnages : on les garde lisibles au premier plan.
-	if name == "paves":
-		m.albedo_color = Color(1.0, 0.95, 0.86)
 	m.uv1_triplanar = true
 	m.uv1_world_triplanar = true
 	m.uv1_scale = Vector3.ONE / meters
@@ -127,7 +124,7 @@ func tex_mat(name: String, meters: float, outline: bool = false) -> StandardMate
 
 
 ## Texture du sol selon le motif de la zone (vide : couleur unie).
-const FLOOR_TEX: Dictionary = {"dalles": ["dalles", 3.0], "paves": ["paves", 4.5], "planches": ["planches", 2.5]}
+const FLOOR_TEX: Dictionary = {"dalles": ["dalles_quai", 5.0], "paves": ["paves", 5.0], "planches": ["planches", 2.5]}
 
 
 func box(parent: Node3D, size: Vector3, pos: Vector3, c: Color, outline: bool = true) -> MeshInstance3D:
@@ -280,10 +277,7 @@ func _build_ground() -> void:
 	var plane: PlaneMesh = PlaneMesh.new()
 	plane.size = Vector2(map.width + 40, map.height + 40)
 	water.mesh = plane
-	var wm: StandardMaterial3D = StandardMaterial3D.new()
-	wm.albedo_color = Color("2f8fcf")
-	wm.roughness = 0.25
-	wm.metallic_specular = 0.6
+	var wm: StandardMaterial3D = tex_mat("eau", 4.0)
 	water.material_override = wm
 	water.position = Vector3(map.width * 0.5, -SLAB_H, map.height * 0.5)
 	add_child(water)
@@ -356,7 +350,7 @@ func _stone_wall(c: Vector3, sz: Vector3) -> void:
 
 
 func _white_block(c: Vector3, sz: Vector3) -> void:
-	box(self, Vector3(sz.x - 0.05, 1.5, sz.z - 0.05), c + Vector3(0, 0.75, 0), SKIN_WALL)
+	box(self, Vector3(sz.x - 0.05, 1.5, sz.z - 0.05), c + Vector3(0, 0.75, 0), SKIN_WALL).material_override = tex_mat("crepi_blanc", 2.0, true)
 	box(self, Vector3(sz.x, 0.3, sz.z), c + Vector3(0, 0.15, 0), STONE)
 	box(self, Vector3(sz.x + 0.06, 0.12, sz.z + 0.06), c + Vector3(0, 1.52, 0), BASQUE_RED)
 
@@ -364,17 +358,19 @@ func _white_block(c: Vector3, sz: Vector3) -> void:
 ## Maison labourdine / crampotte : murs blanchis, colombages et volets rouges ou verts,
 ## toit de tuiles à deux pentes (faîte dans la longueur).
 func _house(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> void:
-	var trim: Color = BASQUE_RED if rng.randf() < 0.7 else BASQUE_GREEN
+	var red: bool = rng.randf() < 0.7
+	var trim: Color = BASQUE_RED if red else BASQUE_GREEN
+	var trim_tex: StandardMaterial3D = tex_mat("bois_rouge" if red else "bois_vert", 1.0)
 	var w: float = sz.x - 0.1
 	var d: float = sz.z - 0.1
 	var h: float = 1.9
-	box(self, Vector3(w, h, d), c + Vector3(0, h * 0.5, 0), SKIN_WALL)
+	box(self, Vector3(w, h, d), c + Vector3(0, h * 0.5, 0), SKIN_WALL).material_override = tex_mat("crepi_blanc", 2.0, true)
 	box(self, Vector3(w + 0.04, 0.3, d + 0.04), c + Vector3(0, 0.15, 0), STONE).material_override = tex_mat("gres", 1.5, true)
 	# Colombages : poteaux d'angle et sablière, sur les quatre faces.
 	for sx: float in [-0.5, 0.5]:
 		for sz2: float in [-0.5, 0.5]:
-			box(self, Vector3(0.14, h, 0.14), c + Vector3(sx * w, h * 0.5, sz2 * d), trim, false)
-	box(self, Vector3(w + 0.06, 0.13, d + 0.06), c + Vector3(0, h - 0.5, 0), trim, false)
+			box(self, Vector3(0.14, h, 0.14), c + Vector3(sx * w, h * 0.5, sz2 * d), trim, false).material_override = trim_tex
+	box(self, Vector3(w + 0.06, 0.13, d + 0.06), c + Vector3(0, h - 0.5, 0), trim, false).material_override = trim_tex
 	# Fenêtres à volets sur la face avant (vers la caméra, +z).
 	var n: int = maxi(1, int(w / 1.6))
 	for i: int in n:
@@ -382,7 +378,7 @@ func _house(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> void:
 		var fz: float = c.z + d * 0.5 + 0.03
 		box(self, Vector3(0.42, 0.5, 0.05), Vector3(c.x + x, 0.95, fz), Color("2c3e66"), false)
 		for s: float in [-1.0, 1.0]:
-			box(self, Vector3(0.2, 0.52, 0.06), Vector3(c.x + x + s * 0.33, 0.95, fz + 0.01), trim, false)
+			box(self, Vector3(0.2, 0.52, 0.06), Vector3(c.x + x + s * 0.33, 0.95, fz + 0.01), trim, false).material_override = trim_tex
 	# Toit à deux pentes, légèrement asymétrique, avec débord.
 	var along_x: bool = w >= d
 	var span: float = (d if along_x else w) + 0.5
@@ -390,7 +386,7 @@ func _house(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> void:
 	var rise: float = 0.9
 	var roof: MeshInstance3D = MeshInstance3D.new()
 	roof.mesh = _roof_mesh(length, span, rise, 0.42)
-	roof.material_override = mat(ROOF, false, true)
+	roof.material_override = tex_mat("tuiles", 1.6, true)
 	roof.position = c + Vector3(0, h, 0)
 	if not along_x:
 		roof.rotation.y = PI * 0.5
@@ -440,7 +436,7 @@ func _crates(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> void:
 		for z: int in int(sz.z):
 			var p: Vector3 = Vector3(c.x - sz.x * 0.5 + 0.5 + x, 0, c.z - sz.z * 0.5 + 0.5 + z)
 			var h: float = 0.7 if rng.randf() < 0.6 else 1.25
-			box(self, Vector3(0.9, h, 0.9), p + Vector3(0, h * 0.5, 0), Color("d29a55"))
+			box(self, Vector3(0.9, h, 0.9), p + Vector3(0, h * 0.5, 0), Color("d29a55")).material_override = tex_mat("bois_caisse", 1.2, true)
 			box(self, Vector3(0.94, 0.08, 0.94), p + Vector3(0, h - 0.04, 0), Color("a8743a"), false)
 
 
