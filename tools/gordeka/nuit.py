@@ -91,7 +91,8 @@ class Perso:
         self.taches_p = os.path.join(HERE, f"taches_{pid}.json")
         self.etape = "fantome"
         self.fantome_tid = FANTOME_TACHE.get(pid)
-        self.faits = set()
+        self.faits_p = os.path.join(self.dir, "_faits_nuit.json")
+        self.faits = set(json.load(open(self.faits_p))) if os.path.exists(self.faits_p) else set()
         self.relances = {}
 
     def modele(self):
@@ -165,6 +166,7 @@ class Perso:
                 continue
             self.importer(anim, tid)
             self.faits.add(anim)
+            json.dump(sorted(self.faits), open(self.faits_p, "w"))
         return reste == 0
 
     def importer(self, anim, tid):
@@ -260,9 +262,8 @@ def main():
         try:
             if courant is None and file_persos:
                 courant = Perso(file_persos.pop(0))
-                if courant.pid == "louis" and os.path.exists(courant.taches_p):
-                    courant.etape = "anims"
-                    courant.faits = {"idle", "walk"}      # déjà intégrées avant la nuit
+                if os.path.exists(courant.taches_p):
+                    courant.etape = "anims"               # reprise : animations déjà déposées
                 log("perso :", courant.pid)
             if courant is not None and courant.tour():
                 log("perso fini :", courant.pid)
