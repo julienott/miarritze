@@ -126,7 +126,18 @@
     2
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "sols/sol_paves_place.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "478aae6423df4f39a347a11fb7dd1179",
+     "date": "2026-10-20"
+    }
+   ]
   },
   "sol_planches_terrasse": {
    "nom": "Planches de la terrasse",
