@@ -17,6 +17,7 @@ Usage : build_rd_anims.py <id>
 from __future__ import annotations
 
 import json
+import re
 import os
 import sys
 
@@ -311,6 +312,38 @@ def vote_scale(f, k):
     return cb.fix(cell)
 
 
+# Boule (salto, projeté, touché en l'air) : pixelforge colle la boule du modèle à
+# la taille du perso debout ; roulé en boule, il ne fait qu'environ 65 % de sa
+# hauteur (Julien, 2026-10-19 : « en boule, ils deviennent bien plus gros »).
+TUCK_RATIO = 0.65
+
+
+def tucked_counts(fid):
+    """{chemin de l'animation : nombre d'images en boule (les dernières)} d'après gen_log.jsonl."""
+    out = {}
+    log = os.path.join(ROOT, "tools", "rd", "out", fid, "gen_log.jsonl")
+    if not os.path.exists(log):
+        return out
+    for line in open(log):
+        r = json.loads(line)
+        if r.get("boules"):
+            out[(r["anim"], int(r["graine"]))] = int(r["boules"])
+    return out
+
+
+def shrink_tucks(frames, n, target):
+    """Réduit les n dernières images (boules) d'un même facteur pour que la plus
+    grande tienne dans `target` px."""
+    if n <= 0:
+        return frames
+    tail = frames[-n:]
+    big = max(max(bbox(f)[2] - bbox(f)[0], bbox(f)[3] - bbox(f)[1]) + 1 for f in tail)
+    k = target / big
+    if k >= 0.97:
+        return frames
+    return frames[:-n] + [vote_scale(f, k) for f in tail]
+
+
 def place(f, dx, air):
     x0, y0, x1, y1 = bbox(f)
     cell = np.zeros((CELL, CELL, 4), np.uint8)
@@ -366,11 +399,16 @@ def main():
     rd_rig._write_palettes(fid, spec, slots)
     cells, report, cleaned = {}, {}, {}
     reuses = fiche.reuses(fid)
+    tucks = tucked_counts(fid)
+    tuck_px = round(TARGET_H * BOSS_SCALE.get(fid, 1.0) * TUCK_RATIO)
     for name in [n for n in meta]:
         src, sel = reuses.get(name, (name, None))
         if src not in cleaned:
             skin = (lambda f: f) if fid in NO_SKIN else fix_red_skin
             cleaned[src] = [cb.fix(fix_light_specks(vote_scale(cb.fix(fix_light_specks(skin(f))), scale))) for f in frames_of(reg[src])]
+            m = re.search(r"_m(\d+)\.png$", reg[src])
+            n_tuck = tucks.get((src, int(m.group(1))), 0) if m else 0
+            cleaned[src] = shrink_tucks(cleaned[src], n_tuck, tuck_px)
         frames = cleaned[src]
         n = meta[name]["frames"]
         if sel == "hold":

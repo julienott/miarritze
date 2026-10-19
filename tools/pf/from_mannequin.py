@@ -50,7 +50,9 @@ ROOTPOS = (float(CELL), CELL * 150.0 / 128.0)
 QA = dict(pieces.QA, max_drift=0.45)
 # Animations où l'accessoire est caché (le bras redessiné ne suit pas la main du
 # mannequin et l'objet barre le visage) : relecture de la planche.
-NO_ACC_ANIMS = {"amaia": {"jump_kick"}}
+NO_ACC_ANIMS = {"amaia": {"jump_kick"},
+                # Ramuntxo : poing devant le visage → la louche recouvrait la tête
+                "ramuntxo": {"fall", "hit_low"}}
 # Accessoire montré SEULEMENT dans ces animations (Julien, 2026-10-18 : Mattin se bat aux
 # poings et ne sort sa pierre que pour ses grands coups ; en garde elle cachait son visage).
 ACC_ONLY = {"mattin": {"intro", "win", "sp_neutral", "sp_forward", "sp_down", "sp_up", "super", "finisher"},

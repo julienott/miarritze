@@ -1,5 +1,11 @@
 # À faire après la pause (2026-10-18)
 
+> **2026-10-19 ~10h30 : refonte arrêtée à la demande de Julien (pivot du jeu).** File pixelforge
+> vidée (25 tâches annulées). Reste exact : Txomin fini ; Patxi sans image de fin ; Xabi 7 reprises
+> à relire puis portrait/fin/build ; Kaio 15 anims à refaire (graine 2000, de `thrown` à `finisher`) ;
+> Ramuntxo fall, hit_low, knockdown, ko, uppercut (graine 1500) ; Itsaso sweep, getup, ko, sp_down,
+> uppercut, knockdown (graine 1500). Boules réduites à 65 % (`build_rd_anims.py`, TUCK_RATIO).
+
 Pause demandée par Julien après Amaia : file pixelforge vidée (tâches en attente annulées,
 déjà générées gardées). Reprise = cette liste, dans l'ordre.
 

@@ -67,6 +67,8 @@ def reuses(fid: str) -> dict:
     """{anim du jeu: (anim RD source, sélection)} ; sélection : None, "hold", "reverse",
     "end_hold" ou slice."""
     out = {}
+    if not exists(fid):          # perso refait sans fiche (Txomin) : aucune reprise
+        return out
     for name, r in (load(fid).get("reprises") or {}).items():
         sel = r.get("images", "tout")
         if sel in SELECTIONS:
