@@ -18,6 +18,17 @@ ZONE = (318, 336, 380, 424)          # zone nettoyée autour de l'ancien nœud (
 NOEUD = (337, 349)                   # coin du foulard, où l'on pose le nouveau nœud
 CONTOUR, BLANC, OMBRE = (0, 12, 64, 255), (255, 255, 255, 255), (196, 210, 230, 255)
 SUR = 8
+TRAIT = 9.0                          # épaisseur du contour du perso à cet endroit (px)
+
+
+def _dist_poly(x, y, pts):
+    """Distance d'un point à une ligne brisée."""
+    best = 1e9
+    for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+        dx, dy = bx - ax, by - ay
+        t = max(0.0, min(1.0, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)))
+        best = min(best, ((x - ax - t * dx) ** 2 + (y - ay - t * dy) ** 2) ** 0.5)
+    return best
 
 
 def hors_tissu(x, y):
@@ -39,11 +50,6 @@ def main():
             if hors_tissu(x, y):
                 px[x, y] = (0, 0, 0, 0)       # l'ancien pendant et sa boucle disparaissent
     if SANS_NOEUD:
-        # Raccord du coin : un court trait entre la fin du bord droit et celle du bord bas.
-        k = Image.new("RGBA", ((x1 - x0) * SUR, (y1 - y0) * SUR), (0, 0, 0, 0))
-        ImageDraw.Draw(k).line([((329 - x0) * SUR, (354 - y0) * SUR), ((343 - x0) * SUR, (339 - y0) * SUR)],
-                               fill=CONTOUR, width=int(4.6 * SUR))
-        im.alpha_composite(k.resize((x1 - x0, y1 - y0), Image.LANCZOS), (x0, y0))
         im.save(DST)
         return
     # Nœud rond et deux pointes, dessinés en ×SUR puis réduits (trait du perso, ~4,5 px).
