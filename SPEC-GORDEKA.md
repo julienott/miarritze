@@ -260,6 +260,14 @@ Vierge, Fronton.
   jamais inquiétant.
 - **HD lisse façon Among Us** (*décidé le 2026-10-19*) : fin du pixel art et de la résolution
   384×216. Résolution logique 1280×720, filtre lissé. Le pipeline d'images est à refaire (§16).
+- **Architecture du Pays basque** (Julien, 2026-10-19) : tous les bâtiments et éléments
+  d'architecture doivent ressembler à ce qu'on trouve au Pays basque (Biarritz, Labourd) :
+  - maisons labourdines et crampottes du port, aux murs blanchis à la chaux ;
+  - colombages et volets rouge basque (parfois vert), toits de tuiles rouges à deux pentes
+    asymétriques ;
+  - quais et murs en pierre ou en grès, garde-corps du front de mer ;
+  - barques basques peintes ;
+  - par petites touches : lauburu, ikurriña, linge basque, fronton.
 - Animations courtes et simples (vue de dessus) : immobile, marche (4 directions, gauche et droite
   en miroir), pouvoir, trouvé (surprise), fantôme, victoire.
 - Le cône de vision et l'assombrissement sont faits par shader, avec les occulteurs 2D de Godot
