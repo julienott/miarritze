@@ -237,6 +237,11 @@ func _start_round() -> void:
 		"evasions_de_vue": 0, "t_trouves": []}
 	_revealed_at.clear()
 	_trap_hit_at = -100.0
+	for a2: GkActor in actors:
+		a2.speed_mult = 1.0
+	if hunter.is_bot:
+		var hl: String = _hunter_level if _hunter_level != "" else str(config.get("level", "normal"))
+		hunter.speed_mult = float(GkRules.ai(hl).get("hunter_speed", 1.0))
 	if _hunter_level != "":
 		for id: int in brains:
 			var b: GkAi = brains[id]
@@ -674,13 +679,25 @@ func _detect(h: GkActor) -> void:
 			found.append(a.position)
 			_revealed_at[a.id] = hunt_elapsed
 	reveals.append({"pos": h.position, "left": 0.6, "id": -1})     # l'onde elle-même
+	# Personne dans le rayon : une flèche vers le chassé libre le plus proche (l'onde donne
+	# toujours un indice, sans révéler où il est exactement).
+	var hint: Vector2 = Vector2.ZERO
+	if found.is_empty():
+		var best: GkActor = null
+		for a: GkActor in actors:
+			if a.role == GkActor.Role.HIDER and (best == null
+					or a.position.distance_to(h.position) < best.position.distance_to(h.position)):
+				best = a
+		if best != null:
+			hint = (best.position - h.position).normalized()
+			reveals.append({"pos": h.position, "dir": hint, "left": GkRules.f("detect_hint_duration"), "id": -2})
 	if _stats:
 		_st["ondes"] += 1
 		_st["montres"] += found.size()
 		if not found.is_empty():
 			_st["ondes_utiles"] += 1
 	if h.is_bot:
-		(brains[h.id] as GkAi).on_detect(found)
+		(brains[h.id] as GkAi).on_detect(found, hint)
 	if h != local:
 		_say("Le chasseur lance une onde !", Color("9fd8ef"), 1.4)
 
@@ -819,7 +836,10 @@ func _draw_overlay(ci: CanvasItem) -> void:
 	# Onde de détection et silhouettes révélées.
 	for r2: Dictionary in reveals:
 		var left: float = float(r2["left"])
-		if int(r2["id"]) < 0:
+		if int(r2["id"]) == -2:
+			if as_hunter or not local.is_hider():
+				_draw_hint_arrow(ci, hunter.position, r2["dir"], left)
+		elif int(r2["id"]) < 0:
 			var k2: float = 1.0 - left / 0.6
 			ci.draw_arc(r2["pos"], GkRules.px("detect_radius") * k2, 0, TAU, 64, Color(0.6, 0.85, 1.0, 1.0 - k2), 6.0)
 		elif as_hunter or not local.is_hider():
@@ -830,3 +850,14 @@ func _draw_overlay(ci: CanvasItem) -> void:
 		if a.extract_t > 0.0 and a.role == GkActor.Role.HIDER and (not as_hunter or bool(_seen.get(a.id, false))):
 			ci.draw_arc(a.position, a.radius + 14, -PI * 0.5, -PI * 0.5 + TAU * a.extract_t / GkRules.f("extract_hold"),
 				32, Color("6fe08a"), 6.0)
+
+
+## Flèche d'indice de l'onde : part du chasseur dans la direction du chassé le plus proche.
+func _draw_hint_arrow(ci: CanvasItem, from: Vector2, dir: Vector2, left: float) -> void:
+	var a: float = clampf(left, 0.0, 1.0)
+	var c: Color = Color(0.6, 0.85, 1.0, a)
+	var p0: Vector2 = from + dir * map.tile * 1.4
+	var p1: Vector2 = from + dir * map.tile * 3.2
+	ci.draw_line(p0, p1, c, 8.0, true)
+	var side: Vector2 = dir.orthogonal() * map.tile * 0.45
+	ci.draw_colored_polygon(PackedVector2Array([p1 + dir * map.tile * 0.7, p1 + side, p1 - side]), c)

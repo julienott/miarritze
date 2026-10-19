@@ -38,14 +38,15 @@ round → scores du round → round suivant … → quitter → scores de la par
 |---|---|---|
 | Tirage | 3 s | Une roulette désigne le chasseur. Il voit « Tu es le CHASSEUR », les autres « Cache-toi ! ». |
 | Cachette | 15 s | Le chasseur compte, écran voilé et immobile (« Bat, bi, hiru… » en basque). Les chassés courent se cacher. |
-| Chasse | 180 s | Le chasseur cherche. Pouvoirs actifs. Sorties ouvertes à 60 s. |
+| Chasse | 180 s | Le chasseur cherche. Pouvoirs actifs. Sorties ouvertes à 90 s. |
 | Fin | 6 s | Le round finit quand plus aucun chassé n'est libre, ou au chrono. **Victoires individuelles** : chaque chassé extrait ou encore libre au chrono gagne ; le chasseur gagne s'il en a trouvé plus de la moitié. Révélation des cachettes, puis scores. |
 
 - **Points d'extraction** (demande de Julien) : chaque carte a un ou plusieurs points de sortie
   difficiles à atteindre (bout de jetée, échelle du phare, barque, porte de la chambre froide).
-  - Un chassé qui l'atteint et y reste **3 s** sans être vu est **extrait** : il a gagné son round,
+  - Un chassé qui l'atteint et y reste **4 s** sans être vu est **extrait** : il a gagné son round,
     marque des points et devient spectateur.
-  - Les points s'**ouvrent** après 60 s de chasse, pour que tout le monde ne file pas dès le départ.
+  - Les points s'**ouvrent** après 90 s de chasse (*équilibrage du 2026-10-19 : à 60 s, un chassé sur trois
+    s'échappait*), pour que tout le monde ne file pas dès le départ.
     Chaque carte en a **2, fixes et connues**, qui s'ouvrent ensemble (*décidé le 2026-10-19*).
   - Ils sont placés dans des zones exposées : longues lignes droites, peu d'objets. Le chasseur peut
     les garder, mais il laisse alors le reste de la carte libre.
@@ -92,7 +93,8 @@ s'amuser, sans classement en ligne en v1.
   une zone, et un personnage fait environ 1/9 de la hauteur d'écran.
 
 ### 3.2 Être trouvé
-- Un chassé est trouvé quand son corps reste **0,3 s** dans la zone de vision du chasseur (cône ou
+- Un chassé est trouvé quand son corps reste **0,5 s** dans la zone de vision (*0,3 s jusqu'au 2026-10-19 : être vu
+  voulait presque toujours dire être trouvé*) du chasseur (cône ou
   cercle), sans objet entre les deux. Une petite jauge se remplit au-dessus de lui et se vide dès qu'il
   sort de la vue. C'est plus juste en ligne (~100 ms de retard) et ça permet des fuites de justesse.
   *Décidé le 2026-10-19.*
@@ -132,6 +134,10 @@ L'icône du bouton montre le pouvoir du moment et se remplit pendant le cooldown
   - Donne une **indication**, jamais une capture directe : une silhouette, une flèche, des traces ou
     une onde, pendant 2 à 4 s.
   - Les chassés voient qu'une détection a été lancée (son et icône), pour garder le jeu juste.
+  - Détection de base (en attendant les pouvoirs par perso) : onde de **14 cases** qui montre les
+    chassés 2 s ; si personne n'est dans le rayon, **flèche vers le chassé le plus proche** pendant 3 s
+    (*équilibrage du 2026-10-19 : à 8 cases, 95 % des ondes ne montraient rien*). Bilans :
+    `docs/GORDEKA_EQUILIBRAGE.md`.
 
 ### 4.2 Par personnage (premières idées, à équilibrer en test)
 | Perso | Piège (chassé) | Détection (chasseur) |
@@ -386,14 +392,14 @@ et les détails du réseau se règleront en jouant.
   légère (chapeaux, couleurs, emotes).
 - **Round** :
   - 15 s pour se cacher, puis 180 s de chasse ;
-  - 2 sorties fixes ouvertes à 60 s ;
+  - 2 sorties fixes ouvertes à 90 s (4 s pour sortir) ;
   - victoires individuelles ;
   - rounds sans limite, podium en quittant ;
   - règles de départ (§2.2).
 - **Joueurs** : 2 à 8, un seul chasseur ; on peut compléter par des IA ; on ne joue qu'entre membres
   du groupe ; solo par défaut à 6 joueurs en Normal.
 - **Règles** :
-  - capture après 0,3 s dans le cône ; un chassé trouvé devient fantôme spectateur ;
+  - capture après 0,5 s dans le cône ; un chassé trouvé devient fantôme spectateur ;
   - le cône suit la marche ; les personnages se traversent ;
   - chasseur à 115 % ; détection toutes les 15 s ;
   - cachettes dans les objets dès la v1 (20 s au plus, fouille de 1 s) ; pas de piège depuis une

@@ -9,6 +9,9 @@ extends Node2D
 
 const MANNEQUIN: String = "res://assets/gordeka/mannequin/%s/"
 const CHOREO: String = "res://assets/gordeka/choreo/%s.json"
+## Expressions de tête (head_<nom>.png ; « neutral » = head.png), cf. docs/GORDEKA_STYLE_2D.md.
+const EXPRESSIONS: Array[String] = ["neutral", "blink", "malicious", "scared", "surprised", "happy", "sad",
+	"focused"]
 
 static var _rigs: Dictionary = {}
 static var _choreos: Dictionary = {}
@@ -24,6 +27,9 @@ var _ghost_body: Texture2D
 var _body_tex: Texture2D
 var choreo: Dictionary
 var frame: int = 0
+## Expression imposée par le jeu (ex. « surprised » dès que le chasseur le voit) ; "" = celle de
+## la chorégraphie.
+var head_override: String = ""
 
 
 static func load_rig(gabarit: String) -> Dictionary:
@@ -55,7 +61,7 @@ func setup(gabarit: String) -> void:
 		segs.append({"name": str(s["name"]), "parent": str(s["parent"]), "pivot": _v(s["pivot"]), "sprites": [sp]})
 	_eval = segs.duplicate()
 	_eval.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _depth(a) < _depth(b))
-	for e: String in ["neutral", "surprised", "happy", "blink"]:
+	for e: String in EXPRESSIONS:
 		var p: String = dir + ("head.png" if e == "neutral" else "head_%s.png" % e)
 		if ResourceLoader.exists(p):
 			_heads[e] = load(p)
@@ -83,7 +89,7 @@ func frame_time(i: int) -> float:
 func pose(f: int) -> void:
 	frame = f
 	var lag: Dictionary = choreo.get("lag", {})
-	var head_expr: String = _step(choreo.get("head", []), f, "neutral")
+	var head_expr: String = head_override if head_override != "" else _step(choreo.get("head", []), f, "neutral")
 	var ghost: bool = _step(choreo.get("body", []), f, "legs") == "ghost"
 	var root_m: Transform2D = _local("root", feet, f)
 	var root_a: float = _alpha("root", f)

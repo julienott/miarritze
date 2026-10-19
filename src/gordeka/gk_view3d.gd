@@ -889,6 +889,8 @@ func _draw_fx(as_hunter: bool) -> void:
 	# Onde de détection et silhouettes révélées.
 	for r: Dictionary in game.reveals:
 		var left: float = float(r["left"])
+		if int(r["id"]) == -2:
+			continue                            # flèche d'indice : 2D seulement
 		if int(r["id"]) < 0:
 			var k: float = 1.0 - left / 0.6
 			_ring(_fx, r["pos"], GkRules.f("detect_radius") * k, 0.12, Color(0.6, 0.85, 1.0, 1.0 - k))

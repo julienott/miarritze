@@ -25,6 +25,11 @@ var clock: float = 0.0
 var _stuck_t: float = 0.0
 var _last_pos: Vector2 = Vector2.ZERO
 var _react_t: float = 0.0
+var lost_pos: Vector2 = Vector2.INF     # chasseur : où il a perdu de vue le dernier chassé poursuivi
+var lost_t: float = -100.0
+var searched: Dictionary = {}           # chasseur : cachette → instant de la dernière fouille
+var ambush: bool = false                # chassé : poser un piège sur son chemin vers sa cachette
+var react_until: float = 0.0            # chasseur : temps de réaction avant de foncer sur un chassé vu
 
 
 func _init(p_game: GkGame, p_me: GkActor, p_level: String) -> void:
@@ -51,6 +56,10 @@ func reset() -> void:
 	clue_t = 0.0
 	chase_id = -1
 	think_t = rng.randf_range(0.0, 0.6)
+	lost_pos = Vector2.INF
+	lost_t = -100.0
+	searched.clear()
+	ambush = false
 
 
 func update(dt: float) -> Dictionary:
@@ -157,6 +166,12 @@ func _think_hider() -> void:
 			return
 	if g.phase == GkGame.Phase.HIDE and path.is_empty():
 		_pick_hiding()
+		ambush = rng.randf() < float(cfg.get("trap_ambush", 0.0))
+		return
+	# Embuscade : piège posé à trois pas de sa planque, sur le chemin qu'on vient de prendre.
+	if ambush and me.power_cd <= 0.0 and path.size() - path_i == 3 and g.near_cachette(me, true) < 0:
+		ambush = false
+		want_action = true
 		return
 	if hunting:
 		relocate_t -= float(cfg.get("think", 0.5))
@@ -181,12 +196,14 @@ func _threatened() -> bool:
 func _flee() -> void:
 	var h: GkActor = g.hunter
 	# Piège sur son chemin si le chasseur est tout près, ou cachette libre à portée.
-	if h.position.distance_to(me.position) < 5.0 * _tiles():
-		if g.near_cachette(me, true) >= 0 and rng.randf() < 0.5:
-			want_action = true
-			return
-		if me.power_cd <= 0.0:
-			want_action = true
+	if h.position.distance_to(me.position) < 5.0 * _tiles() and g.near_cachette(me, true) >= 0 \
+			and rng.randf() < 0.5:
+		want_action = true
+		return
+	# Piège derrière soi quand le chasseur se rapproche.
+	if me.power_cd <= 0.0 and h.position.distance_to(me.position) < float(cfg.get("danger", 8.0)) * 0.75 * _tiles() \
+			and g.near_cachette(me, true) < 0 and rng.randf() < float(cfg.get("trap_chase", 0.6)):
+		want_action = true
 	var best: Vector2i = Vector2i(-1, -1)
 	var bs: float = -INF
 	var here: Vector2i = g.map.to_tile(me.position)
@@ -279,10 +296,18 @@ func _think_hunter() -> void:
 		if a.role == GkActor.Role.HIDER and bool(g._seen.get(a.id, false)):
 			if target == null or a.position.distance_to(me.position) < target.position.distance_to(me.position):
 				target = a
+	if target == null and chase_id >= 0 and clue != Vector2.INF:
+		lost_pos = clue                      # perdu de vue : on retient où
+		lost_t = clock
+		chase_id = -1
 	if target:
+		if target.id != chase_id:
+			react_until = clock + float(cfg.get("hunter_react", 0.3))
 		chase_id = target.id
 		clue = target.position
-		clue_t = 4.0
+		clue_t = 4.0 * float(cfg.get("clue_memory", 1.0))
+		if clock < react_until:
+			return                           # surpris : il met un instant à réagir
 		if g.clear_line(me.position, target.position):
 			path = PackedVector2Array([me.position, target.position])
 			path_i = 1
@@ -293,7 +318,16 @@ func _think_hunter() -> void:
 	var c: int = g.near_cachette(me, false)
 	if c >= 0:
 		var shook: bool = float(g.cachettes[c]["shake"]) > 0.0
-		if shook or rng.randf() < float(cfg.get("search_chance", 0.5)) * 0.35:
+		var chance: float = float(cfg.get("search_chance", 0.5)) * 0.35
+		var fresh: bool = clock - float(searched.get(c, -100.0)) > 15.0
+		if bool(cfg.get("smart_search", false)):
+			# Fouille réfléchie : là où un chassé a disparu, sinon rarement, jamais deux fois de suite.
+			var cpos: Vector2 = g.cachettes[c]["pos"]
+			var suspect: bool = lost_pos != Vector2.INF and clock - lost_t < 12.0 \
+				and cpos.distance_to(lost_pos) < 5.0 * _tiles()
+			chance = 0.9 if suspect else chance * 0.25
+		if shook or (fresh and rng.randf() < chance):
+			searched[c] = clock
 			want_action = true
 			return
 	# 3. Un indice (onde, piège déclenché, dernière position vue) : on y va puis on regarde autour.
@@ -304,11 +338,25 @@ func _think_hunter() -> void:
 		elif _arrived() or path.is_empty() or path[path.size() - 1].distance_to(clue) > _tiles():
 			_go(clue)
 		return
-	# 4. Onde dès qu'elle est prête.
-	if me.power_cd <= 0.0 and rng.randf() < 0.6:
-		want_action = true
-		return
-	# 5. Patrouille : la zone la moins visitée récemment, puis un tour d'horizon.
+	# 4. Onde : dès qu'elle est prête, ou (malin) seulement là où l'on peut se cacher.
+	if me.power_cd <= 0.0:
+		var go: bool = rng.randf() < 0.6
+		if bool(cfg.get("smart_wave", false)):
+			go = g.hunt_elapsed > 8.0 and (_cover_around(7) >= 25 or rng.randf() < 0.1)
+		if go:
+			want_action = true
+			return
+	# 5. Garder une sortie ouverte (plus souvent si l'IA est maligne).
+	if g.exits_open() and _arrived() and scan_t <= 0.0 and not g.map.exits.is_empty() \
+			and rng.randf() < float(cfg.get("guard_exits", 0.0)) * 0.5:
+		var e: Vector2i = g.map.exits[rng.randi() % g.map.exits.size()]
+		for i: int in 20:
+			var t: Vector2i = e + Vector2i(rng.randi_range(-4, 4), rng.randi_range(-4, 4))
+			if g.map.walkable(t):
+				_go(g.map.center(t))
+				scan_t = 2.0 * float(cfg.get("hunter_scan", 0.7))
+				return
+	# 6. Patrouille : la zone la moins visitée récemment, puis un tour d'horizon.
 	if _arrived() and scan_t <= 0.0:
 		var z: int = g.map.zone_of(g.map.to_tile(me.position))
 		if z >= 0:
@@ -339,18 +387,38 @@ func on_found(a: GkActor) -> void:
 func on_trap(pos: Vector2) -> void:
 	if me.role == GkActor.Role.HUNTER:
 		clue = pos
-		clue_t = 6.0
+		clue_t = 6.0 * float(cfg.get("clue_memory", 1.0))
 
 
-func on_detect(found: Array[Vector2]) -> void:
+## Cases abritées (couverture ≥ 3) dans un rayon de r cases autour de soi.
+func _cover_around(r: int) -> int:
+	var here: Vector2i = g.map.to_tile(me.position)
+	var n: int = 0
+	for dy: int in range(-r, r + 1):
+		for dx: int in range(-r, r + 1):
+			if int(g.map.cover.get(here + Vector2i(dx, dy), 0)) >= 3:
+				n += 1
+	return n
+
+
+func on_detect(found: Array[Vector2], hint: Vector2 = Vector2.ZERO) -> void:
 	if found.is_empty():
+		# Flèche d'indice : on part dans cette direction, à la première case praticable.
+		if hint != Vector2.ZERO:
+			for k: int in [10, 8, 6, 4]:
+				var t: Vector2i = g.map.to_tile(me.position + hint * float(k) * _tiles())
+				if g.map.walkable(t):
+					clue = g.map.center(t)
+					clue_t = 6.0 * float(cfg.get("clue_memory", 1.0))
+					_go(clue)
+					return
 		return
 	var best: Vector2 = found[0]
 	for p: Vector2 in found:
 		if p.distance_to(me.position) < best.distance_to(me.position):
 			best = p
 	clue = best
-	clue_t = 8.0
+	clue_t = 8.0 * float(cfg.get("clue_memory", 1.0))
 	_go(best)
 
 

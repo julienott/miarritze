@@ -89,6 +89,15 @@ En plus, par perso : un **portrait** (menus, HUD, podium), une **tête « surpri
 « contente »** (calques de tête échangés pendant les animations), une **icône de piège** et une
 **icône de détection**. La lampe torche du chasseur est un **calque d'objet** tenu en main, commun à tous.
 
+### Expressions (Julien, 2026-10-19)
+La tête change selon ce que fait le perso, avec le même cadrage et le même pivot de cou pour toutes :
+- neutral : immobile ; blink : clignement ;
+- **malicious**, sourire malicieux « je vais me cacher » : marche, fantôme qui bouge, pose d'un piège ;
+- scared : fuite affolée, pris au piège ;
+- **surprised** : imposée par le jeu dès que le chasseur le voit (la jauge monte), et pour « trouvé » ;
+- happy : victoire, sortie, sortie de cachette ; sad : déçu ;
+- focused : chasseur qui fouille ou lance sa détection.
+
 ## 4. Pipeline avec pixelforge
 
 > **Révisé le 2026-10-19 (Julien : « ça me va »)** : après trois allers-retours sur Louis (pieds,

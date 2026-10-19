@@ -39,6 +39,8 @@ var radius: float = 20.0
 var perso: GkPerso
 ## Chassé qui fuit le chasseur tout proche (allure affolée).
 var scared: bool = false
+## Multiplicateur de vitesse du chasseur IA selon son niveau (difficulté) ; 1 pour un humain.
+var speed_mult: float = 1.0
 ## Pose de fin de round : "victory", "sad" ou "" pendant le jeu.
 var end_pose: String = ""
 
@@ -84,6 +86,8 @@ func speed() -> float:
 	var s: float = GkRules.px(key)
 	if slow_left > 0.0:
 		s *= GkRules.f("trap_slow")
+	if role == Role.HUNTER:
+		s *= speed_mult
 	return s
 
 

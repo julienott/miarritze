@@ -36,3 +36,31 @@ Constats :
 | les deux | 79 % | 18 % | 24 % |
 
 Sur 20 rounds, l'écart d'un tirage à l'autre est d'environ ±10 points.
+
+## 2026-10-19 (soir) : réglages appliqués (accord de Julien), 100 rounds
+
+Changements :
+- onde de 14 cases, et flèche vers le chassé le plus proche quand le rayon est vide ;
+- sorties ouvertes à 90 s, 4 s pour sortir ; capture en 0,5 s ;
+- IA retravaillée :
+  - pièges en embuscade sur le chemin de la planque, et pendant une fuite ;
+  - fouilles là où un chassé a disparu, jamais la même cachette deux fois de suite ;
+  - onde lancée là où l'on peut se cacher (malin) ;
+  - garde des sorties ;
+  - temps de réaction et mémoire des indices selon le niveau ;
+  - vitesse du chasseur IA : 0,9 / 1 / 1,07 ;
+  - chassés malins plus patients.
+
+| chassés / chasseur | trouvés | sortis | restés cachés | ondes utiles | pièges posés / pris par round |
+|---|---|---|---|---|---|
+| normal / chasseur facile | 66 % | 24 % | 10 % | 24 % | 1,4 / 0,7 |
+| normal / chasseur normal | 70 % | 23 % | 7 % | 25 % | 1,7 / 1,0 |
+| normal / chasseur malin | 76 % | 21 % | 3 % | 25 % | 1,7 / 1,1 |
+| chassés faciles / chasseur normal | 78 % | 19 % | 3 % | 28 % | 1,9 / 1,0 |
+| chassés malins / chasseur normal | 74 % | 21 % | 5 % | 25 % | 1,7 / 0,9 |
+
+- **Le chasseur** respecte maintenant l'ordre des niveaux (66 → 76 %), dans deux séries de suite.
+- **Les chassés** : le « facile » se fait bien trouver plus souvent ; l'écart entre « normal » et « malin » reste dans le
+  bruit (±10 points).
+- **Contre un humain**, l'écart ressenti tiendra surtout à la vitesse et à la réaction du chasseur IA, à vérifier en
+  jouant.
