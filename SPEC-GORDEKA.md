@@ -198,10 +198,11 @@ dans la même pièce jouent chacun sur leur appareil, en salon.
 
 - On choisit **un personnage du roster** : les 12 de Miarritze Borroka, redessinés dans le nouveau
   style (*décidé le 2026-10-19*). **Personnages cartoon propres d'après ceux de Borroka** (leur
-  silhouette, leur tête, leur tenue), et non des capsules façon Among Us. Ils sont générés en 3D par
-  pixelforge, avec un matériau `tenue` recolorable dans la couleur du joueur.
-- **Bâtiments** : un kit de pièces généré par script chez pixelforge (murs, colombages en relief,
-  toits asymétriques, ouvertures), habillé de ses textures peintes.
+  silhouette, leur tête, leur tenue), et non des capsules façon Among Us, mais **dessinés en 2D flat
+  cartoon dans le style d'Among Us** (cf. `docs/GORDEKA_STYLE_2D.md`), avec une `tenue` recolorable dans la couleur du joueur
+  (masque). ~~Générés en 3D par pixelforge.~~
+- ~~**Bâtiments** : un kit de pièces 3D~~ : en 2D, objets et bâtiments vus de dessus en léger 3/4
+  (`pf_hd__prop`).
 - On choisit **sa couleur** parmi 12, qui teinte la tenue principale (palette). Dans un salon, chaque
   couleur est unique, comme dans Among Us ; la couleur sert à se reconnaître de loin.
 - Le profil garde le pseudo, le personnage favori, la couleur favorite et l'emote. On reprend
@@ -264,7 +265,11 @@ Vierge, Fronton.
   jamais inquiétant.
 - **HD lisse façon Among Us** (*décidé le 2026-10-19*) : fin du pixel art et de la résolution
   384×216. Résolution logique 1280×720, filtre lissé.
-- **Rendu en 3D** (*décidé le 2026-10-19*, à confirmer sur une maquette) : même vue de dessus en 3/4,
+- **Abandonné le 2026-10-19 (Julien : « pas content du tout du résultat »)** : repli sur le **style
+  d'Among Us en 2D flat cartoon, légèrement en perspective**, persos de profil. Observations,
+  liste des animations et pipeline pixelforge : `docs/GORDEKA_STYLE_2D.md`, qui remplace ce
+  point et les parties 3D du §16.
+- ~~**Rendu en 3D**~~ (*décidé puis abandonné le 2026-10-19*) : même vue de dessus en 3/4,
   mais des modèles 3D plutôt que des illustrations détourées (détourages peu précis). **Le rendu
   reste celui de l'intention d'origine** : cartoon propre façon Among Us et Fall Guys.
   - Ombrage simple (« toon »), aplats vifs, contours sombres et épais, formes rondes.
@@ -399,7 +404,11 @@ et les détails du réseau se règleront en jouant.
 
 ## 16. Pipeline d'images et de modèles
 
-> **Décidé le 2026-10-19** : en 3D, **tout est généré par les outils de pixelforge**, exposés dans
+> **Mis à jour le 2026-10-19** : la 3D est abandonnée, voir `docs/GORDEKA_STYLE_2D.md` (styles
+> `pf_2d__cutout` et `pf_2d__anim` demandés à pixelforge). Le principe reste : tout est généré par
+> les outils de pixelforge.
+>
+> ~~**Décidé le 2026-10-19** : en 3D~~, **tout est généré par les outils de pixelforge**, exposés dans
 > son API et intégrés à sa CI :
 > - textures peintes sans couture (`pf_hd__texture`) ;
 > - objets, bâtiments et personnages en modèles 3D (GLB texturés, low-poly), avec un matériau
