@@ -1,21 +1,11 @@
 {
- "name": "extract",
+ "motion": "extract",
+ "quaternius": "Chest_Open",
+ "lib": "ual2",
+ "frames": 33,
  "fps": 24.0,
- "frames": 10,
  "loop": false,
- "duration_s": 0.42,
- "frame_ms": [
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42
- ],
+ "duration_s": 1.375,
  "cell": [
   256,
   256
@@ -25,18 +15,6 @@
   128,
   236
  ],
- "head_by_frame": [
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "happy",
-  "happy",
-  "happy",
-  "happy"
- ],
- "tenue": "shirt",
- "variant": null
+ "expression": "happy face",
+ "tenue": "shirt"
 }

@@ -1,23 +1,11 @@
 {
- "name": "found",
+ "motion": "found",
+ "quaternius": "Hit_Chest",
+ "lib": "ual1",
+ "frames": 33,
  "fps": 24.0,
- "frames": 12,
  "loop": false,
- "duration_s": 0.504,
- "frame_ms": [
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42
- ],
+ "duration_s": 1.375,
  "cell": [
   256,
   256
@@ -27,20 +15,6 @@
   128,
   236
  ],
- "head_by_frame": [
-  "neutral",
-  "neutral",
-  "surprised",
-  "surprised",
-  "surprised",
-  "surprised",
-  "surprised",
-  "surprised",
-  "surprised",
-  "surprised",
-  "surprised",
-  "surprised"
- ],
- "tenue": "shirt",
- "variant": null
+ "expression": "very surprised face, eyes wide open, round open mouth",
+ "tenue": "shirt"
 }

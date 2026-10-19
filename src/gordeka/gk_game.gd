@@ -133,6 +133,10 @@ func _make_actors(parent: Node2D) -> void:
 		if str(all_chars[i]) != my_char or _bots_only:
 			picks.append(i)
 	picks.shuffle()
+	var drawn: Array[String] = []
+	for c: Variant in all_chars:
+		if GkPerso.available(str(c)):
+			drawn.append(str(c))
 	var my_color: int = int(config.get("color", 0))
 	var colors: Array[int] = []
 	for i: int in 12:
@@ -146,6 +150,9 @@ func _make_actors(parent: Node2D) -> void:
 		var k: int = picks[(i - (0 if _bots_only else 1)) % picks.size()] if not me else -1
 		var nm: String = my_name if me else str(all_names[k]) + " (IA)"
 		a.character = my_char if me else str(all_chars[k])
+		# Tant que tous les persos ne sont pas dessinés, les IA prennent un perso qui l'est.
+		if not GkPerso.available(a.character) and not drawn.is_empty():
+			a.character = drawn[i % drawn.size()]
 		if _all_char != "":
 			a.character = _all_char
 		a.setup(i, nm, GkRules.color(my_color if i == 0 else colors[i - 1]), bot)

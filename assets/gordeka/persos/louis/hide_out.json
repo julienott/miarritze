@@ -1,19 +1,11 @@
 {
- "name": "hide_out",
+ "motion": "hide_out",
+ "quaternius": "Sitting_Exit",
+ "lib": "ual1",
+ "frames": 33,
  "fps": 24.0,
- "frames": 8,
  "loop": false,
- "duration_s": 0.336,
- "frame_ms": [
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42
- ],
+ "duration_s": 1.375,
  "cell": [
   256,
   256
@@ -23,16 +15,6 @@
   128,
   236
  ],
- "head_by_frame": [
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "neutral",
-  "neutral"
- ],
- "tenue": "shirt",
- "variant": null
+ "expression": "happy face",
+ "tenue": "shirt"
 }

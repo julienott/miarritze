@@ -1,23 +1,11 @@
 {
- "name": "search",
+ "motion": "search",
+ "quaternius": "Idle_Torch_Loop",
+ "lib": "ual1",
+ "frames": 32,
  "fps": 24.0,
- "frames": 12,
  "loop": true,
- "duration_s": 1.32,
- "frame_ms": [
-  110,
-  110,
-  110,
-  110,
-  110,
-  110,
-  110,
-  110,
-  110,
-  110,
-  110,
-  110
- ],
+ "duration_s": 1.333,
  "cell": [
   256,
   256
@@ -27,20 +15,6 @@
   128,
   236
  ],
- "head_by_frame": [
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral",
-  "neutral"
- ],
- "tenue": "shirt",
- "variant": null
+ "expression": "focused cunning face, narrowed eyes",
+ "tenue": "shirt"
 }

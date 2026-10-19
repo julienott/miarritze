@@ -1,1 +1,17 @@
-{"idle":"8c696285851c4728a4dfd18aa70bff2d","walk":"d97e0f73d2c5453698b568f2ecf4b4a2","run_scared":"1a6787a87aec440999362dd555f099cd","hide_in":"7efbc5871b5d4c8482114f516e4c5c46","hide_out":"73d8614723ef411faf478b16d2863d4f","found":"6164012be0464308aa2eb9d3848db16f","ghost":"e79a4dba5adb4912bbd8db3d4614657d","ghost_move":"bbfc791d016f4c49b1f7ce51ec5203ca","trap":"fab4ba74e1004688a72ce36d31e13335","trapped":"b1c6b7ff98054e86931597bb00538672","search":"bcc9fe070f2f49f3904f27af8aa6c6f4","detect":"ea88c8c07e044843b57f06a6c7d48d82","extract":"3ed45f3142434a90bbee20a156fec17b","victory":"98f0f5aa25ec46b8ae09708e3719247d","sad":"e8395f44eb49444991916bf57ba399d9"}
+{
+ "idle": "f56d1b08433e448594aa23a7c8a9d2c2",
+ "walk": "f5778a17f9de44039a536a6c4b9f1080",
+ "run_scared": "638220c322944b5bbd0eadb49cca86b1",
+ "hide_in": "2c8ab39945a34d1ba4a4e6b4de833820",
+ "hide_out": "1fd3d29d614848ce85761e118724c2b9",
+ "found": "bbe84b7737df49bb8c6fcb2e2531bbb3",
+ "trap": "072123623e514307b5659a55ed226d73",
+ "trapped": "f31eee8ffd914f63aa21f767b9ac8e2c",
+ "search": "8589d5ebbe834e1a9d35d635285a09a6",
+ "detect": "1ad4699157f84e2998052d999a30ef60",
+ "extract": "9e261610607e49bf872a6e7fffbc8dc1",
+ "victory": "e555c1b5d80342f796590d09f43c816a",
+ "sad": "911017d089dd4ded87fc372ca8877bb7",
+ "ghost": "45cd902fece24a90b2ff9f2f8b1f7175",
+ "ghost_move": "8be463f752714dc3a65157808fa0fbcc"
+}

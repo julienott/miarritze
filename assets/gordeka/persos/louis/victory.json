@@ -1,23 +1,11 @@
 {
- "name": "victory",
+ "motion": "victory",
+ "quaternius": "Dance_Loop",
+ "lib": "ual1",
+ "frames": 32,
  "fps": 24.0,
- "frames": 12,
  "loop": true,
- "duration_s": 0.504,
- "frame_ms": [
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42,
-  42
- ],
+ "duration_s": 1.333,
  "cell": [
   256,
   256
@@ -27,20 +15,6 @@
   128,
   236
  ],
- "head_by_frame": [
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy",
-  "happy"
- ],
- "tenue": "shirt",
- "variant": null
+ "expression": "very happy laughing face",
+ "tenue": "shirt"
 }

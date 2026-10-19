@@ -1,17 +1,11 @@
 {
- "name": "sad",
+ "motion": "sad",
+ "quaternius": "Idle_No_Loop",
+ "lib": "ual2",
+ "frames": 32,
  "fps": 24.0,
- "frames": 6,
  "loop": true,
- "duration_s": 1.84,
- "frame_ms": [
-  340,
-  340,
-  340,
-  140,
-  340,
-  340
- ],
+ "duration_s": 1.333,
  "cell": [
   256,
   256
@@ -21,14 +15,6 @@
   128,
   236
  ],
- "head_by_frame": [
-  "neutral",
-  "neutral",
-  "neutral",
-  "blink",
-  "blink",
-  "neutral"
- ],
- "tenue": "shirt",
- "variant": null
+ "expression": "disappointed sad face",
+ "tenue": "shirt"
 }

@@ -44,6 +44,7 @@ var _anim: String = ""
 var _t: float = 0.0
 var _once: String = ""
 var _once_visible: bool = true
+var _float_t: float = 0.0
 
 
 ## Vrai si le perso a ses planches 2D dans le jeu.
@@ -211,6 +212,10 @@ func _process(dt: float) -> void:
 	var feet: Vector2 = d["feet"]
 	var fx: float = cell.x - feet.x if flip_h else feet.x
 	position = Vector2(-fx * scale.x, actor.radius * 0.6 - feet.y * scale.y)
+	if ghost:
+		# Le fantôme (ailes d'ange) flotte au-dessus du sol.
+		_float_t += get_process_delta_time()
+		position.y -= 10.0 + 5.0 * sin(_float_t * 3.0)
 	(material as ShaderMaterial).set_shader_parameter("couleur", actor.color)
 
 
