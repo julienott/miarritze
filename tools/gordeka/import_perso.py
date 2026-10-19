@@ -107,7 +107,9 @@ def main() -> None:
                 os.makedirs(os.path.join(revue, anim), exist_ok=True)
                 data = urllib.request.urlopen(f["url"], timeout=120).read()
                 open(os.path.join(revue, anim, f["name"]), "wb").write(data)
-        if "spritesheet_00.png" in got and "tenue_sheet_00.png" in got:
+        # Le masque de pf_2d__animate exclut désormais la tête à la source : le nettoyage maison (fait pour
+        # les premières planches de Louis) ne s'applique plus que sur demande (GK_NETTOYER_TENUE=1).
+        if os.environ.get("GK_NETTOYER_TENUE") and "spritesheet_00.png" in got and "tenue_sheet_00.png" in got:
             got["tenue_sheet_00.png"] = nettoyer_tenue(got["spritesheet_00.png"], got["tenue_sheet_00.png"])
         for name, data in got.items():
             open(os.path.join(dest, ROLES[name].format(a=anim)), "wb").write(data)

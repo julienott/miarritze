@@ -41,3 +41,4 @@ producer/data/
 .producer_token
 .pf_token
 backend/turn.php
+tools/gordeka/.decor_go
