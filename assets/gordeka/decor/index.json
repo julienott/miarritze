@@ -44,7 +44,18 @@
     2
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "sols/sol_carrelage_criee.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "933b4c60c4624e2fba2f7ea74badf1ca",
+     "date": "2026-10-20"
+    }
+   ]
   },
   "sol_beton_atelier": {
    "nom": "Béton du hangar, de l'atelier et de la cale",
