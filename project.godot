@@ -129,8 +129,9 @@ renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/canvas_textures/default_texture_filter=1
 textures/vram_compression/import_etc2_astc=true
-2d/snap/snap_2d_transforms_to_pixel=true
-2d/snap/snap_2d_vertices_to_pixel=true
+lights_and_shadows/positional_shadow/atlas_size=4096
+lights_and_shadows/positional_shadow/atlas_size.mobile=2048
+anti_aliasing/quality/msaa_3d=2
 
 [debug]
 

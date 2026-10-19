@@ -75,7 +75,7 @@ func _draw() -> void:
 		y += 48
 	# Flèche vers le chasseur quand il est hors champ (chassés et fantômes).
 	if me != game.hunter and game.hunter and game.phase == GkGame.Phase.HUNT:
-		var sp: Vector2 = get_viewport().get_canvas_transform() * game.hunter.position
+		var sp: Vector2 = game.screen_pos(game.hunter.position)
 		var r: Rect2 = Rect2(Vector2.ZERO, s).grow(-40)
 		if not r.has_point(sp):
 			var c: Vector2 = s * 0.5
@@ -84,6 +84,15 @@ func _draw() -> void:
 			var p: Vector2 = c + d * k
 			var pts: PackedVector2Array = [p + d * 26, p + d.orthogonal() * 16 - d * 10, p - d.orthogonal() * 16 - d * 10]
 			draw_colored_polygon(pts, Color("ff3b30"))
+	# En 3D, jauges de repérage au-dessus des chassés (dessinées ici, dans l'écran).
+	if game.use_3d:
+		for a: GkActor in game.actors:
+			if a.gauge > 0.0 and a.role == GkActor.Role.HIDER and a.shown and a.hidden_in < 0:
+				var gp: Vector2 = game.screen_pos(a.position, 1.9)
+				var w: float = 70.0
+				var gr: Rect2 = Rect2(gp - Vector2(w * 0.5, 0), Vector2(w, 10))
+				draw_rect(gr.grow(3), GkDraw.INK)
+				draw_rect(Rect2(gr.position, Vector2(w * clampf(a.gauge, 0.0, 1.0), 10)), Color("ff3b30"))
 	# Bouton d'action.
 	var label: String = game.action_label(me)
 	if label != "" and game.phase in [GkGame.Phase.HIDE, GkGame.Phase.HUNT] and not me.frozen:

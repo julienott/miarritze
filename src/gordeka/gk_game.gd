@@ -42,23 +42,31 @@ var _near_light: PointLight2D
 var _bots_only: bool = false
 var _force_role: String = ""
 var _log: bool = false
+## Affichage 3D (SPEC-GORDEKA §9) ; `--gk-2d` garde l'ancien dessin à plat.
+var use_3d: bool = true
+var view: GkView3D
+var _last_dt: float = 0.0
 
 
 func _ready() -> void:
 	for arg: String in OS.get_cmdline_user_args():
 		if arg == "--gk-bots-only":
 			_bots_only = true
+		elif arg == "--gk-2d":
+			use_3d = false
 		elif arg == "--gk-log":
 			_log = true
 		elif arg.begins_with("--gk-local-role="):
 			_force_role = arg.trim_prefix("--gk-local-role=")
 	map = GkMap.new()
+	map.draw_2d = not use_3d
 	add_child(map)
 	map.load_map(str(config.get("map", "port_pecheurs")))
-	var water: GkWater = GkWater.new()
-	water.map = map
-	map.add_child(water)
-	map.move_child(water, 0)
+	if not use_3d:
+		var water: GkWater = GkWater.new()
+		water.map = map
+		map.add_child(water)
+		map.move_child(water, 0)
 	for t: Vector2i in map.cachettes:
 		cachettes.append({"tile": t, "pos": map.center(t), "occupant": -1, "lock": 0.0, "shake": 0.0})
 	var people: Node2D = Node2D.new()
@@ -66,6 +74,10 @@ func _ready() -> void:
 	add_child(people)
 	_make_actors(people)
 	_make_view()
+	if use_3d:
+		view = GkView3D.new()
+		add_child(view)
+		view.setup(self)
 	input = GkInput.new()
 	add_child(input)
 	input.quit_requested.connect(quit_to_podium)
@@ -293,6 +305,7 @@ func go_menu() -> void:
 # ---------------------------------------------------------------- boucle
 
 func _physics_process(dt: float) -> void:
+	_last_dt = dt
 	if phase == Phase.PODIUM:
 		_update_view()
 		return
@@ -632,8 +645,23 @@ func _update_view() -> void:
 			a.shown = show
 			a.queue_redraw()
 	_camera.position = local.position
-	_overlay.queue_redraw()
+	if use_3d:
+		view.refresh(_last_dt)
+		for a: GkActor in actors:
+			a.draw_2d = false
+		_dark.color = Color.WHITE
+		_cone_light.enabled = false
+		_near_light.enabled = false
+	else:
+		_overlay.queue_redraw()
 	hud.queue_redraw()
+
+
+## Position à l'écran d'un point du jeu (HUD), en 2D comme en 3D.
+func screen_pos(p: Vector2, height: float = 0.0) -> Vector2:
+	if use_3d:
+		return view.screen_pos(p, height)
+	return get_viewport().get_canvas_transform() * p
 
 
 ## Cône du chasseur (polygone par lancer de rayons), vu des chassés et des fantômes.

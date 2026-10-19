@@ -32,6 +32,8 @@ var round_points: int = 0
 var won_round: bool = false
 ## Vu du joueur local : faut-il dessiner ce personnage ?
 var shown: bool = true
+## Dessin à plat (prototype) ; faux en 3D.
+var draw_2d: bool = true
 var radius: float = 20.0
 
 
@@ -87,7 +89,7 @@ func step(move: Vector2, look_dir: Vector2, dt: float) -> void:
 
 
 func _draw() -> void:
-	if not shown or hidden_in >= 0:
+	if not shown or hidden_in >= 0 or not draw_2d:
 		return
 	var ghost: bool = role == Role.GHOST or role == Role.OUT
 	var u: float = radius / 10.0

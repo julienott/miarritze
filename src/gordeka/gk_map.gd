@@ -30,6 +30,8 @@ var exits: Array[Vector2i] = []
 var spawns: Array[Vector2i] = []
 ## Abri de chaque case de sol : nombre de voisins (8) qui cachent la vue.
 var cover: Dictionary = {}
+## Dessin à plat (prototype gris) ; faux en 3D, où GkView3D dessine la carte.
+var draw_2d: bool = true
 
 
 func load_map(id: String) -> void:
@@ -56,7 +58,8 @@ func load_map(id: String) -> void:
 	_build_bodies()
 	_build_astar()
 	_build_cover()
-	_build_chunks()
+	if draw_2d:
+		_build_chunks()
 	queue_redraw()
 
 
@@ -206,7 +209,8 @@ func _floor_of(name: String) -> Array:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, size_px()), Color("b9b2a3"))
+	if draw_2d:
+		draw_rect(Rect2(Vector2.ZERO, size_px()), Color("b9b2a3"))
 
 
 ## Découpe du dessin en morceaux (une zone chacun, plus les murs entre zones) : Godot ne
