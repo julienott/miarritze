@@ -54,7 +54,9 @@ def log(msg):
 
 def main():
     only = set(sys.argv[sys.argv.index("--anims") + 1].split(",")) if "--anims" in sys.argv else None
-    skip = {sys.argv[sys.argv.index(k) + 1] for k in ("--anims", "--max") if k in sys.argv}
+    skip = {sys.argv[sys.argv.index(k) + 1] for k in ("--anims", "--max", "--graine") if k in sys.argv}
+    # --graine D : décalage de graine (relance d'un raté avec un autre tirage)
+    shift0 = int(sys.argv[sys.argv.index("--graine") + 1]) if "--graine" in sys.argv else 0
     fids = [a for a in sys.argv[1:] if not a.startswith("--") and not a.isdigit() and a not in skip]
     limit = int(sys.argv[sys.argv.index("--max") + 1]) if "--max" in sys.argv else 40
     state = {}
@@ -70,11 +72,12 @@ def main():
             if only is not None and name not in only:
                 continue
             key = f"{f}/{name}"
-            if key in state and state[key]["status"] in ("pending", "running") and only is None:
-                continue                        # déjà en file (reprise) ; --anims : on redépose
+            if key in state and state[key]["status"] in ("pending", "running") and only is None \
+                    and "--refaire" not in sys.argv:
+                continue                        # déjà en file (reprise) ; --anims / --refaire : on redépose
             if verdicts.get(name) == "OK" and name in done and "--refaire" not in sys.argv:
                 continue
-            todo.append((f, name, 0))
+            todo.append((f, name, shift0))
     log(f"{len(todo)} animations à déposer ({', '.join(fids)}), {sum(1 for v in state.values() if v['status'] in ('pending', 'running'))} déjà en file")
     controls_cache = {}
     while todo or any(v["status"] in ("pending", "running") for v in state.values()):
@@ -126,7 +129,7 @@ def main():
                 t["status"] = st
                 t["errs"] = errs
                 log(f"{key}: {st} {'OK' if not errs else ' ; '.join(errs)}")
-                if st == "failed" and t["shift"] == 0:     # annulée exprès (DELETE) : pas redéposée
+                if st == "failed" and t["shift"] < 1000:     # annulée exprès (DELETE) : pas redéposée
                     todo.append((f, name, 1000))
             else:
                 t["status"] = "running" if st == "running" else "pending"

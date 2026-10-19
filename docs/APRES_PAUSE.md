@@ -10,12 +10,12 @@ Prêts (modèle + boule + accroupi choisis), à remettre en file :
 | Perso | État | À faire |
 |---|---|---|
 | Mattin | **en ligne le 2026-10-18** (pierre seulement pour ses grands coups) | sp_down : bras détaché images 4–5 ; sp_up/super : coups peu lisibles |
-| Ramuntxo | quelques anims générées | idem |
-| Patxi | quelques anims générées | idem |
-| Kaio | file annulée | tout relancer |
-| Itsaso | file annulée | tout relancer |
-| Txomin | file annulée ; palmes à la ceinture (HIP_ACC) | tout relancer ; vérifier les palmes sur la planche |
-| Xabi | modèle 1001 en attente de l'accord de Julien ; accroupi + boule prêts | après accord : tout lancer |
+| Ramuntxo | 37 générées le 19/10 ; bon dans l'ensemble | 9 ratés relancés (graine +500) |
+| Patxi | 37 générées le 19/10 ; correct | 5 ratés relancés |
+| Kaio | 37 générées : chips devant le bec, plumage taché | chips seulement grands coups (ACC_ONLY) ; tout relancé |
+| Itsaso | 37 générées ; correcte sauf chutes/balayage | 11 ratés relancés |
+| Txomin | 37 générées ; propre | 3 ratés relancés ; vérifier les palmes à la ceinture |
+| Xabi | modèle garde 1014 (bras plié), boule 1021 ; chistera cachait tous les coups | chistera seulement grands coups (ACC_ONLY) ; 29 anims relancées |
 
 Pour chacun, après les 37 anims :
 1. relecture de la planche (`tools/pf/planche_revue.py <id>`) et des bords (rien de coupé) ;

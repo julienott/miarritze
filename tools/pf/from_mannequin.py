@@ -53,7 +53,11 @@ QA = dict(pieces.QA, max_drift=0.45)
 NO_ACC_ANIMS = {"amaia": {"jump_kick"}}
 # Accessoire montré SEULEMENT dans ces animations (Julien, 2026-10-18 : Mattin se bat aux
 # poings et ne sort sa pierre que pour ses grands coups ; en garde elle cachait son visage).
-ACC_ONLY = {"mattin": {"intro", "win", "sp_neutral", "sp_forward", "sp_down", "sp_up", "super", "finisher"}}
+ACC_ONLY = {"mattin": {"intro", "win", "sp_neutral", "sp_forward", "sp_down", "sp_up", "super", "finisher"},
+            # Xabi (2026-10-19) : la chistera géante cachait tous ses coups → même règle.
+            "xabi": {"intro", "win", "sp_neutral", "sp_forward", "sp_down", "sp_up", "super", "finisher"},
+            # Kaio (2026-10-19) : le paquet de chips barrait le bec et tachait le plumage.
+            "kaio": {"intro", "win", "sp_neutral", "sp_forward", "sp_down", "sp_up", "super", "finisher"}}
 ACC_OFFSET = {}
 # Accessoire du rig RD abandonné par le nouveau design (bouée de Txomin → palmes).
 NO_RD_ACC = {"txomin"}
