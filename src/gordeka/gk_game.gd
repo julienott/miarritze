@@ -395,6 +395,7 @@ func _physics_process(dt: float) -> void:
 				phase = Phase.HUNT
 				phase_t = GkRules.f("phase_hunt")
 				hunter.frozen = false
+				hunter.play_once("hunter_reveal")
 				_say("Le chasseur arrive !", Color("ff3b30"), 2.0)
 		Phase.HUNT:
 			hunt_elapsed += dt

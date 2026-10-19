@@ -49,9 +49,13 @@ var _once_visible: bool = true
 var _float_t: float = 0.0
 
 
-## Vrai si le perso a ses planches 2D dans le jeu.
+## Durée d'affichage du profil fixe quand un geste ponctuel n'a pas encore son animation (s).
+const STATIC_ONCE_S: float = 0.6
+
+## Vrai si le perso a ses planches 2D, ou au moins son profil validé (`modele.png`).
 static func available(character: String) -> bool:
-	return use_pantin or ResourceLoader.exists((DIR % character) + "idle.png")
+	return use_pantin or ResourceLoader.exists((DIR % character) + "idle.png") \
+		or ResourceLoader.exists((DIR % character) + "modele.png")
 
 
 ## Durées d'une chorégraphie du pantin, au même format que les planches.
@@ -96,9 +100,32 @@ static func _data(character: String, anim: String) -> Dictionary:
 			"loop": bool(j.get("loop", false)),
 			"cell": Vector2(j.get("cell", [256, 256])[0], j.get("cell", [256, 256])[1]),
 			"feet": Vector2(j.get("feet_anchor", [128, 236])[0], j.get("feet_anchor", [128, 236])[1]),
+			"height": CELL_PERSO_PX,
 		}
+	elif ResourceLoader.exists((DIR % character) + "modele.png"):
+		d = _static(character, anim)
 	_anims[key] = d
 	return d
+
+
+## Repli pour la recette (Julien, 2026-10-20) : toute animation absente montre le profil validé, fixe.
+## Pas de masque de tenue : le perso garde ses couleurs. Les gestes ponctuels durent STATIC_ONCE_S.
+static func _static(character: String, anim: String) -> Dictionary:
+	var tex: Texture2D = load((DIR % character) + "modele.png")
+	var used: Rect2i = tex.get_image().get_used_rect()
+	var noir: Image = Image.create(1, 1, false, Image.FORMAT_RGBA8)
+	noir.fill(Color.BLACK)
+	return {
+		"ends": PackedFloat32Array([STATIC_ONCE_S]),
+		"tex": tex,
+		"mask": ImageTexture.create_from_image(noir),
+		"n": 1,
+		"loop": anim in ["idle", "walk", "run_scared", "ghost", "ghost_move", "trapped", "search", "victory", "sad"],
+		"cell": Vector2(tex.get_size()),
+		"feet": Vector2(used.position.x + used.size.x * 0.5, used.end.y),
+		"height": float(used.size.y),
+		"static": true,
+	}
 
 
 func setup(a: GkActor) -> void:
@@ -174,7 +201,7 @@ func _process(dt: float) -> void:
 	var ends: PackedFloat32Array = d["ends"]
 	var total: float = ends[ends.size() - 1]
 	var rate: float = 1.0
-	if CYCLE_S.has(_anim) and pantin == null:
+	if CYCLE_S.has(_anim) and pantin == null and not d.has("static"):
 		rate = total / float(CYCLE_S[_anim]) * clampf(actor.velocity.length() / GkRules.px("speed_hider"), 0.5, 1.5)
 	_t += dt * rate
 	if _t >= total:
@@ -215,7 +242,7 @@ func _process(dt: float) -> void:
 	var fx: float = cell.x - feet.x if flip_h else feet.x
 	# Petit rebond façon Among Us à chaque pas, avec un léger écrasement quand le pied touche le sol
 	# (idée de Julien) : deux rebonds par cycle, au rythme de la planche.
-	var k: float = HEIGHT_PX / CELL_PERSO_PX
+	var k: float = HEIGHT_PX / float(d["height"])
 	var lift: float = 0.0
 	var squash: float = 0.0
 	if CYCLE_S.has(_anim) and actor.velocity.length() > 5.0:
