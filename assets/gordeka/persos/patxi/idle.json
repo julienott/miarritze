@@ -1,0 +1,20 @@
+{
+ "motion": "idle",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "calm neutral face, blinking now and then",
+ "tenue": "raincoat"
+}
