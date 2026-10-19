@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Anime un perso de Gordeka chez pixelforge, un perso à la fois (Julien, 2026-10-20) :
-13 animations pf_2d__animate depuis le profil choisi, plus le fantôme (le même perso avec de petites
-ailes d'ange, pf_2d__character) animé en ghost / ghost_move.
+"""Anime un perso de Gordeka chez pixelforge (pf_2d__animate), un perso à la fois, à partir des
+prompts soignés de tools/gordeka/prompts_anims.json (Julien, 2026-10-20) : mouvement exagéré par les
+réglages du mannequin (`mouvement`), accessoires décrits animation par animation, objets tenus
+verrouillés (`hold`), masque de tenue par un mot simple.
 
-  anime_perso.py <id> <profil.png> "<tenue>" "<description>" "<prompt du fantôme>"
+  anime_perso.py depose <id> <profil.png> <fantome.png> [<anim> …]   (par défaut : toutes celles prêtes)
+  anime_perso.py suivant <id>          attend la prochaine animation finie, rapatrie son GIF, rend la main
+  anime_perso.py payload <id> <anim>   affiche le payload sans rien envoyer
 
-Écrit tools/gordeka/taches_<id>.json (relu par import_perso.py) et rapatrie le GIF de chaque
-animation dans tools/rd/out/<id>/gk2d/pf/<anim>/ pour la relecture. Les paramètres sont recopiés
-dans SPEC-GORDEKA.md §16.2.
+Suivi : tools/gordeka/taches_<id>.json (relu par import_perso.py). GIF de relecture :
+tools/rd/out/<id>/gk2d/anims/<anim>.gif. Les paramètres sont recopiés dans SPEC-GORDEKA.md §16.2.
 """
 import json
 import os
@@ -23,73 +25,90 @@ sys.path.insert(0, os.path.join(ROOT, "tools", "pf"))
 import gen_anims_pf as pf  # noqa: E402
 import extras_pf as ex  # noqa: E402
 
-MOTIONS = ["idle", "walk", "run_scared", "hide_in", "hide_out", "found", "trap", "trapped", "search", "detect",
-           "extract", "victory", "sad"]
+PROMPTS = json.load(open(os.path.join(HERE, "prompts_anims.json")))
 FINI = ("succeeded", "failed", "canceled", "expired")
+FANTOMES = ("ghost", "ghost_move")
+AILES = " and small white feathered angel wings on the back"
 
 
-def tache(tid):
-    return json.loads(urllib.request.urlopen(f"{pf.PF}/v2/inferences/tasks/{tid}", timeout=60).read())
+def payload(pid, anim):
+    """Payload pf_2d__animate d'une animation (sans l'image d'entrée)."""
+    a, p = PROMPTS["animations"][anim], PROMPTS["persos"][pid]
+    mvt = {k: v for k, v in a["mouvement"].items() if k != "a_venir"}
+    morceaux = [PROMPTS["regles_communes"], a["action"]]
+    if p.get("allure") and anim in ("walk", "run_scared", "idle", "victory"):
+        morceaux.append("Way of moving: " + p["allure"] + ".")
+    for acc in p.get("accessoires", []):
+        geste = acc.get("par_animation", {}).get(anim, acc["defaut"])
+        morceaux.append(f"The {acc['objet']}: {geste}.")
+    desc = p["description"] + (AILES if anim in FANTOMES else "")
+    pl = {"prompt_style": "pf_2d__animate", **mvt, "description": desc, "action": " ".join(morceaux),
+          "expression": a["expression"], "loop": bool(a["boucle"]), "priority": "normal",
+          "tag": f"miarritze/gk2d_{pid}"}
+    if p.get("tenue"):
+        pl["tenue"] = p["tenue"]
+    if p.get("hold") and anim not in p.get("hold_sauf", []):
+        pl["hold"] = p["hold"]
+    return pl
 
 
-def deposer(payload):
-    return pf._post_json(pf.PF + "/v2/inferences", payload, timeout=300)["task_id"]
+def pretes():
+    return [k for k, v in PROMPTS["animations"].items() if "a_venir" not in v["mouvement"]]
 
 
-def main():
-    pid, profil, tenue, desc, fantome = sys.argv[1:6]
-    tag = f"miarritze/gk2d_{pid}"
+def depose(pid, profil, fantome, anims):
     chemin = os.path.join(HERE, f"taches_{pid}.json")
     taches = json.load(open(chemin)) if os.path.exists(chemin) else {}
-    src = Image.open(profil).convert("RGB")
-    for m in MOTIONS:
-        if m not in taches:
-            taches[m] = deposer({"prompt_style": "pf_2d__animate", "input_image": ex.b64(src), "motion": m,
-                                 "tenue": tenue, "description": desc, "tag": tag, "priority": "normal"})
-            print("déposé", m, taches[m], flush=True)
-    # Le fantôme : d'abord son profil (même perso + ailes), puis ses deux animations.
-    if "ghost_profil" not in taches:
-        taches["ghost_profil"] = deposer({"prompt_style": "pf_2d__character", "input_image": ex.b64(src),
-                                          "prompt": fantome, "num_images": 1, "seed": 7, "tag": tag, "priority": "normal"})
-        print("déposé ghost_profil", taches["ghost_profil"], flush=True)
-    json.dump(taches, open(chemin, "w"), indent=1)
+    imgs = {"perso": Image.open(profil).convert("RGB"), "fantome": Image.open(fantome).convert("RGB")}
+    for anim in anims or pretes():
+        if anim in taches:
+            continue
+        pl = payload(pid, anim)
+        pl["input_image"] = ex.b64(imgs["fantome" if anim in FANTOMES else "perso"])
+        taches[anim] = pf._post_json(pf.PF + "/v2/inferences", pl, timeout=300)["task_id"]
+        json.dump(taches, open(chemin, "w"), indent=1)
+        print("déposé", anim, taches[anim], flush=True)
 
-    revue = os.path.join(ROOT, "tools", "rd", "out", pid, "gk2d", "pf")
-    left = {k: v for k, v in taches.items()}
-    while left:
-        for k, tid in list(left.items()):
-            r = tache(tid)
+
+def suivant(pid):
+    taches = json.load(open(os.path.join(HERE, f"taches_{pid}.json")))
+    out = os.path.join(ROOT, "tools", "rd", "out", pid, "gk2d", "anims")
+    os.makedirs(out, exist_ok=True)
+    vus_p = os.path.join(out, "_vus.json")
+    vus = json.load(open(vus_p)) if os.path.exists(vus_p) else []
+    while True:
+        reste = 0
+        for anim, tid in taches.items():
+            if tid in vus:
+                continue
+            try:
+                r = json.loads(urllib.request.urlopen(f"{pf.PF}/v2/inferences/tasks/{tid}", timeout=60).read())
+            except Exception as e:  # redémarrage de pixelforge
+                print("relève impossible :", e, flush=True)
+                time.sleep(30)
+                continue
             if r["status"] not in FINI:
+                reste += 1
                 continue
-            del left[k]
-            print(k, r["status"], str(r.get("error", ""))[:200], flush=True)
-            if r["status"] != "succeeded":
-                continue
-            files = r["result"]["pixelforge"]["files"]
-            if k == "ghost_profil":
-                d = os.path.join(ROOT, "tools", "rd", "out", pid, "gk2d", "fantome")
-                os.makedirs(d, exist_ok=True)
-                for f in files:
-                    open(os.path.join(d, f["name"]), "wb").write(urllib.request.urlopen(f["url"], timeout=120).read())
-                g = Image.open(os.path.join(d, "image_00_white.png" if os.path.exists(
-                    os.path.join(d, "image_00_white.png")) else "image_00.png")).convert("RGB")
-                for m, mot in (("ghost", "idle"), ("ghost_move", "walk")):
-                    if m not in taches:
-                        taches[m] = left[m] = deposer({
-                            "prompt_style": "pf_2d__animate", "input_image": ex.b64(g), "motion": mot, "tenue": tenue,
-                            "expression": "mischievous sly smile", "tag": tag, "priority": "normal",
-                            "description": desc + " and small white angel wings on his back, the wings flapping"})
-                        print("déposé", m, taches[m], flush=True)
-                json.dump(taches, open(chemin, "w"), indent=1)
-                continue
-            for f in files:
+            for f in r.get("result", {}).get("pixelforge", {}).get("files", []):
                 if f["name"] == "animation_00.gif":
-                    os.makedirs(os.path.join(revue, k), exist_ok=True)
-                    open(os.path.join(revue, k, f["name"]), "wb").write(
+                    open(os.path.join(out, f"{anim}.gif"), "wb").write(
                         urllib.request.urlopen(f["url"], timeout=120).read())
+            vus.append(tid)
+            json.dump(vus, open(vus_p, "w"))
+            print(anim, r["status"], str(r.get("error", ""))[:300], os.path.join(out, f"{anim}.gif"), flush=True)
+            return
+        if not reste:
+            print("FINI : plus rien en attente", flush=True)
+            return
         time.sleep(15)
-    print("FINI", flush=True)
 
 
 if __name__ == "__main__":
-    main()
+    cmd, args = sys.argv[1], sys.argv[2:]
+    if cmd == "depose":
+        depose(args[0], args[1], args[2], args[3:])
+    elif cmd == "suivant":
+        suivant(args[0])
+    else:
+        print(json.dumps(payload(args[0], args[1]), ensure_ascii=False, indent=1))
