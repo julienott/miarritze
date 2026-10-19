@@ -1,8 +1,8 @@
 name: Build & deploy web export
 
+# Pivot 2026-10-19 : main = Miarritze Gordeka (prototype), qui ne se déploie pas encore ;
+# le site garde Borroka (branche `borroka`). Déploiement à la main seulement, sur décision de Julien.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 env:
