@@ -1,0 +1,968 @@
+{
+ "_doc": "Décor en images intégré par tools/gordeka/integre_decor.py, lu par src/gordeka/gk_decor.gd.",
+ "carte": "port_pecheurs",
+ "elements": {
+  "sol_dalles_quai": {
+   "nom": "Dalles de quai",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Jetée",
+    "Bassin (quai nord)",
+    "Quai des chalutiers",
+    "Lavoir"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "sol_carrelage_criee": {
+   "nom": "Carrelage de la criée",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Criée"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "sol_beton_atelier": {
+   "nom": "Béton du hangar, de l'atelier et de la cale",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Hangar à filets",
+    "Atelier",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "sol_paves_ruelle": {
+   "nom": "Pavés des ruelles",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Crampottes",
+    "couloirs (rue des pêcheurs, passages entre zones)",
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "sol_paves_place": {
+   "nom": "Pavage de la place du fronton",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "sol_planches_terrasse": {
+   "nom": "Planches de la terrasse",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Terrasse"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "sol_tomettes_chapelle": {
+   "nom": "Tomettes de la chapelle",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "sol_rocher_phare": {
+   "nom": "Plateforme rocheuse du phare",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Phare"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "eau_mer": {
+   "nom": "Eau du port et de la mer",
+   "type": "tuile_sol",
+   "categorie": "eau",
+   "caractere": "~",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "vagues qui ondulent en boucle (4 à 8 images) ; repli : défilement lent des UV par shader"
+   }
+  },
+  "bord_quai_eau": {
+   "nom": "Bord de quai sur l'eau",
+   "type": "tuile_bord",
+   "categorie": "eau",
+   "caractere": "~ / .",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "écume qui va et vient au pied du quai, boucle"
+   }
+  },
+  "mur_pierre": {
+   "nom": "Mur de pierre (bord de carte, murs entre zones)",
+   "type": "tuile_bord",
+   "categorie": "mur",
+   "caractere": "#",
+   "zones": [
+    "toute la carte"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "toit_tuiles": {
+   "nom": "Toits de tuiles rouges (grandes masses bâties)",
+   "type": "tuile_sol",
+   "categorie": "mur",
+   "caractere": "#",
+   "zones": [
+    "masses entre zones (crampottes, criée, hangar, chapelle…)"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "facade_labourdine": {
+   "nom": "Façade blanche à colombages",
+   "type": "bande_facade",
+   "categorie": "mur",
+   "caractere": "#",
+   "zones": [
+    "face sud des masses bâties"
+   ],
+   "taille_cases": [
+    4,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "maison_crampotte": {
+   "nom": "Crampotte (cabane de pêcheur)",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Crampottes"
+   ],
+   "taille_cases": [
+    4,
+    3
+   ],
+   "debord_haut_cases": 1,
+   "animation": {}
+  },
+  "chambre_froide": {
+   "nom": "Chambre froide de la criée",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Criée"
+   ],
+   "taille_cases": [
+    4,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "animation": {}
+  },
+  "tour_phare": {
+   "nom": "Tour du phare (feu du port)",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "#",
+   "zones": [
+    "Phare"
+   ],
+   "taille_cases": [
+    5,
+    5
+   ],
+   "debord_haut_cases": 3,
+   "animation": {
+    "methode": "planche",
+    "description": "faisceau de la lanterne qui tourne ; le halo lumineux peut être ajouté par le jeu"
+   }
+  },
+  "fronton": {
+   "nom": "Fronton de pelote basque",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "#",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    10,
+    1
+   ],
+   "debord_haut_cases": 2,
+   "animation": {}
+  },
+  "rayonnage_filets": {
+   "nom": "Rayonnage du hangar à filets",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Hangar à filets"
+   ],
+   "taille_cases": [
+    2,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "animation": {}
+  },
+  "autel_chapelle": {
+   "nom": "Autel de la chapelle des marins",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "#",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 1,
+   "animation": {}
+  },
+  "comptoir_bar": {
+   "nom": "Comptoir de la terrasse",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Terrasse"
+   ],
+   "taille_cases": [
+    3,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "mur_soutenement": {
+   "nom": "Mur de soutènement de l'escalier",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    2,
+    8
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "caisses_poisson": {
+   "nom": "Pile de caisses de poisson",
+   "type": "objet",
+   "categorie": "objet",
+   "caractere": "c",
+   "zones": [
+    "Jetée",
+    "Criée",
+    "Phare",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Atelier",
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "fichiers": [
+    "objets/caisses_poisson.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "61e084bafeff455cafba367463a1584b",
+     "date": "2026-10-19"
+    }
+   ],
+   "ombre": "objets/caisses_poisson_ombre.png",
+   "ombre_decalage": [
+    32,
+    180
+   ]
+  },
+  "barque_mouillage": {
+   "nom": "Barque basque au mouillage",
+   "type": "objet",
+   "categorie": "bateau",
+   "caractere": "B",
+   "zones": [
+    "Bassin"
+   ],
+   "taille_cases": [
+    6,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tangage lent et flottement vertical"
+   }
+  },
+  "chalutier_quai": {
+   "nom": "Chalutier à quai",
+   "type": "objet",
+   "categorie": "bateau",
+   "caractere": "B",
+   "zones": [
+    "Quai des chalutiers"
+   ],
+   "taille_cases": [
+    7,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "planche",
+    "description": "petit drapeau vert qui flotte au mât ; coque immobile (sur ses tins)"
+   }
+  },
+  "coque_sur_ber": {
+   "nom": "Coque sur ber (cale sèche)",
+   "type": "objet",
+   "categorie": "bateau",
+   "caractere": "B",
+   "zones": [
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    6,
+    3
+   ],
+   "debord_haut_cases": 1,
+   "animation": {}
+  },
+  "coque_chantier": {
+   "nom": "Coque en chantier (atelier)",
+   "type": "objet",
+   "categorie": "bateau",
+   "caractere": "B",
+   "zones": [
+    "Atelier"
+   ],
+   "taille_cases": [
+    5,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "animation": {}
+  },
+  "etal_criee": {
+   "nom": "Étal de la criée",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Criée"
+   ],
+   "taille_cases": [
+    5,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "bitte_amarrage": {
+   "nom": "Bitte d'amarrage",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Jetée",
+    "Bassin (quai nord)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "tas_filets": {
+   "nom": "Filets et casiers posés au sol",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Jetée",
+    "Hangar à filets"
+   ],
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "fontaine_place": {
+   "nom": "Fontaine de la place",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "t",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    4,
+    4
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "jet d'eau et rides du bassin, boucle"
+   }
+  },
+  "banc_vert": {
+   "nom": "Banc vert du front de mer",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "banc_chapelle": {
+   "nom": "Banc de la chapelle",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "taille_cases": [
+    4,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "etabli_atelier": {
+   "nom": "Établi de l'atelier",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Atelier"
+   ],
+   "taille_cases": [
+    5,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "marches_escalier": {
+   "nom": "Marches de l'escalier de la ville",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    6,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "table_terrasse": {
+   "nom": "Table de terrasse",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Terrasse"
+   ],
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "treteaux_cale": {
+   "nom": "Tréteaux et planches de la cale",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "lavoir_bassin": {
+   "nom": "Bassin du lavoir",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "~",
+   "zones": [
+    "Lavoir"
+   ],
+   "taille_cases": [
+    6,
+    3
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "rides et bulles de savon qui montent, boucle"
+   }
+  },
+  "cachette_casier_homards": {
+   "nom": "Casier à homards géant",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Jetée"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort"
+   }
+  },
+  "cachette_coffre_quai": {
+   "nom": "Coffre de quai",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Bassin"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_caisse_glace": {
+   "nom": "Caisse à glace",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Criée"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_coffre_cordages": {
+   "nom": "Coffre à cordages du phare",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Phare"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_poubelle_ruelle": {
+   "nom": "Grande poubelle de ruelle",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Crampottes"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_bac_poissons": {
+   "nom": "Grand bac à poissons",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Quai des chalutiers"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_malle_pelotes": {
+   "nom": "Malle à pelotes",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_tas_filets_cachette": {
+   "nom": "Montagne de filets",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Hangar à filets"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_confessionnal": {
+   "nom": "Confessionnal en bois",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_barque_retournee": {
+   "nom": "Barque retournée",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_tonneau_cidre": {
+   "nom": "Tonneau de cidre géant",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Terrasse"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_panier_linge": {
+   "nom": "Grand panier à linge",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Lavoir"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_caisse_voiles": {
+   "nom": "Caisse à voiles de l'atelier",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Atelier"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "cachette_cabine_plage": {
+   "nom": "Cabine de plage rayée",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   }
+  },
+  "sortie_barque_jetee": {
+   "nom": "Sortie : barque au bout de la jetée",
+   "type": "objet",
+   "categorie": "sortie",
+   "caractere": "E",
+   "zones": [
+    "Jetée"
+   ],
+   "taille_cases": [
+    2,
+    3
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "la barque tangue ; lanterne qui scintille"
+   }
+  },
+  "sortie_echelle_phare": {
+   "nom": "Sortie : échelle derrière le phare",
+   "type": "objet",
+   "categorie": "sortie",
+   "caractere": "E",
+   "zones": [
+    "Phare"
+   ],
+   "taille_cases": [
+    2,
+    3
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "sortie_barque_cale": {
+   "nom": "Sortie : barque de la cale",
+   "type": "objet",
+   "categorie": "sortie",
+   "caractere": "E",
+   "zones": [
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "la barque tangue au bout de la cale"
+   }
+  },
+  "sortie_porte_ville": {
+   "nom": "Sortie : porte de la ville",
+   "type": "objet",
+   "categorie": "sortie",
+   "caractere": "E",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 1,
+   "animation": {}
+  },
+  "depart_lauburu": {
+   "nom": "Marque de départ",
+   "type": "decal",
+   "categorie": "sol",
+   "caractere": "S",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "piege_generique": {
+   "nom": "Piège générique (flaque collante)",
+   "type": "decal",
+   "categorie": "piege",
+   "caractere": "—",
+   "zones": [
+    "posé par les chassés, n'importe où"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "bulles qui gonflent et éclatent, boucle"
+   }
+  }
+ }
+}

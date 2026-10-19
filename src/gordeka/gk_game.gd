@@ -921,9 +921,11 @@ func _draw_overlay(ci: CanvasItem) -> void:
 		var shake: float = float(c["shake"])
 		var off: Vector2 = Vector2(sin(shake * 60.0) * 4.0 * signf(shake), 0)
 		var px2: Rect2 = Rect2((c["pos"] as Vector2) - Vector2(map.tile, map.tile) * 0.42 + off, Vector2(map.tile, map.tile) * 0.84)
-		ci.draw_rect(px2, Color("e08a2e") if float(c["lock"]) <= 0.0 else Color("8a6a4a"))
-		ci.draw_rect(px2, Color("5a3410"), false, 4.0)
-		ci.draw_line(px2.position + Vector2(6, px2.size.y * 0.35), Vector2(px2.end.x - 6, px2.position.y + px2.size.y * 0.35), Color("5a3410"), 3.0)
+		# Cachette dessinée par pixelforge : l'image du décor (qui tremble elle-même) remplace la caisse.
+		if not map.decor.has_image_at(c["tile"]):
+			ci.draw_rect(px2, Color("e08a2e") if float(c["lock"]) <= 0.0 else Color("8a6a4a"))
+			ci.draw_rect(px2, Color("5a3410"), false, 4.0)
+			ci.draw_line(px2.position + Vector2(6, px2.size.y * 0.35), Vector2(px2.end.x - 6, px2.position.y + px2.size.y * 0.35), Color("5a3410"), 3.0)
 		var occ: int = int(c["occupant"])
 		if occ >= 0 and not as_hunter:
 			# Les chassés savent qui est dedans : deux yeux de la couleur du joueur.
