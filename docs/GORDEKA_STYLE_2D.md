@@ -91,6 +91,19 @@ En plus, par perso : un **portrait** (menus, HUD, podium), une **tête « surpri
 
 ## 4. Pipeline avec pixelforge
 
+> **Révisé le 2026-10-19 (Julien : « ça me va »)** : après trois allers-retours sur Louis (pieds,
+> bras, hanches), on abandonne la découpe d'un dessin libre par perso au profit d'un **gabarit de
+> corps commun**, comme Among Us.
+> - Un corps « humain » (et un « crabe » pour Karramarro) est dessiné pour l'animation : articulations
+>   en disques, pivots et proportions fixes. Les 15 chorégraphies y sont validées une fois.
+> - Chaque perso est un **habillage** du gabarit : tête et expressions, cheveux, chapeau en calque, couleurs
+>   et motifs par zone, chaussures. Les membres gardent la forme du gabarit.
+> - Compromis assumé : même silhouette pour tous ; on reconnaît les persos à leur tête, leur chapeau,
+>   leur tenue et leur couleur.
+>
+> Les étapes 2 et 3 ci-dessous décrivent l'approche d'avant (découpe par perso).
+
+
 Règle de base : l'outillage est **chez pixelforge** (styles de son API, testés dans sa CI) ;
 le jeu ne fait que demander, relire et intégrer.
 
