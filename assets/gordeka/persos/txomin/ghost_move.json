@@ -1,0 +1,25 @@
+{
+ "motion": "walk",
+ "quaternius": "Jog_Fwd_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "mischievous sly smile",
+ "tenue": "tank top",
+ "drive": {
+  "exaggerate": 1.3,
+  "bounce": 0.05
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Glides forward through the air: body leaning slightly forward, legs trailing behind relaxed, the small white angel wings flap clearly and steadily. The blue swim fins hanging from the belt at the hip: stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame."
+}
