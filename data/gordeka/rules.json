@@ -7,6 +7,8 @@
 	"phase_end": 6.0,
 	"exits_open_at": 90.0,
 	"extract_hold": 4.0,
+	"exits_per_round": 2,
+	"exits_min_gap": 40.0,
 	"capture_time": 0.5,
 	"capture_decay": 2.0,
 	"cone_deg": 90.0,

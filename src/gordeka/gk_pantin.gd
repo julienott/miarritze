@@ -4,7 +4,8 @@ extends Node2D
 ## (assets/gordeka/mannequin/<gabarit>/) habillé de sa garde-robe, animé en direct par les
 ## chorégraphies (assets/gordeka/choreo/). La composition suit exactement `rig.json` → `compose` :
 ##   M_local = T(pivot) · T(x·H, −y·H) · R(rot) · S(sx, sy) · T(−pivot)
-##   M(segment) = M(parent) · M_local ; root s'applique à tout ; `lag` décale les ancêtres.
+##   M(segment) = M(parent) · M_local ; root s'applique à tout ; `lag` décale le segment et ses
+##   ancêtres (hors root) de n images.
 ## Le pantin est dessiné dans le repère du canevas ; le nœud parent place les pieds (root.pivot).
 
 const MANNEQUIN: String = "res://assets/gordeka/mannequin/%s/"
@@ -105,7 +106,7 @@ func pose(f: int) -> void:
 			m = (root_m if parent == "root" else mats[parent]) * _local(nm, s["pivot"], f)
 			a = (root_a if parent == "root" else float(alphas[parent])) * _alpha(nm, f)
 		else:
-			# Retard (chapeau) : les ancêtres sous root sont pris à l'image f − n, le segment à f.
+			# Retard (tête, chapeau) : le segment et ses ancêtres sous root sont pris à l'image f − n.
 			var fl: int = _lagged(f, n)
 			var chain: Array[String] = []
 			var p: String = s["parent"]
@@ -117,8 +118,8 @@ func pose(f: int) -> void:
 			for c: String in chain:
 				m = m * _local(c, segs[by_name[c]]["pivot"], fl)
 				a *= _alpha(c, fl)
-			m = m * _local(nm, s["pivot"], f)
-			a *= _alpha(nm, f)
+			m = m * _local(nm, s["pivot"], fl)
+			a *= _alpha(nm, fl)
 		mats[nm] = m
 		alphas[nm] = a
 		var hidden: bool = ghost and (nm.begins_with("leg_") or nm.begins_with("foot_"))

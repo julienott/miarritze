@@ -273,7 +273,7 @@ func _cachette_claimed(i: int) -> bool:
 func _safest_exit() -> Vector2i:
 	var best: Vector2i = Vector2i(-1, -1)
 	var bd: float = -INF
-	for e: Vector2i in g.map.exits:
+	for e: Vector2i in g.open_exits:
 		var p: Vector2 = g.map.center(e)
 		var dh: float = p.distance_to(g.hunter.position) / _tiles()
 		if dh < 12.0:
@@ -347,9 +347,9 @@ func _think_hunter() -> void:
 			want_action = true
 			return
 	# 5. Garder une sortie ouverte (plus souvent si l'IA est maligne).
-	if g.exits_open() and _arrived() and scan_t <= 0.0 and not g.map.exits.is_empty() \
+	if g.exits_open() and _arrived() and scan_t <= 0.0 and not g.open_exits.is_empty() \
 			and rng.randf() < float(cfg.get("guard_exits", 0.0)) * 0.5:
-		var e: Vector2i = g.map.exits[rng.randi() % g.map.exits.size()]
+		var e: Vector2i = g.open_exits[rng.randi() % g.open_exits.size()]
 		for i: int in 20:
 			var t: Vector2i = e + Vector2i(rng.randi_range(-4, 4), rng.randi_range(-4, 4))
 			if g.map.walkable(t):

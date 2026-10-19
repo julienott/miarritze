@@ -65,8 +65,12 @@ func _draw() -> void:
 	var left: int = game.actors.filter(func(a: GkActor) -> bool: return a.role == GkActor.Role.HIDER).size()
 	_text(font, Vector2(s.x * 0.5, 104), "%d chassé%s encore libre%s" % [left, "s" if left > 1 else "", "s" if left > 1 else ""],
 		20, Color(1, 1, 1, 0.8))
-	if game.exits_open():
-		_text(font, Vector2(s.x * 0.5, 128), "Sorties ouvertes", 20, Color("6fe08a"))
+	if not game.open_exit_zones.is_empty() and (game.phase == GkGame.Phase.HIDE or game.phase == GkGame.Phase.HUNT):
+		var where: String = " et ".join(game.open_exit_zones)
+		if game.exits_open():
+			_text(font, Vector2(s.x * 0.5, 128), "Sorties ouvertes : " + where, 20, Color("6fe08a"))
+		else:
+			_text(font, Vector2(s.x * 0.5, 128), "Sorties du round : " + where, 20, Color(1, 1, 1, 0.7))
 	# Messages.
 	var y: float = s.y * 0.26
 	for m: Dictionary in game.messages:

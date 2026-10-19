@@ -26,6 +26,9 @@ var round_no: int = 0
 var hunter: GkActor
 var cachettes: Array = []            # [{tile, pos, occupant, lock, shake}]
 var traps: Array = []                # [{pos, owner}]
+## Sorties tirées au sort pour ce round (parmi les sorties possibles de la carte).
+var open_exits: Array[Vector2i] = []
+var open_exit_zones: Array[String] = []
 var reveals: Array = []              # [{pos, left, id}] (détection du chasseur)
 var messages: Array = []             # [{text, left, color}]
 var _sac: Array[int] = []
@@ -76,6 +79,8 @@ func _ready() -> void:
 			_hunter_level = arg.trim_prefix("--gk-hunter-level=")
 		elif arg.begins_with("--gk-rounds="):
 			_rounds_max = int(arg.trim_prefix("--gk-rounds="))
+		elif arg == "--gk-mannequin":
+			GkPerso.use_pantin = true
 		elif arg == "--gk-stats":
 			_stats = true
 		elif arg.begins_with("--gk-perso="):
@@ -229,12 +234,13 @@ func _start_round() -> void:
 		c["occupant"] = -1
 		c["lock"] = 0.0
 	hunter = _draw_hunter()
+	_pick_exits()
 	_round_hiders = actors.size() - 1
 	_round_found = 0
 	_st = {"vue": 0, "fouille_ok": 0, "fouille_vide": 0, "ondes": 0, "ondes_utiles": 0, "montres": 0,
 		"trouves_apres_onde": 0, "pieges_poses": 0, "pieges_pris": 0, "trouves_apres_piege": 0,
 		"entrees_cachette": 0, "ejections_cachette": 0, "trouves_en_cachette": 0, "sorties": 0,
-		"evasions_de_vue": 0, "t_trouves": []}
+		"evasions_de_vue": 0, "t_trouves": [], "lieux_trouves": [], "sorties_round": open_exit_zones.duplicate()}
 	_revealed_at.clear()
 	_trap_hit_at = -100.0
 	for a2: GkActor in actors:
@@ -533,6 +539,8 @@ func _found(a: GkActor, via: String = "vue") -> void:
 	if _stats:
 		_st[via] = int(_st.get(via, 0)) + 1
 		(_st["t_trouves"] as Array).append(snappedf(hunt_elapsed, 0.1))
+		var tt: Vector2i = map.to_tile(a.position)
+		(_st["lieux_trouves"] as Array).append([tt.x, tt.y])
 		if hunt_elapsed - float(_revealed_at.get(a.id, -100.0)) < 12.0:
 			_st["trouves_apres_onde"] += 1
 		if hunt_elapsed - _trap_hit_at < 8.0:
@@ -704,6 +712,47 @@ func _detect(h: GkActor) -> void:
 
 # ---------------------------------------------------------------- sorties
 
+## Tire les sorties du round : `exits_per_round` groupes, éloignés d'au moins `exits_min_gap` cases
+## (pour ne pas ouvrir deux sorties voisines). On rompt ainsi la routine d'un round à l'autre.
+func _pick_exits() -> void:
+	open_exits.clear()
+	open_exit_zones.clear()
+	var groups: Array = map.exit_groups.duplicate()
+	groups.shuffle()
+	var picked: Array = []
+	for grp: Dictionary in groups:
+		if picked.size() >= int(GkRules.f("exits_per_round")):
+			break
+		var c: Vector2 = _group_center(grp)
+		var ok: bool = true
+		for p: Dictionary in picked:
+			if c.distance_to(_group_center(p)) < GkRules.f("exits_min_gap"):
+				ok = false
+		if ok:
+			picked.append(grp)
+	for grp: Dictionary in picked:
+		open_exits.append_array(grp["tiles"])
+		open_exit_zones.append(str(grp["zone"]))
+
+
+func _group_center(grp: Dictionary) -> Vector2:
+	var s: Vector2 = Vector2.ZERO
+	for t: Vector2i in grp["tiles"]:
+		s += Vector2(t)
+	return s / float((grp["tiles"] as Array).size())
+
+
+func _open_exit_rects() -> Array[Rect2i]:
+	var out: Array[Rect2i] = []
+	for grp: Dictionary in map.exit_groups:
+		if open_exits.has((grp["tiles"] as Array)[0]):
+			var r: Rect2i = Rect2i(grp["tiles"][0], Vector2i.ONE)
+			for t: Vector2i in grp["tiles"]:
+				r = r.merge(Rect2i(t, Vector2i.ONE))
+			out.append(r)
+	return out
+
+
 func exits_open() -> bool:
 	return phase == Phase.HUNT and hunt_elapsed >= GkRules.f("exits_open_at")
 
@@ -714,7 +763,7 @@ func _update_exits(dt: float) -> void:
 	for a: GkActor in actors:
 		if a.role != GkActor.Role.HIDER or a.hidden_in >= 0:
 			continue
-		if map.at(map.to_tile(a.position)) == "E" and a.gauge <= 0.0:
+		if open_exits.has(map.to_tile(a.position)) and a.gauge <= 0.0:
 			a.extract_t += dt
 			if a.extract_t >= GkRules.f("extract_hold"):
 				a.play_once("extract")
@@ -799,7 +848,7 @@ func _draw_overlay(ci: CanvasItem) -> void:
 	var font: Font = ThemeDB.fallback_font
 	# Sorties : grisées tant qu'elles sont fermées.
 	var open: bool = exits_open()
-	for r: Rect2i in map.merged_rects("E"):
+	for r: Rect2i in _open_exit_rects():
 		var px: Rect2 = Rect2(Vector2(r.position) * map.tile, Vector2(r.size) * map.tile)
 		ci.draw_rect(px, Color(0.3, 0.9, 0.45, 0.35) if open else Color(0.4, 0.4, 0.4, 0.25))
 		ci.draw_rect(px, Color("6fe08a") if open else Color("8a8a8a"), false, 4.0)

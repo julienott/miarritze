@@ -8,14 +8,18 @@ extends Node2D
 const LAYER_MOVE: int = 1
 const LAYER_SIGHT: int = 2
 ## Pleins qui cachent la vue / objets bas et eau qui bloquent seulement le passage.
-const OCCLUDE: String = "#cBH"
-const LOW: String = "t~"
-const WALK: String = ".ES"
+## Lieux réels (tools/gordeka/carte_reelle.py) : R grand rocher, v végétation (cachent la vue),
+## r rochers bas (bloquent le passage) ; sol de sable « : » et de jetée « = ».
+const OCCLUDE: String = "#cBHRv"
+const LOW: String = "t~r"
+const WALK: String = ".ES:="
 
 const COLORS: Dictionary = {
 	"#": Color("3b4253"), "c": Color("a0703e"), "B": Color("e8eef2"), "H": Color("e08a2e"),
-	"t": Color("c9a873"), "~": Color("2f7fb8"),
+	"t": Color("c9a873"), "~": Color("2f7fb8"), "R": Color("8c6446"), "r": Color("9a7a5c"), "v": Color("5f8a4a"),
 }
+## Sols particuliers, case par case (le reste prend le sol de sa zone).
+const TILE_FLOORS: Dictionary = {":": Color("e6cf98"), "=": Color("b8b2a6")}
 const FLOOR_TINTS: Array[Color] = [Color("d9d2c3"), Color("cfc8b6"), Color("d4cdbf")]
 
 var map_id: String = ""
@@ -27,6 +31,9 @@ var astar: AStarGrid2D
 var zones: Array = []               # [{name, rect: Rect2i}]
 var cachettes: Array[Vector2i] = []
 var exits: Array[Vector2i] = []
+## Sorties possibles, groupées (zones.json → exits) : {zone, tiles: Array[Vector2i]} ; le jeu en
+## tire quelques-unes à chaque round.
+var exit_groups: Array = []
 var spawns: Array[Vector2i] = []
 ## Abri de chaque case de sol : nombre de voisins (8) qui cachent la vue.
 var cover: Dictionary = {}
@@ -55,6 +62,14 @@ func load_map(id: String) -> void:
 				"H": cachettes.append(Vector2i(x, y))
 				"E": exits.append(Vector2i(x, y))
 				"S": spawns.append(Vector2i(x, y))
+	exit_groups.clear()
+	for e: Variant in (zj as Dictionary).get("exits", []):
+		var ts: Array[Vector2i] = []
+		for t: Variant in (e as Dictionary)["tiles"]:
+			ts.append(Vector2i(int(t[0]), int(t[1])))
+		exit_groups.append({"zone": str(e["zone"]), "tiles": ts})
+	if exit_groups.is_empty() and not exits.is_empty():
+		exit_groups.append({"zone": "", "tiles": exits.duplicate()})
 	_build_bodies()
 	_build_astar()
 	_build_cover()
@@ -217,7 +232,7 @@ func _draw() -> void:
 ## dessine que les morceaux visibles à l'écran.
 func _build_chunks() -> void:
 	var groups: Dictionary = {}
-	for ch: String in "#cBt":
+	for ch: String in "#cBtRrv":
 		for r: Rect2i in merged_rects(ch):
 			var z: int = zone_of(r.position + r.size / 2)
 			if not groups.has(z):
@@ -239,24 +254,38 @@ func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
 		var f: Array = _floor_of(str(z["name"]))
 		var px: Rect2 = Rect2(Vector2(r.position) * t, Vector2(r.size) * t)
 		var base: Color = Color(str(f[0]))
-		ci.draw_rect(px, base)
+		# Sol case par case (par plages d'une ligne) : pas de sol peint sur l'eau ni sous les rochers.
+		for y: int in range(r.position.y, r.end.y):
+			var x: int = r.position.x
+			while x < r.end.x:
+				var ch: String = at(Vector2i(x, y))
+				if not WALK.contains(ch) and not "cBHt#".contains(ch):
+					x += 1
+					continue
+				var x2: int = x
+				while x2 < r.end.x and at(Vector2i(x2, y)) == ch:
+					x2 += 1
+				ci.draw_rect(Rect2(Vector2(x, y) * t, Vector2(x2 - x, 1) * t), TILE_FLOORS.get(ch, base))
+				x = x2
 		var line: Color = base.darkened(0.12)
 		match str(f[1]):
 			"dalles":
 				for y: int in range(r.position.y, r.end.y):
 					for x: int in range(r.position.x, r.end.x):
+						if at(Vector2i(x, y)) != ".":
+							continue
 						var o: float = 0.5 * t if y % 2 == 0 else 0.0
 						ci.draw_rect(Rect2(Vector2(x, y) * t + Vector2(o, 0), Vector2(t, t)).intersection(px), line, false, 2.0)
 			"paves":
 				for y: int in range(r.position.y * 2, r.end.y * 2):
 					for x: int in range(r.position.x * 2, r.end.x * 2):
 						var c: Vector2 = (Vector2(x, y) + Vector2(0.5 + 0.25 * (y % 2), 0.5)) * t * 0.5
-						if px.has_point(c):
+						if px.has_point(c) and at(Vector2i(int(c.x / t), int(c.y / t))) == ".":
 							ci.draw_circle(c, t * 0.2, base.lightened(0.04 * float((x * 7 + y * 3) % 3)))
 			"carrelage":
 				for y: int in range(r.position.y, r.end.y):
 					for x: int in range(r.position.x, r.end.x):
-						if (x + y) % 2 == 0:
+						if (x + y) % 2 == 0 and at(Vector2i(x, y)) == ".":
 							ci.draw_rect(Rect2(Vector2(x, y) * t, Vector2(t, t)), base.darkened(0.05))
 			"planches":
 				for y: int in range(r.position.y * 4, r.end.y * 4):
@@ -275,7 +304,7 @@ func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
 		var rr: Rect2i = it[1]
 		var p2: Rect2 = Rect2(Vector2(rr.position) * t, Vector2(rr.size) * t)
 		ci.draw_rect(Rect2(p2.position + Vector2(t * 0.18, t * 0.22), p2.size), Color(0, 0, 0, 0.16))
-	for ch: String in "tcB#":
+	for ch: String in "rtcBRv#":
 		for it: Array in items:
 			if str(it[0]) != ch:
 				continue
@@ -286,6 +315,9 @@ func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
 				"c": _crate(ci, p3)
 				"B": _boat(ci, p3, rr.position.x * 3 + rr.position.y)
 				"#": _wall(ci, p3)
+				"R": _block(ci, p3, Color("a07a58"), Color("6e5038"), 10.0)
+				"r": GkDraw.rbox(ci, p3.grow(-2), Color("9a7a5c"), 8.0, 2.0)
+				"v": _block(ci, p3, Color("6f9a55"), Color("4c7038"), 12.0)
 
 
 ## Bloc avec un dessus clair et une face avant plus sombre (vue 3/4), contour épais.

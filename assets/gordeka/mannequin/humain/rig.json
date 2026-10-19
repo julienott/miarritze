@@ -14,7 +14,7 @@
    "name": "arm_back",
    "parent": "body",
    "pivot": [
-    296.0,
+    280.0,
     262.0
    ],
    "pivot_name": "shoulder_back",
@@ -25,8 +25,8 @@
    "name": "hand_back",
    "parent": "arm_back",
    "pivot": [
-    296.0,
-    332.3
+    280.0,
+    347.5
    ],
    "pivot_name": "wrist_back",
    "z": 1,
@@ -113,7 +113,7 @@
    "name": "arm_front",
    "parent": "body",
    "pivot": [
-    270.0,
+    256.0,
     262.0
    ],
    "pivot_name": "shoulder_front",
@@ -124,8 +124,8 @@
    "name": "hand_front",
    "parent": "arm_front",
    "pivot": [
-    270.0,
-    336.0
+    256.0,
+    352.0
    ],
    "pivot_name": "wrist_front",
    "z": 10,
@@ -146,14 +146,28 @@
  "variants": {
   "head": [
    "neutral",
+   "blink",
+   "malicious",
+   "scared",
    "surprised",
    "happy",
-   "blink"
+   "sad",
+   "focused"
   ],
   "body": [
    "legs",
    "ghost"
   ]
+ },
+ "expressions": {
+  "neutral": "immobile",
+  "blink": "clignement",
+  "malicious": "sourire malicieux, je vais me cacher (walk, ghost_move, trap)",
+  "scared": "affolé (run_scared, trapped)",
+  "surprised": "vu ou trouvé (found)",
+  "happy": "content (victory, extract, hide_out)",
+  "sad": "déçu (sad)",
+  "focused": "concentré, rusé, chasseur (search, detect)"
  },
  "order": [
   "arm_back",
@@ -194,12 +208,12 @@
    474.0
   ],
   "shoulder_front": [
-   270.0,
+   256.0,
    262.0
   ],
   "wrist_front": [
-   270.0,
-   336.0
+   256.0,
+   352.0
   ],
   "hip_back": [
    254.0,
@@ -210,12 +224,12 @@
    474.0
   ],
   "shoulder_back": [
-   296.0,
+   280.0,
    262.0
   ],
   "wrist_back": [
-   296.0,
-   332.3
+   280.0,
+   347.5
   ]
  },
  "clip_legs": false,
@@ -245,7 +259,7 @@
   "H": "height_px du rig (x, y des pistes en fraction de H ; y positif = vers le HAUT, d'où −y·H)",
   "rotation": "rot en degrés ; R(θ) = [[cos θ, −sin θ], [sin θ, cos θ]] appliquée en repère y vers le bas, donc θ > 0 = sens HORAIRE à l'écran (corps penché en avant ; membre vers l'arrière, le perso regardant à droite)",
   "hierarchie": "M(root) = M_local(piste root, root.pivot) ; M(segment) = M(parent) · M_local(piste du segment, pivot du segment) ; rotations LOCALES au parent. Piste absente = identité (x = y = rot = 0, sx = sy = 1, alpha = 1). head, hat, arm_*, hand_* suivent body ; leg_*, foot_* suivent root (pas body) ; root s'applique à tout.",
-  "lag": "lag = {\"hat\": n} : M(hat) = M(root)(f) · M_local(body)(f−n) · M_local(head)(f−n) · M_local(hat)(f). f−n est pris modulo frames si loop, sinon borné à 0",
+  "lag": "lag = {\"<segment>\": n} : le segment et toute sa chaîne d'ancêtres (hors root) sont pris n images plus tôt : M(seg) = M(root)(f) · M_local(a1)(f−n) · … · M_local(seg)(f−n) (ex. head 1 : M_local(body)(f−1) · M_local(head)(f−1) ; hat 2 : body, head et hat à f−2). Un enfant d'un segment en retard sans lag propre suit ce segment tel quel. f−n modulo frames si loop, sinon borné à 0",
   "interpolation": "par propriété, entre les deux clés qui l'encadrent (une clé peut ne donner que certaines propriétés) ; t = (f − f0) / (f1 − f0), adouci t' = 0,5 − 0,5·cos(π t) sauf si la clé de départ porte \"ease\": \"linear\" ; avant la 1re clé / après la dernière : valeur de la clé ; en boucle, la 1re clé est recopiée à f + frames (et la dernière à f − frames) pour fermer le cycle",
   "variantes": "head : image de la tête remplacée par head_<expr> (clé en marches, sans interpolation) ; body : \"ghost\" remplace body par body_ghost et masque leg_* et foot_*",
   "alpha": "alpha d'un segment = produit des alphas de la chaîne root → … → segment",
