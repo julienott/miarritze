@@ -488,3 +488,19 @@ ces paramètres permettent de les relancer.
 |---|---|---|---|---|---|
 | Essai écarté | `pf_2d__character` | `tools/rd/out/txomin/neutral_256.png` (pixel art Borroka, fond blanc, 512 px) | « a Basque lifeguard boy with dark brown skin and short black curly hair, black sunglasses, yellow tank top, red swim shorts, a silver whistle on a cord around his neck, a pair of blue swim fins hanging from his belt at his hip, barefoot, cheerful confident smile », `num_images` 3. Rendu pixelisé, casquette inventée : **ne pas partir d'un sprite pixel art.** | 1 | `13c35937f92b463fa794eb7f794ea95c` |
 | **Modèle** (variante 2 sur 3 retenue par Julien → `image_01.png`) | `pf_2d__character` | aucune (description seule) | le même prompt + « bare head with no hat and no cap, smooth clean cartoon, no pixel art », `num_images` 3 | 1 | `149ffc0a84eb4d12b713216d6731ff32` |
+
+#### Profils des 10 autres persos (run du 2026-10-19, `tools/gordeka/profils_persos.py`, choix de Julien attendus)
+`pf_2d__character`, description seule, `num_images` 3, graine 1 ; à chaque prompt s'ajoute « , smooth clean cartoon, no pixel art ».
+
+| Perso | Prompt | Tâche | Remarques |
+|---|---|---|---|
+| maia | « a young Basque surfer girl with wet brown hair in a ponytail, deep turquoise wetsuit with a navy panel, a small yellow surfboard strapped flat on her back, barefoot, hands empty, confident cheerful smile » | `b5c2e32aba454898a8c6233c6b95fdc3` | planche portée en travers du corps et non sur le dos (les 3) |
+| patxi | « a bearded Basque fisherman, blue beanie, yellow raincoat, navy trousers, black boots, a fishing rod strapped on his back, hands empty, friendly smile » | `11e6f30a41564ff78fb939228778e3f1` |  |
+| xabi | « a Basque pelota player boy, white shirt and white trousers, red sash belt, a long curved wicker chistera basket glove on his hand, cheerful smile » | `7d011045d17848868609879d9a914277` | chistera mal rendue (panier rond) ; variante 2 à tête grise de mannequin |
+| mattin | « a strong Basque stone lifter man, black mustache, red beret, red and white horizontally striped shirt, navy trousers, big muscular arms, friendly smile » | `fcb50f5c24ff41b992860791e5e90888` |  |
+| amaia | « a Basque folk dancer girl, red headscarf, green vest over a white blouse, red skirt, white espadrilles, a wooden makila walking stick slung on her back, hands empty, cheerful smile » | `455ca52c6cb64e7f9b0836ad7e0f3fa9` |  |
+| kaio | « a cheeky anthropomorphic seagull standing upright on two orange webbed feet, big yellow beak with a red dot, white head and belly, light grey wings used as arms with feathered fingertips, small grey tail, mischievous grin » | `bc43a467a3e6467eaf358ee113c97bc9` |  |
+| karramarro | « a cheerful orange cartoon crab standing on its eight thin legs, two big orange pincers raised, eyes on stalks, yellow belly, big happy open mouth » | `3b9c8d989c5d46fcb647acf38ee2291f` | de face plutôt que de profil |
+| ramuntxo | « a jolly Basque chef, tall white chef hat, white chef jacket, red neck scarf, checkered trousers, a frying pan hanging from his belt, hands empty, big smile » | `04b332683de44715960e433426fbfd26` | peau grise sur les 3 variantes : préciser la couleur de peau |
+| itsaso | « a girl made of sea water, pale cyan skin, long wavy aqua hair, a dress of deep blue waves edged with white sea foam, barefoot, gentle smile » | `38bbce7c1da34d97882c78fcf0e5145d` | interrompu (arrêt de pixelforge) : à relancer |
+| peio | « a sturdy young Basque rugby player with dark brown skin and short black hair, red and white hooped rugby jersey, black shorts, white socks, black boots, hands empty, no logo, big cheerful smile » | `d02476411bac480abdee501ed42a3ca1` | interrompu (arrêt de pixelforge) : à relancer |
