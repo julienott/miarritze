@@ -1,5 +1,5 @@
 {
- "_doc": "Prompts de génération du décor de la carte Port des Pêcheurs v2 (Miarritze Gordeka). Rien n'a été envoyé. Généré à partir de tools/gordeka/make_port_v2.py, assets/maps/port_pecheurs/map.txt, zones.json et src/gordeka/gk_map.gd. Voir docs/GORDEKA_PROMPTS_DECOR.md.",
+ "_doc": "Prompts de génération du décor de la carte Port des Pêcheurs v2 (Miarritze Gordeka). Rien n'a été envoyé. Généré à partir de tools/gordeka/make_port_v2.py, assets/maps/port_pecheurs/map.txt, zones.json et src/gordeka/gk_map.gd. Voir docs/GORDEKA_PROMPTS_DECOR.md. Chaque payload se termine par la même consigne de caméra par style (camera_commune), pour un angle pseudo 3D identique façon Among Us sur tous les objets et les sols (Julien, 2026-10-20).",
  "carte": "port_pecheurs",
  "version_carte": 2,
  "date": "2026-10-19",
@@ -57,7 +57,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Large rectangular warm sandstone paving slabs of an old harbour quay, staggered rows, beige and light golden tones, a few slabs slightly lighter or darker, rounded corners, tiny pebbles in some joints.",
+     "prompt": "Large rectangular warm sandstone paving slabs of an old harbour quay, staggered rows, beige and light golden tones, a few slabs slightly lighter or darker, rounded corners, tiny pebbles in some joints. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 3,
      "width": 1024,
      "height": 1024,
@@ -106,7 +106,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Clean white and very light blue-grey square ceramic tiles of a fish market hall, checkerboard pattern, a couple of small wet shiny spots.",
+     "prompt": "Clean white and very light blue-grey square ceramic tiles of a fish market hall, checkerboard pattern, a couple of small wet shiny spots. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 2,
      "width": 1024,
      "height": 1024,
@@ -157,7 +157,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Smooth light grey concrete floor of a boat workshop, large square slabs with straight expansion joints, a few flat pale paint splashes in Basque red #9e1b1b and green.",
+     "prompt": "Smooth light grey concrete floor of a boat workshop, large square slabs with straight expansion joints, a few flat pale paint splashes in Basque red #9e1b1b and green. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 3,
      "width": 1024,
      "height": 1024,
@@ -208,7 +208,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Rounded cobblestones of a narrow Basque fishermen's lane, warm grey and beige stones of slightly different sizes in offset rows, soft rounded shapes.",
+     "prompt": "Rounded cobblestones of a narrow Basque fishermen's lane, warm grey and beige stones of slightly different sizes in offset rows, soft rounded shapes. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 3,
      "width": 1024,
      "height": 1024,
@@ -257,7 +257,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Light golden sandstone #d9c39a pavement of a Basque village square arranged in a fan pattern (calade), pale cream and ochre stones.",
+     "prompt": "Light golden sandstone #d9c39a pavement of a Basque village square arranged in a fan pattern (calade), pale cream and ochre stones. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 2,
      "width": 1024,
      "height": 1024,
@@ -306,7 +306,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Wooden deck boards of a seaside bar terrace, warm honey brown planks running horizontally, staggered board ends, a few darker knots drawn as simple ovals.",
+     "prompt": "Wooden deck boards of a seaside bar terrace, warm honey brown planks running horizontally, staggered board ends, a few darker knots drawn as simple ovals. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 2,
      "width": 1024,
      "height": 1024,
@@ -355,7 +355,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Hexagonal terracotta floor tiles (tomettes) of a small Basque sailors' chapel, warm red-orange tones, thin cream joints.",
+     "prompt": "Hexagonal terracotta floor tiles (tomettes) of a small Basque sailors' chapel, warm red-orange tones, thin cream joints. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 2,
      "width": 1024,
      "height": 1024,
@@ -404,7 +404,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Flat platform of smoothed golden sandstone #d9c39a rock at the foot of a harbour lighthouse, large irregular rounded plates, a few tiny tide pools drawn as small turquoise #2fa7b8 ovals.",
+     "prompt": "Flat platform of smoothed golden sandstone #d9c39a rock at the foot of a harbour lighthouse, large irregular rounded plates, a few tiny tide pools drawn as small turquoise #2fa7b8 ovals. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 2,
      "width": 1024,
      "height": 1024,
@@ -455,7 +455,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Calm harbour sea water, deep turquoise #2fa7b8 and navy blue, simple flat cartoon wave crests drawn as small white curved lines, a few lighter ripple shapes.",
+     "prompt": "Calm harbour sea water, deep turquoise #2fa7b8 and navy blue, simple flat cartoon wave crests drawn as small white curved lines, a few lighter ripple shapes. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 4,
      "width": 1024,
      "height": 1024,
@@ -525,7 +525,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Edge of a sandstone harbour quay meeting the water: a rounded stone coping on the quay side, a short visible front face of stacked golden stone blocks dropping into turquoise #2fa7b8 water, a thin line of white foam where it touches the water. Provide straight pieces for the north, south, east and west sides plus outer and inner corners.",
+     "prompt": "Edge of a sandstone harbour quay meeting the water: a rounded stone coping on the quay side, a short visible front face of stacked golden stone blocks dropping into turquoise #2fa7b8 water, a thin line of white foam where it touches the water. Provide straight pieces for the north, south, east and west sides plus outer and inner corners. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 4,
      "width": 1024,
@@ -575,7 +575,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Thick old harbour wall: flat top of dark grey-blue capstones seen from above, and a front face of large golden sandstone #d9c39a blocks with rounded corners. Provide pieces for straight runs, ends, corners and T junctions.",
+     "prompt": "Thick old harbour wall: flat top of dark grey-blue capstones seen from above, and a front face of large golden sandstone #d9c39a blocks with rounded corners. Provide pieces for straight runs, ends, corners and T junctions. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 4,
@@ -626,7 +626,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__ground",
-     "prompt": "Red clay Basque roof tiles (canal tiles) seen from above, rows of rounded orange-red tiles, a few slightly darker or lighter tiles, simple flat shapes.",
+     "prompt": "Red clay Basque roof tiles (canal tiles) seen from above, rows of rounded orange-red tiles, a few slightly darker or lighter tiles, simple flat shapes. Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
      "num_images": 2,
      "width": 1024,
      "height": 1024,
@@ -675,7 +675,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__texture",
-     "prompt": "Front face of a Labourd Basque house: whitewashed #f4f1ea wall with red half-timbering beams, small windows with Basque red #9e1b1b shutters (some dark green #1f6b3a), a red wooden door, a flower box with pink hydrangeas.",
+     "prompt": "Front face of a Labourd Basque house: whitewashed #f4f1ea wall with red half-timbering beams, small windows with Basque red #9e1b1b shutters (some dark green #1f6b3a), a red wooden door, a flower box with pink hydrangeas. Front face only, square to the viewer, orthographic, as the front face of a wall in an Among Us style three-quarter top-down map. Light from the upper left.",
      "num_images": 4,
      "width": 1024,
      "height": 256,
@@ -728,7 +728,7 @@
       3
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 4 by 3 tiles.",
+     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 4 by 3 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -743,7 +743,7 @@
       3
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 3 by 3 tiles.",
+     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 3 by 3 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -758,7 +758,7 @@
       4
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 3 by 4 tiles.",
+     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 3 by 4 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -773,7 +773,7 @@
       2
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 4 by 2 tiles.",
+     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 4 by 2 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -824,7 +824,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Cold storage room of a fish market: white boxy building with rounded corners, a big light blue insulated door with a silver handle, a painted blue fish shape on the wall, a few frost marks drawn as white snowflake shapes.",
+     "prompt": "Cold storage room of a fish market: white boxy building with rounded corners, a big light blue insulated door with a silver handle, a painted blue fish shape on the wall, a few frost marks drawn as white snowflake shapes. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 832,
@@ -874,7 +874,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Small round harbour lighthouse: white stone tower with a wide red band at the top, a glass lantern room with a yellow light, a little green door at its base, round stone base. The tower is tall.",
+     "prompt": "Small round harbour lighthouse: white stone tower with a wide red band at the top, a glass lantern room with a yellow light, a little green door at its base, round stone base. The tower is tall. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -932,7 +932,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Basque pelota wall (fronton): tall wall of warm pink sandstone with the typical curved rounded top, a painted horizontal red line near the bottom, a few small green plants at its foot.",
+     "prompt": "Basque pelota wall (fronton): tall wall of warm pink sandstone with the typical curved rounded top, a painted horizontal red line near the bottom, a few small green plants at its foot. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -987,7 +987,7 @@
       3
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Tall wooden shelving unit in a net shed: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates. Footprint 2 by 3 tiles.",
+     "prompt": "Tall wooden shelving unit in a net shed: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates. Footprint 2 by 3 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 512,
@@ -1001,7 +1001,7 @@
       4
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Tall wooden shelving unit in a net shed: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates. Footprint 2 by 4 tiles.",
+     "prompt": "Tall wooden shelving unit in a net shed: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates. Footprint 2 by 4 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 384,
@@ -1015,7 +1015,7 @@
       5
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Tall wooden shelving unit in a net shed: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates. Footprint 2 by 5 tiles.",
+     "prompt": "Tall wooden shelving unit in a net shed: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates. Footprint 2 by 5 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 320,
@@ -1065,7 +1065,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Small wooden altar of a Basque sailors' chapel, white cloth with a red and green Basque linen stripe, a little wooden model sailing boat (ex-voto) on top, two short candles, a vase of blue hydrangeas.",
+     "prompt": "Small wooden altar of a Basque sailors' chapel, white cloth with a red and green Basque linen stripe, a little wooden model sailing boat (ex-voto) on top, two short candles, a vase of blue hydrangeas. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1116,7 +1116,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Wooden bar counter of a seaside Basque terrace, front panel painted Basque red #9e1b1b, a top covered with a striped Basque linen cloth, two small cider barrels and a glass jar of lemonade on it.",
+     "prompt": "Wooden bar counter of a seaside Basque terrace, front panel painted Basque red #9e1b1b, a top covered with a striped Basque linen cloth, two small cider barrels and a glass jar of lemonade on it. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1167,7 +1167,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Long narrow retaining wall of golden sandstone #d9c39a blocks, a flat stone top with a row of pink and blue hydrangeas and a dark green #1f6b3a iron railing.",
+     "prompt": "Long narrow retaining wall of golden sandstone #d9c39a blocks, a flat stone top with a row of pink and blue hydrangeas and a dark green #1f6b3a iron railing. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1228,7 +1228,7 @@
       2
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them. Footprint 2 by 2 tiles.",
+     "prompt": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them. Footprint 2 by 2 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 704,
@@ -1242,7 +1242,7 @@
       1
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them. Footprint 2 by 1 tiles.",
+     "prompt": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them. Footprint 2 by 1 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -1256,7 +1256,7 @@
       2
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them. Footprint 1 by 2 tiles.",
+     "prompt": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them. Footprint 1 by 2 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 320,
@@ -1310,7 +1310,7 @@
       2
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Small traditional Basque wooden fishing boat, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it. Footprint 6 by 2 tiles.",
+     "prompt": "Small traditional Basque wooden fishing boat, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it. Footprint 6 by 2 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1325,7 +1325,7 @@
       2
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Small traditional Basque wooden fishing boat, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it. Footprint 7 by 2 tiles.",
+     "prompt": "Small traditional Basque wooden fishing boat, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it. Footprint 7 by 2 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1340,7 +1340,7 @@
       2
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Small traditional Basque wooden fishing boat, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it. Footprint 4 by 2 tiles.",
+     "prompt": "Small traditional Basque wooden fishing boat, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it. Footprint 4 by 2 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1391,7 +1391,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Chunky friendly cartoon fishing trawler, horizontal (bow to the right), red and white hull, a small white wheelhouse with round windows, a short mast with a green flag, piles of nets and orange floats on the deck, sitting on wooden blocks.",
+     "prompt": "Chunky friendly cartoon fishing trawler, horizontal (bow to the right), red and white hull, a small white wheelhouse with round windows, a short mast with a green flag, piles of nets and orange floats on the deck, sitting on wooden blocks. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1442,7 +1442,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Wooden fishing boat hull out of the water resting on a wooden cradle, horizontal, half repainted (one half fresh Basque green #1f6b3a, the other faded), a small ladder leaning on the side, paint pots on the ground next to it.",
+     "prompt": "Wooden fishing boat hull out of the water resting on a wooden cradle, horizontal, half repainted (one half fresh Basque green #1f6b3a, the other faded), a small ladder leaning on the side, paint pots on the ground next to it. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1493,7 +1493,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Wooden boat being built in a workshop: a nearly finished planked hull in natural honey wood with a few planks still missing at the bow, wood clamps, a stack of planks beside it.",
+     "prompt": "Wooden boat being built in a workshop: a nearly finished planked hull in natural honey wood with a few planks still missing at the bow, wood clamps, a stack of planks beside it. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -1543,7 +1543,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Long low fish market stall table: steel table covered with crushed ice, rows of smiling cartoon fish, a few crabs and shrimps, lemons, a string of red Espelette peppers hanging at one end.",
+     "prompt": "Long low fish market stall table: steel table covered with crushed ice, rows of smiling cartoon fish, a few crabs and shrimps, lemons, a string of red Espelette peppers hanging at one end. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -1594,7 +1594,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Short round cast iron mooring bollard painted dark green #1f6b3a with a thick beige rope looped around it.",
+     "prompt": "Short round cast iron mooring bollard painted dark green #1f6b3a with a thick beige rope looped around it. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -1649,7 +1649,7 @@
       1
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Low pile of fishing nets spread on the ground with round orange floats and two small lobster pots of wood and rope. Footprint 3 by 1 tiles.",
+     "prompt": "Low pile of fishing nets spread on the ground with round orange floats and two small lobster pots of wood and rope. Footprint 3 by 1 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -1663,7 +1663,7 @@
       1
      ],
      "prompt_style": "pf_hd__prop",
-     "prompt": "Low pile of fishing nets spread on the ground with round orange floats and two small lobster pots of wood and rope. Footprint 2 by 1 tiles.",
+     "prompt": "Low pile of fishing nets spread on the ground with round orange floats and two small lobster pots of wood and rope. Footprint 2 by 1 tiles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -1713,7 +1713,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Round low stone fountain of a Basque village square: golden sandstone #d9c39a basin with turquoise #2fa7b8 water, a small central column with a lauburu (Basque cross) carved on it and a thin water spout.",
+     "prompt": "Round low stone fountain of a Basque village square: golden sandstone #d9c39a basin with turquoise #2fa7b8 water, a small central column with a lauburu (Basque cross) carved on it and a thin water spout. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1771,7 +1771,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Classic dark green #1f6b3a wooden and cast iron seaside bench of Biarritz, horizontal.",
+     "prompt": "Classic dark green #1f6b3a wooden and cast iron seaside bench of Biarritz, horizontal. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1822,7 +1822,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Simple dark wooden chapel bench (pew), horizontal, a small red cushion at one end.",
+     "prompt": "Simple dark wooden chapel bench (pew), horizontal, a small red cushion at one end. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1873,7 +1873,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Long wooden carpenter's workbench: a wooden plane, wood shavings curls, a mallet, a coil of rope and small pots of red and green paint.",
+     "prompt": "Long wooden carpenter's workbench: a wooden plane, wood shavings curls, a mallet, a coil of rope and small pots of red and green paint. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1924,7 +1924,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Low block of three wide golden sandstone #d9c39a steps, horizontal, a terracotta pot of pink hydrangeas at each end.",
+     "prompt": "Low block of three wide golden sandstone #d9c39a steps, horizontal, a terracotta pot of pink hydrangeas at each end. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -1975,7 +1975,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Small round bistro table with a red and white striped Basque linen tablecloth, a slice of gâteau basque on a plate, and two red wooden chairs on each side.",
+     "prompt": "Small round bistro table with a red and white striped Basque linen tablecloth, a slice of gâteau basque on a plate, and two red wooden chairs on each side. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2026,7 +2026,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Two wooden trestles holding a few long planks and a pair of oars, horizontal.",
+     "prompt": "Two wooden trestles holding a few long planks and a pair of oars, horizontal. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -2076,7 +2076,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Old Basque public washing basin (lavoir): rectangular sandstone basin with sloped stone washing edges, clear turquoise #2fa7b8 water, a wooden washing board and a few floating soap bubbles.",
+     "prompt": "Old Basque public washing basin (lavoir): rectangular sandstone basin with sloped stone washing edges, clear turquoise #2fa7b8 water, a wooden washing board and a few floating soap bubbles. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2134,7 +2134,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Big round wooden and rope lobster pot lying on its side, large enough for a child to curl up inside, a net flap as a door, a couple of orange floats tied to it. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Big round wooden and rope lobster pot lying on its side, large enough for a child to curl up inside, a net flap as a door, a couple of orange floats tied to it. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -2191,7 +2191,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Big wooden harbour storage chest painted Basque green #1f6b3a with iron bands and a rounded lid, coiled rope on top. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Big wooden harbour storage chest painted Basque green #1f6b3a with iron bands and a rounded lid, coiled rope on top. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2249,7 +2249,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Large white insulated ice box of a fish market with a light blue lid and big handles, a few ice cubes around the lid. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Large white insulated ice box of a fish market with a light blue lid and big handles, a few ice cubes around the lid. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -2306,7 +2306,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Sturdy red wooden chest for ropes and lanterns at the foot of a lighthouse, rounded lid, a brass lantern and a coiled rope on top. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Sturdy red wooden chest for ropes and lanterns at the foot of a lighthouse, rounded lid, a brass lantern and a coiled rope on top. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2364,7 +2364,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Big friendly dark green #1f6b3a wheeled street bin with a rounded lid, clean, with a seagull feather stuck on the lid. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Big friendly dark green #1f6b3a wheeled street bin with a rounded lid, clean, with a seagull feather stuck on the lid. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -2421,7 +2421,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Large blue plastic fish tub with a lid, the kind used on fishing quays, rounded corners, a small white fish drawn on its side. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Large blue plastic fish tub with a lid, the kind used on fishing quays, rounded corners, a small white fish drawn on its side. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -2478,7 +2478,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Big wicker trunk with a leather strap, lid ajar showing white pelota balls and a curved wicker chistera basket. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Big wicker trunk with a leather strap, lid ajar showing white pelota balls and a curved wicker chistera basket. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2536,7 +2536,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Tall soft heap of green and blue fishing nets with orange floats, a child-sized hollow hidden inside. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Tall soft heap of green and blue fishing nets with orange floats, a child-sized hollow hidden inside. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 512,
@@ -2593,7 +2593,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Small wooden booth of an old chapel with a red velvet curtain as a door and a little carved boat on top. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Small wooden booth of an old chapel with a red velvet curtain as a door and a little carved boat on top. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2651,7 +2651,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Small wooden rowboat turned upside down on two blocks, painted blue with a white stripe, a gap under it to slide inside. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Small wooden rowboat turned upside down on two blocks, painted blue with a white stripe, a gap under it to slide inside. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2709,7 +2709,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Huge wooden Basque cider barrel lying on a cradle with a round lid on its front end, red metal hoops. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Huge wooden Basque cider barrel lying on a cradle with a round lid on its front end, red metal hoops. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2767,7 +2767,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Big round wicker laundry basket overflowing with red, green and white striped Basque linen. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Big round wicker laundry basket overflowing with red, green and white striped Basque linen. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "layer",
      "num_images": 2,
      "width": 1024,
@@ -2824,7 +2824,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Large wooden sail chest with rope handles, a folded white sail sticking out from under the lid. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Large wooden sail chest with rope handles, a folded white sail sticking out from under the lid. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2882,7 +2882,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Small wooden beach changing cabin of Biarritz with blue and white vertical stripes, a little door and a triangular roof. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "prompt": "Small wooden beach changing cabin of Biarritz with blue and white vertical stripes, a little door and a triangular roof. Clearly a hiding spot, with a warm orange #e08a2e accent. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "layer",
      "num_images": 2,
@@ -2940,7 +2940,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "End of a stone jetty with a small iron ladder going down to a little red and white Basque rowboat waiting alongside, a lantern on a post, vertical layout.",
+     "prompt": "End of a stone jetty with a small iron ladder going down to a little red and white Basque rowboat waiting alongside, a lantern on a post, vertical layout. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "none",
      "num_images": 2,
@@ -2998,7 +2998,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Iron ladder going down the rocks behind a lighthouse, with a small green garden gate at the top, vertical layout, sea foam at the bottom edge.",
+     "prompt": "Iron ladder going down the rocks behind a lighthouse, with a small green garden gate at the top, vertical layout, sea foam at the bottom edge. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "none",
      "num_images": 2,
@@ -3056,7 +3056,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Concrete boat ramp sloping into the water with a small blue rowboat ready to leave, oars inside.",
+     "prompt": "Concrete boat ramp sloping into the water with a small blue rowboat ready to leave, oars inside. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "none",
      "num_images": 2,
@@ -3114,7 +3114,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "Top of a stone stairway leading up to the town through a small sandstone arch with a Basque red #9e1b1b wooden door.",
+     "prompt": "Top of a stone stairway leading up to the town through a small sandstone arch with a Basque red #9e1b1b wooden door. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "none",
      "num_images": 2,
@@ -3172,7 +3172,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "A lauburu (Basque cross with four comma shaped arms) painted in Basque red #9e1b1b inside a white circle, flat on the paving.",
+     "prompt": "A lauburu (Basque cross with four comma shaped arms) painted in Basque red #9e1b1b inside a white circle, flat on the paving. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "theme": "basque",
      "shadow": "none",
      "num_images": 2,
@@ -3223,7 +3223,7 @@
    "payloads": [
     {
      "prompt_style": "pf_hd__prop",
-     "prompt": "A funny sticky puddle of golden honey-like goo with a few bubbles and two cartoon sparkles, round and flat on the ground.",
+     "prompt": "A funny sticky puddle of golden honey-like goo with a few bubbles and two cartoon sparkles, round and flat on the ground. Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
      "shadow": "none",
      "num_images": 2,
      "width": 1024,
@@ -3248,5 +3248,10 @@
   "Couleurs des bateaux et des portes : variantes d'images (proposé) ou un masque recoloré par le jeu comme la tenue des persos ?",
   "Outil : styles pixelforge pf_hd__prop (objets) et pf_hd__texture (sols) à confirmer pour ce rendu flat ; le fond transparent est-il natif ou faut-il détourer un fond blanc ?",
   "Ambiance non bloquante (mouettes, linge basque qui sèche, ikurriña, hortensias, flaques) : à ajouter maintenant ou après le premier lot ?"
- ]
+ ],
+ "camera_commune": {
+  "pf_hd__prop": "Camera: Among Us style three-quarter top-down view from the front, about 40 degrees from above: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left.",
+  "pf_hd__ground": "Seen from the same Among Us map camera, flat on the ground: straight top-down orthographic, no perspective, no vanishing point. Light from the upper left.",
+  "pf_hd__texture": "Front face only, square to the viewer, orthographic, as the front face of a wall in an Among Us style three-quarter top-down map. Light from the upper left."
+ }
 }

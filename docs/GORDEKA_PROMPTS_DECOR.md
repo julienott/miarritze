@@ -30,6 +30,18 @@ Repères de couleur (à donner en mots au générateur, en hexa pour la retouche
 
 Tailles : une case fait **64 px en jeu** (`rules.json` → `tile_px`) ; sortie conseillée **128 px par case** (×2). Générer plus grand (côté long ≈ 1024 px) puis réduire. Le débord vers le haut (`debord_haut_cases`) est compté dans la taille.
 
+### Caméra commune (ajoutée le 2026-10-20, demande de Julien)
+
+Pour un angle pseudo 3D identique façon Among Us sur tout le décor, chaque payload se termine par la
+même consigne de caméra selon son style (`camera_commune` dans `tools/gordeka/prompts_decor.json`) :
+
+- objets (`pf_hd__prop`) : vue de 3/4 du dessus, de face, environ 40° au-dessus ; on voit le dessus et
+  la face avant, face avant parallèle à l'écran, pas de face latérale, orthographique, pas isométrique ;
+- sols (`pf_hd__ground`) : vus de la même caméra, à plat, donc droit du dessus, sans perspective ;
+- façades (`pf_hd__texture`) : face avant seule, parallèle à l'écran.
+
+Lumière commune : en haut à gauche. Priorité de file : `low` (décor = 2).
+
 ## 2. Liste des éléments
 
 57 éléments. « Vue » = bloque la vue du chasseur ; « Passage » = bloque le passage.
