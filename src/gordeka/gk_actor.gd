@@ -10,6 +10,9 @@ const LAYER_ACTOR: int = 4
 
 var id: int = 0
 var display_name: String = ""
+## Personnage du roster (accessoire dessiné) : louis, maia, patxi…
+var character: String = "louis"
+var walk_phase: float = 0.0
 var color: Color = Color.WHITE
 var is_bot: bool = true
 var role: Role = Role.HIDER
@@ -73,6 +76,7 @@ func step(move: Vector2, look_dir: Vector2, dt: float) -> void:
 	else:
 		velocity = move.limit_length(1.0) * speed()
 		move_and_slide()
+		walk_phase = fmod(walk_phase + velocity.length() * dt * 0.06, TAU) if velocity.length() > 5.0 else 0.0
 	var want: Vector2 = move if move.length() > 0.2 else look_dir
 	if want.length() > 0.1 and hidden_in < 0:
 		var turn: float = deg_to_rad(GkRules.f("turn_speed_deg")) * dt
@@ -86,32 +90,133 @@ func _draw() -> void:
 	if not shown or hidden_in >= 0:
 		return
 	var ghost: bool = role == Role.GHOST or role == Role.OUT
-	var a: float = 0.4 if ghost else 1.0
-	var dir: Vector2 = Vector2.from_angle(look)
-	var dark: Color = color.darkened(0.45)
-	# Ombre, sac à dos, corps, visière (façon Among Us vue de dessus).
+	var u: float = radius / 10.0
+	var face: float = 1.0 if cos(look) >= 0.0 else -1.0
+	# Ombre au sol, et anneau rouge sous le chasseur.
 	if not ghost:
-		draw_circle(Vector2(0, radius * 0.55), radius * 1.05, Color(0, 0, 0, 0.18))
-	draw_circle(-dir * radius * 0.75, radius * 0.55, Color(dark, a))
-	draw_circle(Vector2.ZERO, radius + 3, Color(Color("1d2230"), a))
-	draw_circle(Vector2.ZERO, radius, Color(color, a))
-	var vis: Vector2 = dir * radius * 0.45
-	draw_set_transform(vis, look, Vector2(0.55, 1.0))
-	draw_circle(Vector2.ZERO, radius * 0.62, Color(Color("1d2230"), a))
-	draw_circle(Vector2.ZERO, radius * 0.5, Color(Color("9fd8ef"), a))
-	draw_set_transform(Vector2.ZERO)
+		GkDraw.ellipse(self, Vector2(0, 5.5 * u), 10.5 * u, 3.6 * u, Color(0, 0, 0, 0.22))
 	if role == Role.HUNTER:
-		draw_arc(Vector2.ZERO, radius + 9, 0, TAU, 32, Color("ff3b30"), 5.0)
-	if slow_left > 0.0:
-		for i: int in 3:
-			var p: Vector2 = Vector2.from_angle(float(i) * TAU / 3.0 + slow_left * 4.0) * (radius + 6)
-			draw_circle(p, 5, Color("f2c12e"))
+		var ring: PackedVector2Array = GkDraw.ellipse_points(Vector2(0, 5.5 * u), 13.0 * u, 5.0 * u, 32)
+		ring.append(ring[0])
+		draw_polyline(ring, Color("ff3b30"), 4.0, true)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2(face * u, u))
+	_draw_body(ghost)
+	draw_set_transform(Vector2.ZERO)
 	var font: Font = ThemeDB.fallback_font
-	var label: String = display_name
-	draw_string(font, Vector2(-120, -radius - 14), label, HORIZONTAL_ALIGNMENT_CENTER, 240, 20,
-		Color(1, 1, 1, a))
+	var top: float = (-34.0 if character == "ramuntxo" else -27.0) * u
+	draw_string(font, Vector2(-120, top), display_name, HORIZONTAL_ALIGNMENT_CENTER, 240, 20,
+		Color(1, 1, 1, 0.5 if ghost else 1.0))
+	if slow_left > 0.0:
+		for k: int in 3:
+			var p: Vector2 = Vector2(0, -8 * u) + Vector2.from_angle(float(k) * TAU / 3.0 + slow_left * 4.0) * 14 * u
+			draw_circle(p, 4.0, Color("f2c12e"))
 	if gauge > 0.0 and role == Role.HIDER:
 		var w: float = radius * 2.4
-		var r: Rect2 = Rect2(Vector2(-w * 0.5, -radius - 44), Vector2(w, 9))
-		draw_rect(r.grow(2), Color("1d2230"))
+		var r: Rect2 = Rect2(Vector2(-w * 0.5, top - 30), Vector2(w, 9))
+		draw_rect(r.grow(2), GkDraw.INK)
 		draw_rect(Rect2(r.position, Vector2(w * clampf(gauge, 0.0, 1.0), r.size.y)), Color("ff3b30"))
+
+
+## Le petit bonhomme façon Among Us, de profil vers la droite, en unités (1 u = rayon / 10) ;
+## les pieds touchent y = 6.
+func _draw_body(ghost: bool) -> void:
+	var a: float = 0.45 if ghost else 1.0
+	var main: Color = Color(color, a)
+	var dark: Color = Color(color.darkened(0.35), a)
+	var ink: Color = Color(GkDraw.INK, a)
+	var step_y: float = sin(walk_phase) * 1.6
+	if not ghost:
+		GkDraw.rbox(self, Rect2(-6.5, -1 - maxf(step_y, 0.0), 5.5, 7), dark, 2.5, 0.35, ink)
+	_back_item(a)
+	if ghost:
+		# Fantôme : pas de jambes, une petite queue ondulante.
+		GkDraw.poly(self, PackedVector2Array([Vector2(-8, -2), Vector2(8, -2), Vector2(5, 4), Vector2(1, 1),
+			Vector2(-3, 5), Vector2(-6, 1)]), main, 0.35, ink)
+	# Corps : contour sombre, puis l'aplat, puis l'ombre douce côté dos.
+	GkDraw.rbox(self, Rect2(-8.6, -19.6, 17.2, 22.2), ink, 8.0, 0.0, ink)
+	GkDraw.rbox(self, Rect2(-8, -19, 16, 21), main, 7.0, 0.0, ink)
+	GkDraw.rbox(self, Rect2(-8, -13, 4, 14), dark, 2.0, 0.0, ink)
+	if not ghost:
+		GkDraw.rbox(self, Rect2(1, -1 - maxf(-step_y, 0.0), 5.5, 7), main, 2.5, 0.35, ink)
+	# Visière.
+	GkDraw.rbox(self, Rect2(1, -15.5, 9.5, 7.5), Color(Color("8fd3ee"), a), 3.6, 0.4, ink)
+	GkDraw.rbox(self, Rect2(4.5, -14.2, 4.5, 2.2), Color(1, 1, 1, 0.85 * a), 1.0, 0.0, ink)
+	_head_item(a)
+
+
+## Objet porté dans le dos (à la place du sac à dos d'Among Us).
+func _back_item(a: float) -> void:
+	var ink: Color = Color(GkDraw.INK, a)
+	match character:
+		"maia":                     # planche de surf
+			GkDraw.ellipse(self, Vector2(-11, -9), 2.8, 12, Color(Color("f7efdc"), a), 0.4, ink)
+			draw_line(Vector2(-11, -20), Vector2(-11, 2), Color(Color("2fb24a"), a), 1.0)
+		"mattin":                   # la pierre qu'il soulève
+			GkDraw.poly(self, PackedVector2Array([Vector2(-15, -12), Vector2(-11, -17), Vector2(-6, -15),
+				Vector2(-5, -4), Vector2(-9, -1), Vector2(-15, -4)]), Color(Color("8d939e"), a), 0.4, ink)
+		"xabi":                     # chistera
+			GkDraw.ellipse(self, Vector2(-12, -8), 3.2, 9, Color(Color("c9a46a"), a), 0.4, ink)
+			for k: int in 3:
+				draw_line(Vector2(-14, -13 + k * 4), Vector2(-10, -12 + k * 4), Color(Color("8a6a3a"), a), 0.4)
+		"amaia":                    # makila en travers du dos
+			draw_line(Vector2(-13, 0), Vector2(-5, -22), Color(Color("7a4a24"), a), 1.6)
+			GkDraw.ellipse(self, Vector2(-5, -22), 1.4, 1.4, Color(Color("d8dde3"), a), 0.3, ink)
+		"karramarro":               # pinces de crabe devant
+			GkDraw.ellipse(self, Vector2(-11, -8), 3, 6, Color(color.darkened(0.35), a), 0.4, ink)
+		_:
+			GkDraw.rbox(self, Rect2(-11.5, -14, 5, 12), Color(color.darkened(0.35), a), 2.2, 0.4, ink)
+
+
+## Ce qui rend chaque perso reconnaissable : chapeau, lunettes, bec, pinces…
+func _head_item(a: float) -> void:
+	var ink: Color = Color(GkDraw.INK, a)
+	match character:
+		"louis":                    # txapela rouge
+			GkDraw.ellipse(self, Vector2(0.5, -19), 9.5, 2.6, Color(Color("c62828"), a), 0.4, ink)
+			GkDraw.ellipse(self, Vector2(0, -21), 7, 3, Color(Color("d83a34"), a), 0.4, ink)
+			draw_line(Vector2(0, -24), Vector2(0.5, -26), ink, 0.8)
+		"maia":                     # bandeau jaune
+			GkDraw.rbox(self, Rect2(-8.3, -18, 16.6, 2.4), Color(Color("f2c12e"), a), 1.0, 0.35, ink)
+		"patxi":                    # bonnet de marin et barbe
+			GkDraw.rbox(self, Rect2(-8, -24, 16, 9), Color(Color("2b4c8c"), a), 6.0, 0.4, ink)
+			GkDraw.rbox(self, Rect2(-8.6, -17.5, 17.2, 3.4), Color(Color("1f3a70"), a), 1.5, 0.4, ink)
+			GkDraw.ellipse(self, Vector2(7, -6), 3.6, 2.8, Color(Color("6b4226"), a), 0.35, ink)
+		"xabi":                     # bandeau de pelotari
+			GkDraw.rbox(self, Rect2(-8.3, -17.5, 16.6, 2.6), Color(Color("ffffff"), a), 1.0, 0.35, ink)
+			draw_line(Vector2(-8, -16.2), Vector2(8, -16.2), Color(Color("c62828"), a), 0.6)
+		"mattin":                   # béret noir
+			GkDraw.ellipse(self, Vector2(0, -19.5), 8.5, 2.6, Color(Color("2a2a30"), a), 0.4, ink)
+		"amaia":                    # fleur rouge de dantzari
+			for k: int in 5:
+				GkDraw.ellipse(self, Vector2(-3, -19) + Vector2.from_angle(TAU * k / 5.0) * 1.6, 1.3, 1.3, Color(Color("e53935"), a))
+			GkDraw.ellipse(self, Vector2(-3, -19), 0.9, 0.9, Color(Color("ffd34a"), a))
+		"txomin":                   # lunettes noires et sifflet
+			GkDraw.rbox(self, Rect2(1.5, -14.5, 9.5, 4.2), Color(Color("111111"), a), 1.6, 0.3, ink)
+			draw_line(Vector2(-6, -15), Vector2(1.5, -13), ink, 0.6)
+			GkDraw.ellipse(self, Vector2(6, -4), 1.4, 1.1, Color(Color("f2c12e"), a), 0.3, ink)
+		"kaio":                     # bec de goéland et houppette
+			GkDraw.poly(self, PackedVector2Array([Vector2(9.5, -13.5), Vector2(16, -11.5), Vector2(9.5, -9.5)]),
+				Color(Color("f6a91e"), a), 0.4, ink)
+			GkDraw.ellipse(self, Vector2(15.2, -11.5), 0.7, 0.7, Color(Color("e53935"), a))
+			for k: int in 3:
+				GkDraw.ellipse(self, Vector2(-2 + k * 2.2, -19.5 - (1 if k == 1 else 0)), 1.6, 2.4, Color(Color("eef1f4"), a), 0.3, ink)
+		"karramarro":               # yeux sur pédoncules et pince
+			for x: float in [1.0, 5.0]:
+				draw_line(Vector2(x, -18), Vector2(x + 0.5, -24), ink, 0.8)
+				GkDraw.ellipse(self, Vector2(x + 0.5, -24.5), 1.8, 1.8, Color(1, 1, 1, a), 0.3, ink)
+				GkDraw.ellipse(self, Vector2(x + 1.0, -24.5), 0.7, 0.7, ink)
+			GkDraw.poly(self, PackedVector2Array([Vector2(8, -5), Vector2(14, -8), Vector2(16, -5), Vector2(13, -4),
+				Vector2(16, -2), Vector2(13, 0), Vector2(8, -1)]), Color(color.darkened(0.1), a), 0.4, ink)
+		"ramuntxo":                 # toque de chef
+			GkDraw.rbox(self, Rect2(-5.5, -27, 11, 9), Color(1, 1, 1, a), 2.5, 0.4, ink)
+			for x: float in [-4.0, 0.0, 4.0]:
+				GkDraw.ellipse(self, Vector2(x, -28), 3.4, 3.0, Color(1, 1, 1, a), 0.4, ink)
+			GkDraw.rbox(self, Rect2(-6, -20.5, 12, 2.5), Color(Color("e8e8e8"), a), 1.0, 0.35, ink)
+		"itsaso":                   # couronne d'écume
+			for k: int in 4:
+				GkDraw.ellipse(self, Vector2(-6 + k * 4, -19 - (k % 2) * 1.2), 2.4, 2.2,
+					Color(Color("e8fbff") if k % 2 == 0 else Color("7fd6f0"), a), 0.3, ink)
+		"peio":                     # casque de rugby rayé
+			GkDraw.rbox(self, Rect2(-8.6, -22, 17.2, 10), Color(Color("c62828"), a), 6.5, 0.4, ink)
+			for x: float in [-4.0, 0.0, 4.0]:
+				draw_line(Vector2(x, -21.5), Vector2(x, -13), Color(1, 1, 1, a), 0.8)

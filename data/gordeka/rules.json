@@ -40,6 +40,7 @@
 	"colors": ["#e23b3b", "#2f6fe0", "#2fb24a", "#f2c12e", "#f08a24", "#9b4fd6", "#41c7d6", "#f27ab3", "#ffffff", "#7a5230", "#5a6270", "#9ad13b"],
 	"color_names": ["Rouge", "Bleu", "Vert", "Jaune", "Orange", "Violet", "Cyan", "Rose", "Blanc", "Marron", "Gris", "Citron"],
 	"bot_names": ["Louis", "Maïa", "Patxi", "Xabi", "Mattin", "Amaia", "Txomin", "Kaio", "Karramarro", "Ramuntxo", "Itsaso", "Peio"],
+	"characters": ["louis", "maia", "patxi", "xabi", "mattin", "amaia", "txomin", "kaio", "karramarro", "ramuntxo", "itsaso", "peio"],
 	"ai": {
 		"facile": {"think": 0.9, "danger": 6.0, "relocate": 35.0, "extract_chance": 0.1, "hunter_scan": 0.4, "search_chance": 0.25, "react": 0.5},
 		"normal": {"think": 0.5, "danger": 8.0, "relocate": 25.0, "extract_chance": 0.2, "hunter_scan": 0.7, "search_chance": 0.5, "react": 0.25},

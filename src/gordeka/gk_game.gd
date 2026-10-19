@@ -55,6 +55,10 @@ func _ready() -> void:
 	map = GkMap.new()
 	add_child(map)
 	map.load_map(str(config.get("map", "port_pecheurs")))
+	var water: GkWater = GkWater.new()
+	water.map = map
+	map.add_child(water)
+	map.move_child(water, 0)
 	for t: Vector2i in map.cachettes:
 		cachettes.append({"tile": t, "pos": map.center(t), "occupant": -1, "lock": 0.0, "shake": 0.0})
 	var people: Node2D = Node2D.new()
@@ -76,10 +80,16 @@ func _ready() -> void:
 
 func _make_actors(parent: Node2D) -> void:
 	var n: int = clampi(int(config.get("players", 6)), 2, 8)
-	var names: Array = GkRules.data().get("bot_names", []).duplicate()
+	var all_names: Array = GkRules.data().get("bot_names", [])
+	var all_chars: Array = GkRules.data().get("characters", [])
 	var my_name: String = str(config.get("name", "Toi"))
-	names.erase(my_name)
-	names.shuffle()
+	var my_char: String = str(config.get("character", "louis"))
+	# Les IA prennent les autres persos du roster, dans le désordre.
+	var picks: Array[int] = []
+	for i: int in all_chars.size():
+		if str(all_chars[i]) != my_char or _bots_only:
+			picks.append(i)
+	picks.shuffle()
 	var my_color: int = int(config.get("color", 0))
 	var colors: Array[int] = []
 	for i: int in 12:
@@ -89,8 +99,11 @@ func _make_actors(parent: Node2D) -> void:
 	for i: int in n:
 		var a: GkActor = GkActor.new()
 		var bot: bool = i > 0 or _bots_only
-		var nm: String = my_name if i == 0 and not _bots_only else str(names[i % names.size()]) + " (IA)"
+		var me: bool = i == 0 and not _bots_only
+		var k: int = picks[(i - (0 if _bots_only else 1)) % picks.size()] if not me else -1
+		var nm: String = my_name if me else str(all_names[k]) + " (IA)"
 		a.setup(i, nm, GkRules.color(my_color if i == 0 else colors[i - 1]), bot)
+		a.character = my_char if me else str(all_chars[k])
 		parent.add_child(a)
 		actors.append(a)
 		if bot:

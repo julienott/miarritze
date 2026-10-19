@@ -56,6 +56,7 @@ func load_map(id: String) -> void:
 	_build_bodies()
 	_build_astar()
 	_build_cover()
+	_build_chunks()
 	queue_redraw()
 
 
@@ -186,34 +187,139 @@ func path(a: Vector2, b: Vector2) -> PackedVector2Array:
 	return pts
 
 
+## Sol de chaque zone selon son nom : (couleur, motif).
+const FLOORS: Dictionary = {
+	"Jetée": ["cfc6b4", "dalles"], "Bassin": ["cfc6b4", "dalles"], "Quai": ["d3cab7", "dalles"],
+	"Rampe": ["bdb8ad", "beton"], "Criée": ["d6d2c8", "carrelage"], "Hangar": ["c3beb3", "beton"],
+	"Atelier": ["c3beb3", "beton"], "Crampottes": ["cdb99e", "paves"], "Rue": ["cdb99e", "paves"],
+	"Place": ["dccdb0", "paves"], "Parking": ["6f747d", "parking"], "Cale": ["bdb8ad", "beton"],
+	"Terrasse": ["c99662", "planches"],
+}
+const DEPTH: float = 0.42                # hauteur de la face avant des objets (en cases)
+
+
+func _floor_of(name: String) -> Array:
+	for k: String in FLOORS:
+		if name.begins_with(k):
+			return FLOORS[k]
+	return ["d0c9b8", "dalles"]
+
+
 func _draw() -> void:
-	# Sol teinté par zone, puis les blocs, puis un liseré sombre pour la lisibilité.
-	draw_rect(Rect2(Vector2.ZERO, size_px()), Color("bfb8a8"))
-	for i: int in zones.size():
-		var r: Rect2i = zones[i]["rect"]
-		draw_rect(Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile), FLOOR_TINTS[i % FLOOR_TINTS.size()])
-	for ch: String in "~t#cB":
+	draw_rect(Rect2(Vector2.ZERO, size_px()), Color("b9b2a3"))
+
+
+## Découpe du dessin en morceaux (une zone chacun, plus les murs entre zones) : Godot ne
+## dessine que les morceaux visibles à l'écran.
+func _build_chunks() -> void:
+	var groups: Dictionary = {}
+	for ch: String in "#cBt":
 		for r: Rect2i in merged_rects(ch):
-			var px: Rect2 = Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile)
-			if ch == "B":
-				draw_rect(px.grow(-6), COLORS[ch])
-				draw_rect(px.grow(-6), Color("2a3442"), false, 4.0)
-				draw_rect(px.grow(-px.size.y * 0.3), Color("9db8c9"))
-			elif ch == "~":
-				draw_rect(px, COLORS[ch])
-			else:
-				draw_rect(px.grow(-2 if ch != "#" else 0), COLORS[ch])
-				if ch != "#":
-					draw_rect(px.grow(-2), Color(0, 0, 0, 0.35), false, 3.0)
-	# Vaguelettes sur l'eau.
-	for r: Rect2i in merged_rects("~"):
-		for y: int in range(r.position.y, r.end.y):
-			for x: int in range(r.position.x, r.end.x, 2):
-				var p: Vector2 = (Vector2(x, y) + Vector2(0.3, 0.5 + 0.15 * (x % 3))) * tile
-				draw_line(p, p + Vector2(tile * 0.5, 0), Color(1, 1, 1, 0.25), 3.0)
-	# Noms des zones, discrets.
-	var font: Font = ThemeDB.fallback_font
-	for z: Dictionary in zones:
+			var z: int = zone_of(r.position + r.size / 2)
+			if not groups.has(z):
+				groups[z] = []
+			(groups[z] as Array).append([ch, r])
+	for z: int in range(-1, zones.size()):
+		var c: GkMapChunk = GkMapChunk.new()
+		c.map = self
+		c.zone = z
+		c.items = groups.get(z, [])
+		add_child(c)
+
+
+func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
+	var t: float = tile
+	if zi >= 0:
+		var z: Dictionary = zones[zi]
 		var r: Rect2i = z["rect"]
-		draw_string(font, Vector2(r.position) * tile + Vector2(14, 34), str(z["name"]).to_upper(),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color(0, 0, 0, 0.28))
+		var f: Array = _floor_of(str(z["name"]))
+		var px: Rect2 = Rect2(Vector2(r.position) * t, Vector2(r.size) * t)
+		var base: Color = Color(str(f[0]))
+		ci.draw_rect(px, base)
+		var line: Color = base.darkened(0.12)
+		match str(f[1]):
+			"dalles":
+				for y: int in range(r.position.y, r.end.y):
+					for x: int in range(r.position.x, r.end.x):
+						var o: float = 0.5 * t if y % 2 == 0 else 0.0
+						ci.draw_rect(Rect2(Vector2(x, y) * t + Vector2(o, 0), Vector2(t, t)).intersection(px), line, false, 2.0)
+			"paves":
+				for y: int in range(r.position.y * 2, r.end.y * 2):
+					for x: int in range(r.position.x * 2, r.end.x * 2):
+						var c: Vector2 = (Vector2(x, y) + Vector2(0.5 + 0.25 * (y % 2), 0.5)) * t * 0.5
+						if px.has_point(c):
+							ci.draw_circle(c, t * 0.2, base.lightened(0.04 * float((x * 7 + y * 3) % 3)))
+			"carrelage":
+				for y: int in range(r.position.y, r.end.y):
+					for x: int in range(r.position.x, r.end.x):
+						if (x + y) % 2 == 0:
+							ci.draw_rect(Rect2(Vector2(x, y) * t, Vector2(t, t)), base.darkened(0.05))
+			"planches":
+				for y: int in range(r.position.y * 4, r.end.y * 4):
+					ci.draw_line(Vector2(px.position.x, y * t * 0.25), Vector2(px.end.x, y * t * 0.25), line, 2.0)
+			"parking":
+				for x: int in range(r.position.x, r.end.x, 4):
+					ci.draw_line(Vector2(x * t + t * 0.5, px.position.y + t), Vector2(x * t + t * 0.5, px.end.y - t),
+						Color(1, 1, 1, 0.55), 4.0)
+			"beton":
+				for y: int in range(r.position.y, r.end.y, 3):
+					ci.draw_line(Vector2(px.position.x, y * t), Vector2(px.end.x, y * t), line, 2.0)
+		ci.draw_string(ThemeDB.fallback_font, Vector2(r.position) * t + Vector2(16, 40), str(z["name"]).to_upper(),
+			HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color(0, 0, 0, 0.22))
+	# Ombres portées, puis les objets (bas, caisses, bateaux, murs).
+	for it: Array in items:
+		var rr: Rect2i = it[1]
+		var p2: Rect2 = Rect2(Vector2(rr.position) * t, Vector2(rr.size) * t)
+		ci.draw_rect(Rect2(p2.position + Vector2(t * 0.18, t * 0.22), p2.size), Color(0, 0, 0, 0.16))
+	for ch: String in "tcB#":
+		for it: Array in items:
+			if str(it[0]) != ch:
+				continue
+			var rr: Rect2i = it[1]
+			var p3: Rect2 = Rect2(Vector2(rr.position) * t, Vector2(rr.size) * t)
+			match ch:
+				"t": _low(ci, p3)
+				"c": _crate(ci, p3)
+				"B": _boat(ci, p3, rr.position.x * 3 + rr.position.y)
+				"#": _wall(ci, p3)
+
+
+## Bloc avec un dessus clair et une face avant plus sombre (vue 3/4), contour épais.
+func _block(ci: CanvasItem, px: Rect2, top: Color, front: Color, radius: float = 6.0) -> Rect2:
+	var d: float = minf(tile * DEPTH, px.size.y * 0.45)
+	GkDraw.rbox(ci, px, front, radius, 3.0)
+	var top_r: Rect2 = Rect2(px.position, Vector2(px.size.x, px.size.y - d))
+	GkDraw.rbox(ci, top_r, top, radius, 3.0)
+	return top_r
+
+
+func _wall(ci: CanvasItem, px: Rect2) -> void:
+	var top: Rect2 = _block(ci, px, Color("aeb3bf"), Color("6e7383"), 4.0)
+	# Joints de pierre sur la face avant.
+	var y0: float = top.end.y
+	for x: float in range(int(px.position.x) + 24, int(px.end.x) - 8, 48):
+		ci.draw_line(Vector2(x, y0 + 4), Vector2(x, px.end.y - 4), Color(0, 0, 0, 0.18), 2.0)
+
+
+func _crate(ci: CanvasItem, px: Rect2) -> void:
+	var top: Rect2 = _block(ci, px, Color("dca865"), Color("a8743a"), 5.0)
+	for x: float in range(int(top.position.x) + 16, int(top.end.x) - 8, 16):
+		ci.draw_line(Vector2(x, top.position.y + 5), Vector2(x, top.end.y - 5), Color(0, 0, 0, 0.15), 2.0)
+
+
+func _low(ci: CanvasItem, px: Rect2) -> void:
+	# Objet bas (étal, table, filet) : petit plateau sur pieds, on voit par-dessus.
+	var top: Rect2 = Rect2(px.position + Vector2(4, 2), px.size - Vector2(8, 14))
+	for x: float in [px.position.x + 10, px.end.x - 14]:
+		GkDraw.rbox(ci, Rect2(x, top.end.y - 4, 6, 14), Color("8a6239"), 2.0, 2.0)
+	GkDraw.rbox(ci, top, Color("e2c28c"), 6.0, 3.0)
+	GkDraw.rbox(ci, Rect2(top.position + Vector2(6, 5), Vector2(top.size.x - 12, 5)), Color(1, 1, 1, 0.35), 2.0, 0.0)
+
+
+func _boat(ci: CanvasItem, px: Rect2, seed: int) -> void:
+	var stripes: Array[Color] = [Color("2f6fe0"), Color("d83a34"), Color("2fb24a"), Color("f2c12e")]
+	var hull: Rect2 = px.grow(-4)
+	var top: Rect2 = _block(ci, hull, Color("f4f6f8"), Color("c9d2da"), minf(hull.size.y * 0.45, 26.0))
+	var inner: Rect2 = top.grow(-maxf(8.0, top.size.y * 0.18))
+	GkDraw.rbox(ci, inner, Color("c08a55"), minf(inner.size.y * 0.45, 18.0), 2.5)
+	ci.draw_rect(Rect2(hull.position.x + 6, top.end.y + 3, hull.size.x - 12, 5), stripes[seed % stripes.size()])
