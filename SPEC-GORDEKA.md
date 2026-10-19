@@ -487,4 +487,4 @@ ces paramètres permettent de les relancer.
 | Étape | Style | Entrée | Prompt / paramètres | Graine | Tâche |
 |---|---|---|---|---|---|
 | Essai écarté | `pf_2d__character` | `tools/rd/out/txomin/neutral_256.png` (pixel art Borroka, fond blanc, 512 px) | « a Basque lifeguard boy with dark brown skin and short black curly hair, black sunglasses, yellow tank top, red swim shorts, a silver whistle on a cord around his neck, a pair of blue swim fins hanging from his belt at his hip, barefoot, cheerful confident smile », `num_images` 3. Rendu pixelisé, casquette inventée : **ne pas partir d'un sprite pixel art.** | 1 | `13c35937f92b463fa794eb7f794ea95c` |
-| Modèle (3 variantes, choix de Julien attendu) | `pf_2d__character` | aucune (description seule) | le même prompt + « bare head with no hat and no cap, smooth clean cartoon, no pixel art », `num_images` 3 | 1 | voir `tools/rd/out/txomin/gk2d/v2/profil_params.json` |
+| Modèle (3 variantes, choix de Julien attendu) | `pf_2d__character` | aucune (description seule) | le même prompt + « bare head with no hat and no cap, smooth clean cartoon, no pixel art », `num_images` 3 | 1 | `149ffc0a84eb4d12b713216d6731ff32` |
