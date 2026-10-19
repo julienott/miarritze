@@ -39,6 +39,9 @@ var spawns: Array[Vector2i] = []
 var cover: Dictionary = {}
 ## Dessin à plat (prototype gris) ; faux en 3D, où GkView3D dessine la carte.
 var draw_2d: bool = true
+## Décor en images (assets/gordeka/decor/, au fil des livraisons de pixelforge) ; tout ce qui n'a
+## pas d'image garde le dessin procédural ci-dessous.
+var decor: GkDecor
 
 
 func load_map(id: String) -> void:
@@ -74,7 +77,11 @@ func load_map(id: String) -> void:
 	_build_astar()
 	_build_cover()
 	if draw_2d:
+		decor = GkDecor.new()
+		decor.setup(self)
 		_build_chunks()
+		decor.attach()
+	_qa_camera()
 	queue_redraw()
 
 
@@ -107,9 +114,9 @@ func zone_of(t: Vector2i) -> int:
 	return -1
 
 
-## Rectangles fusionnés (en cases) des cases dont la lettre est dans `chars`.
-func merged_rects(chars: String) -> Array[Rect2i]:
-	var used: Dictionary = {}
+## Rectangles fusionnés (en cases) des cases dont la lettre est dans `chars`, hors cases de `skip`.
+func merged_rects(chars: String, skip: Dictionary = {}) -> Array[Rect2i]:
+	var used: Dictionary = skip.duplicate()
 	var out: Array[Rect2i] = []
 	for y: int in height:
 		for x: int in width:
@@ -216,6 +223,47 @@ const FLOORS: Dictionary = {
 const DEPTH: float = 0.42                # hauteur de la face avant des objets (en cases)
 
 
+## QA : `--gk-cam=<zone>[@zoom]` (début du nom, sans casse ni accents ; zoom par défaut : la zone
+## tient à l'écran) ou `--gk-cam=x,y[@zoom]` (case) : caméra fixe, pour les captures du décor.
+func _qa_camera() -> void:
+	for arg: String in OS.get_cmdline_user_args():
+		if not arg.begins_with("--gk-cam="):
+			continue
+		var spec: PackedStringArray = arg.trim_prefix("--gk-cam=").split("@")
+		var target: Rect2i = Rect2i()
+		var xy: PackedStringArray = spec[0].split(",")
+		if xy.size() == 2 and xy[0].is_valid_int():
+			target = Rect2i(int(xy[0]) - 8, int(xy[1]) - 4, 16, 9)
+		else:
+			for z: Dictionary in zones:
+				if _plain(str(z["name"])).begins_with(_plain(spec[0])):
+					target = z["rect"]
+					break
+		if target.size == Vector2i.ZERO:
+			push_warning("--gk-cam : zone inconnue « %s »" % spec[0])
+			return
+		var px: Rect2 = Rect2(Vector2(target.position) * tile, Vector2(target.size) * tile)
+		var vp: Vector2 = get_viewport_rect().size
+		var cam: Camera2D = Camera2D.new()
+		cam.position = px.get_center()
+		var zoom: float = float(spec[1]) if spec.size() > 1 else minf(1.25, minf(vp.x / px.size.x, vp.y / px.size.y))
+		cam.zoom = Vector2(zoom, zoom)
+		cam.limit_right = int(size_px().x)
+		cam.limit_bottom = int(size_px().y)
+		cam.limit_left = 0
+		cam.limit_top = 0
+		add_child(cam)
+		cam.make_current.call_deferred()
+		return
+
+
+static func _plain(s: String) -> String:
+	var out: String = s.to_lower().replace("_", " ")
+	for pair: String in ["ée", "èe", "êe", "àa", "âa", "çc", "ôo", "ûu", "ùu", "îi"]:
+		out = out.replace(pair[0], pair[1])
+	return out
+
+
 func _floor_of(name: String) -> Array:
 	for k: String in FLOORS:
 		if name.begins_with(k):
@@ -232,8 +280,9 @@ func _draw() -> void:
 ## dessine que les morceaux visibles à l'écran.
 func _build_chunks() -> void:
 	var groups: Dictionary = {}
+	# Les cases couvertes par une image du décor ne sont plus dessinées ici.
 	for ch: String in "#cBtRrv":
-		for r: Rect2i in merged_rects(ch):
+		for r: Rect2i in merged_rects(ch, decor.covered if decor else {}):
 			var z: int = zone_of(r.position + r.size / 2)
 			if not groups.has(z):
 				groups[z] = []
@@ -248,6 +297,8 @@ func _build_chunks() -> void:
 
 func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
 	var t: float = tile
+	if zi < 0 and decor:
+		decor.draw_floors(ci, -1)
 	if zi >= 0:
 		var z: Dictionary = zones[zi]
 		var r: Rect2i = z["rect"]
@@ -259,7 +310,8 @@ func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
 			var x: int = r.position.x
 			while x < r.end.x:
 				var ch: String = at(Vector2i(x, y))
-				if not WALK.contains(ch) and not "cBHt#".contains(ch):
+				if not WALK.contains(ch) and not "cBHt#".contains(ch) \
+						or decor and decor.water_under.has(Vector2i(x, y)):
 					x += 1
 					continue
 				var x2: int = x
@@ -268,7 +320,13 @@ func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
 				ci.draw_rect(Rect2(Vector2(x, y) * t, Vector2(x2 - x, 1) * t), TILE_FLOORS.get(ch, base))
 				x = x2
 		var line: Color = base.darkened(0.12)
-		match str(f[1]):
+		# Sol en image si le décor en a un pour cette zone, sinon motif procédural.
+		var pattern: String = str(f[1])
+		if decor:
+			decor.draw_floors(ci, zi)
+			if decor.has_floor(".", zi):
+				pattern = ""
+		match pattern:
 			"dalles":
 				for y: int in range(r.position.y, r.end.y):
 					for x: int in range(r.position.x, r.end.x):

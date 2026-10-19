@@ -10,8 +10,25 @@ var _rects: Array[Rect2i] = []
 
 
 func _ready() -> void:
-	_rects = map.merged_rects("~")
-	z_index = 1
+	# L'eau couverte par une image du décor (texture de mer, lavoir…) n'est plus dessinée ici ; sous
+	# un objet posé sur l'eau (barques), si.
+	_rects = map.merged_rects("~", map.decor.covered if map.decor else {})
+	if map.decor:
+		for c: Vector2i in map.decor.water_under:
+			_rects.append(Rect2i(c, Vector2i.ONE))
+	_reorder.call_deferred()
+
+
+## Au-dessus des morceaux de la carte (cache les motifs de sol qui débordent sur l'eau) mais au même
+## z que les persos et le décor en image : les objets qui débordent sur l'eau (barques qui tanguent,
+## chalutier) restent visibles par-dessus, et les ombres du décor tombent sur l'eau.
+func _reorder() -> void:
+	var under: Node = map.decor.under if map.decor else null
+	if under and under.get_parent() == map:
+		var i: int = under.get_index()
+		map.move_child(self, i - 1 if get_index() < i else i)
+	else:
+		map.move_child(self, -1)
 
 
 func _process(dt: float) -> void:
