@@ -43,6 +43,9 @@ var scared: bool = false
 var speed_mult: float = 1.0
 ## Pose de fin de round : "victory", "sad" ou "" pendant le jeu.
 var end_pose: String = ""
+## Emote en cours (index dans GkGame.EMOTES, -1 = aucune) et temps restant de sa bulle (s).
+var emote: int = -1
+var emote_t: float = 0.0
 
 
 func setup(p_id: int, p_name: String, p_color: Color, bot: bool) -> void:
@@ -69,6 +72,20 @@ func setup(p_id: int, p_name: String, p_color: Color, bot: bool) -> void:
 func play_once(anim: String) -> void:
 	if perso != null:
 		perso.play_once(anim)
+
+
+## Coupe l'emote en cours (la partie reprend : on ne gêne pas la cachette).
+func stop_emote() -> void:
+	emote_t = 0.0
+	if perso != null:
+		perso.stop_emote()
+
+
+## Ligne du pseudo au-dessus de la tête (repère local) ; la bulle d'emote se pose au-dessus.
+func name_y() -> float:
+	if perso != null:
+		return radius * 0.6 - GkPerso.HEIGHT_PX - 4.0
+	return (-34.0 if character == "ramuntxo" else -27.0) * radius / 10.0
 
 
 func set_role(r: Role) -> void:
@@ -126,9 +143,7 @@ func _draw() -> void:
 		_draw_body(ghost)
 		draw_set_transform(Vector2.ZERO)
 	var font: Font = ThemeDB.fallback_font
-	var top: float = (-34.0 if character == "ramuntxo" else -27.0) * u
-	if perso != null:
-		top = radius * 0.6 - GkPerso.HEIGHT_PX - 4.0
+	var top: float = name_y()
 	draw_string(font, Vector2(-120, top), display_name, HORIZONTAL_ALIGNMENT_CENTER, 240, 20,
 		Color(1, 1, 1, 0.5 if ghost else 1.0))
 	if slow_left > 0.0:

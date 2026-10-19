@@ -62,6 +62,15 @@ func reset() -> void:
 	ambush = false
 
 
+## Emote de temps en temps, avec parcimonie : seulement au tirage et sur le podium (index ou -1).
+func want_emote(dt: float) -> int:
+	if g.phase != GkGame.Phase.DRAW and g.phase != GkGame.Phase.PODIUM:
+		return -1
+	if me.emote_t > 0.0 or rng.randf() >= GkRules.f("emote_ai_rate") * dt:
+		return -1
+	return rng.randi_range(0, GkGame.EMOTES.size() - 1)
+
+
 func update(dt: float) -> Dictionary:
 	clock += dt
 	clue_t = maxf(0.0, clue_t - dt)

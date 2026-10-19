@@ -8,6 +8,10 @@ enum Phase { DRAW, HIDE, HUNT, END, PODIUM }
 
 const COUNT_WORDS: PackedStringArray = ["bat", "bi", "hiru", "lau", "bost", "sei", "zazpi", "zortzi",
 	"bederatzi", "hamar", "hamaika", "hamabi", "hamahiru", "hamalau", "hamabost"]
+## Emotes (SPEC-GORDEKA §3.2) : animation du perso, dans l'ordre des touches 1 à 6 et des bulles
+## (icônes dessinées par GkDraw.emote_icon). Permises seulement hors de l'action (`emotes_allowed`).
+const EMOTES: PackedStringArray = ["emote_salut", "emote_rire", "emote_danse", "emote_pouce",
+	"emote_chut", "emote_langue"]
 
 ## Réglages de la partie, posés par le menu (gk_menu.gd).
 static var config: Dictionary = {"players": 6, "level": "normal", "map": "port_pecheurs",
@@ -61,6 +65,10 @@ var _revealed_at: Dictionary = {}     # id du chassé → instant de la dernièr
 var _trap_hit_at: float = -100.0
 var view: GkView3D
 var _last_dt: float = 0.0
+## QA : `--gk-qa-emotes` fait enchaîner les emotes à tout le monde et ouvre l'éventail ;
+## `--gk-qa-podium` passe directement au podium.
+var _qa_emotes: bool = false
+var _qa_podium: bool = false
 
 
 func _ready() -> void:
@@ -87,6 +95,10 @@ func _ready() -> void:
 			_all_char = arg.trim_prefix("--gk-perso=")
 		elif arg == "--gk-log":
 			_log = true
+		elif arg == "--gk-qa-emotes":
+			_qa_emotes = true
+		elif arg == "--gk-qa-podium":
+			_qa_podium = true
 		elif arg.begins_with("--gk-local-role="):
 			_force_role = arg.trim_prefix("--gk-local-role=")
 	map = GkMap.new()
@@ -119,6 +131,8 @@ func _ready() -> void:
 	add_child(hud_layer)
 	hud_layer.add_child(hud)
 	_start_round()
+	if _qa_podium:
+		quit_to_podium()
 
 
 func _make_actors(parent: Node2D) -> void:
@@ -378,6 +392,7 @@ func go_menu() -> void:
 
 func _physics_process(dt: float) -> void:
 	_last_dt = dt
+	_update_emotes(dt)
 	if phase == Phase.PODIUM:
 		_update_view()
 		return
@@ -492,6 +507,45 @@ func action_cooldown(a: GkActor) -> float:
 	if label == "Onde":
 		return a.power_cd / GkRules.f("detect_cooldown")
 	return 0.0
+
+
+# ---------------------------------------------------------------- emotes
+
+## Emotes seulement hors de l'action : au tirage, sur le podium, ou fantôme ou échappé.
+## Jamais en jeu actif, pour ne pas tricher ni gêner la cachette (Julien, 2026-10-19).
+func emotes_allowed(a: GkActor) -> bool:
+	return phase == Phase.DRAW or phase == Phase.PODIUM or a.role == GkActor.Role.GHOST \
+		or a.role == GkActor.Role.OUT
+
+
+## Lance l'emote `i` : geste du perso et bulle d'icône au-dessus de sa tête.
+func emote(a: GkActor, i: int) -> void:
+	if i < 0 or i >= EMOTES.size() or not emotes_allowed(a):
+		return
+	if a.emote_t > GkRules.f("emote_duration") - GkRules.f("emote_gap"):
+		return
+	a.emote = i
+	a.emote_t = GkRules.f("emote_duration")
+	a.play_once(EMOTES[i])
+
+
+func _update_emotes(dt: float) -> void:
+	input.emotes_enabled = emotes_allowed(local) and (not local.is_bot or _qa_emotes)
+	if _qa_emotes and input.emotes_enabled:
+		input.wheel_open = true
+	for a: GkActor in actors:
+		if a.emote_t > 0.0 and not emotes_allowed(a):
+			a.stop_emote()
+		a.emote_t = maxf(0.0, a.emote_t - dt)
+		var e: int = -1
+		if a == local and not a.is_bot:
+			e = input.take_emote()
+		elif brains.has(a.id):
+			e = (brains[a.id] as GkAi).want_emote(dt)
+		if _qa_emotes and a.emote_t <= 0.0:
+			e = (a.id + round_no) % EMOTES.size()
+		if e >= 0:
+			emote(a, e)
 
 
 func _hiders_left() -> int:

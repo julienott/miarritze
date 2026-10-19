@@ -2,7 +2,8 @@ class_name GkHud
 extends Control
 ## Interface du round (SPEC-GORDEKA §2, §5) : rôle, chrono, messages, bouton d'action avec
 ## son temps de recharge, joystick tactile, flèche vers le chasseur hors champ, voile du
-## chasseur qui compte, scores entre les rounds et podium en quittant.
+## chasseur qui compte, scores entre les rounds et podium en quittant. Emotes : bulles d'icône
+## au-dessus des têtes, petit bouton et éventail des 6 bulles quand elles sont permises.
 
 var game: GkGame
 var _quit: Button
@@ -97,6 +98,12 @@ func _draw() -> void:
 				var gr: Rect2 = Rect2(gp - Vector2(w * 0.5, 0), Vector2(w, 10))
 				draw_rect(gr.grow(3), GkDraw.INK)
 				draw_rect(Rect2(gr.position, Vector2(w * clampf(a.gauge, 0.0, 1.0), 10)), Color("ff3b30"))
+	# Bulles d'emote au-dessus des têtes (seulement des persos que l'on voit).
+	for a: GkActor in game.actors:
+		if a.shown and a.hidden_in < 0:
+			var tip: Vector2 = game.screen_pos(a.position, 2.3) if game.use_3d else \
+				game.screen_pos(a.position + Vector2(0, a.name_y() - 24.0))
+			_emote_bubble(a, tip, Vector2(0, -1))
 	# Bouton d'action.
 	var label: String = game.action_label(me)
 	if label != "" and game.phase in [GkGame.Phase.HIDE, GkGame.Phase.HUNT] and not me.frozen:
@@ -119,6 +126,7 @@ func _draw() -> void:
 	# Scores du round.
 	if game.phase == GkGame.Phase.END:
 		_draw_scores(s, font)
+	_draw_emote_wheel(font)
 
 
 func _draw_scores(s: Vector2, font: Font) -> void:
@@ -159,6 +167,45 @@ func _draw_podium(s: Vector2, font: Font) -> void:
 		_text(font, Vector2(x, base - heights[i] + 46), str(i + 1), 44, Color.WHITE)
 		_text(font, Vector2(x, base - heights[i] - 110), rows[i].display_name, 28, Color.WHITE)
 		_text(font, Vector2(x, base - heights[i] + 86), "%d pts" % rows[i].score, 24, Color.WHITE)
+		# Emote à droite de la pastille.
+		_emote_bubble(rows[i], Vector2(x + 40, base - heights[i] - 50), Vector2(1, -0.25))
+	# Le joueur local hors du podium voit quand même son emote, près du bouton.
+	if rows.find(game.local) >= 3 and game.local.emote_t > 0.0:
+		var c: Vector2 = game.input.action_center() + Vector2(0, 40)
+		draw_circle(c, 30, game.local.color)
+		_emote_bubble(game.local, c + Vector2(0, -30), Vector2(0, -1))
+	_draw_emote_wheel(font)
+
+
+## Bulle de l'emote en cours d'un acteur, pointe en `tip`, posée dans la direction `dir` :
+## elle apparaît en rebondissant et disparaît en se rétractant.
+func _emote_bubble(a: GkActor, tip: Vector2, dir: Vector2) -> void:
+	if a.emote < 0 or a.emote_t <= 0.0:
+		return
+	var age: float = GkRules.f("emote_duration") - a.emote_t
+	var k: float = clampf(age / 0.18, 0.0, 1.0) * clampf(a.emote_t / 0.15, 0.0, 1.0)
+	var r: float = 38.0 * (k + sin(k * PI) * 0.18)
+	if r < 3.0:
+		return
+	GkDraw.emote_bubble(self, tip + dir.normalized() * (r + 14.0 * k), tip, a.emote, r)
+
+
+## Petit bouton d'emote et, ouvert, l'éventail des 6 bulles (touches 1 à 6 rappelées au clavier).
+func _draw_emote_wheel(font: Font) -> void:
+	var inp: GkInput = game.input
+	if not inp.emotes_enabled:
+		return
+	var c: Vector2 = inp.emote_center()
+	draw_circle(c, GkInput.EMOTE_RADIUS + 6, Color(0, 0, 0, 0.45))
+	GkDraw.emote_disc(self, c, GkInput.EMOTE_RADIUS, 1, Color("ffd34a") if inp.wheel_open else Color(0, 0, 0, 0))
+	if not inp.wheel_open:
+		return
+	for i: int in GkGame.EMOTES.size():
+		var b: Vector2 = inp.bubble_center(i)
+		GkDraw.emote_disc(self, b, GkInput.BUBBLE_RADIUS, i, Color("ffd34a") if i == inp.wheel_sel else Color(0, 0, 0, 0))
+		if not inp.touch_used:
+			draw_circle(b + Vector2(28, 26), 13, GkDraw.INK)
+			_text(font, b + Vector2(28, 33), str(i + 1), 20, Color.WHITE)
 
 
 func _text(font: Font, at: Vector2, text: String, fsize: int, col: Color) -> void:

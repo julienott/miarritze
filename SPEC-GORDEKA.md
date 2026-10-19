@@ -98,10 +98,15 @@ s'amuser, sans classement en ligne en v1.
   cercle), sans objet entre les deux. Une petite jauge se remplit au-dessus de lui et se vide dès qu'il
   sort de la vue. C'est plus juste en ligne (~100 ms de retard) et ça permet des fuites de justesse.
   *Décidé le 2026-10-19.*
-- Les chassés se voient entre eux et communiquent seulement par **emotes** prédéfinies, en bulle
-  au-dessus de la tête, visibles des chassés et des fantômes, jamais du chasseur. Il y en a 6 au
-  départ : « Par ici ! », « Attention ! », « Bravo ! », « Haha ! », « Au secours ! », « Coucou ! ».
-  D'autres se débloquent. Les fantômes peuvent aussi en envoyer aux chassés (*décidé le 2026-10-19*).
+- **Emotes** (*remplacé le 2026-10-19, validé par Julien*) : 6 gestes du perso (`emote_salut`,
+  `emote_rire`, `emote_danse`, `emote_pouce`, `emote_chut`, `emote_langue`, `GkGame.EMOTES`) avec
+  une bulle d'icône dessinée, sans texte, au-dessus de la tête pendant 1,5 s (`emote_duration`).
+  Elles sont permises seulement **hors de l'action** : au tirage, sur le podium, et pour un fantôme ou
+  un échappé ; jamais en jeu actif, ni pour tricher ni pour gêner la cachette. Commandes : un petit
+  bouton au-dessus du bouton d'action qui ouvre un éventail de 6 bulles, les touches 1 à 6, ou LB/RB
+  à la manette puis la croix et A. Les IA en font rarement, au tirage et au podium. Pas encore de
+  synchro réseau (le mode en ligne de Gordeka n'existe pas encore). Sans planche, le profil fixe
+  reste affiché le temps de l'emote.
 - Le chassé trouvé crie un « Trouvé ! » rigolo et devient un **fantôme** translucide, simple
   spectateur (*décidé le 2026-10-19*). Il se déplace
   librement, traverse les murs, voit tout, mais ne peut plus rien faire ni être vu par le chasseur.

@@ -33,6 +33,9 @@
 	"search_time": 1.0,
 	"use_range": 1.3,
 	"scared_range": 4.0,
+	"emote_duration": 1.5,
+	"emote_gap": 0.5,
+	"emote_ai_rate": 0.06,
 	"score": {
 		"hider_per_10s": 1,
 		"hider_survive": 5,

@@ -110,13 +110,15 @@ static func _data(character: String, anim: String) -> Dictionary:
 
 ## Repli pour la recette (Julien, 2026-10-20) : toute animation absente montre le profil validé, fixe.
 ## Pas de masque de tenue : le perso garde ses couleurs. Les gestes ponctuels durent STATIC_ONCE_S.
+## Une emote (`emote_*`) dure plus longtemps : toute la durée de sa bulle (`emote_duration`).
 static func _static(character: String, anim: String) -> Dictionary:
 	var tex: Texture2D = load((DIR % character) + "modele.png")
 	var used: Rect2i = tex.get_image().get_used_rect()
 	var noir: Image = Image.create(1, 1, false, Image.FORMAT_RGBA8)
 	noir.fill(Color.BLACK)
+	var once_s: float = GkRules.f("emote_duration") if anim.begins_with("emote_") else STATIC_ONCE_S
 	return {
-		"ends": PackedFloat32Array([STATIC_ONCE_S]),
+		"ends": PackedFloat32Array([once_s]),
 		"tex": tex,
 		"mask": ImageTexture.create_from_image(noir),
 		"n": 1,
@@ -155,6 +157,12 @@ func play_once(anim: String) -> void:
 	_once = anim
 	_once_visible = actor.shown
 	_set_anim(anim)
+
+
+## Arrête une emote en cours ; l'animation d'état reprend à l'image suivante.
+func stop_emote() -> void:
+	if _once.begins_with("emote_"):
+		_once = ""
 
 
 func _set_anim(anim: String) -> void:
