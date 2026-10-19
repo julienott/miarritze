@@ -29,9 +29,9 @@ PROMPTS = {
             "shoulder, nothing in front of her body, barefoot, hands empty, confident cheerful smile",
     "patxi": "a bearded Basque fisherman, blue beanie, yellow raincoat, navy trousers, black boots, a fishing rod strapped "
              "on his back, hands empty, friendly smile",
-    "xabi": "a Basque pelota player boy with light peach skin and rosy cheeks, white shirt and white trousers, red sash belt, "
-            "a chistera on his right hand: a long narrow banana-shaped curved wicker scoop, twice as long as his forearm, "
-            "extending forward from his hand, cheerful smile",
+    "xabi": "a Basque pelota player boy with light peach skin, rosy cheeks and short dark brown hair, white shirt and white "
+            "trousers, red sash belt, arms relaxed along his body, a long curved wicker chistera worn like a glove on his "
+            "right hand, the narrow curved basket hanging down along his leg and curving up at the tip, cheerful smile",
     "mattin": "a strong Basque stone lifter man, black mustache, red beret, red and white horizontally striped shirt, "
               "navy trousers, big muscular arms, friendly smile",
     "amaia": "a Basque folk dancer girl, red headscarf, green vest over a white blouse, red skirt, white espadrilles, a "

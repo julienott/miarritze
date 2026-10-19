@@ -1,0 +1,3161 @@
+{
+ "_doc": "Prompts de génération du décor de la carte Port des Pêcheurs v2 (Miarritze Gordeka). Rien n'a été envoyé. Généré à partir de tools/gordeka/make_port_v2.py, assets/maps/port_pecheurs/map.txt, zones.json et src/gordeka/gk_map.gd. Voir docs/GORDEKA_PROMPTS_DECOR.md.",
+ "carte": "port_pecheurs",
+ "version_carte": 2,
+ "date": "2026-10-19",
+ "taille_case_jeu_px": 64,
+ "taille_case_sortie_px": 128,
+ "preambule_style": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo.",
+ "suffixes_par_type": {
+  "objet": "Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above.",
+  "tuile_sol": "Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border.",
+  "tuile_bord": "Modular edge tile set on a transparent background, seen from above with the slight 3/4 tilt, each piece seamless along its length so that pieces connect end to end, thick dark navy outline only on the outer silhouette.",
+  "bande_facade": "Horizontally seamless strip (left and right edges match), front face of a wall seen with the slight 3/4 tilt, flat colors, thick dark navy outline on the top and bottom edges only, transparent background.",
+  "decal": "Flat decal painted on the ground, seen straight from above, transparent background, slightly faded so it reads as paint on the floor, thin outline."
+ },
+ "prompt_negatif": "pixel art, gradient, photorealistic, 3d render, isometric, strong perspective, texture, noise, grain, blur, text, letters, watermark, logo, people, characters, animals, weapons, blood, dark horror mood",
+ "elements": [
+  {
+   "id": "sol_dalles_quai",
+   "nom": "Dalles de quai",
+   "caractere": ".",
+   "categorie": "sol",
+   "zones": [
+    "Jetée",
+    "Bassin (quai nord)",
+    "Quai des chalutiers",
+    "Lavoir"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Large rectangular warm sandstone paving slabs of an old harbour quay, staggered rows, beige and light golden tones, a few slabs slightly lighter or darker, rounded corners, tiny pebbles in some joints.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Large rectangular warm sandstone paving slabs of an old harbour quay, staggered rows, beige and light golden tones, a few slabs slightly lighter or darker, rounded corners, tiny pebbles in some joints.",
+   "variantes": 3,
+   "remarques": "Sol le plus étendu : très calme pour que les persos ressortent. 3 variantes de la même tuile pour casser la répétition (le jeu les mélange).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Large rectangular warm sandstone paving slabs of an old harbour quay, staggered rows, beige and light golden tones, a few slabs slightly lighter or darker, rounded corners, tiny pebbles in some joints.",
+     "num_images": 3,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "sol_carrelage_criee",
+   "nom": "Carrelage de la criée",
+   "caractere": ".",
+   "categorie": "sol",
+   "zones": [
+    "Criée"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Clean white and very light blue-grey square ceramic tiles of a fish market hall, checkerboard pattern, a couple of small wet shiny spots.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Clean white and very light blue-grey square ceramic tiles of a fish market hall, checkerboard pattern, a couple of small wet shiny spots.",
+   "variantes": 2,
+   "remarques": "Couleur froide pour distinguer la criée d'un coup d'œil. Pas d'écailles ni de sang de poisson.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Clean white and very light blue-grey square ceramic tiles of a fish market hall, checkerboard pattern, a couple of small wet shiny spots.",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "sol_beton_atelier",
+   "nom": "Béton du hangar, de l'atelier et de la cale",
+   "caractere": ".",
+   "categorie": "sol",
+   "zones": [
+    "Hangar à filets",
+    "Atelier",
+    "Cale sèche"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Smooth light grey concrete floor of a boat workshop, large square slabs with straight expansion joints, a few flat pale paint splashes in Basque red and green.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Smooth light grey concrete floor of a boat workshop, large square slabs with straight expansion joints, a few flat pale paint splashes in Basque red and green.",
+   "variantes": 3,
+   "remarques": "Une variante plus chaude (cale sèche, au soleil) et une plus froide (hangar, à l'intérieur).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Smooth light grey concrete floor of a boat workshop, large square slabs with straight expansion joints, a few flat pale paint splashes in Basque red #9e1b1b and green.",
+     "num_images": 3,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "sol_paves_ruelle",
+   "nom": "Pavés des ruelles",
+   "caractere": ".",
+   "categorie": "sol",
+   "zones": [
+    "Crampottes",
+    "couloirs (rue des pêcheurs, passages entre zones)",
+    "Escalier de la ville"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Rounded cobblestones of a narrow Basque fishermen's lane, warm grey and beige stones of slightly different sizes in offset rows, soft rounded shapes.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Rounded cobblestones of a narrow Basque fishermen's lane, warm grey and beige stones of slightly different sizes in offset rows, soft rounded shapes.",
+   "variantes": 3,
+   "remarques": "Sert aussi pour tous les couloirs (aujourd'hui sans sol dessiné, zone -1).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Rounded cobblestones of a narrow Basque fishermen's lane, warm grey and beige stones of slightly different sizes in offset rows, soft rounded shapes.",
+     "num_images": 3,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "sol_paves_place",
+   "nom": "Pavage de la place du fronton",
+   "caractere": ".",
+   "categorie": "sol",
+   "zones": [
+    "Place du fronton"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Light golden sandstone pavement of a Basque village square arranged in a fan pattern (calade), pale cream and ochre stones.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Light golden sandstone pavement of a Basque village square arranged in a fan pattern (calade), pale cream and ochre stones.",
+   "variantes": 2,
+   "remarques": "Plus clair que les ruelles : la place est le cœur de la carte (départ).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Light golden sandstone #d9c39a pavement of a Basque village square arranged in a fan pattern (calade), pale cream and ochre stones.",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "sol_planches_terrasse",
+   "nom": "Planches de la terrasse",
+   "caractere": ".",
+   "categorie": "sol",
+   "zones": [
+    "Terrasse"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Wooden deck boards of a seaside bar terrace, warm honey brown planks running horizontally, staggered board ends, a few darker knots drawn as simple ovals.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Wooden deck boards of a seaside bar terrace, warm honey brown planks running horizontally, staggered board ends, a few darker knots drawn as simple ovals.",
+   "variantes": 2,
+   "remarques": "Planches horizontales (le dessin du prototype les met à l'horizontale).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Wooden deck boards of a seaside bar terrace, warm honey brown planks running horizontally, staggered board ends, a few darker knots drawn as simple ovals.",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "sol_tomettes_chapelle",
+   "nom": "Tomettes de la chapelle",
+   "caractere": ".",
+   "categorie": "sol",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Hexagonal terracotta floor tiles (tomettes) of a small Basque sailors' chapel, warm red-orange tones, thin cream joints.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Hexagonal terracotta floor tiles (tomettes) of a small Basque sailors' chapel, warm red-orange tones, thin cream joints.",
+   "variantes": 2,
+   "remarques": "Aujourd'hui « dalles » par défaut dans gk_map.gd : proposition pour donner un repère de couleur.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Hexagonal terracotta floor tiles (tomettes) of a small Basque sailors' chapel, warm red-orange tones, thin cream joints.",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "sol_rocher_phare",
+   "nom": "Plateforme rocheuse du phare",
+   "caractere": ".",
+   "categorie": "sol",
+   "zones": [
+    "Phare"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Flat platform of smoothed golden sandstone rock at the foot of a harbour lighthouse, large irregular rounded plates, a few tiny tide pools drawn as small turquoise ovals.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Flat platform of smoothed golden sandstone rock at the foot of a harbour lighthouse, large irregular rounded plates, a few tiny tide pools drawn as small turquoise ovals.",
+   "variantes": 2,
+   "remarques": "Les flaques restent petites et plates : ce n'est pas de l'eau bloquante.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Flat platform of smoothed golden sandstone #d9c39a rock at the foot of a harbour lighthouse, large irregular rounded plates, a few tiny tide pools drawn as small turquoise #2fa7b8 ovals.",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "eau_mer",
+   "nom": "Eau du port et de la mer",
+   "caractere": "~",
+   "categorie": "eau",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Cale sèche"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "bloque le passage, pas la vue"
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Calm harbour sea water, deep turquoise and navy blue, simple flat cartoon wave crests drawn as small white curved lines, a few lighter ripple shapes.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Calm harbour sea water, deep turquoise and navy blue, simple flat cartoon wave crests drawn as small white curved lines, a few lighter ripple shapes.",
+   "variantes": 4,
+   "remarques": "4 images qui se suivent pour une animation lente des vagues (boucle). Mer bien lisible comme « on ne passe pas », mais pas inquiétante.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Calm harbour sea water, deep turquoise #2fa7b8 and navy blue, simple flat cartoon wave crests drawn as small white curved lines, a few lighter ripple shapes.",
+     "num_images": 4,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de eau_mer>",
+     "prompt": "same object, same style, but the wave crests shifted a little to the right (next animation frame)"
+    },
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de eau_mer>",
+     "prompt": "same object, same style, but the wave crests shifted a little to the right (next animation frame)"
+    },
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de eau_mer>",
+     "prompt": "same object, same style, but the wave crests shifted a little to the right (next animation frame)"
+    }
+   ]
+  },
+  {
+   "id": "bord_quai_eau",
+   "nom": "Bord de quai sur l'eau",
+   "caractere": "~ / .",
+   "categorie": "eau",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Cale sèche"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "purement visuel : la limite reste celle des cases"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "tuile_bord",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Edge of a sandstone harbour quay meeting the water: a rounded stone coping on the quay side, a short visible front face of stacked golden stone blocks dropping into turquoise water, a thin line of white foam where it touches the water. Provide straight pieces for the north, south, east and west sides plus outer and inner corners.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Modular edge tile set on a transparent background, seen from above with the slight 3/4 tilt, each piece seamless along its length so that pieces connect end to end, thick dark navy outline only on the outer silhouette. Edge of a sandstone harbour quay meeting the water: a rounded stone coping on the quay side, a short visible front face of stacked golden stone blocks dropping into turquoise water, a thin line of white foam where it touches the water. Provide straight pieces for the north, south, east and west sides plus outer and inner corners.",
+   "variantes": 12,
+   "remarques": "Jeu de bords (4 droits, 4 coins extérieurs, 4 coins intérieurs) ; seule la face sud montre sa face avant de pierre (3/4). À valider avec la question sur les transitions.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Edge of a sandstone harbour quay meeting the water: a rounded stone coping on the quay side, a short visible front face of stacked golden stone blocks dropping into turquoise #2fa7b8 water, a thin line of white foam where it touches the water. Provide straight pieces for the north, south, east and west sides plus outer and inner corners.",
+     "shadow": "layer",
+     "num_images": 4,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "mur_pierre",
+   "nom": "Mur de pierre (bord de carte, murs entre zones)",
+   "caractere": "#",
+   "categorie": "mur",
+   "zones": [
+    "toute la carte"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "tuile_bord",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Thick old harbour wall: flat top of dark grey-blue capstones seen from above, and a front face of large golden sandstone blocks with rounded corners. Provide pieces for straight runs, ends, corners and T junctions.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Modular edge tile set on a transparent background, seen from above with the slight 3/4 tilt, each piece seamless along its length so that pieces connect end to end, thick dark navy outline only on the outer silhouette. Thick old harbour wall: flat top of dark grey-blue capstones seen from above, and a front face of large golden sandstone blocks with rounded corners. Provide pieces for straight runs, ends, corners and T junctions.",
+   "variantes": 16,
+   "remarques": "Jeu de murs à raccords (autotile) pour les contours ; la face avant ne se voit que côté sud.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Thick old harbour wall: flat top of dark grey-blue capstones seen from above, and a front face of large golden sandstone #d9c39a blocks with rounded corners. Provide pieces for straight runs, ends, corners and T junctions.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 4,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "toit_tuiles",
+   "nom": "Toits de tuiles rouges (grandes masses bâties)",
+   "caractere": "#",
+   "categorie": "mur",
+   "zones": [
+    "masses entre zones (crampottes, criée, hangar, chapelle…)"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "tuile_sol",
+   "style_pixelforge_suggere": "pf_hd__ground",
+   "prompt_specifique": "Red clay Basque roof tiles (canal tiles) seen from above, rows of rounded orange-red tiles, a few slightly darker or lighter tiles, simple flat shapes.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Seamless tileable floor texture seen straight from above, filling the whole square edge to edge and repeating without visible seams, flat colors with thin slightly darker joint lines instead of thick outlines, low contrast so that characters stand out, no objects, no shadows, no border. Red clay Basque roof tiles (canal tiles) seen from above, rows of rounded orange-red tiles, a few slightly darker or lighter tiles, simple flat shapes.",
+   "variantes": 2,
+   "remarques": "Pour remplir les grands blocs « # » entre les zones : on voit des toits au lieu d'un gris. Plus un faîtage (ligne de crête) à prévoir si les toits sont à deux pentes.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__ground",
+     "prompt": "Red clay Basque roof tiles (canal tiles) seen from above, rows of rounded orange-red tiles, a few slightly darker or lighter tiles, simple flat shapes.",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "facade_labourdine",
+   "nom": "Façade blanche à colombages",
+   "caractere": "#",
+   "categorie": "mur",
+   "zones": [
+    "face sud des masses bâties"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    4,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    256,
+    64
+   ],
+   "taille_sortie_px": [
+    512,
+    128
+   ],
+   "type": "bande_facade",
+   "style_pixelforge_suggere": "pf_hd__texture",
+   "prompt_specifique": "Front face of a Labourd Basque house: whitewashed wall with red half-timbering beams, small windows with Basque red shutters (some dark green), a red wooden door, a flower box with pink hydrangeas.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Horizontally seamless strip (left and right edges match), front face of a wall seen with the slight 3/4 tilt, flat colors, thick dark navy outline on the top and bottom edges only, transparent background. Front face of a Labourd Basque house: whitewashed wall with red half-timbering beams, small windows with Basque red shutters (some dark green), a red wooden door, a flower box with pink hydrangeas.",
+   "variantes": 4,
+   "remarques": "Bande de 4 cases raccordable à gauche et à droite ; 2 variantes rouges, 1 verte, 1 bleue (pêcheurs). Posée sous le bord sud des toits.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__texture",
+     "prompt": "Front face of a Labourd Basque house: whitewashed #f4f1ea wall with red half-timbering beams, small windows with Basque red #9e1b1b shutters (some dark green #1f6b3a), a red wooden door, a flower box with pink hydrangeas.",
+     "num_images": 4,
+     "width": 1024,
+     "height": 256,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "maison_crampotte",
+   "nom": "Crampotte (cabane de pêcheur)",
+   "caractere": "#",
+   "categorie": "batiment",
+   "zones": [
+    "Crampottes"
+   ],
+   "occurrences": "7 blocs : 4×3 (2,15), 4×3 (8,14), 3×3 (13,16), 3×4 (2,20), 4×3 (7,19), 4×3 (12,21), 4×2 (6,24)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    4,
+    3
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    256,
+    256
+   ],
+   "taille_sortie_px": [
+    512,
+    512
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port seen from above with the slight 3/4 tilt: red clay tile roof, whitewashed front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Tiny Basque fishermen's hut (crampotte) of the Biarritz port seen from above with the slight 3/4 tilt: red clay tile roof, whitewashed front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall.",
+   "variantes": 6,
+   "remarques": "Tailles présentes : 4×3 (×4), 3×3, 3×4, 4×2. Une variante par taille, portes de couleurs différentes : ce sont les repères des ruelles.",
+   "payloads": [
+    {
+     "taille_cases": [
+      4,
+      3
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 4 by 3 tiles.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      3,
+      3
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 3 by 3 tiles.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 768,
+     "height": 1024,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      3,
+      4
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 3 by 4 tiles.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 640,
+     "height": 1024,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      4,
+      2
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Tiny Basque fishermen's hut (crampotte) of the Biarritz port: red clay tile roof, whitewashed #f4f1ea front wall with a brightly painted wooden door (red, green or blue) and one small shuttered window, a coiled rope and an oar leaning against the wall. Footprint 4 by 2 tiles.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 768,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "chambre_froide",
+   "nom": "Chambre froide de la criée",
+   "caractere": "#",
+   "categorie": "batiment",
+   "zones": [
+    "Criée"
+   ],
+   "occurrences": "(76,1)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    4,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    256,
+    320
+   ],
+   "taille_sortie_px": [
+    512,
+    640
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Cold storage room of a fish market: white boxy building with rounded corners, a big light blue insulated door with a silver handle, a painted blue fish shape on the wall, a few frost marks drawn as white snowflake shapes.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Cold storage room of a fish market: white boxy building with rounded corners, a big light blue insulated door with a silver handle, a painted blue fish shape on the wall, a few frost marks drawn as white snowflake shapes.",
+   "variantes": 2,
+   "remarques": "Repère de la criée. Pas de texte (pas de « FRIGO »).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Cold storage room of a fish market: white boxy building with rounded corners, a big light blue insulated door with a silver handle, a painted blue fish shape on the wall, a few frost marks drawn as white snowflake shapes.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 832,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "tour_phare",
+   "nom": "Tour du phare (feu du port)",
+   "caractere": "#",
+   "categorie": "repere",
+   "zones": [
+    "Phare"
+   ],
+   "occurrences": "(86,3)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on en fait le tour"
+   },
+   "taille_cases": [
+    5,
+    5
+   ],
+   "debord_haut_cases": 3,
+   "taille_jeu_px": [
+    320,
+    512
+   ],
+   "taille_sortie_px": [
+    640,
+    1024
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Small round harbour lighthouse seen from above with the slight 3/4 tilt: white stone tower with a wide red band at the top, a glass lantern room with a yellow light, a little green door at its base, round stone base. The top of the tower rises above its footprint.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small round harbour lighthouse seen from above with the slight 3/4 tilt: white stone tower with a wide red band at the top, a glass lantern room with a yellow light, a little green door at its base, round stone base. The top of the tower rises above its footprint.",
+   "variantes": 2,
+   "remarques": "Plus grand repère de la carte : il dépasse vers le haut (environ 3 cases). Une variante feu allumé (phase finale), une éteinte.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small round harbour lighthouse: white stone tower with a wide red band at the top, a glass lantern room with a yellow light, a little green door at its base, round stone base. The tower is tall.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 640,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de tour_phare>",
+     "prompt": "same object, same style, but the lantern light switched off"
+    }
+   ]
+  },
+  {
+   "id": "fronton",
+   "nom": "Fronton de pelote basque",
+   "caractere": "#",
+   "categorie": "repere",
+   "zones": [
+    "Place du fronton"
+   ],
+   "occurrences": "(36,14)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    10,
+    1
+   ],
+   "debord_haut_cases": 2,
+   "taille_jeu_px": [
+    640,
+    192
+   ],
+   "taille_sortie_px": [
+    1280,
+    384
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Basque pelota wall (fronton) seen from above with the slight 3/4 tilt: tall wall of warm pink sandstone with the typical curved rounded top, a painted horizontal red line near the bottom, a few small green plants at its foot.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Basque pelota wall (fronton) seen from above with the slight 3/4 tilt: tall wall of warm pink sandstone with the typical curved rounded top, a painted horizontal red line near the bottom, a few small green plants at its foot.",
+   "variantes": 2,
+   "remarques": "Long mur au nord de la place ; la face visible est celle qui regarde la place (sud). Dépasse vers le haut (2 cases). Pas de texte « PLAZA ».",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Basque pelota wall (fronton): tall wall of warm pink sandstone with the typical curved rounded top, a painted horizontal red line near the bottom, a few small green plants at its foot.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 320,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "rayonnage_filets",
+   "nom": "Rayonnage du hangar à filets",
+   "caractere": "#",
+   "categorie": "batiment",
+   "zones": [
+    "Hangar à filets"
+   ],
+   "occurrences": "(60,15) 2×4, (64,17) 2×5, (68,14) 2×4, (68,20) 2×3, (72,16) 2×5",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    128,
+    320
+   ],
+   "taille_sortie_px": [
+    256,
+    640
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Tall wooden shelving unit in a net shed seen from above with the slight 3/4 tilt: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Tall wooden shelving unit in a net shed seen from above with the slight 3/4 tilt: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates.",
+   "variantes": 3,
+   "remarques": "Tailles présentes : 2×4 (×2), 2×5 (×2), 2×3. Une variante par hauteur. Bloque la vue : c'est un dédale.",
+   "payloads": [
+    {
+     "taille_cases": [
+      2,
+      3
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Tall wooden shelving unit in a net shed: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates. Footprint 2 by 3 tiles.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 512,
+     "height": 1024,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      2,
+      4
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Tall wooden shelving unit in a net shed: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates. Footprint 2 by 4 tiles.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 384,
+     "height": 1024,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      2,
+      5
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Tall wooden shelving unit in a net shed: shelves loaded with rolled green and blue fishing nets, round orange and yellow floats, coiled ropes and small wooden crates. Footprint 2 by 5 tiles.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 320,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "autel_chapelle",
+   "nom": "Autel de la chapelle des marins",
+   "caractere": "#",
+   "categorie": "repere",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "occurrences": "(87,20)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    128,
+    192
+   ],
+   "taille_sortie_px": [
+    256,
+    384
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Small wooden altar of a Basque sailors' chapel, white cloth with a red and green Basque linen stripe, a little wooden model sailing boat (ex-voto) on top, two short candles, a vase of blue hydrangeas.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small wooden altar of a Basque sailors' chapel, white cloth with a red and green Basque linen stripe, a little wooden model sailing boat (ex-voto) on top, two short candles, a vase of blue hydrangeas.",
+   "variantes": 2,
+   "remarques": "Repère calme et neutre ; le bateau-maquette est le signe distinctif.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small wooden altar of a Basque sailors' chapel, white cloth with a red and green Basque linen stripe, a little wooden model sailing boat (ex-voto) on top, two short candles, a vase of blue hydrangeas.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 704,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "comptoir_bar",
+   "nom": "Comptoir de la terrasse",
+   "caractere": "#",
+   "categorie": "batiment",
+   "zones": [
+    "Terrasse"
+   ],
+   "occurrences": "(36,34)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    3,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    192,
+    128
+   ],
+   "taille_sortie_px": [
+    384,
+    256
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Wooden bar counter of a seaside Basque terrace, front panel painted Basque red, a top covered with a striped Basque linen cloth, two small cider barrels and a glass jar of lemonade on it.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Wooden bar counter of a seaside Basque terrace, front panel painted Basque red, a top covered with a striped Basque linen cloth, two small cider barrels and a glass jar of lemonade on it.",
+   "variantes": 2,
+   "remarques": "Boissons sans alcool à l'image (cidre en tonneau seulement comme décor traditionnel).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Wooden bar counter of a seaside Basque terrace, front panel painted Basque red #9e1b1b, a top covered with a striped Basque linen cloth, two small cider barrels and a glass jar of lemonade on it.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 704,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "mur_soutenement",
+   "nom": "Mur de soutènement de l'escalier",
+   "caractere": "#",
+   "categorie": "batiment",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "occurrences": "(89,27)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    8
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    512
+   ],
+   "taille_sortie_px": [
+    256,
+    1024
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Long narrow retaining wall of golden sandstone blocks seen from above with the slight 3/4 tilt, a flat stone top with a row of pink and blue hydrangeas and a dark green iron railing.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Long narrow retaining wall of golden sandstone blocks seen from above with the slight 3/4 tilt, a flat stone top with a row of pink and blue hydrangeas and a dark green iron railing.",
+   "variantes": 1,
+   "remarques": "Vertical (2 de large, 8 de haut).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Long narrow retaining wall of golden sandstone #d9c39a blocks, a flat stone top with a row of pink and blue hydrangeas and a dark green #1f6b3a iron railing.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 256,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "caisses_poisson",
+   "nom": "Pile de caisses de poisson",
+   "caractere": "c",
+   "categorie": "objet",
+   "zones": [
+    "Jetée",
+    "Criée",
+    "Phare",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Atelier",
+    "Escalier de la ville"
+   ],
+   "occurrences": "2×2 : (5,8), (52,21), (73,36) ; 2×1 : (63,10), (83,8), (20,23), (83,37) ; 1×2 : (30,15)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    128,
+    192
+   ],
+   "taille_sortie_px": [
+    256,
+    384
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them.",
+   "variantes": 4,
+   "remarques": "Tailles présentes : 2×2, 2×1, 1×2. Une variante par taille + une deuxième 2×2. Les cachent, mais ce ne sont pas des cachettes : bien les distinguer visuellement des « H ».",
+   "payloads": [
+    {
+     "taille_cases": [
+      2,
+      2
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them. Footprint 2 by 2 tiles.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 704,
+     "height": 1024,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      2,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them. Footprint 2 by 1 tiles.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      1,
+      2
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Stack of wooden fish crates and light blue plastic crates of a fishing port, two levels high, one crate on top slightly askew, a coiled rope beside them. Footprint 1 by 2 tiles.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 320,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "barque_mouillage",
+   "nom": "Barque basque au mouillage",
+   "caractere": "B",
+   "categorie": "bateau",
+   "zones": [
+    "Bassin"
+   ],
+   "occurrences": "(31,2) 6×2, (42,4) 7×2, (51,2) 4×2",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "dans l'eau : cache la vue, l'eau empêche déjà d'y aller"
+   },
+   "taille_cases": [
+    6,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    384,
+    128
+   ],
+   "taille_sortie_px": [
+    768,
+    256
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Small traditional Basque wooden fishing boat seen from above with the slight 3/4 tilt, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small traditional Basque wooden fishing boat seen from above with the slight 3/4 tilt, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it.",
+   "variantes": 6,
+   "remarques": "Tailles présentes : 6×2, 7×2, 4×2. 2 couleurs par taille. Couleurs vives des barques du port des Pêcheurs.",
+   "payloads": [
+    {
+     "taille_cases": [
+      6,
+      2
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small traditional Basque wooden fishing boat, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it. Footprint 6 by 2 tiles.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 320,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      7,
+      2
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small traditional Basque wooden fishing boat, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it. Footprint 7 by 2 tiles.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 320,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      4,
+      2
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small traditional Basque wooden fishing boat, floating on its own, horizontal (bow to the right), brightly painted hull (white with a red, green or blue stripe), warm wooden inside with a bench, two oars and a small coiled net, no water around it. Footprint 4 by 2 tiles.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 512,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "chalutier_quai",
+   "nom": "Chalutier à quai",
+   "caractere": "B",
+   "categorie": "bateau",
+   "zones": [
+    "Quai des chalutiers"
+   ],
+   "occurrences": "(22,17)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on en fait le tour"
+   },
+   "taille_cases": [
+    7,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    448,
+    320
+   ],
+   "taille_sortie_px": [
+    896,
+    640
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Chunky friendly cartoon fishing trawler seen from above with the slight 3/4 tilt, horizontal (bow to the right), red and white hull, a small white wheelhouse with round windows, a short mast with a green flag, piles of nets and orange floats on the deck, sitting on wooden blocks.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Chunky friendly cartoon fishing trawler seen from above with the slight 3/4 tilt, horizontal (bow to the right), red and white hull, a small white wheelhouse with round windows, a short mast with a green flag, piles of nets and orange floats on the deck, sitting on wooden blocks.",
+   "variantes": 2,
+   "remarques": "Repère de la zone. Sur la carte il est posé sur le quai (pas dans l'eau) : voir questions ouvertes.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Chunky friendly cartoon fishing trawler, horizontal (bow to the right), red and white hull, a small white wheelhouse with round windows, a short mast with a green flag, piles of nets and orange floats on the deck, sitting on wooden blocks.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 704,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "coque_sur_ber",
+   "nom": "Coque sur ber (cale sèche)",
+   "caractere": "B",
+   "categorie": "bateau",
+   "zones": [
+    "Cale sèche"
+   ],
+   "occurrences": "(3,30), (11,33)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    6,
+    3
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    384,
+    256
+   ],
+   "taille_sortie_px": [
+    768,
+    512
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Wooden fishing boat hull out of the water resting on a wooden cradle, seen from above with the slight 3/4 tilt, horizontal, half repainted (one half fresh Basque green, the other faded), a small ladder leaning on the side, paint pots on the ground next to it.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Wooden fishing boat hull out of the water resting on a wooden cradle, seen from above with the slight 3/4 tilt, horizontal, half repainted (one half fresh Basque green, the other faded), a small ladder leaning on the side, paint pots on the ground next to it.",
+   "variantes": 2,
+   "remarques": "Deux coques, couleurs différentes.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Wooden fishing boat hull out of the water resting on a wooden cradle, horizontal, half repainted (one half fresh Basque green #1f6b3a, the other faded), a small ladder leaning on the side, paint pots on the ground next to it.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 704,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "coque_chantier",
+   "nom": "Coque en chantier (atelier)",
+   "caractere": "B",
+   "categorie": "bateau",
+   "zones": [
+    "Atelier"
+   ],
+   "occurrences": "(68,30)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on en fait le tour"
+   },
+   "taille_cases": [
+    5,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    320,
+    320
+   ],
+   "taille_sortie_px": [
+    640,
+    640
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Wooden boat being built in a workshop, seen from above with the slight 3/4 tilt: a nearly finished planked hull in natural honey wood with a few planks still missing at the bow, wood clamps, a stack of planks beside it.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Wooden boat being built in a workshop, seen from above with the slight 3/4 tilt: a nearly finished planked hull in natural honey wood with a few planks still missing at the bow, wood clamps, a stack of planks beside it.",
+   "variantes": 1,
+   "remarques": "Doit rester « plein » (il cache la vue) : coque bordée, pas un squelette de membrures.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Wooden boat being built in a workshop: a nearly finished planked hull in natural honey wood with a few planks still missing at the bow, wood clamps, a stack of planks beside it.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "etal_criee",
+   "nom": "Étal de la criée",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Criée"
+   ],
+   "occurrences": "(64,3), (71,3), (64,7), (71,7)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on voit par-dessus, on n'y passe pas"
+   },
+   "taille_cases": [
+    5,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    320,
+    64
+   ],
+   "taille_sortie_px": [
+    640,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Long low fish market stall table seen from above with the slight 3/4 tilt: steel table covered with crushed ice, rows of smiling cartoon fish, a few crabs and shrimps, lemons, a string of red Espelette peppers hanging at one end.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Long low fish market stall table seen from above with the slight 3/4 tilt: steel table covered with crushed ice, rows of smiling cartoon fish, a few crabs and shrimps, lemons, a string of red Espelette peppers hanging at one end.",
+   "variantes": 2,
+   "remarques": "4 étals (deux rangées dont on fait le tour). Poissons mignons, rien de découpé.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Long low fish market stall table: steel table covered with crushed ice, rows of smiling cartoon fish, a few crabs and shrimps, lemons, a string of red Espelette peppers hanging at one end.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 256,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "bitte_amarrage",
+   "nom": "Bitte d'amarrage",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Jetée",
+    "Bassin (quai nord)"
+   ],
+   "occurrences": "(20,7), (38,10), (50,10)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on voit par-dessus, on n'y passe pas"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Short round cast iron mooring bollard painted dark green with a thick beige rope looped around it.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Short round cast iron mooring bollard painted dark green with a thick beige rope looped around it.",
+   "variantes": 2,
+   "remarques": "Une variante avec corde, une sans.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Short round cast iron mooring bollard painted dark green #1f6b3a with a thick beige rope looped around it.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "tas_filets",
+   "nom": "Filets et casiers posés au sol",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Jetée",
+    "Hangar à filets"
+   ],
+   "occurrences": "(13,9) 3×1, (61,21) 2×1",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on voit par-dessus, on n'y passe pas"
+   },
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    192,
+    64
+   ],
+   "taille_sortie_px": [
+    384,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Low pile of fishing nets spread on the ground with round orange floats and two small lobster pots of wood and rope.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Low pile of fishing nets spread on the ground with round orange floats and two small lobster pots of wood and rope.",
+   "variantes": 2,
+   "remarques": "Tailles présentes : 3×1 (jetée) et 2×1 (filets étendus du hangar).",
+   "payloads": [
+    {
+     "taille_cases": [
+      3,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Low pile of fishing nets spread on the ground with round orange floats and two small lobster pots of wood and rope. Footprint 3 by 1 tiles.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 320,
+     "seed": 1
+    },
+    {
+     "taille_cases": [
+      2,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Low pile of fishing nets spread on the ground with round orange floats and two small lobster pots of wood and rope. Footprint 2 by 1 tiles.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 512,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "fontaine_place",
+   "nom": "Fontaine de la place",
+   "caractere": "t",
+   "categorie": "repere",
+   "zones": [
+    "Place du fronton"
+   ],
+   "occurrences": "(43,18)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "basse : on voit par-dessus, on en fait le tour"
+   },
+   "taille_cases": [
+    4,
+    4
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    256,
+    256
+   ],
+   "taille_sortie_px": [
+    512,
+    512
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Round low stone fountain of a Basque village square seen from above with the slight 3/4 tilt: golden sandstone basin with turquoise water, a small central column with a lauburu (Basque cross) carved on it and a thin water spout.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Round low stone fountain of a Basque village square seen from above with the slight 3/4 tilt: golden sandstone basin with turquoise water, a small central column with a lauburu (Basque cross) carved on it and a thin water spout.",
+   "variantes": 2,
+   "remarques": "Repère central, juste à côté du départ. 2 images pour l'eau qui bouge.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Round low stone fountain of a Basque village square: golden sandstone #d9c39a basin with turquoise #2fa7b8 water, a small central column with a lauburu (Basque cross) carved on it and a thin water spout.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de fontaine_place>",
+     "prompt": "same object, same style, but the water ripples and spout slightly changed (next animation frame)"
+    }
+   ]
+  },
+  {
+   "id": "banc_vert",
+   "nom": "Banc vert du front de mer",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Place du fronton"
+   ],
+   "occurrences": "(50,16), (37,22)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on voit par-dessus, on n'y passe pas"
+   },
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    192,
+    64
+   ],
+   "taille_sortie_px": [
+    384,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Classic dark green wooden and cast iron seaside bench of Biarritz seen from above with the slight 3/4 tilt, horizontal.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Classic dark green wooden and cast iron seaside bench of Biarritz seen from above with the slight 3/4 tilt, horizontal.",
+   "variantes": 1,
+   "remarques": "Mobilier vert foncé typique de Biarritz.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Classic dark green #1f6b3a wooden and cast iron seaside bench of Biarritz, horizontal.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 320,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "banc_chapelle",
+   "nom": "Banc de la chapelle",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "occurrences": "(83,14), (89,14), (83,16), (89,16), (83,18), (89,18)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on voit par-dessus, on n'y passe pas"
+   },
+   "taille_cases": [
+    4,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    256,
+    64
+   ],
+   "taille_sortie_px": [
+    512,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Simple dark wooden chapel bench (pew) seen from above with the slight 3/4 tilt, horizontal, a small red cushion at one end.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Simple dark wooden chapel bench (pew) seen from above with the slight 3/4 tilt, horizontal, a small red cushion at one end.",
+   "variantes": 1,
+   "remarques": "6 bancs (3 rangées × 2).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Simple dark wooden chapel bench (pew), horizontal, a small red cushion at one end.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 256,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "etabli_atelier",
+   "nom": "Établi de l'atelier",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Atelier"
+   ],
+   "occurrences": "(61,29), (61,33)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on voit par-dessus, on n'y passe pas"
+   },
+   "taille_cases": [
+    5,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    320,
+    64
+   ],
+   "taille_sortie_px": [
+    640,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Long wooden carpenter's workbench seen from above with the slight 3/4 tilt: a wooden plane, wood shavings curls, a mallet, a coil of rope and small pots of red and green paint.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Long wooden carpenter's workbench seen from above with the slight 3/4 tilt: a wooden plane, wood shavings curls, a mallet, a coil of rope and small pots of red and green paint.",
+   "variantes": 2,
+   "remarques": "Outils ronds et inoffensifs (pas de scie ni de lame visible).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Long wooden carpenter's workbench: a wooden plane, wood shavings curls, a mallet, a coil of rope and small pots of red and green paint.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 256,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "marches_escalier",
+   "nom": "Marches de l'escalier de la ville",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "occurrences": "(81,28), (81,31), (81,34)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on voit par-dessus, on n'y passe pas"
+   },
+   "taille_cases": [
+    6,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    384,
+    64
+   ],
+   "taille_sortie_px": [
+    768,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Low block of three wide golden sandstone steps seen from above with the slight 3/4 tilt, horizontal, a terracotta pot of pink hydrangeas at each end.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Low block of three wide golden sandstone steps seen from above with the slight 3/4 tilt, horizontal, a terracotta pot of pink hydrangeas at each end.",
+   "variantes": 2,
+   "remarques": "3 rangées ; on passe entre elles, pas dessus (bloque le passage). Voir questions ouvertes.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Low block of three wide golden sandstone #d9c39a steps, horizontal, a terracotta pot of pink hydrangeas at each end.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 256,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "table_terrasse",
+   "nom": "Table de terrasse",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Terrasse"
+   ],
+   "occurrences": "(24,36), (28,36), (32,36)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on voit par-dessus, on n'y passe pas"
+   },
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    64
+   ],
+   "taille_sortie_px": [
+    256,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Small round bistro table with a red and white striped Basque linen tablecloth, a slice of gâteau basque on a plate, and two red wooden chairs on each side, seen from above with the slight 3/4 tilt.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small round bistro table with a red and white striped Basque linen tablecloth, a slice of gâteau basque on a plate, and two red wooden chairs on each side, seen from above with the slight 3/4 tilt.",
+   "variantes": 2,
+   "remarques": "Chaises rouges et nappe en linge basque.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small round bistro table with a red and white striped Basque linen tablecloth, a slice of gâteau basque on a plate, and two red wooden chairs on each side.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 512,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "treteaux_cale",
+   "nom": "Tréteaux et planches de la cale",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Cale sèche"
+   ],
+   "occurrences": "(14,29)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "on voit par-dessus, on n'y passe pas"
+   },
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    192,
+    64
+   ],
+   "taille_sortie_px": [
+    384,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Two wooden trestles holding a few long planks and a pair of oars, seen from above with the slight 3/4 tilt, horizontal.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Two wooden trestles holding a few long planks and a pair of oars, seen from above with the slight 3/4 tilt, horizontal.",
+   "variantes": 1,
+   "remarques": "",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Two wooden trestles holding a few long planks and a pair of oars, horizontal.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 320,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "lavoir_bassin",
+   "nom": "Bassin du lavoir",
+   "caractere": "~",
+   "categorie": "repere",
+   "zones": [
+    "Lavoir"
+   ],
+   "occurrences": "(45,35)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": "eau basse : on voit par-dessus, on en fait le tour"
+   },
+   "taille_cases": [
+    6,
+    3
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    384,
+    192
+   ],
+   "taille_sortie_px": [
+    768,
+    384
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Old Basque public washing basin (lavoir) seen from above with the slight 3/4 tilt: rectangular sandstone basin with sloped stone washing edges, clear turquoise water, a wooden washing board and a few floating soap bubbles.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Old Basque public washing basin (lavoir) seen from above with the slight 3/4 tilt: rectangular sandstone basin with sloped stone washing edges, clear turquoise water, a wooden washing board and a few floating soap bubbles.",
+   "variantes": 2,
+   "remarques": "Sur la carte c'est de l'eau « ~ » ; dessiné comme un seul objet bas. Pas de toit (sinon il cacherait la vue). 2 images pour l'eau.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Old Basque public washing basin (lavoir): rectangular sandstone basin with sloped stone washing edges, clear turquoise #2fa7b8 water, a wooden washing board and a few floating soap bubbles.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 512,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de lavoir_bassin>",
+     "prompt": "same object, same style, but the water ripples slightly changed (next animation frame)"
+    }
+   ]
+  },
+  {
+   "id": "cachette_casier_homards",
+   "nom": "Casier à homards géant",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Jetée"
+   ],
+   "occurrences": "(9,10)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Big round wooden and rope lobster pot lying on its side, large enough for a child to curl up inside, a net flap as a door, a couple of orange floats tied to it. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Big round wooden and rope lobster pot lying on its side, large enough for a child to curl up inside, a net flap as a door, a couple of orange floats tied to it. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Big round wooden and rope lobster pot lying on its side, large enough for a child to curl up inside, a net flap as a door, a couple of orange floats tied to it. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_casier_homards>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_coffre_quai",
+   "nom": "Coffre de quai",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Bassin"
+   ],
+   "occurrences": "(44,9)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Big wooden harbour storage chest painted Basque green with iron bands and a rounded lid, coiled rope on top. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Big wooden harbour storage chest painted Basque green with iron bands and a rounded lid, coiled rope on top. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Big wooden harbour storage chest painted Basque green #1f6b3a with iron bands and a rounded lid, coiled rope on top. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_coffre_quai>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_caisse_glace",
+   "nom": "Caisse à glace",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Criée"
+   ],
+   "occurrences": "(75,2)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Large white insulated ice box of a fish market with a light blue lid and big handles, a few ice cubes around the lid. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Large white insulated ice box of a fish market with a light blue lid and big handles, a few ice cubes around the lid. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Large white insulated ice box of a fish market with a light blue lid and big handles, a few ice cubes around the lid. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_caisse_glace>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_coffre_cordages",
+   "nom": "Coffre à cordages du phare",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Phare"
+   ],
+   "occurrences": "(92,8)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Sturdy red wooden chest for ropes and lanterns at the foot of a lighthouse, rounded lid, a brass lantern and a coiled rope on top. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Sturdy red wooden chest for ropes and lanterns at the foot of a lighthouse, rounded lid, a brass lantern and a coiled rope on top. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Sturdy red wooden chest for ropes and lanterns at the foot of a lighthouse, rounded lid, a brass lantern and a coiled rope on top. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_coffre_cordages>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_poubelle_ruelle",
+   "nom": "Grande poubelle de ruelle",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Crampottes"
+   ],
+   "occurrences": "(11,18)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Big friendly dark green wheeled street bin with a rounded lid, clean, with a seagull feather stuck on the lid. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Big friendly dark green wheeled street bin with a rounded lid, clean, with a seagull feather stuck on the lid. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Big friendly dark green #1f6b3a wheeled street bin with a rounded lid, clean, with a seagull feather stuck on the lid. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_poubelle_ruelle>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_bac_poissons",
+   "nom": "Grand bac à poissons",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Quai des chalutiers"
+   ],
+   "occurrences": "(19,21)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Large blue plastic fish tub with a lid, the kind used on fishing quays, rounded corners, a small white fish drawn on its side. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Large blue plastic fish tub with a lid, the kind used on fishing quays, rounded corners, a small white fish drawn on its side. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Large blue plastic fish tub with a lid, the kind used on fishing quays, rounded corners, a small white fish drawn on its side. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_bac_poissons>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_malle_pelotes",
+   "nom": "Malle à pelotes",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Place du fronton"
+   ],
+   "occurrences": "(35,24)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Big wicker trunk with a leather strap, lid ajar showing white pelota balls and a curved wicker chistera basket. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Big wicker trunk with a leather strap, lid ajar showing white pelota balls and a curved wicker chistera basket. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Big wicker trunk with a leather strap, lid ajar showing white pelota balls and a curved wicker chistera basket. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_malle_pelotes>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_tas_filets_cachette",
+   "nom": "Montagne de filets",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Hangar à filets"
+   ],
+   "occurrences": "(74,22)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    64,
+    128
+   ],
+   "taille_sortie_px": [
+    128,
+    256
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Tall soft heap of green and blue fishing nets with orange floats, a child-sized hollow hidden inside. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Tall soft heap of green and blue fishing nets with orange floats, a child-sized hollow hidden inside. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent. Dépasse vers le haut (1 case).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Tall soft heap of green and blue fishing nets with orange floats, a child-sized hollow hidden inside. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 512,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_tas_filets_cachette>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_confessionnal",
+   "nom": "Confessionnal en bois",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "occurrences": "(93,13)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    64,
+    128
+   ],
+   "taille_sortie_px": [
+    128,
+    256
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Small wooden booth of an old chapel with a red velvet curtain as a door and a little carved boat on top. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small wooden booth of an old chapel with a red velvet curtain as a door and a little carved boat on top. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent. Dépasse vers le haut (1 case).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small wooden booth of an old chapel with a red velvet curtain as a door and a little carved boat on top. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 512,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_confessionnal>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_barque_retournee",
+   "nom": "Barque retournée",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Cale sèche"
+   ],
+   "occurrences": "(18,37)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Small wooden rowboat turned upside down on two blocks, painted blue with a white stripe, a gap under it to slide inside. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small wooden rowboat turned upside down on two blocks, painted blue with a white stripe, a gap under it to slide inside. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small wooden rowboat turned upside down on two blocks, painted blue with a white stripe, a gap under it to slide inside. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_barque_retournee>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_tonneau_cidre",
+   "nom": "Tonneau de cidre géant",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Terrasse"
+   ],
+   "occurrences": "(23,38)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Huge wooden Basque cider barrel lying on a cradle with a round lid on its front end, red metal hoops. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Huge wooden Basque cider barrel lying on a cradle with a round lid on its front end, red metal hoops. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Huge wooden Basque cider barrel lying on a cradle with a round lid on its front end, red metal hoops. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_tonneau_cidre>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_panier_linge",
+   "nom": "Grand panier à linge",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Lavoir"
+   ],
+   "occurrences": "(54,37)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Big round wicker laundry basket overflowing with red, green and white striped Basque linen. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Big round wicker laundry basket overflowing with red, green and white striped Basque linen. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Big round wicker laundry basket overflowing with red, green and white striped Basque linen. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_panier_linge>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_caisse_voiles",
+   "nom": "Caisse à voiles de l'atelier",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Atelier"
+   ],
+   "occurrences": "(60,37)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Large wooden sail chest with rope handles, a folded white sail sticking out from under the lid. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Large wooden sail chest with rope handles, a folded white sail sticking out from under the lid. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Large wooden sail chest with rope handles, a folded white sail sticking out from under the lid. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_caisse_voiles>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "cachette_cabine_plage",
+   "nom": "Cabine de plage rayée",
+   "caractere": "H",
+   "categorie": "cachette",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "occurrences": "(93,26)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": true,
+    "franchissable": false,
+    "sortie": false,
+    "note": "1 joueur, 20 s max ; Entrer/Sortir ; le chasseur fouille 1 s"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    64,
+    128
+   ],
+   "taille_sortie_px": [
+    128,
+    256
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Small wooden beach changing cabin of Biarritz with blue and white vertical stripes, a little door and a triangular roof. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small wooden beach changing cabin of Biarritz with blue and white vertical stripes, a little door and a triangular roof. Make it clearly a hiding spot: slightly bigger than the props around it, a warm orange accent.",
+   "variantes": 2,
+   "remarques": "2 états : fermé et entrouvert (pour l'entrée et la sortie ; le tremblement est fait par le jeu). Les cachettes partagent un accent orange (couleur du prototype #e08a2e) pour que les enfants les repèrent. Dépasse vers le haut (1 case).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small wooden beach changing cabin of Biarritz with blue and white vertical stripes, a little door and a triangular roof. Clearly a hiding spot, with a warm orange #e08a2e accent.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 512,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de cachette_cabine_plage>",
+     "prompt": "same object, same style, but its lid or door slightly open, a dark gap inside"
+    }
+   ]
+  },
+  {
+   "id": "sortie_barque_jetee",
+   "nom": "Sortie : barque au bout de la jetée",
+   "caractere": "E",
+   "categorie": "sortie",
+   "zones": [
+    "Jetée"
+   ],
+   "occurrences": "(1,2) 2×3",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": true,
+    "note": "2 sorties tirées au sort par round, ouvertes à 90 s ; 4 s sur la case pour sortir"
+   },
+   "taille_cases": [
+    2,
+    3
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    192
+   ],
+   "taille_sortie_px": [
+    256,
+    384
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "End of a stone jetty with a small iron ladder going down to a little red and white Basque rowboat waiting alongside, a lantern on a post, vertical layout.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. End of a stone jetty with a small iron ladder going down to a little red and white Basque rowboat waiting alongside, a lantern on a post, vertical layout.",
+   "variantes": 2,
+   "remarques": "2 états : fermée (lanterne éteinte, corde nouée) et ouverte (lanterne allumée, petit fanion vert). Le perso marche dessus : le dessin reste au niveau du sol.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "End of a stone jetty with a small iron ladder going down to a little red and white Basque rowboat waiting alongside, a lantern on a post, vertical layout.",
+     "theme": "basque",
+     "shadow": "none",
+     "num_images": 2,
+     "width": 704,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de sortie_barque_jetee>",
+     "prompt": "same object, same style, but the lantern lit and a small green pennant flying"
+    }
+   ]
+  },
+  {
+   "id": "sortie_echelle_phare",
+   "nom": "Sortie : échelle derrière le phare",
+   "caractere": "E",
+   "categorie": "sortie",
+   "zones": [
+    "Phare"
+   ],
+   "occurrences": "(93,1) 2×3",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": true,
+    "note": "2 sorties tirées au sort par round, ouvertes à 90 s ; 4 s sur la case pour sortir"
+   },
+   "taille_cases": [
+    2,
+    3
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    192
+   ],
+   "taille_sortie_px": [
+    256,
+    384
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Iron ladder going down the rocks behind a lighthouse, with a small green garden gate at the top, vertical layout, sea foam at the bottom edge.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Iron ladder going down the rocks behind a lighthouse, with a small green garden gate at the top, vertical layout, sea foam at the bottom edge.",
+   "variantes": 2,
+   "remarques": "2 états : portillon fermé / ouvert.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Iron ladder going down the rocks behind a lighthouse, with a small green garden gate at the top, vertical layout, sea foam at the bottom edge.",
+     "theme": "basque",
+     "shadow": "none",
+     "num_images": 2,
+     "width": 704,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de sortie_echelle_phare>",
+     "prompt": "same object, same style, but the gate wide open"
+    }
+   ]
+  },
+  {
+   "id": "sortie_barque_cale",
+   "nom": "Sortie : barque de la cale",
+   "caractere": "E",
+   "categorie": "sortie",
+   "zones": [
+    "Cale sèche"
+   ],
+   "occurrences": "(1,37) 2×2",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": true,
+    "note": "2 sorties tirées au sort par round, ouvertes à 90 s ; 4 s sur la case pour sortir"
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    128
+   ],
+   "taille_sortie_px": [
+    256,
+    256
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Concrete boat ramp sloping into the water with a small blue rowboat ready to leave, oars inside.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Concrete boat ramp sloping into the water with a small blue rowboat ready to leave, oars inside.",
+   "variantes": 2,
+   "remarques": "2 états : barque attachée / barque prête (fanion vert).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Concrete boat ramp sloping into the water with a small blue rowboat ready to leave, oars inside.",
+     "theme": "basque",
+     "shadow": "none",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de sortie_barque_cale>",
+     "prompt": "same object, same style, but a small green pennant flying on the boat, rope untied"
+    }
+   ]
+  },
+  {
+   "id": "sortie_porte_ville",
+   "nom": "Sortie : porte de la ville",
+   "caractere": "E",
+   "categorie": "sortie",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "occurrences": "(92,36) 2×2",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": true,
+    "note": "2 sorties tirées au sort par round, ouvertes à 90 s ; 4 s sur la case pour sortir"
+   },
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    128,
+    192
+   ],
+   "taille_sortie_px": [
+    256,
+    384
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Top of a stone stairway leading up to the town through a small sandstone arch with a Basque red wooden door.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Top of a stone stairway leading up to the town through a small sandstone arch with a Basque red wooden door.",
+   "variantes": 2,
+   "remarques": "2 états : porte fermée / grande ouverte avec de la lumière. Dépasse vers le haut (1 case).",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Top of a stone stairway leading up to the town through a small sandstone arch with a Basque red #9e1b1b wooden door.",
+     "theme": "basque",
+     "shadow": "none",
+     "num_images": 2,
+     "width": 704,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": [
+    {
+     "prompt_style": "pf_hd__edit",
+     "input_image": "<image validée de sortie_porte_ville>",
+     "prompt": "same object, same style, but the door wide open with warm light inside"
+    }
+   ]
+  },
+  {
+   "id": "depart_lauburu",
+   "nom": "Marque de départ",
+   "caractere": "S",
+   "categorie": "sol",
+   "zones": [
+    "Place du fronton"
+   ],
+   "occurrences": "(44,16) 2×1",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    64
+   ],
+   "taille_sortie_px": [
+    256,
+    128
+   ],
+   "type": "decal",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "A lauburu (Basque cross with four comma shaped arms) painted in Basque red inside a white circle, flat on the paving.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Flat decal painted on the ground, seen straight from above, transparent background, slightly faded so it reads as paint on the floor, thin outline. A lauburu (Basque cross with four comma shaped arms) painted in Basque red inside a white circle, flat on the paving.",
+   "variantes": 1,
+   "remarques": "Optionnel : le départ n'est pas montré aujourd'hui. Le lauburu reste petit et décoratif.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "A lauburu (Basque cross with four comma shaped arms) painted in Basque red #9e1b1b inside a white circle, flat on the paving.",
+     "theme": "basque",
+     "shadow": "none",
+     "num_images": 2,
+     "width": 1024,
+     "height": 512,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  },
+  {
+   "id": "piege_generique",
+   "nom": "Piège générique (flaque collante)",
+   "caractere": "—",
+   "categorie": "piege",
+   "zones": [
+    "posé par les chassés, n'importe où"
+   ],
+   "occurrences": "",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": "ralentit le chasseur 3 s ; visible des chassés, du chasseur seulement à moins de 2 cases"
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "decal",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "A funny sticky puddle of golden honey-like goo with a few bubbles and two cartoon sparkles, round and flat on the ground.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt like the maps of Among Us: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Flat decal painted on the ground, seen straight from above, transparent background, slightly faded so it reads as paint on the floor, thin outline. A funny sticky puddle of golden honey-like goo with a few bubbles and two cartoon sparkles, round and flat on the ground.",
+   "variantes": 2,
+   "remarques": "Pas sur map.txt (posé en jeu) ; aujourd'hui un cercle jaune de 18 px. Les 12 pièges par perso (§4.2) viendront plus tard. Rigolo, pas dégoûtant.",
+   "payloads": [
+    {
+     "prompt_style": "pf_hd__prop",
+     "prompt": "A funny sticky puddle of golden honey-like goo with a few bubbles and two cartoon sparkles, round and flat on the ground.",
+     "shadow": "none",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1
+    }
+   ],
+   "edits": []
+  }
+ ],
+ "questions_ouvertes": [
+  "Vue exacte : la face avant des objets fait-elle 0,42 case comme dans le prototype (DEPTH), et les objets hauts (phare, fronton, crampottes, cabine, chalutier) débordent-ils vers le haut de leur emprise comme dans Among Us (ce qui change le tri d'affichage et la forme d'occlusion) ? J'ai proposé un débord par élément (debord_haut_cases).",
+  "Taille des cases en jeu : rules.json dit tile_px = 64 et les persos font ~90 px de haut (≈ 1,4 case). Je conseille une sortie à 128 px par case (×2 pour iPhone et grands écrans), générée plus grand puis réduite. Faut-il plutôt viser 256 px par case comme les planches de persos ?",
+  "Grandes masses « # » entre les zones : toits de tuiles rouges vus d'en haut avec une façade au sud (proposé), ou murs sombres façon salles fermées d'Among Us ?",
+  "Sols : tuiles qui se répètent (proposé, avec 2 ou 3 variantes chacune) ou une grande image peinte par zone (SPEC §16) ? Et faut-il des transitions entre sols de zones voisines ?",
+  "Bords d'eau et murs en jeux de raccords (autotile) : combien de pièces accepte-t-on (12 pour le quai, 16 pour les murs) ? Un générateur d'images tient mal les raccords exacts : retouche à prévoir.",
+  "Cachettes et sorties : deux états dessinés (fermé, ouvert) suffisent-ils ? L'accent orange commun aux cachettes est-il souhaité ?",
+  "Chalutier : sur la carte il est posé sur le quai (cases de sol autour), donc sur un ber ; ou faut-il creuser une darse d'eau autour ?",
+  "Escalier de la ville : les 3 rangées de marches bloquent le passage (« t ») ; est-ce voulu ou faut-il en faire un sol franchissable avec des jardinières seulement aux extrémités ?",
+  "Chapelle des marins : autel et confessionnal conviennent-ils, ou préfère-t-on un lieu non religieux (abri du canot de sauvetage) ?",
+  "Couleurs des bateaux et des portes : variantes d'images (proposé) ou un masque recoloré par le jeu comme la tenue des persos ?",
+  "Outil : styles pixelforge pf_hd__prop (objets) et pf_hd__texture (sols) à confirmer pour ce rendu flat ; le fond transparent est-il natif ou faut-il détourer un fond blanc ?",
+  "Ambiance non bloquante (mouettes, linge basque qui sèche, ikurriña, hortensias, flaques) : à ajouter maintenant ou après le premier lot ?"
+ ]
+}
