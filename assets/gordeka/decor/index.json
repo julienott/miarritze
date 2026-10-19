@@ -18,7 +18,18 @@
     2
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "sols/sol_dalles_quai.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "c882eac3527242f48dfc7386f3f4eb91",
+     "date": "2026-10-19"
+    }
+   ]
   },
   "sol_carrelage_criee": {
    "nom": "Carrelage de la criée",
