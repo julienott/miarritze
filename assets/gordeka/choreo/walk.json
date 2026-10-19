@@ -1,0 +1,470 @@
+{
+ "name": "walk",
+ "fps": 24,
+ "frames": 12,
+ "loop": true,
+ "description": "Marche Among Us : 12 images / 0,5 s, pas alternés (pied d'appui qui glisse à vitesse constante, l'autre repasse devant, levé), jambes étirées, rebond, penché en avant.",
+ "tracks": {
+  "root": [
+   {
+    "f": 0,
+    "y": 0.0,
+    "ease": "linear"
+   },
+   {
+    "f": 1,
+    "y": 0.015,
+    "ease": "linear"
+   },
+   {
+    "f": 2,
+    "y": 0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 3,
+    "y": 0.03,
+    "ease": "linear"
+   },
+   {
+    "f": 4,
+    "y": 0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 5,
+    "y": 0.015,
+    "ease": "linear"
+   },
+   {
+    "f": 6,
+    "y": 0.0,
+    "ease": "linear"
+   },
+   {
+    "f": 7,
+    "y": 0.015,
+    "ease": "linear"
+   },
+   {
+    "f": 8,
+    "y": 0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 9,
+    "y": 0.03,
+    "ease": "linear"
+   },
+   {
+    "f": 10,
+    "y": 0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 11,
+    "y": 0.015,
+    "ease": "linear"
+   }
+  ],
+  "leg_front": [
+   {
+    "f": 0,
+    "rot": -32.0,
+    "sy": 1.179,
+    "y": -0.0,
+    "ease": "linear"
+   },
+   {
+    "f": 1,
+    "rot": -22.62,
+    "sy": 1.083,
+    "y": -0.015,
+    "ease": "linear"
+   },
+   {
+    "f": 2,
+    "rot": -11.77,
+    "sy": 1.021,
+    "y": -0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 3,
+    "rot": 0.0,
+    "sy": 1.0,
+    "y": -0.03,
+    "ease": "linear"
+   },
+   {
+    "f": 4,
+    "rot": 11.77,
+    "sy": 1.021,
+    "y": -0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 5,
+    "rot": 22.62,
+    "sy": 1.083,
+    "y": -0.015,
+    "ease": "linear"
+   },
+   {
+    "f": 6,
+    "rot": 32.0,
+    "sy": 1.179,
+    "y": -0.0,
+    "ease": "linear"
+   },
+   {
+    "f": 7,
+    "rot": 27.71,
+    "sy": 0.971,
+    "y": -0.015,
+    "ease": "linear"
+   },
+   {
+    "f": 8,
+    "rot": 16.0,
+    "sy": 0.788,
+    "y": -0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 9,
+    "rot": 0.0,
+    "sy": 0.72,
+    "y": -0.03,
+    "ease": "linear"
+   },
+   {
+    "f": 10,
+    "rot": -16.0,
+    "sy": 0.788,
+    "y": -0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 11,
+    "rot": -27.71,
+    "sy": 0.971,
+    "y": -0.015,
+    "ease": "linear"
+   }
+  ],
+  "leg_back": [
+   {
+    "f": 0,
+    "rot": 32.0,
+    "sy": 1.179,
+    "y": -0.0,
+    "ease": "linear"
+   },
+   {
+    "f": 1,
+    "rot": 27.71,
+    "sy": 0.971,
+    "y": -0.015,
+    "ease": "linear"
+   },
+   {
+    "f": 2,
+    "rot": 16.0,
+    "sy": 0.788,
+    "y": -0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 3,
+    "rot": 0.0,
+    "sy": 0.72,
+    "y": -0.03,
+    "ease": "linear"
+   },
+   {
+    "f": 4,
+    "rot": -16.0,
+    "sy": 0.788,
+    "y": -0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 5,
+    "rot": -27.71,
+    "sy": 0.971,
+    "y": -0.015,
+    "ease": "linear"
+   },
+   {
+    "f": 6,
+    "rot": -32.0,
+    "sy": 1.179,
+    "y": -0.0,
+    "ease": "linear"
+   },
+   {
+    "f": 7,
+    "rot": -22.62,
+    "sy": 1.083,
+    "y": -0.015,
+    "ease": "linear"
+   },
+   {
+    "f": 8,
+    "rot": -11.77,
+    "sy": 1.021,
+    "y": -0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 9,
+    "rot": 0.0,
+    "sy": 1.0,
+    "y": -0.03,
+    "ease": "linear"
+   },
+   {
+    "f": 10,
+    "rot": 11.77,
+    "sy": 1.021,
+    "y": -0.026,
+    "ease": "linear"
+   },
+   {
+    "f": 11,
+    "rot": 22.62,
+    "sy": 1.083,
+    "y": -0.015,
+    "ease": "linear"
+   }
+  ],
+  "foot_front": [
+   {
+    "f": 0,
+    "rot": 32.0,
+    "sy": 0.848,
+    "ease": "linear"
+   },
+   {
+    "f": 1,
+    "rot": 22.62,
+    "sy": 0.923,
+    "ease": "linear"
+   },
+   {
+    "f": 2,
+    "rot": 11.77,
+    "sy": 0.979,
+    "ease": "linear"
+   },
+   {
+    "f": 3,
+    "rot": -0.0,
+    "sy": 1.0,
+    "ease": "linear"
+   },
+   {
+    "f": 4,
+    "rot": -11.77,
+    "sy": 0.979,
+    "ease": "linear"
+   },
+   {
+    "f": 5,
+    "rot": -22.62,
+    "sy": 0.923,
+    "ease": "linear"
+   },
+   {
+    "f": 6,
+    "rot": -16.0,
+    "sy": 0.848,
+    "ease": "linear"
+   },
+   {
+    "f": 7,
+    "rot": -13.86,
+    "sy": 1.029,
+    "ease": "linear"
+   },
+   {
+    "f": 8,
+    "rot": -8.0,
+    "sy": 1.269,
+    "ease": "linear"
+   },
+   {
+    "f": 9,
+    "rot": -0.0,
+    "sy": 1.389,
+    "ease": "linear"
+   },
+   {
+    "f": 10,
+    "rot": 8.0,
+    "sy": 1.269,
+    "ease": "linear"
+   },
+   {
+    "f": 11,
+    "rot": 13.86,
+    "sy": 1.029,
+    "ease": "linear"
+   }
+  ],
+  "foot_back": [
+   {
+    "f": 0,
+    "rot": -16.0,
+    "sy": 0.848,
+    "ease": "linear"
+   },
+   {
+    "f": 1,
+    "rot": -13.86,
+    "sy": 1.029,
+    "ease": "linear"
+   },
+   {
+    "f": 2,
+    "rot": -8.0,
+    "sy": 1.269,
+    "ease": "linear"
+   },
+   {
+    "f": 3,
+    "rot": -0.0,
+    "sy": 1.389,
+    "ease": "linear"
+   },
+   {
+    "f": 4,
+    "rot": 8.0,
+    "sy": 1.269,
+    "ease": "linear"
+   },
+   {
+    "f": 5,
+    "rot": 13.86,
+    "sy": 1.029,
+    "ease": "linear"
+   },
+   {
+    "f": 6,
+    "rot": 32.0,
+    "sy": 0.848,
+    "ease": "linear"
+   },
+   {
+    "f": 7,
+    "rot": 22.62,
+    "sy": 0.923,
+    "ease": "linear"
+   },
+   {
+    "f": 8,
+    "rot": 11.77,
+    "sy": 0.979,
+    "ease": "linear"
+   },
+   {
+    "f": 9,
+    "rot": -0.0,
+    "sy": 1.0,
+    "ease": "linear"
+   },
+   {
+    "f": 10,
+    "rot": -11.77,
+    "sy": 0.979,
+    "ease": "linear"
+   },
+   {
+    "f": 11,
+    "rot": -22.62,
+    "sy": 0.923,
+    "ease": "linear"
+   }
+  ],
+  "body": [
+   {
+    "f": 0,
+    "rot": 7,
+    "sy": 0.96,
+    "sx": 1.042
+   },
+   {
+    "f": 3,
+    "rot": 7,
+    "sy": 1.03,
+    "sx": 0.971
+   },
+   {
+    "f": 6,
+    "rot": 7,
+    "sy": 0.96,
+    "sx": 1.042
+   },
+   {
+    "f": 9,
+    "rot": 7,
+    "sy": 1.03,
+    "sx": 0.971
+   }
+  ],
+  "head": [
+   {
+    "f": 0,
+    "rot": -3
+   },
+   {
+    "f": 3,
+    "rot": -1
+   },
+   {
+    "f": 6,
+    "rot": -3
+   },
+   {
+    "f": 9,
+    "rot": -1
+   }
+  ],
+  "arm_front": [
+   {
+    "f": 0,
+    "rot": 26
+   },
+   {
+    "f": 6,
+    "rot": -26
+   }
+  ],
+  "arm_back": [
+   {
+    "f": 0,
+    "rot": -16
+   },
+   {
+    "f": 6,
+    "rot": 16
+   }
+  ]
+ },
+ "head": [
+  [
+   0,
+   "neutral"
+  ]
+ ],
+ "body": [
+  [
+   0,
+   "legs"
+  ]
+ ],
+ "lag": {
+  "hat": 1
+ }
+}

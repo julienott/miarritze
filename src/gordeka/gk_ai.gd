@@ -35,6 +35,12 @@ func _init(p_game: GkGame, p_me: GkActor, p_level: String) -> void:
 	rng.seed = hash(p_me.id * 7919 + 17)
 
 
+## Change de niveau (QA : chasseur IA d'un autre niveau que les chassés).
+func set_level(p_level: String) -> void:
+	level = p_level
+	cfg = GkRules.ai(p_level)
+
+
 func reset() -> void:
 	path = PackedVector2Array()
 	plan_cachette = -1

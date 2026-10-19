@@ -1,0 +1,65 @@
+{
+ "name": "search",
+ "fps": 24,
+ "frames": 12,
+ "loop": true,
+ "description": "Chercher : main en visière, se penche et regarde en haut puis en bas.",
+ "tracks": {
+  "body": [
+   {
+    "f": 0,
+    "rot": 8
+   },
+   {
+    "f": 6,
+    "rot": 14
+   }
+  ],
+  "head": [
+   {
+    "f": 0,
+    "rot": -12
+   },
+   {
+    "f": 6,
+    "rot": 10
+   }
+  ],
+  "arm_front": [
+   {
+    "f": 0,
+    "rot": -125
+   },
+   {
+    "f": 6,
+    "rot": -115
+   }
+  ],
+  "arm_back": [
+   {
+    "f": 0,
+    "rot": 10
+   },
+   {
+    "f": 6,
+    "rot": 14
+   }
+  ]
+ },
+ "head": [
+  [
+   0,
+   "neutral"
+  ]
+ ],
+ "body": [
+  [
+   0,
+   "legs"
+  ]
+ ],
+ "lag": {
+  "hat": 1
+ },
+ "frame_ms": 110
+}

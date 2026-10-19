@@ -48,6 +48,14 @@ var _local_bot: bool = false          # QA : le joueur local est piloté par l'I
 var use_3d: bool = false
 ## QA : `--gk-perso=louis` donne ce perso à tout le monde (voir ses animations sur toutes les IA).
 var _all_char: String = ""
+## QA gameplay : niveau imposé au chasseur IA (`--gk-hunter-level=`), arrêt après N rounds
+## (`--gk-rounds=`), statistiques par round en JSON (`--gk-stats`).
+var _hunter_level: String = ""
+var _rounds_max: int = 0
+var _stats: bool = false
+var _st: Dictionary = {}
+var _revealed_at: Dictionary = {}     # id du chassé → instant de la dernière onde qui l'a montré
+var _trap_hit_at: float = -100.0
 var view: GkView3D
 var _last_dt: float = 0.0
 
@@ -60,6 +68,16 @@ func _ready() -> void:
 			_local_bot = true
 		elif arg == "--gk-3d":
 			use_3d = true
+		elif arg.begins_with("--gk-level="):
+			config["level"] = arg.trim_prefix("--gk-level=")
+		elif arg.begins_with("--gk-players="):
+			config["players"] = int(arg.trim_prefix("--gk-players="))
+		elif arg.begins_with("--gk-hunter-level="):
+			_hunter_level = arg.trim_prefix("--gk-hunter-level=")
+		elif arg.begins_with("--gk-rounds="):
+			_rounds_max = int(arg.trim_prefix("--gk-rounds="))
+		elif arg == "--gk-stats":
+			_stats = true
 		elif arg.begins_with("--gk-perso="):
 			_all_char = arg.trim_prefix("--gk-perso=")
 		elif arg == "--gk-log":
@@ -213,6 +231,16 @@ func _start_round() -> void:
 	hunter = _draw_hunter()
 	_round_hiders = actors.size() - 1
 	_round_found = 0
+	_st = {"vue": 0, "fouille_ok": 0, "fouille_vide": 0, "ondes": 0, "ondes_utiles": 0, "montres": 0,
+		"trouves_apres_onde": 0, "pieges_poses": 0, "pieges_pris": 0, "trouves_apres_piege": 0,
+		"entrees_cachette": 0, "ejections_cachette": 0, "trouves_en_cachette": 0, "sorties": 0,
+		"evasions_de_vue": 0, "t_trouves": []}
+	_revealed_at.clear()
+	_trap_hit_at = -100.0
+	if _hunter_level != "":
+		for id: int in brains:
+			var b: GkAi = brains[id]
+			b.set_level(_hunter_level if actors[id] == hunter else str(config.get("level", "normal")))
 	var spots: Array[Vector2i] = _spawn_spots(actors.size())
 	var k: int = 1
 	for a: GkActor in actors:
@@ -293,6 +321,17 @@ func _finish_round() -> void:
 	for a: GkActor in actors:
 		if a.role == GkActor.Role.HIDER or a.role == GkActor.Role.HUNTER:
 			a.end_pose = "victory" if a.won_round else "sad"
+	if _stats:
+		_st["round"] = round_no
+		_st["niveau"] = str(config.get("level", "normal"))
+		_st["niveau_chasseur"] = _hunter_level if _hunter_level != "" else _st["niveau"]
+		_st["chasses"] = _round_hiders
+		_st["trouves"] = _round_found
+		_st["restes_caches"] = _hiders_left()
+		_st["duree"] = snappedf(hunt_elapsed, 0.1)
+		print("[gk-stats] " + JSON.stringify(_st))
+		if _rounds_max > 0 and round_no >= _rounds_max:
+			get_tree().quit()
 	if _log:
 		var out: int = actors.filter(func(a: GkActor) -> bool: return a.role == GkActor.Role.OUT).size()
 		print("[gk] round %d : chasseur %s, trouvés %d/%d, échappés %d, restés cachés %d, durée %.0f s" % [
@@ -479,11 +518,20 @@ func _update_capture(dt: float) -> void:
 			a.gauge += dt / GkRules.f("capture_time")
 			if a.gauge >= 1.0:
 				_found(a)
-		else:
+		elif a.gauge > 0.0:
 			a.gauge = maxf(0.0, a.gauge - dt * GkRules.f("capture_decay") / GkRules.f("capture_time"))
+			if a.gauge <= 0.0 and _stats:
+				_st["evasions_de_vue"] += 1
 
 
-func _found(a: GkActor) -> void:
+func _found(a: GkActor, via: String = "vue") -> void:
+	if _stats:
+		_st[via] = int(_st.get(via, 0)) + 1
+		(_st["t_trouves"] as Array).append(snappedf(hunt_elapsed, 0.1))
+		if hunt_elapsed - float(_revealed_at.get(a.id, -100.0)) < 12.0:
+			_st["trouves_apres_onde"] += 1
+		if hunt_elapsed - _trap_hit_at < 8.0:
+			_st["trouves_apres_piege"] += 1
 	if a.hidden_in >= 0:
 		_leave_cachette(a, false)
 	a.play_once("found")
@@ -522,6 +570,8 @@ func _enter_cachette(a: GkActor, i: int) -> void:
 	a.gauge = 0.0
 	a.position = c["pos"]
 	a.play_once("hide_in")
+	if _stats and phase == Phase.HUNT:
+		_st["entrees_cachette"] += 1
 
 
 func _leave_cachette(a: GkActor, forced: bool) -> void:
@@ -557,6 +607,8 @@ func _update_cachettes(dt: float) -> void:
 			a.hidden_t += dt
 			if a.hidden_t >= GkRules.f("hide_max"):
 				_leave_cachette(a, true)
+				if _stats:
+					_st["ejections_cachette"] += 1
 				if a == local:
 					_say("Trop longtemps caché : dehors !", Color("ffcf4a"), 2.0)
 
@@ -571,9 +623,15 @@ func _update_searches(dt: float) -> void:
 			var occ: int = int(c["occupant"])
 			c["shake"] = 0.5
 			if occ >= 0:
-				_found(actors[occ])
-			elif a == local:
-				_say("Personne…", Color.WHITE, 1.2)
+				if _stats:
+					_st["fouille_ok"] += 1
+					_st["trouves_en_cachette"] += 1
+				_found(actors[occ], "fouille")
+			else:
+				if _stats:
+					_st["fouille_vide"] += 1
+				if a == local:
+					_say("Personne…", Color.WHITE, 1.2)
 
 
 # ---------------------------------------------------------------- pouvoirs
@@ -585,6 +643,8 @@ func _place_trap(a: GkActor) -> void:
 		traps.erase(mine[0])
 	a.power_cd = GkRules.f("trap_cooldown")
 	a.play_once("trap")
+	if _stats:
+		_st["pieges_poses"] += 1
 
 
 func _update_traps() -> void:
@@ -594,6 +654,9 @@ func _update_traps() -> void:
 		if hunter.position.distance_to(t["pos"]) < hunter.radius + map.tile * 0.3:
 			traps.erase(t)
 			hunter.slow_left = GkRules.f("trap_duration")
+			if _stats:
+				_st["pieges_pris"] += 1
+				_trap_hit_at = hunt_elapsed
 			var owner: GkActor = actors[int(t["owner"])]
 			_give(owner, GkRules.score("hider_trap_hit"))
 			_say("Piège de %s !" % owner.display_name, Color("f2c12e"), 1.6)
@@ -609,7 +672,13 @@ func _detect(h: GkActor) -> void:
 		if a.role == GkActor.Role.HIDER and a.position.distance_to(h.position) <= GkRules.px("detect_radius"):
 			reveals.append({"pos": a.position, "left": GkRules.f("detect_duration"), "id": a.id})
 			found.append(a.position)
+			_revealed_at[a.id] = hunt_elapsed
 	reveals.append({"pos": h.position, "left": 0.6, "id": -1})     # l'onde elle-même
+	if _stats:
+		_st["ondes"] += 1
+		_st["montres"] += found.size()
+		if not found.is_empty():
+			_st["ondes_utiles"] += 1
 	if h.is_bot:
 		(brains[h.id] as GkAi).on_detect(found)
 	if h != local:
@@ -633,6 +702,8 @@ func _update_exits(dt: float) -> void:
 			if a.extract_t >= GkRules.f("extract_hold"):
 				a.play_once("extract")
 				a.set_role(GkActor.Role.OUT)
+				if _stats:
+					_st["sorties"] += 1
 				_give(a, GkRules.score("hider_extract"))
 				_say("%s s'est échappé !" % a.display_name, Color("6fe08a"), 2.0)
 		else:

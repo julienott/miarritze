@@ -1,0 +1,71 @@
+{
+ "name": "ghost_move",
+ "fps": 24,
+ "frames": 8,
+ "loop": true,
+ "description": "Fantôme en déplacement : penché en avant, bras traînant derrière.",
+ "tracks": {
+  "root": [
+   {
+    "f": 0,
+    "y": 0.06,
+    "alpha": 0.8
+   },
+   {
+    "f": 4,
+    "y": 0.09,
+    "alpha": 0.8
+   }
+  ],
+  "body": [
+   {
+    "f": 0,
+    "rot": 14,
+    "sx": 1.04,
+    "sy": 0.96
+   },
+   {
+    "f": 4,
+    "rot": 17,
+    "sx": 0.97,
+    "sy": 1.03
+   }
+  ],
+  "arm_front": [
+   {
+    "f": 0,
+    "rot": 40
+   },
+   {
+    "f": 4,
+    "rot": 50
+   }
+  ],
+  "arm_back": [
+   {
+    "f": 0,
+    "rot": 48
+   },
+   {
+    "f": 4,
+    "rot": 38
+   }
+  ]
+ },
+ "head": [
+  [
+   0,
+   "neutral"
+  ]
+ ],
+ "body": [
+  [
+   0,
+   "ghost"
+  ]
+ ],
+ "lag": {
+  "hat": 2
+ },
+ "frame_ms": 90
+}
