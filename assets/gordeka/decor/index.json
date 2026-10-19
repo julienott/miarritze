@@ -152,7 +152,18 @@
     2
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "sols/sol_planches_terrasse.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "96e28e319d7e46028f88b77c389af45f",
+     "date": "2026-10-20"
+    }
+   ]
   },
   "sol_tomettes_chapelle": {
    "nom": "Tomettes de la chapelle",
