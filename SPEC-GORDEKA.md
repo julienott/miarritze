@@ -446,3 +446,39 @@ ombre douce, fond transparent. Il doit aussi garder un personnage identique d'un
 - **Prototype** (jalon 1) : aucune image nécessaire, des capsules de couleur suffisent. Le pipeline
   se met en place pendant le jalon 3.
 
+
+### 16.1 Méthode retenue pour les persos (2026-10-19)
+
+- **Méthode pixelforge du 2026-10-19** (validée par Julien, « super résultat »).
+- Deux étapes, toutes deux par l'API `/v2/inferences` :
+  1. `pf_2d__character` dessine le perso entier, de profil vers la droite. Julien choisit une
+     variante.
+  2. `pf_2d__animate` anime la variante choisie. Le mouvement vient des animations Quaternius
+     (CC0, `GET /v2/motions`) et le dessin est fait par Wan Animate.
+- Le jeu joue les planches telles quelles :
+  - `GkPerso` lit `assets/gordeka/persos/<id>/<anim>.png`, `_tenue.png` et `.json` ;
+  - le masque `_tenue` recolore la tenue dans la couleur du joueur ;
+  - la marche et la course sont accélérées selon la vitesse réelle du perso.
+- Import : `tools/gordeka/import_perso.py <id> tools/gordeka/taches_<id>.json`.
+- Fantôme : le même perso avec de petites ailes d'ange (idée de Julien), à moitié transparent et
+  flottant dans le jeu.
+
+### 16.2 Historique des prompts par perso
+
+But : pouvoir refaire un perso à l'identique. On note **chaque** génération retenue (style,
+prompt, graine, image d'entrée, tâche). Les tâches pixelforge sont purgées au bout de 48 h : seuls
+ces paramètres permettent de les relancer.
+
+#### Louis (validé le 2026-10-19)
+| Étape | Style | Entrée | Prompt / paramètres | Graine | Tâche |
+|---|---|---|---|---|---|
+| Esquisse (candidat n° 3 retenu) | `pf_hd__character` | — | « Clean flat 2D vector cartoon game character in the exact art style of Among Us: thick uniform dark navy outline, flat colors with one darker cel-shadow tone, tiny white highlight, no gradient, no texture. Full body side view facing right, standing calmly, arms relaxed along the body, feet flat on the ground. A cheerful 9 year old Basque boy: blond hair, red Basque beret, white shirt with rolled sleeves, red sash belt, navy trousers, rope espadrilles, big happy smile. Very chunky cute chibi proportions: big round head, short round body, short stubby legs, simple mitten hands, about 2.5 heads tall. Plain white background, no shadow on the ground. » (768 px) | 4102 | — |
+| Retouche de profil (« A ») | `pf_hd__edit` | l'esquisse | « Turn this boy to a pure side profile view facing right, standing, arms relaxed. Keep exactly the same character, face, hair, beret, clothes and colors. Restyle as a flat 2D cartoon like the game Among Us: thick uniform dark navy outline, flat colors with one hard darker shadow tone, no gradients. Make him chunkier: big round head, short round body, short stubby legs. Plain white background. » | 5200 | — |
+| **Modèle** (variante 3 sur 3 retenue) | `pf_2d__character` | la retouche A (fond blanc) | « a little Basque boy, red beret, blond hair, white short-sleeved shirt, red belt, navy rolled-up trousers, brown gloves and shoes », `num_images` 3 → `image_02.png` | 1 | `affc36bd90aa4e25ba350ee139b2fdc5` |
+| Fantôme (variante 1 sur 2 retenue) | `pf_2d__character` | le modèle (fond blanc) | « the same little Basque boy, red beret, blond hair, white short-sleeved shirt, red belt, navy rolled-up trousers, brown gloves and shoes, with small white feathered angel wings on his back », `num_images` 2 → `image_00.png` | 7 | `0beeee88db1e43639247bacf45c794a6` |
+| 13 animations | `pf_2d__animate` | le modèle (`image_02.png`) | `motion` = idle, walk, run_scared, hide_in, hide_out, found, trap, trapped, search, detect, extract, victory, sad ; `tenue` « shirt » ; `description` « a little Basque boy with a red beret » ; expressions par défaut des préréglages | défaut | `tools/gordeka/taches_louis.json` |
+| ghost, ghost_move | `pf_2d__animate` | le fantôme | `motion` idle / walk ; `tenue` « shirt » ; `expression` « mischievous sly smile » ; `description` « a little Basque boy with a red beret and small white angel wings on his back, the wings flapping » | défaut | `tools/gordeka/taches_louis.json` |
+
+À revoir sur Louis :
+- « found » et « victory » sont un peu timides ;
+- les ailes du fantôme bougent peu (le jeu le fait flotter).
