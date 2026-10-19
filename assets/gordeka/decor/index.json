@@ -100,7 +100,18 @@
     2
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "sols/sol_paves_ruelle.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "71ac1f679d1648a2a0953703713c9dc3",
+     "date": "2026-10-20"
+    }
+   ]
   },
   "sol_paves_place": {
    "nom": "Pavage de la place du fronton",
