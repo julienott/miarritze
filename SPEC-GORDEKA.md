@@ -393,7 +393,16 @@ et les détails du réseau se règleront en jouant.
   mini-carte ; emotes seulement (6 au départ, les fantômes peuvent en envoyer).
 - **Premier lancement** : round guidé ; première carte, le Port des Pêcheurs.
 
-## 16. Pipeline d'images (HD lisse)
+## 16. Pipeline d'images et de modèles
+
+> **Décidé le 2026-10-19** : en 3D, **tout est généré par les outils de pixelforge**, exposés dans
+> son API et intégrés à sa CI :
+> - textures peintes sans couture (`pf_hd__texture`) ;
+> - objets, bâtiments et personnages en modèles 3D (GLB texturés, low-poly), avec un matériau
+>   `tenue` recolorable et un squelette simple pour les personnages.
+>
+> Les modèles faits en code dans `gk_view3d.gd` ne sont que des remplaçants. Les sections
+> ci-dessous décrivent l'approche 2D d'avant, qui reste vraie pour les textures.
 
 Les outils actuels (pixelforge, Retro Diffusion) sont faits pour le **pixel art**. Pour le style
 retenu, il faut un modèle qui produit du **dessin cartoon lisse** : contours épais réguliers, aplats et

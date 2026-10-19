@@ -103,6 +103,33 @@ func mat(c: Color, unshaded: bool = false, outline: bool = false) -> StandardMat
 	return m
 
 
+## Matériau texturé (textures peintes de pixelforge, assets/gordeka/textures/) : projection
+## « triplanaire » en coordonnées du monde, la texture couvre `meters` mètres et se répète.
+func tex_mat(name: String, meters: float, outline: bool = false) -> StandardMaterial3D:
+	var key: String = "tex|%s|%s|%s" % [name, meters, outline]
+	if _mats.has(key):
+		return _mats[key]
+	var m: StandardMaterial3D = StandardMaterial3D.new()
+	m.albedo_texture = load("res://assets/gordeka/textures/%s.png" % name)
+	# Sols plus doux que les personnages : on les garde lisibles au premier plan.
+	if name == "paves":
+		m.albedo_color = Color(1.0, 0.95, 0.86)
+	m.uv1_triplanar = true
+	m.uv1_world_triplanar = true
+	m.uv1_scale = Vector3.ONE / meters
+	m.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT
+	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	m.roughness = 1.0
+	if outline:
+		m.next_pass = _outline
+	_mats[key] = m
+	return m
+
+
+## Texture du sol selon le motif de la zone (vide : couleur unie).
+const FLOOR_TEX: Dictionary = {"dalles": ["dalles", 3.0], "paves": ["paves", 4.5], "planches": ["planches", 2.5]}
+
+
 func box(parent: Node3D, size: Vector3, pos: Vector3, c: Color, outline: bool = true) -> MeshInstance3D:
 	var mi: MeshInstance3D = MeshInstance3D.new()
 	var b: BoxMesh = BoxMesh.new()
@@ -267,13 +294,18 @@ func _build_ground() -> void:
 		var c: Color = Color(k.split("|")[0])
 		var mi: MeshInstance3D = box(self, Vector3(r.size.x, SLAB_H, r.size.y),
 			Vector3(r.position.x + r.size.x * 0.5, -SLAB_H * 0.5, r.position.y + r.size.y * 0.5), c, false)
-		# Tranche du quai en pierre : un second matériau sur le pourtour serait plus juste ; on
-		# assombrit simplement la dalle vers l'eau avec un liseré.
-		mi.material_override = mat(c)
+		var parts: PackedStringArray = k.split("|")
+		var zi: int = int(parts[1]) if parts.size() > 1 else -1
+		var motif: String = str(map._floor_of(str(map.zones[zi]["name"]))[1]) if zi >= 0 else ""
+		if FLOOR_TEX.has(motif):
+			mi.material_override = tex_mat(str(FLOOR_TEX[motif][0]), float(FLOOR_TEX[motif][1]))
+		else:
+			mi.material_override = mat(c)
 	for it: Array in _merge(func(t: Vector2i) -> String: return "q" if _floor_color(t) != "" and map.at(t + Vector2i(0, 1)) == "~" else ""):
 		var r: Rect2i = it[1]
-		box(self, Vector3(r.size.x, SLAB_H + 0.02, 0.12), Vector3(r.position.x + r.size.x * 0.5, -SLAB_H * 0.5,
+		var edge: MeshInstance3D = box(self, Vector3(r.size.x, SLAB_H + 0.02, 0.12), Vector3(r.position.x + r.size.x * 0.5, -SLAB_H * 0.5,
 			r.end.y), STONE.darkened(0.25), false)
+		edge.material_override = tex_mat("gres", 1.5)
 
 
 func _zone_name(r: Rect2i) -> String:
@@ -319,7 +351,7 @@ func _build_objects() -> void:
 
 
 func _stone_wall(c: Vector3, sz: Vector3) -> void:
-	box(self, Vector3(sz.x, 1.1, sz.z), c + Vector3(0, 0.55, 0), STONE)
+	box(self, Vector3(sz.x, 1.1, sz.z), c + Vector3(0, 0.55, 0), STONE).material_override = tex_mat("gres", 2.0, true)
 	box(self, Vector3(sz.x + 0.08, 0.12, sz.z + 0.08), c + Vector3(0, 1.16, 0), STONE.lightened(0.15))
 
 
@@ -337,7 +369,7 @@ func _house(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> void:
 	var d: float = sz.z - 0.1
 	var h: float = 1.9
 	box(self, Vector3(w, h, d), c + Vector3(0, h * 0.5, 0), SKIN_WALL)
-	box(self, Vector3(w + 0.04, 0.3, d + 0.04), c + Vector3(0, 0.15, 0), STONE)
+	box(self, Vector3(w + 0.04, 0.3, d + 0.04), c + Vector3(0, 0.15, 0), STONE).material_override = tex_mat("gres", 1.5, true)
 	# Colombages : poteaux d'angle et sablière, sur les quatre faces.
 	for sx: float in [-0.5, 0.5]:
 		for sz2: float in [-0.5, 0.5]:
