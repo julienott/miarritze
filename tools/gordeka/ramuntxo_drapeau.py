@@ -18,7 +18,7 @@ ECUSSON = (244, 338, 309, 407)        # boîte de l'écusson sur le tablier (px 
 BLANC_TABLIER = (255, 255, 255, 255)
 CONTOUR = (0, 12, 64)                 # bleu marine du trait
 ROUGE, VERT, BLANC = (213, 43, 30), (0, 155, 72), (255, 255, 255)
-CENTRE, TAILLE, ANGLE = (248, 94), (32, 20), 13.5   # sur le bandeau, incliné comme lui
+CENTRE, TAILLE, ANGLE = (248, 85), (32, 20), 13.5   # sur le bandeau, incliné comme lui
 SUR = 8                               # suréchantillonnage du dessin
 
 
