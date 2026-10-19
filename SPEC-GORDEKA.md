@@ -197,7 +197,11 @@ dans la même pièce jouent chacun sur leur appareil, en salon.
 ## 7. Personnages et couleurs
 
 - On choisit **un personnage du roster** : les 12 de Miarritze Borroka, redessinés dans le nouveau
-  style (*décidé le 2026-10-19*).
+  style (*décidé le 2026-10-19*). **Personnages cartoon propres d'après ceux de Borroka** (leur
+  silhouette, leur tête, leur tenue), et non des capsules façon Among Us. Ils sont générés en 3D par
+  pixelforge, avec un matériau `tenue` recolorable dans la couleur du joueur.
+- **Bâtiments** : un kit de pièces généré par script chez pixelforge (murs, colombages en relief,
+  toits asymétriques, ouvertures), habillé de ses textures peintes.
 - On choisit **sa couleur** parmi 12, qui teinte la tenue principale (palette). Dans un salon, chaque
   couleur est unique, comme dans Among Us ; la couleur sert à se reconnaître de loin.
 - Le profil garde le pseudo, le personnage favori, la couleur favorite et l'emote. On reprend
