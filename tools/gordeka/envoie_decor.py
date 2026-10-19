@@ -71,6 +71,8 @@ def depose(ids):
                 if pl is None:
                     continue
             pl["priority"] = PRIORITE
+            if eid in ANCRES:
+                pl["num_images"] = 3           # ancres : 3 variantes à faire valider
             pl["tag"] = f"miarritze/decor_{eid}"
             while True:
                 try:
