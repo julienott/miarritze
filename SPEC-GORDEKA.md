@@ -259,7 +259,15 @@ Vierge, Fronton.
   personnages trapus et expressifs. Même esprit qu'Among Us et Fall Guys : mignon, lisible de loin,
   jamais inquiétant.
 - **HD lisse façon Among Us** (*décidé le 2026-10-19*) : fin du pixel art et de la résolution
-  384×216. Résolution logique 1280×720, filtre lissé. Le pipeline d'images est à refaire (§16).
+  384×216. Résolution logique 1280×720, filtre lissé.
+- **Rendu en 3D** (*décidé le 2026-10-19*, à confirmer sur une maquette) : même vue de dessus en 3/4,
+  mais des modèles 3D plutôt que des illustrations détourées (détourages peu précis). **Le rendu
+  reste celui de l'intention d'origine** : cartoon propre façon Among Us et Fall Guys.
+  - Ombrage simple (« toon »), aplats vifs, contours sombres et épais, formes rondes.
+  - Ni réalisme ni textures photo ; des textures peintes simples, générées à plat (crépi, tuiles,
+    pavés, bois).
+  - Les règles restent en 2D (carte, collisions, vision) ; seul l'affichage passe en 3D. Le cône du
+    chasseur devient une lampe torche avec de vraies ombres.
 - **Architecture et décor du Pays basque** (Julien, 2026-10-19) : tous les bâtiments, éléments
   d'architecture **et objets de décor** doivent ressembler à ce qu'on trouve au Pays basque (Biarritz, Labourd) :
   - maisons labourdines et crampottes du port, aux murs blanchis à la chaux ;
