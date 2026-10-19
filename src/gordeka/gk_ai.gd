@@ -182,6 +182,16 @@ func _think_hider() -> void:
 		ambush = false
 		want_action = true
 		return
+	# Gâteau basque à portée et chasseur loin : on va le chercher, puis on repart se cacher.
+	if hunting and not g.gateaux.is_empty() and _arrived():
+		var danger: float = float(cfg.get("danger", 8.0)) * _tiles()
+		for gt: Dictionary in g.gateaux:
+			var gp: Vector2 = gt["pos"]
+			if gp.distance_to(me.position) < 10.0 * _tiles() and gp.distance_to(h.position) > danger * 1.3 \
+					and rng.randf() < 0.5:
+				_go(gp)
+				relocate_t = minf(relocate_t, 3.0)
+				return
 	if hunting:
 		relocate_t -= float(cfg.get("think", 0.5))
 		if relocate_t <= 0.0 and _arrived() and h.position.distance_to(me.position) > 12.0 * _tiles():
@@ -326,7 +336,9 @@ func _think_hunter() -> void:
 	# 2. Une cachette tremble ou on passe à côté : on fouille (plus souvent si l'IA est maligne).
 	var c: int = g.near_cachette(me, false)
 	if c >= 0:
-		var shook: bool = float(g.cachettes[c]["shake"]) > 0.0
+		# Le tremblement de fin de sa propre fouille ne compte pas (sinon le malin, qui réfléchit
+		# plus vite que ce tremblement ne dure, refouillait sans fin la même cachette vide).
+		var shook: bool = float(g.cachettes[c]["shake"]) > 0.0 and clock - float(searched.get(c, -100.0)) > 2.0
 		var chance: float = float(cfg.get("search_chance", 0.5)) * 0.35
 		var fresh: bool = clock - float(searched.get(c, -100.0)) > 15.0
 		if bool(cfg.get("smart_search", false)):
@@ -393,6 +405,31 @@ func on_found(a: GkActor) -> void:
 		clue_t = 0.0
 
 
+## Fantôme : il traverse les murs, il va donc tout droit.
+func _go_ghost(target: Vector2) -> void:
+	path = PackedVector2Array([me.position, target])
+	path_i = 1
+
+
+## Chasseur : un bruit entendu (cachette qui grince, mouettes qui s'envolent) devient un indice.
+func on_noise(pos: Vector2) -> void:
+	if me.role != GkActor.Role.HUNTER or chase_id >= 0:
+		return
+	# Une cachette n'est pas praticable : on vise la case libre voisine la plus proche.
+	var here: Vector2i = g.map.to_tile(pos)
+	var best: Vector2 = Vector2.INF
+	for dy: int in range(-2, 3):
+		for dx: int in range(-2, 3):
+			var t: Vector2i = here + Vector2i(dx, dy)
+			if g.map.walkable(t) and (best == Vector2.INF or g.map.center(t).distance_to(pos) < best.distance_to(pos)):
+				best = g.map.center(t)
+	if best == Vector2.INF:
+		return
+	clue = best
+	clue_t = 5.0 * float(cfg.get("clue_memory", 1.0))
+	_go(best)
+
+
 func on_trap(pos: Vector2) -> void:
 	if me.role == GkActor.Role.HUNTER:
 		clue = pos
@@ -434,6 +471,27 @@ func on_detect(found: Array[Vector2], hint: Vector2 = Vector2.ZERO) -> void:
 # ---------------------------------------------------------------- fantôme
 
 func _think_ghost() -> void:
+	if g.phase == GkGame.Phase.HUNT:
+		# Délivrance : rejoindre le chassé libre le plus loin du chasseur (une seule fois par round).
+		if GkRules.on("idee_delivrance") and not me.rescued and g._rescues < int(GkRules.f("delivrance_max")):
+			var best: GkActor = null
+			var bs: float = -INF
+			for a: GkActor in g.actors:
+				if a.role == GkActor.Role.HIDER and a.hidden_in < 0:
+					var s: float = a.position.distance_to(g.hunter.position) - a.position.distance_to(me.position) * 0.5
+					if s > bs:
+						bs = s
+						best = a
+			if best != null:
+				if me.position.distance_to(best.position) > GkRules.px("delivrance_portee") * 0.6:
+					_go_ghost(best.position)
+				else:
+					path = PackedVector2Array()
+				return
+		# Chatouille : filer vers le chasseur dès qu'elle est prête.
+		if GkRules.on("idee_chatouille") and me.power_cd <= 0.0 and g.hunt_elapsed >= g._tickle_free_until - 2.0:
+			_go_ghost(g.hunter.position)
+			return
 	if _arrived() and rng.randf() < 0.25:
 		var keys: Array = g.map.cover.keys()
 		_go(g.map.center(keys[rng.randi() % keys.size()]))

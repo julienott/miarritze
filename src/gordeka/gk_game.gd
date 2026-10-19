@@ -79,6 +79,15 @@ var _stats: bool = false
 var _st: Dictionary = {}
 var _revealed_at: Dictionary = {}     # id du chassé → instant de la dernière onde qui l'a montré
 var _trap_hit_at: float = -100.0
+## Idées de gameplay (drapeaux `idee_*` de rules.json) : gâteaux basques au sol [{pos}],
+## mouettes posées [{pos, away (s avant leur retour), fly (s d'envol à dessiner)}], instant de la
+## dernière capture (chasseur bredouille), derniers bruits entendus (statistiques).
+var gateaux: Array = []
+var mouettes: Array = []
+var _last_find_t: float = 0.0
+var _noise_at: float = -100.0
+var _tickle_free_until: float = 0.0     # chasseur à l'abri des chatouilles jusqu'à cet instant (répit)
+var _rescues: int = 0                   # délivrances déjà faites ce round
 var view: GkView3D
 var _last_dt: float = 0.0
 ## QA : `--gk-qa-emotes` fait enchaîner les emotes à tout le monde et ouvre l'éventail ;
@@ -293,11 +302,23 @@ func _start_round() -> void:
 	_st = {"vue": 0, "fouille_ok": 0, "fouille_vide": 0, "ondes": 0, "ondes_utiles": 0, "montres": 0,
 		"trouves_apres_onde": 0, "pieges_poses": 0, "pieges_pris": 0, "trouves_apres_piege": 0,
 		"entrees_cachette": 0, "ejections_cachette": 0, "trouves_en_cachette": 0, "sorties": 0,
-		"evasions_de_vue": 0, "t_trouves": [], "lieux_trouves": [], "sorties_round": open_exit_zones.duplicate()}
+		"evasions_de_vue": 0, "t_trouves": [], "lieux_trouves": [], "sorties_round": open_exit_zones.duplicate(),
+		"chatouilles": 0, "delivres": 0, "grincements": 0, "gateaux": 0, "mouettes": 0,
+		"trouves_apres_bruit": 0, "elan_s": 0.0, "fantome_s": 0.0}
 	_revealed_at.clear()
 	_trap_hit_at = -100.0
+	_last_find_t = 0.0
+	_noise_at = -100.0
+	_tickle_free_until = 0.0
+	_rescues = 0
+	_place_bonus()
 	for a2: GkActor in actors:
 		a2.speed_mult = 1.0
+		a2.tickle_left = 0.0
+		a2.sprint_left = 0.0
+		a2.elan_mult = 1.0
+		a2.rescue_k = 0.0
+		a2.rescued = false
 	if hunter.is_bot:
 		var hl: String = _hunter_level if _hunter_level != "" else str(config.get("level", "normal"))
 		hunter.speed_mult = float(GkRules.ai(hl).get("hunter_speed", 1.0))
@@ -464,9 +485,12 @@ func _physics_process(dt: float) -> void:
 		_update_traps()
 		_update_capture(dt)
 		_update_exits(dt)
+		_update_ideas(dt)
 		for a: GkActor in actors:
 			if a.role == GkActor.Role.HIDER:
 				a.alive_t += dt
+			elif a.role == GkActor.Role.GHOST and _stats:
+				_st["fantome_s"] = float(_st["fantome_s"]) + dt
 	_update_cachettes(dt)
 	for r: Dictionary in reveals:
 		r["left"] = float(r["left"]) - dt
@@ -647,6 +671,11 @@ func _found(a: GkActor, via: String = "vue") -> void:
 			_st["trouves_apres_onde"] += 1
 		if hunt_elapsed - _trap_hit_at < 8.0:
 			_st["trouves_apres_piege"] += 1
+		if hunt_elapsed - _noise_at < 10.0:
+			_st["trouves_apres_bruit"] += 1
+	_last_find_t = hunt_elapsed
+	hunter.elan_mult = 1.0
+	a.rescue_k = 0.0
 	if a.hidden_in >= 0:
 		_leave_cachette(a, false)
 	a.play_once("found")
@@ -679,6 +708,7 @@ func near_cachette(a: GkActor, free_only: bool) -> int:
 func _enter_cachette(a: GkActor, i: int) -> void:
 	var c: Dictionary = cachettes[i]
 	c["occupant"] = a.id
+	c["creak_wait"] = 0.0
 	a.hidden_in = i
 	a.hidden_t = 0.0
 	a.gauge = 0.0
@@ -726,7 +756,7 @@ func _leave_cachette(a: GkActor, forced: bool) -> void:
 func _reset_cachettes() -> void:
 	for c: Dictionary in cachettes:
 		c.merge({"occupant": -1, "lock": 0.0, "shake": 0.0, "jiggle": 0.0, "open": 0.0, "delay": 0.0, "hold": 0.0,
-			"close_shake": 0.0, "squash_t": 0.0, "shiver": 0.0,
+			"close_shake": 0.0, "squash_t": 0.0, "shiver": 0.0, "creak": 0.0, "creak_wait": 0.0,
 			"shiver_wait": GkRules.f("cachette_shiver_gap") * randf_range(1.0, 2.0)}, true)
 
 
@@ -765,6 +795,7 @@ func _update_cachettes(dt: float) -> void:
 		c["jiggle"] = maxf(0.0, float(c["jiggle"]) - dt)
 		c["squash_t"] = maxf(0.0, float(c["squash_t"]) - dt)
 		c["shiver"] = maxf(0.0, float(c["shiver"]) - dt)
+		c["creak"] = maxf(0.0, float(c["creak"]) - dt)
 		if float(c["delay"]) > 0.0:
 			c["delay"] = float(c["delay"]) - dt
 			if float(c["delay"]) <= 0.0:
@@ -789,6 +820,19 @@ func _update_cachettes(dt: float) -> void:
 		a.pop_left = maxf(0.0, a.pop_left - dt)
 		if a.hidden_in >= 0:
 			a.hidden_t += dt
+			# Cachette qui grince : passé `grince_apres` s dedans, elle craque toutes les `grince_ecart` s.
+			if GkRules.on("idee_grince") and phase == Phase.HUNT and a.inside() \
+					and a.hidden_t >= GkRules.f("grince_apres"):
+				var c: Dictionary = cachettes[a.hidden_in]
+				c["creak_wait"] = float(c.get("creak_wait", 0.0)) - dt
+				if float(c["creak_wait"]) <= 0.0:
+					c["creak_wait"] = GkRules.f("grince_ecart")
+					c["creak"] = 0.9
+					c["shake"] = 1.0
+					c["jiggle"] = maxf(float(c["jiggle"]), 0.5)
+					_noise(c["pos"], "grincements")
+					if a == local and a.hidden_t < GkRules.f("grince_apres") + dt * 1.5:
+						_say("Ta cachette grince !", Color("ffd34a"), 2.0)
 			if a.hidden_t >= GkRules.f("hide_max"):
 				_leave_cachette(a, true)
 				if _stats:
@@ -904,6 +948,144 @@ func _detect(h: GkActor) -> void:
 		(brains[h.id] as GkAi).on_detect(found, hint)
 	if h != local:
 		_say("Le chasseur lance une onde !", Color("9fd8ef"), 1.4)
+
+
+# ---------------------------------------------------------------- idées de gameplay (A/B)
+
+## Gâteaux basques et mouettes du round, sur des cases libres et dégagées (couverture ≤ 2),
+## loin du départ et espacées entre elles.
+func _place_bonus() -> void:
+	gateaux.clear()
+	mouettes.clear()
+	var want_g: int = int(GkRules.f("gateaux_nombre")) if GkRules.on("idee_gateaux") else 0
+	var want_m: int = int(GkRules.f("mouettes_nombre")) if GkRules.on("idee_mouettes") else 0
+	if want_g + want_m == 0:
+		return
+	var spawn: Vector2 = map.center(map.spawns[0]) if not map.spawns.is_empty() else map.size_px() * 0.5
+	var keys: Array = map.cover.keys()
+	var taken: Array[Vector2] = []
+	for tries: int in 400:
+		if gateaux.size() >= want_g and mouettes.size() >= want_m:
+			break
+		var t: Vector2i = keys[randi() % keys.size()]
+		if int(map.cover[t]) > 2 or map.at(t) != "." and map.at(t) != ":" and map.at(t) != "=":
+			continue
+		var p: Vector2 = map.center(t)
+		if p.distance_to(spawn) < 8.0 * map.tile:
+			continue
+		var ok: bool = true
+		for q: Vector2 in taken:
+			if p.distance_to(q) < 9.0 * map.tile:
+				ok = false
+				break
+		if not ok:
+			continue
+		taken.append(p)
+		if gateaux.size() < want_g:
+			gateaux.append({"pos": p})
+		else:
+			mouettes.append({"pos": p, "away": 0.0, "fly": 0.0})
+
+
+## Un bruit (cachette qui grince, mouettes qui s'envolent) : le chasseur IA l'entend s'il est à
+## portée ; un chasseur humain le voit sur son écran (dessiné dans le calque du monde).
+func _noise(pos: Vector2, stat: String) -> void:
+	_noise_at = hunt_elapsed
+	if _stats:
+		_st[stat] = int(_st[stat]) + 1
+	var hear: float = GkRules.px("grince_ouie" if stat == "grincements" else "mouettes_ouie")
+	if hunter.is_bot and hunter.position.distance_to(pos) <= hear:
+		(brains[hunter.id] as GkAi).on_noise(pos)
+
+
+func _update_ideas(dt: float) -> void:
+	# Chatouille : un fantôme qui touche le chasseur le fait rire, et il ralentit un instant.
+	if GkRules.on("idee_chatouille") and not hunter.frozen:
+		for a: GkActor in actors:
+			if a.role == GkActor.Role.GHOST and a.power_cd <= 0.0 and hunt_elapsed >= _tickle_free_until \
+					and a.position.distance_to(hunter.position) < GkRules.px("chatouille_portee"):
+				a.power_cd = GkRules.f("chatouille_cooldown")
+				hunter.tickle_left = GkRules.f("chatouille_duree")
+				_tickle_free_until = hunt_elapsed + GkRules.f("chatouille_repit")
+				_give(a, GkRules.score("ghost_tickle"))
+				_say("Tu chatouilles le chasseur !" if a == local else "%s chatouille le chasseur !" % a.display_name,
+					Color("ffd34a"), 1.6)
+				if _stats:
+					_st["chatouilles"] += 1
+	# Délivrance : un chassé libre et hors de vue reste près d'un fantôme, qui revient en jeu.
+	if GkRules.on("idee_delivrance") and _rescues < int(GkRules.f("delivrance_max")):
+		for gh: GkActor in actors:
+			if gh.role != GkActor.Role.GHOST or gh.rescued:
+				continue
+			var helper: GkActor = null
+			for a: GkActor in actors:
+				if a.role == GkActor.Role.HIDER and a.hidden_in < 0 and a.gauge <= 0.0 \
+						and a.position.distance_to(gh.position) < GkRules.px("delivrance_portee"):
+					helper = a
+					break
+			if helper == null:
+				gh.rescue_k = maxf(0.0, gh.rescue_k - dt / GkRules.f("delivrance_temps"))
+				continue
+			gh.rescue_k += dt / GkRules.f("delivrance_temps")
+			if gh.rescue_k >= 1.0:
+				_rescue(gh, helper)
+	# Gâteaux basques : un chassé qui en ramasse un marque un point et file un moment.
+	for g2: Dictionary in gateaux.duplicate():
+		for a: GkActor in actors:
+			if a.role == GkActor.Role.HIDER and a.hidden_in < 0 \
+					and a.position.distance_to(g2["pos"]) < GkRules.px("gateau_portee"):
+				gateaux.erase(g2)
+				a.sprint_left = GkRules.f("gateau_duree")
+				_give(a, GkRules.score("hider_cake"))
+				if a == local:
+					_say("Gâteau basque : ça file !", Color("ffd34a"), 1.6)
+				if _stats:
+					_st["gateaux"] += 1
+				break
+	# Mouettes : un chassé qui passe trop près les fait s'envoler en criant (indice pour le chasseur).
+	for m: Dictionary in mouettes:
+		m["fly"] = maxf(0.0, float(m["fly"]) - dt)
+		if float(m["away"]) > 0.0:
+			m["away"] = float(m["away"]) - dt
+			continue
+		for a: GkActor in actors:
+			if a.role == GkActor.Role.HIDER and a.hidden_in < 0 \
+					and a.position.distance_to(m["pos"]) < GkRules.px("mouettes_portee"):
+				m["away"] = GkRules.f("mouettes_retour")
+				m["fly"] = 1.5
+				_noise(m["pos"], "mouettes")
+				break
+	# Chasseur bredouille : sans capture depuis `bredouille_apres` s, il a le vent dans le dos.
+	if GkRules.on("idee_bredouille") and not hunter.frozen:
+		var dry: bool = hunt_elapsed - _last_find_t >= GkRules.f("bredouille_apres")
+		if dry and hunter.elan_mult <= 1.0:
+			_say("Le chasseur a le vent dans le dos !", Color("9fd8ef"), 2.0)
+		hunter.elan_mult = GkRules.f("bredouille_vitesse") if dry else 1.0
+		if dry and _stats:
+			_st["elan_s"] = float(_st["elan_s"]) + dt
+
+
+func _rescue(gh: GkActor, helper: GkActor) -> void:
+	gh.rescued = true
+	_rescues += 1
+	for a: GkActor in actors:
+		a.rescue_k = 0.0
+	gh.set_role(GkActor.Role.HIDER)
+	gh.position = helper.position          # un fantôme traverse les murs : il revient à côté de son sauveur
+	gh.gauge = 0.0
+	gh.play_once("hide_out")
+	_round_found -= 1
+	_give(helper, GkRules.score("hider_rescue"))
+	if helper == local:
+		_say("Tu délivres %s !" % gh.display_name, Color("6fe08a"), 2.0)
+	elif gh == local:
+		_say("%s te délivre : rejoue !" % helper.display_name, Color("6fe08a"), 2.0)
+	else:
+		_say("%s délivre %s !" % [helper.display_name, gh.display_name], Color("6fe08a"), 2.0)
+	if _stats:
+		_st["delivres"] += 1
+	if brains.has(gh.id):
+		(brains[gh.id] as GkAi).reset()
 
 
 # ---------------------------------------------------------------- sorties
@@ -1066,6 +1248,36 @@ func _draw_overlay(ci: CanvasItem) -> void:
 			# Les chassés savent qui est dedans : deux yeux de la couleur du joueur.
 			ci.draw_circle(px2.get_center() + Vector2(-9, 8), 6, actors[occ].color)
 			ci.draw_circle(px2.get_center() + Vector2(9, 8), 6, actors[occ].color)
+	# Cachette qui grince : « crac ! » au-dessus, vu de tous (c'est un bruit).
+	for c3: Dictionary in cachettes:
+		if float(c3["creak"]) > 0.0:
+			var k3: float = float(c3["creak"]) / 0.9
+			var p3: Vector2 = (c3["pos"] as Vector2) + Vector2(0, -map.tile * (0.8 + 0.4 * (1.0 - k3)))
+			_draw_noise_bubble(ci, font, p3, "crac !", k3)
+	# Gâteaux basques au sol (vus de tous, chasseur compris : ils attirent les chassés à découvert).
+	for g2: Dictionary in gateaux:
+		var gp: Vector2 = g2["pos"]
+		var bob: float = sin(hunt_elapsed * 4.0 + gp.x) * 3.0
+		GkDraw.ellipse(ci, gp + Vector2(0, 10), 20, 6, Color(0, 0, 0, 0.2))
+		GkDraw.ellipse(ci, gp + Vector2(0, bob), 20, 13, Color("e7b45a"), 3.0)
+		GkDraw.ellipse(ci, gp + Vector2(0, bob - 3), 13, 7, Color("f2cf7f"))
+		for k7: int in 3:
+			ci.draw_line(gp + Vector2(-8 + k7 * 8, bob - 7), gp + Vector2(-4 + k7 * 8, bob + 1), Color("b5772a"), 2.0)
+		GkDraw.ellipse(ci, gp + Vector2(6, bob - 6), 4, 3, Color("c62828"), 1.5)
+	# Mouettes posées (petits « v » blancs) ; envolées, elles montent en criant « kaio ! ».
+	for m: Dictionary in mouettes:
+		var mp: Vector2 = m["pos"]
+		var fly: float = float(m["fly"])
+		if float(m["away"]) <= 0.0:
+			for k5: int in 3:
+				_draw_gull(ci, mp + Vector2(-26 + k5 * 26, (k5 % 2) * 12), 1.0 if k5 != 1 else -1.0)
+		elif fly > 0.0:
+			var up: float = (1.5 - fly) * 70.0
+			for k6: int in 3:
+				var bp2: Vector2 = mp + Vector2(-24 + k6 * 24 + (1.5 - fly) * 20 * (k6 - 1), -up - k6 * 10)
+				ci.draw_polyline(PackedVector2Array([bp2 + Vector2(-10, -4), bp2, bp2 + Vector2(10, -4)]),
+					Color(1, 1, 1, fly / 1.5), 3.0, true)
+			_draw_noise_bubble(ci, font, mp + Vector2(0, -map.tile * 0.9 - up * 0.5), "kaio !", fly / 1.5)
 	# Pièges : visibles des chassés ; le chasseur ne les voit que tout près, dans sa vue.
 	for t: Dictionary in traps:
 		var p: Vector2 = t["pos"]
@@ -1119,6 +1331,27 @@ func _draw_crate(ci: CanvasItem, r: Rect2, open: float, locked: bool) -> void:
 	ci.draw_colored_polygon(lid, Color("c46e1c"))
 	lid.append(lid[0])
 	ci.draw_polyline(lid, ink, 3.0)
+
+
+## Mouette posée, de profil (`face` 1 vers la droite, -1 vers la gauche).
+func _draw_gull(ci: CanvasItem, p: Vector2, face: float) -> void:
+	GkDraw.ellipse(ci, p + Vector2(0, 12), 13, 4, Color(0, 0, 0, 0.18))
+	ci.draw_line(p + Vector2(-3, 6), p + Vector2(-3, 12), Color("f6a91e"), 3.0)
+	ci.draw_line(p + Vector2(3, 6), p + Vector2(3, 12), Color("f6a91e"), 3.0)
+	GkDraw.ellipse(ci, p, 14, 9, Color.WHITE, 2.5)
+	GkDraw.ellipse(ci, p + Vector2(-3 * face, -1), 9, 5, Color("aab4c0"), 2.0)
+	GkDraw.ellipse(ci, p + Vector2(11 * face, -9), 7, 7, Color.WHITE, 2.5)
+	GkDraw.poly(ci, PackedVector2Array([p + Vector2(16 * face, -10), p + Vector2(25 * face, -8),
+		p + Vector2(16 * face, -6)]), Color("f6a91e"), 1.5)
+	ci.draw_circle(p + Vector2(13 * face, -11), 1.8, GkDraw.INK)
+
+
+## Bulle de bruit (grincement, mouettes) : texte blanc cerné d'encre, qui s'efface avec `k` (1 → 0).
+func _draw_noise_bubble(ci: CanvasItem, font: Font, at: Vector2, text: String, k: float) -> void:
+	var a: float = clampf(k * 3.0, 0.0, 1.0)
+	ci.draw_string_outline(font, at - Vector2(100, 0), text, HORIZONTAL_ALIGNMENT_CENTER, 200, 30, 8,
+		Color(GkDraw.INK, a))
+	ci.draw_string(font, at - Vector2(100, 0), text, HORIZONTAL_ALIGNMENT_CENTER, 200, 30, Color(Color("ffd34a"), a))
 
 
 ## Flèche d'indice de l'onde : part du chasseur dans la direction du chassé le plus proche.

@@ -46,6 +46,14 @@ var perso: GkPerso
 var scared: bool = false
 ## Multiplicateur de vitesse du chasseur IA selon son niveau (difficulté) ; 1 pour un humain.
 var speed_mult: float = 1.0
+## Idées de gameplay (rules.json, `idee_*`) : chatouille d'un fantôme (chasseur ralenti), sprint
+## d'un gâteau basque (chassé), vent dans le dos du chasseur bredouille (multiplicateur), et
+## délivrance (progression 0 → 1 du fantôme qu'un chassé délivre ; une seule fois par round).
+var tickle_left: float = 0.0
+var sprint_left: float = 0.0
+var elan_mult: float = 1.0
+var rescue_k: float = 0.0
+var rescued: bool = false
 ## Pose de fin de round : "victory", "sad" ou "" pendant le jeu.
 var end_pose: String = ""
 ## Emote en cours (index dans GkGame.EMOTES, -1 = aucune) et temps restant de sa bulle (s).
@@ -118,8 +126,12 @@ func speed() -> float:
 	var s: float = GkRules.px(key)
 	if slow_left > 0.0:
 		s *= GkRules.f("trap_slow")
+	if tickle_left > 0.0:
+		s *= GkRules.f("chatouille_lent")
+	if sprint_left > 0.0 and role == Role.HIDER:
+		s *= GkRules.f("gateau_sprint")
 	if role == Role.HUNTER:
-		s *= speed_mult
+		s *= speed_mult * elan_mult
 	return s
 
 
@@ -136,6 +148,8 @@ func step(move: Vector2, look_dir: Vector2, dt: float) -> void:
 		var turn: float = deg_to_rad(GkRules.f("turn_speed_deg")) * dt
 		look = rotate_toward(look, want.angle(), turn)
 	slow_left = maxf(0.0, slow_left - dt)
+	tickle_left = maxf(0.0, tickle_left - dt)
+	sprint_left = maxf(0.0, sprint_left - dt)
 	power_cd = maxf(0.0, power_cd - dt)
 	queue_redraw()
 
@@ -165,6 +179,21 @@ func _draw() -> void:
 		for k: int in 3:
 			var p: Vector2 = Vector2(0, -8 * u) + Vector2.from_angle(float(k) * TAU / 3.0 + slow_left * 4.0) * 14 * u
 			draw_circle(p, 4.0, Color("f2c12e"))
+	# Chatouillé par un fantôme : il rit (« hi hi ») en se tortillant.
+	if tickle_left > 0.0:
+		var wob: float = sin(tickle_left * 30.0) * 4.0
+		draw_string(font, Vector2(-120 + wob, top - 40), "hi hi !", HORIZONTAL_ALIGNMENT_CENTER, 240, 24, Color("ffd34a"))
+	# Vent dans le dos (chasseur bredouille) ou sprint du gâteau : traits de vitesse derrière lui.
+	if (elan_mult > 1.0 and role == Role.HUNTER) or (sprint_left > 0.0 and role == Role.HIDER):
+		var back: float = -face
+		var col: Color = Color("9fd8ef") if role == Role.HUNTER else Color("ffd34a")
+		for k: int in 3:
+			var y: float = (-14.0 + k * 7.0) * u
+			var x0: float = back * (12.0 + fmod(walk_phase * 3.0 + k, 3.0)) * u
+			draw_line(Vector2(x0, y), Vector2(x0 + back * 10.0 * u, y), col, 3.0, true)
+	# Délivrance en cours : anneau vert qui se remplit autour du fantôme.
+	if rescue_k > 0.0 and role == Role.GHOST:
+		draw_arc(Vector2(0, -8 * u), radius + 16, -PI * 0.5, -PI * 0.5 + TAU * rescue_k, 32, Color("6fe08a"), 6.0)
 	if gauge > 0.0 and role == Role.HIDER:
 		var w: float = radius * 2.4
 		var r: Rect2 = Rect2(Vector2(-w * 0.5, top - 30), Vector2(w, 9))

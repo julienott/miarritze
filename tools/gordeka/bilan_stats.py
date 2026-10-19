@@ -45,7 +45,26 @@ def main() -> None:
               f"captures < 8 s après un piège pris {tot('trouves_apres_piege')}")
         print(f"  entrées en cachette {tot('entrees_cachette')}, éjections (20 s) {tot('ejections_cachette')}, "
               f"trouvés en cachette {tot('trouves_en_cachette')}")
-        print(f"  évasions (jauge entamée puis perdue) {tot('evasions_de_vue')}")
+        print(f"  évasions (jauge entamée puis perdue) {tot('evasions_de_vue')} ({tot('evasions_de_vue') / n:.1f}/round)")
+        # Plaisir de jeu : rounds gagnés par le chasseur, temps morts (plus longue période sans
+        # capture, attente des fantômes).
+        gagnes = sum(1 for r in rs if r["trouves"] * 2 > r["chasses"])
+        trous = []
+        for r in rs:
+            ts = sorted(r["t_trouves"])
+            bornes = [0.0] + ts + [r["duree"]]
+            trous.append(max(b - a for a, b in zip(bornes, bornes[1:])))
+        trous.sort()
+        attente = [r["duree"] - x for r in rs for x in r["t_trouves"]]
+        print(f"  chasseur gagnant {gagnes}/{n} ({100 * gagnes / n:.0f} %) ; plus long chou blanc : "
+              f"médiane {trous[len(trous) // 2]:.0f} s ; attente moyenne d'un trouvé "
+              f"{sum(attente) / max(len(attente), 1):.0f} s"
+              + (f" (temps fantôme mesuré {tot('fantome_s') / n:.0f} s/round)" if tot('fantome_s') else ""))
+        idees = [(k, tot(k)) for k in ("chatouilles", "delivres", "grincements", "gateaux", "mouettes",
+                                       "trouves_apres_bruit") if tot(k)]
+        if idees:
+            print("  idées : " + ", ".join(f"{k} {v} ({v / n:.1f}/round)" for k, v in idees)
+                  + (f", vent dans le dos {tot('elan_s') / n:.0f} s/round" if tot('elan_s') else ""))
 
 
 if __name__ == "__main__":

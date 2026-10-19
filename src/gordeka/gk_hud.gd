@@ -72,6 +72,18 @@ func _draw() -> void:
 			_text(font, Vector2(s.x * 0.5, 128), "Sorties ouvertes : " + where, 20, Color("6fe08a"))
 		else:
 			_text(font, Vector2(s.x * 0.5, 128), "Sorties du round : " + where, 20, Color(1, 1, 1, 0.7))
+	# Fantôme : ce qu'il peut encore faire (idées chatouille et délivrance).
+	if me.role == GkActor.Role.GHOST and game.phase == GkGame.Phase.HUNT:
+		var tips: PackedStringArray = []
+		if GkRules.on("idee_chatouille"):
+			tips.append("Touche le chasseur : il rit !")
+		if GkRules.on("idee_delivrance") and not me.rescued and game._rescues < int(GkRules.f("delivrance_max")):
+			tips.append("Rejoins un chassé : il te délivre !")
+		var ty: float = s.y - 30.0 - 38.0 * float(tips.size() - 1)
+		for tip: String in tips:
+			draw_rect(Rect2(s.x * 0.5 - 250, ty - 28, 500, 36), Color(0, 0, 0, 0.55))
+			_text(font, Vector2(s.x * 0.5, ty), tip, 24, Color("ffd34a"))
+			ty += 38.0
 	# Messages.
 	var y: float = s.y * 0.26
 	for m: Dictionary in game.messages:

@@ -25,6 +25,11 @@ static func f(key: String) -> float:
 	return float(data().get(key, 0.0))
 
 
+## Drapeau d'une idée de gameplay (0 ou 1 dans rules.json, `--gk-rules=idee_x:1` pour l'A/B).
+static func on(key: String) -> bool:
+	return f(key) > 0.5
+
+
 ## Distance en cases → pixels.
 static func px(key: String) -> float:
 	return f(key) * f("tile_px")
