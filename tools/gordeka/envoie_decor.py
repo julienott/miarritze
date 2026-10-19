@@ -27,6 +27,27 @@ FINI = ("succeeded", "failed", "canceled", "expired")
 ANCRES = ["sol_dalles_quai", "caisses_poisson", "cachette_coffre_quai"]
 
 
+# Décor au trait des persos (pixelforge, 2026-10-20) : pf_2d__prop (Qwen + référence de style = le
+# modèle de Louis) et pf_2d__ground (sol mis au trait par code). Les façades (pf_hd__texture) attendent.
+STYLE_2D = True
+STYLE_TASK = "affc36bd90aa4e25ba350ee139b2fdc5"   # pf_2d__character de Louis (variante 3 retenue)
+PRIORITE = os.environ.get("PF_PRIORITE", "low")
+
+
+def en_2d(pl):
+    if pl["prompt_style"] == "pf_hd__prop":
+        q = {k: v for k, v in pl.items() if k != "height"}
+        q.update(prompt_style="pf_2d__prop", style_task=STYLE_TASK,
+                 width=max(pl.get("width", 512), pl.get("height", 512)))
+        return q
+    if pl["prompt_style"] == "pf_hd__ground":
+        q = {k: v for k, v in pl.items() if k != "theme"}
+        q["prompt_style"] = "pf_2d__ground"
+        q["prompt"] = q["prompt"].split(" Camera:")[0]   # la matière seule : le trait est fait par code
+        return q
+    return None
+
+
 def charger(chemin, defaut):
     return json.load(open(chemin)) if os.path.exists(chemin) else defaut
 
@@ -45,7 +66,11 @@ def depose(ids):
         suivi[eid] = []
         for pl in els[eid].get("payloads", []):
             pl = {k: v for k, v in pl.items() if k not in ("taille_cases",)}
-            pl["priority"] = "low"
+            if STYLE_2D:
+                pl = en_2d(pl)
+                if pl is None:
+                    continue
+            pl["priority"] = PRIORITE
             pl["tag"] = f"miarritze/decor_{eid}"
             while True:
                 try:

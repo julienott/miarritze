@@ -15,9 +15,9 @@
    "expression": "mischievous sly smile, eyes squinting with fun, as if thinking 'I know the perfect hiding spot'",
    "boucle": true,
    "mouvement": {
-    "motion": "Jog_Fwd_Loop",
-    "bounce": 1.0,
-    "exaggerate": 1.3
+    "motion": "walk",
+    "exaggerate": 1.3,
+    "bounce": 0.05
    }
   },
   "run_scared": {
@@ -25,9 +25,9 @@
    "expression": "terrified comic face, eyes wide open, mouth open in a scream",
    "boucle": true,
    "mouvement": {
-    "motion": "Sprint_Loop",
+    "motion": "run_scared",
     "arms": "up",
-    "exaggerate": 1.4
+    "exaggerate": 1.3
    }
   },
   "hide_in": {
