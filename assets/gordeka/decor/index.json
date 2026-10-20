@@ -914,7 +914,23 @@
     1
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/etabli_atelier.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "d71cce21d4254ac482a44632dc9db9c5",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/etabli_atelier_ombre.png",
+   "ombre_decalage": [
+    13,
+    73
+   ]
   },
   "marches_escalier": {
    "nom": "Marches de l'escalier de la ville",
