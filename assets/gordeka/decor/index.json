@@ -296,7 +296,18 @@
     2
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "sols/toit_tuiles.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "8b08962aa0af4b759954a82b78292189",
+     "date": "2026-10-20"
+    }
+   ]
   },
   "facade_labourdine": {
    "nom": "Façade blanche à colombages",
