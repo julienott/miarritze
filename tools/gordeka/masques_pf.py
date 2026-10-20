@@ -59,7 +59,7 @@ def payload(eid, el):
             "game_width_px": round(largeur_jeu(el, img) * grand.width / img.width),
             "footprint_cells": el["taille_cases"],
             "camera": "front34", "hint": hint[:300], "thin_px": 10 * PX_PAR_PX_JEU, "char_height_cells": 1.5,
-            "priority": "low", "tag": f"miarritze/masque_{eid}"}
+            "priority": "high", "tag": f"miarritze/masque_{eid}"}
 
 
 def depose(ids):

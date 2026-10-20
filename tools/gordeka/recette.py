@@ -72,6 +72,7 @@ def telecharge(r, d):
 
 def payload_perso(pid, anim):
     pl = ap.payload(pid, anim)
+    pl["priority"] = "low"    # Julien 2026-10-20 : masques > décor > animations
     plus = lire(RETOUCHES, {}).get(f"perso/{pid}/{anim}")
     if isinstance(plus, dict):        # {"action": "...", "hold": {...}} : réglages du mannequin en plus
         if plus.get("action"):
@@ -105,7 +106,7 @@ def payloads_decor(eid):
             continue
         if plus.get(f"decor/{eid}/{n}"):
             pl["prompt"] = pl["prompt"].rstrip() + " " + plus[f"decor/{eid}/{n}"]
-        pl.update(priority="low", tag=f"miarritze/decor_{eid}")
+        pl.update(priority="normal", tag=f"miarritze/decor_{eid}")
         pls.append(pl)
     return pls
 

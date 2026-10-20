@@ -387,7 +387,8 @@ func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, d
 		sh = _shape(tex, rel, drawn)
 	if (sh.get("polys", []) as Array).is_empty():
 		return
-	blocks = bool(sh.get("blocks_view", blocks))
+	# La carte décide des objets bas (banc, étal…) : pixelforge peut seulement lever le blocage de vue.
+	blocks = blocks and bool(sh.get("blocks_view", blocks))
 	var holder: Node2D = inst["holder"]
 	var sp: Sprite2D = inst["sprite"]
 	var top_left: Vector2 = holder.position + sp.position - drawn * 0.5
