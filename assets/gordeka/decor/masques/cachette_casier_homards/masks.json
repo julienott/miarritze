@@ -3,127 +3,127 @@
   [
    [
     0,
-    111
+    76
    ],
    [
     4,
-    111
+    76
    ],
    [
     8,
-    111
+    76
    ],
    [
     12,
-    111
+    76
    ],
    [
     16,
-    111
+    76
    ],
    [
     20,
-    111
+    76
    ],
    [
     24,
-    111
+    76
    ],
    [
     28,
-    111
+    76
    ],
    [
     32,
-    111
+    76
    ],
    [
     36,
-    111
+    76
    ],
    [
     40,
-    111
+    76
    ],
    [
     44,
-    111
+    76
    ],
    [
     48,
-    111
+    76
    ],
    [
     52,
-    111
+    76
    ],
    [
     56,
-    111
+    76
    ],
    [
     60,
-    111
+    76
    ],
    [
     64,
-    111
+    76
    ],
    [
     68,
-    111
+    76
    ],
    [
     72,
-    111
+    76
    ],
    [
     76,
-    111
+    76
    ],
    [
     80,
-    111
+    76
    ],
    [
     84,
-    111
+    76
    ],
    [
     88,
-    111
+    76
    ],
    [
     92,
-    111
+    76
    ],
    [
     96,
-    111
+    76
    ],
    [
     100,
-    111
+    76
    ],
    [
     104,
-    111
+    76
    ],
    [
     108,
-    111
+    76
    ],
    [
     112,
-    111
+    76
    ],
    [
     116,
-    111
+    76
    ],
    [
     117,
-    111
+    76
    ],
    [
     116,
@@ -258,19 +258,20 @@
   144
  ],
  "front_y": 117,
- "back_y": 111,
- "baseline_y": 114,
+ "back_y": 76,
+ "baseline_y": 96,
  "height_px": 117,
- "blocks_view": true,
+ "blocks_view": false,
  "camera": "front34",
  "scale": 1.9872,
- "depth_px": 6.0,
+ "depth_px": 41.0,
  "shapes": [
-  "sur pieds (pieds arri\u00e8re)"
+  "sur pieds"
  ],
- "confidence": 0.9,
+ "confidence": 0.8,
  "warnings": [
-  "socle de sol d\u00e9tect\u00e9 (13% de l'objet) : traversable, hors occluder"
+  "socle de sol d\u00e9tect\u00e9 (13% de l'objet) : traversable, hors occluder",
+  "profondeur estim\u00e9e (sur pieds, 117 px de large) : 41 px, faute de face du dessus lisible"
  ],
  "size": [
   123,
