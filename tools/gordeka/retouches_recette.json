@@ -22,10 +22,15 @@
  "decor/cachette_tas_filets_cachette/0": "It must clearly read as a big messy heap of green and blue fishing nets made of visible criss-cross mesh lines, with orange cork floats and a coiled rope tangled in it, like a soft pile of fabric on the quay; not a hut, no door, no arch, no opening, no creature, no face, no animal.",
  "perso/mattin/walk": "Strict side view facing right in every single frame: his big round belly and chest always face right, he never turns his torso toward the camera, his arms stay solid and clearly drawn.",
  "decor/cachette_barque_retournee/0": "The small wooden rowing boat is turned UPSIDE DOWN, lying directly on the ground: we see its rounded painted hull bottom and keel on top (blue and white stripes, green rim along the ground), the inside of the boat is hidden underneath; seen from the front, horizontal, no blocks, no stand, no pedestal, nothing inside visible.",
- "perso/mattin/ghost_move": "Strict side view facing right in every single frame: his big round belly and chest always face right, he never turns his torso toward the camera, his arms stay solid and clearly drawn, the small wings stay on his back.",
+ "perso/mattin/ghost_move": {
+  "action": "The small white angel wings on his back flap clearly and steadily.",
+  "priority": "normal"
+ },
  "perso/louis/emote_langue": "Cheeky teasing face: a big pink tongue sticks far out of his mouth, clearly visible in profile, eyes squinting playfully, during the whole gesture.",
  "perso/txomin/emote_langue": "Cheeky teasing face: a big pink tongue sticks far out of his mouth, clearly visible in profile, during the whole gesture.",
- "perso/kaio/walk": "Keep the exact same seagull from the reference in every frame: small round body, the same size and proportions, same beak and red dot, grey wings folded at the sides; his round white body stays round and smooth, the drawing stays sharp.",
+ "perso/kaio/walk": {
+  "priority": "normal"
+ },
  "perso/kaio/hunter_reveal": "He holds the flashlight clamped in the feathered tip of his grey wing, the wing stays a clean grey wing in every frame.",
  "perso/kaio/victory": {
   "action": "Clear joyful celebration: he hops up and down on his webbed feet several times, both grey wings spread wide open and flapping at each hop, beak wide open in a happy squawk."
@@ -66,6 +71,28 @@
   "priority": "normal"
  },
  "perso/txomin/ghost": {
+  "priority": "normal"
+ },
+ "perso/amaia/walk": {
+  "priority": "normal"
+ },
+ "perso/patxi/ghost": {
+  "priority": "normal"
+ },
+ "perso/patxi/ghost_move": {
+  "priority": "normal"
+ },
+ "perso/mattin/ghost": {
+  "action": "The small white angel wings on his back flap clearly and steadily.",
+  "priority": "normal"
+ },
+ "perso/mattin/hunter_reveal": {
+  "priority": "normal"
+ },
+ "perso/kaio/run_scared": {
+  "priority": "normal"
+ },
+ "perso/kaio/hide_in": {
   "priority": "normal"
  }
 }

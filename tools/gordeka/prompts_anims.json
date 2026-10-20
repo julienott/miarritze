@@ -58,7 +58,7 @@
    }
   },
   "trap": {
-   "action": "Sets a trap: looks left and right sneakily, bends forward at the waist with both legs straight, places a small object on the ground in front of him, pats it, straightens up rubbing his hands with glee.",
+   "action": "Sets a trap: looks left and right sneakily, bends forward at the waist with both legs straight, places a small wooden trap on the ground in front of him, then straightens up rubbing his hands with glee.",
    "expression": "sneaky mischievous grin",
    "boucle": false,
    "mouvement": {
@@ -350,7 +350,7 @@
    "accessoires": [
     {
      "objet": "wooden makila stick slung diagonally on the back",
-     "defaut": "stays rigid on her back at the same diagonal angle, moving only with the torso, never in her hands",
+     "defaut": "stays rigid on her back at the same diagonal angle, moving only with the torso, never in her hands; it stays on the same side of her body as in the reference image in every frame, never crossing to the other side",
      "par_animation": {
       "run_scared": "bounces on her back",
       "hide_in": "goes in with her"
