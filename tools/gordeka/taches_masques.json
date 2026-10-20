@@ -5,10 +5,10 @@
   "statut": "succeeded"
  },
  "rayonnage_filets": {
-  "tid": "be5255e90a7b43c3a4f5d9b745f826d7",
+  "tid": "8eb618cd19214501a10bd4981432d18b",
   "fichier": "objets/rayonnage_filets.png",
   "statut": "en_vol",
-  "essai": "v3"
+  "essai": "override"
  },
  "mur_soutenement": {
   "tid": "1e874f2a311a4dbc8c230324b051f6a3",
@@ -24,7 +24,7 @@
  "etal_criee": {
   "tid": "979b59d349c4481092b9a010975395a4",
   "fichier": "objets/etal_criee.png",
-  "statut": "en_vol",
+  "statut": "succeeded",
   "essai": "v3"
  },
  "bitte_amarrage": {
@@ -35,14 +35,14 @@
  "fontaine_place": {
   "tid": "a8108d2697bd4a378f2d5c2cbacafe85",
   "fichier": "objets/fontaine_place.png",
-  "statut": "en_vol",
+  "statut": "succeeded",
   "essai": "v3"
  },
  "banc_vert": {
-  "tid": "3d6eb760a72041f8883e60798e674cc5",
+  "tid": "c52aa69bfc454e7d86e566beffe5400b",
   "fichier": "objets/banc_vert.png",
   "statut": "en_vol",
-  "essai": "v3"
+  "essai": "override"
  },
  "cachette_casier_homards": {
   "tid": "d82eb41865bb42aa9eaa2d35dd291ddc",
