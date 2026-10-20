@@ -125,8 +125,7 @@
    "expression": "playful determined grin, one eyebrow raised",
    "boucle": false,
    "mouvement": {
-    "motion": "hunter_reveal",
-    "a_venir": "clip sur mesure pixelforge"
+    "motion": "hunter_reveal"
    }
   },
   "ghost": {
@@ -148,12 +147,11 @@
    "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option"
   },
   "emote_salut": {
-   "action": "Waves hello enthusiastically with one raised hand above the head, swinging it wide left and right three times.",
+   "action": "Waves hello with an open hand, fingers spread, waving high above the head, swinging it wide left and right three times.",
    "expression": "big friendly smile",
    "boucle": false,
    "mouvement": {
-    "motion": "emote_salut",
-    "a_venir": "clip sur mesure pixelforge"
+    "motion": "wave"
    }
   },
   "emote_rire": {
@@ -161,17 +159,15 @@
    "expression": "eyes closed, mouth wide open laughing",
    "boucle": false,
    "mouvement": {
-    "motion": "emote_rire",
-    "a_venir": "clip sur mesure pixelforge"
+    "motion": "laugh"
    }
   },
   "emote_danse": {
    "action": "Short silly dance: hips swinging, arms waving up and down in turn, a little spin at the end.",
    "expression": "happy grin",
-   "boucle": false,
+   "boucle": true,
    "mouvement": {
-    "motion": "emote_danse",
-    "a_venir": "clip sur mesure pixelforge"
+    "motion": "dance"
    }
   },
   "emote_pouce": {
@@ -179,8 +175,7 @@
    "expression": "confident smile with a wink",
    "boucle": false,
    "mouvement": {
-    "motion": "emote_pouce",
-    "a_venir": "clip sur mesure pixelforge"
+    "motion": "thumbs_up"
    }
   },
   "emote_chut": {
@@ -188,8 +183,7 @@
    "expression": "secretive smile, eyes wide",
    "boucle": false,
    "mouvement": {
-    "motion": "emote_chut",
-    "a_venir": "clip sur mesure pixelforge"
+    "motion": "shush"
    }
   },
   "emote_langue": {
@@ -197,8 +191,7 @@
    "expression": "cheeky tongue out, eyes squinting",
    "boucle": false,
    "mouvement": {
-    "motion": "emote_langue",
-    "a_venir": "clip sur mesure pixelforge"
+    "motion": "tongue"
    }
   }
  },
@@ -322,7 +315,13 @@
    "hold_sauf": [
     "victory",
     "emote_salut",
-    "search"
+    "search",
+    "hunter_reveal",
+    "emote_rire",
+    "emote_danse",
+    "emote_pouce",
+    "emote_chut",
+    "emote_langue"
    ]
   },
   "mattin": {

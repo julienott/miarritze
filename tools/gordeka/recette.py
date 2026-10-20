@@ -12,6 +12,7 @@ tout ce qui est sorti, si ce n'est pas bon renvoie-le, sinon intègre-le », rem
   recette.py ok <clé> [variante]          ex. ok perso/maia/walk  |  ok decor/fronton/0 image_02
   recette.py ko <clé> "<consigne>"        renvoi ; la consigne s'ajoute au prompt (retouches_recette.json)
   recette.py echec <clé>                  abandon (garde l'état actuel du jeu)
+  recette.py file <clé> …                 à déposer dès que la file a de la place (sans bloquer)
 
 Les commandes passent par une file (commandes.jsonl) lue par la boucle : pas de course sur l'état.
 Clés : perso/<id>/<anim>, decor/<id>/<n>.
@@ -189,6 +190,10 @@ class Routine:
                     self.integre(cle, c.get("variante"))
                 elif c["cmd"] == "ko":
                     self.relance(cle, c.get("consigne"))
+                elif c["cmd"] == "file":       # à déposer quand la file a de la place
+                    self.e.setdefault("a_deposer", [])
+                    if cle not in self.e["a_deposer"]:
+                        self.e["a_deposer"].append(cle)
                 elif c["cmd"] == "echec":
                     self.e["items"].setdefault(cle, {"essais": 0})["statut"] = "echec"
                     log("abandon", cle)
@@ -238,6 +243,11 @@ class Routine:
                        for k, v in self.e["items"].items()):
                 log("perso fini :", pid)
                 lances.remove(pid)
+        # Animations ajoutées après coup (clips sur mesure…), au rythme de la file.
+        attente = self.e.setdefault("a_deposer", [])
+        while attente and len(self.items("en_vol", "perso")) < MAX_PERSO_VOL:
+            self.relance(attente.pop(0), None)
+            self.sauve()
         # Profil fantôme d'abord, SANS bloquer la boucle (une erreur réseau ne doit plus perdre le perso).
         fantomes = self.e.setdefault("fantomes", {})
         while self.e["persos"] and len(fantomes) < 2 and len(self.items("en_vol", "perso")) < MAX_PERSO_VOL:
@@ -367,3 +377,6 @@ if __name__ == "__main__":
         commande("ko", a[0], consigne=a[1] if len(a) > 1 else None)
     elif c == "echec":
         commande("echec", a[0])
+    elif c == "file":
+        for cle in a:
+            commande("file", cle)
