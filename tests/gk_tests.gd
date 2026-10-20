@@ -23,7 +23,7 @@ func _initialize() -> void:
 func _run() -> void:
 	var tests: Array[Callable] = [test_jauge_remplissage, test_jauge_decroissance, test_jauge_sans_detection,
 		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus,
-		test_partie_ia_courte]
+		test_options_partie, test_partie_ia_courte]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
 			continue
@@ -56,6 +56,22 @@ func fill_time(d: float, vis: float) -> float:
 		g = GkGame.next_gauge(g, vis, d, DT)
 		t += DT
 	return t
+
+
+# ------------------------------------------------------------------ options de partie
+
+## Catalogue des options validées (futur menu de création de partie) : chaque clé existe dans
+## rules.json, les choix sont bornés et seules les clés déclarées sont acceptées.
+func test_options_partie() -> void:
+	var opts: Array = GkRules.options_partie()
+	check(not opts.is_empty(), "options_partie.json vide ou illisible")
+	for o: Dictionary in opts:
+		for r: Dictionary in o.get("reglages", []):
+			check(GkRules.data().has(str(r["cle"])), "clé inconnue de rules.json : " + str(r["cle"]))
+	GkRules.appliquer_options({"gateaux_nombre": 99, "idee_gateaux": 0, "pas_une_option": 5})
+	check(near(GkRules.f("gateaux_nombre"), 8.0, 0.001), "curseur non borné")
+	check(not GkRules.on("idee_gateaux"), "on/off non appliqué")
+	check(not GkRules.data().has("pas_une_option"), "clé non déclarée acceptée")
 
 
 # ------------------------------------------------------------------ jauge de détection

@@ -1,0 +1,18 @@
+{
+	"_doc": "Options de gameplay VALIDÉES par Julien, réglables dans le futur menu de création de partie (Julien 2026-10-20). Chaque option pointe vers des clés de rules.json ; GkRules.appliquer_options() pose les valeurs choisies par-dessus rules.json au lancement d'une partie. Une idée non validée n'entre pas ici.",
+	"options": [
+		{
+			"id": "gateaux",
+			"groupe": "Bonus",
+			"libelle": "Gâteaux basques",
+			"aide": "Des gâteaux au sol : 1 point et un sprint pour le chassé qui le mange.",
+			"valide_le": "2026-10-20",
+			"carte_kanban": 347,
+			"reglages": [
+				{"cle": "idee_gateaux", "type": "on_off", "libelle": "Activés", "defaut": 1},
+				{"cle": "gateaux_nombre", "type": "curseur", "libelle": "Nombre de gâteaux", "min": 1, "max": 8, "pas": 1, "defaut": 4},
+				{"cle": "gateau_duree", "type": "curseur", "libelle": "Durée du sprint (s)", "min": 2, "max": 8, "pas": 1, "defaut": 4}
+			]
+		}
+	]
+}

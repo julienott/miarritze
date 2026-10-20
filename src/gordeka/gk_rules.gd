@@ -32,6 +32,35 @@ static func args() -> PackedStringArray:
 	return out
 
 
+## Options de partie validées par Julien (data/gordeka/options_partie.json), pour le futur menu de
+## création de partie : liste des options avec leurs réglages (clé de rules.json, type, bornes, défaut).
+const OPTIONS_PATH: String = "res://data/gordeka/options_partie.json"
+
+
+static func options_partie() -> Array:
+	var f: FileAccess = FileAccess.open(OPTIONS_PATH, FileAccess.READ)
+	if f == null:
+		return []
+	var d: Variant = JSON.parse_string(f.get_as_text())
+	return (d as Dictionary).get("options", []) if d is Dictionary else []
+
+
+## Pose les choix du menu ({clé: valeur}) par-dessus rules.json pour la partie qui commence. Seules les
+## clés déclarées dans options_partie.json sont acceptées, bornées à leur min/max.
+static func appliquer_options(choix: Dictionary) -> void:
+	for o: Dictionary in options_partie():
+		for r: Dictionary in o.get("reglages", []):
+			var cle: String = str(r.get("cle", ""))
+			if not choix.has(cle):
+				continue
+			var v: float = float(choix[cle])
+			if str(r.get("type", "")) == "on_off":
+				v = 1.0 if v > 0.5 else 0.0
+			else:
+				v = clampf(v, float(r.get("min", v)), float(r.get("max", v)))
+			data()[cle] = v
+
+
 static func f(key: String) -> float:
 	return float(data().get(key, 0.0))
 
