@@ -126,6 +126,22 @@ await page.check('#kb-hats-only');
 const onlyHats = await page.$$eval('#board .column > .card', (n) => n.map((x) => Number(x.dataset.id)));
 check('chapeaux seulement : enfants masqués', onlyHats.includes(hatId) && !kidIds.some((k) => onlyHats.includes(k)));
 await shot(page, '03_chapeaux_seulement');
+// « Masquer les chapeaux » : l'inverse, exclusif avec « chapeaux seulement », retenu.
+await page.check('#kb-no-hats');
+check('masquer les chapeaux décoche « chapeaux seulement »', !(await page.isChecked('#kb-hats-only')));
+const noHats = await page.$$eval('#board .column > .card', (l) => l.map((x) => Number(x.dataset.id)));
+const allC = (await apiTok('cards'))[1].cards;
+const leaves = allC.filter((c) => !c.children);
+check('masquer les chapeaux : seulement les cartes sans enfant', !noHats.includes(hatId) && kidIds.every((k) => noHats.includes(k))
+  && noHats.length === leaves.length, `${noHats.length}/${leaves.length}`);
+const colCount = await page.$eval('.column[data-status=backlog] h3 .muted', (n) => Number(n.textContent));
+check('masquer les chapeaux : compteurs filtrés', colCount === leaves.filter((c) => c.status === 'backlog').length, String(colCount));
+await shot(page, '03b_chapeaux_masques');
+await page.reload();
+await page.waitForSelector('#board .column');
+check('masquer les chapeaux : choix retenu', await page.isChecked('#kb-no-hats') && !(await page.$(`.card[data-id="${hatId}"]`)));
+await page.check('#kb-hats-only');
+check('chapeaux seulement décoche « masquer les chapeaux »', !(await page.isChecked('#kb-no-hats')));
 await page.uncheck('#kb-hats-only');
 
 // ------------------------------------ Julien priorise, commente, déplace
@@ -354,6 +370,12 @@ for (const [name, vp] of [['iphone_portrait', { width: 390, height: 844 }], ['ip
   check(`${name} : filtres repliés`, !(await mp.isVisible('.kanban-bar')));
   await mp.locator('.kb-tab.kb-filters').tap();
   check(`${name} : ☰ déplie les filtres`, await mp.isVisible('#kb-hat'));
+  check(`${name} : « Masquer les chapeaux » dans le menu ☰`, await mp.isVisible('#kb-no-hats'));
+  await mp.locator('#kb-no-hats').tap();
+  const qaN = Number(await mp.textContent('.kb-tab[data-status=qa] .n'));
+  const qaLeaves = (await apiTok('cards'))[1].cards.filter((c) => c.status === 'qa' && !c.children).length;
+  check(`${name} : compteurs des onglets filtrés`, qaN === qaLeaves, `${qaN}/${qaLeaves}`);
+  await mp.locator('#kb-no-hats').tap();
   await shot(mp, `06_${name}_filtres`, false);
   await mp.locator('.kb-tab.kb-filters').tap();
   // Miniature au toucher : anime sans ouvrir la carte ; décor : masques au toucher.

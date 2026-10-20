@@ -31,6 +31,7 @@ const state = {
   hat: 0,            // filtre « par chapeau » du kanban (0 = tous)
   hatsOnly: false,   // kanban : enfants masqués (vue chapeaux seulement)
   nightOnly: false,  // kanban : cartes night shift seulement
+  noHats: false,     // kanban : chapeaux masqués (inverse de hatsOnly, exclusifs)
   expanded: new Set(),  // chapeaux dépliés sur le board
   decorMode: store('producer-decor-mode') || 'masques',   // image | masques | controle
   decorSansMasque: false,  // filtre « sans masque » du décor
@@ -1307,8 +1308,21 @@ function initKanban() {
     if (parent) openCardDialog(null, '', parent.id);
   });
   state.hat = Number(store('producer-kb-hat')) || 0;
-  state.hatsOnly = store('producer-kb-hats-only') === '1';
+  state.noHats = store('producer-kb-no-hats') === '1';
+  state.hatsOnly = !state.noHats && store('producer-kb-hats-only') === '1';
   $('kb-hats-only').checked = state.hatsOnly;
+  $('kb-no-hats').checked = state.noHats;
+  // « Chapeaux seulement » et « Masquer les chapeaux » s'excluent : cocher l'une décoche l'autre.
+  const setHatView = (hatsOnly, noHats) => {
+    state.hatsOnly = hatsOnly;
+    state.noHats = noHats;
+    $('kb-hats-only').checked = hatsOnly;
+    $('kb-no-hats').checked = noHats;
+    store('producer-kb-hats-only', hatsOnly ? '1' : '0');
+    store('producer-kb-no-hats', noHats ? '1' : '0');
+    renderBoard();
+  };
+  $('kb-no-hats').addEventListener('change', () => setHatView(false, $('kb-no-hats').checked));
   state.nightOnly = store('producer-kb-night-only') === '1';
   $('kb-night-only').checked = state.nightOnly;
   $('kb-night-only').addEventListener('change', () => {
@@ -1322,11 +1336,7 @@ function initKanban() {
     store('producer-kb-hat', String(state.hat));
     renderBoard();
   });
-  $('kb-hats-only').addEventListener('change', () => {
-    state.hatsOnly = $('kb-hats-only').checked;
-    store('producer-kb-hats-only', state.hatsOnly ? '1' : '0');
-    renderBoard();
-  });
+  $('kb-hats-only').addEventListener('change', () => setHatView($('kb-hats-only').checked, false));
   // Rafraîchissement discret : seulement si l'on ne fait rien sur le board.
   setInterval(async () => {
     if (!state.index || !location.hash.startsWith('#/kanban') || document.hidden) return;
@@ -1360,6 +1370,8 @@ function visibleCards() {
     const fam = familyIds(state.hat);
     cards = cards.filter((c) => fam.has(c.id));
   }
+  // Masquer les chapeaux : seules les cartes sans enfant restent, chacune dans sa colonne.
+  if (state.noHats) cards = cards.filter((c) => !c.children);
   if (state.hatsOnly) {
     // Un enfant dont le chapeau est affiché est caché (il se voit en dépliant).
     const shown = new Set(cards.map((c) => c.id));
@@ -1432,7 +1444,7 @@ function renderKbTabs(cards) {
   }, el('span', { text: label }), el('span', { class: 'n', text: String(cards.filter((c) => c.status === status).length) }))),
   el('button', {
     type: 'button', class: 'kb-tab kb-filters' + ($('view-kanban').classList.contains('filters-open') ? ' active' : '')
-      + (state.hat || state.hatsOnly || state.nightOnly ? ' on' : ''),
+      + (state.hat || state.hatsOnly || state.noHats || state.nightOnly ? ' on' : ''),
     'aria-label': 'Filtres et nouvelle carte', title: 'Filtres et nouvelle carte',
     onclick: () => { $('view-kanban').classList.toggle('filters-open'); renderBoard(); },
   }, '☰'));
