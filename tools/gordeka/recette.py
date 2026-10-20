@@ -322,8 +322,9 @@ class Routine:
     def fantome(self, pid, fantomes):
         """Un pas du profil fantôme de pid (vraie retouche du profil HD) ; True quand il est prêt."""
         p = nuit.Perso(pid)
-        if os.path.exists(p.fantome_png()):
-            return True
+        if os.path.exists(p.fantome_png()) or all(v.get("en_pause") for k, v in ap.PROMPTS["animations"].items()
+                                                  if k in ap.FANTOMES):
+            return True                          # fantômes générés en pause (Julien 2026-10-20) : pas de profil
         tid = fantomes[pid]
         if tid is None:
             from PIL import Image

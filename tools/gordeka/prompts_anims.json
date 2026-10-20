@@ -135,7 +135,8 @@
    "mouvement": {
     "motion": "idle"
    },
-   "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option"
+   "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option",
+   "en_pause": "Julien 2026-10-20 : fantômes générés annulés ; vol stationnaire + ailes par le code en attendant"
   },
   "ghost_move": {
    "action": "Glides forward through the air: body leaning slightly forward, legs trailing behind relaxed, the small white angel wings flap clearly and steadily.",
@@ -144,7 +145,8 @@
    "mouvement": {
     "motion": "walk"
    },
-   "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option"
+   "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option",
+   "en_pause": "Julien 2026-10-20 : fantômes générés annulés ; vol stationnaire + ailes par le code en attendant"
   },
   "emote_salut": {
    "action": "Waves hello: arm stretched forward at shoulder height, forearm raised, open hand waving left and right.",
@@ -152,7 +154,8 @@
    "boucle": false,
    "mouvement": {
     "motion": "wave"
-   }
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
   "emote_rire": {
    "action": "Laughs out loud: leans back, hand on the belly, shoulders shaking, little hops.",
@@ -160,7 +163,8 @@
    "boucle": false,
    "mouvement": {
     "motion": "laugh"
-   }
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
   "emote_danse": {
    "action": "Happy little dance: both arms stretched forward at shoulder height going up and down in turn, body swaying, head bobbing, small hops on the spot.",
@@ -168,7 +172,8 @@
    "boucle": true,
    "mouvement": {
     "motion": "dance"
-   }
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
   "emote_pouce": {
    "action": "Gives a big thumbs up toward the viewer with a little nod and a wink.",
@@ -176,7 +181,8 @@
    "boucle": false,
    "mouvement": {
     "motion": "thumbs_up"
-   }
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
   "emote_chut": {
    "action": "Shushes: puts one finger in front of the lips, leans forward slightly, looks left and right.",
@@ -184,7 +190,8 @@
    "boucle": false,
    "mouvement": {
     "motion": "shush"
-   }
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
   "emote_langue": {
    "action": "Teases: sticks out the tongue playfully, thumbs on the temples wiggling fingers, a little bounce.",
@@ -192,7 +199,8 @@
    "boucle": false,
    "mouvement": {
     "motion": "tongue"
-   }
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   }
  },
  "persos": {

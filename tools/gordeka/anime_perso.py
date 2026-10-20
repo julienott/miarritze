@@ -61,7 +61,7 @@ def payload(pid, anim):
 
 
 def pretes():
-    return [k for k, v in PROMPTS["animations"].items() if "a_venir" not in v["mouvement"]]
+    return [k for k, v in PROMPTS["animations"].items() if "a_venir" not in v["mouvement"] and not v.get("en_pause")]
 
 
 def depose(pid, profil, fantome, anims):
