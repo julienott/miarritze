@@ -18,6 +18,7 @@ trap 'git -C "$ROOT" worktree remove --force "$TMP/wt" >/dev/null 2>&1 || true; 
 rm -f "$TMP/producer/config.php"          # jamais de config (hachages) dans le dépôt
 rm -rf "$TMP/producer/data"
 
+git -C "$ROOT" branch -D "$BRANCHE" >/dev/null 2>&1 || true   # copie locale de l'envoi précédent
 git -C "$ROOT" worktree add --detach "$TMP/wt" >/dev/null
 cd "$TMP/wt"
 git checkout -q --orphan "$BRANCHE"
