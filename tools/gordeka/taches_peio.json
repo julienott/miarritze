@@ -1,0 +1,16 @@
+{
+ "idle": "6741df6f3d80489db9181acd4b1177bb",
+ "walk": "c648ae63dd104f04b72a626969502fc0",
+ "run_scared": "1a8501b6d23644129bf26aae238b4fde",
+ "hide_in": "1c40f37f01134313b6d8c7c692a840ed",
+ "hide_out": "fc1d7eac852a4fd69b2f58a7103df057",
+ "found": "e3033d77dba84a1988da8fc22ffb2556",
+ "trap": "1cddb065d6e248b2bf3f3a83767bd49c",
+ "trapped": "04f38bebfc6e4e2c83e304c3d83e8bfa",
+ "search": "6432fc483e53464983ab8f41af79408e",
+ "detect": "ade6d8cb06364643aae952fbb579fa85",
+ "extract": "90905be7f5ce4f02b5ad9acab9d81a88",
+ "victory": "2a671c4b980442bdbc6faa4ae6c00f0b",
+ "sad": "27d0f94eb017419ba62d522b3d22250c",
+ "hunter_reveal": "a826a58879054a5c8361c7004a16878e"
+}

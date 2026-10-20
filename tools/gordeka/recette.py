@@ -45,7 +45,7 @@ LOG = os.path.join(DIR, "journal.log")
 RETOUCHES = os.path.join(HERE, "retouches_recette.json")
 MAX_DECOR = 10
 OMBRE_MIN_PX = 1500     # en dessous : reflets gris des chaussures, pas une ombre
-MAX_PERSO_VOL = 30     # pixelforge refuse au-delà de 50 tâches en attente
+MAX_PERSO_VOL = 400     # file « night » comptée à part chez pixelforge (2000)
 MAX_ESSAIS = 4
 FINI = nuit.FINI
 
@@ -76,7 +76,7 @@ def telecharge(r, d):
 
 def payload_perso(pid, anim):
     pl = ap.payload(pid, anim)
-    pl["priority"] = "low"    # Julien 2026-10-20 : masques > décor > animations
+    pl["priority"] = "night"  # Julien 2026-10-20 : persos restants la nuit (1 h–8 h Paris), le jour pour le jeu
     plus = lire(RETOUCHES, {}).get(f"perso/{pid}/{anim}")
     if isinstance(plus, dict):        # {"action": "...", "hold": {...}} : réglages du mannequin en plus
         if plus.get("action"):
