@@ -13,8 +13,8 @@ ont quelques secondes pour se cacher derrière les cabines de plage, les étals 
 bateaux du port. Le chasseur voit seulement devant lui, dans un cône que les objets bloquent. Un
 chassé qui entre dans ce cône est **trouvé**. Les chassés voient toute la carte, y compris le cône du
 chasseur : tout le jeu consiste à rester hors de vue. Chacun a un pouvoir, un **piège** quand il est
-chassé et une **détection** quand il est chasseur. Les rounds s'enchaînent jusqu'à ce qu'on quitte la
-partie.
+chassé et une **détection** quand il est chasseur. Une partie compte un nombre de rounds fixé (par défaut
+un par joueur), puis un podium.
 
 **Piliers**
 1. **Lisible en une seconde.** Le cône rouge du chasseur se voit sur le sol, chez tout le monde.
@@ -23,20 +23,22 @@ partie.
    ou lance une détection selon le rôle.
 3. **Jamais punitif.** Personne n'est « tué » : on est *trouvé*. Un joueur trouvé devient un petit
    fantôme qui continue de regarder et d'encourager, et le round suivant arrive vite (2 à 3 min).
-4. **Entre copains.** On joue en salon avec son groupe, ou seul contre l'IA. Pas de joueurs inconnus,
-   pas de chat libre.
+4. **Entre copains, sans risque.** On joue en salon en ligne (public ou privé par code) ou seul contre
+   l'IA. Aucun chat ni texte libre entre joueurs : seulement des emotes (*Julien, 2026-10-20 : les salons
+   publics remplacent les groupes*).
 5. **Biarritz.** Les cartes sont des lieux de la ville, les personnages viennent de Miarritze Borroka.
 
 ## 2. Boucle de jeu
 
 ### 2.1 Une partie
-`Accueil → choix du personnage et de la couleur → (solo : réglages IA | en ligne : salon) →
-round → scores du round → round suivant … → quitter → scores de la partie`.
+`Qui joue ? (profil) → Accueil → (Partie rapide : réglages | En ligne : liste des salons → salon) →
+[tirage → versus → round → scores] × N rounds → podium → retour à l'accueil ou au salon`. Écrans détaillés : §6.
 
 ### 2.2 Un round
 | Phase | Durée (données) | Ce qui se passe |
 |---|---|---|
 | Tirage | 3 s | Une roulette désigne le chasseur. Il voit « Tu es le CHASSEUR », les autres « Cache-toi ! ». |
+| Versus | 5 s | Écran de suspense : à gauche le chasseur en grand (avatar animé, pseudo, icône de détection), à droite les chassés (avatar, pseudo, couleur, icône de piège), grand « VS » au centre avec une secousse, compte à rebours 5→1 et son de tension (*Julien, 2026-10-20*). |
 | Cachette | 15 s | Le chasseur compte, écran voilé et immobile (« Bat, bi, hiru… » en basque). Les chassés courent se cacher. |
 | Chasse | 180 s | Le chasseur cherche. Pouvoirs actifs. Sorties ouvertes à 90 s. |
 | Fin | 6 s | Le round finit quand plus aucun chassé n'est libre, ou au chrono. **Victoires individuelles** : chaque chassé extrait ou encore libre au chrono gagne ; le chasseur gagne s'il en a trouvé plus de la moitié. Révélation des cachettes, puis scores. |
@@ -55,12 +57,17 @@ round → scores du round → round suivant … → quitter → scores de la par
 - **Joueurs** : 2 à 8 par salon, toujours **un seul chasseur** ; des IA complètent si besoin
   (*décidé le 2026-10-19*).
 - Le round suivant démarre seul après les scores. Un bouton « Quitter » est toujours accessible.
-- **Fin de partie** : il n'y a pas de nombre de rounds. Quand l'hôte quitte (ou le joueur, en solo),
-  un **podium** du cumul des points s'affiche (or, argent, bronze), puis on revient au menu.
+- **Fin de partie** : une partie compte **N rounds**, par défaut le nombre de joueurs (avec le sac, chacun
+  est chasseur une fois), réglable de 3 à 12 en partie rapide et par l'admin en ligne. L'admin (ou le
+  joueur, en partie rapide) peut aussi arrêter plus tôt pendant l'écran des scores. Puis un **podium**
+  du cumul des points (or, argent, bronze) et retour au salon (en ligne) ou à l'accueil (*Julien,
+  2026-10-20*).
 - **Départs** :
   - si le chasseur quitte, le round s'arrête sans points et le suivant démarre ;
   - si un chassé quitte, il disparaît et le round continue ;
-  - si l'hôte l'a activé, une IA prend la place libre au round suivant.
+  - si l'admin l'a activé, une IA prend la place libre au round suivant ;
+  - un joueur coupé garde sa place 60 s (il revient en fantôme si le round a continué), sinon une IA
+    la prend au round suivant.
 
 ### 2.3 Score
 Les scores sont cumulés sur la partie, affichés entre les rounds et à la fin. Ils ne servent qu'à
@@ -226,33 +233,67 @@ Demande de Julien : « plus tendu, beaucoup de near miss, beaucoup de mouvements
 - Vibration courte sur iPhone et manette quand on est trouvé ou quand on déclenche un piège.
 - Vibration aussi au rythme du cœur quand le chasseur est tout près (§4.4, frisson).
 
-## 6. Modes
+## 6. Modes et menus (*grilling du 2026-10-20 avec Julien*)
 
-### 6.1 Solo contre l'IA
-- Hors ligne, sans compte.
-- Réglages : nombre de joueurs (4 à 8, complétés par des IA), difficulté (Facile, Normal, Malin),
-  carte (ou au hasard). Par défaut : **6 joueurs (toi et 5 IA), Normal, Port des Pêcheurs**.
-- Le joueur est chasseur à son tour comme les autres, grâce au sac du tirage.
+Tous les écrans se pilotent au toucher (iPhone), à la manette et au clavier, en paysage, avec de gros
+boutons. Aucun texte libre entre joueurs.
+
+### 6.0 Écrans
+1. **Qui joue ?** au lancement : jusqu'à **4 profils** par appareil (frères et sœurs) ; créer,
+   choisir, supprimer (avec confirmation).
+2. **Accueil** : quatre gros boutons **Partie rapide**, **En ligne**, **Mon profil**, **Réglages**,
+   avec l'avatar animé du profil actif à côté. Réglages : son, musique, vibration, aide, refaire le
+   round guidé (§7.2). Les boutons « DEBUG · Visite » restent en bas, temporaires.
+3. **Mon profil** : choix du **personnage** (les 12, avatar animé), du **pseudo**, de la **couleur
+   préférée** (12) et de l'**emote** favorite. Pseudo libre de 2 à 15 caractères, filtre anti-gros-mots
+   du serveur, rappel « pas ton vrai nom ! ». Rien d'autre : ni âge, ni vrai nom.
+4. **Partie rapide** (§6.1), **En ligne** (§6.2), **Versus** avant chaque round (§2.2), **Scores**
+   entre les rounds, **Podium** à la fin.
+
+### 6.1 Partie rapide (contre l'IA, en local)
+- Hors ligne, sans compte. Toi et des IA, de **4 à 8 joueurs**.
+- Réglages repliés derrière un bouton « Réglages » ; « Jouer » lance tout de suite avec les défauts :
+  **6 joueurs, IA Normal, Port des Pêcheurs, rounds = nombre de joueurs, options validées activées**.
+- Réglages : nombre de joueurs, difficulté des IA (Facile, Normal, Malin), carte (une seule
+  aujourd'hui, le menu est prêt pour les suivantes), nombre de rounds (3 à 12), **options de
+  gameplay** du catalogue `data/gordeka/options_partie.json` (seules les options validées par Julien).
+- Le chasseur est tiré **en sac** à chaque round, toi compris.
 - **Visite de debug, TEMPORAIRE** (*Julien, 2026-10-20*) : « Visite : chassé » et « Visite : chasseur »
   dans le menu (ou `--gk-visite=chasse|chasseur`, web `#scene=gk_game&visite=…`) : carte complète,
   ni chrono ni fin de manche, personne d'autre, F montre les formes du décor, C change de perso. À
   retirer une fois les collisions, masques et décor mis au point.
 
-### 6.2 Salon entre copains (en ligne)
-- **Créer un salon** : l'hôte choisit la carte et le nombre de places (4 à 8).
-- **Compléter par des IA** (Julien, 2026-10-19) : entre deux rounds, l'hôte peut ajouter ou retirer
-  des IA, avec leur difficulté. L'option « compléter automatiquement » remplit les places vides
-  jusqu'au nombre choisi à chaque round, y compris les places laissées par ceux qui partent.
-  Les IA ont un pseudo du roster suivi de « (IA) » et sont tirées comme chasseur à leur tour.
-- **On ne joue qu'entre membres du groupe.** Les « Salons actifs » servent seulement à demander à
-  entrer dans un groupe (un membre accepte), jamais à rejoindre directement une partie d'inconnus.
-- **Rejoindre** : depuis le groupe, avec la liste des copains connectés et des salons ouverts du
-  groupe. On reprend le système existant :
-  - code de groupe, « Créer un groupe », « J'ai un code » ;
-  - « Salons actifs » avec demande acceptée par un membre.
-- Arriver pendant un round : on attend en fantôme et on joue au round suivant.
-- L'hôte quitte : la partie s'arrête pour tous, avec un message gentil. **[Plus tard]** Un autre
-  joueur reprend le rôle d'hôte.
+### 6.2 En ligne : salons
+**Plus de groupes ni de code de groupe** : les salons les remplacent.
+- **Liste des salons publics** : nom automatique « Salon de Léa » (pas de texte libre), carte, places
+  prises / total, état (« en attente » ou « en partie, round 3/6 »), avatars des joueurs. Les salons
+  pleins sont grisés. En haut : **Créer un salon** et **J'ai un code**.
+- **Créer un salon** : public ou **privé**. Un salon privé n'apparaît pas dans la liste ; on le rejoint
+  avec un **code de 4 lettres** sans caractères ambigus (ni I, L, O, ni chiffres), saisi avec un
+  clavier de lettres à l'écran.
+- **Places** : de **4 à 8**, 6 par défaut, choisies par l'admin. Un salon est **plein** quand toutes ses
+  places sont prises par des humains.
+- **Dans le salon (avant le lancement)** : chacun peut changer son perso et sa couleur (pas de bouton
+  « Prêt »). Les **couleurs sont uniques** : si ta couleur préférée est prise, tu reçois la plus
+  proche encore libre. Deux joueurs peuvent avoir le même personnage.
+- **L'admin** est celui qui a créé le salon :
+  - il règle les places, les IA (nombre et difficulté), le nombre de rounds, les options de gameplay
+    (et bientôt la carte), **avant le lancement et entre deux rounds** (pendant les scores) ; les
+    changements valent au round suivant et tout le monde voit ce qui a changé ; jamais pendant un
+    round ;
+  - il **lance** la partie : il faut **au moins 2 humains** ; des **IA complètent** jusqu'à 4 joueurs au
+    moins (8 au plus). Les IA occupent des **places libres** : un humain qui arrive en cours de partie
+    regarde en fantôme jusqu'à la fin du round, puis **remplace une IA** au round suivant ; s'il n'y a
+    plus d'IA à remplacer : « salon plein » ;
+  - il peut **exclure** un joueur (« l'admin a libéré ta place ») : celui-ci ne peut plus revenir dans
+    ce salon ;
+  - il peut **terminer la partie** plus tôt pendant les scores.
+- **Si l'admin quitte**, le **plus ancien humain** du salon devient admin (bandeau « Léa est maintenant
+  admin »). Une IA n'est jamais admin. S'il ne reste plus d'humain, le salon se ferme.
+- **Coupure** : un joueur coupé garde sa place **60 s**.
+- **Salon inactif** : un salon sans partie lancée depuis **10 min** se ferme et sort de la liste ;
+  son code privé est libéré.
+- Fin de partie : podium pour tous, puis **retour au salon**, où l'admin peut relancer.
 
 ### 6.3 Pas de jeu à plusieurs sur un même écran
 La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même écran. Les copains
@@ -269,8 +310,8 @@ dans la même pièce jouent chacun sur leur appareil, en salon.
   (`pf_hd__prop`).
 - On choisit **sa couleur** parmi 12, qui teinte la tenue principale (palette). Dans un salon, chaque
   couleur est unique, comme dans Among Us ; la couleur sert à se reconnaître de loin.
-- Le profil garde le pseudo, le personnage favori, la couleur favorite et l'emote. On reprend
-  l'existant : pseudo, code de groupe, aucune donnée personnelle.
+- Le profil garde le pseudo, le personnage favori, la couleur favorite et l'emote (§6.0), sans
+  aucune donnée personnelle ; plus de code de groupe.
 - Le personnage ne change que l'apparence et les pouvoirs. Pas de différence de vitesse ni de taille
   de hitbox : tous ont la même empreinte au sol.
 
@@ -279,7 +320,7 @@ dans la même pièce jouent chacun sur leur appareil, en salon.
 - En jouant, on débloque des **chapeaux**, des **couleurs spéciales** et des **emotes** : txapela,
   béret, bob, couronne en château de sable, couleurs à motifs (rayé Biarritz, écume…).
 - Les déblocages viennent de défis simples : être extrait 3 fois, trouver 10 chassés, poser 20
-  pièges… Ils sont enregistrés dans le profil local et synchronisés avec le groupe, comme les stats
+  pièges… Ils sont enregistrés dans le profil local et synchronisés avec le serveur, comme les stats
   actuelles.
 
 ### 7.2 Premier lancement (*décidé le 2026-10-19*)
@@ -418,8 +459,13 @@ Vierge, Fronton.
   - la signalisation PHP par polling ;
   - les serveurs STUN et le relais TURN Cloudflare ;
   - l'extension WebRTC native (Steam Deck, Mac, Recalbox) et le diagnostic d'échec.
-- **Serveur PHP** : groupes, présence, salons (création, liste, places), invitations, demandes
-  d'entrée, signalisation. Pas de partie côté serveur.
+- **Hôte** : l'admin du salon fait tourner la partie (hôte-autorité). S'il part, le plus ancien humain
+  devient admin **et hôte** : la partie en cours s'arrête proprement (round annulé sans points) et
+  reprend au round suivant chez le nouvel hôte, qui a reçu l'état du salon (joueurs, scores, réglages).
+- **Serveur PHP** : salons (création, public/privé, code de 4 lettres, liste, places, état, admin et
+  ordre d'arrivée, exclusions, purge des salons inactifs), présence par salon, signalisation à
+  plusieurs destinataires (étoile). Pas de partie côté serveur. Les groupes de Borroka ne sont plus
+  utilisés par Gordeka.
 
 ## 12. Plateformes et technique
 
@@ -482,10 +528,10 @@ et les détails du réseau se règleront en jouant.
   - 15 s pour se cacher, puis 180 s de chasse ;
   - 2 sorties fixes ouvertes à 90 s (4 s pour sortir) ;
   - victoires individuelles ;
-  - rounds sans limite, podium en quittant ;
+  - ~~rounds sans limite, podium en quittant~~ → N rounds (= nombre de joueurs par défaut), podium (§2.2) ;
   - règles de départ (§2.2).
-- **Joueurs** : 2 à 8, un seul chasseur ; on peut compléter par des IA ; on ne joue qu'entre membres
-  du groupe ; solo par défaut à 6 joueurs en Normal.
+- **Joueurs** : 2 à 8, un seul chasseur ; on peut compléter par des IA ; ~~on ne joue qu'entre membres
+  du groupe~~ salons publics ou privés par code (§6.2, 2026-10-20) ; solo par défaut à 6 joueurs en Normal.
 - **Règles** :
   - capture après 0,5 s dans le cône ; un chassé trouvé devient fantôme spectateur ;
   - le cône suit la marche ; les personnages se traversent ;
