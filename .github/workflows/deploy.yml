@@ -1,7 +1,7 @@
 name: Build & deploy web export
 
 # Depuis le 2026-10-20 (Julien) : main = Miarritze Gordeka, publié À LA RACINE du site (remplace
-# Borroka) ; /producer est publié ENSUITE par producer.yml (relancé en fin de job). Steam Deck et Recalbox sont sautés « jusqu'à nouvel ordre ».
+# Borroka) ; /producer est préparé en local (tools/producer/publie.sh) et recopié ensuite par producer.yml. Steam Deck et Recalbox sont sautés « jusqu'à nouvel ordre ».
 # Déploiement à la main seulement, sur décision de Julien.
 on:
   workflow_dispatch:
@@ -111,7 +111,7 @@ jobs:
             --exclude='*.sqlite*' --exclude='config.php' \
             backend/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/api/"
 
-      # Le jeu est en ligne : /producer se reconstruit ensuite (Julien 2026-10-20).
+      # Le jeu est en ligne : on recopie ensuite le dernier /producer préparé en local (producer-build).
       - name: Relancer producer
         env:
           GH_TOKEN: ${{ github.token }}
