@@ -417,7 +417,23 @@
     1
    ],
    "debord_haut_cases": 2,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/fronton.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "d5ed2664c2624ef8835e099b81de8147",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/fronton_ombre.png",
+   "ombre_decalage": [
+    42,
+    217
+   ]
   },
   "rayonnage_filets": {
    "nom": "Rayonnage du hangar à filets",
