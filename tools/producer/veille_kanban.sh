@@ -9,7 +9,7 @@ SINCE="${2:-$(date +%s)}"
 while true; do
   OUT="$($CLI events --since "$SINCE" 2>&1)" || { echo "veille : erreur producer : ${OUT:0:200}"; sleep 300; continue; }
   NEXT="$(printf '%s\n' "$OUT" | sed -n 's/.*repasser --since \([0-9]*\).*/\1/p' | head -1)"
-  printf '%s\n' "$OUT" | grep -v "repasser --since" | grep -v " claude #" | grep -v "^$" | sed 's/^/KANBAN /'
+  printf "%s\n" "$OUT" | grep -v "repasser --since" | grep -v " claude #" | grep -v "Rien de neuf" | grep -v "^$" | sed "s/^/KANBAN /"
   [ -n "$NEXT" ] && SINCE="$NEXT"
   sleep 300
 done
