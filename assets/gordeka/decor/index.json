@@ -1177,7 +1177,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_coffre_cordages.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "96e956cd81644f55a30e46e5c30dfc79",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_coffre_cordages_ombre.png",
+   "ombre_decalage": [
+    14,
+    72
+   ]
   },
   "cachette_poubelle_ruelle": {
    "nom": "Grande poubelle de ruelle",
