@@ -1,0 +1,23 @@
+{
+ "perso/txomin/trapped": "The swim fins stay hanging at his belt on his hip during the whole animation; his two hands are empty, flat palms pressing on the invisible wall, he never holds a fin in his hands.",
+ "decor/sol_rocher_phare/0": "Uniform natural grey-beige rock surface with soft irregular cracks spread evenly, no repeated motif, no circles, no turquoise puddles, calm and low contrast so characters stay readable on it.",
+ "decor/toit_tuiles/0": "Seen from above: rows of overlapping rounded red-orange Basque clay roof tiles (canal tiles), staggered rows, uniform, low contrast, no red dots, no square grid.",
+ "perso/xabi/hide_out": {
+  "action": "The jai alai cesta is a rigid wicker basket: it keeps exactly the same long curved shape and size in every frame, hanging down from his right hand along his leg, its tip pointing to the ground behind him; it never curls, flattens or folds.",
+  "hold": {
+   "right_arm": "down"
+  }
+ },
+ "decor/banc_chapelle/0": "Seen from the front, the front face of the bench is visible: a warm brown varnished wooden church pew with a carved backrest, not seen from straight above.",
+ "perso/xabi/trapped": {
+  "action": "Only his free left hand presses flat on the invisible wall in front of him; his right arm hangs down along his body holding the jai alai cesta, a rigid wicker basket that keeps exactly the same long curved shape and size in every frame, tip pointing to the ground behind him; it never curls, flaps or folds, and nothing is held in front of his chest.",
+  "hold": {
+   "right_arm": "down"
+  }
+ },
+ "perso/txomin/ghost_move": "The swim fins stay hanging at his belt on his hip during the whole animation; both his hands are empty fists swinging while he runs, he never holds a fin in his hands.",
+ "decor/cachette_malle_pelotes/0": "The trunk is CLOSED: its rounded lid is shut and latched, nothing visible inside; a few white pelota balls rest on the top of the lid.",
+ "decor/cachette_tas_filets_cachette/0": "It must clearly read as a big messy heap of green and blue fishing nets made of visible criss-cross mesh lines, with orange cork floats and a coiled rope tangled in it, like a soft pile of fabric on the quay; not a hut, no door, no arch, no opening, no creature, no face, no animal.",
+ "perso/mattin/walk": "Strict side view facing right in every single frame: his big round belly and chest always face right, he never turns his torso toward the camera, his arms stay solid and clearly drawn.",
+ "decor/cachette_barque_retournee/0": "The small wooden rowing boat is turned UPSIDE DOWN, lying directly on the ground: we see its rounded painted hull bottom and keel on top (blue and white stripes, green rim along the ground), the inside of the boat is hidden underneath; seen from the front, horizontal, no blocks, no stand, no pedestal, nothing inside visible."
+}
