@@ -1143,7 +1143,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_caisse_glace.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "935ca38c1fa44788aacdade589e990f4",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_caisse_glace_ombre.png",
+   "ombre_decalage": [
+    11,
+    61
+   ]
   },
   "cachette_coffre_cordages": {
    "nom": "Coffre à cordages du phare",
