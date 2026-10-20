@@ -51,6 +51,7 @@ for (const [label, opts] of [['ordi', { viewport: { width: 1280, height: 900 } }
   await page.waitForSelector('.tile');
   // Vue d'ensemble : une section par combattant, tuiles rangées par famille
   // (la page s'ouvre sur Gordeka : on passe sur les combattants de Borroka).
+  await page.evaluate(() => document.querySelector('.cats li.foldable button[aria-expanded="false"]')?.click());   // Borroka est replié
   await page.click('.cats button:has-text("Combattants")');
   await page.waitForSelector('.group .group-head');
   const heads = await page.$$eval('.group .group-name', (h) => h.map((x) => x.textContent));
@@ -59,6 +60,7 @@ for (const [label, opts] of [['ordi', { viewport: { width: 1280, height: 900 } }
   check(`${label} : familles dans l'ordre de la review`,
     kinds[0] === 'Animations' && kinds[1] === 'Portraits' && kinds.includes('Effets des spéciaux'), kinds.join(','));
   await page.screenshot({ path: path.join(OUT, `anims_${label}_combattants.png`) });
+  await page.evaluate(() => document.querySelector('.cats li.foldable button[aria-expanded="false"]')?.click());   // Borroka est replié
   await page.click('.cats button:has-text("Combattants")');
   await page.click(`.cats li.sub.show button:has(span:text-is("${FID}"))`);
   await page.waitForTimeout(800);

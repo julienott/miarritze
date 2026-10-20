@@ -24,6 +24,9 @@ const state = {
   zoom: 0,           // 0 = automatique
   player: null,      // lecteur d'animation en cours
   editing: null,     // carte en cours d'édition (null = nouvelle)
+  decorMode: store('producer-decor-mode') || 'masques',   // image | masques | controle
+  decorSansMasque: false,  // filtre « sans masque » du décor
+  fs: null,          // lecteur plein écran ouvert
 };
 
 // ------------------------------------------------------------------ utilitaires
@@ -222,6 +225,7 @@ function route() {
   }
   for (const v of document.querySelectorAll('.view')) v.hidden = v.id !== 'view-' + current;
   stopPlayer();
+  if (state.fs) closePlayer(false);
   if (current === 'assets') {
     const id = rest.length ? decodeURIComponent(rest.join('/')) : '';
     if (id && state.assetsById.has(id)) showDetail(state.assetsById.get(id));
@@ -275,8 +279,19 @@ function renderCats() {
   const sections = state.index.sections || [{ name: '', categories: state.index.categories }];
   for (const section of sections) {
     if (!assets.some((a) => section.categories.includes(a.cat))) continue;
-    if (section.name) items.push(el('li', { class: 'section', text: section.name }));
-    for (const cat of section.categories) mkCat(cat);
+    // Section repliable (Borroka, l'ancien jeu) : repliée par défaut, sauf si on y est.
+    const key = 'producer-open-' + section.name;
+    const open = !section.collapsed || store(key) === '1' || section.categories.includes(state.cat);
+    if (section.name) {
+      items.push(el('li', { class: 'section' + (section.collapsed ? ' foldable' : '') },
+        section.collapsed
+          ? el('button', {
+            type: 'button', 'aria-expanded': String(open),
+            onclick: () => { store(key, open ? '0' : '1'); renderCats(); },
+          }, (open ? '▾ ' : '▸ ') + section.name)
+          : section.name));
+    }
+    if (open) for (const cat of section.categories) mkCat(cat);
   }
   ul.replaceChildren(...items);
 
@@ -316,8 +331,11 @@ function showGrid() {
   $('detail').hidden = true;
   const grid = $('grid');
   grid.hidden = false;
-  const list = filteredAssets();
   grid.classList.remove('grouped');
+  // Vues dédiées de Gordeka (hors recherche) : persos et décor.
+  if (!state.search && state.cat === 'Persos' && state.index.gordeka) { renderPersos(grid); return; }
+  if (!state.search && state.cat === 'Décor') { renderDecor(grid); return; }
+  const list = filteredAssets();
   if (!list.length) {
     grid.replaceChildren(el('p', { class: 'empty', text: 'Aucun asset ne correspond.' }));
     return;
@@ -374,6 +392,394 @@ function kindBlocks(items) {
     const sub = items.filter((a) => kindOf(a) === k);
     return sub.length ? [el('h4', { class: 'kind', text: label }), el('div', { class: 'group-tiles' }, sub.map(tile))] : [];
   });
+}
+
+// ============================================================ GORDEKA : PERSOS
+
+// Animations d'un perso (asset « animations ») et masques de tenue.
+function gkAnims(pid) {
+  const a = state.assetsById.get(`gordeka/persos/${pid}/animations`);
+  return a ? a.anims : [];
+}
+
+// Liste ordonnée des animations du perso : attendues (présentes ou manquantes),
+// puis celles qui existent sans être attendues.
+function gkSlots(pid) {
+  const have = new Map(gkAnims(pid).map((x) => [x.name, x]));
+  const exp = state.index.gordeka.anims;
+  const slots = exp.map((e) => ({ ...e, anim: have.get(e.name) || null }));
+  for (const [n, x] of have) if (!exp.some((e) => e.name === n)) slots.push({ name: n, loop: x.loop, a_venir: false, anim: x });
+  return slots;
+}
+
+function renderPersos(grid) {
+  grid.classList.add('grouped');
+  const all = state.index.gordeka.persos;
+  const persos = state.group ? all.filter((p) => p === state.group) : all;
+  const blocks = [];
+  if (!state.group) blocks.push(recapTable(all));
+  for (const pid of persos) {
+    const mine = state.index.assets.filter((x) => x.cat === 'Persos' && x.group === pid);
+    const slots = gkSlots(pid);
+    const present = slots.filter((s) => s.anim).length;
+    const missing = slots.filter((s) => !s.anim);
+    const face = faceOf('Persos', pid);
+    const modele = mine.find((x) => x.kind === 'modele');
+    const animsAsset = state.assetsById.get(`gordeka/persos/${pid}/animations`);
+    const open = () => { state.group = pid; renderCats(); showGrid(); window.scrollTo(0, 0); };
+    const cells = slots.map((s) => (s.anim
+      ? el('button', {
+        type: 'button', class: 'gk-anim', title: `${s.name} · ${s.anim.frames} images à ${s.anim.fps} i/s`,
+        'data-anim': s.name, onclick: () => openPlayer(pid, s.name),
+      }, el('div', { class: 'anim-box' }, miniAnim(s.anim, 0)),
+      el('span', { class: 'gk-anim-name', text: s.name }),
+      el('span', { class: 'muted', text: `${s.anim.frames} im. · ${s.anim.fps} i/s${s.anim.loop ? ' · boucle' : ''}` }))
+      : el('div', { class: 'gk-anim missing', 'data-anim': s.name, title: s.a_venir ? 'clip sur mesure à venir' : 'pas encore générée' },
+        el('div', { class: 'anim-box' }, el('span', { text: s.a_venir ? 'à venir' : 'manquante' })),
+        el('span', { class: 'gk-anim-name', text: s.name }),
+        el('span', { class: 'muted', text: s.a_venir ? 'clip sur mesure' : 'manquante' }))));
+    const others = mine.filter((x) => ['masque', 'candidat', 'src'].includes(kindOf(x)));
+    blocks.push(el('section', { class: 'group gk-perso', id: 'perso-' + pid, 'data-perso': pid },
+      el('button', { type: 'button', class: 'group-head', onclick: open, title: 'Voir seulement ' + pid },
+        face ? el('img', { src: fileUrl(face.preview), alt: '', class: 'smooth' }) : null,
+        el('span', { class: 'group-name', text: pid }),
+        el('span', { class: 'muted', text: `${present}/${slots.length} animations` })),
+      el('div', { class: 'gk-perso-body' },
+        el('div', { class: 'gk-profil' },
+          modele ? tile(modele) : el('div', { class: 'gk-noprofil muted', text: 'pas de profil validé' })),
+        el('div', { class: 'gk-perso-anims' },
+          missing.length
+            ? el('p', { class: 'missing-band' },
+              el('strong', { text: `${missing.length} manquante${missing.length > 1 ? 's' : ''} : ` }),
+              missing.map((m) => m.name).join(', '))
+            : el('p', { class: 'missing-band ok', text: 'Toutes les animations sont là.' }),
+          el('div', { class: 'controls' },
+            present ? el('button', { type: 'button', class: 'small primary', onclick: () => openPlayer(pid, slots.find((s) => s.anim).name) }, '⛶ Plein écran') : null,
+            animsAsset ? el('a', { href: '#/assets/' + encodeURIComponent(animsAsset.id) }, 'Commenter les animations') : null),
+          el('div', { class: 'gk-anims' }, cells))),
+      others.length ? kindBlocks(others) : null));
+  }
+  grid.replaceChildren(...blocks);
+}
+
+// Récapitulatif global perso × animation.
+function recapTable(persos) {
+  const exp = state.index.gordeka.anims;
+  const head = el('tr', {}, el('th', { class: 'corner', text: 'Perso' }),
+    exp.map((e) => el('th', { class: 'v' + (e.a_venir ? ' a-venir' : ''), title: e.a_venir ? 'à venir (clip sur mesure)' : '' }, el('span', { text: e.name }))),
+    el('th', { class: 'v' }, el('span', { text: 'total' })));
+  const rows = persos.map((pid) => {
+    const have = new Set(gkAnims(pid).map((x) => x.name));
+    const n = exp.filter((e) => have.has(e.name)).length;
+    return el('tr', { 'data-perso': pid },
+      el('th', {}, el('button', {
+        type: 'button', class: 'link',
+        onclick: () => { const s = $('perso-' + pid); if (s) s.scrollIntoView({ behavior: 'smooth' }); },
+      }, pid)),
+      exp.map((e) => (have.has(e.name)
+        ? el('td', { class: 'yes' }, el('button', { type: 'button', title: `${pid} · ${e.name}`, 'aria-label': `${pid} ${e.name}`, onclick: () => openPlayer(pid, e.name) }, '✓'))
+        : el('td', { class: 'no', title: `${pid} · ${e.name} : manquante` }, '·'))),
+      el('td', { class: 'total', text: `${n}/${exp.length}` }));
+  });
+  return el('section', { class: 'group recap' },
+    el('h4', { class: 'kind', text: 'Récapitulatif des animations' }),
+    el('div', { class: 'recap-scroll' }, el('table', { class: 'recap-table' }, el('thead', {}, head), el('tbody', {}, rows))),
+    el('p', { class: 'muted small-note', text: '✓ présente (toucher pour la lire en plein écran) · « · » manquante · en italique : clips sur mesure à venir.' }));
+}
+
+// ------------------------------------------------- lecteur plein écran
+
+const FS_BGS = [['light', 'Clair'], ['dark', 'Sombre'], ['checker', 'Damier']];
+
+function openPlayer(pid, name) {
+  closePlayer(false);
+  const persos = state.index.gordeka.persos.filter((p) => gkAnims(p).length);
+  const fs = { pid, anims: [], anim: null, img: null, mask: null, frame: 0, playing: true, timer: 0,
+    showMask: false, showFeet: false, bg: store('producer-fs-bg') || state.stageBg || 'checker' };
+  state.fs = fs;
+  const canvas = el('canvas', { class: 'fs-canvas' });
+  const ctx = canvas.getContext('2d');
+  const title = el('span', { class: 'fs-title' });
+  const info = el('span', { class: 'fs-info' });
+  const playBtn = el('button', { type: 'button', 'aria-label': 'Lecture ou pause' }, '⏸');
+  const maskBtn = el('button', { type: 'button', title: 'Masque de tenue par-dessus' }, 'Masque');
+  const feetBtn = el('button', { type: 'button', title: 'Ligne des pieds (feet_anchor)' }, 'Pieds');
+  const bgBtn = el('button', { type: 'button', title: 'Fond' });
+  const stage = el('div', { class: 'fs-stage' }, canvas);
+  const root = el('div', { class: 'fs bg-' + fs.bg, role: 'dialog', 'aria-label': 'Lecteur plein écran' },
+    el('div', { class: 'fs-bar top' },
+      el('button', { type: 'button', class: 'fs-close', 'aria-label': 'Fermer', onclick: () => closePlayer(true) }, '✕'),
+      title, el('span', { class: 'spacer' }), info),
+    stage,
+    el('div', { class: 'fs-bar bottom' },
+      el('button', { type: 'button', 'aria-label': 'Animation précédente', title: 'Animation précédente (←, glisser à droite)', onclick: () => go(-1) }, '‹ anim'),
+      el('button', { type: 'button', 'aria-label': 'Image précédente', title: 'Image précédente (,)', onclick: () => step(-1) }, '◀'),
+      playBtn,
+      el('button', { type: 'button', 'aria-label': 'Image suivante', title: 'Image suivante (.)', onclick: () => step(1) }, '▶'),
+      el('button', { type: 'button', 'aria-label': 'Animation suivante', title: 'Animation suivante (→, glisser à gauche)', onclick: () => go(1) }, 'anim ›'),
+      bgBtn, maskBtn, feetBtn,
+      document.fullscreenEnabled ? el('button', { type: 'button', title: 'Plein écran du navigateur', onclick: toggleRealFs }, '⛶') : null));
+  fs.root = root;
+
+  const setBg = (v) => {
+    fs.bg = v; store('producer-fs-bg', v);
+    root.className = 'fs bg-' + v;
+    bgBtn.textContent = 'Fond : ' + FS_BGS.find(([k]) => k === v)[1];
+  };
+  bgBtn.addEventListener('click', () => {
+    const i = FS_BGS.findIndex(([k]) => k === fs.bg);
+    setBg(FS_BGS[(i + 1) % FS_BGS.length][0]);
+  });
+  setBg(fs.bg);
+
+  const draw = () => {
+    const a = fs.anim;
+    if (!a || !fs.img) return;
+    ctx.clearRect(0, 0, a.w, a.h);
+    ctx.drawImage(fs.img, fs.frame * a.w, 0, a.w, a.h, 0, 0, a.w, a.h);
+    if (fs.showMask && fs.mask) {
+      ctx.globalAlpha = 0.6;
+      ctx.drawImage(fs.mask, fs.frame * a.w, 0, a.w, a.h, 0, 0, a.w, a.h);
+      ctx.globalAlpha = 1;
+    }
+    if (fs.showFeet && a.feet) {
+      ctx.strokeStyle = '#ce3434'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, a.feet[1] + 0.5); ctx.lineTo(a.w, a.feet[1] + 0.5);
+      ctx.moveTo(a.feet[0] + 0.5, a.feet[1] - 6); ctx.lineTo(a.feet[0] + 0.5, a.feet[1] + 6); ctx.stroke();
+    }
+    const i = fs.anims.indexOf(a);
+    info.textContent = `image ${fs.frame + 1}/${a.frames} · ${a.fps} i/s` + (a.loop ? ' · boucle' : '') +
+      ` · ${i + 1}/${fs.anims.length}`;
+  };
+  const schedule = () => {
+    clearTimeout(fs.timer);
+    if (!fs.playing || !fs.img) return;
+    const a = fs.anim;
+    // Une animation sans boucle marque une pause sur sa dernière image.
+    const last = fs.frame === a.frames - 1;
+    fs.timer = setTimeout(() => {
+      if (state.fs !== fs) return;
+      fs.frame = (fs.frame + 1) % a.frames; draw(); schedule();
+    }, 1000 / a.fps + (last && !a.loop ? 600 : 0));
+  };
+  const setPlaying = (on) => { fs.playing = on; playBtn.textContent = on ? '⏸' : '▶︎ Lire'; schedule(); };
+  playBtn.addEventListener('click', () => setPlaying(!fs.playing));
+  const step = (d) => { setPlaying(false); fs.frame = (fs.frame + d + fs.anim.frames) % fs.anim.frames; draw(); };
+  maskBtn.addEventListener('click', () => { fs.showMask = !fs.showMask; maskBtn.classList.toggle('on', fs.showMask); draw(); });
+  feetBtn.addEventListener('click', () => { fs.showFeet = !fs.showFeet; feetBtn.classList.toggle('on', fs.showFeet); draw(); });
+
+  const load = (p, n) => {
+    fs.pid = p;
+    fs.anims = gkAnims(p);
+    const masks = (state.assetsById.get(`gordeka/persos/${p}/masques`) || { anims: [] }).anims;
+    const a = fs.anims.find((x) => x.name === n) || fs.anims[0];
+    if (!a) return;
+    const m = masks.find((x) => x.name === a.name);
+    fs.anim = a; fs.frame = 0; fs.img = null; fs.mask = null;
+    clearTimeout(fs.timer);
+    canvas.width = a.w; canvas.height = a.h;
+    title.textContent = `${p} · ${a.name}`;
+    maskBtn.disabled = !m;
+    feetBtn.disabled = !a.feet;
+    info.textContent = 'chargement…';
+    const img = new Image();
+    img.onload = () => { if (fs.anim === a) { fs.img = img; draw(); schedule(); } };
+    img.src = fileUrl(a.file);
+    if (m) {
+      const mi = new Image();
+      // Masque teinté en magenta : visible quel que soit le gris du masque et la couleur de la tenue.
+      mi.onload = () => {
+        if (fs.anim !== a) return;
+        const t = el('canvas', { width: mi.width, height: mi.height });
+        const tc = t.getContext('2d');
+        tc.drawImage(mi, 0, 0);
+        tc.globalCompositeOperation = 'source-in';
+        tc.fillStyle = '#e0219b';
+        tc.fillRect(0, 0, t.width, t.height);
+        fs.mask = t; draw();
+      };
+      mi.src = fileUrl(m.file);
+    }
+  };
+  const go = (d) => {
+    const i = fs.anims.indexOf(fs.anim);
+    load(fs.pid, fs.anims[(i + d + fs.anims.length) % fs.anims.length].name);
+  };
+  const goPerso = (d) => {
+    const i = persos.indexOf(fs.pid);
+    if (i < 0 || persos.length < 2) return;
+    load(persos[(i + d + persos.length) % persos.length], fs.anim.name);
+  };
+  fs.onKey = (ev) => {
+    if (ev.target && /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;
+    const k = ev.key;
+    if (k === 'Escape' && !document.fullscreenElement) closePlayer(true);
+    else if (k === 'ArrowLeft') go(-1);
+    else if (k === 'ArrowRight') go(1);
+    else if (k === 'ArrowUp') goPerso(-1);
+    else if (k === 'ArrowDown') goPerso(1);
+    else if (k === ',' || k === '<') step(-1);
+    else if (k === '.' || k === '>') step(1);
+    else if (k === ' ') setPlaying(!fs.playing);
+    else return;
+    ev.preventDefault();
+  };
+  document.addEventListener('keydown', fs.onKey);
+  // Glisser : gauche/droite = animation suivante/précédente, haut/bas = perso ; toucher = pause.
+  let t0 = null;
+  stage.addEventListener('touchstart', (ev) => { const t = ev.changedTouches[0]; t0 = { x: t.clientX, y: t.clientY }; }, { passive: true });
+  stage.addEventListener('touchend', (ev) => {
+    if (!t0) return;
+    const t = ev.changedTouches[0];
+    const dx = t.clientX - t0.x, dy = t.clientY - t0.y;
+    t0 = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
+    else if (Math.abs(dy) > 60) goPerso(dy < 0 ? 1 : -1);
+    else if (Math.abs(dx) < 10 && Math.abs(dy) < 10) setPlaying(!fs.playing);
+    ev.preventDefault();
+  });
+  stage.addEventListener('click', () => setPlaying(!fs.playing));
+
+  document.body.append(root);
+  document.body.classList.add('fs-open');
+  history.pushState({ fs: true }, '');
+  fs.pushed = true;
+  load(pid, name);
+}
+
+function toggleRealFs() {
+  const fs = state.fs;
+  if (!fs) return;
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (fs.root.requestFullscreen) fs.root.requestFullscreen().catch(() => {});
+}
+
+// back = true : fermé par l'interface (on retire l'entrée d'historique ajoutée).
+function closePlayer(back) {
+  const fs = state.fs;
+  if (!fs) return;
+  state.fs = null;
+  clearTimeout(fs.timer);
+  document.removeEventListener('keydown', fs.onKey);
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  fs.root.remove();
+  document.body.classList.remove('fs-open');
+  if (back && fs.pushed) history.back();
+}
+
+window.addEventListener('popstate', () => { if (state.fs) { state.fs.pushed = false; closePlayer(false); } });
+
+// ============================================================ GORDEKA : DÉCOR
+
+const DECOR_MODES = [['image', 'Sans masques'], ['masques', 'Avec masques'], ['controle', 'Contrôle du jeu']];
+const SOURCE_LABEL = { pixelforge: 'pixelforge', repli: 'repli local', aucun: 'sans masque' };
+
+function decorBadges(d) {
+  return el('span', { class: 'dbadges' },
+    el('span', { class: 'badge src-' + d.source, text: SOURCE_LABEL[d.source] || d.source }),
+    d.confidence !== null && d.confidence !== undefined ? el('span', { class: 'badge' + (d.confidence < 0.8 ? ' warn' : ''), text: 'confiance ' + d.confidence }) : null,
+    d.blocks_view ? el('span', { class: 'badge', text: 'bloque la vue' }) : null,
+    d.warnings && d.warnings.length ? el('span', { class: 'badge warn', title: d.warnings.join('\n'), text: '⚠ ' + d.warnings.length }) : null);
+}
+
+// Image d'un objet du décor, seule ou avec son calque de masques (même taille,
+// superposé pixel pour pixel), ou l'image de contrôle du jeu.
+function decorView(a, mode) {
+  const d = a.decor;
+  if (mode === 'controle' && d.controle) {
+    return el('div', { class: 'dview', 'data-mode': 'controle' },
+      el('img', { src: fileUrl(d.controle.file), alt: a.name + ' · contrôle du jeu', loading: 'lazy', width: d.controle.w, height: d.controle.h }));
+  }
+  const withMask = mode !== 'image' && d.calque;
+  const layers = el('div', { class: 'dlayers' },
+    el('img', { src: fileUrl(a.file), alt: a.name, loading: 'lazy', width: a.w, height: a.h }),
+    withMask ? el('img', { class: 'calque', src: fileUrl(d.calque), alt: '', loading: 'lazy', width: a.w, height: a.h }) : null);
+  return el('div', { class: 'dview', 'data-mode': withMask ? 'masques' : 'image' }, layers);
+}
+
+function decorLegend() {
+  return el('p', { class: 'legend' },
+    el('span', { class: 'sw occ' }), ' cache le perso (occluder) ',
+    el('span', { class: 'sw foot' }), ' emprise au sol, bloque (footprint) ',
+    el('span', { class: 'sw gc' }), ' contact au sol');
+}
+
+function decorCard(a) {
+  const d = a.decor;
+  let mode = state.decorMode === 'controle' && !d.controle ? 'masques' : state.decorMode;
+  const box = el('div', { class: 'dbox' }, decorView(a, mode));
+  const toggle = el('button', {
+    type: 'button', class: 'small' + (mode !== 'image' ? ' on' : ''), disabled: !d.calque && !d.controle,
+    title: 'Avec ou sans masques',
+    onclick: (ev) => {
+      ev.stopPropagation();
+      mode = mode === 'image' ? 'masques' : 'image';
+      toggle.classList.toggle('on', mode !== 'image');
+      toggle.textContent = mode === 'image' ? 'Masques : non' : 'Masques : oui';
+      box.replaceChildren(decorView(a, mode));
+    },
+  }, mode === 'image' ? 'Masques : non' : 'Masques : oui');
+  const n = openCount(a.id);
+  return el('div', { class: 'dcard' + (d.sans_masque ? ' sans' : ''), 'data-id': a.id },
+    el('button', { type: 'button', class: 'dopen', onclick: () => { location.hash = '#/assets/' + encodeURIComponent(a.id); } }, box),
+    el('div', { class: 'dcap' },
+      el('span', { class: 'dname', text: a.name }),
+      el('span', { class: 'muted did', text: a.id.split('/').pop().replace(/\.png$/, '') + ' · ' + d.categorie + ` · ${a.w}×${a.h}` }),
+      decorBadges(d),
+      el('span', { class: 'row' }, toggle,
+        n ? el('span', { class: 'badge amelioration', text: n + ' ouvert' + (n > 1 ? 's' : '') }) : null)));
+}
+
+function solTile(a) {
+  const t = el('div', { class: 'soltile' });
+  t.style.backgroundImage = `url("${fileUrl(a.file)}")`;
+  return t;
+}
+
+function solCard(a) {
+  return el('button', {
+    type: 'button', class: 'dcard sol', 'data-id': a.id,
+    onclick: () => { location.hash = '#/assets/' + encodeURIComponent(a.id); },
+  }, solTile(a),
+  el('span', { class: 'dname', text: a.name }),
+  el('span', { class: 'muted did', text: a.id.split('/').pop().replace(/\.png$/, '') + ' · répété 2×2' }));
+}
+
+function renderDecor(grid) {
+  grid.classList.add('grouped');
+  const all = state.index.assets.filter((a) => a.cat === 'Décor');
+  const objets = all.filter((a) => a.kind === 'objet');
+  const sols = all.filter((a) => a.kind === 'sol');
+  const sans = objets.filter((a) => a.decor.sans_masque);
+  const shown = state.decorSansMasque ? sans : objets;
+  const aVenir = (state.index.gordeka && state.index.gordeka.decor_a_venir) || [];
+  const modeBtns = DECOR_MODES.map(([v, label]) => el('button', {
+    type: 'button', class: 'small' + (state.decorMode === v ? ' primary' : ''),
+    onclick: () => { state.decorMode = v; store('producer-decor-mode', v); renderDecor(grid); },
+  }, label));
+  const filter = el('label', { class: 'inline' },
+    el('input', { type: 'checkbox', id: 'decor-sans-masque', checked: state.decorSansMasque || null,
+      onchange: (ev) => { state.decorSansMasque = ev.target.checked; renderDecor(grid); } }),
+    `Sans masque seulement (${sans.length})`);
+  const blocks = [el('div', { class: 'decor-bar' }, el('div', { class: 'seg' }, modeBtns), filter), decorLegend()];
+  if (!state.group || state.group === 'objets') {
+    blocks.push(el('section', { class: 'group' },
+      el('h4', { class: 'kind', text: `Objets (${shown.length}${state.decorSansMasque ? ' sans masque' : ''})` }),
+      shown.length ? el('div', { class: 'dgrid' }, shown.map(decorCard))
+        : el('p', { class: 'empty', text: 'Tous les objets ont leurs masques pixelforge.' })));
+  }
+  if (!state.decorSansMasque && (!state.group || state.group === 'sols')) {
+    blocks.push(el('section', { class: 'group' },
+      el('h4', { class: 'kind', text: `Sols (${sols.length})` }),
+      el('div', { class: 'dgrid sols' }, sols.map(solCard))));
+  }
+  if (!state.decorSansMasque && !state.group && aVenir.length) {
+    blocks.push(el('section', { class: 'group' },
+      el('h4', { class: 'kind', text: `Pas encore d'image (${aVenir.length})` }),
+      el('div', { class: 'avenir' }, aVenir.map((e) => el('span', { class: 'chip', title: (e.zones || []).join(', ') },
+        el('strong', { text: e.nom }), ' ', el('span', { class: 'muted', text: e.categorie }))))));
+  }
+  grid.replaceChildren(...blocks);
 }
 
 function tile(a) {
@@ -558,12 +964,71 @@ function showDetail(a) {
       p.playing = false; clearTimeout(p.timer); playBtn.textContent = '▶ Lecture';
       p.frame = (p.frame + dir + p.anim.frames) % p.anim.frames; draw();
     };
+    // Persos de Gordeka : lecteur plein écran (animations et masques ont les mêmes noms).
+    const gk = /^gordeka\/persos\/([^/]+)\//.exec(a.id);
     controls.append(animSel, playBtn,
       el('button', { type: 'button', class: 'small', onclick: () => step(-1), 'aria-label': 'Frame précédente' }, '◀'),
       el('button', { type: 'button', class: 'small', onclick: () => step(1), 'aria-label': 'Frame suivante' }, '▶'),
+      gk && state.index.gordeka ? el('button', { type: 'button', class: 'small primary', onclick: () => openPlayer(gk[1], p.anim.name) }, '⛶ Plein écran') : null,
       frameLbl);
+    if (gk && state.index.gordeka && a.kind === 'anim') {
+      const missing = gkSlots(gk[1]).filter((x) => !x.anim).map((x) => x.name);
+      if (missing.length) {
+        controls.append(el('p', { class: 'missing-band' },
+          el('strong', { text: `${missing.length} manquante${missing.length > 1 ? 's' : ''} : ` }), missing.join(', ')));
+      }
+    }
     context = () => 'anim : ' + p.anim.name + (p.playing ? '' : ` (frame ${p.frame + 1})`);
     requestAnimationFrame(() => load(def));
+  } else if (a.decor && a.kind === 'sol') {
+    // Sol : la tuile répétée 2×2, puis la tuile seule.
+    stage.classList.add('sol-stage');
+    stage.append(solTile(a));
+  } else if (a.decor && a.kind === 'objet') {
+    const d = a.decor;
+    const views = [['image', 'Sans masques', a], ['masques', 'Avec masques', d.calque ? a : null],
+      ['controle', 'Contrôle du jeu', d.controle], ['apercu_pf', 'Aperçu pixelforge', d.apercu_pf], ['ombre', 'Ombre', d.ombre]]
+      .filter((v) => v[2]);
+    let mode = views.some((v) => v[0] === state.decorMode) ? state.decorMode : 'image';
+    const img = el('img', { alt: a.name });
+    const calque = el('img', { class: 'calque', alt: '' });
+    const layers = el('div', { class: 'dlayers' }, img, calque);
+    stage.append(layers);
+    const btns = views.map(([v, label]) => el('button', {
+      type: 'button', class: 'small', 'data-v': v, onclick: () => { mode = v; show(); },
+    }, label));
+    const cur = () => {
+      const v = views.find((x) => x[0] === mode);
+      return v[0] === 'image' || v[0] === 'masques' ? { file: a.file, w: a.w, h: a.h } : v[2];
+    };
+    applyZoom = () => {
+      const c = cur();
+      const z = state.zoom || autoZoom(stage, c.w, c.h, 4);
+      layers.style.width = c.w * z + 'px';
+      layers.style.height = c.h * z + 'px';
+    };
+    const show = () => {
+      const c = cur();
+      img.src = fileUrl(c.file);
+      calque.hidden = mode !== 'masques';
+      if (mode === 'masques') calque.src = fileUrl(d.calque);
+      for (const b of btns) b.classList.toggle('primary', b.dataset.v === mode);
+      applyZoom();
+    };
+    requestAnimationFrame(show);
+    const warn = d.warnings || [];
+    controls.append(el('div', { class: 'seg' }, btns), decorLegend(),
+      el('dl', { class: 'credits' },
+        el('dt', { text: 'Masques' }), el('dd', {}, decorBadges(d)),
+        el('dt', { text: 'Source' }), el('dd', { text: d.source === 'pixelforge' ? 'masques pixelforge utilisés par le jeu'
+          : d.source === 'repli' ? 'repli : le jeu calcule la forme localement' + (d.refus ? ` (pixelforge refusé : ${d.refus})` : '')
+            : 'aucun masque' }),
+        el('dt', { text: 'Calques' }), el('dd', { text: (d.masques || []).join(', ') || '—' }),
+        d.camera ? [el('dt', { text: 'Caméra' }), el('dd', { text: d.camera })] : null,
+        d.shapes && d.shapes.length ? [el('dt', { text: 'Formes' }), el('dd', { text: d.shapes.join(', ') })] : null,
+        el('dt', { text: 'Zones' }), el('dd', { text: (d.zones || []).join(', ') || '—' }),
+        el('dt', { text: 'Avertissements' }), el('dd', {}, warn.length ? el('ul', { class: 'warns' }, warn.map((w) => el('li', { text: w }))) : '—')));
+    context = () => 'vue : ' + mode;
   } else {
     const img = el('img', { src: fileUrl(a.file), alt: a.name, width: a.w, height: a.h });
     stage.append(img);
@@ -587,7 +1052,8 @@ function showDetail(a) {
   };
   renderAssetComments();
 
-  d.replaceChildren(
+  // replaceChildren écrirait « null » : les blocs absents sont retirés.
+  d.replaceChildren(...[
     el('div', { class: 'detail-head' },
       el('button', { type: 'button', class: 'small', onclick: () => { location.hash = '#/assets'; } }, '← Retour'),
       el('h2', { text: a.name }),
@@ -604,7 +1070,7 @@ function showDetail(a) {
     commentForm(a, context, renderAssetComments),
     el('h3', { text: 'Historique' }),
     commentsBox,
-  );
+  ].filter(Boolean));
 }
 
 function commentForm(a, context, after) {

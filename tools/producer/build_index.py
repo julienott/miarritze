@@ -14,8 +14,14 @@ Usage : build_index.py <dossier_sortie>   (ex. web/build/producer/files)
   profil validé (modele.png), profils candidats (tools/rd/out/<id>/gk2d/profil,
   réduits, seulement s'ils sont présents : dossier non versionné), pièces du
   mannequin, chorégraphies et données JSON, textures, aperçu de la carte rendu
-  depuis map.txt, masques du décor (aperçus de pixelforge dans tools/gordeka/masques,
-  forme utilisée par le jeu dans tools/gordeka/masques/jeu, masques_decor.py).
+  depuis map.txt.
+- Décor de Gordeka (assets/gordeka/decor/index.json) : un asset par objet, avec un calque
+  coloré tiré des masques pixelforge (masques/<id>/footprint.png en vert, occluder.png en
+  violet, ground_contact.png en orange, alignés pixel pour pixel sur objets/<id>.png), la
+  source des masques (pixelforge ou repli, tools/gordeka/masques/jeu/_sources.json), le
+  contrôle du jeu (masques/jeu/<id>.png) et l'aperçu pixelforge ; un asset par sol.
+- Animations attendues (tools/gordeka/prompts_anims.json, clé « animations ») et ordre des
+  persos (clé « persos ») : dans index.json, clé « gordeka », pour les manquantes.
 - Audio : .ogg copié ; si ffmpeg est présent, un .mp3 est ajouté (Safari iOS
   ne lit pas toujours le Vorbis).
 - index.json : liste des assets (id = chemin relatif à assets/), version =
@@ -51,11 +57,12 @@ CAT_GK_PERSOS = "Persos"
 CAT_GK_MAP = "Carte"
 CAT_GK_MANNEQUIN = "Mannequin"
 CAT_GK_DECOR = "Textures & modèles"
-CAT_GK_MASQUES = "Masques du décor"
+CAT_GK_OBJETS = "Décor"
 # Sections de la barre latérale ; la page s'ouvre sur la première catégorie.
 SECTIONS = [
-    {"name": "Gordeka", "categories": [CAT_GK_PERSOS, CAT_GK_MAP, CAT_GK_MASQUES, CAT_GK_MANNEQUIN, CAT_GK_DECOR]},
-    {"name": "Borroka", "categories": [CAT_FIGHTERS, CAT_VFX, CAT_STAGES, CAT_SPRITES, CAT_UI]},
+    {"name": "Gordeka", "categories": [CAT_GK_PERSOS, CAT_GK_OBJETS, CAT_GK_MAP, CAT_GK_MANNEQUIN, CAT_GK_DECOR]},
+    # Ancien jeu de combat : replié dans la barre latérale.
+    {"name": "Borroka", "categories": [CAT_FIGHTERS, CAT_VFX, CAT_STAGES, CAT_SPRITES, CAT_UI], "collapsed": True},
     {"name": "Audio", "categories": [CAT_MUSIC, CAT_SFX, CAT_VOICE]},
 ]
 CATEGORIES = [c for s in SECTIONS for c in s["categories"]]
@@ -63,6 +70,10 @@ CATEGORIES = [c for s in SECTIONS for c in s["categories"]]
 GK = ASSETS / "gordeka"
 GK_CANDIDATS = ROOT / "tools" / "gordeka" / "candidats"   # copies réduites versionnées (sync_candidats.py)
 GK_MASQUES = ROOT / "tools" / "gordeka" / "masques"       # contrôles des formes du décor (masques_decor.py)
+GK_PROMPTS = ROOT / "tools" / "gordeka" / "prompts_anims.json"   # animations attendues, ordre des persos
+# Calques des masques du décor (RGBA) : emprise au sol, zone qui cache le perso, contact au sol.
+GK_MASK_COLORS = (("occluder.png", (155, 89, 230, 115)), ("footprint.png", (40, 200, 80, 160)),
+                  ("ground_contact.png", (255, 120, 0, 235)))
 # Ordre des animations (tools/gordeka/anime_perso.py), les autres ensuite par nom.
 GK_ANIM_ORDER = ["idle", "walk", "run_scared", "hide_in", "hide_out", "found", "trap", "trapped",
                  "search", "detect", "extract", "victory", "sad", "ghost", "ghost_move"]
@@ -105,6 +116,7 @@ class Builder:
         self.assets: list[dict] = []
         self.files: list[str] = []
         self.has_ffmpeg = shutil.which("ffmpeg") is not None
+        self.gk: dict = {"persos": [], "anims": [], "decor_a_venir": []}
 
     # -------------------------------------------------------------- utilitaires
     def _dest(self, rel: str) -> Path:
@@ -247,15 +259,23 @@ class Builder:
         dirs = {p.name for p in (GK / "persos").iterdir() if p.is_dir()} if (GK / "persos").is_dir() else set()
         cands = {p.parents[1].name for p in GK_CANDIDATS.glob("*/*/image_*.png")}
         # Persos animés d'abord, puis ceux qui ont un profil validé, puis les candidats seuls.
+        prompts = json.loads(GK_PROMPTS.read_text(encoding="utf-8")) if GK_PROMPTS.exists() else {}
+        ordre = list(prompts.get("persos", {}))
+        # Ordre du casting (prompts_anims.json), les autres ensuite par nom.
         def rank(pid: str) -> tuple:
-            d = GK / "persos" / pid
-            return (0 if any(d.glob("*.json")) else 1 if (d / "modele.png").exists() else 2, pid)
-        for pid in sorted(dirs | cands, key=rank):
+            return (ordre.index(pid) if pid in ordre else len(ordre), pid)
+        persos = sorted(dirs | cands | set(ordre), key=rank)
+        for pid in persos:
             if pid in dirs:
                 self.gk_perso(pid, GK / "persos" / pid)
             self.gk_candidats(pid)
+        # Animations attendues pour chaque perso (y compris celles « à venir » : clips sur mesure).
+        attendues = [{"name": n, "loop": bool(a.get("boucle", False)),
+                      "a_venir": bool((a.get("mouvement") or {}).get("a_venir"))}
+                     for n, a in prompts.get("animations", {}).items()]
+        self.gk = {"persos": persos, "anims": attendues, "decor_a_venir": []}
+        self.gk_objets()
         self.gk_map()
-        self.gk_masques()
         self.gk_mannequin()
         self.gk_decor()
 
@@ -292,6 +312,9 @@ class Builder:
             fps = float(meta.get("fps", 24))
             info = {"frames": n, "fps": int(fps) if fps.is_integer() else fps,
                     "loop": bool(meta.get("loop", False)), "w": w, "h": h}
+            feet = meta.get("feet_anchor")
+            if isinstance(feet, list) and len(feet) == 2:
+                info["feet"] = [int(feet[0]) - int(x0), int(feet[1]) - int(y0)]   # repère des pieds, recadré
             cut = Image.fromarray(np.concatenate([fr[y0:y1, x0:x1] for fr in frames], axis=1), "RGBA")
             f = self.save_png(cut, f"gordeka/persos/{pid}/anims/{name}.png")
             anims.append({"name": name, **info, "file": f})
@@ -420,20 +443,76 @@ class Builder:
         for js in sorted((GK / "choreo").glob("*.json")):
             self.data(js, CAT_GK_MANNEQUIN, "chorégraphies", "choreo")
 
-    def gk_masques(self) -> None:
-        """Masques du décor : aperçus de pixelforge (masques_pf.py, tools/gordeka/masques/<id>.png) et
-        forme effectivement utilisée par le jeu (masques_decor.py, tools/gordeka/masques/jeu/<id>.png)."""
-        for sub, group, note in (
-                (GK_MASQUES / "jeu", "utilisés par le jeu", "forme utilisée par le jeu (bandeau : pixelforge ou repli) ; "
-                 "vert : bloque ; violet : masque le perso derrière ; rouge : ligne de tri ; pointillé : cases"),
-                (GK_MASQUES, "aperçus pixelforge", "aperçu livré par pixelforge (pf_2d__footprint)")):
-            for png in sorted(sub.glob("*.png")):
-                rel = self.rel_src(png)
-                img = Image.open(png)
-                f = self.copy(png, rel)
-                self.add(id=rel, cat=CAT_GK_MASQUES, group=group, kind="masque_decor", name=f"{group} · {png.stem}",
-                         type="image", smooth=True, version=short_hash(png), w=img.width, h=img.height,
-                         file=f, preview=f, note=note)
+    def gk_objets(self) -> None:
+        """Décor en images (assets/gordeka/decor/index.json) : objets avec leurs masques, sols.
+
+        Le calque des masques est une image transparente de la taille de l'objet, à poser
+        dessus : violet = zone qui cache le perso (occluder), vert = emprise au sol qui bloque
+        (footprint), orange = contact au sol. « sans masque » : pas de masks.json pixelforge,
+        ou le jeu utilise le calcul local de repli (_sources.json)."""
+        ddir = GK / "decor"
+        idx_path = ddir / "index.json"
+        if not idx_path.exists():
+            return
+        elements = json.loads(idx_path.read_text(encoding="utf-8")).get("elements", {})
+        src_path = GK_MASQUES / "jeu" / "_sources.json"
+        sources = json.loads(src_path.read_text(encoding="utf-8")) if src_path.exists() else {}
+        for eid, e in elements.items():
+            fichiers = [ddir / f for f in e.get("fichiers") or [] if (ddir / f).exists()]
+            base = {"nom": e.get("nom", eid), "categorie": e.get("categorie", ""), "type": e.get("type", ""),
+                    "zones": e.get("zones", []), "cases": e.get("taille_cases")}
+            if not fichiers:
+                self.gk["decor_a_venir"].append({"id": eid, **base})
+                continue
+            png = fichiers[0]
+            rel = self.rel_src(png)
+            img = Image.open(png)
+            f = self.copy(png, rel)
+            if e.get("type", "").startswith("tuile"):
+                self.add(id=rel, cat=CAT_GK_OBJETS, group="sols", kind="sol", name=base["nom"], type="image",
+                         smooth=True, version=short_hash(png), w=img.width, h=img.height, file=f, preview=f,
+                         decor=base, note=f"tuile de {'×'.join(map(str, e.get('taille_cases') or []))} cases, "
+                                         "affichée répétée 2×2")
+                continue
+            srcs = [png]
+            mdir = ddir / "masques" / eid
+            mj = mdir / "masks.json"
+            masks = json.loads(mj.read_text(encoding="utf-8")) if mj.exists() else None
+            jeu = sources.get(eid, {})
+            source = jeu.get("source") or ("pixelforge" if masks else "aucun")
+            info = {**base, "source": source, "refus": jeu.get("refus_pixelforge", ""),
+                    "confidence": (masks or {}).get("confidence"), "warnings": (masks or {}).get("warnings", []),
+                    "blocks_view": (masks or {}).get("blocks_view", jeu.get("bloque_vue")),
+                    "camera": (masks or {}).get("camera", ""), "shapes": (masks or {}).get("shapes", []),
+                    "sans_masque": source != "pixelforge"}
+            # Calque coloré, aligné pixel pour pixel (même taille que l'objet).
+            calque = np.zeros((img.height, img.width, 4), dtype=np.uint8)
+            poses = []
+            for name, color in GK_MASK_COLORS:
+                mp = mdir / name
+                if not mp.exists():
+                    continue
+                m = Image.open(mp)
+                if m.size != img.size:
+                    info["warnings"] = info["warnings"] + [f"{name} {m.size[0]}×{m.size[1]} ≠ objet {img.width}×{img.height}"]
+                    continue
+                a = np.array(m.convert("RGBA"))[..., 3] > 0
+                calque[a] = color
+                poses.append(name)
+                srcs.append(mp)
+            if poses:
+                info["calque"] = self.save_png(Image.fromarray(calque, "RGBA"), f"gordeka/decor/calques/{eid}.png")
+            info["masques"] = poses
+            if mj.exists():
+                srcs.append(mj)
+            for key, path in (("controle", GK_MASQUES / "jeu" / f"{eid}.png"), ("apercu_pf", GK_MASQUES / f"{eid}.png"),
+                              ("ombre", ddir / e["ombre"] if e.get("ombre") else None)):
+                if path is not None and path.exists():
+                    im = Image.open(path)
+                    info[key] = {"file": self.copy(path, self.rel_src(path)), "w": im.width, "h": im.height}
+            self.add(id=rel, cat=CAT_GK_OBJETS, group="objets", kind="objet", name=base["nom"], type="image",
+                     smooth=True, version=short_hash(*srcs), w=img.width, h=img.height, file=f, preview=f,
+                     decor=info, note=f"{eid} · {base['categorie']}")
 
     def gk_decor(self) -> None:
         for sub, group in (("textures", "textures"), ("models", "modèles")):
@@ -541,6 +620,7 @@ class Builder:
             "generated_at": int(time.time()),
             "categories": CATEGORIES,
             "sections": SECTIONS,
+            "gordeka": self.gk,
             "assets": self.assets,
             "files": sorted(set(self.files)),
         }

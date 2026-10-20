@@ -6,8 +6,19 @@ Service privé : https://miarritze.ijulien.com/producer/
 
 - **Connexion** : mot de passe unique. Après 5 échecs, l'adresse IP est bloquée 15 minutes. La session dure 30 jours.
 - **Assets** : les catégories sont à gauche (sur iPhone, en haut). On peut aussi chercher par nom (`maia`, `idle`, `fronton`…).
-  - Les catégories sont rangées en trois sections : **Gordeka** (Persos, Carte, Mannequin, Textures & modèles), **Borroka** (Combattants, VFX, Décors, Fonds & sprites, UI) et **Audio**.
-  - La page s'ouvre sur les persos de Gordeka : une section par perso (cliquer son nom n'affiche que lui), les persos animés d'abord. Dans chaque section, les familles : animations, masques (masque de tenue `<anim>_tenue.png`, même recadrage que l'animation), profil validé (`modele.png`), profils candidats (`tools/rd/out/<id>/gk2d/profil/image_0N_white.png`, réduits à 512 px, « variante N » = `image_0(N-1)`, avec le prompt). Les candidats ne viennent que d'un build local : `tools/rd/out/` n'est pas versionné, le build du déploiement GitHub ne les a pas.
+  - Les catégories sont rangées en trois sections : **Gordeka** (Persos, Décor, Carte, Mannequin, Textures & modèles), **Borroka** (l'ancien jeu de combat, replié : toucher « ▸ Borroka » pour l'ouvrir) et **Audio**.
+  - **Persos** (la page d'ouverture) :
+    - en haut, le **récapitulatif** perso × animation : ✓ = présente (toucher un ✓ la lit en plein écran), « · » = manquante. La liste attendue est celle de `tools/gordeka/prompts_anims.json` ; les clips sur mesure à venir (`hunter_reveal`, émotes) sont en italique ;
+    - puis une section par perso, dans l'ordre du casting : le profil validé à gauche, un bandeau qui liste ses animations manquantes, et toutes ses animations qui tournent. Une animation manquante est une tuile hachurée « manquante » (ou « à venir » pour un clip sur mesure). En dessous : masques de tenue et profils candidats ;
+    - « Commenter les animations » ouvre la page de commentaires des animations du perso.
+  - **Plein écran** : toucher une animation l'ouvre en plein écran, à la vitesse du `.json` (i/s, boucle ; une animation sans boucle marque une pause sur sa dernière image). Commandes : ◀ ▶ image par image (met en pause), ⏸ / Lire, « ‹ anim » « anim › » ; sur iPhone, **glisser** à gauche/droite change d'animation, glisser vers le haut/bas change de perso, toucher l'image met en pause. Au clavier : ← → animation, ↑ ↓ perso, `,` `.` image par image, espace pause, Échap ferme. « Fond » alterne clair, sombre et damier ; « Masque » pose le masque de tenue (en magenta) ; « Pieds » trace la ligne des pieds (`feet_anchor`) ; ⛶ passe en vrai plein écran quand le navigateur le permet (pas sur iPhone, où le lecteur occupe déjà tout l'écran). Le bouton retour du navigateur ferme le lecteur. Pense à tourner l'iPhone en paysage.
+  - **Décor** : tous les objets du décor de `assets/gordeka/decor` sur damier.
+    - En haut : « Sans masques » (l'image seule), « Avec masques » (violet = zone qui cache le perso, vert = emprise au sol qui bloque, orange = contact au sol ; masques pixelforge superposés pixel pour pixel), « Contrôle du jeu » (la forme réellement utilisée par le jeu). Chaque objet a aussi sa bascule « Masques : oui/non ».
+    - Badges : source des masques (vert « pixelforge », orange « repli local » quand le jeu recalcule la forme lui-même, rouge « sans masque »), confiance de pixelforge, « bloque la vue », nombre d'avertissements (survol ou page de l'objet pour les lire).
+    - « Sans masque seulement » ne garde que les objets sans masques pixelforge utilisés (repli ou aucun), encadrés en orange.
+    - Les sols sont affichés en tuile répétée 2×2 ; en bas, la liste des éléments du décor qui n'ont pas encore d'image.
+    - Toucher un objet ouvre sa page : vues sans/avec masques, contrôle du jeu, aperçu pixelforge et ombre, avec les avertissements, la caméra et les zones, et les commentaires.
+  - Les profils candidats viennent de `tools/gordeka/candidats/` (copies réduites versionnées, « variante N » = `image_0(N-1)`, avec le prompt).
   - Carte : aperçu rendu depuis `map.txt` (une couleur par tuile, celles de `gk_map.gd`, zones de `zones.json` encadrées et nommées), sauf si un PNG existe dans le dossier de la carte. Mannequin : pièces du pantin, `rig.json` et chorégraphies (JSON affichés en texte). Textures & modèles : textures du décor et des `.glb`.
   - Combattants de Borroka : une section par perso, et dans chaque section les tuiles rangées par famille — animations, portraits, image de fin, projectiles, effets des spéciaux, palettes, sources. Les persos sont colorisés avec le costume 0 ; la vignette des animations joue l'attente.
   - Sur « animations », toutes les animations du perso tournent en aperçu sous le lecteur ; un clic en ouvre une dans le lecteur, où l'on peut avancer image par image avec ◀ ▶.
@@ -50,7 +61,7 @@ Routine conseillée :
 
 Les ids d'asset sont les chemins relatifs à `assets/`, par exemple `fighters/maia/sheet.png`, qui regroupe les animations de Maia. La version d'un asset est un hash court de ses sources.
 
-Pour une sheet, ces sources sont `sheet.png`, `palettes.png` et `anims.json`. Pour Gordeka, les animations d'un perso ont l'id `gordeka/persos/<id>/animations` (sources : les `<anim>.png` et `<anim>.json`), ses masques `gordeka/persos/<id>/masques` (les `<anim>_tenue.png`), la carte `maps/<carte>/map.txt` et un profil candidat son chemin dans le dépôt (`tools/rd/out/<id>/gk2d/profil/image_00_white.png`). Un commentaire dont la version diffère de la version actuelle porte sur une version précédente.
+Pour une sheet, ces sources sont `sheet.png`, `palettes.png` et `anims.json`. Pour Gordeka, les animations d'un perso ont l'id `gordeka/persos/<id>/animations` (sources : les `<anim>.png` et `<anim>.json`), ses masques `gordeka/persos/<id>/masques` (les `<anim>_tenue.png`), un objet ou un sol du décor son chemin (`gordeka/decor/objets/fronton.png`, sources : l'image, ses masques et `masks.json`), la carte `maps/<carte>/map.txt` et un profil candidat son chemin dans le dépôt (`tools/gordeka/candidats/<id>/<lot>/image_00.png`). Un commentaire dont la version diffère de la version actuelle porte sur une version précédente.
 
 ### API (HTTP)
 
@@ -109,7 +120,7 @@ php -S 127.0.0.1:8099 -t /tmp/producer-site &
 PRODUCER_URL=http://127.0.0.1:8099/producer/ PRODUCER_TEST_PASSWORD=test-local \
   PRODUCER_TOKEN=tok_local_0123456789abcdefghij node tests/web/producer.mjs   # base vide requise
 PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_anims.mjs   # page d'un perso + galerie animée
-PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_gordeka.mjs # ouverture sur Gordeka, Louis, masques, carte
+PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_gordeka.mjs # persos, manquantes, plein écran, décor (ordi + iPhone)
 ```
 
 Le test (Chromium, 36 vérifications) couvre :

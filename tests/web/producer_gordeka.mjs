@@ -1,9 +1,10 @@
-// /producer : ouverture sur Gordeka (persos, animations HD, masques de tenue,
-// profils validés et candidats, carte, chorégraphies) et Borroka toujours accessible
-// (Chromium, ordinateur + iPhone).
-// Env : PRODUCER_URL (défaut http://127.0.0.1:8099/producer/), PRODUCER_TEST_PASSWORD.
-// Captures dans tests/out/producer/.
-import { chromium, devices } from 'playwright';
+// /producer : Gordeka d'abord (persos, récapitulatif des animations, animations
+// manquantes, lecteur plein écran, décor avec ou sans masques, filtre « sans masque »,
+// sols répétés 2×2), Borroka replié mais accessible.
+// Ordinateur (Chromium) + iPhone portrait et paysage (WebKit si installé, sinon Chromium).
+// Env : PRODUCER_URL (défaut http://127.0.0.1:8099/producer/), PRODUCER_TEST_PASSWORD,
+//       PRODUCER_SHOTS (dossier des captures, défaut tests/out/producer).
+import { chromium, webkit, devices } from 'playwright';
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -14,7 +15,7 @@ if (!PASSWORD) {
   process.exit(2);
 }
 const ROOT = path.resolve(import.meta.dirname, '../..');
-const OUT = path.join(ROOT, 'tests/out/producer');
+const OUT = process.env.PRODUCER_SHOTS || path.join(ROOT, 'tests/out/producer');
 fs.mkdirSync(OUT, { recursive: true });
 let fails = 0;
 const check = (name, ok, detail = '') => {
@@ -32,87 +33,233 @@ const animated = (page, sel) => page.evaluate(async (s) => {
     return [n, h];
   });
   const shots = [];
-  for (let k = 0; k < 6; k++) { shots.push(snap()); await new Promise((r) => setTimeout(r, 120)); }
+  for (let k = 0; k < 8; k++) { shots.push(snap()); await new Promise((r) => setTimeout(r, 120)); }
   const drawn = shots[shots.length - 1].filter(([n]) => n > 0).length;
   const moving = cs.filter((_, i) => new Set(shots.map((x) => x[i].join(':'))).size > 1).length;
   return { total: cs.length, drawn, moving };
 }, sel);
 
-const browser = await chromium.launch();
-for (const [label, opts] of [['ordi', { viewport: { width: 1280, height: 900 } }], ['iphone', devices['iPhone 13']]]) {
+let wk = null;
+try { wk = await webkit.launch(); } catch (e) { console.log('     (WebKit indisponible : iPhone émulé dans Chromium)'); }
+const cr = await chromium.launch();
+const runs = [
+  ['ordi', cr, { viewport: { width: 1366, height: 900 } }],
+  ['iphone_portrait', wk || cr, devices['iPhone 13']],
+  ['iphone_paysage', wk || cr, devices['iPhone 13 landscape']],
+];
+for (const [label, browser, opts] of runs) {
   const context = await browser.newContext(opts);
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
+  // WebKit signale les styles internes des <select> du formulaire de carte (CSP) : sans effet.
+  page.on('console', (m) => {
+    if (m.type() === 'error' && !(browser === wk && m.text().startsWith('Refused to apply a stylesheet'))) errors.push(m.text());
+  });
+  const shot = (n, full = false) => page.screenshot({ path: path.join(OUT, `${label}_${n}.png`), fullPage: full });
   await page.goto(BASE);
   await page.waitForSelector('#login:not([hidden])');
   await page.fill('#password', PASSWORD);
   await page.click('#login-form button[type=submit]');
-  await page.waitForSelector('.group .group-head');
+  await page.waitForSelector('.gk-perso');
   await page.waitForTimeout(1500);
 
-  // Ouverture : les persos de Gordeka, une section par perso, Louis en premier.
+  // Ouverture : persos de Gordeka, récapitulatif, une section par perso dans l'ordre du casting.
   const active = await page.$eval('.cats button.active span', (s) => s.textContent);
-  check(`${label} : ouverture sur les persos de Gordeka`, active === 'Persos', active);
-  const sections = await page.$$eval('.cats li.section', (l) => l.map((x) => x.textContent));
-  check(`${label} : sections Gordeka puis Borroka`, sections[0] === 'Gordeka' && sections.includes('Borroka'), sections.join(','));
-  const heads = await page.$$eval('.group .group-name', (h) => h.map((x) => x.textContent));
-  check(`${label} : une section par perso, Louis d'abord`, heads[0] === 'louis' && heads.length >= 5, heads.join(','));
-  const kinds = await page.$eval('.group:has(.group-name:text-is("louis"))', (g) => [...g.querySelectorAll('.kind')].map((k) => k.textContent));
-  check(`${label} : Louis, animations puis masques`, kinds[0] === 'Animations' && kinds[1] === 'Masques', kinds.join(','));
-  const thumb = await animated(page, '#grid > .group:first-child .tile .thumb canvas');
-  check(`${label} : vignettes de Louis animées`, thumb.total === 2 && thumb.moving === 2, JSON.stringify(thumb));
-  const kinds2 = await page.$$eval('.group .kind', (k) => [...new Set(k.map((x) => x.textContent))]);
-  check(`${label} : profils validés présents`, kinds2.includes('Profil validé'), kinds2.join(','));
-  if (!kinds2.includes('Profils candidats')) console.log('     (pas de profils candidats : tools/rd/out absent)');
-  await page.screenshot({ path: path.join(OUT, `gordeka_${label}_ouverture.png`) });
+  check(`${label} : ouverture sur les persos`, active === 'Persos', active);
+  const persos = await page.$$eval('.gk-perso', (l) => l.map((x) => x.dataset.perso));
+  check(`${label} : 12 persos dans l'ordre`, persos.length === 12 && persos[0] === 'louis' && persos[11] === 'peio', persos.join(','));
+  const recap = await page.$$eval('.recap-table tbody tr', (r) => r.length);
+  const cols = await page.$$eval('.recap-table thead th.v', (r) => r.length);
+  check(`${label} : récapitulatif perso × animation`, recap === 12 && cols === 23, `${recap} lignes, ${cols} colonnes`);
+  const louis = await page.$eval('.gk-perso[data-perso="louis"]', (s) => ({
+    present: s.querySelectorAll('.gk-anim:not(.missing)').length,
+    missing: [...s.querySelectorAll('.gk-anim.missing')].map((x) => x.dataset.anim),
+    band: s.querySelector('.missing-band').textContent,
+    profil: !!s.querySelector('.gk-profil .tile'),
+  }));
+  check(`${label} : Louis, profil et animations`, louis.profil && louis.present >= 15, JSON.stringify(louis.present));
+  check(`${label} : Louis, manquantes (hunter_reveal, emotes)`,
+    louis.missing.includes('hunter_reveal') && louis.missing.includes('emote_salut') && louis.band.includes('manquante'),
+    louis.missing.join(','));
+  const amaia = await page.$eval('.gk-perso[data-perso="amaia"]', (s) => s.querySelectorAll('.gk-anim.missing').length);
+  check(`${label} : Amaia, toutes manquantes`, amaia === 22, String(amaia));
+  const vign = await animated(page, '.gk-perso[data-perso="louis"] .gk-anim canvas');
+  check(`${label} : vignettes de Louis animées`, vign.drawn === vign.total && vign.moving >= vign.total - 2, JSON.stringify(vign));
+  await shot('01_persos');
+  await page.evaluate(() => document.querySelector('.gk-perso[data-perso="louis"]').scrollIntoView());
+  await page.waitForTimeout(400);
+  await shot('02_louis');
+  await page.evaluate(() => document.querySelector('.gk-perso[data-perso="mattin"]').scrollIntoView());
+  await page.waitForTimeout(600);
+  await shot('03_mattin_manquantes');
 
-  // Lecteur : animations de Louis (galerie et lecteur).
-  await page.click('.tile[data-id="gordeka/persos/louis/animations"]');
-  await page.waitForSelector('.anim-gallery .anim-cell');
-  await page.waitForTimeout(1500);
-  const g = await animated(page, '.anim-gallery canvas');
-  check(`${label} : galerie, toutes les animations dessinées`, g.total >= 13 && g.drawn === g.total, JSON.stringify(g));
-  check(`${label} : galerie, les animations bougent`, g.moving >= g.total - 2, JSON.stringify(g));
-  const p = await animated(page, '.stage canvas');
-  check(`${label} : le lecteur joue`, p.drawn === 1 && p.moving === 1, JSON.stringify(p));
-  const fits = await page.$eval('.stage canvas', (c) => c.getBoundingClientRect().width <= window.innerWidth);
-  check(`${label} : le lecteur tient dans l'écran`, fits);
-  await page.click('.anim-cell:has(span:text-is("walk"))');
-  await page.waitForTimeout(300);
-  check(`${label} : un clic ouvre l'animation dans le lecteur`,
-    (await page.$eval('.controls select[aria-label="Animation"]', (s) => s.value)) === 'walk');
+  // Lecteur plein écran : walk de Louis.
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.screenshot({ path: path.join(OUT, `gordeka_${label}_louis_anims.png`) });
+  await page.click('.gk-perso[data-perso="louis"] .gk-anim[data-anim="walk"]');
+  await page.waitForSelector('.fs canvas');
+  await page.waitForTimeout(800);
+  const fsBox = await page.$eval('.fs', (f) => { const r = f.getBoundingClientRect(); return [r.width, r.height, innerWidth, innerHeight]; });
+  check(`${label} : plein écran couvre l'écran`, fsBox[0] >= fsBox[2] - 1 && fsBox[1] >= fsBox[3] - 1, fsBox.join(','));
+  const cv = await page.$eval('.fs-canvas', (c) => { const r = c.getBoundingClientRect(); return [r.width, r.height]; });
+  check(`${label} : grande image`, cv[1] > fsBox[3] * 0.45, cv.join('×'));
+  const play = await animated(page, '.fs-canvas');
+  check(`${label} : plein écran joue`, play.drawn === 1 && play.moving === 1, JSON.stringify(play));
+  check(`${label} : titre`, (await page.textContent('.fs-title')) === 'louis · walk');
+  await shot('04_plein_ecran_walk');
+  await page.click('button[aria-label="Animation suivante"]');
+  await page.waitForTimeout(300);
+  check(`${label} : animation suivante`, (await page.textContent('.fs-title')) === 'louis · run_scared', await page.textContent('.fs-title'));
+  await page.click('button[aria-label="Image suivante"]');   // met en pause
+  const frameNo = async () => Number((await page.textContent('.fs-info')).match(/image (\d+)\//)[1]);
+  const f0 = await frameNo();
+  await page.click('button[aria-label="Image suivante"]');
+  await page.click('button[aria-label="Image suivante"]');
+  await page.waitForTimeout(300);
+  const f1 = await frameNo();
+  check(`${label} : image par image (en pause)`, f1 === f0 + 2, `${f0} -> ${f1}`);
+  if (label === 'ordi') {
+    await page.keyboard.press('ArrowLeft');
+    await page.waitForTimeout(200);
+    check(`${label} : flèche ← = animation précédente`, (await page.textContent('.fs-title')) === 'louis · walk');
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(200);
+    check(`${label} : flèche ↓ = perso suivant`, (await page.textContent('.fs-title')) === 'txomin · walk', await page.textContent('.fs-title'));
+  } else if (browser === cr) {
+    // Glissement vers la gauche : animation suivante (Touch constructible dans Chromium seulement).
+    const before = await page.textContent('.fs-title');
+    await page.evaluate(() => {
+      const s = document.querySelector('.fs-stage');
+      const mk = (type, x) => {
+        const t = new Touch({ identifier: 1, target: s, clientX: x, clientY: 200 });
+        s.dispatchEvent(new TouchEvent(type, { touches: type === 'touchend' ? [] : [t], changedTouches: [t], bubbles: true, cancelable: true }));
+      };
+      mk('touchstart', 300); mk('touchend', 120);
+    }).catch((e) => console.log('     (TouchEvent non simulable : ' + e.message + ')'));
+    await page.waitForTimeout(300);
+    const after = await page.textContent('.fs-title');
+    check(`${label} : glisser = animation suivante`, after !== before, `${before} -> ${after}`);
+  }
+  await page.click('.fs-bar button[title="Fond"]');
+  await page.click('.fs-bar button[title="Masque de tenue par-dessus"]');
+  await page.waitForTimeout(500);
+  await shot('05_plein_ecran_fond_masque');
+  await page.click('.fs-close');
+  await page.waitForTimeout(300);
+  check(`${label} : fermeture du plein écran`, (await page.$('.fs')) === null);
 
-  // Masques de tenue.
-  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/persos/louis/masques'));
+  // Récapitulatif : un ✓ ouvre le lecteur.
+  await page.click('.recap-table tr[data-perso="maia"] td.yes button');
+  await page.waitForSelector('.fs canvas');
+  check(`${label} : ✓ du récapitulatif ouvre le lecteur`, (await page.textContent('.fs-title')).startsWith('maia · '));
+  await page.click('.fs-close');
+
+  // Page des animations (commentaires) : bouton plein écran et bandeau des manquantes.
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/persos/louis/animations'));
   await page.waitForSelector('.anim-gallery .anim-cell');
-  await page.waitForTimeout(1200);
-  const m = await animated(page, '.stage canvas');
-  check(`${label} : masque de tenue affiché`, m.drawn === 1, JSON.stringify(m));
-  await page.screenshot({ path: path.join(OUT, `gordeka_${label}_louis_masques.png`) });
+  check(`${label} : page des animations, bandeau des manquantes`, !!(await page.$('#detail .missing-band')));
+  check(`${label} : page des animations, bouton plein écran`, !!(await page.$('#detail button:has-text("Plein écran")')));
 
-  // Carte : aperçu rendu depuis map.txt.
-  await page.goto(BASE + '#/assets/' + encodeURIComponent('maps/port_pecheurs/map.txt'));
-  await page.waitForSelector('.stage img');
-  const map = await page.$eval('.stage img', (i) => i.decode().then(() => [i.naturalWidth, i.naturalHeight]));
-  check(`${label} : aperçu de la carte`, map[0] > 0 && map[1] > 0, map.join('×'));
-  await page.screenshot({ path: path.join(OUT, `gordeka_${label}_carte.png`) });
-
-  // Chorégraphie (JSON en texte).
-  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/choreo/walk.json'));
-  await page.waitForFunction(() => (document.querySelector('pre.data') || {}).textContent?.includes('"tracks"'));
-  check(`${label} : chorégraphie lisible`, true);
-
-  // Borroka reste accessible.
+  // Décor : avec masques (défaut), sans masques, filtre « sans masque », sols.
   await page.goto(BASE + '#/assets');
-  await page.click('.cats button:has-text("Combattants")');
+  await page.click('.cats button:has(span:text-is("Décor"))');
+  await page.waitForSelector('.dcard');
+  await page.click('.decor-bar .seg button:has-text("Avec masques")');
+  await page.waitForTimeout(1500);
+  const objets = await page.$$eval('.dgrid:not(.sols) .dcard', (l) => l.length);
+  const calques = await page.$$eval('.dgrid:not(.sols) .dcard img.calque', (l) => l.filter((i) => i.complete && i.naturalWidth > 0).length);
+  check(`${label} : objets du décor avec calques`, objets >= 25 && calques >= objets - 1, `${objets} objets, ${calques} calques`);
+  // Alignement : calque et image occupent exactement la même boîte.
+  const align = await page.$$eval('.dgrid .dlayers', (l) => l.every((d) => {
+    const [a, b] = d.querySelectorAll('img');
+    if (!b) return true;
+    const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+    return Math.abs(ra.x - rb.x) < 0.5 && Math.abs(ra.y - rb.y) < 0.5 && Math.abs(ra.width - rb.width) < 0.5;
+  }));
+  check(`${label} : calques alignés sur les images`, align);
+  await shot('06_decor_masques');
+  // Bascule d'un objet.
+  const first = '.dgrid:not(.sols) .dcard:first-child';
+  await page.click(`${first} .row button`);
+  check(`${label} : bascule par objet (sans masques)`, (await page.$(`${first} img.calque`)) === null);
+  await page.click('.decor-bar .seg button:has-text("Sans masques")');
+  await page.waitForTimeout(800);
+  check(`${label} : tout sans masques`, (await page.$$('.dgrid img.calque')).length === 0);
+  await shot('07_decor_sans_masques');
+  await page.check('#decor-sans-masque');
+  await page.waitForTimeout(300);
+  const sans = await page.$$eval('.dcard', (l) => l.map((x) => x.dataset.id.split('/').pop()));
+  check(`${label} : filtre « sans masque »`, sans.length >= 1 && sans.length < objets, sans.join(','));
+  await page.click('.decor-bar .seg button:has-text("Contrôle du jeu")');
+  await page.waitForTimeout(800);
+  await shot('08_decor_sans_masque_controle');
+  await page.uncheck('#decor-sans-masque');
+  await page.click('.decor-bar .seg button:has-text("Avec masques")');
+  await page.evaluate(() => document.querySelector('.dgrid.sols').scrollIntoView());
+  await page.waitForTimeout(800);
+  const sols = await page.$$eval('.dgrid.sols .soltile', (l) => l.map((t) => getComputedStyle(t).backgroundSize));
+  check(`${label} : sols répétés 2×2`, sols.length >= 9 && sols.every((s) => s === '50% 50%'), `${sols.length} sols`);
+  await shot('09_decor_sols');
+
+  // Détail d'un objet (repli).
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/decor/objets/mur_soutenement.png'));
+  await page.waitForSelector('.stage .dlayers');
+  await page.click('#detail .seg button:has-text("Avec masques")');
+  await page.waitForTimeout(800);
+  check(`${label} : détail, source repli affichée`, (await page.textContent('#detail .credits')).includes('repli'));
+  await shot('10_detail_objet');
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/decor/objets/fronton.png'));
+  await page.waitForSelector('.stage .dlayers');
+  await page.click('#detail .seg button:has-text("Avec masques")');
+  await page.waitForTimeout(800);
+  await shot('11_detail_fronton');
+
+  // Borroka : replié, toujours accessible.
+  await page.goto(BASE + '#/assets');
+  await page.waitForSelector('.cats li.section');
+  const folded = (await page.$$('.cats button:has(span:text-is("Combattants"))')).length === 0;
+  check(`${label} : Borroka replié`, folded);
+  await page.click('.cats li.section.foldable button');
+  await page.click('.cats button:has(span:text-is("Combattants"))');
   await page.waitForSelector('.tile[data-id="fighters/maia/sheet.png"]');
   check(`${label} : combattants de Borroka accessibles`, true);
+  await page.click('#tabs a[data-tab="kanban"]');
+  await page.waitForSelector('#board .column');
+  check(`${label} : kanban`, true);
   check(`${label} : aucune erreur JavaScript`, errors.length === 0, errors.join(' | '));
   await context.close();
 }
-await browser.close();
+// Glissement tactile (Chromium : WebKit ne construit pas de TouchEvent depuis un script).
+{
+  const context = await cr.newContext(devices['iPhone 13 landscape']);
+  const page = await context.newPage();
+  await page.goto(BASE);
+  await page.waitForSelector('#login:not([hidden])');
+  await page.fill('#password', PASSWORD);
+  await page.click('#login-form button[type=submit]');
+  await page.waitForSelector('.gk-perso');
+  await page.click('.gk-perso[data-perso="louis"] .gk-anim[data-anim="walk"]');
+  await page.waitForSelector('.fs canvas');
+  const swipe = (x0, y0, x1, y1) => page.evaluate(([x0, y0, x1, y1]) => {
+    const s = document.querySelector('.fs-stage');
+    const mk = (type, x, y) => {
+      const t = new Touch({ identifier: 1, target: s, clientX: x, clientY: y });
+      s.dispatchEvent(new TouchEvent(type, { touches: type === 'touchend' ? [] : [t], changedTouches: [t], bubbles: true, cancelable: true }));
+    };
+    mk('touchstart', x0, y0); mk('touchend', x1, y1);
+  }, [x0, y0, x1, y1]);
+  await swipe(400, 150, 200, 160);
+  await page.waitForTimeout(200);
+  check('tactile : glisser à gauche = animation suivante', (await page.textContent('.fs-title')) === 'louis · run_scared', await page.textContent('.fs-title'));
+  await swipe(200, 150, 400, 150);
+  await page.waitForTimeout(200);
+  check('tactile : glisser à droite = animation précédente', (await page.textContent('.fs-title')) === 'louis · walk');
+  await swipe(300, 250, 300, 80);
+  await page.waitForTimeout(200);
+  check('tactile : glisser vers le haut = perso suivant', (await page.textContent('.fs-title')) === 'txomin · walk', await page.textContent('.fs-title'));
+  await context.close();
+}
+await cr.close();
+if (wk) await wk.close();
 console.log(fails ? `${fails} échec(s)` : 'tout est vert');
 process.exit(fails ? 1 : 0);
