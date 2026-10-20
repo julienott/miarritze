@@ -6,7 +6,7 @@
   "933b4c60c4624e2fba2f7ea74badf1ca"
  ],
  "sol_beton_atelier": [
-  "6670bce3fd7c4927822e63587d421423"
+  "cb3128bb17b648b09a2144612158cdf7"
  ],
  "sol_paves_ruelle": [
   "71ac1f679d1648a2a0953703713c9dc3"
@@ -21,7 +21,7 @@
   "c872ec4a95264213adda03a962f36ae2"
  ],
  "sol_rocher_phare": [
-  "81d1e8d2e25d472faddc9c37f0705ac4"
+  "e281df140a1240078de57c76a3134968"
  ],
  "eau_mer": [
   "545e1292803c44c2a2687ded049710df"
@@ -33,23 +33,23 @@
   "587aa1f6a85648d69ebdcd26f1c4cf1b"
  ],
  "toit_tuiles": [
-  "8b08962aa0af4b759954a82b78292189"
+  "1429170d04fe42b2b7eb14487d6c9f0e"
  ],
  "facade_labourdine": [],
  "chambre_froide": [
-  "d639d58847ae4a1e9217e470bac176e1"
+  "cafa94a49e964db28892cee8a9f4faec"
  ],
  "tour_phare": [
   "896d94dfe59a4eebafb850a50dde783c"
  ],
  "fronton": [
-  "d5ed2664c2624ef8835e099b81de8147"
+  "2baac5038eaf426d873dddaa763e5c0a"
  ],
  "autel_chapelle": [
-  "47b2e9d9a999403aa3499150241c899f"
+  "7299e83ec8f44008be03c821219b6cd4"
  ],
  "comptoir_bar": [
-  "492334b80e3f42e39567786d93e23959"
+  "17f2f0c1d0114306a14507154bee4054"
  ],
  "mur_soutenement": [
   "b96c0ef6bcea4984baff17bd993716a1"
@@ -58,13 +58,13 @@
   "4e6799bf07da4884b8ad2dbb7deb165b"
  ],
  "coque_sur_ber": [
-  "d10205a82e57492b89e516e0c64df751"
+  "5acc6503a9f54559bc8e6211305f3584"
  ],
  "coque_chantier": [
-  "f10243bdc50b4faa92b79c120a1d8a9e"
+  "e25b166fcac142518181dbd7914d765e"
  ],
  "maison_crampotte": [
-  "1d97cefe8a20400dbe6b8a7d3898eb3c",
+  "56a1ec302d1b41bdba879a6509a6a645",
   "b4e342bae1da4629a403ea8136d96834",
   "1f908bbb21df45a79f18a20ef9502c84",
   "e0552d053cfa41799577dbc51f26d906"
@@ -75,7 +75,7 @@
   "105eb402ca564b2793ab3bc392faabc3"
  ],
  "caisses_poisson": [
-  "e183f1081ec148ffbfc47d15b0886a89",
+  "f67fbeffbcde42aa9d6d474dfe3dc52a",
   "12b9f5bba8ab4084bd80a8af34f04785",
   "22dfad861d2744abae3e2a4ec65efb4a"
  ],
@@ -92,22 +92,22 @@
   "c1c3af5481e141219392559ae075a2a8"
  ],
  "banc_chapelle": [
-  "f04b2a3e7d6a453c8674d787ea689c20"
+  "484e9ffdda854a13ab04ea939cfab3c9"
  ],
  "etabli_atelier": [
-  "d71cce21d4254ac482a44632dc9db9c5"
+  "825bdf842cc947ae854a1a35f3b96575"
  ],
  "marches_escalier": [
-  "d1f00c4b19134e3d897c3bf91e855053"
+  "bd868b0911d1473286e2c4046a0fc620"
  ],
  "table_terrasse": [
-  "62c9f54a53e046169b7984d612cce8c7"
+  "770fd3bc0d4c49a9952eee1e80fb4a27"
  ],
  "treteaux_cale": [
-  "c8f1ec8af99540b39578117b46e52785"
+  "2c35acadc3b647d49b662854b1504b36"
  ],
  "lavoir_bassin": [
-  "a38dccce84a04183bdcf5038a5c14e1c"
+  "a32ee2539b3046709b14a7d886c9fa99"
  ],
  "cachette_casier_homards": [
   "e1e738b6a1d7448381aeef6df846f845"
@@ -135,5 +135,8 @@
  ],
  "cachette_confessionnal": [
   "f11e8c683c6340db95debd136d76d918"
+ ],
+ "cachette_barque_retournee": [
+  "853f1ba788924751bf2fed44503898e6"
  ]
 }
