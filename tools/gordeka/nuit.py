@@ -15,6 +15,7 @@ import os
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
 
 from PIL import Image
@@ -50,7 +51,12 @@ def log(*a):
 
 
 def tache(tid):
-    return json.loads(urllib.request.urlopen(f"{pf.PF}/v2/inferences/tasks/{tid}", timeout=60).read())
+    try:
+        return json.loads(urllib.request.urlopen(f"{pf.PF}/v2/inferences/tasks/{tid}", timeout=60).read())
+    except urllib.error.HTTPError as e:
+        if e.code == 404:   # tâche purgée ou perdue chez pixelforge : traitée comme expirée (relance)
+            return {"status": "expired", "error": "404 : tâche inconnue de pixelforge"}
+        raise
 
 
 def deposer(payload):
