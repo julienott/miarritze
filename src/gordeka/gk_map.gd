@@ -73,12 +73,13 @@ func load_map(id: String) -> void:
 		exit_groups.append({"zone": str(e["zone"]), "tiles": ts})
 	if exit_groups.is_empty() and not exits.is_empty():
 		exit_groups.append({"zone": "", "tiles": exits.duplicate()})
+	if draw_2d:
+		decor = GkDecor.new()
+		decor.setup(self)
 	_build_bodies()
 	_build_astar()
 	_build_cover()
 	if draw_2d:
-		decor = GkDecor.new()
-		decor.setup(self)
 		_build_chunks()
 		decor.attach()
 	_qa_camera()
@@ -152,17 +153,51 @@ func _build_bodies() -> void:
 	low.collision_layer = LAYER_MOVE
 	low.collision_mask = 0
 	add_child(low)
-	for r: Rect2i in merged_rects(OCCLUDE):
+	# Cases d'un objet en image : sa forme réelle (base au sol) remplace le rectangle des cases.
+	var shaped: Dictionary = decor.shaped if decor else {}
+	for r: Rect2i in merged_rects(OCCLUDE, shaped):
 		var px: Rect2 = Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile)
 		_add_shape(solid, px)
-		var occ: LightOccluder2D = LightOccluder2D.new()
-		var poly: OccluderPolygon2D = OccluderPolygon2D.new()
-		poly.polygon = PackedVector2Array([px.position, Vector2(px.end.x, px.position.y), px.end,
-			Vector2(px.position.x, px.end.y)])
-		occ.occluder = poly
-		add_child(occ)
-	for r: Rect2i in merged_rects(LOW):
+		_add_occluder(PackedVector2Array([px.position, Vector2(px.end.x, px.position.y), px.end,
+			Vector2(px.position.x, px.end.y)]), 1)
+	for r: Rect2i in merged_rects(LOW, shaped):
 		_add_shape(low, Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile))
+	if decor == null:
+		return
+	# QA : `--gk-qa-formes` montre les bases calculées (vert : bloque la vue ; jaune : le passage seul).
+	var qa: Node2D = null
+	if OS.get_cmdline_user_args().has("--gk-qa-formes"):
+		qa = Node2D.new()
+		qa.z_index = 100
+		add_child(qa)
+	for inst: Dictionary in decor.instances:
+		if not inst.has("polys"):
+			continue
+		var blocks: bool = bool(inst["blocks_view"])
+		for poly: PackedVector2Array in inst["polys"]:
+			var cp: CollisionPolygon2D = CollisionPolygon2D.new()
+			cp.polygon = poly
+			(solid if blocks else low).add_child(cp)
+			if blocks:
+				_add_occluder(poly, GkDecor.LIGHT_MASK)
+			if qa:
+				var line: Line2D = Line2D.new()
+				line.points = poly
+				line.closed = true
+				line.width = 3.0
+				line.default_color = Color("2fe05a") if blocks else Color("f2c12e")
+				qa.add_child(line)
+
+
+## Occulteur de la vue du chasseur (ombre des lumières) ; `mask` 1 : murs de la grille (ombrent
+## aussi les objets du décor), GkDecor.LIGHT_MASK : base d'un objet (n'ombre que le sol et les persos).
+func _add_occluder(poly: PackedVector2Array, mask: int) -> void:
+	var occ: LightOccluder2D = LightOccluder2D.new()
+	var op: OccluderPolygon2D = OccluderPolygon2D.new()
+	op.polygon = poly
+	occ.occluder = op
+	occ.occluder_light_mask = mask
+	add_child(occ)
 
 
 func _add_shape(body: StaticBody2D, px: Rect2) -> void:
@@ -310,8 +345,9 @@ func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
 			var x: int = r.position.x
 			while x < r.end.x:
 				var ch: String = at(Vector2i(x, y))
-				if not WALK.contains(ch) and not "cBHt#".contains(ch) \
-						or decor and decor.water_under.has(Vector2i(x, y)):
+				var dry: bool = WALK.contains(ch) or "cBHt#".contains(ch) \
+						or decor != null and decor.covered.has(Vector2i(x, y))
+				if not dry or decor and decor.water_under.has(Vector2i(x, y)):
 					x += 1
 					continue
 				var x2: int = x

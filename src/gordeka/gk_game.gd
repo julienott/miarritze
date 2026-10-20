@@ -62,6 +62,10 @@ var _camera: Camera2D
 var _dark: CanvasModulate
 var _cone_light: PointLight2D
 var _near_light: PointLight2D
+## Mêmes lumières pour les objets debout du décor : ombrées par les murs de la grille seulement, pas
+## par la base des objets (sinon le haut d'un objet, au-delà de sa propre base, tombe dans le noir).
+var _cone_light_decor: PointLight2D
+var _near_light_decor: PointLight2D
 var _bots_only: bool = false
 var _force_role: String = ""
 var _log: bool = false
@@ -102,6 +106,10 @@ var _qa_cachette_t: float = 0.35
 var _qa_next: float = -1.0
 var _qa_inside: bool = false
 var _qa_clock: float = 0.0
+## QA : `--gk-qa-place=<acteur>:<x>,<y>[:<regard en degrés>]` (répétable ; acteur 0 = le joueur local,
+## x et y en cases, décimales permises) pose un acteur au premier round (à lancer avec
+## `--gk-rules=phase_draw:60` : tout le monde reste figé).
+var _qa_place: Array = []
 
 
 func _ready() -> void:
@@ -141,6 +149,8 @@ func _ready() -> void:
 			_qa_next = float(arg.trim_prefix("--delay="))
 		elif arg.begins_with("--gk-local-role="):
 			_force_role = arg.trim_prefix("--gk-local-role=")
+		elif arg.begins_with("--gk-qa-place="):
+			_qa_place.append(arg.trim_prefix("--gk-qa-place=").split(":"))
 	map = GkMap.new()
 	map.draw_2d = not use_3d
 	add_child(map)
@@ -238,6 +248,8 @@ func _make_view() -> void:
 	add_child(_dark)
 	_cone_light = _make_light(_cone_texture(GkRules.f("cone_deg")), GkRules.px("cone_range"))
 	_near_light = _make_light(_cone_texture(360.0), GkRules.px("near_radius") + 10.0)
+	_cone_light_decor = _make_light(_cone_light.texture, GkRules.px("cone_range"), true)
+	_near_light_decor = _make_light(_near_light.texture, GkRules.px("near_radius") + 10.0, true)
 	# Calque « dans le monde » non assombri : cône rouge vu des chassés, sorties, cachettes, pièges.
 	var layer: CanvasLayer = CanvasLayer.new()
 	layer.follow_viewport_enabled = true
@@ -248,10 +260,14 @@ func _make_view() -> void:
 	_overlay.draw.connect(func() -> void: _draw_overlay(_overlay))
 
 
-func _make_light(tex: Texture2D, radius: float) -> PointLight2D:
+## Lumière du chasseur. Sol et persos (calque 1) : ombrés par les murs et la base des objets ;
+## objets debout (`decor`, calque GkDecor.LIGHT_MASK) : ombrés par les murs seulement.
+func _make_light(tex: Texture2D, radius: float, decor: bool = false) -> PointLight2D:
 	var l: PointLight2D = PointLight2D.new()
 	l.texture = tex
 	l.texture_scale = radius * 2.0 / float(tex.get_width())
+	l.range_item_cull_mask = GkDecor.LIGHT_MASK if decor else 1
+	l.shadow_item_cull_mask = 1 if decor else 1 | GkDecor.LIGHT_MASK
 	l.shadow_enabled = true
 	l.shadow_filter = Light2D.SHADOW_FILTER_PCF5
 	l.energy = 0.8
@@ -350,6 +366,15 @@ func _start_round() -> void:
 			k += 1
 	for b: GkAi in brains.values():
 		b.reset()
+	if round_no == 1:
+		for spec: PackedStringArray in _qa_place:
+			var i: int = int(spec[0])
+			var xy: PackedStringArray = spec[1].split(",") if spec.size() > 1 else PackedStringArray()
+			if i < 0 or i >= actors.size() or xy.size() != 2:
+				continue
+			actors[i].position = Vector2(float(xy[0]), float(xy[1])) * map.tile
+			if spec.size() > 2:
+				actors[i].look = deg_to_rad(float(spec[2]))
 	_say("Tu es le CHASSEUR !" if local == hunter else "%s est le chasseur. Cache-toi !" % hunter.display_name,
 		Color("ff3b30") if local == hunter else Color("ffffff"), 3.0)
 
@@ -625,6 +650,9 @@ func sees(h: GkActor, p: Vector2, r: float) -> bool:
 	var d: float = v.length()
 	if d > GkRules.px("cone_range") + r:
 		return false
+	# Caché derrière un objet haut (son toit, sa face haute le recouvre) : vu de près seulement.
+	if map.decor and d > GkRules.px("masque_vue_portee") + r and map.decor.masking(p, mask_height(r)) >= 0:
+		return false
 	if d > GkRules.px("near_radius") + r:
 		var half: float = deg_to_rad(GkRules.f("cone_deg")) * 0.5 + atan2(r, maxf(d, 1.0))
 		if absf(angle_difference(h.look, v.angle())) > half:
@@ -634,6 +662,13 @@ func sees(h: GkActor, p: Vector2, r: float) -> bool:
 		if clear_line(h.position, target):
 			return true
 	return false
+
+
+## Hauteur du corps (px au-dessus du pied) qui doit être recouverte pour qu'un corps de rayon `r`
+## soit masqué par un objet : 2 rayons, environ la moitié d'un perso dessiné (même règle pour la vue
+## du chasseur et pour la transparence vue des coéquipiers).
+static func mask_height(r: float) -> float:
+	return r * 2.0
 
 
 func clear_line(a: Vector2, b: Vector2) -> bool:
@@ -1165,12 +1200,22 @@ func _say(text: String, color: Color, seconds: float) -> void:
 func _update_view() -> void:
 	var as_hunter: bool = local == hunter and phase != Phase.END and phase != Phase.PODIUM
 	_dark.color = Color(0.3, 0.3, 0.4) if as_hunter else Color.WHITE
-	_cone_light.enabled = as_hunter
-	_near_light.enabled = as_hunter
-	if as_hunter:
-		_cone_light.position = hunter.position
-		_cone_light.rotation = hunter.look
-		_near_light.position = hunter.position
+	for l: PointLight2D in [_cone_light, _near_light, _cone_light_decor, _near_light_decor]:
+		l.enabled = as_hunter
+		if as_hunter:
+			l.position = hunter.position
+			l.rotation = hunter.look
+	# Un chassé masqué par le haut d'un objet : ses coéquipiers (jamais le chasseur) voient l'objet
+	# en transparence.
+	if map.decor:
+		var fade: Dictionary = {}
+		if local != hunter:
+			for a: GkActor in actors:
+				if a.role == GkActor.Role.HIDER and a.hidden_in < 0:
+					var i: int = map.decor.masking(a.position, mask_height(a.radius))
+					if i >= 0:
+						fade[i] = true
+		map.decor.update_fades(fade, GkRules.f("masque_fondu"), _last_dt)
 	var scare: float = GkRules.px("scared_range")
 	for a: GkActor in actors:
 		a.scared = phase == Phase.HUNT and a.role == GkActor.Role.HIDER \
@@ -1189,8 +1234,8 @@ func _update_view() -> void:
 		for a: GkActor in actors:
 			a.draw_2d = false
 		_dark.color = Color.WHITE
-		_cone_light.enabled = false
-		_near_light.enabled = false
+		for l: PointLight2D in [_cone_light, _near_light, _cone_light_decor, _near_light_decor]:
+			l.enabled = false
 	else:
 		_overlay.queue_redraw()
 	hud.queue_redraw()

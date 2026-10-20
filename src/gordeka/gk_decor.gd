@@ -2,7 +2,10 @@ class_name GkDecor
 extends Node2D
 ## Décor en images (pixelforge, intégré élément par élément par tools/gordeka/integre_decor.py),
 ## posé sur la carte avec repli sur le dessin procédural de GkMap pour tout ce qui n'a pas encore
-## d'image. La collision, l'occlusion de la vue et la grille A* restent celles de la grille.
+## d'image. La grille A* reste celle des cases ; la collision et l'occlusion de la vue des objets en
+## image suivent leur forme réelle, calculée au chargement depuis l'alpha de l'image (`_shape`) :
+## seule la base au sol (bas de la silhouette) arrête le passage et la vue, le haut de l'image (toit,
+## face haute) passe devant les persos qui sont derrière (tri par profondeur sur le pied de l'objet).
 ##
 ## index.json (assets/gordeka/decor/) : {carte, elements: {id: {type, categorie, caractere, zones,
 ## taille_cases, debord_haut_cases, animation, fichiers: [chemins relatifs], ombre, ombre_decalage,
@@ -25,6 +28,24 @@ const BOB_PX: float = 3.0
 const BOB_SPEED: float = 1.7
 ## Fondu fermé → ouvert : l'image ouverte est pleine dès open = 1 / OPEN_FADE (bascule franche).
 const OPEN_FADE: float = 2.0
+## Forme des objets : un point de masque pour SHAPE_STEP px de jeu, contour simplifié à SHAPE_EPSILON
+## point près, opaque au-delà de SHAPE_ALPHA ; les îlots de moins de SHAPE_MIN_AREA points sont ignorés.
+const SHAPE_STEP: float = 4.0
+const SHAPE_EPSILON: float = 1.0
+const SHAPE_ALPHA: float = 0.5
+const SHAPE_MIN_AREA: float = 6.0
+const SHAPE_SOURCE_DIV: int = 4
+## Calque de lumière des objets debout : éclairés par les lumières du chasseur que seuls les murs de
+## la grille ombrent (un objet n'est pas assombri par sa propre base ; voir GkGame._make_view).
+const LIGHT_MASK: int = 2
+## Vitesse du fondu de l'objet qui masque un coéquipier (opacité par seconde).
+const FADE_SPEED: float = 4.0
+
+## Formes déjà calculées (même image, même taille dessinée, même base), gardées d'une partie à l'autre.
+static var _shape_cache: Dictionary = {}
+## Images lues pour les formes, réduites SHAPE_SOURCE_DIV fois (une lecture par image : en WebGL, c'est
+## une relecture du GPU ; réduite, elle pèse peu en mémoire et reste plus fine que le masque).
+static var _image_cache: Dictionary = {}
 
 var map: GkMap
 var under: Node2D
@@ -34,7 +55,12 @@ var elements: Dictionary = {}
 var covered: Dictionary = {}
 ## Cases d'un objet en image posé sur l'eau (barques du bassin) : GkWater y dessine l'eau, pas de sol.
 var water_under: Dictionary = {}
-## Instances posées : {id, cells: Array[Vector2i], rect: Rect2i, zone, holder, sprite, kind, base, phase}.
+## Cases d'un objet en image dont la forme a été calculée : GkMap n'y pose plus de rectangle de
+## collision, mais les polygones de base de l'instance.
+var shaped: Dictionary = {}
+## Instances posées : {id, cells: Array[Vector2i], rect: Rect2i, zone, holder, sprite, kind, base, phase}
+## et, si la forme est connue : polys (bases au sol, repère de la carte), blocks_view, mask (BitMap de
+## la silhouette), mask_rect (zone dessinée, repère de la carte), mask_scale, sort_y, fade.
 var instances: Array = []
 var _dir: String = DIR
 var _tex: Dictionary = {}           # chemin → Texture2D (ou null si absent)
@@ -164,7 +190,9 @@ func draw_floors(ci: CanvasItem, zone: int) -> void:
 			if zone_at(t) != zone or water_under.has(t):
 				continue
 			var ch: String = map.at(t)
-			if not _draw_cell(ci, t, "%s|%d" % [ch, zone]) and UNDER_FLOOR.contains(ch) and ch != ".":
+			# Sol de la zone sous un objet en image posé sur un caractère non marchable (lavoir sur « ~ »).
+			var under_floor: bool = UNDER_FLOOR.contains(ch) or covered.has(t)
+			if not _draw_cell(ci, t, "%s|%d" % [ch, zone]) and under_floor and ch != ".":
 				_draw_cell(ci, t, ".|%d" % zone)
 
 
@@ -260,6 +288,9 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void
 	for c: Vector2i in cells:
 		covered[c] = true
 		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			# Voisins hors de l'objet seulement (un lavoir posé sur « ~ » n'est pas entouré d'eau).
+			if cells.has(c + d):
+				continue
 			var nb: String = map.at(c + d)
 			if nb == "~":
 				wet += 1
@@ -289,6 +320,8 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void
 		holder.position = Vector2(foot.get_center().x, foot.end.y)
 		sp.position = Vector2(0, -size.y * s * 0.5)
 	sp.scale = Vector2(s, s)
+	if not flat:
+		sp.light_mask = LIGHT_MASK
 	(under if flat else self).add_child(holder)
 	# Ombre portée fournie à part, décalée par rapport au coin haut gauche de l'objet.
 	var shadow: Texture2D = _texture(str(el.get("ombre", "")))
@@ -315,12 +348,147 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void
 		op.scale = Vector2(s, s)
 		op.position = sp.position - size * s * 0.5 + Vector2(float(off2[0]), float(off2[1])) * s
 		op.visible = false
+		op.light_mask = sp.light_mask
 		holder.add_child(op)
 		inst["open_sprite"] = op
+	if not flat:
+		_add_shape(inst, el, tex, str(files[0]), size * s)
 	instances.append(inst)
 	inst["x0"] = holder.position.x
 	if kind != "":
 		_animated.append(inst)
+
+
+# ---------------------------------------------------------------- forme des objets
+
+## Base au sol et silhouette de l'objet posé, depuis l'alpha de son image à la taille dessinée.
+## Objets qui cachent la vue (« bloque_vue » de l'index, sinon les caractères qui cachent la vue dans
+## GkMap.OCCLUDE) : base = bas de la silhouette (decor_base_haut de sa hauteur) ; objets bas : toute la
+## silhouette (decor_base_bas). `base_part` dans l'index l'impose pour un élément.
+func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, drawn: Vector2) -> void:
+	var ch: String = str(el.get("caractere", ""))
+	var blocks: bool = bool(el.get("bloque_vue", GkMap.OCCLUDE.contains(ch)))
+	if not GkRules.on("decor_formes") or not blocks and not GkMap.LOW.contains(ch):
+		return
+	var part: float = float(el.get("base_part", GkRules.f("decor_base_haut" if blocks else "decor_base_bas")))
+	var sh: Dictionary = _shape(tex, rel, drawn, part)
+	if (sh.get("polys", []) as Array).is_empty():
+		return
+	var holder: Node2D = inst["holder"]
+	# La base ne sort pas des cases de l'objet (la grille A* des IA reste juste).
+	var r: Rect2 = Rect2(Vector2((inst["rect"] as Rect2i).position) * map.tile, Vector2((inst["rect"] as Rect2i).size) * map.tile)
+	var box: PackedVector2Array = PackedVector2Array([r.position, Vector2(r.end.x, r.position.y), r.end,
+		Vector2(r.position.x, r.end.y)])
+	var polys: Array[PackedVector2Array] = []
+	for poly: PackedVector2Array in sh["polys"]:
+		var pts: PackedVector2Array = PackedVector2Array()
+		for p: Vector2 in poly:
+			pts.append(holder.position + p)
+		for clipped: PackedVector2Array in Geometry2D.intersect_polygons(pts, box):
+			polys.append(clipped)
+	if polys.is_empty():
+		return
+	inst["polys"] = polys
+	inst["blocks_view"] = blocks
+	inst["mask"] = sh["mask"]
+	inst["mask_scale"] = sh["scale"]
+	inst["mask_rect"] = Rect2(holder.position + Vector2(-drawn.x * 0.5, -drawn.y), drawn)
+	inst["sort_y"] = holder.position.y
+	inst["fade"] = 1.0
+	for c: Vector2i in inst["cells"]:
+		shaped[c] = true
+
+
+## Masque (BitMap) de la silhouette à SHAPE_STEP px près et polygones de sa base, dans le repère du
+## porteur (pied de l'objet au milieu du bord bas). Calculé une fois par image et par taille.
+static func _shape(tex: Texture2D, key: String, drawn: Vector2, part: float) -> Dictionary:
+	var ck: String = "%s|%d|%d|%.3f" % [key, roundi(drawn.x), roundi(drawn.y), part]
+	if _shape_cache.has(ck):
+		return _shape_cache[ck]
+	var out: Dictionary = {}
+	_shape_cache[ck] = out
+	if not _image_cache.has(key):
+		var src: Image = tex.get_image()
+		if src != null and not src.is_empty():
+			src = src.duplicate() as Image
+			if src.is_compressed():
+				src.decompress()
+			src.convert(Image.FORMAT_RGBA8)
+			src.resize(maxi(1, src.get_width() / SHAPE_SOURCE_DIV), maxi(1, src.get_height() / SHAPE_SOURCE_DIV),
+				Image.INTERPOLATE_BILINEAR)
+		_image_cache[key] = src
+	var img: Image = _image_cache[key]
+	if img == null or img.is_empty():
+		push_warning("GkDecor : image illisible pour la forme de « %s », collision par cases" % key)
+		return out
+	img = img.duplicate() as Image
+	var mw: int = maxi(1, ceili(drawn.x / SHAPE_STEP))
+	var mh: int = maxi(1, ceili(drawn.y / SHAPE_STEP))
+	img.resize(mw, mh, Image.INTERPOLATE_BILINEAR)
+	var bm: BitMap = BitMap.new()
+	bm.create_from_image_alpha(img, SHAPE_ALPHA)
+	var y0: int = clampi(mh - ceili(float(mh) * clampf(part, 0.0, 1.0)), 0, mh - 1)
+	var sc: Vector2 = Vector2(drawn.x / mw, drawn.y / mh)
+	var org: Vector2 = Vector2(-drawn.x * 0.5, -drawn.y)
+	var polys: Array[PackedVector2Array] = []
+	# Les points rendus sont relatifs au coin du rectangle demandé.
+	for poly: PackedVector2Array in bm.opaque_to_polygons(Rect2i(0, y0, mw, mh - y0), SHAPE_EPSILON):
+		if poly.size() < 3 or absf(_area(poly)) < SHAPE_MIN_AREA:
+			continue
+		var pts: PackedVector2Array = PackedVector2Array()
+		for p: Vector2 in poly:
+			pts.append(org + (p + Vector2(0, y0)) * sc)
+		polys.append(pts)
+	out["mask"] = bm
+	out["scale"] = sc
+	out["polys"] = polys
+	return out
+
+
+static func _area(poly: PackedVector2Array) -> float:
+	var a: float = 0.0
+	for i: int in poly.size():
+		var p: Vector2 = poly[i]
+		var q: Vector2 = poly[(i + 1) % poly.size()]
+		a += p.x * q.y - q.x * p.y
+	return a * 0.5
+
+
+## Instance d'un objet qui cache la vue dessiné devant ce point (pied d'un perso en `p`) et dont la
+## silhouette le recouvre, au pied et à `h` px au-dessus ; -1 sinon.
+func masking(p: Vector2, h: float) -> int:
+	for i: int in instances.size():
+		var inst: Dictionary = instances[i]
+		if not inst.get("blocks_view", false) or p.y >= float(inst["sort_y"]):
+			continue
+		var r: Rect2 = inst["mask_rect"]
+		if r.has_point(p) and _covers(inst, p) and _covers(inst, p - Vector2(0, h)):
+			return i
+	return -1
+
+
+func _covers(inst: Dictionary, p: Vector2) -> bool:
+	var r: Rect2 = inst["mask_rect"]
+	if not r.has_point(p):
+		return false
+	var bm: BitMap = inst["mask"]
+	var q: Vector2i = Vector2i((p - r.position) / (inst["mask_scale"] as Vector2))
+	var sz: Vector2i = bm.get_size()
+	return bm.get_bitv(q.clamp(Vector2i.ZERO, sz - Vector2i.ONE))
+
+
+## Fondu des objets qui masquent un coéquipier (`which` : index d'instance → vrai), vers l'opacité
+## `alpha` ; les autres reviennent opaques.
+func update_fades(which: Dictionary, alpha: float, dt: float) -> void:
+	for i: int in instances.size():
+		var inst: Dictionary = instances[i]
+		if not inst.has("fade"):
+			continue
+		var want: float = alpha if which.has(i) else 1.0
+		var f: float = move_toward(float(inst["fade"]), want, FADE_SPEED * dt)
+		if f != float(inst["fade"]):
+			inst["fade"] = f
+			(inst["holder"] as Node2D).modulate.a = f
 
 
 func _instance_at(t: Vector2i) -> int:
