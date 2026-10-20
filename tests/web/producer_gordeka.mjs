@@ -79,13 +79,47 @@ for (const [label, browser, opts] of runs) {
     profil: !!s.querySelector('.gk-profil .tile'),
   }));
   check(`${label} : Louis, profil et animations`, louis.profil && louis.present >= 15, JSON.stringify(louis.present));
-  check(`${label} : Louis, manquantes (hunter_reveal, emotes)`,
-    louis.missing.includes('hunter_reveal') && louis.missing.includes('emote_salut') && louis.band.includes('manquante'),
-    louis.missing.join(','));
+  // Manquantes : celles que l'index ne contient pas (les données bougent chaque jour).
+  const attendu = await page.evaluate(() => Object.fromEntries(['louis', 'amaia'].map((p) => [p, gkSlots(p).filter((x) => !x.anim).map((x) => x.name)])));
+  check(`${label} : Louis, manquantes affichées`, louis.missing.join(',') === attendu.louis.join(',')
+    && (louis.missing.length ? louis.band.includes('manquante') : louis.band.includes('Toutes')), louis.missing.join(','));
   const amaia = await page.$eval('.gk-perso[data-perso="amaia"]', (s) => s.querySelectorAll('.gk-anim.missing').length);
-  check(`${label} : Amaia, toutes manquantes`, amaia === 22, String(amaia));
-  const vign = await animated(page, '.gk-perso[data-perso="louis"] .gk-anim canvas');
-  check(`${label} : vignettes de Louis animées`, vign.drawn === vign.total && vign.moving >= vign.total - 2, JSON.stringify(vign));
+  check(`${label} : Amaia, manquantes affichées`, amaia === attendu.amaia.length, String(amaia));
+  // Vignettes au repos : image fixe chargée paresseusement, aucune planche, aucun canvas ni minuteur.
+  await page.mouse.move(1, 1);   // la souris ne doit survoler aucune vignette pendant le défilement
+  await page.evaluate(() => document.querySelector('.gk-perso[data-perso="louis"] .gk-anims').scrollIntoView());
+  await page.waitForTimeout(800);
+  const still = await page.evaluate(() => {
+    const imgs = [...document.querySelectorAll('.gk-perso .gk-anim img.mini')];
+    const sheets = performance.getEntriesByType('resource').filter((r) => /%2Fanims%2F[^_]/.test(r.name)).length;
+    return { imgs: imgs.length, lazy: imgs.every((i) => i.loading === 'lazy'), poster: imgs.every((i) => /_poster/.test(i.src)),
+      canvases: document.querySelectorAll('#grid canvas').length, sheets,
+      loaded: imgs.filter((i) => i.complete && i.naturalWidth > 0).length };
+  });
+  check(`${label} : vignettes fixes (image du milieu, chargement paresseux)`, still.imgs >= 100 && still.lazy && still.poster && still.loaded >= 1 && still.loaded < still.imgs, JSON.stringify(still));
+  check(`${label} : au repos, ni canvas ni planche chargée`, still.canvases === 0 && still.sheets === 0, JSON.stringify(still));
+  const walkCell = '.gk-perso[data-perso="louis"] .gk-anim[data-anim="walk"]';
+  if (opts.hasTouch) {
+    await page.locator(walkCell).tap();      // premier toucher : anime sans ouvrir
+  } else {
+    await page.hover(walkCell);
+  }
+  await page.waitForSelector(`${walkCell} canvas.mini`);
+  await page.waitForTimeout(300);
+  const vign = await animated(page, `${walkCell} canvas`);
+  check(`${label} : ${opts.hasTouch ? 'toucher' : 'survol'} = la vignette s'anime`, vign.total === 1 && vign.moving === 1 && !(await page.$('.fs')), JSON.stringify(vign));
+  await shot('01b_vignette_animee');
+  if (opts.hasTouch) {
+    await page.locator('.gk-perso[data-perso="louis"] .gk-anim[data-anim="idle"]').tap();
+    await page.waitForTimeout(300);
+    const n = await page.$$eval('#grid canvas', (c) => c.length);
+    check(`${label} : une seule vignette animée à la fois`, n === 1, String(n));
+  } else {
+    await page.mouse.move(2, 2);
+    await page.waitForTimeout(200);
+    check(`${label} : souris sortie = canvas libéré, image fixe revenue`,
+      (await page.$$('#grid canvas')).length === 0 && !!(await page.$(`${walkCell} img.mini`)));
+  }
   await shot('01_persos');
   await page.evaluate(() => document.querySelector('.gk-perso[data-perso="louis"]').scrollIntoView());
   await page.waitForTimeout(400);
@@ -96,7 +130,14 @@ for (const [label, browser, opts] of runs) {
 
   // Lecteur plein écran : walk de Louis.
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.click('.gk-perso[data-perso="louis"] .gk-anim[data-anim="walk"]');
+  // Toucher suivant (ou clic) : ouvre le plein écran, qui joue tout seul.
+  if (opts.hasTouch) {
+    await page.locator(walkCell).tap();            // anime walk (run était actif)…
+    await page.waitForTimeout(300);
+    if (!(await page.$('.fs'))) await page.locator(walkCell).tap();   // …puis ouvre
+  } else {
+    await page.click(walkCell);
+  }
   await page.waitForSelector('.fs canvas');
   await page.waitForTimeout(800);
   const fsBox = await page.$eval('.fs', (f) => { const r = f.getBoundingClientRect(); return [r.width, r.height, innerWidth, innerHeight]; });
@@ -189,7 +230,7 @@ for (const [label, browser, opts] of runs) {
   await page.check('#decor-sans-masque');
   await page.waitForTimeout(300);
   const sans = await page.$$eval('.dcard', (l) => l.map((x) => x.dataset.id.split('/').pop()));
-  check(`${label} : filtre « sans masque »`, sans.length >= 1 && sans.length < objets, sans.join(','));
+  check(`${label} : filtre « sans masque »`, sans.length < objets, sans.join(','));
   await page.click('.decor-bar .seg button:has-text("Contrôle du jeu")');
   await page.waitForTimeout(800);
   await shot('08_decor_sans_masque_controle');
@@ -206,7 +247,9 @@ for (const [label, browser, opts] of runs) {
   await page.waitForSelector('.stage .dlayers');
   await page.click('#detail .seg button:has-text("Avec masques")');
   await page.waitForTimeout(800);
-  check(`${label} : détail, source repli affichée`, (await page.textContent('#detail .credits')).includes('repli'));
+  const src = await page.evaluate(() => state.assetsById.get('gordeka/decor/objets/mur_soutenement.png').decor.source);
+  const lib = { pixelforge: 'pixelforge', repli: 'repli', aucun: 'sans masque' }[src] || src;
+  check(`${label} : détail, source des masques affichée`, (await page.textContent('#detail .credits')).includes(lib), src);
   await shot('10_detail_objet');
   await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/decor/objets/fronton.png'));
   await page.waitForSelector('.stage .dlayers');

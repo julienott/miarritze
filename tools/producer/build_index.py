@@ -215,8 +215,11 @@ class Builder:
             w, h = int(x1 - x0), int(y1 - y0)
             strip = np.concatenate([fr[y0:y1, x0:x1] for fr in frames], axis=1)
             f = self.save_png(self.colorize(strip, pal), f"fighters/{fid}/sheet/{name}.png")
+            # Image fixe des vignettes : la case du milieu, plus parlante que la première.
+            poster = self.save_png(self.colorize(frames[len(frames) // 2][y0:y1, x0:x1], pal),
+                                   f"fighters/{fid}/sheet/_poster/{name}.png")
             anims.append({"name": name, "frames": len(frames), "fps": int(a.get("fps", 10)),
-                          "loop": bool(a.get("loop", False)), "w": w, "h": h, "file": f})
+                          "loop": bool(a.get("loop", False)), "w": w, "h": h, "file": f, "poster": poster})
             if name == "idle" or not preview:
                 preview_img = self.colorize(frames[0][y0:y1, x0:x1], pal)
                 preview = self.save_png(preview_img, f"fighters/{fid}/sheet/_preview.png")
@@ -317,7 +320,10 @@ class Builder:
                 info["feet"] = [int(feet[0]) - int(x0), int(feet[1]) - int(y0)]   # repère des pieds, recadré
             cut = Image.fromarray(np.concatenate([fr[y0:y1, x0:x1] for fr in frames], axis=1), "RGBA")
             f = self.save_png(cut, f"gordeka/persos/{pid}/anims/{name}.png")
-            anims.append({"name": name, **info, "file": f})
+            # Image fixe des vignettes (case du milieu) : la planche n'est chargée qu'au survol.
+            poster = self.save_png(Image.fromarray(frames[n // 2][y0:y1, x0:x1], "RGBA"),
+                                   f"gordeka/persos/{pid}/anims/_poster/{name}.png")
+            anims.append({"name": name, **info, "file": f, "poster": poster})
             srcs += [png, j]
             if name == "idle" or not preview:
                 preview = self.save_png(Image.fromarray(frames[0][y0:y1, x0:x1], "RGBA"),
@@ -326,7 +332,9 @@ class Builder:
                 m = np.array(Image.open(tenue).convert("RGBA"))
                 mcut = np.concatenate([m[:ch, i * cw + x0:i * cw + x1][y0:y1] for i in range(n)], axis=1)
                 mf = self.save_png(Image.fromarray(mcut, "RGBA"), f"gordeka/persos/{pid}/masques/{name}.png")
-                masks.append({"name": name, **info, "file": mf})
+                mp = self.save_png(Image.fromarray(mcut[:, (n // 2) * w:(n // 2 + 1) * w], "RGBA"),
+                                   f"gordeka/persos/{pid}/masques/_poster/{name}.png")
+                masks.append({"name": name, **info, "file": mf, "poster": mp})
                 mask_srcs.append(tenue)
         if anims:
             tenue_desc = ""

@@ -17,6 +17,7 @@ Exemples :
   cli.py add-card --type animation --title "Amaia : run" --parent 12
   cli.py set 4 --priority haute --parent 12
   cli.py events --since 15m    (tout ce qui a bougé ; aussi epoch ou "2026-10-20 14:00")
+  cli.py qa 4 "marche ralentie à 8 i/s"   (carte retraitée -> QA, commentaire « retraité : … »)
 """
 from __future__ import annotations
 
@@ -45,8 +46,9 @@ STATUS_ALIASES = {
 CARD_TYPES = ["feature", "bug", "perso", "animation", "asset", "gameplay", "pixelforge"]
 EVENT_LABEL = {
     "creation": "création", "deplacement": "déplacement", "titre": "titre", "description": "description",
-    "priorite": "priorité", "type": "type", "asset": "asset", "parent": "chapeau",
+    "priorite": "priorité", "type": "type", "asset": "asset", "detail": "détail", "parent": "chapeau",
     "commentaire": "commentaire", "suppression": "suppression",
+    "accepte": "ACCEPTÉE", "refuse": "REFUSÉE",
 }
 
 
@@ -166,20 +168,21 @@ def short(text: str, n: int = 70) -> str:
 
 def print_card(c: dict, full: bool, titles: dict | None = None) -> None:
     prio = f" !{c['priority']}" if c["priority"] else ""
-    asset = f" · {c['asset']}" if c["asset"] else ""
+    asset = f" · {c['asset']}" + (f" [{c['detail']}]" if c.get("detail") else "") if c["asset"] else ""
+    rework = " [À RETRAITER]" if c.get("rework") else ""
     kids = f" · enfants {c['children_done']}/{c['children']}" if c.get("children") else ""
     parent = ""
     if c.get("parent_id"):
         t = (titles or {}).get(c["parent_id"])
         parent = f" · ↑ #{c['parent_id']}" + (f" {short(t, 30)}" if t else "")
-    print(f"#{c['id']} [{STATUS_LABEL[c['status']]}] {c['type']}{prio} · {c['title']}{asset}{parent}{kids}"
+    print(f"#{c['id']} [{STATUS_LABEL[c['status']]}]{rework} {c['type']}{prio} · {c['title']}{asset}{parent}{kids}"
           f" · par {c.get('origin', '?')}")
     if full:
         print(f"    créée {when(c['created_at'])}, modifiée {when(c['updated_at'])}")
         for line in (c["description"] or "").splitlines():
             print("    " + line)
         for n in c["notes"]:
-            print(f"    — {n['author']} {when(n['created_at'])} : " + n["body"].replace("\n", "\n      "))
+            print(f"    — {n['author']}{' (refus)' if n.get('kind') == 'refus' else ''} {when(n['created_at'])} : " + n["body"].replace("\n", "\n      "))
 
 
 def event_line(e: dict, with_card: bool) -> str:
@@ -188,6 +191,10 @@ def event_line(e: dict, with_card: bool) -> str:
         what = f"{STATUS_LABEL.get(e['old'], e['old'])} -> {STATUS_LABEL.get(e['new'], e['new'])}"
     elif t == "creation":
         what = f"dans {STATUS_LABEL.get(e['new'], e['new'])}"
+    elif t == "accepte":
+        what = "QA -> Done"
+    elif t == "refuse":
+        what = "QA -> Doing, à retraiter : « " + e["new"].replace("\n", "\n      ") + " »"
     elif t == "commentaire":
         what = "« " + e["new"].replace("\n", "\n      ") + " »"
     elif t == "suppression":
@@ -260,6 +267,13 @@ def cmd_move(a: argparse.Namespace) -> None:
     print(f"Carte #{a.id} -> {STATUS_LABEL[a.status]}")
 
 
+def cmd_qa(a: argparse.Namespace) -> None:
+    text = a.text if a.text.lower().startswith("retraité") else "retraité : " + a.text
+    call("card_comment", {"id": a.id, "body": text})
+    call("card_move", {"id": a.id, "status": "qa"})
+    print(f"Carte #{a.id} -> QA (« {short(text)} »)")
+
+
 def cmd_comment(a: argparse.Namespace) -> None:
     call("card_comment", {"id": a.id, "body": a.text})
     print(f"Commentaire ajouté à la carte #{a.id}")
@@ -267,7 +281,7 @@ def cmd_comment(a: argparse.Namespace) -> None:
 
 def cmd_add_card(a: argparse.Namespace) -> None:
     body = {"type": a.type, "title": a.title, "description": a.desc or "", "priority": a.priority or "",
-            "asset": a.asset or "", "status": a.status}
+            "asset": a.asset or "", "detail": a.detail or "", "status": a.status}
     if a.parent:
         body["parent"] = a.parent
     r = call("card", body)
@@ -276,7 +290,7 @@ def cmd_add_card(a: argparse.Namespace) -> None:
 
 def cmd_set(a: argparse.Namespace) -> None:
     body: dict = {"id": a.id}
-    for key in ("title", "type", "asset"):
+    for key in ("title", "type", "asset", "detail"):
         if getattr(a, key) is not None:
             body[key] = getattr(a, key)
     if a.desc is not None:
@@ -286,7 +300,7 @@ def cmd_set(a: argparse.Namespace) -> None:
     if a.parent is not None:
         body["parent"] = a.parent
     if len(body) == 1:
-        sys.exit("Rien à modifier (--title, --desc, --type, --priority, --parent, --asset)")
+        sys.exit("Rien à modifier (--title, --desc, --type, --priority, --parent, --asset, --detail)")
     r = call("card_update", body)
     print(f"Carte #{a.id} : {r.get('changed', 0)} champ(s) modifié(s)")
 
@@ -347,6 +361,7 @@ def main() -> None:
     s.add_argument("--desc")
     s.add_argument("--priority", choices=["basse", "normale", "haute"])
     s.add_argument("--asset")
+    s.add_argument("--detail", help="précise l'asset : nom de l'animation (ex. walk)")
     s.add_argument("--parent", type=int, help="carte chapeau")
     s.add_argument("--status", type=status_arg, default="backlog")
     s.set_defaults(fn=cmd_add_card)
@@ -359,7 +374,13 @@ def main() -> None:
     s.add_argument("--priority", choices=["basse", "normale", "haute", "aucune"])
     s.add_argument("--parent", type=int, help="0 pour détacher")
     s.add_argument("--asset")
+    s.add_argument("--detail", help="nom de l'animation de l'asset (vide pour effacer)")
     s.set_defaults(fn=cmd_set)
+
+    s = sub.add_parser("qa", help="repasser en QA une carte retraitée, avec ce qui a été corrigé")
+    s.add_argument("id", type=int)
+    s.add_argument("text")
+    s.set_defaults(fn=cmd_qa)
 
     a = p.parse_args()
     a.fn(a)

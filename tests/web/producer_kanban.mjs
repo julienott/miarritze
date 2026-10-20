@@ -155,6 +155,7 @@ await page.selectOption('.quick-add select', String(hatId));
 await page.click('.quick-add button[type=submit]');
 await page.waitForSelector(`.card:has-text("${tag} hunter_reveal") .parent-link`);
 check('création rapide avec chapeau', true);
+const hunterId = Number(await page.locator(`.card:not(.is-hat):has-text("${tag} hunter_reveal")`).getAttribute('data-id'));
 
 // ------------------------------------------------ boucle de Claude : events
 const ev = cli('events', '--since', String(t0));
@@ -166,6 +167,71 @@ check('events --json : now + événements', evJson.now >= t0 && evJson.events.le
 check('cli cards --parent', cli('cards', '--parent', String(hatId)).trim().split('\n').length === 4);
 cli('set', String(kidIds[2]), '--parent', '0');
 check('cli set --parent 0 détache', !cli('cards', '--parent', String(hatId)).includes(`${tag} idle`));
+
+// ------------------------------------------- asset lié : vue, détail, commentaire
+const ASSET = 'gordeka/persos/louis/animations';
+cli('set', String(kidIds[1]), '--asset', ASSET, '--detail', 'walk');
+cli('move', String(kidIds[1]), 'qa');
+await page.reload();
+const thumb = page.locator(`.card[data-id="${kidIds[1]}"] img.card-thumb`);
+await thumb.waitFor();
+check('tuile : miniature de l\'asset (image fixe de walk, paresseuse)',
+  (await thumb.getAttribute('loading')) === 'lazy' && decodeURIComponent(await thumb.getAttribute('src')).includes('_poster/walk'));
+await page.click(`.card[data-id="${kidIds[1]}"] .title`);
+await page.waitForSelector('#cf-asset-view:not([hidden]) .anim-cell img.mini');
+check('détail : champ « détail » = walk', (await page.inputValue('#cf-detail')) === 'walk');
+await page.hover('#cf-asset-view .anim-cell');
+await page.waitForSelector('#cf-asset-view .anim-cell canvas.mini');
+check('détail : l\'animation de l\'asset joue au survol', true);
+await page.fill('#cf-asset-view .comment-form textarea', `${tag} : les pieds glissent`);
+await page.click('#cf-asset-view .comment-form button[type=submit]');
+await page.waitForSelector(`#cf-asset-view .comment:has-text("${tag} : les pieds glissent")`);
+const [, cm] = await apiTok('comments');
+const mine = cm.comments.find((c) => c.body === `${tag} : les pieds glissent`);
+check('commentaire d\'asset depuis la carte (version + anim)', mine && mine.asset === ASSET && mine.version && mine.context === 'anim : walk', JSON.stringify(mine && [mine.version, mine.context]));
+await shot(page, '04b_detail_asset', false);
+await page.click('#cf-asset-view .anim-cell');
+await page.waitForSelector('.fs canvas');
+check('détail : clic sur l\'animation = plein écran', (await page.textContent('.fs-title')) === 'louis · walk');
+await page.click('.fs-close');
+
+// ----------------------------------------------------- QA : refuser, retraiter, accepter
+const qaCard = page.locator(`.card[data-id="${kidIds[1]}"]`);
+check('QA : boutons Accepter et Refuser sur la tuile', await qaCard.locator('button.accept').isVisible() && await qaCard.locator('button.refuse').isVisible());
+await shot(page, '04c_board_qa');
+await qaCard.locator('button.refuse').click();
+await page.waitForSelector('#refuse-dialog[open]');
+await page.click('#rf-send');
+check('refus sans commentaire bloqué', (await page.textContent('#rf-error')).length > 0);
+await page.fill('#rf-body', 'La marche glisse encore, pieds à recaler.');
+await shot(page, '04d_refus', false);
+await page.click('#rf-send');
+await page.waitForSelector(`.column[data-status=doing] .card[data-id="${kidIds[1]}"] .rework`);
+check('refus : retour en Doing, badge « à retraiter »', true);
+const refused = cli('show', String(kidIds[1]));
+check('cli show : refus visible', refused.includes('[À RETRAITER]') && refused.includes('REFUSÉE') && refused.includes('pieds à recaler'));
+cli('qa', String(kidIds[1]), 'pieds recalés sur feet_anchor');
+const back = JSON.parse(cli('show', String(kidIds[1]), '--json'));
+check('cli qa : retour en QA, badge effacé, commentaire « retraité : »', back.card.status === 'qa' && !back.card.rework
+  && back.card.notes.some((n) => n.body === 'retraité : pieds recalés sur feet_anchor'));
+// Chapeau en QA : Accepter accepte aussi les enfants encore en QA (après confirmation).
+cli('move', String(hatId), 'qa');
+await page.reload();
+const msgs = [];
+page.removeAllListeners('dialog');
+page.on('dialog', (d) => { msgs.push(d.message()); d.accept(); });
+await page.locator(`.card[data-id="${hatId}"] button.accept`).click();
+await page.waitForSelector(`.column[data-status=done] .card[data-id="${hatId}"]`);
+const st2 = Object.fromEntries((await apiTok('cards'))[1].cards.map((c) => [c.id, c.status]));
+check('chapeau accepté avec confirmation (2 enfants en QA)', msgs.some((m) => m.includes('2 enfants')), msgs.join(' | '));
+check('chapeau + enfants en QA -> Done, les autres restent', st2[hatId] === 'done' && st2[kidIds[0]] === 'done'
+  && st2[kidIds[1]] === 'done' && st2[hunterId] === 'backlog', JSON.stringify([st2[hatId], st2[kidIds[0]], st2[kidIds[1]], st2[hunterId]]));
+const [stBad] = await apiTok('card_accept', { id: hunterId });
+check('accepter hors QA refusé (400)', stBad === 400, String(stBad));
+const evq = JSON.parse(cli('events', '--since', String(t0), '--json')).events;
+check('events : types accepte et refuse (avec le texte)', evq.filter((e) => e.type === 'accepte').length === 3
+  && evq.some((e) => e.type === 'refuse' && e.author === 'julien' && e.new.includes('pieds à recaler')));
+check('cli events : ACCEPTÉE / REFUSÉE lisibles', /ACCEPTÉE/.test(cli('events', '--since', String(t0))) && /REFUSÉE QA -> Doing/.test(cli('events', '--since', String(t0))));
 
 // ------------------------------------------------------------------ iPhone
 const wk = await webkit.launch();
@@ -180,14 +246,27 @@ for (const [name, vp] of [['iphone_portrait', { width: 390, height: 844 }], ['ip
   await shot(mp, `06_${name}_board_entier`);
   const over = await mp.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   check(`${name} : pas de défilement horizontal`, !over);
-  await mp.locator(`.card[data-id="${kidIds[0]}"] button[aria-label="Colonne suivante"]`).tap();
-  await mp.waitForSelector(`.column[data-status=done] .card[data-id="${kidIds[0]}"]`);
+  await mp.locator(`.card[data-id="${hunterId}"] button[aria-label="Colonne suivante"]`).tap();
+  await mp.waitForSelector(`.column[data-status=todo] .card[data-id="${hunterId}"]`);
   check(`${name} : ▶ au toucher`, true);
-  await mp.locator(`.card[data-id="${kidIds[0]}"] button[aria-label="Colonne précédente"]`).tap();
-  await mp.waitForSelector(`.column[data-status=qa] .card[data-id="${kidIds[0]}"]`);
-  await mp.locator(`.card[data-id="${hatId}"] .title`).tap();
-  await mp.waitForSelector('#cf-feed .event');
+  await mp.locator(`.card[data-id="${hunterId}"] button[aria-label="Colonne précédente"]`).tap();
+  await mp.waitForSelector(`.column[data-status=backlog] .card[data-id="${hunterId}"]`);
+  // Une carte en QA avec son asset : boutons au doigt, puis le détail.
+  const qid = Number(/#(\d+)/.exec(cli('add-card', '--type', 'animation', '--title', `${tag} ${name} marche`, '--asset', ASSET, '--detail', 'walk', '--status', 'qa'))[1]);
+  await mp.reload();
+  const qc = mp.locator(`.card[data-id="${qid}"]`);
+  await qc.scrollIntoViewIfNeeded();
+  const hBtn = await qc.locator('button.accept').evaluate((b) => b.getBoundingClientRect().height);
+  check(`${name} : boutons QA assez grands pour le doigt`, hBtn >= 40, String(hBtn));
+  await shot(mp, `07a_${name}_carte_qa`, false);
+  await qc.locator('.title').tap();
+  await mp.waitForSelector('#cf-asset-view .anim-cell img.mini');
   await shot(mp, `07_${name}_detail`, false);
+  await mp.locator('#cf-asset-view').scrollIntoViewIfNeeded();
+  await shot(mp, `07b_${name}_detail_asset`, false);
+  await mp.click('#cf-accept');
+  await mp.waitForSelector(`.column[data-status=done] .card[data-id="${qid}"]`);
+  check(`${name} : Accepter depuis le détail`, true);
   await ctx.close();
 }
 await wk.close();

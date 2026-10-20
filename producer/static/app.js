@@ -435,12 +435,12 @@ function renderPersos(grid) {
     const animsAsset = state.assetsById.get(`gordeka/persos/${pid}/animations`);
     const open = () => { state.group = pid; renderCats(); showGrid(); window.scrollTo(0, 0); };
     const cells = slots.map((s) => (s.anim
-      ? el('button', {
+      ? hoverAnimCell(s.anim, 0, el('button', {
         type: 'button', class: 'gk-anim', title: `${s.name} · ${s.anim.frames} images à ${s.anim.fps} i/s`,
         'data-anim': s.name, onclick: () => openPlayer(pid, s.name),
-      }, el('div', { class: 'anim-box' }, miniAnim(s.anim, 0)),
-      el('span', { class: 'gk-anim-name', text: s.name }),
-      el('span', { class: 'muted', text: `${s.anim.frames} im. · ${s.anim.fps} i/s${s.anim.loop ? ' · boucle' : ''}` }))
+      }), (mini) => [el('div', { class: 'anim-box' }, mini),
+        el('span', { class: 'gk-anim-name', text: s.name }),
+        el('span', { class: 'muted', text: `${s.anim.frames} im. · ${s.anim.fps} i/s${s.anim.loop ? ' · boucle' : ''}` })])
       : el('div', { class: 'gk-anim missing', 'data-anim': s.name, title: s.a_venir ? 'clip sur mesure à venir' : 'pas encore générée' },
         el('div', { class: 'anim-box' }, el('span', { text: s.a_venir ? 'à venir' : 'manquante' })),
         el('span', { class: 'gk-anim-name', text: s.name }),
@@ -800,11 +800,13 @@ function tile(a) {
       : idle
         ? el('div', { class: cls }, miniAnim(idle, 0))
         : el('div', { class: cls }, el('img', { src: fileUrl(a.preview), alt: '', loading: 'lazy' }));
-  return el('button', {
+  const btn = el('button', {
     type: 'button', class: 'tile', 'data-id': a.id,
     onclick: () => { location.hash = '#/assets/' + encodeURIComponent(a.id); },
   }, thumb, el('span', { class: 'name', text: a.name }),
   n ? el('span', { class: 'count' }, el('span', { class: 'badge amelioration', text: n + ' ouvert' + (n > 1 ? 's' : '') })) : null);
+  const mini = idle ? thumb.querySelector('img.mini') : null;
+  return mini ? hoverMini(btn, mini) : btn;
 }
 
 function stopPlayer() {
@@ -814,47 +816,100 @@ function stopPlayer() {
   }
 }
 
-// Mini-animations (vignettes des persos, galerie des animations) : une seule
-// boucle requestAnimationFrame ; une vignette retirée de la page est oubliée.
-const minis = new Set();
-let minisRunning = false;
+// Mini-animations (vignettes des persos, galerie des animations, tuiles) :
+// au repos, une image fixe (case du milieu, `anim.poster`, chargée paresseusement).
+// La planche n'est chargée et animée qu'au survol de la souris, ou au premier
+// toucher sur écran tactile (le toucher suivant ouvre l'animation) ; quand la
+// souris sort, le minuteur est coupé et le canvas et la planche sont libérés.
+// Une seule vignette tourne à la fois.
+let activeMini = null;
 
 function miniAnim(anim, box) {
-  const canvas = el('canvas', { width: anim.w, height: anim.h });
-  const m = { anim, canvas, ctx: canvas.getContext('2d'), img: null, frame: 0, next: 0 };
-  const img = new Image();
-  img.onload = () => { m.img = img; drawMini(m); };
-  img.src = fileUrl(anim.file);
+  const poster = el('img', {
+    class: 'mini', alt: '', loading: 'lazy', decoding: 'async', draggable: 'false',
+    width: anim.w, height: anim.h, src: anim.poster ? fileUrl(anim.poster) : null,
+  });
   // Taille d'affichage : zoom entier qui tient dans la case (pixels nets) ;
   // sans case, c'est la feuille de style qui ajuste (vignettes de la grille).
   if (box) {
     const fit = Math.min(box / anim.w, box / anim.h);
     const z = fit < 1 ? fit : Math.floor(fit);
-    canvas.style.width = anim.w * z + 'px';
-    canvas.style.height = anim.h * z + 'px';
+    poster.style.width = anim.w * z + 'px';
+    poster.style.height = anim.h * z + 'px';
   }
-  minis.add(m);
-  if (!minisRunning) { minisRunning = true; requestAnimationFrame(tickMinis); }
-  return canvas;
+  poster.mini = { anim, poster, canvas: null, img: null, timer: 0, frame: 0 };
+  return poster;
 }
 
-function drawMini(m) {
-  m.ctx.clearRect(0, 0, m.anim.w, m.anim.h);
-  m.ctx.drawImage(m.img, m.frame * m.anim.w, 0, m.anim.w, m.anim.h, 0, 0, m.anim.w, m.anim.h);
+function startMini(m) {
+  if (m.canvas) return;
+  if (activeMini && activeMini !== m) stopMini(activeMini);
+  activeMini = m;
+  const a = m.anim;
+  const canvas = el('canvas', { class: 'mini', width: a.w, height: a.h });
+  canvas.style.cssText = m.poster.style.cssText;
+  m.canvas = canvas;
+  m.frame = Math.floor(a.frames / 2);   // repart de l'image fixe affichée
+  const img = new Image();
+  m.img = img;
+  img.onload = () => {
+    if (m.img !== img) return;
+    m.poster.replaceWith(canvas);
+    const ctx = canvas.getContext('2d');
+    const tick = () => {
+      if (m.img !== img) return;
+      if (!canvas.isConnected) { stopMini(m); return; }
+      ctx.clearRect(0, 0, a.w, a.h);
+      ctx.drawImage(img, m.frame * a.w, 0, a.w, a.h, 0, 0, a.w, a.h);
+      const last = m.frame === a.frames - 1;
+      m.frame = (m.frame + 1) % a.frames;
+      // Comme le lecteur : une animation sans boucle marque une pause avant de recommencer.
+      m.timer = setTimeout(tick, 1000 / a.fps + (last && !a.loop ? 500 : 0));
+    };
+    tick();
+  };
+  img.src = fileUrl(a.file);
 }
 
-function tickMinis(t) {
-  for (const m of minis) {
-    if (!m.canvas.isConnected && m.img) { minis.delete(m); continue; }
-    if (!m.img || t < m.next) continue;
-    const last = m.frame === m.anim.frames - 1;
-    m.frame = (m.frame + 1) % m.anim.frames;
-    drawMini(m);
-    // Comme le lecteur : une animation sans boucle marque une pause avant de recommencer.
-    m.next = t + 1000 / m.anim.fps + (last && !m.anim.loop ? 500 : 0);
+function stopMini(m) {
+  clearTimeout(m.timer);
+  m.timer = 0;
+  if (m.img) { m.img.onload = null; m.img.src = ''; m.img = null; }
+  if (m.canvas) {
+    if (m.canvas.isConnected) m.canvas.replaceWith(m.poster);
+    m.canvas.width = 0; m.canvas.height = 0;   // libère la mémoire du canvas
+    m.canvas = null;
   }
-  if (minis.size) requestAnimationFrame(tickMinis);
-  else minisRunning = false;
+  if (activeMini === m) activeMini = null;
+}
+
+/**
+ * Anime `mini` (rendu par miniAnim) au survol de `host`. Sur tactile, le premier
+ * toucher anime (le clic est absorbé), le suivant fait l'action de `host`.
+ * Le défilement n'est pas gêné : on n'écoute que le clic, jamais touchmove.
+ */
+/** Remplit `host` avec parts(mini) et branche l'animation au survol. */
+function hoverAnimCell(anim, box, host, parts) {
+  const mini = miniAnim(anim, box);
+  host.append(...parts(mini));
+  return hoverMini(host, mini);
+}
+
+function hoverMini(host, mini) {
+  const m = mini.mini;
+  let touch = false;
+  host.addEventListener('pointerenter', (ev) => { if (ev.pointerType === 'mouse') startMini(m); });
+  host.addEventListener('pointerleave', (ev) => { if (ev.pointerType === 'mouse') stopMini(m); });
+  host.addEventListener('pointerdown', (ev) => { touch = ev.pointerType !== 'mouse'; });
+  host.addEventListener('click', (ev) => {
+    if (touch && !m.canvas) {
+      touch = false;
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      startMini(m);
+    }
+  }, { capture: true });
+  return host;
 }
 
 function showDetail(a) {
@@ -957,10 +1012,10 @@ function showDetail(a) {
     animSel.addEventListener('change', () => load(a.anims.find((x) => x.name === animSel.value)));
     // Toutes les animations du perso en même temps ; un clic l'ouvre dans le lecteur.
     gallery = el('div', { class: 'anim-gallery' }, a.anims.map((x) =>
-      el('button', {
+      hoverAnimCell(x, 88, el('button', {
         type: 'button', class: 'anim-cell', title: `${x.name} (${x.frames} images)`,
         onclick: () => { animSel.value = x.name; load(x); stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); },
-      }, el('div', { class: 'anim-box' }, miniAnim(x, 88)), el('span', { text: x.name }))));
+      }), (mini) => [el('div', { class: 'anim-box' }, mini), el('span', { text: x.name })])));
     playBtn.addEventListener('click', () => {
       p.playing = !p.playing;
       playBtn.textContent = p.playing ? '⏸ Pause' : '▶ Lecture';
@@ -1208,6 +1263,12 @@ function initKanban() {
   $('card-form').addEventListener('submit', saveCard);
   $('cf-delete').addEventListener('click', deleteCard);
   $('cf-comment-send').addEventListener('click', sendComment);
+  $('cf-asset').addEventListener('change', () => { fillDetailOptions(); renderCardAsset(); });
+  $('cf-detail').addEventListener('change', renderCardAsset);
+  $('cf-accept').addEventListener('click', () => { if (state.editing) acceptCard(state.editing); });
+  $('cf-refuse').addEventListener('click', () => { if (state.editing) openRefuse(state.editing); });
+  $('rf-cancel').addEventListener('click', () => $('refuse-dialog').close());
+  $('refuse-form').addEventListener('submit', sendRefuse);
   $('cf-add-child').addEventListener('click', () => {
     const parent = state.editing;
     if (parent) openCardDialog(null, '', parent.id);
@@ -1365,6 +1426,10 @@ function cardEl(c, col) {
     hat.querySelector('.bar').style.width = pct + '%';
   }
   const comments = c.notes.length;
+  const thumbSrc = cardThumb(c);
+  const qa = c.status === 'qa' ? el('div', { class: 'qa-actions' },
+    el('button', { type: 'button', class: 'accept', onclick: (ev) => { ev.stopPropagation(); acceptCard(c); } }, '✓ Accepter'),
+    el('button', { type: 'button', class: 'refuse', onclick: (ev) => { ev.stopPropagation(); openRefuse(c); } }, '✗ Refuser')) : null;
   const card = el('div', {
     class: 'card t-' + c.type + (c.children > 0 ? ' is-hat' : ''), draggable: 'true', 'data-id': c.id, tabindex: '0',
     onclick: () => openCardDialog(c, ''),
@@ -1376,18 +1441,23 @@ function cardEl(c, col) {
     el('span', { class: 'muted', text: '#' + c.id }),
     el('span', { class: 'spacer' }),
     el('span', { class: 'origin', title: 'Créée par ' + (AUTHOR_LABEL[c.origin] || c.origin), text: AUTHOR_LABEL[c.origin] || c.origin })),
+  c.rework ? el('div', { class: 'rework', text: '↺ à retraiter' }) : null,
   parent ? el('a', {
     class: 'parent-link', href: '#/kanban', title: 'Ouvrir le chapeau',
     onclick: (ev) => { ev.preventDefault(); ev.stopPropagation(); openCardDialog(parent, ''); },
     text: '↑ ' + parent.title,
   }) : null,
-  el('div', { class: 'title', text: c.title }),
-  c.description ? el('div', { class: 'desc', text: c.description }) : null,
-  c.asset ? el('a', {
-    class: 'asset-link', href: '#/assets/' + encodeURIComponent(c.asset),
-    onclick: stop, text: '↗ ' + (asset ? asset.name : c.asset),
-  }) : null,
+  el('div', { class: 'card-main' },
+    thumbSrc ? el('img', { class: 'card-thumb' + (asset && asset.smooth ? ' smooth' : ''), src: fileUrl(thumbSrc), alt: '', loading: 'lazy', decoding: 'async' }) : null,
+    el('div', { class: 'card-text' },
+      el('div', { class: 'title', text: c.title }),
+      c.description ? el('div', { class: 'desc', text: c.description }) : null,
+      c.asset ? el('a', {
+        class: 'asset-link', href: '#/assets/' + encodeURIComponent(c.asset),
+        onclick: stop, text: '↗ ' + (asset ? asset.name : c.asset) + (c.detail ? ' · ' + c.detail : ''),
+      }) : null)),
   hat,
+  qa,
   el('div', { class: 'foot' },
     comments ? el('span', { class: 'muted', text: `${comments} commentaire${comments > 1 ? 's' : ''}` }) : null,
     el('span', { class: 'spacer' }),
@@ -1430,6 +1500,8 @@ function eventText(e) {
     case 'type': return `a changé le type : ${TYPE_LABEL[e.old] || e.old} → ${TYPE_LABEL[e.new] || e.new}`;
     case 'asset': return `a changé l'asset lié : ${e.new || 'aucun'}`;
     case 'parent': return `a changé le chapeau : ${ref(e.old)} → ${ref(e.new)}`;
+    case 'detail': return `a changé le détail de l'asset : ${e.new || 'aucun'}`;
+    case 'accepte': return 'a accepté la carte : QA → Done';
     default: return e.type;
   }
 }
@@ -1442,6 +1514,10 @@ function renderFeed(events) {
     if (e.type === 'commentaire') {
       return el('div', { class: 'note ' + e.author },
         el('strong', { text: `${who} · ${fmtDate(e.at)}` }), el('br'), e.new);
+    }
+    if (e.type === 'refuse') {
+      return el('div', { class: 'note refus' },
+        el('strong', { text: `✗ Refusée par ${who} · ${fmtDate(e.at)} · retour en Doing` }), el('br'), e.new);
     }
     return el('div', { class: 'event' },
       el('span', { class: 'muted', text: fmtDate(e.at) + ' · ' }), el('strong', { text: who }), ' ' + eventText(e));
@@ -1470,6 +1546,11 @@ function openCardDialog(card, assetId, parentId) {
   $('cf-title').value = card ? card.title : '';
   $('cf-desc').value = card ? card.description : '';
   $('cf-asset').value = card ? card.asset : assetId;
+  $('cf-detail').value = card ? card.detail : '';
+  fillDetailOptions();
+  renderCardAsset();
+  $('cf-qa').hidden = !card || card.status !== 'qa';
+  $('cf-rework').hidden = !card || !card.rework;
   parentOptions($('cf-parent'), card ? card.parent_id : (parentId || 0), card ? familyIds(card.id) : new Set());
   $('cf-note').value = '';
   $('card-error').textContent = '';
@@ -1486,7 +1567,8 @@ function openCardDialog(card, assetId, parentId) {
 function cardBody() {
   return {
     type: $('cf-type').value, priority: $('cf-priority').value, title: $('cf-title').value,
-    description: $('cf-desc').value, asset: $('cf-asset').value.trim(), parent: Number($('cf-parent').value) || 0,
+    description: $('cf-desc').value, asset: $('cf-asset').value.trim(), detail: $('cf-detail').value.trim(),
+    parent: Number($('cf-parent').value) || 0,
   };
 }
 
@@ -1528,6 +1610,127 @@ async function saveCard(ev) {
   $('card-dialog').close();
   toast(card ? 'Carte mise à jour' : 'Carte créée dans le Backlog');
   if (location.hash.startsWith('#/kanban')) renderBoard();
+}
+
+// ------------------------------------------------- asset lié à une carte
+
+/** Animation visée par une carte (champ « détail »), ou l'idle, ou la première. */
+function cardAnim(a, detail) {
+  if (!a || !a.anims || !a.anims.length) return null;
+  return a.anims.find((x) => x.name === detail) || a.anims.find((x) => x.name === 'idle') || a.anims[0];
+}
+
+/** Miniature de la tuile : image fixe de l'animation visée, sinon l'aperçu de l'asset. */
+function cardThumb(c) {
+  const a = c.asset ? state.assetsById.get(c.asset) : null;
+  if (!a || a.type === 'audio' || a.type === 'data') return '';
+  const anim = cardAnim(a, c.detail);
+  return (anim && anim.poster) || a.preview || '';
+}
+
+function fillDetailOptions() {
+  const a = state.assetsById.get($('cf-asset').value.trim());
+  $('detail-ids').replaceChildren(...(a && a.anims ? a.anims.map((x) => el('option', { value: x.name })) : []));
+  $('cf-detail-label').hidden = !(a && a.anims);
+}
+
+/** Vue de l'asset lié, puis le formulaire de commentaire d'asset et ses commentaires. */
+function renderCardAsset() {
+  const box = $('cf-asset-view');
+  const a = state.assetsById.get($('cf-asset').value.trim());
+  if (!a) { box.replaceChildren(); box.hidden = true; return; }
+  box.hidden = false;
+  const detail = $('cf-detail').value.trim();
+  const anim = cardAnim(a, detail);
+  const gk = /^gordeka\/persos\/([^/]+)\/(animations|masques)$/.exec(a.id);
+  const openAsset = () => { $('card-dialog').close(); location.hash = '#/assets/' + encodeURIComponent(a.id); };
+  let view;
+  if (anim) {
+    const cell = hoverAnimCell(anim, 150, el('button', {
+      type: 'button', class: 'anim-cell big', title: 'Survoler pour animer, cliquer pour le plein écran',
+      onclick: () => {
+        $('card-dialog').close();
+        if (gk) openPlayer(gk[1], anim.name); else openAsset();
+      },
+    }), (mini) => [el('div', { class: 'anim-box' }, mini), el('span', { text: `${anim.name} · ${anim.frames} im. · ${anim.fps} i/s` })]);
+    view = el('div', { class: 'ca-anim' + (a.smooth ? ' smooth' : '') }, cell,
+      gk ? el('button', { type: 'button', class: 'small primary', onclick: () => { $('card-dialog').close(); openPlayer(gk[1], anim.name); } }, '⛶ Plein écran') : null);
+  } else if (a.decor && a.kind === 'objet') {
+    let mode = a.decor.calque ? 'masques' : 'image';
+    const holder = el('div', { class: 'dbox' }, decorView(a, mode));
+    const toggle = el('button', {
+      type: 'button', class: 'small', disabled: !a.decor.calque,
+      onclick: () => {
+        mode = mode === 'image' ? 'masques' : 'image';
+        toggle.textContent = mode === 'image' ? 'Masques : non' : 'Masques : oui';
+        holder.replaceChildren(decorView(a, mode));
+      },
+    }, mode === 'image' ? 'Masques : non' : 'Masques : oui');
+    view = el('div', { class: 'ca-decor' }, holder, decorBadges(a.decor), toggle);
+  } else if (a.decor && a.kind === 'sol') {
+    view = el('div', { class: 'ca-sol' }, solTile(a));
+  } else if (a.type === 'audio') {
+    view = el('audio', { controls: true, preload: 'none', src: fileUrl(a.file) });
+  } else if (a.preview) {
+    view = el('div', { class: 'ca-img' + (a.smooth ? ' smooth' : '') }, el('img', { src: fileUrl(a.preview), alt: a.name, loading: 'lazy' }));
+  }
+  const list = el('div', { class: 'asset-comments' });
+  const renderList = () => {
+    const mine = state.comments.filter((c) => c.asset === a.id);
+    list.replaceChildren(...(mine.length ? mine.map((c) => commentEl(c, false, renderList))
+      : [el('p', { class: 'muted', text: 'Aucun commentaire sur cet asset.' })]));
+  };
+  renderList();
+  box.replaceChildren(
+    el('h3', {}, 'Asset : ', el('a', { href: '#/assets/' + encodeURIComponent(a.id), onclick: (ev) => { ev.preventDefault(); openAsset(); }, text: a.name })),
+    view || el('p', { class: 'muted', text: a.id }),
+    el('p', { class: 'meta', text: `${a.id} · version ${a.version}` }),
+    commentForm(a, () => (anim ? 'anim : ' + anim.name : ''), renderList),
+    list);
+}
+
+// ------------------------------------------------------- QA : accepter / refuser
+
+async function acceptCard(c) {
+  const kids = [...familyIds(c.id)].filter((id) => id !== c.id && (cardById(id) || {}).status === 'qa').length;
+  if (kids && !confirm(`Accepter « ${c.title} » et ses ${kids} enfant${kids > 1 ? 's' : ''} encore en QA ?`)) return;
+  const r = await guarded(async () => {
+    const res = await api('card_accept', { method: 'POST', body: { id: c.id } });
+    await reloadCards();
+    return res;
+  });
+  if (!r) return;
+  toast(r.accepted.length > 1 ? `${r.accepted.length} cartes acceptées → Done` : 'Acceptée → Done');
+  if ($('card-dialog').open) $('card-dialog').close();
+  renderBoard();
+}
+
+function openRefuse(c) {
+  state.refusing = c;
+  $('refuse-title').textContent = `Refuser « ${c.title} »`;
+  $('rf-body').value = '';
+  $('rf-error').textContent = '';
+  $('refuse-dialog').showModal();
+  $('rf-body').focus();
+}
+
+async function sendRefuse(ev) {
+  ev.preventDefault();
+  const c = state.refusing;
+  const text = $('rf-body').value.trim();
+  if (!c) return;
+  if (!text) { $('rf-error').textContent = 'Dis ce qui ne va pas : Claude en a besoin pour retraiter.'; return; }
+  try {
+    await api('card_refuse', { method: 'POST', body: { id: c.id, body: text } });
+    await reloadCards();
+  } catch (e) {
+    $('rf-error').textContent = e.message;
+    return;
+  }
+  $('refuse-dialog').close();
+  if ($('card-dialog').open) $('card-dialog').close();
+  toast('Refusée → Doing, à retraiter');
+  renderBoard();
 }
 
 async function deleteCard() {

@@ -17,7 +17,7 @@ const AUTH_WINDOW = 900;            // 15 min
 const SESSION_LIFETIME = 2592000;   // 30 jours
 const MAX_TITLE = 200;
 const MAX_TEXT = 8000;
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 // Colonnes du kanban, dans l'ordre. « review » (ancienne colonne) = « qa ».
 const CARD_STATUSES = ['backlog', 'todo', 'doing', 'qa', 'done'];
 const STATUS_ALIASES = ['review' => 'qa'];
@@ -109,6 +109,8 @@ final class App
             'POST card_move' => $this->moveCard(),
             'POST card_comment', 'POST card_note' => $this->addNote(),
             'POST card_delete' => $this->deleteCard(),
+            'POST card_accept' => $this->acceptCard(),
+            'POST card_refuse' => $this->refuseCard(),
             default => throw new HttpError('Route inconnue', 404),
         };
     }
@@ -162,6 +164,7 @@ final class App
      * v1 -> v2 : colonnes todo/doing/review/done -> todo/doing/qa/done (+ backlog),
      * types libres, parent_id, origin, auteurs « agent » -> « claude »,
      * historique card_events amorcé (création + commentaires existants).
+     * v2 -> v3 : colonnes cards.detail, cards.rework, card_notes.kind.
      */
     private function migrate(PDO $pdo): void
     {
@@ -210,6 +213,14 @@ final class App
                         $pdo->exec("INSERT INTO sqlite_sequence (name, seq) SELECT 'cards', 0"
                             . " WHERE NOT EXISTS (SELECT 1 FROM sqlite_sequence WHERE name = 'cards')");
                         $pdo->prepare("UPDATE sqlite_sequence SET seq = MAX(seq, ?) WHERE name = 'cards'")->execute([$seq]);
+                    }
+                }
+                // v2 -> v3 : détail de l'asset, « à retraiter », type de commentaire.
+                foreach ([['cards', 'detail', "TEXT NOT NULL DEFAULT ''"], ['cards', 'rework', 'INTEGER NOT NULL DEFAULT 0'],
+                    ['card_notes', 'kind', "TEXT NOT NULL DEFAULT ''"]] as [$table, $col, $def]) {
+                    $cols = array_column($pdo->query("PRAGMA table_info($table)")->fetchAll(), 'name');
+                    if (!in_array($col, $cols, true)) {
+                        $pdo->exec("ALTER TABLE $table ADD COLUMN $col $def");   // noms fixes ci-dessus
                     }
                 }
                 $pdo->exec('PRAGMA user_version = ' . SCHEMA_VERSION);
@@ -728,6 +739,7 @@ final class App
         $c['parent_id'] = $c['parent_id'] === null ? null : (int) $c['parent_id'];
         $c['created_at'] = (int) $c['created_at'];
         $c['updated_at'] = (int) $c['updated_at'];
+        $c['rework'] = (bool) (int) $c['rework'];
         return $c;
     }
 
@@ -750,7 +762,8 @@ final class App
             $cid = (int) $n['card_id'];
             if (isset($cards[$cid])) {
                 $cards[$cid]['notes'][] = [
-                    'id' => (int) $n['id'], 'author' => $n['author'], 'body' => $n['body'], 'created_at' => (int) $n['created_at'],
+                    'id' => (int) $n['id'], 'author' => $n['author'], 'body' => $n['body'], 'kind' => $n['kind'],
+                    'created_at' => (int) $n['created_at'],
                 ];
             }
         }
@@ -836,6 +849,7 @@ final class App
         if ($asset !== '' && $this->asset($asset) === null) {
             throw new HttpError('Asset inconnu', 400);
         }
+        $detail = (string) (self::text($b, 'detail', 100) ?? '');
         $status = (string) (self::status($b) ?? 'backlog');
         $parent = (int) self::parentArg($b);
         $this->checkParent(0, $parent);
@@ -846,9 +860,9 @@ final class App
             $stmt->execute([$status]);
             $pos = (int) $stmt->fetchColumn();
             $now = time();
-            $db->prepare('INSERT INTO cards (type, title, description, priority, asset, status, position, parent_id, origin,'
-                . ' created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-                ->execute([$type, $title, $desc, $prio, $asset, $status, $pos, $parent ?: null, $this->actor, $now, $now]);
+            $db->prepare('INSERT INTO cards (type, title, description, priority, asset, detail, status, position, parent_id, origin,'
+                . ' created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+                ->execute([$type, $title, $desc, $prio, $asset, $detail, $status, $pos, $parent ?: null, $this->actor, $now, $now]);
             $id = (int) $db->lastInsertId();
             $this->event($id, 'creation', '', $status, $now);
             $db->commit();
@@ -869,6 +883,7 @@ final class App
             'description' => self::text($b, 'description', MAX_TEXT),
             'priority' => self::oneOf($b, 'priority', PRIORITIES),
             'asset' => self::text($b, 'asset', 300),
+            'detail' => self::text($b, 'detail', 100),
         ];
         $parent = self::parentArg($b);
         if ($fields['title'] === '') {
@@ -888,7 +903,8 @@ final class App
         try {
             $cur = $this->card($id);
             // Nom de l'événement par colonne (« $col » vient de cette liste fixe).
-            $names = ['type' => 'type', 'title' => 'titre', 'description' => 'description', 'priority' => 'priorite', 'asset' => 'asset'];
+            $names = ['type' => 'type', 'title' => 'titre', 'description' => 'description', 'priority' => 'priorite',
+                'asset' => 'asset', 'detail' => 'detail'];
             $sets = [];
             $args = [];
             foreach ($fields as $col => $v) {
@@ -928,15 +944,7 @@ final class App
         $db->beginTransaction();
         try {
             $old = (string) $this->card($id)['status'];
-            $stmt = $db->prepare('SELECT id FROM cards WHERE status = ? AND id != ? ORDER BY position, id');
-            $stmt->execute([$status, $id]);
-            $ids = array_map('intval', array_column($stmt->fetchAll(), 'id'));
-            $at = is_int($index) ? max(0, min($index, count($ids))) : count($ids);
-            array_splice($ids, $at, 0, [$id]);
-            $upd = $db->prepare('UPDATE cards SET status = ?, position = ?, updated_at = CASE WHEN id = ? THEN ? ELSE updated_at END WHERE id = ?');
-            foreach ($ids as $pos => $cid) {
-                $upd->execute([$status, $pos, $id, time(), $cid]);
-            }
+            $this->placeCard($id, $status, $index);
             // Le simple réordonnancement dans une colonne n'est pas historisé.
             if ($old !== $status) {
                 $this->event($id, 'deplacement', $old, $status);
@@ -947,6 +955,107 @@ final class App
             throw $e;
         }
         $this->json(['ok' => true]);
+    }
+
+    /**
+     * Range la carte $id dans la colonne $status à la position $index (fin par
+     * défaut) et renumérote la colonne. Repasser en QA efface « à retraiter ».
+     * À appeler dans une transaction.
+     */
+    private function placeCard(int $id, string $status, mixed $index = null): void
+    {
+        $db = $this->db();
+        $stmt = $db->prepare('SELECT id FROM cards WHERE status = ? AND id != ? ORDER BY position, id');
+        $stmt->execute([$status, $id]);
+        $ids = array_map('intval', array_column($stmt->fetchAll(), 'id'));
+        $at = is_int($index) ? max(0, min($index, count($ids))) : count($ids);
+        array_splice($ids, $at, 0, [$id]);
+        $upd = $db->prepare('UPDATE cards SET status = ?, position = ?, updated_at = CASE WHEN id = ? THEN ? ELSE updated_at END WHERE id = ?');
+        foreach ($ids as $pos => $cid) {
+            $upd->execute([$status, $pos, $id, time(), $cid]);
+        }
+        if ($status === 'qa') {
+            $db->prepare('UPDATE cards SET rework = 0 WHERE id = ?')->execute([$id]);
+        }
+    }
+
+    /**
+     * QA : Julien accepte la carte -> Done (événement « accepte »). Un chapeau
+     * accepte aussi ses descendants encore en QA. Renvoie les ids acceptés.
+     */
+    private function acceptCard(): void
+    {
+        $id = self::id($this->body());
+        $db = $this->db();
+        $db->beginTransaction();
+        try {
+            if ($this->card($id)['status'] !== 'qa') {
+                throw new HttpError('Seule une carte en QA peut être acceptée', 400);
+            }
+            $accepted = [];
+            $fam = $this->descendants($id);
+            $st = $db->prepare('SELECT status FROM cards WHERE id = ?');
+            foreach (array_merge([$id], $fam) as $cid) {
+                $st->execute([$cid]);
+                if ($st->fetchColumn() !== 'qa') {
+                    continue;
+                }
+                $this->placeCard($cid, 'done');
+                $this->event($cid, 'accepte', 'qa', 'done');
+                $accepted[] = $cid;
+            }
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
+        $this->json(['ok' => true, 'accepted' => $accepted]);
+    }
+
+    /** QA : refus avec commentaire obligatoire -> Doing, « à retraiter » (événement « refuse »). */
+    private function refuseCard(): void
+    {
+        $b = $this->body();
+        $id = self::id($b);
+        $text = (string) self::text($b, 'body', MAX_TEXT, true);
+        $db = $this->db();
+        $db->beginTransaction();
+        try {
+            if ($this->card($id)['status'] !== 'qa') {
+                throw new HttpError('Seule une carte en QA peut être refusée', 400);
+            }
+            $now = time();
+            $db->prepare("INSERT INTO card_notes (card_id, author, body, kind, created_at) VALUES (?, ?, ?, 'refus', ?)")
+                ->execute([$id, $this->actor, $text, $now]);
+            $this->placeCard($id, 'doing');
+            $db->prepare('UPDATE cards SET rework = 1 WHERE id = ?')->execute([$id]);
+            $this->event($id, 'refuse', 'qa', $text, $now);
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
+        $this->json(['ok' => true]);
+    }
+
+    /** Ids des descendants d'une carte. */
+    private function descendants(int $id): array
+    {
+        $down = $this->db()->prepare('SELECT id FROM cards WHERE parent_id = ? ORDER BY position, id');
+        $out = [];
+        $level = [$id];
+        for ($guard = 0; $level && $guard < MAX_DEPTH + 1; $guard++) {
+            $next = [];
+            foreach ($level as $cid) {
+                $down->execute([$cid]);
+                foreach (array_column($down->fetchAll(), 'id') as $k) {
+                    $next[] = (int) $k;
+                }
+            }
+            $out = array_merge($out, $next);
+            $level = $next;
+        }
+        return $out;
     }
 
     /** Commentaire sur une carte (route card_comment, alias historique card_note). */

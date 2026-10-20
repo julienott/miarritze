@@ -1,4 +1,4 @@
--- Schéma du service /producer (commentaires d'assets + kanban), version 2.
+-- Schéma du service /producer (commentaires d'assets + kanban), version 3.
 -- Appliqué à chaque connexion : uniquement des CREATE ... IF NOT EXISTS.
 -- Une base de version 1 (colonnes todo/doing/review/done, notes d'« agent »)
 -- est migrée d'abord par App::migrate() (PRAGMA user_version).
@@ -27,10 +27,12 @@ CREATE TABLE IF NOT EXISTS cards (
     description TEXT    NOT NULL DEFAULT '',
     priority    TEXT    NOT NULL DEFAULT '' CHECK (priority IN ('', 'basse', 'normale', 'haute')),
     asset       TEXT    NOT NULL DEFAULT '',
+    detail      TEXT    NOT NULL DEFAULT '',     -- précise l'asset : nom de l'animation (ex. walk)
     status      TEXT    NOT NULL DEFAULT 'backlog' CHECK (status IN ('backlog', 'todo', 'doing', 'qa', 'done')),
     position    INTEGER NOT NULL DEFAULT 0,
     parent_id   INTEGER REFERENCES cards (id) ON DELETE SET NULL,   -- carte chapeau
     origin      TEXT    NOT NULL DEFAULT 'julien' CHECK (origin IN ('julien', 'claude')),
+    rework      INTEGER NOT NULL DEFAULT 0,      -- 1 = refusée en QA, « à retraiter »
     created_at  INTEGER NOT NULL,
     updated_at  INTEGER NOT NULL
 );
@@ -42,6 +44,7 @@ CREATE TABLE IF NOT EXISTS card_notes (
     card_id     INTEGER NOT NULL REFERENCES cards (id) ON DELETE CASCADE,
     author      TEXT    NOT NULL CHECK (author IN ('julien', 'claude')),
     body        TEXT    NOT NULL,
+    kind        TEXT    NOT NULL DEFAULT '',     -- '' | 'refus'
     created_at  INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS card_notes_card ON card_notes (card_id);
@@ -49,7 +52,7 @@ CREATE INDEX IF NOT EXISTS card_notes_card ON card_notes (card_id);
 -- Historique des cartes. Pas de clé étrangère : l'événement « suppression »
 -- survit à la carte, pour que le fil `events` reste complet.
 -- type : creation | deplacement | titre | description | priorite | type | asset
---        | parent | commentaire | suppression
+--        | detail | parent | commentaire | accepte | refuse | suppression
 CREATE TABLE IF NOT EXISTS card_events (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     card_id     INTEGER NOT NULL,

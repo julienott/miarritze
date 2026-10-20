@@ -135,7 +135,7 @@ main { padding: 16px; }
 }
 .stage-dark .tile .thumb { background: var(--stage-dark); }
 .tile .thumb img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
-.tile .thumb canvas { height: 100%; max-width: 100%; object-fit: contain; image-rendering: pixelated; }
+.tile .thumb canvas, .tile .thumb .mini { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
 .tile .thumb.audio { font-size: 34px; color: var(--blue); }
 .tile .name { font-size: 12px; word-break: break-word; }
 .tile .count { font-size: 11px; }
@@ -169,10 +169,10 @@ main { padding: 16px; }
   background: var(--stage-light); border-radius: 4px; overflow: hidden;
 }
 .stage-dark .anim-box { background: var(--stage-dark); }
-.anim-box canvas { image-rendering: pixelated; image-rendering: crisp-edges; max-width: 100%; max-height: 100%; }
+.anim-box canvas, .anim-box .mini { image-rendering: pixelated; image-rendering: crisp-edges; max-width: 100%; max-height: 100%; }
 /* Gordeka est en HD lisse : pas de pixels nets. */
 .stage.smooth img, .stage.smooth canvas, .tile .thumb.smooth img, .tile .thumb.smooth canvas,
-.group-head img.smooth, .stage.smooth ~ .anim-gallery canvas { image-rendering: auto; }
+.group-head img.smooth, .stage.smooth ~ .anim-gallery .mini { image-rendering: auto; }
 .cats li.section { flex-basis: 100%; }
 .data-stage { display: block; }
 pre.data { margin: 0; font-size: 12px; max-height: 60vh; overflow: auto; white-space: pre-wrap; word-break: break-word; }
@@ -259,6 +259,32 @@ audio { width: 100%; margin: 10px 0; }
 .note.claude { border-left: 3px solid var(--red); }
 .note.julien { border-left: 3px solid var(--blue); }
 #cf-thread { border-top: 1px solid var(--line); margin-top: 12px; }
+/* Miniature de l'asset sur la tuile. */
+.card-main { display: flex; gap: 8px; align-items: flex-start; }
+.card-text { flex: 1; min-width: 0; }
+.card-thumb { flex: none; width: 48px; height: 48px; object-fit: contain; margin-top: 4px;
+  background: var(--stage-light); border-radius: 4px; image-rendering: pixelated; }
+.card-thumb.smooth { image-rendering: auto; }
+/* QA : accepter / refuser, au doigt sur iPhone. */
+.qa-actions { display: flex; gap: 6px; margin-top: 8px; }
+.qa-actions button { flex: 1; min-height: 40px; font-weight: 600; }
+button.accept { background: var(--ok); border-color: var(--ok); color: #fff; }
+button.refuse { background: var(--panel); border: 2px solid var(--red); color: var(--red); }
+.rework { display: inline-block; margin: 6px 0 0; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700;
+  background: #b7791f; color: #fff; }
+p.rework { display: block; }
+.note.refus { border-left: 3px solid var(--red); background: rgba(206, 52, 52, .12); }
+/* Asset lié, dans le détail d'une carte. */
+.card-asset { border-top: 1px solid var(--line); margin-top: 12px; }
+.card-asset .ca-anim { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.card-asset .anim-cell.big { width: 190px; }
+.card-asset .anim-cell.big .anim-box { height: 160px; }
+.card-asset .ca-anim.smooth .mini, .card-asset .ca-img.smooth img { image-rendering: auto; }
+.card-asset .ca-img img { max-width: 100%; max-height: 260px; display: block; background: var(--stage-light); border-radius: 6px; }
+.card-asset .ca-decor .dbox { height: 220px; width: 100%; }
+.card-asset .ca-decor { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.card-asset audio { width: 100%; }
+.card-asset .comment-form { padding: 10px; }
 
 dialog {
   border: 1px solid var(--line); border-radius: 12px; padding: 16px; width: min(560px, calc(100vw - 32px));
@@ -286,7 +312,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .45); }
   .column { min-height: 90px; }
 }
 @media (max-height: 500px) {
-  #view-assets { grid-template-columns: 1fr; }
+  #view-assets { grid-template-columns: minmax(0, 1fr); }
   .sidebar { position: static; }
   .cats { display: flex; flex-wrap: wrap; gap: 4px; }
   .cats li button { width: auto; background: var(--chip); gap: 8px; }
@@ -295,7 +321,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .45); }
 /* ---------------------------------------------------------------- mobile */
 @media (max-width: 760px) {
   main { padding: 12px 16px; }
-  #view-assets { grid-template-columns: 1fr; }
+  #view-assets { grid-template-columns: minmax(0, 1fr); }
   .sidebar { position: static; }
   .cats { display: flex; flex-wrap: wrap; gap: 4px; }
   .cats li button { width: auto; background: var(--chip); gap: 8px; }
@@ -334,7 +360,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .45); }
 }
 .gk-anim:hover, .gk-anim:focus-visible { border-color: var(--red); }
 .gk-anim .anim-box { height: 110px; }
-.gk-anim .anim-box canvas { height: 100%; width: auto; max-width: 100%; object-fit: contain; image-rendering: auto; }
+.gk-anim .anim-box .mini { height: 100%; width: auto; max-width: 100%; object-fit: contain; image-rendering: auto; }
 .gk-anim .gk-anim-name { font-weight: 600; }
 .gk-anim .muted { font-size: 11px; }
 .gk-anim.missing { cursor: default; border-style: dashed; opacity: .7; }

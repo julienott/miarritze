@@ -66,6 +66,11 @@
   <form id="card-form" method="dialog" class="card-form">
     <h2 id="card-dialog-title">Carte</h2>
     <p class="muted small-text" id="cf-origin"></p>
+    <p class="rework" id="cf-rework" hidden>↺ Refusée en QA : à retraiter (voir le refus dans l'historique)</p>
+    <div class="qa-actions" id="cf-qa" hidden>
+      <button type="button" id="cf-accept" class="accept">✓ Accepter</button>
+      <button type="button" id="cf-refuse" class="refuse">✗ Refuser</button>
+    </div>
     <div class="row">
       <label>Type
         <select id="cf-type">
@@ -87,6 +92,9 @@
     <label>Chapeau (carte parent, optionnel) <select id="cf-parent"></select></label>
     <label>Asset lié (optionnel) <input id="cf-asset" list="asset-ids" placeholder="gordeka/persos/amaia/animations"></label>
     <datalist id="asset-ids"></datalist>
+    <label id="cf-detail-label" hidden>Détail : animation visée (optionnel)
+      <input id="cf-detail" list="detail-ids" maxlength="100" placeholder="walk"></label>
+    <datalist id="detail-ids"></datalist>
     <p class="error" id="card-error" role="alert"></p>
     <div class="row end">
       <button type="button" id="cf-delete" class="danger">Supprimer</button>
@@ -94,7 +102,10 @@
       <button type="button" id="cf-cancel" class="ghost">Fermer</button>
       <button type="submit" id="cf-save" class="primary">Enregistrer</button>
     </div>
-    <div id="cf-thread">
+  </form>
+  <!-- Hors du formulaire de la carte : le commentaire d'asset a son propre formulaire. -->
+  <section id="cf-asset-view" class="card-asset" hidden></section>
+  <div id="cf-thread">
       <h3 id="cf-children-title">Enfants</h3>
       <ul id="cf-children" class="kids"></ul>
       <button type="button" id="cf-add-child" class="small">+ Carte enfant</button>
@@ -103,7 +114,18 @@
       <label>Commenter <textarea id="cf-note" rows="2" maxlength="8000" placeholder="Une remarque, une précision pour itérer…"></textarea></label>
       <div class="row end"><span class="spacer"></span>
         <button type="button" id="cf-comment-send" class="small primary">Commenter</button></div>
-    </div>
+  </div>
+</dialog>
+
+<dialog id="refuse-dialog">
+  <form id="refuse-form" method="dialog">
+    <h2 id="refuse-title">Refuser</h2>
+    <label>Ce qui ne va pas (obligatoire) — la carte repart en Doing, à retraiter
+      <textarea id="rf-body" rows="4" maxlength="8000" placeholder="Ex. la marche glisse, les pieds ne restent pas au sol"></textarea></label>
+    <p class="error" id="rf-error" role="alert"></p>
+    <div class="row end"><span class="spacer"></span>
+      <button type="button" id="rf-cancel" class="ghost">Annuler</button>
+      <button type="submit" id="rf-send" class="refuse">✗ Refuser</button></div>
   </form>
 </dialog>
 
