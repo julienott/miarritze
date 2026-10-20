@@ -3,8 +3,6 @@
  "decor/sol_rocher_phare/0": "Uniform natural grey-beige rock surface with soft irregular cracks spread evenly, no repeated motif, no circles, no turquoise puddles, calm and low contrast so characters stay readable on it.",
  "decor/toit_tuiles/0": "Seen from above: rows of overlapping rounded red-orange Basque clay roof tiles (canal tiles), staggered rows, uniform, low contrast, no red dots, no square grid.",
  "perso/xabi/hide_out": {
-  "action": "Springs up out of the hiding spot with a big joyful hop, arms open, lands, then stands up straight; the jai alai cesta stays strapped on his right hand, rigid, same shape.",
-  "exaggerate": 1.4,
   "priority": "normal"
  },
  "decor/banc_chapelle/0": "Seen from the front, the front face of the bench is visible: a warm brown varnished wooden church pew with a carved backrest, not seen from straight above.",
