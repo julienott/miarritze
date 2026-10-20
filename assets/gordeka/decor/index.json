@@ -525,7 +525,23 @@
     8
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/mur_soutenement.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "b96c0ef6bcea4984baff17bd993716a1",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/mur_soutenement_ombre.png",
+   "ombre_decalage": [
+    23,
+    118
+   ]
   },
   "caisses_poisson": {
    "nom": "Pile de caisses de poisson",
