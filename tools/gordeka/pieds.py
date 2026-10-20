@@ -258,6 +258,14 @@ def ecrire(chemin: str, r: dict) -> bool:
     return True
 
 
+def _post(pid: str) -> dict:
+    try:
+        p = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "prompts_anims.json")))
+        return dict(p.get("persos", {}).get(pid, {}).get("post", {}) or {})
+    except (OSError, ValueError):
+        return {}
+
+
 def corriger_perso(pid: str, anims=None, ecrit: bool = True) -> dict:
     """Point d'entrée d'import_perso.py : mesure les anims d'un perso et écrit leur correction dans
     leurs .json. Toutes les anims d'un perso sont recalées sur ses pieds dans l'idle : un nouvel idle
@@ -274,6 +282,10 @@ def corriger_perso(pid: str, anims=None, ecrit: bool = True) -> dict:
         r = analyser(os.path.join(d, anim + ".png"), json.load(open(os.path.join(d, fn))), anim, ref)
         if not r:
             continue
+        # Exception déclarée par données (prompts_anims.json, persos.<id>.post.pieds_fixes) : planche
+        # déjà centrée où la mesure des pieds se trompe (ex. bras tendu pris pour un pied) → pas de recalage.
+        if anim in (_post(pid).get("pieds_fixes") or []):
+            r["frame_offsets"] = [[0.0, 0.0]] * len(r["frame_offsets"])
         res[f"{pid}/{anim}"] = r
         if ecrit:
             ecrire(os.path.join(d, fn), r)

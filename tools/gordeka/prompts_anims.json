@@ -329,7 +329,10 @@
     "emote_danse",
     "emote_pouce",
     "emote_chut",
-    "emote_langue"
+    "emote_langue",
+    "hide_out",
+    "ghost",
+    "ghost_move"
    ]
   },
   "mattin": {
@@ -378,6 +381,11 @@
     "\\bhim\\b": "her",
     "\\bhis\\b": "her",
     "\\bhe\\b": "she"
+   },
+   "post": {
+    "pieds_fixes": [
+     "hunter_reveal"
+    ]
    }
   },
   "kaio": {
@@ -407,11 +415,12 @@
    "allure": "seagull waddle: body rocks side to side, webbed feet slap the ground, head bobs forward and back with each step",
    "mouvement": {
     "run_scared": {
+     "arms": "wings_up",
      "exaggerate": null
     }
    },
    "actions": {
-    "run_scared": "Panicked cartoon sprint, running for dear life: very long strides, webbed feet spinning fast, body leaning far forward, both grey wings flapping wildly at his sides, sweat drops flying off the head, a little dust puff at the heels. Hugely exaggerated, comic, never violent."
+    "run_scared": "Runs in panic with both wings raised high and held still, very long strides, webbed feet spinning fast, body leaning forward, sweat drops flying."
    },
    "lexique": {
     "\\ba big thumbs up\\b": "a big raised wing tip",

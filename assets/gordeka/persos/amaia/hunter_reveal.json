@@ -21,41 +21,6 @@
   "clip": "hunter_reveal"
  },
  "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Becomes the hunter: takes a small flashlight from her belt, clicks it on, then holds it steady with her arm stretched forward; a clean straight cone of soft yellow light shines forward from the lamp. The arm stays still and steady once the lamp is on. The wooden makila stick slung diagonally on the back: stays rigid on her back at the same diagonal angle, moving only with the torso, never in her hands; it stays on the same side of her body as in the reference image in every frame, never crossing to the other side. The red headscarf with knotted tails at the back of the head: stays tied on the head, the two knot tails flutter behind with the motion. The red skirt: flares and swirls with each step like a dancer. She takes a small flashlight and holds it perfectly still with her arm stretched forward; her hand does not move at all once the light is on. No beam is drawn, only the small lamp in her hand.",
- "frame_offsets": [
-  [0.0, 0.0],
-  [1.0, 0.0],
-  [2.0, 0.0],
-  [3.0, 0.0],
-  [4.0, 0.0],
-  [5.0, 0.0],
-  [6.0, 0.0],
-  [7.5, 0.0],
-  [8.5, 0.0],
-  [9.5, 0.0],
-  [11.0, 0.0],
-  [12.0, 0.0],
-  [13.0, 0.0],
-  [14.5, 0.0],
-  [15.5, 0.0],
-  [17.0, 0.0],
-  [18.0, 0.0],
-  [19.0, 0.0],
-  [20.0, 0.0],
-  [21.5, 0.0],
-  [22.5, 0.0],
-  [23.5, 0.0],
-  [24.5, 0.0],
-  [25.5, 0.0],
-  [26.5, 0.0],
-  [28.0, 0.0],
-  [29.0, 0.0],
-  [30.5, 0.0],
-  [32.0, 0.0],
-  [33.0, 0.0],
-  [34.5, 0.0],
-  [35.5, 0.0],
-  [37.0, 0.0]
- ],
  "lampe": {
   "debut": 9,
   "points": [
@@ -94,14 +59,15 @@
    [168, 121]
   ]
  },
+ "fin": 32,
  "entrees": {
   "idle": {
-   "i": [0, 26, 26, 26, 26, 26, 26, 26, 26, 26, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 20, 5, 5, 5, 5, 5, 20, 19, 19, 19, 31, 10],
-   "e": [3, 4, 8, 12, 16, 20, 26, 31, 36, 39, 61, 60, 58, 56, 55, 53, 52, 51, 50, 49, 48, 46, 44, 41, 39, 35, 33, 29, 26, 24, 21, 20, 19]
+   "i": [0, 15, 0, 9, 24, 9, 24, 26, 26, 26, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+   "e": [3, 3, 2, 2, 4, 4, 8, 9, 12, 12, 74, 73, 73, 73, 73, 73, 74, 73, 74, 75, 75, 75, 74, 74, 74, 73, 73, 73, 73, 73, 73, 73, 73]
   },
   "walk": {
-   "i": [21, 21, 21, 21, 21, 21, 21, 3, 3, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, 22, 22, 22, 22, 22, 22, 22, 22, 22, 21, 21, 21, 21, 21],
-   "e": [39, 39, 39, 40, 41, 42, 44, 46, 48, 49, 57, 55, 53, 51, 50, 49, 48, 48, 47, 47, 46, 46, 45, 44, 44, 43, 42, 42, 42, 42, 43, 43, 43]
+   "i": [21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+   "e": [39, 38, 39, 39, 40, 40, 40, 40, 41, 41, 70, 69, 69, 69, 69, 69, 69, 69, 70, 70, 70, 70, 70, 69, 69, 69, 68, 68, 68, 68, 68, 69, 69]
   }
  }
 }
