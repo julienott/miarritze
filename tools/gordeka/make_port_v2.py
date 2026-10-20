@@ -11,16 +11,24 @@ vérifie que tout est atteignable et affiche quelques mesures (liaisons, distanc
 Légende : . sol   # mur/bâtiment   c caisse   B bateau   (pleins, cachent la vue)
           t objet bas (bloque le passage, pas la vue)   ~ eau (idem)
           H cachette   E sortie possible   S départ
-Usage : make_port_v2.py
+Usage : make_port_v2.py [--sans-tension]
+
+Tension (2026-10-20, docs/GORDEKA_EQUILIBRAGE.md) : caisses qui coupent les longues lignes de vue
+(place, criée, jetée, escalier, atelier), coffres au milieu du quai nord, cachettes déplacées des
+recoins vers les passages, avec plusieurs côtés libres pour en ressortir. `--sans-tension` redonne
+la carte d'avant (A/B). Le décor suit tout seul : GkDecor pose l'image de chaque objet d'après son
+caractère, sa zone et sa taille (caisses 2 × 2, cachettes 1 × 1, comme les images existantes).
 """
 import json
 import os
+import sys
 from collections import deque
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 OUT = os.path.join(ROOT, "assets", "maps", "port_pecheurs")
 W, H = 96, 40
 g = [["#"] * W for _ in range(H)]
+TENSION = "--sans-tension" not in sys.argv
 
 
 def put(x, y, w, h, ch):
@@ -187,6 +195,28 @@ def build():
     put(93, 26, 1, 1, "H")
 
 
+def tension():
+    """Lignes de vue plus courtes et cachettes près des passages (voir l'en-tête)."""
+    put(38, 18, 2, 2, "c")                      # place : caisses de part et d'autre de la fontaine
+    put(49, 20, 2, 2, "c")
+    put(35, 24, 1, 1, ".")
+    put(55, 19, 1, 1, "H")                      # malle à pelotes : contre le couloir du hangar
+    put(69, 4, 2, 2, "c")                       # criée : caisses entre les étals
+    put(35, 10, 1, 1, "H")
+    put(53, 10, 1, 1, "H")                      # quai nord : deux coffres de plus au milieu du quai
+    put(16, 10, 2, 2, "c")                      # jetée : caisses sur le terre-plein
+    put(92, 30, 2, 2, "c")                      # escalier : caisses derrière le mur de soutènement
+    put(93, 26, 1, 1, ".")
+    put(85, 25, 1, 1, "H")                      # cabine : au pied du couloir de la chapelle
+    put(60, 37, 1, 1, ".")
+    put(74, 31, 1, 1, "H")                      # atelier : caisse à voiles au bord de la coque
+    put(63, 36, 2, 2, "c")
+    put(93, 13, 1, 1, ".")
+    put(81, 13, 1, 1, "H")                      # confessionnal : à l'entrée de la chapelle
+    put(74, 22, 1, 1, ".")
+    put(75, 20, 1, 1, "H")                      # tas de filets : près du couloir de la chapelle
+
+
 def walkable(ch):
     return ch in ".ESH"
 
@@ -253,6 +283,8 @@ def check():
 
 def main():
     build()
+    if TENSION:
+        tension()
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, "map.txt"), "w") as fh:
         fh.write("\n".join("".join(row) for row in g) + "\n")
