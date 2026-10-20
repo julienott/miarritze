@@ -42,3 +42,4 @@ producer/data/
 .pf_token
 backend/turn.php
 tools/gordeka/.decor_go
+tools/gordeka/.decor_pause

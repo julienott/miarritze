@@ -1,19 +1,18 @@
 {
  "tour_phare": {
-  "tid": "8ec1f168cda54fe089dacb6f6e1d5406",
+  "tid": "cd1a622c71724b7d92bcf4741d10dd03",
   "fichier": "objets/tour_phare.png",
-  "statut": "succeeded",
-  "essai": "v2"
+  "statut": "succeeded"
  },
  "rayonnage_filets": {
   "tid": "72e7ec55e51e400fa4595098e97ecf89",
   "fichier": "objets/rayonnage_filets.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "mur_soutenement": {
   "tid": "1e874f2a311a4dbc8c230324b051f6a3",
   "fichier": "objets/mur_soutenement.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "chalutier_quai": {
   "tid": "fb76e21c2efb42328c782161d0797cf2",
@@ -43,7 +42,7 @@
   "essai": "v2"
  },
  "cachette_casier_homards": {
-  "tid": "5d92f09703044884aaab79737d4dc180",
+  "tid": "d82eb41865bb42aa9eaa2d35dd291ddc",
   "fichier": "objets/cachette_casier_homards.png",
   "statut": "succeeded"
  },
@@ -140,6 +139,11 @@
  "lavoir_bassin": {
   "tid": "b39b13b27f504c15bde9984bfef8e12a",
   "fichier": "objets/lavoir_bassin.png",
+  "statut": "succeeded"
+ },
+ "cachette_confessionnal": {
+  "tid": "aa2d4ae8cc1a4fb489489ba96bfb613c",
+  "fichier": "objets/cachette_confessionnal.png",
   "statut": "succeeded"
  }
 }

@@ -217,7 +217,8 @@ class Routine:
                             f"Gordeka : décor {a} (pf_2d, recette OK)")
                 if lire(ed.PROMPTS, {}) and json.load(open(os.path.join(ROOT, "assets/gordeka/decor/index.json")))[
                         "elements"].get(a, {}).get("type") == "objet":
-                    mp.depose([a])           # masques de gameplay (pf_2d__footprint) de la nouvelle image
+                    if not os.path.exists(os.path.join(HERE, ".decor_pause")):
+                        mp.depose([a])           # masques de gameplay (pf_2d__footprint) de la nouvelle image
         it["statut"] = "ok"
         log("INTÉGRÉ", cle, variante or "")
 
@@ -239,7 +240,9 @@ class Routine:
             for anim in ap.pretes():
                 self.relance(f"perso/{pid}/{anim}", None)
             log("perso :", pid)
-        # décor : file glissante
+        # décor : file glissante (suspendue tant que tools/gordeka/.decor_pause existe, Julien 2026-10-20)
+        if os.path.exists(os.path.join(HERE, ".decor_pause")):
+            return
         en_vol = len(self.items("en_vol", "decor"))
         suivi = lire(ed.SUIVI, {})
         for el in json.load(open(ed.PROMPTS))["elements"]:
