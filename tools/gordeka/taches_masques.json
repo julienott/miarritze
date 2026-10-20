@@ -5,9 +5,10 @@
   "statut": "succeeded"
  },
  "rayonnage_filets": {
-  "tid": "72e7ec55e51e400fa4595098e97ecf89",
+  "tid": "be5255e90a7b43c3a4f5d9b745f826d7",
   "fichier": "objets/rayonnage_filets.png",
-  "statut": "succeeded"
+  "statut": "en_vol",
+  "essai": "v3"
  },
  "mur_soutenement": {
   "tid": "1e874f2a311a4dbc8c230324b051f6a3",
@@ -21,9 +22,10 @@
   "essai": "v2"
  },
  "etal_criee": {
-  "tid": "6106a319054641bf8800e1c2dafe511d",
+  "tid": "979b59d349c4481092b9a010975395a4",
   "fichier": "objets/etal_criee.png",
-  "statut": "succeeded"
+  "statut": "en_vol",
+  "essai": "v3"
  },
  "bitte_amarrage": {
   "tid": "bec8426d9dac415cb885ed73de8e3e7d",

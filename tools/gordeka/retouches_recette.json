@@ -46,5 +46,12 @@
  },
  "perso/txomin/walk": {
   "priority": "normal"
+ },
+ "perso/txomin/hide_in": {
+  "priority": "normal"
+ },
+ "perso/patxi/found": {
+  "action": "Clean drawing with no artifacts: a big startled jump straight up, both feet leave the ground, arms flung out wide, then he lands on the same spot.",
+  "priority": "normal"
  }
 }

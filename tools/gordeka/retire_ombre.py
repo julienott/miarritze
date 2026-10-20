@@ -22,9 +22,10 @@ BANDE_HAUT = 14
 ECART_MAX = 22
 GRIS_MIN, GRIS_MAX = 120, 222
 MIETTE_MAX = 40
+TRAIT_HAUT_MAX = 3
 
 
-def ombre(case, pied):
+def ombre(case, pied, traits_seuls=False):
     a = case.astype(int)
     rgb, al = a[..., :3], a[..., 3]
     gris = (rgb.max(-1) - rgb.min(-1) < ECART_MAX) & (rgb.mean(-1) >= GRIS_MIN) & (rgb.mean(-1) <= GRIS_MAX) & (al > 0)
@@ -39,12 +40,13 @@ def ombre(case, pied):
         pres = p
     contour = (((al > 0) & (al < 200)) | gris_large) & ~pres
     m = np.zeros(al.shape, bool)
-    m[pied - BANDE_HAUT:] = (gris | contour)[pied - BANDE_HAUT:]
+    if not traits_seuls:                    # traits_seuls : ne retirer que les traits isolés (chaussures claires)
+        m[pied - BANDE_HAUT:] = (gris | contour)[pied - BANDE_HAUT:]
     # L'ellipse déborde des chaussures à gauche et à droite : hors de leur étendue, tout ce qui n'est
     # pas plein dans la bande est de l'ombre.
     y0b = pied - BANDE_HAUT
     xs = np.nonzero(plein[y0b:].any(0))[0]
-    if len(xs):
+    if len(xs) and not traits_seuls:
         cote = np.ones(al.shape[1], bool)
         cote[max(0, xs.min() - 1):xs.max() + 2] = False
         m[y0b:, cote] |= (al[y0b:, cote] > 0) & ~plein[y0b:, cote]
@@ -64,13 +66,15 @@ def ombre(case, pied):
                     if y0 <= ny < al.shape[0] and 0 <= nx < al.shape[1] and reste[ny, nx] and not vu[ny, nx]:
                         vu[ny, nx] = True
                         pile.append((ny, nx))
-            if not haut and len(pts) < MIETTE_MAX:
+            ys = [q[0] for q in pts]
+            trait = max(ys) - min(ys) <= TRAIT_HAUT_MAX     # trait d'ombre fin et isolé sous le perso
+            if not haut and (len(pts) < MIETTE_MAX or trait):
                 for py, px in pts:
                     m[py, px] = True
     return m
 
 
-def traite(pid, anim, ecrit):
+def traite(pid, anim, ecrit, traits_seuls=False):
     p = os.path.join(PERSOS, pid, anim + ".png")
     j = json.load(open(os.path.join(PERSOS, pid, anim + ".json")))
     cw, ch = j["cell"]
@@ -79,7 +83,7 @@ def traite(pid, anim, ecrit):
     n = 0
     for x0 in range(0, im.shape[1], cw):
         case = im[:ch, x0:x0 + cw]
-        m = ombre(case, pied)
+        m = ombre(case, pied, traits_seuls)
         n += int(m.sum())
         case[m] = 0
     if ecrit and n:
