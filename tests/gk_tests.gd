@@ -22,7 +22,7 @@ func _initialize() -> void:
 
 func _run() -> void:
 	var tests: Array[Callable] = [test_jauge_remplissage, test_jauge_decroissance, test_jauge_sans_detection,
-		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement,
+		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus,
 		test_partie_ia_courte]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
@@ -256,6 +256,59 @@ func test_capture_pas_frolement() -> void:
 	tick(game, 0.2)
 	check(int(game._st["frolements_2"]) == 0 and int(game._st["vu_perdu"]) == 0, "une capture n'est ni un frôlement ni un vu-perdu")
 	await free_game(game)
+
+
+# ------------------------------------------------------------------ poursuite (désactivée par défaut)
+
+func test_poursuite() -> void:
+	GkRules._data["idee_detection"] = 1.0
+	check(not GkRules.on("idee_poursuite"), "poursuite désactivée par défaut (c'est Julien qui décide)")
+	GkRules._data["idee_poursuite"] = 1.0
+	GkRules._data["poursuite_mult_chasseur"] = 1.15
+	GkRules._data["poursuite_mult_chasse"] = 1.25
+	var game: GkGame = await make_game()
+	var h: GkActor = game.actors[1]
+	var base_h: float = h.speed()
+	var base_c: float = game.hunter.speed()
+	h.position = tile_pos(game, 41, 17)
+	tick(game, 0.1)
+	check(h.chase_left == 0.0, "pas de poursuite avant le « ? »")
+	tick(game, 0.25)
+	check(h.gauge >= GkRules.f("poursuite_seuil") and h.role == GkActor.Role.HIDER, "précondition : « ? » atteint, pas trouvé")
+	check(h.chase_left > 0.0 and game.hunter.chase_left > 0.0, "« ? » : poursuite des deux")
+	check(near(h.speed(), base_h * 1.25, 0.01) and near(game.hunter.speed(), base_c * 1.15, 0.01), "vitesses de poursuite (chassé ×1,25, chasseur ×1,15)")
+	check(int(game._st["poursuites"]) == 1, "une poursuite comptée")
+	h.position = game.hunter.position + Vector2(-6.0 * game.map.tile, 0)        # il s'échappe
+	for i: int in int((GkRules.f("poursuite_duree_s") + 0.2) / DT):
+		h.step(Vector2.ZERO, Vector2.ZERO, DT)
+		game.hunter.step(Vector2.ZERO, Vector2.ZERO, DT)
+		game.hunt_elapsed += DT
+		game._update_capture(DT)
+	check(h.chase_left == 0.0 and near(h.speed(), base_h, 0.01), "après poursuite_duree_s : vitesse normale")
+	check(int(game._st["poursuites"]) == 1, "pas de nouvelle poursuite sans nouveau repérage")
+	await free_game(game)
+
+
+## Précision de Julien : pendant la poursuite, tous les chassés que voit le chasseur en profitent.
+func test_poursuite_tous_vus() -> void:
+	GkRules._data["idee_detection"] = 1.0
+	GkRules._data["idee_poursuite"] = 1.0
+	for tous: float in [1.0, 0.0]:
+		GkRules._data["poursuite_tous_vus"] = tous
+		var game: GkGame = await make_game()
+		var h1: GkActor = game.actors[1]
+		var h2: GkActor = game.actors[2]
+		h1.position = tile_pos(game, 41, 17)
+		h2.position = game.hunter.position + Vector2(-6.0 * game.map.tile, 0)    # dans son dos
+		tick(game, 0.35)
+		check(h1.chase_left > 0.0 and h2.chase_left == 0.0, "seul le chassé vu part en poursuite")
+		h2.position = tile_pos(game, 41, 16)                                      # entre dans le champ
+		tick(game, DT)
+		if tous > 0.5:
+			check(h2.chase_left > 0.0, "tous_vus : le chassé qui entre dans le champ en profite aussi")
+		else:
+			check(h2.chase_left == 0.0, "chassé repéré seul : l'autre n'en profite pas")
+		await free_game(game)
 
 
 # ------------------------------------------------------------------ partie IA contre IA

@@ -409,6 +409,8 @@ func _start_round() -> void:
 		a2.speed_mult = 1.0
 		a2.tickle_left = 0.0
 		a2.sprint_left = 0.0
+		a2.chase_left = 0.0
+		a2.chase_used = false
 		a2.elan_mult = 1.0
 		a2.rescue_k = 0.0
 		a2.rescued = false
@@ -911,6 +913,7 @@ func _update_capture(dt: float) -> void:
 		if a.role != GkActor.Role.HIDER or a.hidden_in >= 0:
 			a.gauge = 0.0
 			a.doubted = false
+			a.chase_used = false
 			continue
 		var vis: float = sight_fraction(hunter, a.position, a.radius, progressive)
 		_seen[a.id] = vis > 0.0
@@ -923,6 +926,8 @@ func _update_capture(dt: float) -> void:
 			continue
 		if a.gauge >= GkRules.f("detection_doute"):
 			a.doubted = true
+		if GkRules.on("idee_poursuite"):
+			_update_chase(a, vis > 0.0)
 		if before > 0.0 and a.gauge <= 0.0:
 			if _stats:
 				_st["evasions_de_vue"] += 1
@@ -931,8 +936,43 @@ func _update_capture(dt: float) -> void:
 				a.ouf_t = OUF_S
 				alert_lost = ALERT_LOST_S
 			a.doubted = false
+			a.chase_used = false
 		peak = maxf(peak, a.gauge)
 	hunter_alert = peak
+	# Poursuite pour tous les chassés visibles (Julien) : tant que le chasseur est en poursuite, tout
+	# chassé qu'il voit (déjà là au départ ou entré dans son champ) en profite aussi.
+	if GkRules.on("idee_poursuite") and GkRules.on("poursuite_tous_vus") and hunter.chase_left > 0.0:
+		for a: GkActor in actors:
+			if a.role == GkActor.Role.HIDER and bool(_seen.get(a.id, false)):
+				a.chase_left = maxf(a.chase_left, hunter.chase_left)
+
+
+## Poursuite (idee_poursuite) : multiplicateur de vitesse du chasseur (`hunter`) ou du chassé repéré.
+## poursuite_mult_chasseur / poursuite_mult_chasse, ou poursuite_mult s'ils valent 0.
+static func chase_mult(hunter_side: bool) -> float:
+	var k: float = GkRules.f("poursuite_mult_chasseur" if hunter_side else "poursuite_mult_chasse")
+	return k if k > 0.0 else GkRules.f("poursuite_mult")
+
+
+## Poursuite : un chassé dont la jauge atteint poursuite_seuil (0,3 = le « ? ») part en poursuite avec
+## le chasseur, tous deux plus rapides pendant poursuite_duree_s s ; poursuite_tant_que_vu = 1 : la
+## durée se recharge tant que le chasseur le voit (elle compte alors après l'avoir perdu de vue).
+func _update_chase(a: GkActor, seen: bool) -> void:
+	var dur: float = GkRules.f("poursuite_duree_s")
+	var start: bool = a.chase_left <= 0.0 and seen and a.gauge >= GkRules.f("poursuite_seuil") \
+		and not a.chase_used
+	var keep: bool = a.chase_left > 0.0 and seen and GkRules.on("poursuite_tant_que_vu")
+	if not start and not keep:
+		return
+	if start:
+		a.chase_used = true
+		if hunter.chase_left <= 0.0:
+			if _stats:
+				_st["poursuites"] += 1
+			if frisson:
+				frisson.play_chase()
+	a.chase_left = dur
+	hunter.chase_left = maxf(hunter.chase_left, dur)
 
 
 ## Compteurs de tension d'un round (`--gk-stats`) : frôlements (le chasseur passe à moins de 2 ou
@@ -944,7 +984,8 @@ static func tension_keys() -> Dictionary:
 	return {"frolements_2": 0, "frolements_3": 0, "frolements_2_cachette": 0, "vus": 0, "vu_perdu": 0,
 		"doutes": 0, "doutes_perdus": 0, "cases_parcourues": 0.0, "chasse_s": 0.0, "bouge_s": 0.0,
 		"immobile_s": 0.0, "cachette_s": 0.0, "changements_planque": 0, "sorties_fuite": 0,
-		"captures_course": 0, "captures_apres_evasion": 0, "captures_fin": 0}
+		"captures_course": 0, "captures_apres_evasion": 0, "captures_fin": 0, "poursuites": 0,
+		"poursuite_s": 0.0, "captures_poursuite": 0}
 
 
 ## Met à jour les compteurs de tension (après la capture de cette image : un chassé trouvé a déjà
@@ -953,6 +994,8 @@ func track_tension(dt: float) -> void:
 	if hunter == null or hunter.frozen:
 		return
 	var t: float = map.tile
+	if hunter.chase_left > 0.0:
+		_st["poursuite_s"] += dt
 	for a: GkActor in actors:
 		if a == hunter:
 			continue
@@ -1038,9 +1081,15 @@ func _found(a: GkActor, via: String = "vue") -> void:
 			_st["captures_course"] += 1
 		if _tens.has(a.id) and hunt_elapsed - float(_tens[a.id]["escaped_at"]) < TENSION_JUSTESSE_S:
 			_st["captures_apres_evasion"] += 1
+		if a.chase_left > 0.0:
+			_st["captures_poursuite"] += 1
 		if hunt_elapsed > GkRules.f("phase_hunt") - TENSION_FIN_S:
 			_st["captures_fin"] += 1
 	_last_find_t = hunt_elapsed
+	# Poursuite : elle s'arrête avec la capture (sauf si un autre chassé est encore poursuivi).
+	a.chase_left = 0.0
+	if actors.all(func(b: GkActor) -> bool: return b == hunter or b.chase_left <= 0.0):
+		hunter.chase_left = 0.0
 	hunter.elan_mult = 1.0
 	a.rescue_k = 0.0
 	if a.hidden_in >= 0:

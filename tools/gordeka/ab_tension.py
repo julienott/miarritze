@@ -66,6 +66,9 @@ def par_round(r):
         "duree": r["duree"],
         "delivres": r.get("delivres", 0),
         "gateaux": r.get("gateaux", 0),
+        "poursuites": r.get("poursuites", 0),
+        "poursuite_s": r.get("poursuite_s", 0.0) / r["poursuites"] if r.get("poursuites", 0) else 0.0,
+        "cap_poursuite": r.get("captures_poursuite", 0),
     }
 
 
@@ -139,7 +142,8 @@ COLS = [("rounds", "rounds", None), ("gagne", "chasseur gagne %", 0), ("trouves"
         ("cachette", "en cachette %", 0), ("planques", "chgts planque", 1), ("entrees", "entrées cachette", 1),
         ("fuites", "sorties en fuite", 1), ("cap_course", "captures en course", 1),
         ("cap_evasion", "captures après évasion", 1), ("cap_fin", "captures 30 dernières s", 1),
-        ("delivres", "délivrances", 1), ("gateaux", "gâteaux", 1), ("duree", "durée s", 0)]
+        ("poursuites", "poursuites", 1), ("poursuite_s", "durée poursuite s", 1),
+        ("cap_poursuite", "captures en poursuite", 1), ("delivres", "délivrances", 1), ("gateaux", "gâteaux", 1), ("duree", "durée s", 0)]
 PRINCIPAUX = {"gagne", "fro2", "vu_perdu", "cases_min", "bouge"}
 
 

@@ -25,6 +25,7 @@ var beat: float = 0.0
 ## « Il fouille à côté ! » : secondes restantes d'affichage.
 var search_near: float = 0.0
 var _player: AudioStreamPlayer
+var _chase_player: AudioStreamPlayer
 var _next_beat: float = 0.0
 
 
@@ -32,6 +33,10 @@ func _ready() -> void:
 	_player = AudioStreamPlayer.new()
 	_player.stream = heartbeat_stream()
 	add_child(_player)
+	_chase_player = AudioStreamPlayer.new()
+	_chase_player.stream = chase_stream()
+	_chase_player.volume_db = -6.0
+	add_child(_chase_player)
 
 
 ## Intensité pour un chassé à `d` px du chasseur, `gauge` = sa jauge de repérage : 0 au-delà de
@@ -78,6 +83,31 @@ func _beat() -> void:
 		JavaScriptBridge.eval("navigator.vibrate && navigator.vibrate(%d)" % VIBRE_MS, true)
 	elif OS.has_feature("mobile"):
 		Input.vibrate_handheld(VIBRE_MS, strength)
+
+
+## Départ d'une poursuite (idee_poursuite) : « fiouu ! » entendu de tous.
+func play_chase() -> void:
+	_chase_player.play()
+
+
+## « Fiouu » de départ de poursuite : glissando montant avec un petit vibrato, 0,35 s.
+static func chase_stream() -> AudioStreamWAV:
+	var rate: int = 22050
+	var n: int = int(rate * 0.35)
+	var data: PackedByteArray = PackedByteArray()
+	data.resize(n * 2)
+	var ph: float = 0.0
+	for i: int in n:
+		var t: float = float(i) / rate
+		var f: float = 300.0 + 900.0 * t / 0.35 + 30.0 * sin(TAU * 18.0 * t)
+		ph += TAU * f / rate
+		var env: float = minf(t / 0.02, 1.0) * clampf((0.35 - t) / 0.1, 0.0, 1.0)
+		data.encode_s16(i * 2, int(0.5 * env * (sin(ph) + 0.3 * sin(ph * 2.0)) * 30000.0 / 1.3))
+	var s: AudioStreamWAV = AudioStreamWAV.new()
+	s.format = AudioStreamWAV.FORMAT_16_BITS
+	s.mix_rate = rate
+	s.data = data
+	return s
 
 
 ## « Poum-poum » de cœur (deux coups sourds), généré une fois : PCM 16 bits mono à 22 050 Hz.

@@ -55,6 +55,9 @@ var speed_mult: float = 1.0
 ## délivrance (progression 0 → 1 du fantôme qu'un chassé délivre ; une seule fois par round).
 var tickle_left: float = 0.0
 var sprint_left: float = 0.0
+## Poursuite (idee_poursuite) : secondes de vitesse de poursuite restantes (chasseur et chassé repéré).
+var chase_left: float = 0.0
+var chase_used: bool = false          # poursuite déjà lancée pour ce repérage (jusqu'à jauge vide)
 var elan_mult: float = 1.0
 var rescue_k: float = 0.0
 var rescued: bool = false
@@ -147,6 +150,8 @@ func speed() -> float:
 		s *= GkRules.f("chatouille_lent")
 	if sprint_left > 0.0 and role == Role.HIDER:
 		s *= GkRules.f("gateau_sprint")
+	if chase_left > 0.0:
+		s *= GkGame.chase_mult(role == Role.HUNTER)
 	if role == Role.HUNTER:
 		s *= speed_mult * elan_mult
 	return s
@@ -167,6 +172,7 @@ func step(move: Vector2, look_dir: Vector2, dt: float) -> void:
 	slow_left = maxf(0.0, slow_left - dt)
 	tickle_left = maxf(0.0, tickle_left - dt)
 	sprint_left = maxf(0.0, sprint_left - dt)
+	chase_left = maxf(0.0, chase_left - dt)
 	power_cd = maxf(0.0, power_cd - dt)
 	queue_redraw()
 
@@ -205,9 +211,12 @@ func _draw() -> void:
 		var wob: float = sin(tickle_left * 30.0) * 4.0
 		draw_string(font, Vector2(-120 + wob, top - 40), "hi hi !", HORIZONTAL_ALIGNMENT_CENTER, 240, 24, Color("ffd34a"))
 	# Vent dans le dos (chasseur bredouille) ou sprint du gâteau : traits de vitesse derrière lui.
-	if (elan_mult > 1.0 and role == Role.HUNTER) or (sprint_left > 0.0 and role == Role.HIDER):
+	if (elan_mult > 1.0 and role == Role.HUNTER) or (sprint_left > 0.0 and role == Role.HIDER) \
+			or (chase_left > 0.0 and (role == Role.HUNTER or role == Role.HIDER)):
 		var back: float = -face
 		var col: Color = Color("9fd8ef") if role == Role.HUNTER else Color("ffd34a")
+		if chase_left > 0.0:
+			col = Color("ff6b3d")                # poursuite : traits orange vif sur les deux
 		for k: int in 3:
 			var y: float = (-14.0 + k * 7.0) * u
 			var x0: float = back * (12.0 + fmod(walk_phase * 3.0 + k, 3.0)) * u
