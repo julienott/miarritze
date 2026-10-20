@@ -739,7 +739,23 @@
     1
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/etal_criee.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "73e539ee5baa4058a5ce19b5bfe8af81",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/etal_criee_ombre.png",
+   "ombre_decalage": [
+    14,
+    73
+   ]
   },
   "bitte_amarrage": {
    "nom": "Bitte d'amarrage",
