@@ -62,5 +62,21 @@
  ],
  "coque_chantier": [
   "f10243bdc50b4faa92b79c120a1d8a9e"
+ ],
+ "maison_crampotte": [
+  "1d97cefe8a20400dbe6b8a7d3898eb3c",
+  "b4e342bae1da4629a403ea8136d96834",
+  "1f908bbb21df45a79f18a20ef9502c84",
+  "e0552d053cfa41799577dbc51f26d906"
+ ],
+ "rayonnage_filets": [
+  "692ea33fce6c444eb3f0ca5d808c53ac",
+  "fec87b46c86a42acad7970b4134117cf",
+  "105eb402ca564b2793ab3bc392faabc3"
+ ],
+ "caisses_poisson": [
+  "e183f1081ec148ffbfc47d15b0886a89",
+  "12b9f5bba8ab4084bd80a8af34f04785",
+  "22dfad861d2744abae3e2a4ec65efb4a"
  ]
 }

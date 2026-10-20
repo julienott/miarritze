@@ -337,7 +337,23 @@
     3
    ],
    "debord_haut_cases": 1,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/maison_crampotte.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "1d97cefe8a20400dbe6b8a7d3898eb3c",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/maison_crampotte_ombre.png",
+   "ombre_decalage": [
+    48,
+    249
+   ]
   },
   "chambre_froide": {
    "nom": "Chambre froide de la criée",
