@@ -2,12 +2,15 @@ class_name GkHud
 extends Control
 ## Interface du round (SPEC-GORDEKA §2, §5) : rôle, chrono, messages, bouton d'action avec
 ## son temps de recharge, joystick tactile, flèche vers le chasseur hors champ, voile du
-## chasseur qui compte, scores entre les rounds et podium en quittant. Emotes : bulles d'icône
-## au-dessus des têtes, petit bouton et éventail des 6 bulles quand elles sont permises.
+## chasseur qui compte, scores entre les rounds (« Round k/N », bouton « Terminer » en partie rapide).
+## Versus et podium sont des écrans à part (GkVersus, GkPodium), sous ce calque : le HUD n'y montre
+## que « Quitter » et l'éventail des emotes. Emotes : bulles d'icône au-dessus des têtes, petit bouton
+## et éventail des 6 bulles quand elles sont permises.
 
 var game: GkGame
 var _quit: Button
-var _menu: Button
+## Partie rapide : arrêter la partie pendant les scores, podium tout de suite (SPEC-GORDEKA §2.2).
+var _terminer: Button
 ## Vignettage du chassé local (idee_frisson) : bords sombres et rougeâtres, centre libre.
 var _vignette: TextureRect
 
@@ -28,12 +31,13 @@ func _ready() -> void:
 	add_child(_quit)
 	# Visite de debug (temporaire) : boutons Formes et Perso, pour le tactile.
 	_visite_buttons()
-	_menu = Button.new()
-	_menu.text = "Retour au menu"
-	_menu.add_theme_font_size_override(&"font_size", 30)
-	_menu.visible = false
-	_menu.pressed.connect(func() -> void: game.go_menu())
-	add_child(_menu)
+	_terminer = GkUi.bouton("Terminer la partie", func() -> void: game.quit_to_podium(), Vector2(340, 70),
+		GkUi.CREME, 26)
+	_terminer.visible = false
+	# Jamais le focus : Espace (l'action du jeu) ne doit pas terminer la partie par erreur ; au clavier
+	# et à la manette, c'est Échap / Start (rappelés sur le bouton).
+	_terminer.focus_mode = Control.FOCUS_NONE
+	add_child(_terminer)
 	# Vignettage : un TextureRect plein écran (un draw_texture_rect modulé ne s'affiche pas ici).
 	_vignette = TextureRect.new()
 	_vignette.texture = vignette_texture()
@@ -101,11 +105,13 @@ func _draw() -> void:
 	var s: Vector2 = size
 	var font: Font = ThemeDB.fallback_font
 	var me: GkActor = game.local
+	_quit.visible = game.phase != GkGame.Phase.PODIUM
+	_maj_terminer()
 	if game.phase == GkGame.Phase.PODIUM:
-		_draw_podium(s, font)
+		_draw_emote_wheel(font)
 		return
-	_menu.visible = false
-	_quit.visible = true
+	if game.phase == GkGame.Phase.VERSUS:
+		return
 	# Voile du chasseur qui compte (il ne voit rien pendant la cachette).
 	if game.phase == GkGame.Phase.HIDE and me == game.hunter:
 		draw_rect(Rect2(Vector2.ZERO, s), Color(0.03, 0.03, 0.07, 0.96))
@@ -127,9 +133,10 @@ func _draw() -> void:
 	else:
 		var phase_text: String = {GkGame.Phase.DRAW: "Tirage…", GkGame.Phase.HIDE: "Cachez-vous !",
 			GkGame.Phase.HUNT: "Chasse", GkGame.Phase.END: "Fin du round"}.get(game.phase, "")
+		var no: String = "%d/%d" % [game.round_no, game.rounds_total] if game.rounds_total > 0 else str(game.round_no)
 		var t: int = maxi(0, ceili(game.phase_t))
 		draw_rect(Rect2(s.x * 0.5 - 150, 12, 300, 70), Color(0, 0, 0, 0.55))
-		_text(font, Vector2(s.x * 0.5, 42), "%s · round %d" % [phase_text, game.round_no], 22, Color(1, 1, 1, 0.85))
+		_text(font, Vector2(s.x * 0.5, 42), "%s · round %s" % [phase_text, no], 22, Color(1, 1, 1, 0.85))
 		_text(font, Vector2(s.x * 0.5, 74), "%d:%02d" % [t / 60, t % 60], 32,
 			Color("ff6b5e") if game.phase == GkGame.Phase.HUNT and t <= 20 else Color.WHITE)
 		var left: int = game.actors.filter(func(a: GkActor) -> bool: return a.role == GkActor.Role.HIDER).size()
@@ -216,7 +223,11 @@ func _draw_scores(s: Vector2, font: Font) -> void:
 	var h: float = 90.0 + 48.0 * rows.size()
 	var box: Rect2 = Rect2(s.x * 0.5 - 330, s.y * 0.5 - h * 0.5, 660, h)
 	draw_rect(box, Color(0.05, 0.06, 0.1, 0.88))
-	_text(font, Vector2(s.x * 0.5, box.position.y + 50), "Round %d terminé" % game.round_no, 34, Color.WHITE)
+	var titre: String = "Round %d/%d terminé" % [game.round_no, game.rounds_total] if game.rounds_total > 0 \
+		else "Round %d terminé" % game.round_no
+	_text(font, Vector2(s.x * 0.5, box.position.y + 50), titre, 34, Color.WHITE)
+	if game.rounds_total > 0 and game.round_no >= game.rounds_total:
+		_text(font, Vector2(s.x * 0.5, box.position.y + h + 40), "Dernier round : place au podium !", 28, GkUi.JAUNE)
 	var y: float = box.position.y + 100
 	for a: GkActor in rows:
 		draw_circle(Vector2(box.position.x + 40, y - 10), 14, a.color)
@@ -228,34 +239,19 @@ func _draw_scores(s: Vector2, font: Font) -> void:
 		y += 48
 
 
-func _draw_podium(s: Vector2, font: Font) -> void:
-	_quit.visible = false
-	_menu.visible = true
-	_menu.size = Vector2(320, 64)
-	_menu.position = Vector2(s.x * 0.5 - 160, s.y - 110)
-	draw_rect(Rect2(Vector2.ZERO, s), Color(0.04, 0.05, 0.1, 0.92))
-	_text(font, Vector2(s.x * 0.5, 90), "Podium", 56, Color("ffd34a"))
-	var rows: Array[GkActor] = game.actors.duplicate()
-	rows.sort_custom(func(a: GkActor, b: GkActor) -> bool: return a.score > b.score)
-	var places: Array[Vector2] = [Vector2(0, 0), Vector2(-260, 70), Vector2(260, 110)]
-	var heights: Array[float] = [220.0, 150.0, 110.0]
-	var medal: Array[Color] = [Color("ffd34a"), Color("cfd6df"), Color("d08a4a")]
-	for i: int in mini(3, rows.size()):
-		var x: float = s.x * 0.5 + places[i].x
-		var base: float = s.y - 150
-		draw_rect(Rect2(x - 110, base - heights[i], 220, heights[i]), medal[i].darkened(0.35))
-		draw_circle(Vector2(x, base - heights[i] - 50), 40, rows[i].color)
-		_text(font, Vector2(x, base - heights[i] + 46), str(i + 1), 44, Color.WHITE)
-		_text(font, Vector2(x, base - heights[i] - 110), rows[i].display_name, 28, Color.WHITE)
-		_text(font, Vector2(x, base - heights[i] + 86), "%d pts" % rows[i].score, 24, Color.WHITE)
-		# Emote à droite de la pastille.
-		_emote_bubble(rows[i], Vector2(x + 40, base - heights[i] - 50), Vector2(1, -0.25))
-	# Le joueur local hors du podium voit quand même son emote, près du bouton.
-	if rows.find(game.local) >= 3 and game.local.emote_t > 0.0:
-		var c: Vector2 = game.input.action_center() + Vector2(0, 40)
-		draw_circle(c, 30, game.local.color)
-		_emote_bubble(game.local, c + Vector2(0, -30), Vector2(0, -1))
-	_draw_emote_wheel(font)
+## Bouton « Terminer » : pendant les scores d'une partie rapide (pas au dernier round), avec la
+## touche qui fait la même chose selon l'appareil.
+func _maj_terminer() -> void:
+	var montrer: bool = game.peut_terminer() and not (game.rounds_total > 0 and game.round_no >= game.rounds_total)
+	_terminer.visible = montrer
+	if montrer:
+		# Appareil courant lu sur InputHub par son chemin : pas de dépendance aux autoloads (tests headless).
+		var hub: Node = get_node_or_null("/root/InputHub")
+		var dev: int = int(hub.get("device")) if hub != null else InputDevice.KEYBOARD
+		_terminer.text = {InputDevice.TOUCH: "Terminer la partie",
+			InputDevice.GAMEPAD: "Terminer la partie (START)"}.get(dev, "Terminer la partie (ÉCHAP)")
+		_terminer.reset_size()
+		_terminer.position = Vector2(size.x * 0.5 - _terminer.size.x * 0.5, size.y - 96.0)
 
 
 ## Bulle de l'emote en cours d'un acteur, pointe en `tip`, posée dans la direction `dir` :

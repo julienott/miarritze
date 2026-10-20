@@ -4,7 +4,9 @@ extends Node2D
 ## La partie tourne entièrement ici (rôle d'hôte) : rounds, vision du chasseur, capture,
 ## cachettes, pièges, détections, sorties et points. Les joueurs n'envoient que move/look/action.
 
-enum Phase { DRAW, HIDE, HUNT, END, PODIUM }
+## VERSUS (écran de suspense entre le tirage et la cachette) est ajouté en dernier : les valeurs des
+## autres phases ne bougent pas.
+enum Phase { DRAW, HIDE, HUNT, END, PODIUM, VERSUS }
 
 const COUNT_WORDS: PackedStringArray = ["bat", "bi", "hiru", "lau", "bost", "sei", "zazpi", "zortzi",
 	"bederatzi", "hamar", "hamaika", "hamabi", "hamahiru", "hamalau", "hamabost"]
@@ -41,9 +43,11 @@ const OUF_S: float = 1.4
 const QA_OUT_S: float = 2.0
 const QA_GAP_S: float = 2.0
 
-## Réglages de la partie, posés par le menu (gk_menu.gd).
+## Réglages de la partie, posés par la partie rapide et le profil (menus/gk_partie_rapide.gd,
+## GkProfil.vers_partie) : rounds = nombre de rounds de la partie (0 : rounds_defaut de rules.json,
+## sinon un par joueur), emote = emote favorite du joueur (jouée sur le podium).
 static var config: Dictionary = {"players": 6, "level": "normal", "map": "port_pecheurs",
-	"name": "Toi", "color": 0}
+	"name": "Toi", "color": 0, "rounds": 0, "emote": 0}
 
 var map: GkMap
 var actors: Array[GkActor] = []
@@ -158,6 +162,15 @@ var _rafale_t: float = 0.0
 var _rafale_i: int = 0
 ## Lampe du chasseur allumée pour cette manche (hunter_reveal joué en fin de phase cachée).
 var _reveal_joue: bool = false
+## Nombre de rounds de la partie, podium ensuite (SPEC-GORDEKA §2.2) ; 0 = sans fin (IA contre IA
+## sans `--gk-rounds`). Écran Versus entre le tirage et la cachette, sauté en IA contre IA, en
+## visite et avec `--gk-sans-versus` ; versus et podium sont des écrans posés sur le calque 9, sous
+## le HUD (bouton Quitter, éventail des emotes).
+var rounds_total: int = 0
+var _sans_versus: bool = false
+var _ecrans: CanvasLayer
+var versus: GkVersus
+var podium: GkPodium
 
 
 func _ready() -> void:
@@ -177,6 +190,8 @@ func _ready() -> void:
 			_rafale = Array(arg.trim_prefix("--gk-qa-rafale=").split(","))
 		elif arg == "--gk-bots-only":
 			_bots_only = true
+		elif arg == "--gk-sans-versus":
+			_sans_versus = true
 		elif arg == "--gk-local-bot":
 			_local_bot = true
 		elif arg == "--gk-3d":
@@ -247,6 +262,12 @@ func _ready() -> void:
 	hud_layer.layer = 10
 	add_child(hud_layer)
 	hud_layer.add_child(hud)
+	# Thème cartoon des menus : un Control sous un CanvasLayer n'hérite pas de celui de la fenêtre.
+	hud.theme = GkUi.theme()
+	_ecrans = CanvasLayer.new()
+	_ecrans.layer = 9
+	add_child(_ecrans)
+	rounds_total = rounds_pour(config, _bots_only, _rounds_max)
 	_start_round()
 	if _qa_podium:
 		quit_to_podium()
@@ -371,6 +392,31 @@ static func _cone_texture(deg: float) -> Texture2D:
 
 
 # ---------------------------------------------------------------- rounds
+
+## Rounds de la partie : `--gk-rounds`, sinon le choix du menu, sinon rounds_defaut, sinon un par
+## joueur ; bornés à rounds_min..rounds_max. Sans fin en IA contre IA sans `--gk-rounds`.
+static func rounds_pour(cfg: Dictionary, bots_only: bool = false, forced: int = 0) -> int:
+	if forced > 0:
+		return forced
+	if bots_only:
+		return 0
+	var r: int = int(cfg.get("rounds", 0))
+	if r <= 0:
+		r = int(GkRules.f("rounds_defaut"))
+	if r <= 0:
+		r = int(cfg.get("players", 6))
+	return clampi(r, int(GkRules.f("rounds_min")), int(GkRules.f("rounds_max")))
+
+
+## Le versus se joue-t-il ? Pas en IA contre IA (personne ne regarde), ni en visite.
+func versus_actif() -> bool:
+	return GkRules.f("phase_versus") > 0.0 and not _bots_only and not _sans_versus and visite == ""
+
+
+## Partie rapide : le joueur peut terminer plus tôt pendant les scores (SPEC-GORDEKA §2.2).
+func peut_terminer() -> bool:
+	return phase == Phase.END and visite == "" and not _bots_only
+
 
 func _start_round() -> void:
 	round_no += 1
@@ -629,12 +675,56 @@ func quit_to_podium() -> void:
 	if phase == Phase.PODIUM:
 		return
 	phase = Phase.PODIUM
+	_fermer_versus()
 	for a: GkActor in actors:
 		a.frozen = true
+		a.end_pose = ""
+		a.stop_emote()
+	if _bots_only and DisplayServer.get_name() == "headless":
+		get_tree().quit()
+		return
+	podium = GkPodium.new()
+	podium.game = self
+	podium.theme = GkUi.theme()
+	_ecrans.add_child(podium)
+	# Le joueur local fait son emote favorite en montant sur le podium.
+	if not local.is_bot:
+		emote(local, int(config.get("emote", 0)))
+	var am: Node = get_node_or_null("/root/AudioManager")
+	if am != null:
+		am.play_music(&"victory")
 
 
 func go_menu() -> void:
-	get_tree().change_scene_to_file("res://src/gordeka/gk_menu.tscn")
+	GkNav.aller("accueil")
+
+
+func _ouvrir_versus() -> void:
+	phase = Phase.VERSUS
+	phase_t = GkRules.f("phase_versus")
+	messages.clear()
+	versus = GkVersus.new()
+	versus.game = self
+	versus.theme = GkUi.theme()
+	versus.duree = phase_t
+	_ecrans.add_child(versus)
+
+
+func _fermer_versus() -> void:
+	if versus != null:
+		versus.queue_free()
+		versus = null
+
+
+## Fin du tirage ou du versus : les chassés filent se cacher, le chasseur compte.
+func _debut_cachette() -> void:
+	_fermer_versus()
+	phase = Phase.HIDE
+	phase_t = GkRules.f("phase_hide")
+	for a: GkActor in actors:
+		a.frozen = a == hunter
+	_reveal_joue = false
+	_say("Cachez-vous !" if local != hunter else "Compte jusqu'à quinze…", Color.WHITE, 2.0)
 
 
 # ---------------------------------------------------------------- boucle
@@ -653,12 +743,13 @@ func _physics_process(dt: float) -> void:
 	match phase:
 		Phase.DRAW:
 			if phase_t <= 0.0:
-				phase = Phase.HIDE
-				phase_t = GkRules.f("phase_hide")
-				for a: GkActor in actors:
-					a.frozen = a == hunter
-				_reveal_joue = false
-				_say("Cachez-vous !" if local != hunter else "Compte jusqu'à quinze…", Color.WHITE, 2.0)
+				if versus_actif():
+					_ouvrir_versus()
+				else:
+					_debut_cachette()
+		Phase.VERSUS:
+			if phase_t <= 0.0:
+				_debut_cachette()
 		Phase.HIDE:
 			# Le chasseur allume sa lampe juste avant d'être lâché, encore figé (anim_reveal_avance) :
 			# le geste se joue en entier, sans glisser sous ses pieds quand il part.
@@ -682,7 +773,10 @@ func _physics_process(dt: float) -> void:
 				_finish_round()
 		Phase.END:
 			if phase_t <= 0.0:
-				_start_round()
+				if rounds_total > 0 and round_no >= rounds_total:
+					quit_to_podium()
+				else:
+					_start_round()
 				return
 	_control(dt)
 	if phase == Phase.HUNT:

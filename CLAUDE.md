@@ -8,13 +8,17 @@
 > refonte des combattants arrêtée : `docs/APRES_PAUSE.md`.
 >
 > **Gordeka (jalon 1, prototype gris)** : code dans `src/gordeka/` (gk_game = partie et règles,
-> gk_map, gk_actor, gk_ai, gk_input, gk_hud, gk_menu), règles dans `data/gordeka/rules.json`, carte
+> gk_map, gk_actor, gk_ai, gk_input, gk_hud, gk_versus, gk_podium), menus dans `src/gordeka/menus/`
+> (gk_qui_joue → gk_accueil → gk_partie_rapide, gk_profil_ecran, gk_reglages ; « En ligne » =
+> `src/gordeka/gk_online.tscn`, à remplacer par les salons ; navigation `GkNav`, kit 1280×720 `GkUi`,
+> profil `GkProfil`), règles dans `data/gordeka/rules.json`, carte
 > générée par `tools/gordeka/make_proto_map.py` → `assets/maps/port_pecheurs/`. Projet en 1280×720
-> lissé, démarrage `src/gordeka/gk_boot.tscn`.
+> lissé, démarrage `src/gordeka/gk_boot.tscn` (« Qui joue ? » ; `--scene=gk_<écran>` pour un écran).
 > ```bash
 > godot --path . -- --scene=gk_game [--gk-local-role=hunter|hider] [--gk-rules=phase_hide:2,…]
 > godot --headless --path . -- --scene=gk_game --gk-bots-only --gk-log --speed=8   # rounds IA contre IA
 > node tests/web/smoke.mjs chromium "#scene=gk_game" 28                          # web
+godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd         # tests Gordeka
 > ```
 
 Résumé opérationnel pour Claude Code. **La source de vérité est `SPEC-BORROKA.md`** ; en cas de doute, elle prime. Le *quoi/pourquoi* est résumé dans `DESIGN.md`. État d'avancement : `docs/STATUS.md`. Choix tranchés : `docs/DECISIONS.md`. Revues visuelles : `docs/REVIEWS.md`.

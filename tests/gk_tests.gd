@@ -1,6 +1,7 @@
 extends SceneTree
 ## Tests headless de Gordeka : détection progressive (jauge, seuils), ressenti du chassé, mesures
-## de tension (frôlements, vu puis perdu) et une partie IA contre IA courte.
+## de tension (frôlements, vu puis perdu), une partie IA contre IA courte, et la partie en N rounds
+## (tirage en sac, versus, podium), la partie rapide (réglages → règles) et le profil (persistance).
 ## godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd [-- --only=nom]
 
 const GAME: String = "res://src/gordeka/gk_game.tscn"
@@ -10,6 +11,7 @@ var _failures: int = 0
 var _passed: int = 0
 var _only: String = ""
 var _saved: Dictionary = {}
+var _saved_cfg: Dictionary = {}
 
 
 func _initialize() -> void:
@@ -17,17 +19,20 @@ func _initialize() -> void:
 		if arg.begins_with("--only="):
 			_only = arg.trim_prefix("--only=")
 	_saved = GkRules.data().duplicate(true)
+	_saved_cfg = GkGame.config.duplicate(true)
 	_run.call_deferred()
 
 
 func _run() -> void:
 	var tests: Array[Callable] = [test_jauge_remplissage, test_jauge_decroissance, test_jauge_sans_detection,
 		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus,
-		test_options_partie, test_partie_ia_courte]
+		test_options_partie, test_partie_ia_courte, test_rounds_pour, test_sac, test_versus_saute_en_ia,
+		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
 			continue
 		GkRules._data = _saved.duplicate(true)
+		GkGame.config = _saved_cfg.duplicate(true)
 		var before: int = _failures
 		var start: int = Time.get_ticks_msec()
 		await t.call()
@@ -353,3 +358,202 @@ func test_partie_ia_courte() -> void:
 		check(game.last_stats.has(k), "mesure présente : " + k)
 	check(float(game.last_stats.get("chasse_s", 0.0)) > 0.0, "temps de chasse mesuré")
 	await free_game(game)
+
+
+# ------------------------------------------------------------------ partie en N rounds
+
+func test_rounds_pour() -> void:
+	check(GkGame.rounds_pour({"players": 6, "rounds": 0}) == 6, "par défaut : un round par joueur")
+	check(GkGame.rounds_pour({"players": 2, "rounds": 0}) == int(GkRules.f("rounds_min")), "au moins rounds_min")
+	check(GkGame.rounds_pour({"players": 6, "rounds": 40}) == int(GkRules.f("rounds_max")), "au plus rounds_max")
+	check(GkGame.rounds_pour({"players": 6, "rounds": 5}) == 5, "choix du menu")
+	check(GkGame.rounds_pour({"players": 6}, true) == 0, "IA contre IA : sans fin")
+	check(GkGame.rounds_pour({"players": 6}, true, 40) == 40, "--gk-rounds l'emporte")
+
+
+## Tirage en sac : chacun est chasseur une fois par tour de sac, jamais deux rounds de suite.
+func test_sac() -> void:
+	var game: GkGame = await make_game()
+	var n: int = game.actors.size()
+	game.round_no = 2
+	game._sac.clear()
+	var ids: Array[int] = []
+	for i: int in n * 4:
+		ids.append(game._draw_hunter().id)
+	var tous: Array[int] = []
+	for i: int in n:
+		tous.append(i)
+	for tour: int in 4:
+		var t: Array[int] = ids.slice(tour * n, tour * n + n)
+		t.sort()
+		check(t == tous, "tour de sac %d : chacun une fois (%s)" % [tour, str(ids.slice(tour * n, tour * n + n))])
+	for i: int in range(1, ids.size()):
+		check(ids[i] != ids[i - 1], "jamais deux fois de suite le même chasseur (%d)" % i)
+	await free_game(game)
+
+
+func _phases_courtes() -> void:
+	GkRules._data["phase_draw"] = 0.2
+	GkRules._data["phase_versus"] = 0.4
+	GkRules._data["phase_hide"] = 0.3
+	GkRules._data["phase_hunt"] = 1.0
+	GkRules._data["phase_end"] = 0.2
+
+
+## IA contre IA : pas de versus (personne ne regarde), et pas de fin de partie.
+func test_versus_saute_en_ia() -> void:
+	_phases_courtes()
+	GkGame.config["players"] = 4
+	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	game._bots_only = true
+	root.add_child(game)
+	var vu: bool = false
+	var frames: int = 0
+	while game.round_no < 3 and frames < 60 * 20:
+		await physics_frame
+		frames += 1
+		vu = vu or game.phase == GkGame.Phase.VERSUS
+	check(not vu, "pas de versus en IA contre IA")
+	check(game.rounds_total == 0 and game.round_no >= 3, "IA contre IA : les rounds s'enchaînent sans fin")
+	await free_game(game)
+
+
+## Partie de 3 rounds : tirage, versus, cachette, chasse, scores, trois fois, puis le podium.
+func test_rounds_fixes_podium() -> void:
+	_phases_courtes()
+	GkGame.config["players"] = 4
+	GkGame.config["rounds"] = 3
+	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	game._local_bot = true
+	root.add_child(game)
+	var versus: int = 0
+	var t_versus: float = 0.0
+	var last: GkGame.Phase = game.phase
+	var chasseurs: Array[int] = []
+	var frames: int = 0
+	while game.phase != GkGame.Phase.PODIUM and frames < 60 * 30:
+		await physics_frame
+		frames += 1
+		if game.phase == GkGame.Phase.VERSUS:
+			t_versus += DT
+			if last != GkGame.Phase.VERSUS:
+				versus += 1
+				chasseurs.append(game.hunter.id)
+				check(game.versus != null, "écran versus ouvert")
+				check(last == GkGame.Phase.DRAW, "le versus suit le tirage")
+		if last == GkGame.Phase.VERSUS and game.phase != GkGame.Phase.VERSUS:
+			check(game.phase == GkGame.Phase.HIDE, "la cachette suit le versus")
+			check(game.versus == null, "écran versus refermé")
+		last = game.phase
+	check(game.rounds_total == 3, "3 rounds choisis (%d)" % game.rounds_total)
+	check(game.phase == GkGame.Phase.PODIUM and game.round_no == 3, "podium après le 3e round (round %d)" % game.round_no)
+	check(versus == 3, "un versus par round (%d)" % versus)
+	check(near(t_versus / 3.0, GkRules.f("phase_versus"), 3.0 * DT), "versus de phase_versus s (%.2f)" % (t_versus / 3.0))
+	check(chasseurs.size() == 3 and chasseurs[0] != chasseurs[1] and chasseurs[1] != chasseurs[2], "trois chasseurs différents")
+	check(game.podium != null, "écran du podium")
+	var rangs: Array[GkActor] = GkPodium.classement(game.actors)
+	for i: int in range(1, rangs.size()):
+		check(rangs[i - 1].score >= rangs[i].score, "podium trié par points")
+	await free_game(game)
+
+
+# ------------------------------------------------------------------ partie rapide
+
+## Les réglages de l'écran passent dans la partie : joueurs, rounds (qui suivent les joueurs tant
+## qu'on n'y a pas touché), options du catalogue posées sur rules.json et bornées.
+func test_partie_rapide_options() -> void:
+	var scr: GDScript = load("res://src/gordeka/menus/gk_partie_rapide.gd")
+	scr.reinitialiser()
+	var ecran: Control = (load("res://src/gordeka/menus/gk_partie_rapide.tscn") as PackedScene).instantiate()
+	root.add_child(ecran)
+	await process_frame
+	var choix: Dictionary = scr.choix
+	check(int(choix["players"]) == int(GkRules.f("joueurs_defaut")) and int(choix["rounds"]) == int(choix["players"]),
+		"défauts : 6 joueurs, autant de rounds")
+	var interrupteurs: int = ecran.find_children("*", "CheckButton", true, false).size()
+	var on_off: int = 0
+	for o: Dictionary in GkRules.options_partie():
+		for r: Dictionary in o.get("reglages", []):
+			if str(r.get("type", "")) == "on_off":
+				on_off += 1
+	check(interrupteurs == on_off and on_off > 0, "un interrupteur par option (%d/%d)" % [interrupteurs, on_off])
+	ecran.regler_joueurs(8)
+	check(int(choix["rounds"]) == 8, "les rounds suivent les joueurs")
+	ecran.regler_joueurs(2)
+	check(int(choix["players"]) == int(GkRules.f("joueurs_min")), "au moins joueurs_min joueurs")
+	ecran.regler_rounds(10)
+	ecran.regler_joueurs(5)
+	check(int(choix["rounds"]) == 10, "rounds touchés : ils ne suivent plus les joueurs")
+	ecran.regler_rounds(99)
+	check(int(choix["rounds"]) == int(GkRules.f("rounds_max")), "rounds bornés")
+	ecran.regler_option("idee_gateaux", 0.0)
+	ecran.regler_option("gateaux_nombre", 99.0)
+	ecran.regler_option("chatouille_duree", 2.5)
+	GkGame.config["visite"] = "chasse"
+	ecran.preparer()
+	check(not GkRules.on("idee_gateaux"), "option coupée dans la partie")
+	check(near(GkRules.f("gateaux_nombre"), 8.0, 1e-4), "curseur borné à son max")
+	check(near(GkRules.f("chatouille_duree"), 2.5, 1e-4), "curseur posé sur rules.json")
+	check(int(GkGame.config["players"]) == 5 and int(GkGame.config["rounds"]) == int(GkRules.f("rounds_max")),
+		"joueurs et rounds dans la config de la partie")
+	check(str(GkGame.config["visite"]) == "", "une partie rapide n'est jamais une visite")
+	scr.reinitialiser()
+	ecran.queue_free()
+	await process_frame
+
+
+# ------------------------------------------------------------------ profil
+
+## Le profil garde perso, couleur et emote (relu depuis user://profiles.json) ; les anciens profils
+## reçoivent leurs champs Gordeka. Le fichier du joueur est remis tel quel à la fin.
+func test_profil_persiste() -> void:
+	await process_frame
+	var p: Node = root.get_node("/root/Profiles")
+	var path: String = "user://profiles.json"
+	var avant: String = FileAccess.get_file_as_string(path) if FileAccess.file_exists(path) else ""
+	var profils: Array[Dictionary] = p.profiles.duplicate(true)
+	var actif: int = p.active_index
+	p.profiles.clear()
+	p.active_index = -1
+	check(GkProfil.creer("Lea") == "", "profil créé")
+	GkProfil.regler(GkProfil.PERSO, "maia")
+	GkProfil.regler(GkProfil.COULEUR, 7)
+	GkProfil.regler(GkProfil.EMOTE, 4)
+	p._load()
+	check(GkProfil.perso() == "maia" and GkProfil.couleur() == 7 and GkProfil.emote() == 4,
+		"perso, couleur et emote relus du fichier (%s, %d, %d)" % [GkProfil.perso(), GkProfil.couleur(), GkProfil.emote()])
+	check(not GkProfil.actif().has("group_code") or str(GkProfil.actif()["group_code"]) == "", "aucun code de groupe")
+	check(GkProfil.creer("lea") != "", "même pseudo refusé sur l'appareil")
+	# Ancien profil de Borroka, sans champs Gordeka.
+	p.profiles.append({"pseudo": "Ancien", "fighter": "txomin"})
+	p.save()
+	p._load()
+	GkProfil.migrer()
+	var ancien: Dictionary = p.profiles[1]
+	check(str(ancien.get(GkProfil.PERSO, "")) == "txomin", "migration : le perso de Borroka est gardé")
+	check(ancien.has(GkProfil.COULEUR) and int(ancien[GkProfil.COULEUR]) != 7, "migration : une couleur libre")
+	check(int(ancien.get(GkProfil.EMOTE, -1)) == 0, "migration : première emote")
+	GkProfil.vers_partie()
+	check(str(GkGame.config["character"]) == "maia" and int(GkGame.config["color"]) == 7 and str(GkGame.config["name"]) == "Lea",
+		"le profil actif joue la partie")
+	# Remise en état.
+	p.profiles = profils
+	p.active_index = actif
+	if avant != "":
+		var f: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+		f.store_string(avant)
+		f.close()
+	else:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+
+func test_pseudo() -> void:
+	await process_frame
+	check(GkProfil.erreur_pseudo("Léa_9") == "", "pseudo accepté (accents, chiffres, _)")
+	check(GkProfil.erreur_pseudo("a") != "", "trop court")
+	check(GkProfil.erreur_pseudo("abcdefghijklmnop") != "", "trop long")
+	check(GkProfil.erreur_pseudo("le roi") != "", "pas d'espace")
+	check(GkProfil.erreur_pseudo("x!y") != "", "caractères interdits")
+	check(GkProfil.gros_mot("PuT4in") and GkProfil.gros_mot("Mérde"), "gros mots repérés (leet, accents)")
+	check(not GkProfil.gros_mot("Louis") and not GkProfil.gros_mot("Itsaso"), "pseudos normaux acceptés")
+	check(GkProfil.erreur_pseudo("fuck_12") != "", "gros mot refusé")

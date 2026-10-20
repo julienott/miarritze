@@ -295,6 +295,23 @@ boutons. Aucun texte libre entre joueurs.
   son code privé est libéré.
 - Fin de partie : podium pour tous, puis **retour au salon**, où l'admin peut relancer.
 
+### 6.4 Réalisation locale (2026-10-20) : ce qui diffère
+Écrans dans `src/gordeka/menus/` (navigation `GkNav`, kit `GkUi`/`GkEcran`), versus et podium dans
+`gk_versus.gd` / `gk_podium.gd`, profil dans `GkProfil`.
+- Après la création d'un profil (pseudo seul), on arrive sur **Mon profil** pour choisir son perso.
+- Le filtre anti-gros-mots est aussi vérifié **hors ligne** dès la saisie, avec une copie de la liste du
+  serveur (`data/gordeka/gros_mots.json`, à garder identique à `backend/src/Profanity.php`).
+- « Refaire le round guidé » : bouton grisé « bientôt » tant que le round guidé (§7.2) n'existe pas.
+- Partie rapide : les réglages choisis restent le temps de la session (pas enregistrés dans le profil).
+- « Terminer la partie » pendant les scores : au toucher ; au clavier et à la manette c'est Échap / Start
+  (le bouton ne prend jamais le focus, pour qu'Espace en jeu ne termine pas la partie). Absent au dernier
+  round (le podium arrive).
+- L'emote favorite est jouée par le joueur en montant sur le podium.
+- Versus : `phase_versus` dans `rules.json` ; sauté en IA contre IA (`--gk-bots-only`), en visite et avec
+  `--gk-sans-versus`. Icônes de piège et de détection génériques en attendant celles des persos.
+- Les persos sans planches animées (Itsaso, Karramarro, Peio) s'affichent avec leur profil fixe,
+  sans la couleur du joueur.
+
 ### 6.3 Pas de jeu à plusieurs sur un même écran
 La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même écran. Les copains
 dans la même pièce jouent chacun sur leur appareil, en salon.

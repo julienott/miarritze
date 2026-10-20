@@ -76,6 +76,9 @@ func _beat() -> void:
 	_player.play()
 	if level < VIBRE_DES or game.local.is_bot:
 		return
+	var reglages: Node = get_node_or_null("/root/Settings")
+	if reglages != null and not reglages.vibrations:
+		return                          # vibration coupée dans les Réglages
 	var strength: float = clampf((level - VIBRE_DES) / (1.0 - VIBRE_DES), 0.2, 1.0)
 	for pad: int in Input.get_connected_joypads():
 		Input.start_joy_vibration(pad, strength * 0.6, strength, VIBRE_MS / 1000.0)
