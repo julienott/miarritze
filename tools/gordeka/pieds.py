@@ -258,6 +258,28 @@ def ecrire(chemin: str, r: dict) -> bool:
     return True
 
 
+ANCRE_TETE = ("hunter_reveal",)
+
+
+def offsets_tete(planche: str, n: int) -> list:
+    """dx par image pour garder le centre de la tête à sa place de la première image (lissé sur 3)."""
+    im = np.array(Image.open(planche).convert("RGBA"))
+    xs = []
+    for k in range(n):
+        a = im[:, k * 256:(k + 1) * 256, 3] > 40
+        ys = np.nonzero(a.any(1))[0]
+        if not len(ys):
+            xs.append(None)
+            continue
+        top, h = ys.min(), ys.max() - ys.min()
+        cols = np.nonzero(a[top:top + max(1, int(h * 0.22))].any(0))[0]
+        xs.append((cols.min() + cols.max()) / 2.0)
+    ref = next((x for x in xs if x is not None), 128.0)
+    xs = [ref if x is None else x for x in xs]
+    lis = [sum(xs[max(0, i - 1):i + 2]) / len(xs[max(0, i - 1):i + 2]) for i in range(n)]
+    return [[round((ref - x) * 2) / 2, 0.0] for x in lis]
+
+
 def _post(pid: str) -> dict:
     try:
         p = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "prompts_anims.json")))
@@ -286,6 +308,11 @@ def corriger_perso(pid: str, anims=None, ecrit: bool = True) -> dict:
         # déjà centrée où la mesure des pieds se trompe (ex. bras tendu pris pour un pied) → pas de recalage.
         if anim in (_post(pid).get("pieds_fixes") or []):
             r["frame_offsets"] = [[0.0, 0.0]] * len(r["frame_offsets"])
+        # Gestes où le bras se tend loin devant (apparition du chasseur) : pixelforge recentre la planche
+        # sur la boîte englobante, le corps saute alors en arrière d'un coup (~40 px). On cale sur la TÊTE,
+        # qui ne bouge pas dans ce geste (Julien 2026-10-20 : « l'animation défile »).
+        if anim in ANCRE_TETE or anim in (_post(pid).get("ancre_tete") or []):
+            r["frame_offsets"] = offsets_tete(os.path.join(d, anim + ".png"), len(r["frame_offsets"]))
         res[f"{pid}/{anim}"] = r
         if ecrit:
             ecrire(os.path.join(d, fn), r)
