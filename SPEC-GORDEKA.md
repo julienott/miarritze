@@ -93,7 +93,7 @@ s'amuser, sans classement en ligne en v1.
   une zone, et un personnage fait environ 1/9 de la hauteur d'écran.
 
 ### 3.2 Être trouvé
-- Un chassé est trouvé quand son corps reste **0,5 s** dans la zone de vision (*0,3 s jusqu'au 2026-10-19 : être vu
+- *(Remplacé par la détection progressive, §4.4, à valider par Julien.)* Un chassé est trouvé quand son corps reste **0,5 s** dans la zone de vision (*0,3 s jusqu'au 2026-10-19 : être vu
   voulait presque toujours dire être trouvé*) du chasseur (cône ou
   cercle), sans objet entre les deux. Une petite jauge se remplit au-dessus de lui et se vide dès qu'il
   sort de la vue. C'est plus juste en ligne (~100 ms de retard) et ça permet des fuites de justesse.
@@ -181,6 +181,34 @@ Retenus après des rounds IA contre IA (`docs/GORDEKA_EQUILIBRAGE.md`), chacun d
 - Essayées et écartées (drapeau à 0) : cachette qui grince après 8 s, chasseur plus rapide après 30 s
   bredouille ; toutes deux renforçaient un chasseur déjà gagnant.
 
+### 4.4 Tension et mouvement (*essai A/B du 2026-10-20, à valider par Julien*)
+Demande de Julien : « plus tendu, beaucoup de near miss, beaucoup de mouvements ». Bilans :
+`docs/GORDEKA_EQUILIBRAGE.md` ; drapeaux dans `rules.json`, tous comparables en A/B
+(`tools/gordeka/ab_tension.py`).
+- **Détection progressive** (`idee_detection`, retenue), remplace la capture en 0,5 s du §3.2 : la jauge
+  se remplit en 0,3 s tout près du chasseur et en 1 s au bout du cône, plus lentement si on n'est vu
+  qu'en partie (`detection_partiel`), et redescend doucement hors de vue (0,6 par seconde). Au-dessus du
+  chasseur, **vus de tous** : une petite jauge jaune → rouge, un « ? » dès 30 %, un « ! » à la capture.
+  Le chassé qui s'en tire souffle « ouf ! ». Le chasseur IA ne remarque un chassé qu'au « ? » et va voir ;
+  le chassé IA file vers l'abri le plus proche dès que sa jauge monte. Effet mesuré : les « vu puis
+  perdu » passent d'environ 2 à 3 par round.
+- **Frisson du chassé** (`idee_frisson`, retenu) : pour le joueur chassé seulement, battement de cœur,
+  vignettage rouge sombre et vibration (manette, téléphone) qui montent quand le chasseur approche
+  (sous 8 cases), au plus fort quand on est en train d'être vu ; « Il fouille à côté ! » quand le chasseur
+  fouille une cachette à moins de 6 cases. Ne dépend que de la distance, sans direction : il ne révèle
+  rien que le chassé ne voie déjà.
+- **Mouvement** (`idee_mouvement`, retenu) : un gâteau basque mangé réapparaît ailleurs 12 s plus tard,
+  loin du chasseur. Les chassés IA profitent d'une fouille proche pour filer (et sortent de leur
+  cachette), contournent le chasseur qui vient de passer près d'eux et changent plus souvent de planque.
+  Effet : 1,5 fois plus de cases parcourues, la moitié du temps en mouvement au lieu d'un tiers.
+- **Carte** (`tools/gordeka/make_port_v2.py`, retenue) : caisses qui coupent les longues lignes de vue
+  (place, criée, terre-plein de la jetée, escalier, atelier), deux coffres de plus sur le quai nord,
+  cachettes déplacées des recoins vers les passages, avec plusieurs côtés libres (`--sans-tension` :
+  carte d'avant).
+- Écartée : ronde du chasseur IA derrière les gros objets (`idee_ronde`), sans effet mesurable.
+- Équilibre : au niveau normal le chasseur gagne toujours ~3 rounds sur 5 ; l'écart entre les niveaux
+  facile et normal du chasseur s'est réduit (à surveiller avec Louis).
+
 ## 5. Contrôles
 
 | | Déplacement | Pouvoir | Emote / menu |
@@ -193,6 +221,7 @@ Retenus après des rounds IA contre IA (`docs/GORDEKA_EQUILIBRAGE.md`), chacun d
 - Le personnage regarde **là où il va**. Le cône du chasseur suit donc sa direction de marche, avec
   une rotation lissée et rapide. Pas de second stick pour viser.
 - Vibration courte sur iPhone et manette quand on est trouvé ou quand on déclenche un piège.
+- Vibration aussi au rythme du cœur quand le chasseur est tout près (§4.4, frisson).
 
 ## 6. Modes
 
@@ -400,6 +429,8 @@ Vierge, Fronton.
 - Tests :
   - règles en headless : vision et occlusion, capture, pièges, fin de round, tirage en sac ;
   - IA contre IA sur chaque carte (un round se termine, pas de blocage de navigation) ;
+  - `godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd` : jauge de détection,
+    frisson, frôlements et vu-perdu, partie IA courte ;
   - deux navigateurs Playwright pour le salon en ligne (comme `tests/web/online_two.mjs`).
 
 ## 13. Ce qu'on garde de Miarritze Borroka, ce qu'on laisse

@@ -114,3 +114,65 @@ rounds gagnés par le chasseur.
 - Les trouvés ne se contentent plus de regarder : ils chatouillent (5/round) et un trouvé sur quatre environ revient en jeu.
 - À vérifier avec Louis : si la chatouille est perçue comme gênante par l'enfant chasseur, monter
   `chatouille_repit`.
+
+## 2026-10-20 : tension et mouvement (demande de Julien : « plus tendu, beaucoup de near miss, beaucoup de mouvements »)
+
+Outil : `python3 tools/gordeka/ab_tension.py run <variante> [--rules k:v,…] [--niveaux …] [--rounds 80]`
+(Godot headless en `--fixed-fps 60` : même pas de temps qu'en jeu, aussi vite que le processeur ; 9 processus en
+parallèle, ~8 min pour 3 × 80 rounds), puis `ab_tension.py tableau <variantes…>`. Journaux et `bilan.json` dans
+`tests/out/gordeka_ab/<variante>/`. 6 joueurs, chiffres par round : **moyenne ± écart-type [± erreur type]**.
+
+Nouvelles mesures (`--gk-stats`, `GkGame.tension_keys`) :
+- **frôlement** : le chasseur passe à moins de 2 (ou 3) cases d'un chassé qu'il ne trouve pas (épisode refermé au-delà
+  de 2,5 cases) ;
+- **vu-perdu** : un chassé entre dans la vue du chasseur puis en sort 0,4 s sans être trouvé ;
+- **mouvement** : cases parcourues par minute et par chassé ; part du temps en mouvement, immobile, en cachette ;
+  **changements de planque** (immobile 3 s à plus de 4 cases de la planque d'avant) ; sorties de cachette en fuite ;
+- **captures au dernier moment** : en pleine course, moins de 15 s après une évasion, dans les 30 dernières s.
+
+### Leviers essayés (80 rounds par niveau ; chassés « normal », chasseur facile / normal / malin)
+
+| variante | chasseur gagne % | trouvés % | frôlements < 2 | vu-perdu | cases/min | en mouvement % |
+|---|---|---|---|---|---|---|
+| **départ** (base) | 42 / 62 / 72 | 49 / 57 / 66 | 0,3 / 0,3 / 0,1 | 1,9 / 2,2 / 0,9 | 100 / 99 / 91 | 35 / 35 / 32 |
+| a. détection progressive (0,35 s → 1,4 s) | 31 / 44 / 69 | 38 / 48 / 59 | 0,3 / 0,2 / 0,2 | **3,7 / 3,1 / 2,4** | 101 / 100 / 98 | 35 / 35 / 34 |
+| a'. détection plus vive (0,3 s → 1,0 s) | 34 / 68 / 62 | 42 / 56 / 58 | 0,2 / 0,3 / 0,3 | **2,3 / 3,4 / 1,9** | 98 / 97 / 94 | 34 / 34 / 33 |
+| c. mouvement | 56 / 65 / 72 | 54 / 57 / 63 | 0,4 / 0,3 / 0,1 | 1,9 / 2,5 / 0,8 | **149 / 143 / 141** | **52 / 50 / 49** |
+| d. carte | 51 / 56 / 75 | 48 / 54 / 63 | **0,6 / 0,5 / 0,2** | 2,0 / 2,4 / 0,8 | 99 / 99 / 97 | 35 / 35 / 34 |
+| d + ronde du chasseur derrière les objets | 46 / 56 / 61 | 47 / 56 / 56 | 0,4 / 0,4 / 0,2 | 1,9 / 2,2 / 0,9 | 103 / 97 / 99 | 36 / 34 / 34 |
+| a + c + d | 35 / 56 / 71 | 41 / 52 / 61 | 0,4 / 0,3 / 0,4 | 3,6 / 3,3 / 2,7 | 151 / 153 / 152 | 53 / 53 / 53 |
+| a' + c + d + ronde | 41 / 61 / 68 | 42 / 58 / 59 | 0,6 / 0,6 / 0,2 | 2,8 / 3,1 / 2,5 | 147 / 151 / 153 | 51 / 53 / 53 |
+
+Erreur type sur 80 rounds : ±5 à 6 points sur « chasseur gagne », ±3 sur « trouvés », ±0,1 sur les frôlements,
+±0,2 à 0,3 sur vu-perdu, ±2 cases/min. b (frisson) ne change rien aux IA : pas de ligne.
+
+Constats :
+- **Les frôlements à moins de 2 cases restent rares** (moins d'un par round) : à moins de 1,9 case, le chasseur voit
+  tout autour de lui, un frôlement suppose donc un mur entre les deux. La carte les double (0,3 → 0,6) sans les rendre
+  fréquents. **Le « presque trouvé » que l'on vit vraiment, c'est le vu-perdu** : la détection progressive le
+  multiplie par 1,5 à 3, et chaque fois tout le monde le voit (« ? » au-dessus du chasseur, « ouf ! »).
+- **La détection lente (1,4 s au bout du cône) affaiblit trop le chasseur** (62 → 44 % au normal). À 0,3 s / 1,0 s,
+  l'équilibre revient.
+- **Le levier mouvement fait bouger** : +50 % de cases parcourues, la moitié du temps en mouvement au lieu d'un tiers,
+  deux fois plus d'entrées en cachette et de gâteaux ; il rend les chassés un peu plus faciles à trouver par le
+  chasseur facile.
+- **La ronde derrière les objets** n'apporte ni frôlements ni captures (le malin devient même moins bon) : écartée.
+- Les sorties restent la grande porte de victoire des chassés (40 à 50 % des chassés sortent) ; un levier simple si
+  le chasseur doit regagner : `exits_open_at` ou `extract_hold`.
+
+### Combinaison retenue (à valider par Julien) : détection 0,3 s → 1,0 s + frisson + mouvement + carte, 120 rounds
+
+| chassés / chasseur | chasseur gagne % (départ → retenu) | trouvés % | frôlements < 2 | vu-perdu | cases/min | en mouvement % | entrées en cachette |
+|---|---|---|---|---|---|---|---|
+| normal / facile | 42 → 56 | 49 → 53 | 0,3 → 0,4 | 1,9 → **3,1** | 100 → **153** | 35 → **53** | 2,6 → 3,9 |
+| normal / normal | 62 → **59** | 57 → 59 | 0,3 → 0,4 | 2,2 → **3,3** | 99 → **149** | 35 → **52** | 2,3 → 3,9 |
+| normal / malin | 72 → 73 | 66 → 61 | 0,1 → 0,4 | 0,9 → **2,7** | 91 → **149** | 32 → **52** | 2,4 → 3,8 |
+| facile / facile | 57 → 60 | 55 → 54 | 0,3 → 0,4 | 2,0 → 2,7 | 128 → 174 | 45 → 61 | 3,7 → 4,3 |
+| malin / malin | 66 → 59 | 58 → 56 | 0,1 → 0,2 | 0,8 → **2,9** | 69 → **123** | 24 → **43** | 1,7 → 2,8 |
+
+- Au niveau normal, le chasseur gagne toujours environ 3 rounds sur 5 (62 → 59 %, dans le bruit) ; il reste le
+  favori, l'objectif de 2 sur 3 est à peine en dessous, comme avant.
+- Les « presque trouvés » visibles (vu-perdu) passent de ~2 à ~3 par round, et triplent chez les malins.
+- Les chassés bougent 1,5 fois plus et passent la moitié du temps en mouvement.
+- **À surveiller** : l'écart facile / normal du chasseur s'est réduit (56 / 59 %, contre 42 / 62 %) ; si Louis
+  trouve le chasseur facile trop fort, baisser `ai.facile.hunter_speed` (0,9) ou monter `hunter_react`.
