@@ -1,7 +1,8 @@
 name: Build & deploy web export
 
-# Pivot 2026-10-19 : main = Miarritze Gordeka (prototype), qui ne se déploie pas encore ;
-# le site garde Borroka (branche `borroka`). Déploiement à la main seulement, sur décision de Julien.
+# Depuis le 2026-10-20 (Julien) : main = Miarritze Gordeka, publié À LA RACINE du site (remplace
+# Borroka) avec /producer. Steam Deck et Recalbox sont sautés « jusqu'à nouvel ordre ».
+# Déploiement à la main seulement, sur décision de Julien.
 on:
   workflow_dispatch:
 
@@ -137,6 +138,7 @@ jobs:
   # pour se mettre à jour : il doit rester croissant (ne pas renommer le
   # fichier sans relever le compteur, cf. doc).
   steamdeck:
+    if: ${{ false }}   # sauté jusqu'à nouvel ordre de Julien (2026-10-20)
     runs-on: ubuntu-latest
     # Deux pushs rapprochés : on publie dans l'ordre, jamais un manifeste plus ancien en dernier.
     concurrency:
@@ -224,6 +226,7 @@ jobs:
   # jamais le déploiement web. Même numéro de build (run_number de CE
   # workflow) : il doit rester croissant.
   recalbox:
+    if: ${{ false }}   # sauté jusqu'à nouvel ordre de Julien (2026-10-20)
     runs-on: ubuntu-latest
     concurrency:
       group: recalbox-deploy
