@@ -216,7 +216,9 @@ def image_jeu(eid):
 
 def payloads_anim(eid):
     pls = []
-    for a in ANIMS[eid]:
+    # Pistes écrites ici, sinon celles de prompts_decor.json (animation.pistes : éléments ajoutés avec la
+    # carte v3, tools/gordeka/make_port_v3.py).
+    for a in ANIMS.get(eid) or elements()[eid].get("animation", {}).get("pistes", []):
         pl = {k: v for k, v in a.items() if k not in ("quoi", "source")}
         if a.get("source") == "hd":                    # vidéo : la source HD (1024 px), Wan voit mieux
             s = (index()[eid].get("sources") or [{}])[0]

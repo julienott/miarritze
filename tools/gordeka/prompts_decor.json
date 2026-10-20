@@ -699,7 +699,8 @@
    "caractere": "#",
    "categorie": "batiment",
    "zones": [
-    "Crampottes"
+    "Crampottes",
+    "Jetée"
    ],
    "occurrences": "7 blocs : 4×3 (2,15), 4×3 (8,14), 3×3 (13,16), 3×4 (2,20), 4×3 (7,19), 4×3 (12,21), 4×2 (6,24)",
    "gameplay": {
@@ -1203,7 +1204,15 @@
     "Quai des chalutiers",
     "Place du fronton",
     "Atelier",
-    "Escalier de la ville"
+    "Escalier de la ville",
+    "Cale sèche",
+    "Bassin",
+    "Hangar à filets",
+    "Terrasse",
+    "Lavoir",
+    "Chapelle des marins",
+    "Crampottes",
+    "couloirs (rue des pêcheurs, passages entre zones)"
    ],
    "occurrences": "2×2 : (5,8), (52,21), (73,36) ; 2×1 : (63,10), (83,8), (20,23), (83,37) ; 1×2 : (30,15)",
    "gameplay": {
@@ -2375,7 +2384,8 @@
    "caractere": "H",
    "categorie": "cachette",
    "zones": [
-    "Crampottes"
+    "Crampottes",
+    "couloirs (rue des pêcheurs, passages entre zones)"
    ],
    "occurrences": "(11,18)",
    "gameplay": {
@@ -3329,6 +3339,1305 @@
     "methode": "planche",
     "description": "bulles qui gonflent et éclatent, boucle"
    }
+  },
+  {
+   "id": "barriques_cidre",
+   "nom": "Deux barriques de cidre",
+   "caractere": "c",
+   "categorie": "objet",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "occurrences": "carte v3 (tools/gordeka/make_port_v3.py)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    64,
+    128
+   ],
+   "taille_sortie_px": [
+    128,
+    256
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Two old oak cider barrels standing upright side by side, warm honey brown wood staves, two dark iron hoops on each, the right barrel a little taller, a small wooden tap on the front of the left barrel, a round lid on top of each.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Two old oak cider barrels standing upright side by side, warm honey brown wood staves, two dark iron hoops on each, the right barrel a little taller, a small wooden tap on the front of the left barrel, a round lid on top of each.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « barriques ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Two old oak cider barrels standing upright side by side, warm honey brown wood staves, two dark iron hoops on each, the right barrel a little taller, a small wooden tap on the front of the left barrel, a round lid on top of each. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "barriques"
+  },
+  {
+   "id": "pot_hortensias",
+   "nom": "Pot d'hortensias",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Crampottes",
+    "Place du fronton",
+    "Chapelle des marins",
+    "Terrasse",
+    "Lavoir",
+    "Escalier de la ville",
+    "Phare",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "occurrences": "carte v3 (tools/gordeka/make_port_v3.py)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Big round terracotta flower pot overflowing with blue, pink and lilac hydrangea flower balls and fresh green leaves, the pot as wide as the flowers, sitting on the ground.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Big round terracotta flower pot overflowing with blue, pink and lilac hydrangea flower balls and fresh green leaves, the pot as wide as the flowers, sitting on the ground.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « pot_hortensias ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Big round terracotta flower pot overflowing with blue, pink and lilac hydrangea flower balls and fresh green leaves, the pot as wide as the flowers, sitting on the ground. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "pot_hortensias"
+  },
+  {
+   "id": "casier_bouees",
+   "nom": "Casier et bouées",
+   "caractere": "t",
+   "categorie": "objet_bas",
+   "zones": [
+    "Criée",
+    "Hangar à filets",
+    "Atelier",
+    "Cale sèche",
+    "Quai des chalutiers"
+   ],
+   "occurrences": "carte v3 (tools/gordeka/make_port_v3.py)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Low square wooden lobster pot lying flat on the ground with three round orange and white fishing buoys and a small coil of blue rope piled on top of it.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Low square wooden lobster pot lying flat on the ground with three round orange and white fishing buoys and a small coil of blue rope piled on top of it.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « casier_vide ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Low square wooden lobster pot lying flat on the ground with three round orange and white fishing buoys and a small coil of blue rope piled on top of it. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "casier_vide"
+  },
+  {
+   "id": "platane_place",
+   "nom": "Platane de la place",
+   "caractere": "v",
+   "categorie": "vegetation",
+   "zones": [
+    "Place du fronton"
+   ],
+   "occurrences": "carte v3 (tools/gordeka/make_port_v3.py)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 2,
+   "taille_jeu_px": [
+    64,
+    192
+   ],
+   "taille_sortie_px": [
+    128,
+    384
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Plane tree of a Basque village square: a short smooth trunk with pale beige and grey camouflage bark patches, a big round leafy crown of bright green leaves above it, a small round grate at its foot.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Plane tree of a Basque village square: a short smooth trunk with pale beige and grey camouflage bark patches, a big round leafy crown of bright green leaves above it, a small round grate at its foot.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « platane ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Plane tree of a Basque village square: a short smooth trunk with pale beige and grey camouflage bark patches, a big round leafy crown of bright green leaves above it, a small round grate at its foot. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "platane",
+   "animation": {
+    "methode": "planche",
+    "description": "feuillage qui frémit au vent, boucle lente",
+    "pistes": [
+     {
+      "quoi": "feuillage (warp wind)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "bottom",
+      "amplitude_px": 3,
+      "waves": 1,
+      "frames": 12,
+      "fps": 8
+     }
+    ]
+   }
+  },
+  {
+   "id": "fanions_basques",
+   "nom": "Guirlande de fanions basques",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    6,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    384,
+    64
+   ],
+   "taille_sortie_px": [
+    768,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Long garland of small triangular bunting flags in alternating Basque red, white and green, hanging along a thin dark rope that sags gently in a smooth curve, seen from the front, wide horizontal strip.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Long garland of small triangular bunting flags in alternating Basque red, white and green, hanging along a thin dark rope that sags gently in a smooth curve, seen from the front, wide horizontal strip.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « fanions ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      6,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Long garland of small triangular bunting flags in alternating Basque red, white and green, hanging along a thin dark rope that sags gently in a smooth curve, seen from the front, wide horizontal strip. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "fanions",
+   "ornement": true,
+   "couche": "haut",
+   "animation": {
+    "methode": "planche",
+    "description": "les fanions claquent au vent, boucle",
+    "pistes": [
+     {
+      "quoi": "fanions au vent (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "top",
+      "amplitude_px": 5,
+      "waves": 2,
+      "frames": 12,
+      "fps": 10
+     },
+     {
+      "quoi": "fanions au vent (vidéo)",
+      "mode": "video",
+      "frames": 16,
+      "fps": 8,
+      "prompt": "the little triangular flags of the garland flutter and swing in the sea breeze, the rope sways gently, seamless loop"
+     }
+    ]
+   }
+  },
+  {
+   "id": "linge_seche",
+   "nom": "Linge qui sèche",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Lavoir",
+    "Crampottes",
+    "Cale sèche",
+    "Terrasse"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    192,
+    64
+   ],
+   "taille_sortie_px": [
+    384,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Washing line stretched between two thin wooden poles with clothes pinned on it: a white sheet, a blue and white striped sailor shirt, a red Basque scarf and a pair of small blue trousers, seen from the front.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Washing line stretched between two thin wooden poles with clothes pinned on it: a white sheet, a blue and white striped sailor shirt, a red Basque scarf and a pair of small blue trousers, seen from the front.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « linge ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      3,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Washing line stretched between two thin wooden poles with clothes pinned on it: a white sheet, a blue and white striped sailor shirt, a red Basque scarf and a pair of small blue trousers, seen from the front. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "linge",
+   "ornement": true,
+   "animation": {
+    "methode": "planche",
+    "description": "le linge flotte au vent, boucle",
+    "pistes": [
+     {
+      "quoi": "linge au vent (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "top",
+      "amplitude_px": 6,
+      "waves": 2,
+      "frames": 12,
+      "fps": 10
+     }
+    ]
+   }
+  },
+  {
+   "id": "lanterne_murale",
+   "nom": "Lanterne de façade",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Small black iron wall lantern hanging from a curled bracket, warm glowing yellow glass panes, a little pointed roof, seen from the front.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small black iron wall lantern hanging from a curled bracket, warm glowing yellow glass panes, a little pointed roof, seen from the front.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « lanterne ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small black iron wall lantern hanging from a curled bracket, warm glowing yellow glass panes, a little pointed roof, seen from the front. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "lanterne",
+   "ornement": true,
+   "animation": {
+    "methode": "planche",
+    "description": "la flamme vacille, halo chaud",
+    "pistes": [
+     {
+      "quoi": "flamme qui vacille (vidéo)",
+      "mode": "video",
+      "frames": 12,
+      "fps": 8,
+      "prompt": "the warm light inside the lantern flickers softly and its glow pulses gently, the lantern stays still"
+     }
+    ]
+   }
+  },
+  {
+   "id": "fumee_cheminee",
+   "nom": "Cheminée qui fume",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "masses entre zones (crampottes, criée, hangar, chapelle…)"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    64,
+    128
+   ],
+   "taille_sortie_px": [
+    128,
+    256
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Small square brick chimney stack on a red tile roof with soft round puffs of light grey smoke rising from it.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small square brick chimney stack on a red tile roof with soft round puffs of light grey smoke rising from it.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « fumee ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small square brick chimney stack on a red tile roof with soft round puffs of light grey smoke rising from it. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "fumee",
+   "ornement": true,
+   "animation": {
+    "methode": "planche",
+    "description": "bouffées de fumée qui montent et s'effacent",
+    "pistes": [
+     {
+      "quoi": "fumée (particles smoke)",
+      "mode": "particles",
+      "kind": "smoke",
+      "count": 6,
+      "size_px": 14,
+      "frames": 16,
+      "fps": 8
+     }
+    ]
+   }
+  },
+  {
+   "id": "bouee_murale",
+   "nom": "Bouée accrochée au mur",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Round red and white life ring buoy hanging on a wooden peg, with a short coiled rope around it, seen from the front.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Round red and white life ring buoy hanging on a wooden peg, with a short coiled rope around it, seen from the front.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « bouee ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Round red and white life ring buoy hanging on a wooden peg, with a short coiled rope around it, seen from the front. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "bouee",
+   "ornement": true
+  },
+  {
+   "id": "filet_suspendu",
+   "nom": "Filet suspendu au mur",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    64
+   ],
+   "taille_sortie_px": [
+    256,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Green fishing net hanging from two wooden pegs in a soft draped shape, a row of round orange cork floats along its top rope, seen from the front.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Green fishing net hanging from two wooden pegs in a soft draped shape, a row of round orange cork floats along its top rope, seen from the front.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « filet_suspendu ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      2,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Green fishing net hanging from two wooden pegs in a soft draped shape, a row of round orange cork floats along its top rope, seen from the front. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "filet_suspendu",
+   "ornement": true,
+   "animation": {
+    "methode": "planche",
+    "description": "le filet se balance doucement",
+    "pistes": [
+     {
+      "quoi": "filet qui se balance (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "top",
+      "amplitude_px": 3,
+      "waves": 1,
+      "frames": 12,
+      "fps": 8
+     }
+    ]
+   }
+  },
+  {
+   "id": "mouette_posee",
+   "nom": "Mouette posée",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "masses entre zones (crampottes, criée, hangar, chapelle…)"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Cute round white and light grey seagull standing on its orange feet, yellow beak, small black eye, folded grey wings, seen from the side.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Cute round white and light grey seagull standing on its orange feet, yellow beak, small black eye, folded grey wings, seen from the side.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « mouette ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Cute round white and light grey seagull standing on its orange feet, yellow beak, small black eye, folded grey wings, seen from the side. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "mouette",
+   "ornement": true,
+   "animation": {
+    "methode": "planche",
+    "description": "la mouette hoche la tête et cligne, boucle",
+    "pistes": [
+     {
+      "quoi": "mouette qui hoche la tête (vidéo)",
+      "mode": "video",
+      "frames": 12,
+      "fps": 8,
+      "prompt": "the seagull bobs its head, looks around and ruffles its wings a little, its feet stay in place, seamless loop"
+     }
+    ]
+   }
+  },
+  {
+   "id": "chat_du_port",
+   "nom": "Chat du port endormi",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Terrasse",
+    "Crampottes",
+    "Lavoir",
+    "Escalier de la ville"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Chubby ginger cat curled up asleep in a round ball, its tail wrapped around it, eyes closed with a peaceful smile.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Chubby ginger cat curled up asleep in a round ball, its tail wrapped around it, eyes closed with a peaceful smile.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « chat ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Chubby ginger cat curled up asleep in a round ball, its tail wrapped around it, eyes closed with a peaceful smile. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "chat",
+   "ornement": true,
+   "animation": {
+    "methode": "planche",
+    "description": "le chat respire et bat de la queue, boucle",
+    "pistes": [
+     {
+      "quoi": "chat qui dort (vidéo)",
+      "mode": "video",
+      "frames": 12,
+      "fps": 8,
+      "prompt": "the sleeping cat breathes slowly and the tip of its tail flicks, it stays curled in place, seamless loop"
+     }
+    ]
+   }
+  },
+  {
+   "id": "ancre_decor",
+   "nom": "Vieille ancre",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Quai des chalutiers",
+    "Cale sèche"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Old dark grey iron ship anchor standing upright against a wall, a ring at the top and a few links of chain.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Old dark grey iron ship anchor standing upright against a wall, a ring at the top and a few links of chain.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « ancre ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Old dark grey iron ship anchor standing upright against a wall, a ring at the top and a few links of chain. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "ancre",
+   "ornement": true
+  },
+  {
+   "id": "cordage_enroule",
+   "nom": "Cordage enroulé",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Quai des chalutiers",
+    "Cale sèche"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Thick beige ship rope coiled in a neat round spiral lying flat on the quay stones, its loose end trailing out to the side.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Thick beige ship rope coiled in a neat round spiral lying flat on the quay stones, its loose end trailing out to the side.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « cordage ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Thick beige ship rope coiled in a neat round spiral lying flat on the quay stones, its loose end trailing out to the side. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "cordage",
+   "ornement": true,
+   "couche": "sol"
+  },
+  {
+   "id": "lampadaire_port",
+   "nom": "Réverbère du port",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    64,
+    128
+   ],
+   "taille_sortie_px": [
+    128,
+    256
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Old dark green cast iron street lamp of a seaside town: a slim fluted post and a round white glass globe on top.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Old dark green cast iron street lamp of a seaside town: a slim fluted post and a round white glass globe on top.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « lampadaire ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Old dark green cast iron street lamp of a seaside town: a slim fluted post and a round white glass globe on top. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "lampadaire",
+   "ornement": true
+  },
+  {
+   "id": "drapeau_mat",
+   "nom": "Drapeau sur un mât",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Jetée",
+    "Phare"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    64,
+    128
+   ],
+   "taille_sortie_px": [
+    128,
+    256
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Thin wooden flag pole with a small rectangular red pennant flag with a white stripe, seen from the front.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Thin wooden flag pole with a small rectangular red pennant flag with a white stripe, seen from the front.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « drapeau ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Thin wooden flag pole with a small rectangular red pennant flag with a white stripe, seen from the front. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "drapeau",
+   "ornement": true,
+   "animation": {
+    "methode": "planche",
+    "description": "le drapeau flotte au vent",
+    "pistes": [
+     {
+      "quoi": "drapeau au vent (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "left",
+      "amplitude_px": 6,
+      "waves": 2,
+      "frames": 12,
+      "fps": 10
+     }
+    ]
+   }
+  },
+  {
+   "id": "maison_crampotte_verte",
+   "nom": "Crampotte aux volets verts",
+   "caractere": "#",
+   "categorie": "batiment",
+   "zones": [
+    "Crampottes",
+    "Jetée"
+   ],
+   "occurrences": "7 blocs : 4×3 (2,15), 4×3 (8,14), 3×3 (13,16), 3×4 (2,20), 4×3 (7,19), 4×3 (12,21), 4×2 (6,24)",
+   "gameplay": {
+    "bloque_vue": true,
+    "bloque_passage": true,
+    "cachette": false,
+    "franchissable": false,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    4,
+    3
+   ],
+   "debord_haut_cases": 1,
+   "taille_jeu_px": [
+    256,
+    256
+   ],
+   "taille_sortie_px": [
+    512,
+    512
+   ],
+   "type": "objet",
+   "style_pixelforge_suggere": "pf_hd__prop",
+   "prompt_specifique": "Small whitewashed Basque fisherman's hut of Biarritz port with a red clay tile roof, dark green wooden shutters and a dark green door, a little window box with red geraniums, a wooden bench against the wall.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Small whitewashed Basque fisherman's hut of Biarritz port with a red clay tile roof, dark green wooden shutters and a dark green door, a little window box with red geraniums, a wooden bench against the wall.",
+   "variantes": 2,
+   "remarques": "Variante de couleur de la crampotte (2026-10-20, carte v3) : alternée avec l'autre par decor.json, pour que les cabanes ne soient pas toutes identiques. Même emprise et même cadrage que maison_crampotte.",
+   "payloads": [
+    {
+     "taille_cases": [
+      4,
+      3
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Small whitewashed Basque fisherman's hut of Biarritz port with a red clay tile roof, dark green wooden shutters and a dark green door, a little window box with red geraniums, a wooden bench against the wall. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "theme": "basque",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ]
+  },
+  {
+   "id": "panier_poissons",
+   "nom": "Panier de poissons",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Criée",
+    "Quai des chalutiers",
+    "Bassin",
+    "Jetée"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    64,
+    64
+   ],
+   "taille_sortie_px": [
+    128,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Round wicker basket full of shiny silver sardines and a few red mullets, a sprig of seaweed on top, standing on the ground.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Round wicker basket full of shiny silver sardines and a few red mullets, a sprig of seaweed on top, standing on the ground.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « panier ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      1,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Round wicker basket full of shiny silver sardines and a few red mullets, a sprig of seaweed on top, standing on the ground. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "panier",
+   "ornement": true
+  },
+  {
+   "id": "filet_au_sol",
+   "nom": "Filet étendu au sol",
+   "caractere": "",
+   "categorie": "ornement",
+   "zones": [
+    "Hangar à filets",
+    "Jetée",
+    "Quai des chalutiers",
+    "Cale sèche"
+   ],
+   "occurrences": "ornement de decor.json (sans effet de jeu)",
+   "gameplay": {
+    "bloque_vue": false,
+    "bloque_passage": false,
+    "cachette": false,
+    "franchissable": true,
+    "sortie": false,
+    "note": ""
+   },
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "taille_jeu_px": [
+    128,
+    64
+   ],
+   "taille_sortie_px": [
+    256,
+    128
+   ],
+   "type": "ornement",
+   "style_pixelforge_suggere": "pf_2d__prop",
+   "prompt_specifique": "Green fishing net spread out flat on the ground to dry, a loose rectangle of criss-cross mesh with a few orange cork floats along one edge.",
+   "prompt": "Clean flat 2D vector cartoon game asset in the art style of our game Miarritze Gordeka: thick uniform dark navy outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, no gradient, no texture, no noise, smooth clean cartoon, no pixel art. Camera: top-down view with a slight 3/4 tilt: we see the top of things from above and a small strip of their front face, orthographic, no vanishing point, not isometric. Setting: the old fishermen's port of Biarritz in the French Basque Country: whitewashed walls, Basque red and dark green paint, red clay roof tiles, warm golden sandstone, navy and turquoise sea. Cute, friendly and readable from far away for 9 year old children, nothing scary, no weapons, no people, no text, no letters, no logo. Single isolated object, centered and fully inside the frame, on a transparent background (or a plain white background to be removed), no cast shadow on the ground (the game draws it), soft light from above. Green fishing net spread out flat on the ground to dry, a loose rectangle of criss-cross mesh with a few orange cork floats along one edge.",
+   "variantes": 2,
+   "remarques": "Ajouté le 2026-10-20 (revue de carte v3). Provisoire dessiné par le code (GkProvisoire, sorte « filet_sol ») en attendant l'image.",
+   "payloads": [
+    {
+     "taille_cases": [
+      2,
+      1
+     ],
+     "prompt_style": "pf_hd__prop",
+     "prompt": "Green fishing net spread out flat on the ground to dry, a loose rectangle of criss-cross mesh with a few orange cork floats along one edge. Camera: Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
+     "shadow": "layer",
+     "num_images": 2,
+     "width": 1024,
+     "height": 1024,
+     "seed": 1,
+     "priority": "low"
+    }
+   ],
+   "provisoire": "filet_sol",
+   "ornement": true,
+   "couche": "sol"
   }
  ],
  "questions_ouvertes": [
@@ -3349,5 +4658,6 @@
   "pf_hd__prop": "Camera: three-quarter top-down view from the front, about 40 degrees above the ground: the top face and the front face are visible, the front face is square to the viewer, no side faces, orthographic, no vanishing point, not isometric. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
   "pf_hd__ground": "Camera: straight top-down orthographic view of the ground, flat, no perspective, no vanishing point. Light from the upper left. Art style: clean flat 2D cartoon, thin slightly darker joint lines instead of thick outlines, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
   "pf_hd__texture": "Camera: front face only, square to the viewer, orthographic, the front face of a wall in a three-quarter top-down map. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art."
- }
+ },
+ "revue_carte_v3": "2026-10-20 : éléments ajoutés pour la carte v3 (make_port_v3.py), avec leur provisoire dessiné par le code (src/gordeka/gk_provisoire.gd) ; ornements = décor sans effet de jeu posé par assets/maps/<id>/decor.json."
 }

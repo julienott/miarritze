@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Mesures A/B de la tension des rounds IA contre IA (docs/GORDEKA_EQUILIBRAGE.md, 2026-10-20).
 
-  ab_tension.py run <variante> [--rules k:v,…] [--niveaux normal/facile,normal/normal,normal/malin]
+  ab_tension.py run <variante> [--rules k:v,…] [--map <id de carte>] [--niveaux normal/facile,normal/normal,normal/malin]
                 [--rounds 80] [--procs 8] [--players 6] [--projet <copie du projet>]
   ab_tension.py tableau <variante> [<variante> …] [--niveau normal/normal]
 
@@ -106,6 +106,8 @@ def run(args):
                    f"--gk-level={chasses}", f"--gk-hunter-level={chasseur}", f"--gk-players={args.players}"]
             if args.rules:
                 cmd.append(f"--gk-rules={args.rules}")
+            if args.map:
+                cmd.append(f"--gk-map={args.map}")
             jobs.append((cmd, os.path.join(dossier, f"{chasses}_{chasseur}_{i}.log")))
     t0 = time.time()
     actifs = []
@@ -121,7 +123,7 @@ def run(args):
                 actifs.remove((p, fh, log))
             elif time.time() - t0 > args.timeout:
                 p.kill()
-    res = {"variante": args.variante, "rules": args.rules, "niveaux": {}}
+    res = {"variante": args.variante, "rules": args.rules, "map": args.map, "niveaux": {}}
     for niv in args.niveaux.split(","):
         res["niveaux"][niv] = bilan(lire(dossier, niv))
     with open(os.path.join(dossier, "bilan.json"), "w") as fh:
@@ -182,6 +184,7 @@ def main():
     r.add_argument("--procs", type=int, default=8, help="processus par niveau (chacun fait sa part des rounds)")
     r.add_argument("--paralleles", type=int, default=9, help="processus Godot en même temps")
     r.add_argument("--players", type=int, default=6)
+    r.add_argument("--map", default="", help="variante de carte (assets/maps/<id>/, --gk-map)")
     r.add_argument("--timeout", type=float, default=3600)
     r.add_argument("--projet", default=ROOT, help="copie du projet à lancer (instantané : le code peut changer pendant la mesure)")
     t = sub.add_parser("tableau")

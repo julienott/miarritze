@@ -330,7 +330,8 @@
    "categorie": "batiment",
    "caractere": "#",
    "zones": [
-    "Crampottes"
+    "Crampottes",
+    "Jetée"
    ],
    "taille_cases": [
     4,
@@ -587,7 +588,15 @@
     "Quai des chalutiers",
     "Place du fronton",
     "Atelier",
-    "Escalier de la ville"
+    "Escalier de la ville",
+    "Cale sèche",
+    "Bassin",
+    "Hangar à filets",
+    "Terrasse",
+    "Lavoir",
+    "Chapelle des marins",
+    "Crampottes",
+    "couloirs (rue des pêcheurs, passages entre zones)"
    ],
    "taille_cases": [
     2,
@@ -1201,7 +1210,8 @@
    "categorie": "cachette",
    "caractere": "H",
    "zones": [
-    "Crampottes"
+    "Crampottes",
+    "couloirs (rue des pêcheurs, passages entre zones)"
    ],
    "taille_cases": [
     1,
@@ -1521,6 +1531,578 @@
     "methode": "planche",
     "description": "bulles qui gonflent et éclatent, boucle"
    }
+  },
+  "barriques_cidre": {
+   "nom": "Deux barriques de cidre",
+   "type": "objet",
+   "categorie": "objet",
+   "caractere": "c",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "provisoire": "barriques",
+   "fichiers": []
+  },
+  "pot_hortensias": {
+   "nom": "Pot d'hortensias",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Crampottes",
+    "Place du fronton",
+    "Chapelle des marins",
+    "Terrasse",
+    "Lavoir",
+    "Escalier de la ville",
+    "Phare",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "provisoire": "pot_hortensias",
+   "fichiers": []
+  },
+  "casier_bouees": {
+   "nom": "Casier et bouées",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Criée",
+    "Hangar à filets",
+    "Atelier",
+    "Cale sèche",
+    "Quai des chalutiers"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "provisoire": "casier_vide",
+   "fichiers": []
+  },
+  "platane_place": {
+   "nom": "Platane de la place",
+   "type": "objet",
+   "categorie": "vegetation",
+   "caractere": "v",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 2,
+   "animation": {
+    "methode": "planche",
+    "description": "feuillage qui frémit au vent, boucle lente",
+    "pistes": [
+     {
+      "quoi": "feuillage (warp wind)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "bottom",
+      "amplitude_px": 3,
+      "waves": 1,
+      "frames": 12,
+      "fps": 8
+     }
+    ]
+   },
+   "provisoire": "platane",
+   "fichiers": []
+  },
+  "fanions_basques": {
+   "nom": "Guirlande de fanions basques",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    6,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "les fanions claquent au vent, boucle",
+    "pistes": [
+     {
+      "quoi": "fanions au vent (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "top",
+      "amplitude_px": 5,
+      "waves": 2,
+      "frames": 12,
+      "fps": 10
+     },
+     {
+      "quoi": "fanions au vent (vidéo)",
+      "mode": "video",
+      "frames": 16,
+      "fps": 8,
+      "prompt": "the little triangular flags of the garland flutter and swing in the sea breeze, the rope sways gently, seamless loop"
+     }
+    ]
+   },
+   "provisoire": "fanions",
+   "fichiers": [],
+   "couche": "haut"
+  },
+  "linge_seche": {
+   "nom": "Linge qui sèche",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Lavoir",
+    "Crampottes",
+    "Cale sèche",
+    "Terrasse"
+   ],
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "le linge flotte au vent, boucle",
+    "pistes": [
+     {
+      "quoi": "linge au vent (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "top",
+      "amplitude_px": 6,
+      "waves": 2,
+      "frames": 12,
+      "fps": 10
+     }
+    ]
+   },
+   "provisoire": "linge",
+   "fichiers": []
+  },
+  "lanterne_murale": {
+   "nom": "Lanterne de façade",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "la flamme vacille, halo chaud",
+    "pistes": [
+     {
+      "quoi": "flamme qui vacille (vidéo)",
+      "mode": "video",
+      "frames": 12,
+      "fps": 8,
+      "prompt": "the warm light inside the lantern flickers softly and its glow pulses gently, the lantern stays still"
+     }
+    ]
+   },
+   "provisoire": "lanterne",
+   "fichiers": []
+  },
+  "fumee_cheminee": {
+   "nom": "Cheminée qui fume",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "masses entre zones (crampottes, criée, hangar, chapelle…)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "planche",
+    "description": "bouffées de fumée qui montent et s'effacent",
+    "pistes": [
+     {
+      "quoi": "fumée (particles smoke)",
+      "mode": "particles",
+      "kind": "smoke",
+      "count": 6,
+      "size_px": 14,
+      "frames": 16,
+      "fps": 8
+     }
+    ]
+   },
+   "provisoire": "fumee",
+   "fichiers": []
+  },
+  "bouee_murale": {
+   "nom": "Bouée accrochée au mur",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "provisoire": "bouee",
+   "fichiers": []
+  },
+  "filet_suspendu": {
+   "nom": "Filet suspendu au mur",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "le filet se balance doucement",
+    "pistes": [
+     {
+      "quoi": "filet qui se balance (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "top",
+      "amplitude_px": 3,
+      "waves": 1,
+      "frames": 12,
+      "fps": 8
+     }
+    ]
+   },
+   "provisoire": "filet_suspendu",
+   "fichiers": []
+  },
+  "mouette_posee": {
+   "nom": "Mouette posée",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "masses entre zones (crampottes, criée, hangar, chapelle…)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "la mouette hoche la tête et cligne, boucle",
+    "pistes": [
+     {
+      "quoi": "mouette qui hoche la tête (vidéo)",
+      "mode": "video",
+      "frames": 12,
+      "fps": 8,
+      "prompt": "the seagull bobs its head, looks around and ruffles its wings a little, its feet stay in place, seamless loop"
+     }
+    ]
+   },
+   "provisoire": "mouette",
+   "fichiers": []
+  },
+  "chat_du_port": {
+   "nom": "Chat du port endormi",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Terrasse",
+    "Crampottes",
+    "Lavoir",
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "le chat respire et bat de la queue, boucle",
+    "pistes": [
+     {
+      "quoi": "chat qui dort (vidéo)",
+      "mode": "video",
+      "frames": 12,
+      "fps": 8,
+      "prompt": "the sleeping cat breathes slowly and the tip of its tail flicks, it stays curled in place, seamless loop"
+     }
+    ]
+   },
+   "provisoire": "chat",
+   "fichiers": []
+  },
+  "ancre_decor": {
+   "nom": "Vieille ancre",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Quai des chalutiers",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "provisoire": "ancre",
+   "fichiers": []
+  },
+  "cordage_enroule": {
+   "nom": "Cordage enroulé",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Quai des chalutiers",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "provisoire": "cordage",
+   "fichiers": [],
+   "couche": "sol"
+  },
+  "lampadaire_port": {
+   "nom": "Réverbère du port",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "provisoire": "lampadaire",
+   "fichiers": []
+  },
+  "drapeau_mat": {
+   "nom": "Drapeau sur un mât",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Phare"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "planche",
+    "description": "le drapeau flotte au vent",
+    "pistes": [
+     {
+      "quoi": "drapeau au vent (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "left",
+      "amplitude_px": 6,
+      "waves": 2,
+      "frames": 12,
+      "fps": 10
+     }
+    ]
+   },
+   "provisoire": "drapeau",
+   "fichiers": []
+  },
+  "maison_crampotte_verte": {
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Crampottes",
+    "Jetée"
+   ],
+   "taille_cases": [
+    4,
+    3
+   ],
+   "debord_haut_cases": 1,
+   "nom": "Crampotte aux volets verts",
+   "animation": {},
+   "fichiers": []
+  },
+  "panier_poissons": {
+   "nom": "Panier de poissons",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Criée",
+    "Quai des chalutiers",
+    "Bassin",
+    "Jetée"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "provisoire": "panier",
+   "fichiers": []
+  },
+  "filet_au_sol": {
+   "nom": "Filet étendu au sol",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Hangar à filets",
+    "Jetée",
+    "Quai des chalutiers",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "provisoire": "filet_sol",
+   "fichiers": [],
+   "couche": "sol"
   }
  }
 }
