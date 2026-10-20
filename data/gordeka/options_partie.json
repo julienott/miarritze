@@ -152,6 +152,81 @@
 					"defaut": 2
 				}
 			]
+		},
+		{
+			"id": "detection",
+			"groupe": "Tension",
+			"libelle": "Détection progressive",
+			"aide": "Le chasseur ne voit pas d'un coup : une jauge « ? » se remplit, on peut s'enfuir avant le « ! ».",
+			"valide_le": "2026-10-20",
+			"carte_kanban": 355,
+			"reglages": [
+				{
+					"cle": "idee_detection",
+					"type": "on_off",
+					"libelle": "Activée",
+					"defaut": 1
+				},
+				{
+					"cle": "detection_temps_pres",
+					"type": "curseur",
+					"libelle": "Temps pour repérer de près (s)",
+					"min": 0.1,
+					"max": 1,
+					"pas": 0.05,
+					"defaut": 0.3
+				},
+				{
+					"cle": "detection_temps_loin",
+					"type": "curseur",
+					"libelle": "Temps pour repérer de loin (s)",
+					"min": 0.5,
+					"max": 2.5,
+					"pas": 0.1,
+					"defaut": 1.0
+				}
+			]
+		},
+		{
+			"id": "frisson",
+			"groupe": "Tension",
+			"libelle": "Frisson du chassé",
+			"aide": "Battement de cœur, bords de l'écran qui rougissent et vibration quand le chasseur approche.",
+			"valide_le": "2026-10-20",
+			"carte_kanban": 355,
+			"reglages": [
+				{
+					"cle": "idee_frisson",
+					"type": "on_off",
+					"libelle": "Activé",
+					"defaut": 1
+				},
+				{
+					"cle": "frisson_portee",
+					"type": "curseur",
+					"libelle": "Distance du frisson (cases)",
+					"min": 4,
+					"max": 12,
+					"pas": 1,
+					"defaut": 8
+				}
+			]
+		},
+		{
+			"id": "mouvement",
+			"groupe": "Tension",
+			"libelle": "Pousser à bouger",
+			"aide": "Les gâteaux réapparaissent ailleurs, et les fouilles du chasseur ouvrent des fenêtres pour changer de cachette.",
+			"valide_le": "2026-10-20",
+			"carte_kanban": 355,
+			"reglages": [
+				{
+					"cle": "idee_mouvement",
+					"type": "on_off",
+					"libelle": "Activé",
+					"defaut": 1
+				}
+			]
 		}
 	]
 }
