@@ -133,7 +133,7 @@
    "expression": "gentle smile, mouth closed and still, the mouth does not move",
    "boucle": true,
    "mouvement": {
-    "motion": "idle"
+    "motion": "ghost"
    },
    "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option",
    "en_pause": "Julien 2026-10-20 : fantômes générés annulés ; vol stationnaire + ailes par le code en attendant"
@@ -143,7 +143,7 @@
    "expression": "gentle smile, mouth closed and still, the mouth does not move",
    "boucle": true,
    "mouvement": {
-    "motion": "walk"
+    "motion": "ghost_move"
    },
    "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option",
    "en_pause": "Julien 2026-10-20 : fantômes générés annulés ; vol stationnaire + ailes par le code en attendant"

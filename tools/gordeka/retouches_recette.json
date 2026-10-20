@@ -16,7 +16,9 @@
   }
  },
  "perso/txomin/ghost_move": {
-  "priority": "normal"
+  "priority": "normal",
+  "character_task": "1bdce32f041a48c6ac3bdc21a8ca91e3",
+  "variant": 0
  },
  "decor/cachette_malle_pelotes/0": "The trunk is CLOSED: its rounded lid is shut and latched, nothing visible inside; a few white pelota balls rest on the top of the lid.",
  "decor/cachette_tas_filets_cachette/0": "It must clearly read as a big messy heap of green and blue fishing nets made of visible criss-cross mesh lines, with orange cork floats and a coiled rope tangled in it, like a soft pile of fabric on the quay; not a hut, no door, no arch, no opening, no creature, no face, no animal.",
@@ -24,7 +26,9 @@
  "decor/cachette_barque_retournee/0": "The small wooden rowing boat is turned UPSIDE DOWN, lying directly on the ground: we see its rounded painted hull bottom and keel on top (blue and white stripes, green rim along the ground), the inside of the boat is hidden underneath; seen from the front, horizontal, no blocks, no stand, no pedestal, nothing inside visible.",
  "perso/mattin/ghost_move": {
   "action": "The small white angel wings on his back flap clearly and steadily.",
-  "priority": "normal"
+  "priority": "normal",
+  "character_task": "e35e2cef6c554ef39c760c6c3287d3e3",
+  "variant": 0
  },
  "perso/louis/emote_langue": "Cheeky teasing face: a big pink tongue sticks far out of his mouth, clearly visible in profile, eyes squinting playfully, during the whole gesture.",
  "perso/txomin/emote_langue": "Cheeky teasing face: a big pink tongue sticks far out of his mouth, clearly visible in profile, during the whole gesture.",
@@ -65,26 +69,38 @@
   "priority": "normal"
  },
  "perso/louis/ghost": {
-  "priority": "normal"
+  "priority": "normal",
+  "character_task": "a2a8eb39d2814df2bfb5b1c206a3f6e6",
+  "variant": 0
  },
  "perso/louis/ghost_move": {
-  "priority": "normal"
+  "priority": "normal",
+  "character_task": "a2a8eb39d2814df2bfb5b1c206a3f6e6",
+  "variant": 0
  },
  "perso/txomin/ghost": {
-  "priority": "normal"
+  "priority": "normal",
+  "character_task": "1bdce32f041a48c6ac3bdc21a8ca91e3",
+  "variant": 0
  },
  "perso/amaia/walk": {
   "priority": "normal"
  },
  "perso/patxi/ghost": {
-  "priority": "normal"
+  "priority": "normal",
+  "character_task": "06e5630f7f394e98ad4267a7cefd8784",
+  "variant": 0
  },
  "perso/patxi/ghost_move": {
-  "priority": "normal"
+  "priority": "normal",
+  "character_task": "06e5630f7f394e98ad4267a7cefd8784",
+  "variant": 0
  },
  "perso/mattin/ghost": {
   "action": "The small white angel wings on his back flap clearly and steadily.",
-  "priority": "normal"
+  "priority": "normal",
+  "character_task": "e35e2cef6c554ef39c760c6c3287d3e3",
+  "variant": 0
  },
  "perso/mattin/hunter_reveal": {
   "priority": "normal"
