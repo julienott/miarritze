@@ -44,7 +44,7 @@ async function login(page) {
   await page.waitForSelector('#login:not([hidden])');
   await page.fill('#password', PASSWORD);
   await page.click('#login-form button[type=submit]');
-  await page.waitForSelector('#view-kanban:not([hidden]) .column');
+  await page.waitForSelector('#view-kanban:not([hidden]) #board');
 }
 
 const browser = await chromium.launch();
@@ -234,42 +234,95 @@ check('events : types accepte et refuse (avec le texte)', evq.filter((e) => e.ty
 check('cli events : ACCEPTÉE / REFUSÉE lisibles', /ACCEPTÉE/.test(cli('events', '--since', String(t0))) && /REFUSÉE QA -> Doing/.test(cli('events', '--since', String(t0))));
 
 // ------------------------------------------------------------------ iPhone
+// Vue mobile : une colonne à la fois, onglets collants, tuiles compactes.
+for (let k = 1; k <= 8; k++) {
+  cli('add-card', '--type', 'animation', '--title', `${tag} QA mobile ${k}`, '--asset', ASSET, '--detail', 'walk', '--status', 'qa');
+}
 const wk = await webkit.launch();
 for (const [name, vp] of [['iphone_portrait', { width: 390, height: 844 }], ['iphone_paysage', { width: 844, height: 390 }]]) {
   const ctx = await wk.newContext({ viewport: vp, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
   const mp = await ctx.newPage();
   mp.on('dialog', (d) => d.accept());
   await login(mp);
-  await mp.waitForSelector(`.card[data-id="${hatId}"]`);
-  await mp.locator(`.card[data-id="${hatId}"]`).scrollIntoViewIfNeeded();
-  await shot(mp, `05_${name}_board`, false);
-  await shot(mp, `06_${name}_board_entier`);
+  await mp.waitForSelector('#kb-tabs:not([hidden]) .kb-tab.active');
+  const tabs = await mp.$$eval('#kb-tabs .kb-tab[data-status]', (l) => l.map((t) => [t.dataset.status, t.getBoundingClientRect().height]));
+  check(`${name} : 5 onglets assez grands`, tabs.length === 5 && tabs.every(([, h]) => h >= 40), JSON.stringify(tabs));
+  check(`${name} : QA ouvert par défaut (cartes à tester)`, (await mp.getAttribute('.kb-tab.active', 'data-status')) === 'qa');
+  const shown = await mp.$$eval('.column', (l) => l.filter((c) => c.getBoundingClientRect().height > 0).length);
+  check(`${name} : une seule colonne à l'écran`, shown === 1, String(shown));
+  const fit = await mp.evaluate(() => [...document.querySelectorAll('.column.active .card')]
+    .filter((c) => { const b = c.getBoundingClientRect(); return b.top >= 0 && b.bottom <= innerHeight; }).length);
+  check(`${name} : cartes à l'écran (≥ ${name.endsWith('portrait') ? 8 : 4})`, fit >= (name.endsWith('portrait') ? 8 : 4), String(fit));
+  const btn = await mp.$eval('.column.active .card.compact button.accept', (b) => b.getBoundingClientRect().height);
+  check(`${name} : ✓ / ✗ sur la tuile, au doigt`, btn >= 40, String(btn));
   const over = await mp.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   check(`${name} : pas de défilement horizontal`, !over);
-  await mp.locator(`.card[data-id="${hunterId}"] button[aria-label="Colonne suivante"]`).tap();
-  await mp.waitForSelector(`.column[data-status=todo] .card[data-id="${hunterId}"]`);
-  check(`${name} : ▶ au toucher`, true);
-  await mp.locator(`.card[data-id="${hunterId}"] button[aria-label="Colonne précédente"]`).tap();
-  await mp.waitForSelector(`.column[data-status=backlog] .card[data-id="${hunterId}"]`);
-  // Une carte en QA avec son asset : boutons au doigt, puis le détail.
-  const qid = Number(/#(\d+)/.exec(cli('add-card', '--type', 'animation', '--title', `${tag} ${name} marche`, '--asset', ASSET, '--detail', 'walk', '--status', 'qa'))[1]);
+  await shot(mp, `05_${name}_board`, false);
+  // Onglet Backlog, puis « déplacer vers… » sans ouvrir la carte.
+  await mp.locator('.kb-tab[data-status=backlog]').tap();
+  await mp.waitForSelector(`.column.active[data-status=backlog] .card[data-id="${hunterId}"]`);
+  await mp.selectOption(`.card[data-id="${hunterId}"] select.move`, 'todo');
+  await mp.waitForSelector(`.column[data-status=todo] .card[data-id="${hunterId}"]`, { state: 'attached' });
+  check(`${name} : déplacer vers… (menu de la tuile)`, (await apiTok('cards'))[1].cards.find((c) => c.id === hunterId).status === 'todo');
   await mp.reload();
-  const qc = mp.locator(`.card[data-id="${qid}"]`);
-  await qc.scrollIntoViewIfNeeded();
-  const hBtn = await qc.locator('button.accept').evaluate((b) => b.getBoundingClientRect().height);
-  check(`${name} : boutons QA assez grands pour le doigt`, hBtn >= 40, String(hBtn));
-  await shot(mp, `07a_${name}_carte_qa`, false);
+  await mp.waitForSelector('#kb-tabs .kb-tab.active');
+  check(`${name} : onglet mémorisé`, (await mp.getAttribute('.kb-tab.active', 'data-status')) === 'backlog');
+  await mp.selectOption(`.card[data-id="${hunterId}"] select.move`, 'backlog').catch(() => {});
+  await mp.locator('.kb-tab[data-status=todo]').tap();
+  await mp.selectOption(`.card[data-id="${hunterId}"] select.move`, 'backlog');
+  await mp.waitForSelector(`.column[data-status=backlog] .card[data-id="${hunterId}"]`, { state: 'attached' });
+  // Filtres repliés derrière ☰.
+  check(`${name} : filtres repliés`, !(await mp.isVisible('.kanban-bar')));
+  await mp.locator('.kb-tab.kb-filters').tap();
+  check(`${name} : ☰ déplie les filtres`, await mp.isVisible('#kb-hat'));
+  await shot(mp, `06_${name}_filtres`, false);
+  await mp.locator('.kb-tab.kb-filters').tap();
+  // Détail plein écran : asset en haut, Accepter / Refuser collés en bas, ← pour fermer.
+  await mp.locator('.kb-tab[data-status=qa]').tap();
+  const qc = mp.locator('.column.active .card.compact').filter({ hasText: `${tag} QA mobile` }).first();
+  const qid = Number(await qc.getAttribute('data-id'));
   await qc.locator('.title').tap();
   await mp.waitForSelector('#cf-asset-view .anim-cell img.mini');
+  const geo = await mp.evaluate(() => {
+    const r = (s) => document.querySelector(s).getBoundingClientRect();
+    return { w: r('#card-dialog').width, vw: innerWidth, asset: r('#cf-asset-view').top, form: r('#card-form').top,
+      bar: r('#cf-qa-bar').bottom, vh: innerHeight, back: r('#cf-back').height };
+  });
+  check(`${name} : détail plein écran, asset en haut`, Math.abs(geo.w - geo.vw) < 2 && geo.asset < geo.form, JSON.stringify(geo));
+  check(`${name} : Accepter / Refuser collés en bas`, Math.abs(geo.bar - geo.vh) < 2, JSON.stringify(geo));
   await shot(mp, `07_${name}_detail`, false);
-  await mp.locator('#cf-asset-view').scrollIntoViewIfNeeded();
-  await shot(mp, `07b_${name}_detail_asset`, false);
-  await mp.click('#cf-accept');
-  await mp.waitForSelector(`.column[data-status=done] .card[data-id="${qid}"]`);
-  check(`${name} : Accepter depuis le détail`, true);
+  await mp.locator('#cf-back').tap();
+  check(`${name} : ← ferme le détail`, !(await mp.$('#card-dialog[open]')));
+  await qc.locator('.title').tap();
+  await mp.waitForSelector('#cf-qa-bar:not([hidden])');
+  await mp.locator('#cf-accept2').tap();
+  await mp.waitForFunction(() => !document.querySelector('#card-dialog[open]'));
+  check(`${name} : Accepter depuis la barre collante`, (await apiTok('cards'))[1].cards.find((c) => c.id === qid).status === 'done');
   await ctx.close();
 }
 await wk.close();
+// Balayage horizontal (Chromium : WebKit ne construit pas de TouchEvent depuis un script).
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const mp = await ctx.newPage();
+  await login(mp);
+  await mp.waitForSelector('#kb-tabs .kb-tab.active');
+  const before = await mp.getAttribute('.kb-tab.active', 'data-status');
+  const swipe = (x0, x1) => mp.evaluate(([x0, x1]) => {
+    const b = document.getElementById('board');
+    const mk = (type, x) => {
+      const t = new Touch({ identifier: 1, target: b, clientX: x, clientY: 400 });
+      b.dispatchEvent(new TouchEvent(type, { touches: type === 'touchend' ? [] : [t], changedTouches: [t], bubbles: true }));
+    };
+    mk('touchstart', x0); mk('touchend', x1);
+  }, [x0, x1]);
+  await swipe(320, 80);
+  const after = await mp.getAttribute('.kb-tab.active', 'data-status');
+  check('mobile : balayage à gauche = colonne suivante', before === 'qa' && after === 'done', `${before} -> ${after}`);
+  await swipe(80, 320);
+  check('mobile : balayage à droite = colonne précédente', (await mp.getAttribute('.kb-tab.active', 'data-status')) === 'qa');
+  await ctx.close();
+}
 
 check('aucune erreur JS', errors.length === 0, errors.join(' | '));
 await browser.close();

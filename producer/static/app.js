@@ -1258,6 +1258,38 @@ function parentOptions(select, current, excluded) {
 }
 
 function initKanban() {
+  KB_MOBILE.addEventListener('change', () => { if (state.index && location.hash.startsWith('#/kanban')) renderBoard(); });
+  // Balayage horizontal sur le board (mobile) : colonne voisine.
+  let sw = null;
+  $('board').addEventListener('touchstart', (ev) => {
+    const t = ev.changedTouches[0];
+    sw = ev.target.closest('select, input, textarea') ? null : { x: t.clientX, y: t.clientY };
+  }, { passive: true });
+  $('board').addEventListener('touchend', (ev) => {
+    if (!sw || !isKbMobile()) return;
+    const t = ev.changedTouches[0];
+    const dx = t.clientX - sw.x, dy = t.clientY - sw.y;
+    sw = null;
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const i = STATUSES.findIndex(([k]) => k === kbTab()) + (dx < 0 ? 1 : -1);
+    if (i >= 0 && i < STATUSES.length) setKbTab(STATUSES[i][0]);
+  }, { passive: true });
+  // Détail en plein écran mobile : « ← » ou balayage vers la droite pour fermer.
+  $('cf-back').addEventListener('click', () => $('card-dialog').close());
+  $('cf-accept2').addEventListener('click', () => { if (state.editing) acceptCard(state.editing); });
+  $('cf-refuse2').addEventListener('click', () => { if (state.editing) openRefuse(state.editing); });
+  let dsw = null;
+  $('card-dialog').addEventListener('touchstart', (ev) => {
+    const t = ev.changedTouches[0];
+    dsw = ev.target.closest('input, textarea, select, .anim-cell') ? null : { x: t.clientX, y: t.clientY };
+  }, { passive: true });
+  $('card-dialog').addEventListener('touchend', (ev) => {
+    if (!dsw || !isKbMobile()) return;
+    const t = ev.changedTouches[0];
+    const dx = t.clientX - dsw.x, dy = t.clientY - dsw.y;
+    dsw = null;
+    if (dx > 90 && Math.abs(dy) < 60) $('card-dialog').close();
+  }, { passive: true });
   $('new-card').addEventListener('click', () => openCardDialog(null, ''));
   $('cf-cancel').addEventListener('click', () => $('card-dialog').close());
   $('card-form').addEventListener('submit', saveCard);
@@ -1355,16 +1387,97 @@ function quickAdd() {
   return form;
 }
 
+// ------------------------------------------------------------ vue mobile
+// Téléphone (portrait, ou paysage étroit) : une colonne à la fois, onglets
+// collants, tuiles compactes avec leurs actions. La vue ordinateur ne change pas.
+const KB_MOBILE = window.matchMedia('(max-width: 760px), (max-height: 500px) and (max-width: 1000px)');
+
+function isKbMobile() {
+  return KB_MOBILE.matches;
+}
+
+/** Onglet actif : mémorisé, sinon QA s'il y a des cartes à tester, sinon Todo. */
+function kbTab() {
+  if (STATUSES.some(([k]) => k === state.kbTab)) return state.kbTab;
+  const saved = store('producer-kb-tab');
+  if (STATUSES.some(([k]) => k === saved)) return saved;
+  return state.cards.some((c) => c.status === 'qa') ? 'qa' : 'todo';
+}
+
+function setKbTab(status) {
+  state.kbTab = status;
+  store('producer-kb-tab', status);
+  renderBoard();
+  window.scrollTo(0, 0);
+}
+
+function renderKbTabs(cards) {
+  const active = kbTab();
+  $('kb-tabs').replaceChildren(...STATUSES.map(([status, label]) => el('button', {
+    type: 'button', class: 'kb-tab' + (status === active ? ' active' : ''), 'data-status': status,
+    'aria-pressed': status === active ? 'true' : 'false', onclick: () => setKbTab(status),
+  }, el('span', { text: label }), el('span', { class: 'n', text: String(cards.filter((c) => c.status === status).length) }))),
+  el('button', {
+    type: 'button', class: 'kb-tab kb-filters' + ($('view-kanban').classList.contains('filters-open') ? ' active' : '')
+      + (state.hat || state.hatsOnly ? ' on' : ''),
+    'aria-label': 'Filtres et nouvelle carte', title: 'Filtres et nouvelle carte',
+    onclick: () => { $('view-kanban').classList.toggle('filters-open'); renderBoard(); },
+  }, '☰'));
+  // Les onglets collent sous l'en-tête, dont la hauteur varie (portrait : 2 lignes).
+  document.documentElement.style.setProperty('--top-h', document.querySelector('header.top').offsetHeight + 'px');
+}
+
+/** Tuile compacte (mobile) : miniature, titre, badges, et l'action du moment. */
+function cardCompact(c) {
+  const thumbSrc = cardThumb(c);
+  const asset = c.asset ? state.assetsById.get(c.asset) : null;
+  const stop = (ev) => ev.stopPropagation();
+  let act;
+  if (c.status === 'qa') {
+    act = [
+      el('button', { type: 'button', class: 'accept', 'aria-label': 'Accepter', title: 'Accepter', onclick: (ev) => { ev.stopPropagation(); acceptCard(c); } }, '✓'),
+      el('button', { type: 'button', class: 'refuse', 'aria-label': 'Refuser', title: 'Refuser', onclick: (ev) => { ev.stopPropagation(); openRefuse(c); } }, '✗'),
+    ];
+  } else {
+    const sel = el('select', { class: 'move', 'aria-label': 'Déplacer vers…', onclick: stop },
+      el('option', { value: '', text: '⇄' }),
+      STATUSES.filter(([k]) => k !== c.status).map(([k, label]) => el('option', { value: k, text: '→ ' + label })));
+    sel.addEventListener('change', () => { if (sel.value) moveCard(c.id, sel.value); });
+    act = [sel];
+  }
+  return el('div', {
+    class: 'card compact t-' + c.type, 'data-id': c.id, tabindex: '0',
+    onclick: () => openCardDialog(c, ''),
+  },
+  thumbSrc ? el('img', { class: 'card-thumb' + (asset && asset.smooth ? ' smooth' : ''), src: fileUrl(thumbSrc), alt: '', loading: 'lazy', decoding: 'async' })
+    : el('span', { class: 'card-thumb none' }),
+  el('div', { class: 'cbody' },
+    el('div', { class: 'title', text: c.title }),
+    el('div', { class: 'cmeta' },
+      typeBadge(c.type),
+      c.priority ? el('span', { class: 'badge ' + c.priority, text: PRIO_LABEL[c.priority] }) : null,
+      c.rework ? el('span', { class: 'rework', text: '↺ à retraiter' }) : null,
+      c.children > 0 ? el('span', { class: 'muted', text: `▤ ${c.children_done}/${c.children}` }) : null,
+      el('span', { class: 'muted', text: '#' + c.id }))),
+  el('div', { class: 'cact' }, act));
+}
+
 function renderBoard() {
   renderHatFilter();
   const board = $('board');
   const cards = visibleCards();
+  const mobile = isKbMobile();
+  const active = mobile ? kbTab() : '';
+  board.classList.toggle('mobile', mobile);
+  $('kb-tabs').hidden = !mobile;
+  if (mobile) renderKbTabs(cards);
   board.replaceChildren(...STATUSES.map(([status, label], col) => {
     const list = cards.filter((c) => c.status === status);
-    const column = el('div', { class: 'column', 'data-status': status },
+    const column = el('div', { class: 'column' + (status === active ? ' active' : ''), 'data-status': status },
       el('h3', {}, el('span', { text: label }), el('span', { class: 'muted', text: String(list.length) })),
       status === 'backlog' ? quickAdd() : null,
-      list.map((c) => cardEl(c, col)));
+      list.map((c) => (mobile ? cardCompact(c) : cardEl(c, col))),
+      mobile && !list.length ? el('p', { class: 'empty', text: 'Aucune carte ici.' }) : null);
     column.addEventListener('dragover', (ev) => { ev.preventDefault(); column.classList.add('over'); });
     column.addEventListener('dragleave', () => column.classList.remove('over'));
     column.addEventListener('drop', (ev) => {
@@ -1550,6 +1663,8 @@ function openCardDialog(card, assetId, parentId) {
   fillDetailOptions();
   renderCardAsset();
   $('cf-qa').hidden = !card || card.status !== 'qa';
+  $('cf-qa-bar').hidden = !card || card.status !== 'qa';
+  $('cf-mtitle').textContent = card ? `#${card.id} · ${STATUS_LABEL[card.status]}` : 'Nouvelle carte';
   $('cf-rework').hidden = !card || !card.rework;
   parentOptions($('cf-parent'), card ? card.parent_id : (parentId || 0), card ? familyIds(card.id) : new Set());
   $('cf-note').value = '';

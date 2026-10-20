@@ -51,6 +51,7 @@
       <label class="inline">Chapeau <select id="kb-hat" aria-label="Filtrer par chapeau"></select></label>
       <label class="inline"><input type="checkbox" id="kb-hats-only"> Chapeaux seulement</label>
     </div>
+    <nav id="kb-tabs" class="kb-tabs" aria-label="Colonnes du kanban" hidden></nav>
     <div id="board" class="board"></div>
   </section>
 
@@ -63,6 +64,10 @@
 </main>
 
 <dialog id="card-dialog">
+  <div id="cf-mbar" class="mbar">
+    <button type="button" id="cf-back" class="ghost">← Retour</button>
+    <span id="cf-mtitle"></span>
+  </div>
   <form id="card-form" method="dialog" class="card-form">
     <h2 id="card-dialog-title">Carte</h2>
     <p class="muted small-text" id="cf-origin"></p>
@@ -114,6 +119,11 @@
       <label>Commenter <textarea id="cf-note" rows="2" maxlength="8000" placeholder="Une remarque, une précision pour itérer…"></textarea></label>
       <div class="row end"><span class="spacer"></span>
         <button type="button" id="cf-comment-send" class="small primary">Commenter</button></div>
+  </div>
+  <!-- Mobile : Accepter / Refuser collés en bas de l'écran. -->
+  <div id="cf-qa-bar" class="qa-actions qa-sticky" hidden>
+    <button type="button" id="cf-accept2" class="accept">✓ Accepter</button>
+    <button type="button" id="cf-refuse2" class="refuse">✗ Refuser</button>
   </div>
 </dialog>
 

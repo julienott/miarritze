@@ -267,7 +267,7 @@ for (const [label, browser, opts] of runs) {
   await page.waitForSelector('.tile[data-id="fighters/maia/sheet.png"]');
   check(`${label} : combattants de Borroka accessibles`, true);
   await page.click('#tabs a[data-tab="kanban"]');
-  await page.waitForSelector('#board .column');
+  await page.waitForSelector('#board .column.active, #board:not(.mobile) .column');
   check(`${label} : kanban`, true);
   check(`${label} : aucune erreur JavaScript`, errors.length === 0, errors.join(' | '));
   await context.close();

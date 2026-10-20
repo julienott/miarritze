@@ -492,3 +492,79 @@ body.fs-open { overflow: hidden; }
   .dbox { height: 150px; }
   .dgrid.sols { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
 }
+
+/* ------------------------------------------- kanban et détail : vue mobile */
+/* Hors mobile, la barre du détail et les actions collantes n'existent pas. */
+.mbar, .qa-sticky { display: none !important; }
+.kb-tabs[hidden] { display: none; }
+@media (max-width: 760px), (max-height: 500px) and (max-width: 1000px) {
+  /* Barre des filtres repliée derrière ☰. */
+  #view-kanban:not(.filters-open) .kanban-bar { display: none; }
+  #view-kanban .kanban-bar { gap: 8px 12px; margin: 8px 0; padding: 8px; background: var(--chip); border-radius: 8px; }
+  .kb-tabs {
+    position: sticky; top: var(--top-h, 0px); z-index: 4; display: flex; gap: 4px;
+    margin: -4px -16px 8px; padding: 6px 16px; background: var(--bg); border-bottom: 1px solid var(--line);
+  }
+  .kb-tab {
+    flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 2px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0; font-size: 13px; font-weight: 600; line-height: 1.15;
+  }
+  .kb-tab .n { font-size: 12px; font-weight: 400; color: var(--muted); }
+  .kb-tab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .kb-tab.active .n { color: #fff; }
+  .kb-tab.kb-filters { flex: 0 0 44px; font-size: 18px; }
+  .kb-tab.kb-filters.on { border-color: var(--red); color: var(--red); }
+  .kb-tab.kb-filters.active { color: #fff; }
+  .board.mobile { display: block; }
+  .board.mobile .column { display: none; padding: 0; background: none; min-height: 0; }
+  .board.mobile .column.active { display: block; }
+  .board.mobile .column h3 { display: none; }
+  .board.mobile .quick-add { flex-direction: row; flex-wrap: wrap; }
+  .board.mobile .quick-add input { flex: 1 1 60%; }
+  .board.mobile .quick-add .row { flex: 1 1 100%; }
+  /* Tuiles compactes : 2 lignes, miniature, action à droite. */
+  .card.compact {
+    display: flex; align-items: center; gap: 8px; padding: 5px 6px 5px 8px; margin-bottom: 5px; cursor: pointer; min-height: 50px;
+  }
+  .card.compact .card-thumb { width: 38px; height: 38px; margin: 0; }
+  .card.compact .card-thumb.none { background: var(--chip); }
+  .card.compact .cbody { flex: 1; min-width: 0; }
+  .card.compact .title { margin: 0; font-size: 14px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card.compact .cmeta { display: flex; gap: 4px; align-items: center; font-size: 11px; margin-top: 2px; overflow: hidden; white-space: nowrap; }
+  .card.compact .cmeta .badge { font-size: 10px; padding: 0 6px; }
+  .card.compact .cmeta .rework { margin: 0; font-size: 10px; padding: 0 5px; }
+  .card.compact .cact { display: flex; gap: 4px; flex: none; }
+  .card.compact .cact button { width: 42px; min-height: 40px; padding: 0; font-size: 18px; font-weight: 700; }
+  .card.compact .cact select.move { width: 48px; min-height: 40px; padding: 0 4px; font-size: 16px; text-align: center; }
+  /* Détail d'une carte : plein écran, asset en haut, actions QA collées en bas. */
+  #card-dialog {
+    width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; padding: 0 16px;
+    border: 0; border-radius: 0;
+  }
+  #card-dialog[open] { display: flex; flex-direction: column; }
+  #card-dialog[open] > * { flex: none; }
+  #card-dialog .mbar {
+    display: flex !important; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 3; order: -2;
+    margin: 0 -16px; padding: max(6px, env(safe-area-inset-top)) 16px 6px; background: var(--blue); color: #fff;
+  }
+  #card-dialog .mbar button { color: #fff; border-color: rgba(255, 255, 255, .4); min-height: 40px; }
+  #card-dialog .mbar span { font-weight: 600; }
+  #card-dialog #cf-asset-view { order: -1; border-top: 0; margin-top: 0; }
+  #card-dialog #card-form h2 { margin-top: 12px; }
+  #card-dialog #cf-qa { display: none; }
+  #card-dialog .qa-sticky:not([hidden]) {
+    display: flex !important; position: sticky; bottom: 0; z-index: 3; order: 99; margin: 8px -16px 0;
+    padding: 8px 16px max(8px, env(safe-area-inset-bottom)); background: var(--panel); border-top: 1px solid var(--line);
+  }
+  #card-dialog .qa-sticky button { min-height: 48px; font-size: 16px; }
+}
+/* Paysage étroit : chaque pixel de hauteur compte. L'en-tête défile avec la
+   page (les onglets restent collés en haut), onglets sur une ligne. */
+@media (max-height: 500px) and (max-width: 1000px) {
+  header.top { position: static; padding: 4px 16px; }
+  header.top .tabs a, header.top button { min-height: 34px; padding-top: 4px; padding-bottom: 4px; }
+  .kb-tabs { top: 0; padding: 4px 16px; margin-top: -8px; }
+  .kb-tab { flex-direction: row; gap: 6px; min-height: 40px; }
+  .card.compact { min-height: 48px; padding-top: 4px; padding-bottom: 4px; }
+  .card.compact .card-thumb { width: 34px; height: 34px; }
+}
