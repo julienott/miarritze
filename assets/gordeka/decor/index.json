@@ -614,7 +614,23 @@
    "animation": {
     "methode": "planche",
     "description": "petit drapeau vert qui flotte au mât ; coque immobile (sur ses tins)"
-   }
+   },
+   "fichiers": [
+    "objets/chalutier_quai.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "4e6799bf07da4884b8ad2dbb7deb165b",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/chalutier_quai_ombre.png",
+   "ombre_decalage": [
+    67,
+    366
+   ]
   },
   "coque_sur_ber": {
    "nom": "Coque sur ber (cale sèche)",
