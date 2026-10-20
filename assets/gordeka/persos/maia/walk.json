@@ -22,5 +22,47 @@
   "bounce": 0.05
  },
  "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Happy bouncy trot of a child sneaking off to hide: springy little hops on each step, body bobbing clearly up and down, knees lifted high, arms swinging cheerfully, slight forward lean, a playful skip in the rhythm. Exaggerated, cartoon, joyful, never a calm adult walk. The small yellow surfboard strapped upright on the back: stays strapped flat against her back, upright, moving only with the torso, never in front of her body, never in her hands. The brown ponytail: swings behind the head with the motion, with a little delay.",
- "stride_px": 357.8
+ "stride_px": 357.8,
+ "decalage": [-6.0, 0.0],
+ "entrees": {
+  "idle": {
+   "i": [11, 11, 11, 0, 0, 19, 17, 31, 31, 28, 12, 12, 12, 12, 12, 12, 12, 28, 31, 18, 17, 17, 1, 31, 31, 12, 12, 12, 12, 12, 12, 12],
+   "e": [43, 43, 44, 43, 43, 37, 39, 34, 34, 41, 46, 49, 49, 49, 48, 45, 45, 44, 45, 44, 35, 35, 36, 33, 32, 42, 42, 49, 49, 49, 46, 44]
+  },
+  "run_scared": {
+   "i": [18, 18, 17, 3, 3, 4, 4, 10, 10, 27, 27, 27, 27, 27, 27, 27, 27, 28, 19, 3, 3, 3, 4, 4, 4, 27, 27, 27, 27, 27, 27, 27],
+   "e": [33, 33, 31, 33, 33, 35, 41, 36, 36, 28, 29, 38, 38, 39, 39, 34, 34, 35, 36, 34, 37, 37, 38, 34, 34, 29, 29, 40, 40, 41, 37, 33]
+  },
+  "hide_in": {
+   "e": [52, 52, 52, 56, 56, 53, 56, 49, 49, 48, 48, 50, 50, 50, 51, 52, 52, 52, 54, 56, 52, 52, 52, 49, 49, 50, 50, 53, 53, 53, 51, 51]
+  },
+  "trap": {
+   "e": [47, 47, 47, 42, 42, 35, 36, 37, 37, 48, 54, 57, 58, 57, 56, 52, 52, 50, 49, 43, 34, 34, 33, 37, 37, 49, 49, 57, 57, 57, 55, 51]
+  },
+  "found": {
+   "e": [47, 47, 47, 45, 45, 39, 43, 40, 40, 46, 51, 54, 55, 55, 54, 52, 52, 50, 49, 46, 37, 38, 40, 39, 39, 47, 47, 54, 54, 55, 53, 51]
+  },
+  "extract": {
+   "e": [46, 46, 46, 43, 43, 35, 36, 37, 37, 47, 53, 56, 56, 56, 55, 50, 50, 48, 48, 44, 34, 34, 33, 36, 36, 48, 48, 56, 56, 56, 53, 50]
+  },
+  "detect": {
+   "e": [44, 44, 45, 43, 43, 36, 38, 34, 34, 43, 48, 51, 51, 51, 50, 46, 46, 44, 44, 44, 34, 34, 35, 33, 33, 44, 44, 51, 51, 51, 48, 45]
+  },
+  "search": {
+   "i": [24, 24, 24, 30, 30, 30, 30, 30, 30, 26, 26, 26, 26, 26, 25, 30, 30, 30, 30, 30, 30, 30, 30, 25, 30, 26, 26, 0, 0, 0, 0, 30],
+   "e": [46, 46, 46, 44, 44, 37, 38, 36, 36, 45, 50, 52, 52, 52, 50, 46, 46, 45, 45, 44, 34, 34, 34, 35, 35, 46, 46, 51, 51, 51, 48, 46]
+  },
+  "trapped": {
+   "i": [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
+   "e": [69, 69, 69, 65, 65, 65, 65, 61, 61, 67, 69, 70, 70, 71, 71, 70, 70, 70, 69, 66, 64, 64, 65, 63, 63, 69, 69, 71, 71, 71, 70, 69]
+  },
+  "victory": {
+   "i": [10, 10, 10, 26, 26, 25, 23, 9, 9, 29, 10, 7, 7, 7, 7, 10, 10, 10, 10, 25, 10, 10, 23, 30, 30, 7, 7, 7, 7, 7, 7, 10],
+   "e": [40, 40, 40, 37, 37, 34, 38, 35, 35, 40, 45, 49, 49, 49, 48, 42, 43, 40, 42, 39, 31, 31, 34, 33, 33, 41, 41, 48, 48, 49, 46, 41]
+  },
+  "sad": {
+   "i": [3, 3, 3, 3, 3, 3, 3, 3, 3, 30, 30, 30, 30, 30, 31, 31, 31, 31, 3, 3, 3, 3, 3, 3, 3, 30, 30, 31, 31, 31, 31, 31],
+   "e": [41, 41, 41, 40, 40, 32, 35, 28, 28, 40, 46, 50, 50, 50, 50, 47, 47, 46, 46, 43, 32, 32, 31, 29, 29, 43, 43, 51, 51, 51, 49, 46]
+  }
+ }
 }

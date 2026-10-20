@@ -25,5 +25,15 @@
   }
  },
  "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Glides forward through the air: body leaning slightly forward, legs trailing behind relaxed, the small white angel wings flap clearly and steadily. The long curved wicker chistera worn on the right hand: stays attached to his right hand as an extension of the arm, keeps its long curved banana shape and its length in every frame, follows the right arm swing like a long glove, never detaches, never changes into a racket or a ball. The red sash belt ends: the loose ends flutter behind at the hip.",
- "stride_px": 380.4
+ "stride_px": 380.4,
+ "decalage": [-2.0, 3.0],
+ "entrees": {
+  "ghost": {
+   "i": [10, 10, 10, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 31, 31, 13, 10, 13, 10, 10, 13, 13, 13, 26, 13, 13, 29, 29, 31, 31],
+   "e": [56, 56, 58, 57, 57, 56, 60, 58, 58, 58, 59, 61, 61, 61, 61, 57, 57, 55, 57, 57, 55, 54, 58, 58, 57, 57, 57, 60, 60, 61, 61, 58]
+  },
+  "hide_out": {
+   "e": [59, 59, 60, 58, 58, 56, 58, 59, 59, 60, 64, 66, 66, 66, 65, 61, 61, 58, 59, 59, 56, 55, 57, 58, 56, 59, 61, 64, 64, 65, 65, 62]
+  }
+ }
 }

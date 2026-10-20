@@ -22,5 +22,48 @@
   "bounce": 0.05
  },
  "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Happy bouncy trot of a child sneaking off to hide: springy little hops on each step, body bobbing clearly up and down, knees lifted high, arms swinging cheerfully, slight forward lean, a playful skip in the rhythm. Exaggerated, cartoon, joyful, never a calm adult walk. The blue swim fins hanging from the belt at the hip: stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet; they stay on the same hip as in the reference image in every frame, never switching to the other side. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame.",
- "stride_px": 373.3
+ "stride_px": 373.3,
+ "echelle": 1.08,
+ "decalage": [-12.0, 0.0],
+ "entrees": {
+  "idle": {
+   "i": [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 15, 2, 1, 1, 1, 1, 30],
+   "e": [56, 56, 56, 42, 42, 38, 40, 41, 41, 49, 56, 63, 63, 63, 64, 62, 62, 60, 56, 41, 42, 34, 37, 41, 41, 51, 59, 64, 64, 64, 64, 61]
+  },
+  "run_scared": {
+   "i": [18, 18, 18, 3, 3, 3, 6, 25, 25, 26, 28, 26, 26, 26, 26, 26, 26, 18, 18, 3, 3, 3, 5, 25, 25, 26, 3, 25, 25, 25, 25, 26],
+   "e": [49, 48, 48, 41, 41, 39, 44, 46, 47, 46, 52, 59, 59, 59, 60, 58, 58, 57, 51, 42, 42, 42, 45, 47, 47, 48, 56, 61, 61, 61, 61, 59]
+  },
+  "hide_in": {
+   "e": [57, 56, 56, 42, 42, 38, 40, 41, 41, 49, 56, 63, 63, 64, 64, 63, 63, 60, 56, 42, 42, 34, 37, 41, 41, 51, 59, 64, 64, 64, 64, 62]
+  },
+  "trap": {
+   "e": [54, 54, 54, 40, 40, 36, 39, 42, 42, 48, 54, 61, 61, 62, 63, 60, 60, 58, 54, 38, 39, 33, 35, 42, 42, 48, 56, 62, 62, 63, 63, 60]
+  },
+  "found": {
+   "e": [67, 67, 67, 58, 58, 56, 60, 58, 58, 60, 63, 67, 67, 67, 68, 69, 69, 68, 67, 58, 59, 55, 58, 56, 55, 59, 64, 67, 67, 67, 67, 67]
+  },
+  "extract": {
+   "e": [57, 57, 57, 46, 46, 42, 42, 48, 48, 53, 58, 65, 65, 65, 65, 63, 63, 60, 57, 45, 45, 39, 42, 47, 47, 53, 60, 65, 65, 65, 65, 63]
+  },
+  "detect": {
+   "e": [54, 54, 54, 39, 39, 35, 37, 38, 38, 47, 54, 61, 61, 62, 62, 61, 61, 58, 54, 38, 39, 30, 34, 38, 38, 48, 57, 63, 63, 63, 63, 60]
+  },
+  "search": {
+   "i": [30, 30, 30, 31, 31, 1, 1, 31, 31, 1, 1, 1, 1, 7, 7, 7, 7, 7, 30, 31, 31, 30, 30, 1, 1, 1, 7, 7, 7, 7, 7, 7],
+   "e": [53, 53, 53, 40, 40, 36, 40, 42, 42, 49, 56, 62, 62, 62, 63, 61, 60, 57, 53, 39, 39, 32, 38, 42, 42, 50, 57, 63, 63, 63, 62, 59]
+  },
+  "trapped": {
+   "i": [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 0, 0, 0, 0, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 0, 0, 0, 0, 20],
+   "e": [78, 78, 78, 69, 69, 70, 72, 73, 73, 75, 78, 80, 80, 81, 81, 81, 81, 80, 78, 69, 69, 71, 70, 72, 72, 76, 79, 81, 81, 81, 81, 79]
+  },
+  "victory": {
+   "i": [3, 3, 3, 6, 6, 6, 31, 2, 2, 31, 31, 31, 31, 31, 31, 31, 31, 31, 2, 3, 3, 31, 31, 2, 2, 31, 29, 31, 31, 31, 31, 31],
+   "e": [53, 53, 53, 38, 38, 34, 38, 41, 41, 48, 54, 60, 60, 61, 62, 60, 60, 56, 53, 38, 38, 30, 36, 41, 41, 49, 56, 62, 62, 62, 62, 59]
+  },
+  "sad": {
+   "i": [3, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+   "e": [53, 53, 53, 37, 37, 31, 33, 36, 36, 46, 54, 61, 61, 62, 62, 60, 60, 57, 54, 38, 38, 27, 31, 37, 37, 49, 58, 63, 63, 63, 62, 60]
+  }
+ }
 }
