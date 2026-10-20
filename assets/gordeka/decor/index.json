@@ -463,7 +463,23 @@
     2
    ],
    "debord_haut_cases": 1,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/autel_chapelle.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "47b2e9d9a999403aa3499150241c899f",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/autel_chapelle_ombre.png",
+   "ombre_decalage": [
+    37,
+    194
+   ]
   },
   "comptoir_bar": {
    "nom": "Comptoir de la terrasse",
