@@ -1007,7 +1007,23 @@
     1
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/treteaux_cale.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "c8f1ec8af99540b39578117b46e52785",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/treteaux_cale_ombre.png",
+   "ombre_decalage": [
+    13,
+    73
+   ]
   },
   "lavoir_bassin": {
    "nom": "Bassin du lavoir",
