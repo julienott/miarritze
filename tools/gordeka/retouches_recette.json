@@ -15,7 +15,9 @@
    "right_arm": "down"
   }
  },
- "perso/txomin/ghost_move": "The swim fins stay hanging at his belt on his hip during the whole animation; both his hands are empty fists swinging while he runs, he never holds a fin in his hands.",
+ "perso/txomin/ghost_move": {
+  "priority": "normal"
+ },
  "decor/cachette_malle_pelotes/0": "The trunk is CLOSED: its rounded lid is shut and latched, nothing visible inside; a few white pelota balls rest on the top of the lid.",
  "decor/cachette_tas_filets_cachette/0": "It must clearly read as a big messy heap of green and blue fishing nets made of visible criss-cross mesh lines, with orange cork floats and a coiled rope tangled in it, like a soft pile of fabric on the quay; not a hut, no door, no arch, no opening, no creature, no face, no animal.",
  "perso/mattin/walk": "Strict side view facing right in every single frame: his big round belly and chest always face right, he never turns his torso toward the camera, his arms stay solid and clearly drawn.",
@@ -52,6 +54,18 @@
  },
  "perso/patxi/found": {
   "action": "Clean drawing with no artifacts: a big startled jump straight up, both feet leave the ground, arms flung out wide, then he lands on the same spot.",
+  "priority": "normal"
+ },
+ "perso/louis/hunter_reveal": {
+  "priority": "normal"
+ },
+ "perso/louis/ghost": {
+  "priority": "normal"
+ },
+ "perso/louis/ghost_move": {
+  "priority": "normal"
+ },
+ "perso/txomin/ghost": {
   "priority": "normal"
  }
 }

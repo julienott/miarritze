@@ -121,7 +121,7 @@
    }
   },
   "hunter_reveal": {
-   "action": "Becomes the hunter: pulls out a flashlight, shakes it twice, it switches on with a yellow beam pointing forward, then holds it up proudly in front of him.",
+   "action": "Becomes the hunter: takes a small flashlight from his belt, clicks it on, then holds it steady with his arm stretched forward; a clean straight cone of soft yellow light shines forward from the lamp. The arm stays still and steady once the lamp is on.",
    "expression": "playful determined grin, one eyebrow raised",
    "boucle": false,
    "mouvement": {
@@ -129,8 +129,8 @@
    }
   },
   "ghost": {
-   "action": "Floats gently in place: the whole body slowly bobs up and down in the air, feet dangling relaxed off the ground, the small white angel wings flap softly and slowly.",
-   "expression": "mischievous sly smile",
+   "action": "Floats gently in place: the whole body slowly bobs up and down in the air, feet dangling relaxed off the ground, the small white angel wings flap softly and slowly. Both legs stay slightly bent back at the knees as if flying, feet off the ground.",
+   "expression": "gentle smile, mouth closed and still, the mouth does not move",
    "boucle": true,
    "mouvement": {
     "motion": "idle"
@@ -139,8 +139,8 @@
    "en_pause": "Julien 2026-10-20 : fantômes générés annulés ; vol stationnaire + ailes par le code en attendant"
   },
   "ghost_move": {
-   "action": "Glides forward through the air: body leaning slightly forward, legs trailing behind relaxed, the small white angel wings flap clearly and steadily.",
-   "expression": "mischievous sly smile",
+   "action": "Glides forward through the air: body leaning slightly forward, legs trailing behind relaxed, the small white angel wings flap clearly and steadily. Both legs stay slightly bent back at the knees as if flying, feet off the ground.",
+   "expression": "gentle smile, mouth closed and still, the mouth does not move",
    "boucle": true,
    "mouvement": {
     "motion": "walk"
