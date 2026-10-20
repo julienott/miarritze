@@ -249,6 +249,10 @@ def ecrire(chemin: str, r: dict) -> bool:
     texte = json.dumps(j, indent=1, ensure_ascii=False)
     # Une paire [dx, dy] (flottants) par ligne plutôt que quatre lignes ; cell, feet_anchor intacts.
     texte = re.sub(r"\[\s*(-?\d+\.\d+),\s*(-?\d+\.\d+)\s*\]", r"[\1, \2]", texte)
+    # Points de la lampe (tools/gordeka/lampe.py) : une paire par ligne aussi.
+    i = texte.find('"lampe"')
+    if i >= 0:
+        texte = texte[:i] + re.sub(r"\[\s*(-?\d+),\s*(-?\d+)\s*\]", r"[\1, \2]", texte[i:])
     if texte == brut or (json.dumps(j, sort_keys=True) == avant and "frame_offsets" not in j):
         return False
     with open(chemin, "w") as fh:

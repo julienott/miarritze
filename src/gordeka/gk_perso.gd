@@ -74,6 +74,8 @@ var _float_t: float = 0.0
 ## Hauteur de vol du fantôme (px à l'écran) : l'acteur dessine son ombre en conséquence.
 var hover_lift: float = 0.0
 var _wings: Array[Sprite2D] = []
+## Cône de lumière de la lampe pendant hunter_reveal (GkLampe), créé à la première utilisation.
+var _lampe: GkLampe
 static var _wing_tex: Texture2D
 static var _wing_root: Vector2 = Vector2.ZERO
 
@@ -125,7 +127,14 @@ static func _data(character: String, anim: String) -> Dictionary:
 		var offs: PackedVector2Array = PackedVector2Array()
 		for o: Variant in j.get("frame_offsets", []):
 			offs.append(Vector2(float(o[0]), float(o[1])))
+		# Lampe du chasseur (hunter_reveal) : main par image, px de case (tools/gordeka/lampe.py).
+		var lampe: Array = []
+		var lj: Dictionary = j.get("lampe", {})
+		for p: Variant in lj.get("points", []):
+			lampe.append(Vector2(float(p[0]), float(p[1])) if p is Array else null)
 		d = {
+			"lampe": lampe,
+			"lampe_debut": int(lj.get("debut", -1)),
 			"offs": offs,
 			"stride": float(j.get("stride_px", 0.0)),
 			"ends": ends,
@@ -333,7 +342,28 @@ func _process(dt: float) -> void:
 	rotation = rot
 	position = anchor + o.rotated(rot)
 	_update_wings(fake and ghost, d, f, flip_h, _float_t)
+	_update_lampe(d, f, total, dt)
 	(material as ShaderMaterial).set_shader_parameter("couleur", actor.color)
+
+
+## Lampe du chasseur : allumée de l'image `lampe_debut` à la fin de l'animation, sur la main de
+## l'image ; éteinte (fondu) dès que la main n'est plus mesurée, juste avant la fin du geste ou s'il
+## est interrompu.
+func _update_lampe(d: Dictionary, f: int, total: float, dt: float) -> void:
+	var pts: Array = d.get("lampe", [])
+	if pts.is_empty() and _lampe == null:
+		return
+	if _lampe == null:
+		_lampe = GkLampe.new()
+		add_child(_lampe)
+	var on: bool = _once != "" and _once == _anim and f < pts.size() and pts[f] != null \
+		and f >= int(d.get("lampe_debut", -1)) and _t < total - GkLampe.FONDU_S
+	var p: Vector2 = Vector2.ZERO
+	if on:
+		var cell: Vector2 = d["cell"]
+		var q: Vector2 = pts[f]
+		p = Vector2(cell.x - q.x if flip_h else q.x, q.y)
+	_lampe.suivre(on, p, -1.0 if flip_h else 1.0, scale, dt)
 
 
 ## Sortie de cachette : décalage de dessin qui part de la cachette et rejoint l'acteur (posé sur

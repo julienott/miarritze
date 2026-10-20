@@ -123,6 +123,14 @@ def main() -> None:
         print("pieds : recalage écrit")
     except Exception as e:  # noqa: BLE001 — l'import des planches ne doit jamais échouer pour ça
         print(f"pieds : recalage ignoré ({e})")
+    # Lampe du chasseur : main qui tient la lampe dans hunter_reveal, le jeu y dessine le cône
+    # (tools/gordeka/lampe.py ; après pieds.py, le .json garde ses deux ajouts).
+    try:
+        import lampe
+        for cle, r in lampe.corriger_perso(pid).items():
+            print(f"lampe : {cle} début {r.get('debut')}" if r else f"lampe : {cle} rien")
+    except Exception as e:  # noqa: BLE001 — même règle : jamais d'échec d'import pour ça
+        print(f"lampe : ignorée ({e})")
 
 
 if __name__ == "__main__":

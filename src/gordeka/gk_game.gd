@@ -431,6 +431,8 @@ func _start_visite() -> void:
 	messages.clear()
 	if _visite_fantome:
 		visite_toggle_ghost()
+	if local == hunter:
+		hunter.play_once("hunter_reveal")      # la lampe s'allume, comme au début d'une chasse
 	_say("Visite %s (debug) : F formes, C perso, G fantôme" % ("du chasseur" if local == hunter else "du chassé"),
 		Color("ffd34a"), 4.0)
 
@@ -466,6 +468,8 @@ func visite_next_character() -> void:
 		var c: String = str(chars[(i + k) % chars.size()])
 		if GkPerso.available(c):
 			local.set_character(c)
+			if local == hunter:
+				local.play_once("hunter_reveal")
 			_say(c.capitalize(), Color.WHITE, 1.5)
 			return
 
