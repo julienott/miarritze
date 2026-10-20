@@ -147,7 +147,7 @@
    "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option"
   },
   "emote_salut": {
-   "action": "Waves hello with an open hand, fingers spread, waving high above the head, swinging it wide left and right three times.",
+   "action": "Waves hello: arm stretched forward at shoulder height, forearm raised, open hand waving left and right.",
    "expression": "big friendly smile",
    "boucle": false,
    "mouvement": {

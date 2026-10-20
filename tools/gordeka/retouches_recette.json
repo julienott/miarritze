@@ -19,5 +19,13 @@
  "decor/cachette_malle_pelotes/0": "The trunk is CLOSED: its rounded lid is shut and latched, nothing visible inside; a few white pelota balls rest on the top of the lid.",
  "decor/cachette_tas_filets_cachette/0": "It must clearly read as a big messy heap of green and blue fishing nets made of visible criss-cross mesh lines, with orange cork floats and a coiled rope tangled in it, like a soft pile of fabric on the quay; not a hut, no door, no arch, no opening, no creature, no face, no animal.",
  "perso/mattin/walk": "Strict side view facing right in every single frame: his big round belly and chest always face right, he never turns his torso toward the camera, his arms stay solid and clearly drawn.",
- "decor/cachette_barque_retournee/0": "The small wooden rowing boat is turned UPSIDE DOWN, lying directly on the ground: we see its rounded painted hull bottom and keel on top (blue and white stripes, green rim along the ground), the inside of the boat is hidden underneath; seen from the front, horizontal, no blocks, no stand, no pedestal, nothing inside visible."
+ "decor/cachette_barque_retournee/0": "The small wooden rowing boat is turned UPSIDE DOWN, lying directly on the ground: we see its rounded painted hull bottom and keel on top (blue and white stripes, green rim along the ground), the inside of the boat is hidden underneath; seen from the front, horizontal, no blocks, no stand, no pedestal, nothing inside visible.",
+ "perso/mattin/ghost_move": "Strict side view facing right in every single frame: his big round belly and chest always face right, he never turns his torso toward the camera, his arms stay solid and clearly drawn, the small wings stay on his back.",
+ "perso/louis/emote_danse": {
+  "action": "Big joyful dance: hips swinging wide, both arms raised and waving above the head in turn, bouncing on the knees.",
+  "exaggerate": 1.7,
+  "bounce": 0.12,
+  "arms": "up"
+ },
+ "perso/louis/emote_langue": "Cheeky teasing face: a big pink tongue sticks far out of his mouth, clearly visible in profile, eyes squinting playfully, during the whole gesture."
 }
