@@ -115,7 +115,15 @@ def main() -> None:
         for name, data in got.items():
             open(os.path.join(dest, ROLES[name].format(a=anim)), "wb").write(data)
         print(f"{anim} : ok")
-    # Pieds qui glissent : recalage par image et stride des planches du perso, écrits dans les .json
+    # Post-traitement complet du perso (tools/gordeka/post_anims.py, SPEC-GORDEKA §16.3) : pieds, lampe,
+    # échelle, calage, images utiles, tables d'entrée. Un nouvel idle change la référence de tout le perso.
+    try:
+        import post_anims
+        post_anims.traiter(pid, lambda m: print(f"post_anims : {m}"))
+        return
+    except Exception as e:  # noqa: BLE001 — l'import des planches ne doit jamais échouer pour ça
+        print(f"post_anims : ignoré ({e}), repli sur pieds.py et lampe.py")
+    # Repli : pieds qui glissent : recalage par image et stride des planches du perso, écrits dans les .json
     # (tools/gordeka/pieds.py ; un nouvel idle recale toutes les anims du perso, d'où tout le perso).
     try:
         import pieds

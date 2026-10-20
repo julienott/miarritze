@@ -31,6 +31,9 @@ import sys
 import numpy as np
 from PIL import Image, ImageDraw
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import anim_json  # noqa: E402
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 PERSOS = os.path.join(ROOT, "assets", "gordeka", "persos")
@@ -150,12 +153,8 @@ def ecrire(chemin: str, r: dict) -> bool:
     j.pop("lampe", None)
     if r and r.get("debut") is not None:
         j["lampe"] = {"debut": r["debut"], "points": r["points"]}
-    texte = json.dumps(j, indent=1, ensure_ascii=False)
-    # Une paire par ligne (frame_offsets comme pieds.py, points de la lampe) ; cell, feet_anchor intacts.
-    texte = re.sub(r"\[\s*(-?\d+\.\d+),\s*(-?\d+\.\d+)\s*\]", r"[\1, \2]", texte)
-    i = texte.find('"lampe"')
-    if i >= 0:
-        texte = texte[:i] + re.sub(r"\[\s*(-?\d+),\s*(-?\d+)\s*\]", r"[\1, \2]", texte[i:])
+    # Format commun des .json d'anim (anim_json.py).
+    texte = anim_json.formater(j)
     if texte == brut:
         return False
     with open(chemin, "w") as fh:

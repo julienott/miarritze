@@ -30,6 +30,9 @@ import sys
 import numpy as np
 from PIL import Image, ImageDraw
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import anim_json  # noqa: E402
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 PERSOS = os.path.join(ROOT, "assets", "gordeka", "persos")
@@ -246,13 +249,8 @@ def ecrire(chemin: str, r: dict) -> bool:
         j["frame_offsets"] = r["frame_offsets"]
     if r.get("stride_px", 0) > 0:
         j["stride_px"] = r["stride_px"]
-    texte = json.dumps(j, indent=1, ensure_ascii=False)
-    # Une paire [dx, dy] (flottants) par ligne plutôt que quatre lignes ; cell, feet_anchor intacts.
-    texte = re.sub(r"\[\s*(-?\d+\.\d+),\s*(-?\d+\.\d+)\s*\]", r"[\1, \2]", texte)
-    # Points de la lampe (tools/gordeka/lampe.py) : une paire par ligne aussi.
-    i = texte.find('"lampe"')
-    if i >= 0:
-        texte = texte[:i] + re.sub(r"\[\s*(-?\d+),\s*(-?\d+)\s*\]", r"[\1, \2]", texte[i:])
+    # Format commun des .json d'anim (anim_json.py : une paire par ligne, tables d'entrée compactes).
+    texte = anim_json.formater(j)
     if texte == brut or (json.dumps(j, sort_keys=True) == avant and "frame_offsets" not in j):
         return False
     with open(chemin, "w") as fh:
