@@ -16,11 +16,11 @@
   236
  ],
  "expression": "mischievous sly smile, eyes squinting with fun, as if thinking 'I know the perfect hiding spot'",
- "tenue": "shirt",
+ "tenue": "tank top",
  "drive": {
-  "exaggerate": 1.0,
+  "exaggerate": 1.3,
   "bounce": 0.05
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Happy bouncy trot of a child sneaking off to hide: springy little hops on each step, body bobbing clearly up and down, knees lifted high, arms swinging cheerfully, slight forward lean, a playful skip in the rhythm. Exaggerated, cartoon, joyful, never a calm adult walk. The red beret: stays firmly on the head, tilted the same way in every frame.",
- "stride_px": 166.4
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Happy bouncy trot of a child sneaking off to hide: springy little hops on each step, body bobbing clearly up and down, knees lifted high, arms swinging cheerfully, slight forward lean, a playful skip in the rhythm. Exaggerated, cartoon, joyful, never a calm adult walk. The blue swim fins hanging from the belt at the hip: stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet; they stay on the same hip as in the reference image in every frame, never switching to the other side. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame.",
+ "stride_px": 373.3
 }

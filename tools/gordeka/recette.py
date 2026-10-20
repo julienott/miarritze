@@ -105,7 +105,8 @@ def depose_perso(pid, anim):
     p = nuit.Perso(pid)
     img = Image.open(p.fantome_png() if anim in ap.FANTOMES else p.modele()).convert("RGB")
     pl = payload_perso(pid, anim)
-    pl["input_image"] = nuit.ex.b64(img)
+    if not pl.get("character_task"):          # sinon : référence retouchée (émotion, pose de vol) chez pixelforge
+        pl["input_image"] = nuit.ex.b64(img)
     tid = deposer_une_fois(pl)
     taches = lire(p.taches_p, {})
     taches[anim] = tid
