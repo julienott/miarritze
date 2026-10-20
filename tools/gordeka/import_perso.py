@@ -5,7 +5,8 @@
 
 taches.json : {"idle": "<task_id>", "walk": "<task_id>", …} (un task_id par chorégraphie).
 Pour chaque animation, on enregistre dans assets/gordeka/persos/<id>/ :
-  <anim>.png (planche), <anim>_tenue.png (masque de tenue), <anim>.json (fps, boucle, ancrage).
+  <anim>.png (planche), <anim>_tenue.png (masque de tenue), <anim>.json (fps, boucle, ancrage,
+  et frame_offsets / stride_px calculés par pieds.py pour que les pieds ne glissent pas).
 Un GIF d'aperçu par animation va dans tools/rd/out/<id>/gk2d/pf/<anim>/ pour la relecture.
 """
 import io
@@ -114,6 +115,14 @@ def main() -> None:
         for name, data in got.items():
             open(os.path.join(dest, ROLES[name].format(a=anim)), "wb").write(data)
         print(f"{anim} : ok")
+    # Pieds qui glissent : recalage par image et stride des planches du perso, écrits dans les .json
+    # (tools/gordeka/pieds.py ; un nouvel idle recale toutes les anims du perso, d'où tout le perso).
+    try:
+        import pieds
+        pieds.corriger_perso(pid)
+        print("pieds : recalage écrit")
+    except Exception as e:  # noqa: BLE001 — l'import des planches ne doit jamais échouer pour ça
+        print(f"pieds : recalage ignoré ({e})")
 
 
 if __name__ == "__main__":

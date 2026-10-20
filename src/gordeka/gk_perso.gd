@@ -22,6 +22,12 @@ const POP_JUMP_PX: float = 22.0
 const BOUNCE_PX: float = 5.0        # hauteur du rebond de marche (px à l'écran)
 const SQUASH: float = 0.07          # écrasement vertical au contact du pied
 const CYCLE_S: Dictionary = {"walk": 0.85, "run_scared": 0.6, "ghost_move": 1.0}
+## Pieds qui glissent (recette Julien, 2026-10-20) : une planche de déplacement qui a son `stride_px`
+## (recul du pied posé sur toute la planche, px de case, mesuré par tools/gordeka/pieds.py) joue à la
+## cadence qui garde le pied posé immobile au sol : planches/s = vitesse réelle / stride. Bornée entre
+## RATE_MIN et RATE_MAX × son fps (au-delà, des pas trop courts patinent encore un peu). CYCLE_S en repli.
+const RATE_MIN: float = 0.3
+const RATE_MAX: float = 3.0
 const SHADER: String = """
 shader_type canvas_item;
 uniform sampler2D tenue : filter_linear;
@@ -115,7 +121,13 @@ static func _data(character: String, anim: String) -> Dictionary:
 		for i: int in n:
 			acc += float(ms[i]) / 1000.0 if i < ms.size() else 1.0 / float(j.get("fps", 24.0))
 			ends.append(acc)
+		# Recalage par image (px de case) : les pieds posés restent fixes (tools/gordeka/pieds.py).
+		var offs: PackedVector2Array = PackedVector2Array()
+		for o: Variant in j.get("frame_offsets", []):
+			offs.append(Vector2(float(o[0]), float(o[1])))
 		d = {
+			"offs": offs,
+			"stride": float(j.get("stride_px", 0.0)),
 			"ends": ends,
 			"tex": load(path + ".png"),
 			"mask": load(path + "_tenue.png") if ResourceLoader.exists(path + "_tenue.png") else null,
@@ -243,7 +255,13 @@ func _process(dt: float) -> void:
 	var rate: float = 1.0
 	var fake: bool = _once == "" and _fake_ghost(_anim)
 	if CYCLE_S.has(_anim) and pantin == null and not d.has("static"):
-		rate = total / float(CYCLE_S[_anim]) * clampf(actor.velocity.length() / GkRules.px("speed_hider"), 0.5, 1.5)
+		var stride: float = float(d.get("stride", 0.0))
+		if stride > 0.0 and not fake:
+			# Vitesse en px de case par seconde ÷ stride = planches par seconde ; × durée de la planche.
+			var v_case: float = actor.velocity.length() * float(d["height"]) / HEIGHT_PX
+			rate = clampf(total * v_case / stride, RATE_MIN, RATE_MAX)
+		else:
+			rate = total / float(CYCLE_S[_anim]) * clampf(actor.velocity.length() / GkRules.px("speed_hider"), 0.5, 1.5)
 		if fake:
 			rate *= HOVER_WALK_RATE
 	_t += dt * rate
@@ -284,6 +302,9 @@ func _process(dt: float) -> void:
 	flip_h = face < 0.0
 	# Pieds de la case sur les pieds de l'acteur (même ligne que l'ombre au sol).
 	var feet: Vector2 = d["feet"]
+	var offs: PackedVector2Array = d.get("offs", PackedVector2Array())
+	if f < offs.size():
+		feet -= offs[f]      # l'image décalée de offs : ses pieds posés restent sous l'acteur
 	var fx: float = cell.x - feet.x if flip_h else feet.x
 	# Petit rebond façon Among Us à chaque pas, avec un léger écrasement quand le pied touche le sol
 	# (idée de Julien) : deux rebonds par cycle, au rythme de la planche.

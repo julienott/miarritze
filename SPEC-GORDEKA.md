@@ -513,6 +513,10 @@ ombre douce, fond transparent. Il doit aussi garder un personnage identique d'un
   - `GkPerso` lit `assets/gordeka/persos/<id>/<anim>.png`, `_tenue.png` et `.json` ;
   - le masque `_tenue` recolore la tenue dans la couleur du joueur ;
   - la marche et la course sont accélérées selon la vitesse réelle du perso.
+  - pieds qui glissent (2026-10-20) : `tools/gordeka/pieds.py` (appelé par `import_perso.py`) mesure
+    les pieds posés et écrit dans le `.json` un recalage par image `frame_offsets` (sur place : pieds
+    fixes, sur ceux de l'idle) et un `stride_px` (déplacement : cadence = vitesse / stride, bornée à
+    ×3 du fps) ; PNG intacts.
 - Import : `tools/gordeka/import_perso.py <id> tools/gordeka/taches_<id>.json`.
 - Prompts d'animation (2026-10-20) : `tools/gordeka/prompts_anims.json`, envoyés par `tools/gordeka/anime_perso.py`.
   Le squelette (`motion`) fait le mouvement du corps ; l'exagération passe par les réglages du mannequin
