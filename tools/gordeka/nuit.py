@@ -140,7 +140,7 @@ class Perso:
                     "prompt_style": "pf_2d__character",
                     "input_image": ex.b64(Image.open(os.path.join(OUT, PROFIL_HD[self.pid]) if self.pid in PROFIL_HD
                                                      else self.modele()).convert("RGB")),
-                    "prompt": "add small white feathered angel wings on the back", "params": {"edit": True},
+                    "prompt": "add small white feathered angel wings on the back", "edit": True,
                     "num_images": 1, "seed": 7, "priority": "normal", "tag": f"miarritze/gk2d_{self.pid}"})
                 log(self.pid, "profil fantôme déposé", self.fantome_tid)
                 return False
