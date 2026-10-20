@@ -1,0 +1,24 @@
+{
+ "motion": "laugh",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "eyes closed, mouth wide open laughing",
+ "tenue": "tank top",
+ "drive": {
+  "clip": "laugh"
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Laughs out loud: leans back, hand on the belly, shoulders shaking, little hops. The blue swim fins hanging from the belt at the hip: stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame."
+}
