@@ -407,8 +407,7 @@
    "allure": "seagull waddle: body rocks side to side, webbed feet slap the ground, head bobs forward and back with each step",
    "mouvement": {
     "run_scared": {
-     "arms": null,
-     "exaggerate": 1.15
+     "exaggerate": null
     }
    },
    "actions": {
@@ -431,6 +430,9 @@
     "\\barms\\b": "wings",
     "\\barm\\b": "wing",
     "\\bnose\\b": "beak"
+   },
+   "mouvement_tous": {
+    "arms": "wings"
    }
   },
   "karramarro": {
@@ -482,6 +484,14 @@
     "\\bboth arms\\b": "both pincers",
     "\\barms\\b": "pincers",
     "\\barm\\b": "pincer"
+   },
+   "mouvement_tous": {
+    "arms": "side"
+   },
+   "mouvement": {
+    "run_scared": {
+     "exaggerate": 1.15
+    }
    }
   },
   "ramuntxo": {

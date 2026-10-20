@@ -37,6 +37,7 @@ def payload(pid, anim):
     a, p = PROMPTS["animations"][anim], PROMPTS["persos"][pid]
     mvt = {k: v for k, v in a["mouvement"].items() if k != "a_venir"}
     # Réglages propres au perso (ex. une mouette n'a pas de bras à lever : ses ailes en tiennent lieu).
+    mvt.update(p.get("mouvement_tous", {}))              # ex. arms "wings" pour une mouette
     mvt.update(p.get("mouvement", {}).get(anim, {}))
     mvt = {k: v for k, v in mvt.items() if v is not None}
     action = p.get("actions", {}).get(anim, a["action"])

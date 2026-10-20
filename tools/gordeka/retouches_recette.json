@@ -21,5 +21,15 @@
  "perso/mattin/walk": "Strict side view facing right in every single frame: his big round belly and chest always face right, he never turns his torso toward the camera, his arms stay solid and clearly drawn.",
  "decor/cachette_barque_retournee/0": "The small wooden rowing boat is turned UPSIDE DOWN, lying directly on the ground: we see its rounded painted hull bottom and keel on top (blue and white stripes, green rim along the ground), the inside of the boat is hidden underneath; seen from the front, horizontal, no blocks, no stand, no pedestal, nothing inside visible.",
  "perso/mattin/ghost_move": "Strict side view facing right in every single frame: his big round belly and chest always face right, he never turns his torso toward the camera, his arms stay solid and clearly drawn, the small wings stay on his back.",
- "perso/louis/emote_langue": "Cheeky teasing face: a big pink tongue sticks far out of his mouth, clearly visible in profile, eyes squinting playfully, during the whole gesture."
+ "perso/louis/emote_langue": "Cheeky teasing face: a big pink tongue sticks far out of his mouth, clearly visible in profile, eyes squinting playfully, during the whole gesture.",
+ "perso/txomin/emote_langue": "Cheeky teasing face: a big pink tongue sticks far out of his mouth, clearly visible in profile, during the whole gesture.",
+ "perso/kaio/walk": "Keep the exact same seagull from the reference in every frame: small round body, the same size and proportions, same beak and red dot, grey wings folded at the sides; his round white body stays round and smooth, the drawing stays sharp.",
+ "perso/kaio/hunter_reveal": "He holds the flashlight clamped in the feathered tip of his grey wing, the wing stays a clean grey wing in every frame.",
+ "perso/kaio/victory": {
+  "action": "Clear joyful celebration: he hops up and down on his webbed feet several times, both grey wings spread wide open and flapping at each hop, beak wide open in a happy squawk."
+ },
+ "perso/kaio/search": {
+  "action": "Clear rummaging: he bends his whole body far forward and pokes his beak down again and again into a hiding spot in front of him, both grey wings flapping and scraping fast at his sides, tail up."
+ },
+ "perso/maia/hunter_reveal": "In her outstretched hand she holds a small yellow flashlight, clearly drawn, that switches on with a bright yellow beam of light pointing forward."
 }
