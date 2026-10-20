@@ -1547,6 +1547,7 @@ function cardEl(c, col) {
     onclick: () => openCardDialog(c, ''),
     onkeydown: (ev) => { if (ev.key === 'Enter' && ev.target === ev.currentTarget) openCardDialog(c, ''); },
   },
+  el('span', { class: 'thumb-slot' }),   // asset en pleine largeur, en haut (s'il y en a un)
   el('div', { class: 'foot' },
     typeBadge(c.type),
     c.priority ? el('span', { class: 'badge ' + c.priority, text: PRIO_LABEL[c.priority] }) : null,
@@ -1560,7 +1561,6 @@ function cardEl(c, col) {
     text: '↑ ' + parent.title,
   }) : null,
   el('div', { class: 'card-main' },
-    el('span', { class: 'thumb-slot' }),
     el('div', { class: 'card-text' },
       el('div', { class: 'title', text: c.title }),
       c.description ? el('div', { class: 'desc', text: c.description }) : null,

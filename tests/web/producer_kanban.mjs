@@ -200,7 +200,18 @@ const dthumb = `.card[data-id="${decorId}"] .dthumb`;
 check('tuile décor : masques non chargés au repos', !(await page.getAttribute(`${dthumb} img.calque`, 'src')));
 await page.hover(`.card[data-id="${decorId}"] .title`);
 await page.waitForFunction((s) => { const i = document.querySelector(s + ' img.calque'); return i && i.complete && i.naturalWidth > 0; }, dthumb);
-check('tuile décor : masques au survol', await page.$eval(dthumb, (b) => b.classList.contains('masks') && getComputedStyle(b.querySelector('.calque')).visibility === 'visible'));
+check('tuile décor : masques au survol, superposés à l\'image', await page.$eval(dthumb, (b) => {
+  const [base, cal] = b.querySelectorAll('img');
+  const r1 = base.getBoundingClientRect(), r2 = cal.getBoundingClientRect();
+  return b.classList.contains('masks') && getComputedStyle(cal).visibility === 'visible'
+    && Math.abs(r1.top - r2.top) < 1 && Math.abs(r1.width - r2.width) < 1;
+}));
+// Ordinateur : l'asset en haut de la tuile, sur toute sa largeur.
+const full = await page.$eval(`.card[data-id="${kidIds[1]}"]`, (c) => {
+  const t = c.firstElementChild.getBoundingClientRect(), r = c.getBoundingClientRect();
+  return { top: t.top - r.top, w: t.width / r.width, h: t.height };
+});
+check('tuile : asset en haut, pleine largeur, hauteur bornée', full.top < 12 && full.w > 0.85 && full.h <= 160, JSON.stringify(full));
 await shot(page, '04a_tuile_decor_masques', false);
 await page.mouse.move(2, 2);
 check('tuile décor : masques cachés au départ de la souris', !(await page.$eval(dthumb, (b) => b.classList.contains('masks'))));

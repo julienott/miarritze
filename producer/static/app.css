@@ -577,3 +577,33 @@ body.fs-open { overflow: hidden; }
 .card-thumb.dthumb .calque { visibility: hidden; }
 .card-thumb.dthumb.masks .calque { visibility: visible; }
 .card-thumb.dthumb.masks { outline: 2px solid #8b5cf6; outline-offset: 1px; }
+
+/* Ordinateur : l'asset d'une carte en haut de la tuile, sur toute sa largeur,
+   proportions gardées, hauteur bornée pour que la colonne reste lisible. */
+.card:not(.compact) > .card-thumb,
+.card:not(.compact) > .thumb-box {
+  display: block; width: 100%; height: 150px; margin: 0 0 6px; border-radius: 6px; overflow: hidden;
+  background: var(--stage-light);
+}
+.card:not(.compact) > img.card-thumb { object-fit: contain; }
+.card:not(.compact) > .thumb-box .card-thumb { width: 100%; height: 100%; margin: 0; object-fit: contain; border-radius: 0; }
+.card:not(.compact) > .card-thumb.dthumb {
+  display: grid;   /* image et masques empilés dans la même case */
+  background-color: #fff;
+  background-image: linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ddd 75%), linear-gradient(-45deg, transparent 75%, #ddd 75%);
+  background-size: 12px 12px; background-position: 0 0, 0 6px, 6px -6px, -6px 0; padding: 4px;
+}
+
+/* Détail d'une carte : l'asset en haut, en pleine largeur (ordinateur et mobile). */
+#card-dialog[open] { display: flex; flex-direction: column; }
+#card-dialog[open] > * { flex: none; }
+#card-dialog #cf-asset-view { order: -1; border-top: 0; margin-top: 0; }
+#card-dialog #cf-asset-view h3 { margin-top: 4px; }
+.card-asset .ca-anim { flex-direction: column; align-items: stretch; }
+.card-asset .anim-cell.big { width: 100%; }
+.card-asset .anim-cell.big .anim-box { height: min(300px, 40vh); }
+.card-asset .anim-cell.big .mini { width: 100% !important; height: 100% !important; object-fit: contain; }
+.card-asset .ca-anim > button.primary { align-self: flex-start; }
+.card-asset .ca-decor .dbox { height: min(320px, 45vh); }
+.card-asset .ca-img img { width: 100%; max-height: min(320px, 45vh); object-fit: contain; }
