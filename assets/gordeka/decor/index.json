@@ -1211,7 +1211,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_poubelle_ruelle.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "4df14a29b8da4beeb843ed6ab102e6c8",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_poubelle_ruelle_ombre.png",
+   "ombre_decalage": [
+    14,
+    72
+   ]
   },
   "cachette_bac_poissons": {
    "nom": "Grand bac à poissons",
