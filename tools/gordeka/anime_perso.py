@@ -35,7 +35,10 @@ def payload(pid, anim):
     """Payload pf_2d__animate d'une animation (sans l'image d'entrée)."""
     a, p = PROMPTS["animations"][anim], PROMPTS["persos"][pid]
     mvt = {k: v for k, v in a["mouvement"].items() if k != "a_venir"}
-    morceaux = [PROMPTS["regles_communes"], a["action"]]
+    # Réglages propres au perso (ex. une mouette n'a pas de bras à lever : ses ailes en tiennent lieu).
+    mvt.update(p.get("mouvement", {}).get(anim, {}))
+    mvt = {k: v for k, v in mvt.items() if v is not None}
+    morceaux = [PROMPTS["regles_communes"], p.get("actions", {}).get(anim, a["action"])]
     if p.get("allure") and anim in ("walk", "run_scared", "idle", "victory"):
         morceaux.append("Way of moving: " + p["allure"] + ".")
     for acc in p.get("accessoires", []):

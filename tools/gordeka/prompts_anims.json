@@ -374,7 +374,7 @@
      "objet": "light grey wings used as arms",
      "defaut": "behave like arms with feathered fingertips, swinging with the walk; they are not flying wings",
      "par_animation": {
-      "run_scared": "flap frantically as if trying to take off, feet still running",
+      "run_scared": "flap frantically at his sides at shoulder height as if trying to take off, feet still running; he has no hands and no human arms, only his two grey wings",
       "found": "fly up in surprise, a couple of feathers pop off",
       "victory": "flap wide open"
      }
@@ -390,7 +390,16 @@
      "par_animation": {}
     }
    ],
-   "allure": "seagull waddle: body rocks side to side, webbed feet slap the ground, head bobs forward and back with each step"
+   "allure": "seagull waddle: body rocks side to side, webbed feet slap the ground, head bobs forward and back with each step",
+   "mouvement": {
+    "run_scared": {
+     "arms": null,
+     "exaggerate": 1.15
+    }
+   },
+   "actions": {
+    "run_scared": "Panicked cartoon sprint, running for dear life: very long strides, webbed feet spinning fast, body leaning far forward, both grey wings flapping wildly at his sides, sweat drops flying off the head, a little dust puff at the heels. Hugely exaggerated, comic, never violent."
+   }
   },
   "karramarro": {
    "description": "a cheerful orange cartoon crab with thin legs, two big orange pincers raised, eyes on stalks, yellow belly, big happy open mouth, a small neckerchief scarf tied at the front",
