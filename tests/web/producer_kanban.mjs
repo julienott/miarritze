@@ -172,11 +172,38 @@ check('cli set --parent 0 détache', !cli('cards', '--parent', String(hatId)).in
 const ASSET = 'gordeka/persos/louis/animations';
 cli('set', String(kidIds[1]), '--asset', ASSET, '--detail', 'walk');
 cli('move', String(kidIds[1]), 'qa');
+const DECOR = 'gordeka/decor/objets/fronton.png';
+const decorId = Number(/#(\d+)/.exec(cli('add-card', '--type', 'asset', '--title', `${tag} fronton masques`, '--asset', DECOR, '--status', 'qa'))[1]);
 await page.reload();
 const thumb = page.locator(`.card[data-id="${kidIds[1]}"] img.card-thumb`);
 await thumb.waitFor();
 check('tuile : miniature de l\'asset (image fixe de walk, paresseuse)',
   (await thumb.getAttribute('loading')) === 'lazy' && decodeURIComponent(await thumb.getAttribute('src')).includes('_poster/walk'));
+// Survol de la tuile : la miniature joue l'animation, puis s'arrête et se libère.
+await page.hover(`.card[data-id="${kidIds[1]}"] .title`);
+await page.waitForSelector(`.card[data-id="${kidIds[1]}"] canvas.card-thumb`);
+const moving = await page.evaluate(async (id) => {
+  const c = document.querySelector(`.card[data-id="${id}"] canvas.card-thumb`);
+  const snap = () => c.toDataURL().length + ':' + c.toDataURL().slice(-80);
+  const a = snap();
+  await new Promise((r) => setTimeout(r, 400));
+  return a !== snap();
+}, kidIds[1]);
+check('tuile : l\'animation joue au survol', moving && (await page.$$('#board canvas')).length === 1);
+await shot(page, '04a_tuile_survol', false);
+await page.mouse.move(2, 2);
+await page.waitForTimeout(150);
+check('tuile : souris sortie = animation arrêtée et libérée',
+  (await page.$$('#board canvas')).length === 0 && !!(await page.$(`.card[data-id="${kidIds[1]}"] img.card-thumb`)));
+// Décor avec masques : les masques apparaissent au survol, chargés à ce moment-là.
+const dthumb = `.card[data-id="${decorId}"] .dthumb`;
+check('tuile décor : masques non chargés au repos', !(await page.getAttribute(`${dthumb} img.calque`, 'src')));
+await page.hover(`.card[data-id="${decorId}"] .title`);
+await page.waitForFunction((s) => { const i = document.querySelector(s + ' img.calque'); return i && i.complete && i.naturalWidth > 0; }, dthumb);
+check('tuile décor : masques au survol', await page.$eval(dthumb, (b) => b.classList.contains('masks') && getComputedStyle(b.querySelector('.calque')).visibility === 'visible'));
+await shot(page, '04a_tuile_decor_masques', false);
+await page.mouse.move(2, 2);
+check('tuile décor : masques cachés au départ de la souris', !(await page.$eval(dthumb, (b) => b.classList.contains('masks'))));
 await page.click(`.card[data-id="${kidIds[1]}"] .title`);
 await page.waitForSelector('#cf-asset-view:not([hidden]) .anim-cell img.mini');
 check('détail : champ « détail » = walk', (await page.inputValue('#cf-detail')) === 'walk');
@@ -277,8 +304,22 @@ for (const [name, vp] of [['iphone_portrait', { width: 390, height: 844 }], ['ip
   check(`${name} : ☰ déplie les filtres`, await mp.isVisible('#kb-hat'));
   await shot(mp, `06_${name}_filtres`, false);
   await mp.locator('.kb-tab.kb-filters').tap();
-  // Détail plein écran : asset en haut, Accepter / Refuser collés en bas, ← pour fermer.
+  // Miniature au toucher : anime sans ouvrir la carte ; décor : masques au toucher.
   await mp.locator('.kb-tab[data-status=qa]').tap();
+  const anim = mp.locator('.column.active .card.compact').filter({ hasText: `${tag} QA mobile` }).nth(1);
+  await anim.locator('.thumb-box').tap();
+  await mp.waitForSelector('.column.active canvas.card-thumb');
+  check(`${name} : miniature animée au premier toucher, carte fermée`, !(await mp.$('#card-dialog[open]')));
+  await mp.locator(`.card[data-id="${decorId}"]`).scrollIntoViewIfNeeded().catch(() => {});
+  if (await mp.$(`.card[data-id="${decorId}"] .dthumb`)) {
+    await mp.locator(`.card[data-id="${decorId}"] .dthumb`).tap();
+    await mp.waitForTimeout(300);
+    check(`${name} : décor, masques au toucher`, await mp.$eval(`.card[data-id="${decorId}"] .dthumb`, (b) => b.classList.contains('masks'))
+      && !(await mp.$('#card-dialog[open]')));
+    await shot(mp, `06b_${name}_miniatures`, false);
+  }
+  await mp.evaluate(() => scrollTo(0, 0));
+  // Détail plein écran : asset en haut, Accepter / Refuser collés en bas, ← pour fermer.
   const qc = mp.locator('.column.active .card.compact').filter({ hasText: `${tag} QA mobile` }).first();
   const qid = Number(await qc.getAttribute('data-id'));
   await qc.locator('.title').tap();

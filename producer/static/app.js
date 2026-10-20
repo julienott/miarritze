@@ -846,7 +846,7 @@ function startMini(m) {
   if (activeMini && activeMini !== m) stopMini(activeMini);
   activeMini = m;
   const a = m.anim;
-  const canvas = el('canvas', { class: 'mini', width: a.w, height: a.h });
+  const canvas = el('canvas', { class: m.poster.className, width: a.w, height: a.h });
   canvas.style.cssText = m.poster.style.cssText;
   m.canvas = canvas;
   m.frame = Math.floor(a.frames / 2);   // repart de l'image fixe affichée
@@ -895,13 +895,13 @@ function hoverAnimCell(anim, box, host, parts) {
   return hoverMini(host, mini);
 }
 
-function hoverMini(host, mini) {
+function hoverMini(host, mini, tapHost = host) {
   const m = mini.mini;
   let touch = false;
   host.addEventListener('pointerenter', (ev) => { if (ev.pointerType === 'mouse') startMini(m); });
   host.addEventListener('pointerleave', (ev) => { if (ev.pointerType === 'mouse') stopMini(m); });
-  host.addEventListener('pointerdown', (ev) => { touch = ev.pointerType !== 'mouse'; });
-  host.addEventListener('click', (ev) => {
+  tapHost.addEventListener('pointerdown', (ev) => { touch = ev.pointerType !== 'mouse'; });
+  tapHost.addEventListener('click', (ev) => {
     if (touch && !m.canvas) {
       touch = false;
       ev.preventDefault();
@@ -1429,8 +1429,6 @@ function renderKbTabs(cards) {
 
 /** Tuile compacte (mobile) : miniature, titre, badges, et l'action du moment. */
 function cardCompact(c) {
-  const thumbSrc = cardThumb(c);
-  const asset = c.asset ? state.assetsById.get(c.asset) : null;
   const stop = (ev) => ev.stopPropagation();
   let act;
   if (c.status === 'qa') {
@@ -1445,12 +1443,11 @@ function cardCompact(c) {
     sel.addEventListener('change', () => { if (sel.value) moveCard(c.id, sel.value); });
     act = [sel];
   }
-  return el('div', {
+  const card = el('div', {
     class: 'card compact t-' + c.type, 'data-id': c.id, tabindex: '0',
     onclick: () => openCardDialog(c, ''),
   },
-  thumbSrc ? el('img', { class: 'card-thumb' + (asset && asset.smooth ? ' smooth' : ''), src: fileUrl(thumbSrc), alt: '', loading: 'lazy', decoding: 'async' })
-    : el('span', { class: 'card-thumb none' }),
+  el('span', { class: 'card-thumb none' }),
   el('div', { class: 'cbody' },
     el('div', { class: 'title', text: c.title }),
     el('div', { class: 'cmeta' },
@@ -1460,6 +1457,9 @@ function cardCompact(c) {
       c.children > 0 ? el('span', { class: 'muted', text: `▤ ${c.children_done}/${c.children}` }) : null,
       el('span', { class: 'muted', text: '#' + c.id }))),
   el('div', { class: 'cact' }, act));
+  const th = cardThumbEl(c, card);
+  if (th) card.querySelector('.card-thumb.none').replaceWith(th);
+  return card;
 }
 
 function renderBoard() {
@@ -1539,7 +1539,6 @@ function cardEl(c, col) {
     hat.querySelector('.bar').style.width = pct + '%';
   }
   const comments = c.notes.length;
-  const thumbSrc = cardThumb(c);
   const qa = c.status === 'qa' ? el('div', { class: 'qa-actions' },
     el('button', { type: 'button', class: 'accept', onclick: (ev) => { ev.stopPropagation(); acceptCard(c); } }, '✓ Accepter'),
     el('button', { type: 'button', class: 'refuse', onclick: (ev) => { ev.stopPropagation(); openRefuse(c); } }, '✗ Refuser')) : null;
@@ -1561,7 +1560,7 @@ function cardEl(c, col) {
     text: '↑ ' + parent.title,
   }) : null,
   el('div', { class: 'card-main' },
-    thumbSrc ? el('img', { class: 'card-thumb' + (asset && asset.smooth ? ' smooth' : ''), src: fileUrl(thumbSrc), alt: '', loading: 'lazy', decoding: 'async' }) : null,
+    el('span', { class: 'thumb-slot' }),
     el('div', { class: 'card-text' },
       el('div', { class: 'title', text: c.title }),
       c.description ? el('div', { class: 'desc', text: c.description }) : null,
@@ -1576,6 +1575,9 @@ function cardEl(c, col) {
     el('span', { class: 'spacer' }),
     col > 0 ? el('button', { type: 'button', class: 'small', onclick: move(-1), 'aria-label': 'Colonne précédente', title: STATUSES[col - 1][1] }, '◀') : null,
     col < STATUSES.length - 1 ? el('button', { type: 'button', class: 'small', onclick: move(1), 'aria-label': 'Colonne suivante', title: STATUSES[col + 1][1] }, '▶') : null));
+  const slot = card.querySelector('.thumb-slot');
+  const th = cardThumbEl(c, card);
+  if (th) slot.replaceWith(th); else slot.remove();
   card.addEventListener('dragstart', (ev) => {
     ev.dataTransfer.setData('text/plain', String(c.id));
     ev.dataTransfer.effectAllowed = 'move';
@@ -1733,6 +1735,52 @@ async function saveCard(ev) {
 function cardAnim(a, detail) {
   if (!a || !a.anims || !a.anims.length) return null;
   return a.anims.find((x) => x.name === detail) || a.anims.find((x) => x.name === 'idle') || a.anims[0];
+}
+
+/**
+ * Miniature d'une tuile du kanban (ordinateur et mobile), branchée sur `card` :
+ * - animation : image fixe, l'animation joue au survol de la tuile (premier
+ *   toucher sur la miniature en tactile), comme la page Persos ;
+ * - objet du décor avec masques : les masques se superposent au survol
+ *   (toucher la miniature les bascule), chargés seulement à ce moment-là ;
+ * - sinon l'aperçu de l'asset. Renvoie null s'il n'y a rien à montrer.
+ */
+function cardThumbEl(c, card) {
+  const a = c.asset ? state.assetsById.get(c.asset) : null;
+  if (!a || a.type === 'audio' || a.type === 'data') return null;
+  const smooth = a.smooth ? ' smooth' : '';
+  const anim = cardAnim(a, c.detail);
+  if (anim && anim.poster) {
+    const mini = miniAnim(anim, 0);
+    mini.className = 'mini card-thumb' + smooth;
+    const box = el('span', { class: 'thumb-box', title: 'Survoler pour animer' }, mini);
+    hoverMini(card, mini, box);
+    return box;
+  }
+  const src = cardThumb(c);
+  if (!src) return null;
+  const base = el('img', { src: fileUrl(src), alt: '', loading: 'lazy', decoding: 'async' });
+  if (!(a.decor && a.kind === 'objet' && a.decor.calque)) {
+    base.className = 'card-thumb' + smooth;
+    return base;
+  }
+  const calque = el('img', { class: 'calque', alt: '', decoding: 'async' });
+  const box = el('span', { class: 'card-thumb dthumb', title: 'Survoler pour voir les masques' }, base, calque);
+  const show = (on) => {
+    if (on && !calque.getAttribute('src')) calque.src = fileUrl(a.decor.calque);
+    box.classList.toggle('masks', on);
+  };
+  card.addEventListener('pointerenter', (ev) => { if (ev.pointerType === 'mouse') show(true); });
+  card.addEventListener('pointerleave', (ev) => { if (ev.pointerType === 'mouse') show(false); });
+  let touch = false;
+  box.addEventListener('pointerdown', (ev) => { touch = ev.pointerType !== 'mouse'; });
+  box.addEventListener('click', (ev) => {
+    if (!touch) return;
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+    show(!box.classList.contains('masks'));
+  }, { capture: true });
+  return box;
 }
 
 /** Miniature de la tuile : image fixe de l'animation visée, sinon l'aperçu de l'asset. */
