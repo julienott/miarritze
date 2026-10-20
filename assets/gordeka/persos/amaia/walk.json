@@ -21,48 +21,48 @@
   "exaggerate": 1.3,
   "bounce": 0.05
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Happy bouncy trot of a child sneaking off to hide: springy little hops on each step, body bobbing clearly up and down, knees lifted high, arms swinging cheerfully, slight forward lean, a playful skip in the rhythm. Exaggerated, cartoon, joyful, never a calm adult walk. Way of moving: light dancer's steps, on her toes. The wooden makila stick slung diagonally on the back: stays rigid on her back at the same diagonal angle, moving only with the torso, never in her hands; it stays on the same side of her body as in the reference image in every frame, never crossing to the other side. The red headscarf with knotted tails at the back of the head: stays tied on the head, the two knot tails flutter behind with the motion. The red skirt: flares and swirls with each step like a dancer.",
- "stride_px": 176.0,
- "decalage": [-4.0, 1.0],
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Happy bouncy trot of a child sneaking off to hide: springy little hops on each step, body bobbing clearly up and down, knees lifted high, arms swinging cheerfully, slight forward lean, a playful skip in the rhythm. Exaggerated, cartoon, joyful, never a calm adult walk. Way of moving: light dancer's steps, on her toes. The wooden makila stick slung diagonally on the back: stays rigid on her back at the same diagonal angle, moving only with the torso, never in her hands; it stays on the same side of her body as in the reference image in every frame, never crossing to the other side. The red headscarf with knotted tails at the back of the head: stays tied on the head, the two knot tails flutter behind with the motion. The red skirt: flares and swirls with each step like a dancer. The wooden makila stays slung diagonally across her BACK, on the far side of her body (behind her, on the left side of the image), never in front of her body.",
+ "stride_px": 272.0,
+ "decalage": [-6.0, 0.0],
  "entrees": {
   "idle": {
-   "i": [28, 28, 11, 13, 13, 13, 31, 17, 17, 13, 28, 28, 28, 28, 28, 13, 13, 13, 13, 13, 13, 13, 13, 17, 17, 13, 28, 13, 13, 13, 28, 28],
-   "e": [50, 50, 51, 49, 49, 46, 45, 44, 43, 47, 49, 50, 50, 50, 50, 50, 50, 50, 51, 49, 49, 45, 45, 43, 43, 43, 46, 47, 47, 47, 48, 47]
+   "i": [28, 28, 28, 13, 13, 28, 29, 28, 17, 28, 13, 28, 28, 28, 28, 28, 28, 13, 13, 13, 13, 16, 29, 28, 28, 28, 13, 28, 28, 28, 31, 30],
+   "e": [49, 49, 49, 45, 44, 41, 44, 43, 43, 46, 45, 45, 45, 45, 45, 45, 45, 45, 46, 43, 43, 39, 42, 42, 42, 42, 42, 44, 44, 45, 45, 46]
   },
   "run_scared": {
-   "i": [28, 29, 16, 2, 2, 14, 19, 18, 18, 27, 10, 10, 10, 10, 10, 27, 27, 27, 16, 2, 2, 19, 18, 18, 18, 26, 27, 27, 27, 27, 10, 10],
-   "e": [35, 35, 32, 31, 31, 38, 37, 34, 34, 31, 36, 39, 39, 41, 41, 39, 39, 36, 30, 30, 30, 33, 32, 32, 33, 27, 39, 43, 43, 44, 44, 42]
+   "i": [29, 29, 29, 4, 4, 5, 23, 21, 21, 26, 26, 26, 26, 26, 26, 26, 26, 26, 18, 3, 3, 5, 20, 9, 9, 26, 27, 25, 25, 25, 25, 9],
+   "e": [39, 40, 37, 29, 29, 32, 33, 32, 32, 30, 39, 42, 42, 43, 43, 42, 42, 40, 37, 27, 27, 30, 34, 34, 34, 30, 42, 46, 46, 47, 46, 44]
   },
   "hide_in": {
-   "e": [51, 52, 53, 50, 50, 46, 46, 45, 44, 48, 49, 50, 50, 50, 50, 51, 51, 51, 52, 50, 50, 46, 46, 44, 44, 44, 47, 47, 47, 47, 47, 47]
+   "e": [50, 50, 50, 45, 45, 42, 46, 45, 45, 47, 46, 45, 45, 45, 46, 46, 46, 47, 47, 44, 44, 41, 43, 43, 43, 43, 42, 44, 44, 45, 45, 46]
   },
   "trap": {
-   "e": [51, 51, 52, 49, 49, 46, 46, 44, 44, 48, 50, 51, 51, 51, 51, 51, 51, 51, 52, 49, 49, 46, 45, 44, 44, 44, 47, 48, 48, 48, 49, 48]
+   "e": [50, 50, 50, 46, 46, 42, 46, 45, 45, 47, 46, 45, 46, 46, 46, 46, 46, 47, 47, 44, 44, 41, 42, 43, 43, 43, 42, 44, 44, 45, 45, 46]
   },
   "found": {
-   "e": [59, 59, 58, 55, 55, 52, 54, 54, 53, 57, 60, 61, 61, 61, 61, 60, 60, 60, 59, 57, 57, 53, 56, 55, 54, 54, 59, 60, 60, 60, 61, 60]
+   "e": [55, 55, 54, 49, 49, 48, 52, 52, 52, 54, 56, 57, 57, 57, 57, 56, 56, 55, 54, 50, 51, 47, 50, 51, 51, 52, 54, 55, 55, 56, 56, 56]
   },
   "extract": {
-   "e": [51, 52, 52, 49, 49, 46, 47, 45, 44, 48, 50, 51, 51, 51, 51, 51, 51, 52, 52, 49, 49, 46, 46, 44, 44, 44, 47, 47, 47, 47, 48, 48]
+   "e": [50, 50, 50, 45, 45, 43, 46, 45, 45, 47, 46, 46, 46, 46, 46, 46, 46, 47, 47, 44, 44, 41, 43, 43, 43, 43, 42, 44, 44, 45, 45, 46]
   },
   "detect": {
-   "e": [48, 49, 50, 47, 47, 44, 44, 41, 41, 45, 47, 48, 48, 48, 48, 48, 48, 48, 49, 47, 47, 44, 42, 40, 40, 41, 45, 45, 45, 45, 46, 45]
+   "e": [48, 48, 48, 44, 44, 40, 43, 42, 42, 44, 43, 43, 43, 44, 44, 44, 44, 44, 45, 42, 42, 39, 41, 41, 41, 41, 41, 42, 42, 44, 44, 43]
   },
   "search": {
-   "i": [7, 9, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 23, 23, 23, 23, 9, 7, 7, 7, 2, 2, 2, 2, 3, 26, 26, 26, 26, 26, 23],
-   "e": [50, 50, 51, 49, 49, 45, 45, 43, 43, 47, 49, 50, 50, 50, 50, 50, 50, 51, 51, 49, 49, 46, 45, 43, 43, 43, 46, 46, 46, 46, 46, 46]
+   "i": [3, 3, 3, 0, 0, 0, 2, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 9, 9, 7, 7, 0, 2, 1, 1, 0, 4, 3, 3, 3, 25, 3],
+   "e": [49, 49, 49, 45, 45, 42, 45, 44, 44, 46, 45, 45, 45, 45, 45, 45, 45, 45, 46, 43, 43, 40, 42, 42, 42, 42, 41, 43, 43, 45, 45, 45]
   },
   "trapped": {
-   "i": [31, 31, 31, 31, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-   "e": [54, 53, 52, 48, 48, 47, 45, 47, 46, 51, 55, 56, 56, 56, 57, 57, 57, 56, 55, 51, 51, 48, 49, 50, 50, 50, 54, 55, 55, 55, 56, 56]
+   "i": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+   "e": [59, 59, 59, 55, 55, 56, 59, 59, 59, 57, 59, 60, 60, 60, 60, 60, 60, 60, 58, 53, 53, 52, 55, 58, 58, 59, 60, 60, 60, 60, 60, 59]
   },
   "victory": {
-   "i": [10, 10, 26, 26, 26, 26, 27, 27, 27, 10, 10, 10, 10, 9, 11, 11, 11, 10, 26, 26, 26, 26, 27, 10, 10, 10, 9, 9, 9, 12, 12, 12],
-   "e": [50, 50, 51, 48, 48, 45, 46, 44, 43, 47, 48, 48, 48, 49, 49, 49, 49, 50, 51, 49, 49, 45, 46, 44, 44, 42, 44, 45, 45, 44, 46, 46]
+   "i": [10, 10, 10, 26, 26, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+   "e": [48, 48, 48, 44, 44, 43, 46, 44, 45, 45, 45, 44, 44, 44, 44, 44, 44, 45, 46, 44, 44, 40, 43, 43, 42, 41, 40, 42, 42, 42, 42, 44]
   },
   "sad": {
-   "i": [11, 11, 11, 11, 11, 11, 11, 9, 9, 9, 11, 11, 11, 11, 13, 7, 7, 7, 7, 7, 7, 7, 11, 7, 7, 7, 11, 15, 15, 15, 15, 15],
-   "e": [47, 47, 47, 44, 45, 41, 40, 38, 38, 42, 45, 47, 47, 48, 47, 47, 47, 47, 48, 45, 45, 41, 40, 38, 38, 39, 44, 45, 45, 45, 46, 45]
+   "i": [29, 29, 29, 7, 7, 13, 13, 13, 13, 7, 29, 29, 29, 30, 31, 29, 29, 29, 29, 1, 1, 7, 7, 29, 29, 29, 29, 29, 29, 3, 3, 26],
+   "e": [49, 49, 49, 44, 44, 40, 43, 43, 43, 45, 45, 44, 45, 45, 45, 45, 45, 46, 46, 43, 44, 40, 41, 42, 42, 42, 41, 43, 43, 44, 44, 45]
   }
  }
 }
