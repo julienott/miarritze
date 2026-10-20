@@ -18,9 +18,12 @@
  },
  "banc_vert": {
   "bloque_vue": false,
-  "confidence": 1.0,
+  "confidence": 0.95,
   "source": "pixelforge",
-  "warnings": []
+  "warnings": [
+   "rapport largeur/profondeur 6.5 hors de [1.5 ; 6] (sur pieds (pieds arrière), x 16-207)",
+   "emprise imposée (footprint_override)"
+  ]
  },
  "bitte_amarrage": {
   "bloque_vue": false,
@@ -154,10 +157,12 @@
  },
  "etal_criee": {
   "bloque_vue": false,
-  "confidence": 0.9,
+  "confidence": 0.65,
   "source": "pixelforge",
   "warnings": [
-   "socle de sol détecté (19% de l'objet) : traversable, hors occluder"
+   "socle de sol détecté (19% de l'objet) : traversable, hors occluder",
+   "caméra en coin : emprise approchée (losange sur le bord bas)",
+   "emprise imposée (footprint_override)"
   ]
  },
  "fontaine_place": {
@@ -171,7 +176,8 @@
    "profondeur estimée (sur pieds, 40 px de large) : 14 px, faute de face du dessus lisible",
    "profondeur estimée (posé, 20 px de large) : 7 px, faute de face du dessus lisible",
    "profondeur estimée (sur pieds, 23 px de large) : 8 px, faute de face du dessus lisible",
-   "7 morceau(x) dans la face avant d'une base ronde : fusionné(s)"
+   "7 morceau(x) dans la face avant d'une base ronde : fusionné(s)",
+   "emprise imposée (footprint_override)"
   ]
  },
  "fronton": {
@@ -229,10 +235,10 @@
   "source": "pixelforge",
   "warnings": [
    "socle de sol détecté (7% de l'objet) : traversable, hors occluder",
-   "vue en coin détectée sur l'image : emprise calculée en camera corner",
    "losange plafonné en profondeur",
    "caméra en coin : emprise approchée (losange sur le bord bas)",
-   "losange dégénéré : emprise calculée sur la forme de la base"
+   "losange dégénéré : emprise calculée sur la forme de la base",
+   "emprise imposée (footprint_override)"
   ]
  },
  "table_terrasse": {
