@@ -206,6 +206,9 @@ Demande de Julien : « plus tendu, beaucoup de near miss, beaucoup de mouvements
   cachettes déplacées des recoins vers les passages, avec plusieurs côtés libres (`--sans-tension` :
   carte d'avant).
 - Écartée : ronde du chasseur IA derrière les gros objets (`idee_ronde`), sans effet mesurable.
+- **Poursuite** (`idee_poursuite`, question de Julien, désactivée, à trancher par Julien) : au « ? », le chasseur et les
+  chassés qu'il voit vont ×1,2 pendant 3 s (traits orange, « fiouu ! »). Mesurée sans gain : les poursuites durent
+  ~1 s et finissent 3 fois sur 4 en capture (bilan dans `docs/GORDEKA_EQUILIBRAGE.md`).
 - Équilibre : au niveau normal le chasseur gagne toujours ~3 rounds sur 5 ; l'écart entre les niveaux
   facile et normal du chasseur s'est réduit (à surveiller avec Louis).
 

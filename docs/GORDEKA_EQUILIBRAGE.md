@@ -176,3 +176,33 @@ Constats :
 - Les chassés bougent 1,5 fois plus et passent la moitié du temps en mouvement.
 - **À surveiller** : l'écart facile / normal du chasseur s'est réduit (56 / 59 %, contre 42 / 62 %) ; si Louis
   trouve le chasseur facile trop fort, baisser `ai.facile.hunter_speed` (0,9) ou monter `hunter_react`.
+
+## 2026-10-20 (soir) : poursuite (question de Julien, `idee_poursuite`, désactivée)
+
+« Est-ce que ça servirait à la tension si, quand un chasseur détecte un chassé, le chasseur et le chassé avaient une
+vitesse ×1,2 ? », avec la précision « valable pour tous les chassés visibles ». Mesure sur la combinaison retenue,
+120 rounds par niveau (chassés normaux, chasseur facile / normal / malin). Déclenchement au « ? » (jauge à 30 %),
+3 s, sauf « tant que vu » (rechargé tant que le chasseur le voit, puis 1 s).
+
+| variante | chasseur gagne % | trouvés % | vu-perdu | poursuites / round | durée moyenne (s) | finies en capture / round | cases/min | en mouvement % |
+|---|---|---|---|---|---|---|---|---|
+| sans poursuite (retenu) | 56 / 59 / 73 | 53 / 59 / 61 | 3,1 / 3,3 / 2,7 | – | – | – | 153 / 149 / 149 | 53 / 52 / 52 |
+| ×1,2 les deux, tous les chassés vus | 46 / 55 / 71 | 48 / 52 / 64 | 3,1 / 3,2 / 2,3 | 4,2 / 4,4 / 4,5 | 1,2 / 1,2 / 0,9 | 3,3 / 3,5 / 4,0 | 149 / 152 / 151 | 52 |
+| ×1,2 les deux, chassé repéré seul | 50 / 62 / 72 | 49 / 57 / 62 | 3,1 / 3,3 / 2,3 | 4,3 / 4,7 / 4,5 | 1,2 / 1,2 / 0,8 | 3,3 / 3,7 / 4,0 | 152 / 147 / 151 | 52 |
+| ×1,2 les deux, tant que vu (tous) | 49 / 65 / 63 | 51 / 58 / 59 | 2,9 / 3,1 / 2,0 | 4,4 / 4,7 / 4,2 | 0,8 / 0,8 / 0,7 | 3,4 / 3,7 / 3,7 | 153 / 151 / 149 | 52 |
+| ×1,2 chassés seulement (tous) | 48 / 52 / 77 | 46 / 52 / 64 | 3,2 / 3,0 / 2,2 | 4,2 / 4,4 / 4,5 | 1,2 / 1,1 / 0,9 | 3,1 / 3,5 / 4,1 | 152 / 153 / 153 | 53 |
+| chasseur ×1,15, chassés ×1,25 (tous) | 52 / 49 / 80 | 50 / 48 / 66 | 3,1 / 2,7 / 2,2 | 4,4 / 4,2 / 4,7 | 1,2 / 1,1 / 0,9 | 3,4 / 3,3 / 4,2 | 152 / 149 / 147 | 51 |
+
+Erreur type : ±4 à 5 points sur « chasseur gagne », ±0,2 sur vu-perdu et sur les poursuites.
+
+- **La poursuite ne crée presque pas de vraies courses** : environ 4,5 par round, mais elles durent ~1 s et 3 sur 4
+  finissent en capture. Au « ? », la jauge est déjà au tiers et se remplit en moins d'une seconde de plus : l'élan
+  arrive trop tard pour changer l'issue. Les poursuites dont on s'échappe restent ~1 par round, comme avant.
+- **Le vu-perdu ne monte pas** (et baisse un peu chez les malins), les cases parcourues et le temps en mouvement ne
+  bougent pas.
+- **Équilibre** : « chassé repéré seul » est la seule variante neutre (62 % au normal) ; « tous les chassés vus »
+  coûte ~4 points au chasseur normal (dans le bruit) et 10 au facile ; les variantes asymétriques désordonnent les
+  niveaux (normal 49-52 %, malin 77-80 %).
+- Verdict : **pas de gain de tension mesurable, à ne pas activer en l'état.** Pour qu'une poursuite existe vraiment, il
+  faudrait la déclencher plus tôt (`poursuite_seuil` bas) avec une capture plus lente (`detection_temps_loin`), à
+  essayer en jouant : l'IA ne rend pas le plaisir d'une course.
