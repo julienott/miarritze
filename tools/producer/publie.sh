@@ -3,7 +3,7 @@
 # (Julien 2026-10-20 : « préparer les pages statiques sur /producer en local puis pousser le tout pour
 # publication / rsync »). Le build va sur la branche orpheline `producer-build`, en UN SEUL commit
 # remplacé à chaque fois (push forcé) : main ne grossit pas, le dépôt garde une seule copie des
-# aperçus. Le workflow producer.yml, déclenché par ce push, ne fait plus que copier (rsync).
+# aperçus. Le workflow producer.yml (lancé à la fin) ne fait plus que copier (rsync).
 # Avantage du local : les candidats de tools/rd/out (non versionnés) sont aussi publiés.
 # Usage : tools/producer/publie.sh            (depuis la racine du dépôt, après le push de main)
 set -euo pipefail
@@ -28,4 +28,6 @@ printf '%s\n' "$(git -C "$ROOT" rev-parse HEAD)" > SOURCE_COMMIT
 git add -A
 git commit -q -m "Producer construit en local depuis main $(git -C "$ROOT" rev-parse --short HEAD)"
 git push -q -f origin "HEAD:$BRANCHE"
-echo "producer poussé sur $BRANCHE ($(du -sh . | cut -f1)) : publication par producer.yml"
+# La branche orpheline n'a pas de workflow : on lance celui de main, qui copie producer-build.
+gh workflow run producer.yml --ref main -R "$(git -C "$ROOT" remote get-url origin)"
+echo "producer poussé sur $BRANCHE ($(du -sh . | cut -f1)) : publication lancée (producer.yml)"

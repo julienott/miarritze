@@ -5,9 +5,7 @@ name: Producer (publication du build local)
 # producer/data/ (SQLite, sessions) n'est jamais touché ; config.php n'est régénérée que si les
 # secrets sont présents (le build local n'en contient jamais).
 on:
-  push:
-    branches: [producer-build]
-  workflow_dispatch:
+  workflow_dispatch:     # lancé par publie.sh (et en fin de deploy.yml)
 
 jobs:
   producer:
