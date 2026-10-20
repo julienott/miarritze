@@ -33,6 +33,7 @@ import nuit  # noqa: E402   (dépôt, commit, profil blanc : on réutilise)
 import anime_perso as ap  # noqa: E402
 import envoie_decor as ed  # noqa: E402
 import planche_recette as pr  # noqa: E402
+import masques_pf as mp  # noqa: E402
 
 PY = nuit.PY
 DIR = os.path.join(ROOT, "tools", "rd", "out", "recette")
@@ -213,6 +214,9 @@ class Routine:
                     raise RuntimeError(p.stdout[-300:] + p.stderr[-300:])
                 nuit.commit(["assets/gordeka/decor", "tools/gordeka/taches_decor.json"],
                             f"Gordeka : décor {a} (pf_2d, recette OK)")
+                if lire(ed.PROMPTS, {}) and json.load(open(os.path.join(ROOT, "assets/gordeka/decor/index.json")))[
+                        "elements"].get(a, {}).get("type") == "objet":
+                    mp.depose([a])           # masques de gameplay (pf_2d__footprint) de la nouvelle image
         it["statut"] = "ok"
         log("INTÉGRÉ", cle, variante or "")
 
@@ -252,6 +256,14 @@ class Routine:
                 en_vol += 1
             suivi = lire(ed.SUIVI, {})
 
+    def masques(self):
+        """Masques pf_2d__footprint finis : rapatriés, puis À VOIR (aperçu) pour la recette."""
+        avant = {k: v["statut"] for k, v in lire(mp.SUIVI, {}).items()}
+        mp.releve(une_fois=True)
+        for eid, s in lire(mp.SUIVI, {}).items():
+            if avant.get(eid) == "en_vol" and s["statut"] != "en_vol":
+                log("À VOIR masque", eid, s["statut"], os.path.join(mp.APERCUS, eid + ".png"))
+
     def surveille(self):
         """File bloquée : du travail en vol mais pixelforge ne fait rien depuis 10 min."""
         if not self.items("en_vol"):
@@ -273,6 +285,7 @@ class Routine:
             try:
                 self.commandes()
                 self.releve()
+                self.masques()
                 self.alimente()
                 self.surveille()
                 self.sauve()

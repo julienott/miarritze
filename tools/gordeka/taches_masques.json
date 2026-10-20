@@ -1,0 +1,72 @@
+{
+ "tour_phare": {
+  "tid": "25fba807dc34412f8f647d1753ee7f57",
+  "fichier": "objets/tour_phare.png",
+  "statut": "succeeded"
+ },
+ "rayonnage_filets": {
+  "tid": "da7c6862a72d4900b98dc6839aadcdff",
+  "fichier": "objets/rayonnage_filets.png",
+  "statut": "succeeded"
+ },
+ "mur_soutenement": {
+  "tid": "237bdae0716d4109a33b2e6c8fd7936e",
+  "fichier": "objets/mur_soutenement.png",
+  "statut": "succeeded"
+ },
+ "chalutier_quai": {
+  "tid": "19cbb915187442dca446065b2d227a89",
+  "fichier": "objets/chalutier_quai.png",
+  "statut": "succeeded"
+ },
+ "etal_criee": {
+  "tid": "0ae14183ebb84b7c9488947c22e704b4",
+  "fichier": "objets/etal_criee.png",
+  "statut": "annule"
+ },
+ "bitte_amarrage": {
+  "tid": "95c2069453804b9db8a5c8af821d2a08",
+  "fichier": "objets/bitte_amarrage.png",
+  "statut": "annule"
+ },
+ "fontaine_place": {
+  "tid": "eb433304e0c94381b482dc65dd16016e",
+  "fichier": "objets/fontaine_place.png",
+  "statut": "annule"
+ },
+ "banc_vert": {
+  "tid": "beb9dd93740e4a23803dc47b5be56834",
+  "fichier": "objets/banc_vert.png",
+  "statut": "succeeded"
+ },
+ "cachette_casier_homards": {
+  "tid": "878d560981fb4917bcc0284189361397",
+  "fichier": "objets/cachette_casier_homards.png",
+  "statut": "annule"
+ },
+ "cachette_coffre_quai": {
+  "tid": "b7e8ca3b4e3049d7bffc20cf02d5dc55",
+  "fichier": "objets/cachette_coffre_quai.png",
+  "statut": "annule"
+ },
+ "cachette_caisse_glace": {
+  "tid": "b4918dd023254510874c060c79df0347",
+  "fichier": "objets/cachette_caisse_glace.png",
+  "statut": "annule"
+ },
+ "cachette_coffre_cordages": {
+  "tid": "90fa476014724336bc380510d5d2a003",
+  "fichier": "objets/cachette_coffre_cordages.png",
+  "statut": "annule"
+ },
+ "cachette_poubelle_ruelle": {
+  "tid": "43ddbef289c84efd8ad545a4dfc25140",
+  "fichier": "objets/cachette_poubelle_ruelle.png",
+  "statut": "annule"
+ },
+ "cachette_bac_poissons": {
+  "tid": "b011e95ec4ec4b50ace5b7e3ac487b9c",
+  "fichier": "objets/cachette_bac_poissons.png",
+  "statut": "annule"
+ }
+}
