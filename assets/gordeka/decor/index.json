@@ -1245,7 +1245,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_bac_poissons.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "a891f8e12ec047948234e2a73f654f18",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_bac_poissons_ombre.png",
+   "ombre_decalage": [
+    11,
+    62
+   ]
   },
   "cachette_malle_pelotes": {
    "nom": "Malle à pelotes",
