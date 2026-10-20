@@ -1277,7 +1277,7 @@ function initKanban() {
     if (i >= 0 && i < STATUSES.length) setKbTab(STATUSES[i][0]);
   }, { passive: true });
   // Détail en plein écran mobile : « ← » ou balayage vers la droite pour fermer.
-  $('cf-back').addEventListener('click', () => $('card-dialog').close());
+  $('cf-back').addEventListener('click', closeCardDialog);
   $('cf-accept2').addEventListener('click', () => { if (state.editing) acceptCard(state.editing); });
   $('cf-refuse2').addEventListener('click', () => { if (state.editing) openRefuse(state.editing); });
   let dsw = null;
@@ -1290,10 +1290,21 @@ function initKanban() {
     const t = ev.changedTouches[0];
     const dx = t.clientX - dsw.x, dy = t.clientY - dsw.y;
     dsw = null;
-    if (dx > 90 && Math.abs(dy) < 60) $('card-dialog').close();
+    if (dx > 90 && Math.abs(dy) < 60) closeCardDialog();
   }, { passive: true });
   $('new-card').addEventListener('click', () => openCardDialog(null, ''));
-  $('cf-cancel').addEventListener('click', () => $('card-dialog').close());
+  $('cf-cancel').addEventListener('click', closeCardDialog);
+  // Échap : même garde-fou que « Fermer ».
+  $('card-dialog').addEventListener('cancel', (ev) => { if (state.dirty) { ev.preventDefault(); closeCardDialog(); } });
+  // Enregistrement immédiat (carte existante) : night shift, type, priorité, chapeau.
+  $('cf-night').addEventListener('change', () => saveNow('night', $('cf-night'), () => $('cf-night').checked));
+  $('cf-type').addEventListener('change', () => saveNow('type', $('cf-type'), () => $('cf-type').value));
+  $('cf-priority').addEventListener('change', () => saveNow('priority', $('cf-priority'), () => $('cf-priority').value));
+  $('cf-parent').addEventListener('change', () => saveNow('parent', $('cf-parent'), () => Number($('cf-parent').value) || 0));
+  // Champs texte : enregistrés avec « Enregistrer » ; on le signale tant que ce n'est pas fait.
+  for (const id of ['cf-title', 'cf-desc', 'cf-asset', 'cf-detail']) {
+    $(id).addEventListener('input', () => setDirty(!!state.editing));
+  }
   $('card-form').addEventListener('submit', saveCard);
   $('cf-delete').addEventListener('click', deleteCard);
   $('cf-comment-send').addEventListener('click', sendComment);
@@ -1691,6 +1702,8 @@ function openCardDialog(card, assetId, parentId) {
   $('cf-asset').value = card ? card.asset : assetId;
   $('cf-detail').value = card ? card.detail : '';
   $('cf-night').checked = card ? !!card.night : false;
+  setDirty(false);
+  setSaveState('');
   $('cf-night-children').hidden = !card || !card.children;
   fillDetailOptions();
   renderCardAsset();
@@ -1718,6 +1731,57 @@ function cardBody() {
     night: $('cf-night').checked,
     parent: Number($('cf-parent').value) || 0,
   };
+}
+
+/** Ferme le détail ; demande confirmation s'il reste des champs texte non enregistrés. */
+function closeCardDialog() {
+  if (state.dirty && !confirm('Des modifications ne sont pas enregistrées. Fermer quand même ?')) return;
+  setDirty(false);
+  $('card-dialog').close();
+}
+
+function setDirty(on) {
+  state.dirty = on;
+  $('cf-dirty').hidden = !on;
+}
+
+/** Retour visuel de l'enregistrement immédiat : '' | 'en cours' | 'ok' | 'erreur'. */
+let saveStateTimer = 0;
+function setSaveState(st, msg) {
+  const n = $('cf-saved');
+  clearTimeout(saveStateTimer);
+  n.className = 'save-state ' + st;
+  n.textContent = { '': '', 'en cours': 'enregistrement…', ok: '✓ enregistré', erreur: '✗ ' + (msg || 'non enregistré') }[st];
+  if (st === 'ok') saveStateTimer = setTimeout(() => { n.textContent = ''; }, 2500);
+}
+
+/**
+ * Enregistre tout de suite un champ d'une carte existante (sans « Enregistrer »).
+ * En cas d'échec, le champ revient à sa valeur précédente.
+ */
+async function saveNow(field, input, value) {
+  const card = state.editing;
+  if (!card) return;   // nouvelle carte : tout part à la création
+  const old = field === 'parent' ? (card.parent_id || 0) : field === 'night' ? !!card.night : card[field];
+  const v = value();
+  if (v === old) return;
+  input.disabled = true;
+  setSaveState('en cours');
+  try {
+    await api('card_update', { method: 'POST', body: { id: card.id, [field]: v } });
+    await reloadCards();
+  } catch (e) {
+    if (input.type === 'checkbox') input.checked = old; else input.value = String(old || '');
+    setSaveState('erreur', e.message);
+    input.disabled = false;
+    return;
+  }
+  input.disabled = false;
+  setSaveState('ok');
+  state.editing = cardById(card.id) || card;
+  if (field === 'parent') parentOptions($('cf-parent'), state.editing.parent_id, familyIds(card.id));
+  loadFeed(card.id);
+  if (location.hash.startsWith('#/kanban')) renderBoard();
 }
 
 async function sendComment() {
@@ -1755,6 +1819,7 @@ async function saveCard(ev) {
     $('card-error').textContent = e.message;
     return;
   }
+  setDirty(false);
   $('card-dialog').close();
   toast(card ? 'Carte mise à jour' : 'Carte créée dans le Backlog');
   if (location.hash.startsWith('#/kanban')) renderBoard();
@@ -1891,12 +1956,16 @@ async function nightToChildren() {
   if (!card) return;
   const night = $('cf-night').checked;
   const ids = [...familyIds(card.id)].filter((id) => id !== card.id && !!(cardById(id) || {}).night !== night);
+  $('cf-night-children').disabled = true;
+  setSaveState('en cours');
   const ok = await guarded(async () => {
     if (!!card.night !== night) await api('card_update', { method: 'POST', body: { id: card.id, night } });
     for (const id of ids) await api('card_update', { method: 'POST', body: { id, night } });
     await reloadCards();
     return true;
   });
+  $('cf-night-children').disabled = false;
+  setSaveState(ok ? 'ok' : 'erreur');
   if (!ok) return;
   toast(`Night shift ${night ? 'activé' : 'désactivé'} sur ${ids.length} enfant${ids.length > 1 ? 's' : ''}`);
   state.editing = cardById(card.id) || card;

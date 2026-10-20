@@ -612,3 +612,10 @@ body.fs-open { overflow: hidden; }
 .badge.night { background: #2b2d5c; color: #ffd75e; }
 .night-toggle { margin: 4px 0 2px; font-size: 14px; color: var(--text); }
 .quick-add .qa-night { flex: none; margin: 0; font-size: 16px; }
+
+/* Enregistrement immédiat (night shift, type, priorité, chapeau) et champs non enregistrés. */
+.save-state { font-weight: 600; margin-left: 6px; }
+.save-state.ok { color: var(--ok); }
+.save-state.erreur { color: var(--red); }
+.save-state[class~="en"] { color: var(--muted); }
+.dirty { color: #b7791f; font-size: 13px; font-weight: 600; margin-right: 6px; }

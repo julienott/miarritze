@@ -72,7 +72,7 @@
   </div>
   <form id="card-form" method="dialog" class="card-form">
     <h2 id="card-dialog-title">Carte</h2>
-    <p class="muted small-text" id="cf-origin"></p>
+    <p class="muted small-text"><span id="cf-origin"></span> <span id="cf-saved" class="save-state" role="status" aria-live="polite"></span></p>
     <p class="rework" id="cf-rework" hidden>↺ Refusée en QA : à retraiter (voir le refus dans l'historique)</p>
     <div class="qa-actions" id="cf-qa" hidden>
       <button type="button" id="cf-accept" class="accept">✓ Accepter</button>
@@ -95,7 +95,7 @@
       </label>
     </div>
     <label class="inline night-toggle" title="La carte part en file la nuit (1 h – 8 h, heure de Paris) au lieu de tout de suite">
-      <input type="checkbox" id="cf-night"> 🌙 Night shift : à traiter la nuit (1 h – 8 h)</label>
+      <input type="checkbox" id="cf-night"> 🌙 Night shift : à traiter la nuit (1 h – 8 h) <span class="muted">· enregistré aussitôt</span></label>
     <label>Titre <input id="cf-title" maxlength="200" required></label>
     <label>Description <textarea id="cf-desc" rows="4" maxlength="8000"></textarea></label>
     <label>Chapeau (carte parent, optionnel) <select id="cf-parent"></select></label>
@@ -108,6 +108,7 @@
     <div class="row end">
       <button type="button" id="cf-delete" class="danger">Supprimer</button>
       <span class="spacer"></span>
+      <span id="cf-dirty" class="dirty" hidden>● Modifications non enregistrées</span>
       <button type="button" id="cf-cancel" class="ghost">Fermer</button>
       <button type="submit" id="cf-save" class="primary">Enregistrer</button>
     </div>

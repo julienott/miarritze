@@ -304,12 +304,42 @@ check('cli events : ACCEPTÉE / REFUSÉE lisibles', /ACCEPTÉE/.test(cli('events
   await page.click(`.card[data-id="${hatId}"] .title`);
   await page.waitForSelector('#cf-night-children:not([hidden])');
   await page.check('#cf-night');
+  await page.waitForSelector('#cf-saved.ok');   // le chapeau lui-même est enregistré aussitôt
   await page.click('#cf-night-children');
-  await page.waitForFunction(() => document.querySelector('#cf-feed') && document.querySelector('#cf-feed').textContent.includes('night shift'));
+  await page.waitForFunction(() => /Night shift activé sur \d+ enfant/.test(document.getElementById('toast').textContent));
   const fam2 = (await apiTok('cards'))[1].cards.filter((c) => c.id === hatId || c.parent_id === hatId);
   check('night : appliqué au chapeau et à tous ses enfants', fam2.length >= 3 && fam2.every((c) => c.night), fam2.map((c) => c.id + ':' + c.night).join(','));
   await shot(page, '04e_night_detail', false);
   await page.click('#cf-cancel');
+  // Enregistrement immédiat : cocher 🌙, fermer SANS « Enregistrer », rouvrir.
+  const leaf = kidIds[2];
+  await page.reload();
+  await page.click(`.card[data-id="${leaf}"] .title`);
+  await page.waitForSelector('#card-dialog[open]');
+  await page.check('#cf-night');
+  await page.waitForSelector('#cf-saved.ok');
+  await page.selectOption('#cf-priority', 'basse');
+  await page.waitForFunction(() => document.querySelector('#cf-saved').textContent.includes('enregistré') && !document.querySelector('#cf-priority').disabled);
+  await page.click('#cf-cancel');
+  check('night : badge 🌙 de la tuile à jour sans recharger', !!(await page.$(`.card[data-id="${leaf}"] .badge.night`)));
+  const lc = (await apiTok('cards'))[1].cards.find((c) => c.id === leaf);
+  check('night et priorité enregistrés sans « Enregistrer »', lc.night === true && lc.priority === 'basse', JSON.stringify([lc.night, lc.priority]));
+  await page.click(`.card[data-id="${leaf}"] .title`);
+  await page.waitForSelector('#card-dialog[open]');
+  check('rouverte : la case 🌙 est cochée', await page.isChecked('#cf-night'));
+  // Échec réseau : la case revient en arrière, erreur affichée.
+  await page.route('**/index.php?r=card_update*', (r) => r.fulfill({ status: 500, contentType: 'application/json', body: '{"error":"panne simulée"}' }));
+  await page.uncheck('#cf-night');
+  await page.waitForSelector('#cf-saved.erreur');
+  check('échec : la case revient à son état enregistré', await page.isChecked('#cf-night'));
+  await page.unroute('**/index.php?r=card_update*');
+  for (let k = errors.length - 1; k >= 0; k--) if (/status of 500/.test(errors[k])) errors.splice(k, 1);   // panne voulue
+  // Champs texte : « modifications non enregistrées » tant qu'on n'a pas enregistré.
+  await page.fill('#cf-title', 'titre modifié sans enregistrer');
+  check('champ texte modifié : « modifications non enregistrées »', await page.isVisible('#cf-dirty'));
+  await shot(page, '04g_enregistrement_immediat', false);
+  await page.click('#cf-cancel');   // confirmation acceptée
+  await page.waitForFunction(() => !document.querySelector('#card-dialog[open]'));
   // Filtre « night shift seulement ».
   await page.check('#kb-night-only');
   const shownN = await page.$$eval('#board .column > .card', (l) => l.map((c) => !!c.querySelector('.badge.night')));
