@@ -1,0 +1,119 @@
+{
+ "autel_chapelle": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "banc_chapelle": {
+  "bloque_vue": false,
+  "source": "repli"
+ },
+ "banc_vert": {
+  "bloque_vue": false,
+  "refus_pixelforge": "emprise = 155 % de la silhouette",
+  "source": "repli"
+ },
+ "bitte_amarrage": {
+  "bloque_vue": false,
+  "source": "repli"
+ },
+ "cachette_bac_poissons": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "cachette_caisse_glace": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "cachette_casier_homards": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "cachette_coffre_cordages": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "cachette_coffre_quai": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "cachette_poubelle_ruelle": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "caisses_poisson": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "chalutier_quai": {
+  "bloque_vue": true,
+  "refus_pixelforge": "emprise = 128 % de la silhouette",
+  "source": "repli"
+ },
+ "chambre_froide": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "comptoir_bar": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "coque_chantier": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "coque_sur_ber": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "etabli_atelier": {
+  "bloque_vue": false,
+  "source": "repli"
+ },
+ "etal_criee": {
+  "bloque_vue": false,
+  "source": "repli"
+ },
+ "fontaine_place": {
+  "bloque_vue": false,
+  "source": "repli"
+ },
+ "fronton": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "lavoir_bassin": {
+  "bloque_vue": false,
+  "source": "repli"
+ },
+ "maison_crampotte": {
+  "bloque_vue": true,
+  "source": "repli"
+ },
+ "marches_escalier": {
+  "bloque_vue": false,
+  "source": "repli"
+ },
+ "mur_soutenement": {
+  "bloque_vue": true,
+  "refus_pixelforge": "emprise = 185 % de la silhouette",
+  "source": "repli"
+ },
+ "rayonnage_filets": {
+  "bloque_vue": true,
+  "refus_pixelforge": "emprise = 128 % de la silhouette",
+  "source": "repli"
+ },
+ "table_terrasse": {
+  "bloque_vue": false,
+  "source": "repli"
+ },
+ "tour_phare": {
+  "bloque_vue": true,
+  "refus_pixelforge": "emprise = 103 % de la silhouette",
+  "source": "repli"
+ },
+ "treteaux_cale": {
+  "bloque_vue": false,
+  "source": "repli"
+ }
+}

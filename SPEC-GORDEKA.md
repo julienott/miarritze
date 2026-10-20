@@ -288,8 +288,17 @@ Vierge, Fronton.
      un chassé masqué n'est vu qu'à `masque_vue_portee` cases, et ses coéquipiers voient l'objet en
      transparence.
 
-  Contrôle : `tools/gordeka/masques_decor.py` exporte, avec le même code, une image par objet
-  (empreinte en vert, zone qui masque en violet) dans `tools/gordeka/masques/`, visible sur /producer.
+  **Masques de pixelforge prioritaires** (*2026-10-20, Julien : le calcul sur la silhouette « ne va
+  pas »*) : quand `assets/gordeka/decor/masques/<id>/masks.json` existe (`tools/gordeka/masques_pf.py`),
+  le jeu prend son emprise (`polygons`), sa ligne de tri (`baseline_y` : pieds au-dessus = perso
+  derrière l'objet), `blocks_view` et `occluder.png` pour le masquage. Le calcul ci-dessus n'est plus
+  qu'un repli : objet sans masques, confiance sous `decor_masques_pf_confiance_min`, ou emprise de plus
+  de `decor_masques_pf_part_max` de la silhouette ; `decor_masques_pf` = 0 l'impose partout.
+
+  Contrôle : `tools/gordeka/masques_decor.py` exporte, avec le code du jeu, la forme effectivement
+  utilisée par objet (bandeau : pixelforge ou repli et pourquoi ; empreinte en vert, zone qui masque en
+  violet, ligne de tri en rouge) dans `tools/gordeka/masques/jeu/`, à côté des aperçus de pixelforge
+  (`tools/gordeka/masques/<id>.png`) ; les deux sont visibles sur /producer.
 - **Cachettes dans les objets dès la v1** (*décidé le 2026-10-19*) : cabines, poubelles, casiers,
   coffres de bateau, comme les bouches d'aération d'Among Us.
   - Près d'une cachette, le bouton Pouvoir d'un chassé devient **Entrer**, puis **Sortir** une fois

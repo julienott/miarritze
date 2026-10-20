@@ -43,6 +43,8 @@ const FADE_SPEED: float = 4.0
 
 ## Formes déjà calculées (même image, même taille dessinée, même base), gardées d'une partie à l'autre.
 static var _shape_cache: Dictionary = {}
+## Masques de pixelforge déjà lus (par dossier, objet et taille dessinée).
+static var _pf_cache: Dictionary = {}
 ## Images lues pour les formes, réduites SHAPE_SOURCE_DIV fois (une lecture par image : en WebGL, c'est
 ## une relecture du GPU ; réduite, elle pèse peu en mémoire et reste plus fine que le masque).
 static var _image_cache: Dictionary = {}
@@ -364,19 +366,31 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void
 
 # ---------------------------------------------------------------- forme des objets
 
-## Empreinte au sol et silhouette de l'objet posé (`_shape`), ramenées dans le repère de la carte et
-## coupées aux cases de l'objet (la grille A* des IA reste juste). Objets qui cachent la vue
-## (« bloque_vue » de l'index, sinon les caractères de GkMap.OCCLUDE) : corps solide qui bloque aussi
-## la vue ; objets bas (GkMap.LOW) : le passage seulement.
+## Forme de l'objet posé : masques de pixelforge s'il y en a pour cet objet (`_pf_shape`), sinon le
+## calcul local sur la silhouette (`_shape`, repli ; `decor_masques_pf` = 0 l'impose partout). Elle
+## est ramenée dans le repère de la carte et l'empreinte est coupée aux cases de l'objet (la grille A*
+## des IA reste juste). Vue bloquée : `blocks_view` de pixelforge, sinon « bloque_vue » de l'index,
+## sinon les caractères de GkMap.OCCLUDE ; les autres objets bloquent le passage seulement.
+## Pixelforge donne aussi la ligne de tri (baseline_y : un perso dont les pieds sont au-dessus est
+## derrière l'objet) : le porteur, que trie le calque des persos, y est descendu ou remonté.
 func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, drawn: Vector2) -> void:
 	var ch: String = str(el.get("caractere", ""))
 	var blocks: bool = bool(el.get("bloque_vue", GkMap.OCCLUDE.contains(ch)))
 	if not GkRules.on("decor_formes") or not blocks and not GkMap.LOW.contains(ch):
 		return
-	var sh: Dictionary = _shape(tex, rel, drawn)
+	var sh: Dictionary = {}
+	var refus: String = ""
+	if GkRules.on("decor_masques_pf"):
+		sh = _pf_shape(str(inst["id"]), tex, rel, drawn)
+		refus = str(sh.get("refus", ""))
+	if not sh.has("polys"):
+		sh = _shape(tex, rel, drawn)
 	if (sh.get("polys", []) as Array).is_empty():
 		return
+	blocks = bool(sh.get("blocks_view", blocks))
 	var holder: Node2D = inst["holder"]
+	var sp: Sprite2D = inst["sprite"]
+	var top_left: Vector2 = holder.position + sp.position - drawn * 0.5
 	var r: Rect2 = Rect2(Vector2((inst["rect"] as Rect2i).position) * map.tile, Vector2((inst["rect"] as Rect2i).size) * map.tile)
 	var box: PackedVector2Array = PackedVector2Array([r.position, Vector2(r.end.x, r.position.y), r.end,
 		Vector2(r.position.x, r.end.y)])
@@ -384,25 +398,122 @@ func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, d
 	for poly: PackedVector2Array in sh["polys"]:
 		var pts: PackedVector2Array = PackedVector2Array()
 		for p: Vector2 in poly:
-			pts.append(holder.position + p)
+			pts.append(top_left + p)
 		for clipped: PackedVector2Array in Geometry2D.intersect_polygons(pts, box):
 			polys.append(clipped)
 	if polys.is_empty():
 		return
+	if sh.has("baseline"):
+		var dy: float = top_left.y + float(sh["baseline"]) - holder.position.y
+		holder.position.y += dy
+		for c: Node in holder.get_children():
+			(c as Node2D).position.y -= dy
+		inst["base"] = sp.position
 	inst["polys"] = polys
 	inst["blocks_view"] = blocks
 	inst["mask"] = sh["mask"]
 	inst["mask_scale"] = sh["scale"]
-	inst["mask_rect"] = Rect2(holder.position + Vector2(-drawn.x * 0.5, -drawn.y), drawn)
+	inst["mask_rect"] = Rect2(top_left, drawn)
 	inst["sort_y"] = holder.position.y
 	inst["fade"] = 1.0
+	inst["shape_source"] = str(sh.get("source", "repli"))
+	inst["shape_info"] = sh.get("info", {"refus_pixelforge": refus} if refus != "" else {})
 	for c: Vector2i in inst["cells"]:
 		shaped[c] = true
 
 
+## Masques de pixelforge (tools/gordeka/masques_pf.py) : <dossier du décor>/masques/<id>/masks.json
+## (polygons de l'emprise au sol, baseline_y, blocks_view, en px de l'image intégrée) et occluder.png
+## (ce qui passe devant un perso derrière). Alignés sur l'image intégrée : ignorés si sa taille a
+## changé depuis (image réintégrée). Un calcul par objet et par taille dessinée, partagé par toutes
+## ses poses sur la carte. Vide s'il n'y en a pas ; {refus: raison} si on les écarte pour le repli :
+## confiance sous decor_masques_pf_confiance_min, ou emprise de plus de decor_masques_pf_part_max de
+## la silhouette (emprise ratée, pleine).
+func _pf_shape(id: String, tex: Texture2D, rel: String, drawn: Vector2) -> Dictionary:
+	var tex_size: Vector2 = tex.get_size()
+	var ck: String = "%s|%s|%d|%d" % [_dir, id, roundi(drawn.x), roundi(drawn.y)]
+	if _pf_cache.has(ck):
+		return _pf_cache[ck]
+	var out: Dictionary = {}
+	_pf_cache[ck] = out
+	var dir: String = _dir.path_join("masques").path_join(id)
+	if not FileAccess.file_exists(dir.path_join("masks.json")):
+		return out
+	var m: Variant = JSON.parse_string(FileAccess.get_file_as_string(dir.path_join("masks.json")))
+	if not m is Dictionary:
+		push_warning("GkDecor : masks.json illisible pour « %s », repli" % id)
+		return out
+	var md: Dictionary = m
+	var size: Array = md.get("size", [0, 0])
+	if size.size() != 2 or Vector2(float(size[0]), float(size[1])) != tex_size:
+		push_warning("GkDecor : masques pixelforge de « %s » pour une image de %s, l'image fait %s : repli" % [id, size, tex_size])
+		return out
+	var k: Vector2 = drawn / tex_size          # px de jeu par px de l'image
+	var polys: Array[PackedVector2Array] = []
+	for poly: Variant in md.get("polygons", []):
+		var pts: PackedVector2Array = PackedVector2Array()
+		for q: Variant in (poly as Array):
+			pts.append(Vector2(float(q[0]), float(q[1])) * k)
+		if pts.size() >= 3:
+			polys.append(pts)
+	if polys.is_empty():
+		return out
+	var conf: float = float(md.get("confidence", 0.0))
+	if conf < GkRules.f("decor_masques_pf_confiance_min"):
+		out["refus"] = "confiance %.2f" % conf
+		return out
+	var sil: Dictionary = _shape(tex, rel, drawn)
+	if sil.has("mask"):
+		var area: float = 0.0
+		for poly: PackedVector2Array in polys:
+			area += absf(_area(poly))
+		var sc: Vector2 = sil["scale"]
+		var sil_area: float = float((sil["mask"] as BitMap).get_true_bit_count()) * sc.x * sc.y
+		if sil_area > 0.0 and area / sil_area > GkRules.f("decor_masques_pf_part_max"):
+			out["refus"] = "emprise = %d %% de la silhouette" % roundi(100.0 * area / sil_area)
+			return out
+	# Masquage : occluder.png à SHAPE_STEP px près (à défaut, la silhouette de l'image).
+	var occ: Image = _read_image(dir.path_join("occluder.png"))
+	if occ == null:
+		return out
+	occ.convert(Image.FORMAT_RGBA8)
+	var mw: int = maxi(1, ceili(drawn.x / SHAPE_STEP))
+	var mh: int = maxi(1, ceili(drawn.y / SHAPE_STEP))
+	occ.resize(mw, mh, Image.INTERPOLATE_BILINEAR)
+	var bm: BitMap = BitMap.new()
+	bm.create_from_image_alpha(occ, SHAPE_ALPHA)
+	out["polys"] = polys
+	out["mask"] = bm
+	out["scale"] = Vector2(drawn.x / mw, drawn.y / mh)
+	out["baseline"] = clampf(float(md.get("baseline_y", tex_size.y)), 0.0, tex_size.y) * k.y
+	out["blocks_view"] = bool(md.get("blocks_view", true))
+	out["source"] = "pixelforge"
+	out["info"] = {"confidence": md.get("confidence", 0.0), "warnings": md.get("warnings", [])}
+	return out
+
+
+## Image d'un fichier du décor : importée (jeu exporté) ou lue directement (QA, fichier pas encore
+## importé par l'éditeur).
+static func _read_image(path: String) -> Image:
+	var img: Image = null
+	if ResourceLoader.exists(path):
+		var t: Texture2D = load(path) as Texture2D
+		if t:
+			img = t.get_image()
+	elif FileAccess.file_exists(path):
+		img = Image.load_from_file(path)
+	if img == null or img.is_empty():
+		return null
+	img = img.duplicate() as Image
+	if img.is_compressed():
+		img.decompress()
+	return img
+
+
 ## Forme d'un objet à sa taille dessinée, calculée une fois par image et par taille (SPEC-GORDEKA,
 ## décor) : {mask: BitMap de la silhouette, foot: BitMap de l'empreinte au sol, scale (px de jeu par
-## point), polys: contours de l'empreinte dans le repère du porteur (pied au milieu du bord bas)}.
+## point), polys: contours de l'empreinte en px de jeu depuis le coin haut gauche de l'image dessinée}.
+## C'est le repli quand pixelforge n'a pas (encore) fourni les masques de l'objet (`_pf_shape`).
 ##
 ## Empreinte au sol en vue 3/4 (de face ou en coin) :
 ## 1. silhouette (alpha) à SHAPE_STEP px près, puis ouverture morphologique : les parties plus fines
@@ -501,7 +612,7 @@ static func _shape(tex: Texture2D, key: String, drawn: Vector2) -> Dictionary:
 	if r > 0:
 		foot.grow_mask(-r, full)
 		foot.grow_mask(r, full)
-	var org: Vector2 = Vector2(-drawn.x * 0.5, -drawn.y)
+	var org: Vector2 = Vector2.ZERO
 	var polys: Array[PackedVector2Array] = []
 	for poly: PackedVector2Array in foot.opaque_to_polygons(full, SHAPE_EPSILON):
 		if poly.size() < 3 or absf(_area(poly)) < SHAPE_MIN_AREA:
@@ -574,13 +685,14 @@ func update_fades(which: Dictionary, alpha: float, dt: float) -> void:
 
 
 ## Contrôle des formes (tools/gordeka/masques_decor.py, `--gk-export-masques=<dossier>`) : pour chaque
-## objet en image, sa première pose sur la carte en PNG (2 px par px de jeu) : l'image, l'empreinte au
-## sol en vert (ce qui bloque, coupée aux cases de l'objet), la zone qui masque un perso derrière en
-## violet, le cadre des cases en pointillé blanc.
+## objet en image, sa première pose sur la carte en PNG (2 px par px de jeu), avec la forme que le jeu
+## utilise vraiment : l'empreinte qui bloque (polygones de collision, coupés aux cases) en vert, la
+## zone qui masque un perso derrière en violet, la ligne de tri en rouge, les cases en pointillé
+## blanc. `_sources.json` donne la source de chaque forme (pixelforge ou repli).
 func export_masks(dir: String) -> void:
 	DirAccess.make_dir_recursive_absolute(dir)
 	var done: Dictionary = {}
-	var n: int = 0
+	var sources: Dictionary = {}
 	for inst: Dictionary in instances:
 		var id: String = str(inst["id"])
 		if done.has(id) or not inst.has("polys"):
@@ -600,10 +712,8 @@ func export_masks(dir: String) -> void:
 		src.resize(ceili(r.size.x * k), ceili(r.size.y * k), Image.INTERPOLATE_BILINEAR)
 		var outi: Image = Image.create(w, h, false, Image.FORMAT_RGBA8)
 		var off: Vector2i = Vector2i(((r.position - view.position) * k).round())
-		var sh: Dictionary = _shape(sp.texture, str((elements[id] as Dictionary)["fichiers"][0]), r.size)
-		var foot: BitMap = sh["foot"]
-		var bm: BitMap = sh["mask"]
-		var sc: Vector2 = sh["scale"]
+		var polys: Array = inst["polys"]
+		var sort_y: float = float(inst["sort_y"])
 		for y: int in h:
 			for x: int in w:
 				var wp: Vector2 = view.position + Vector2(x, y) / k        # repère de la carte
@@ -611,20 +721,29 @@ func export_masks(dir: String) -> void:
 				var q: Vector2i = Vector2i(x, y) - off
 				if q.x >= 0 and q.y >= 0 and q.x < src.get_width() and q.y < src.get_height():
 					c = c.blend(src.get_pixelv(q))
-				var mq: Vector2i = Vector2i((wp - r.position) / sc)
-				if mq.x >= 0 and mq.y >= 0 and mq.x < bm.get_size().x and mq.y < bm.get_size().y:
-					if foot.get_bitv(mq) and cells.has_point(wp):
-						c = c.blend(Color(0.1, 0.85, 0.3, 0.55))
-					elif bm.get_bitv(mq):
-						c = c.blend(Color(0.6, 0.2, 0.9, 0.35))
+				var inside: bool = false
+				for poly: PackedVector2Array in polys:
+					if Geometry2D.is_point_in_polygon(wp, poly):
+						inside = true
+						break
+				if inside:
+					c = c.blend(Color(0.1, 0.85, 0.3, 0.55))
+				elif _covers(inst, wp):
+					c = c.blend(Color(0.6, 0.2, 0.9, 0.35))
+				if absf(wp.y - sort_y) < 0.75:
+					c = Color(0.9, 0.15, 0.15)
 				var on_edge: bool = absf(wp.x - cells.position.x) < 1.0 or absf(wp.x - cells.end.x) < 1.0 \
 					or absf(wp.y - cells.position.y) < 1.0 or absf(wp.y - cells.end.y) < 1.0
 				if on_edge and cells.grow(1.0).has_point(wp) and (x + y) / 6 % 2 == 0:
 					c = Color.WHITE
 				outi.set_pixel(x, y, c)
 		outi.save_png(dir.path_join(id + ".png"))
-		n += 1
-	print("[gk] masques du décor : %d images dans %s" % [n, dir])
+		sources[id] = {"source": inst["shape_source"], "bloque_vue": inst["blocks_view"]}
+		sources[id].merge(inst["shape_info"])
+	var f: FileAccess = FileAccess.open(dir.path_join("_sources.json"), FileAccess.WRITE)
+	f.store_string(JSON.stringify(sources, " "))
+	f.close()
+	print("[gk] masques du décor : %d images dans %s" % [done.size(), dir])
 	map.get_tree().quit.call_deferred()
 
 
