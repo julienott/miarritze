@@ -97,6 +97,7 @@ final class App
         match ("$method $route") {
             'POST logout' => $this->logout(),
             'GET index' => $this->json($this->index()),
+            'GET index_version' => $this->json(['v' => $this->indexVersion()]),
             'GET comments' => $this->listComments(),
             'POST comment' => $this->addComment(),
             'POST comment_update' => $this->updateComment(),
@@ -1150,7 +1151,21 @@ final class App
     {
         header('Content-Type: text/html; charset=utf-8');
         header('Cache-Control: no-cache');
-        // Coquille statique : aucune donnée dedans, tout passe par l'API.
-        readfile(__DIR__ . '/page.html');
+        // Coquille statique : aucune donnée dedans, tout passe par l'API. Les statiques portent
+        // leur date de modification (?v=) : un déploiement n'est jamais masqué par un vieux cache.
+        $html = (string) file_get_contents(__DIR__ . '/page.html');
+        $static = dirname(__DIR__) . '/static/';
+        foreach (['app.css', 'app.js'] as $f) {
+            $html = str_replace('static/' . $f . '"', 'static/' . $f . '?v=' . (int) @filemtime($static . $f) . '"', $html);
+        }
+        echo $html;
+    }
+
+    /** Version légère de l'index des assets (date + taille de index.json) : sondée par le board. */
+    private function indexVersion(): string
+    {
+        $f = $this->filesDir() . '/index.json';
+        clearstatcache(true, $f);
+        return is_file($f) ? filemtime($f) . '-' . filesize($f) : '';
     }
 }

@@ -280,7 +280,8 @@ check('cli show : refus visible', refused.includes('[À RETRAITER]') && refused.
 cli('qa', String(kidIds[1]), 'pieds recalés sur feet_anchor');
 const back = JSON.parse(cli('show', String(kidIds[1]), '--json'));
 check('cli qa : retour en QA, badge effacé, commentaire « retraité : »', back.card.status === 'qa' && !back.card.rework
-  && back.card.notes.some((n) => n.body === 'retraité : pieds recalés sur feet_anchor'));
+  && back.card.notes.some((n) => n.body.startsWith('retraité : pieds recalés sur feet_anchor')
+    && n.body.includes(`asset ${ASSET} · walk version `)));
 // Chapeau en QA : Accepter accepte aussi les enfants encore en QA (après confirmation).
 cli('move', String(hatId), 'qa');
 await page.reload();
@@ -480,6 +481,71 @@ await wk.close();
   await swipe(80, 320);
   check('mobile : balayage à droite = colonne précédente', (await mp.getAttribute('.kb-tab.active', 'data-status')) === 'qa');
   await ctx.close();
+}
+
+// ------------------------------------------------- mise à jour en direct (kanban)
+// Board et détail ouverts : un commentaire, un déplacement, un changement d'asset/détail par le CLI,
+// puis une nouvelle version publiée de l'asset (PRODUCER_FILES_DIR = dossier files/ du build servi)
+// apparaissent sans recharger la page. Sondage accéléré à 1 s pour le test.
+{
+  const live = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await live.addInitScript(() => { try { localStorage.setItem('producer-kb-tick', '1000'); } catch (e) { /* */ } });
+  const lp = await live.newPage();
+  lp.on('pageerror', (e) => errors.push(String(e)));
+  await login(lp);
+  const lid = Number(/#(\d+)/.exec(cli('add-card', '--type', 'animation', '--title', `${tag} direct`, '--asset', ASSET, '--detail', 'walk', '--status', 'todo'))[1]);
+  await lp.waitForSelector(`.card[data-id="${lid}"]`, { timeout: 40000 });
+  check('direct : une carte créée par le CLI apparaît sans recharger', true);
+  await lp.click(`.card[data-id="${lid}"] .title`);
+  await lp.waitForSelector('#cf-asset-view .anim-cell');
+  cli('comment', String(lid), `${tag} commentaire en direct`);
+  await lp.waitForFunction((t) => document.getElementById('cf-feed').textContent.includes(t), `${tag} commentaire en direct`, { timeout: 8000 });
+  check('direct : commentaire de Claude dans le fil du détail ouvert', true);
+  cli('move', String(lid), 'doing');
+  await lp.waitForFunction(() => document.getElementById('card-dialog-title').textContent.includes('Doing'), null, { timeout: 8000 });
+  check('direct : changement de colonne visible dans le détail ouvert', true);
+  cli('set', String(lid), '--detail', 'idle');
+  await lp.waitForFunction(() => document.getElementById('cf-detail').value === 'idle'
+    && document.querySelector('#cf-asset-view .anim-cell span:last-child').textContent.startsWith('idle'), null, { timeout: 8000 });
+  await lp.waitForFunction((id) => decodeURIComponent(document.querySelector(`.card[data-id="${id}"] img.card-thumb`).src).includes('_poster/idle'), lid, { timeout: 8000 });
+  check('direct : set --detail met à jour la tuile et le détail ouvert', true);
+  const FILES = process.env.PRODUCER_FILES_DIR || '';
+  if (FILES) {
+    // Nouvelle version publiée : la miniature (image fixe d'idle) change de contenu et d'empreinte.
+    const idxPath = path.join(FILES, 'index.json');
+    const idxSave = fs.readFileSync(idxPath);
+    const idx = JSON.parse(idxSave);
+    const a = idx.assets.find((x) => x.id === ASSET);
+    const anim = a.anims.find((x) => x.name === 'idle');
+    const posterPath = path.join(FILES, anim.poster);
+    const posterSave = fs.readFileSync(posterPath);
+    fs.copyFileSync(path.join(FILES, a.anims.find((x) => x.name === 'walk').poster), posterPath);
+    idx.versions[anim.poster] = 'abcdef0123';
+    a.version = 'nouvelle01';
+    fs.writeFileSync(idxPath, JSON.stringify(idx));
+    try {
+      await lp.waitForFunction((id) => /v=abcdef0123/.test(document.querySelector(`.card[data-id="${id}"] img.card-thumb`).src)
+        && /v=abcdef0123/.test(document.querySelector('#cf-asset-view img.mini').src), lid, { timeout: 8000 });
+      check('direct : nouvelle version de l\'asset dans la tuile et le détail, sans recharger', true);
+      check('direct : signe « ↻ nouvelle version »', await lp.isVisible(`.card[data-id="${lid}"] .fresh`) && await lp.isVisible('#cf-asset-view .fresh'));
+      await lp.screenshot({ path: path.join(OUT, '08_direct_nouvelle_version.png') });
+      // Le plein écran ouvert recharge aussi l'animation.
+      await lp.click('#cf-asset-view .anim-cell');
+      await lp.waitForSelector('.fs canvas');
+      idx.versions[anim.file] = 'fedcba9876';
+      a.version = 'nouvelle02';
+      fs.writeFileSync(idxPath, JSON.stringify(idx));
+      await lp.waitForFunction(() => performance.getEntriesByType('resource').some((r) => /v=fedcba9876/.test(r.name)), null, { timeout: 8000 });
+      check('direct : plein écran ouvert rechargé avec la nouvelle version', !!(await lp.$('.fs canvas')));
+      await lp.click('.fs-close');
+    } finally {
+      fs.writeFileSync(idxPath, idxSave);
+      fs.writeFileSync(posterPath, posterSave);
+    }
+  } else {
+    console.log('     (PRODUCER_FILES_DIR absent : republication d\'asset non testée)');
+  }
+  await live.close();
 }
 
 check('aucune erreur JS', errors.length === 0, errors.join(' | '));

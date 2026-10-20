@@ -274,8 +274,23 @@ def cmd_move(a: argparse.Namespace) -> None:
     print(f"Carte #{a.id} -> {STATUS_LABEL[a.status]}")
 
 
+def asset_version(card: dict) -> str:
+    """« asset <id>[ · <anim>] version <empreinte> » de l'asset lié, tel que /producer le sert."""
+    if not card.get("asset"):
+        return ""
+    idx = call("index")
+    for x in idx.get("assets", []):
+        if x.get("id") == card["asset"]:
+            anim = f" · {card['detail']}" if card.get("detail") else ""
+            return f"asset {card['asset']}{anim} version {x.get('version', '?')}"
+    return f"asset {card['asset']} absent de l'index publié"
+
+
 def cmd_qa(a: argparse.Namespace) -> None:
     text = a.text if a.text.lower().startswith("retraité") else "retraité : " + a.text
+    ver = asset_version(call("card", query={"id": a.id})["card"])
+    if ver:
+        text += f" ({ver})"     # Julien sait qu'il voit la bonne version
     call("card_comment", {"id": a.id, "body": text})
     call("card_move", {"id": a.id, "status": "qa"})
     print(f"Carte #{a.id} -> QA (« {short(text)} »)")

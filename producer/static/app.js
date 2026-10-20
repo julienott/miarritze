@@ -32,6 +32,8 @@ const state = {
   hatsOnly: false,   // kanban : enfants masqués (vue chapeaux seulement)
   nightOnly: false,  // kanban : cartes night shift seulement
   noHats: false,     // kanban : chapeaux masqués (inverse de hatsOnly, exclusifs)
+  indexV: '',        // version de l'index des assets (sondée par le board)
+  fresh: new Map(),  // asset -> instant où une nouvelle version est arrivée
   expanded: new Set(),  // chapeaux dépliés sur le board
   decorMode: store('producer-decor-mode') || 'masques',   // image | masques | controle
   decorSansMasque: false,  // filtre « sans masque » du décor
@@ -226,7 +228,8 @@ async function enter() {
   $('login').hidden = true;
   $('tabs').hidden = false;
   $('logout').hidden = false;
-  const [index] = await Promise.all([api('index'), reloadComments(), reloadCards()]);
+  const [index, iv] = await Promise.all([api('index'), api('index_version'), reloadComments(), reloadCards()]);
+  state.indexV = iv.v;
   state.index = index;
   state.assetsById = new Map(index.assets.map((a) => [a.id, a]));
   // Première ouverture : la première catégorie non vide (les persos de Gordeka),
@@ -470,7 +473,8 @@ function renderPersos(grid) {
         'data-anim': s.name, onclick: () => openPlayer(pid, s.name),
       }), (mini) => [el('div', { class: 'anim-box' }, mini),
         el('span', { class: 'gk-anim-name', text: s.name }),
-        el('span', { class: 'muted', text: `${s.anim.frames} im. · ${s.anim.fps} i/s${s.anim.loop ? ' · boucle' : ''}` })])
+        el('span', { class: 'muted', text: `${s.anim.frames} im. · ${s.anim.fps} i/s${s.anim.loop ? ' · boucle' : ''}` }),
+        glisseNote(s.anim)].filter(Boolean))
       : el('div', { class: 'gk-anim missing', 'data-anim': s.name, title: s.a_venir ? 'clip sur mesure à venir' : 'pas encore générée' },
         el('div', { class: 'anim-box' }, el('span', { text: s.a_venir ? 'à venir' : 'manquante' })),
         el('span', { class: 'gk-anim-name', text: s.name }),
@@ -599,8 +603,9 @@ function openPlayer(pid, name) {
       ctx.moveTo(Math.round(L.ax) + 0.5, L.ay - 6); ctx.lineTo(Math.round(L.ax) + 0.5, L.ay + 6); ctx.stroke();
     }
     const i = fs.anims.indexOf(a);
+    const g = glisseOf(a, fs.jeu);
     info.textContent = `image ${fs.frame + 1}/${a.frames} · ${a.fps} i/s` + (a.loop ? ' · boucle' : '') +
-      ` · ${i + 1}/${fs.anims.length}`;
+      ` · ${i + 1}/${fs.anims.length}` + (g >= 6 ? ` · ⚠ glisse de ${g} px dans la planche` : '');
   };
   const schedule = () => {
     clearTimeout(fs.timer);
@@ -662,6 +667,8 @@ function openPlayer(pid, name) {
       mi.src = fileUrl(m.file);
     }
   };
+  // Nouvelle version publiée : on recharge l'animation affichée, mêmes réglages.
+  fs.reload = () => { if (state.fs === fs && fs.anim) load(fs.pid, fs.anim.name); };
   const go = (d) => {
     const i = fs.anims.indexOf(fs.anim);
     load(fs.pid, fs.anims[(i + d + fs.anims.length) % fs.anims.length].name);
@@ -823,7 +830,8 @@ function solCard(a) {
     onclick: () => { location.hash = '#/assets/' + encodeURIComponent(a.id); },
   }, solTile(a),
   el('span', { class: 'dname', text: a.name }),
-  el('span', { class: 'muted did', text: a.id.split('/').pop().replace(/\.png$/, '') + ' · répété 2×2' }));
+  el('span', { class: 'muted did', text: a.id.split('/').pop().replace(/\.png$/, '') + ' · répété 2×2' }),
+  el('span', { class: 'muted did', text: 'tuile de sol : pas de masque (collision par case)' }));
 }
 
 function renderDecor(grid) {
@@ -831,7 +839,10 @@ function renderDecor(grid) {
   const all = state.index.assets.filter((a) => a.cat === 'Décor');
   const objets = all.filter((a) => a.kind === 'objet');
   const sols = all.filter((a) => a.kind === 'sol');
-  const sans = objets.filter((a) => a.decor.sans_masque);
+  // Les tuiles de sol (et de bord) n'ont pas de masque par conception (collision par case) :
+  // jamais dans « sans masque », seuls les objets qui devraient en avoir un y figurent.
+  const isTuile = (a) => a.kind === 'sol' || /^tuile/.test((a.decor && a.decor.type) || '');
+  const sans = objets.filter((a) => !isTuile(a) && a.decor.sans_masque);
   const shown = state.decorSansMasque ? sans : objets;
   const aVenir = (state.index.gordeka && state.index.gordeka.decor_a_venir) || [];
   const modeBtns = DECOR_MODES.map(([v, label]) => el('button', {
@@ -964,6 +975,23 @@ function stopMini(m) {
  * toucher anime (le clic est absorbé), le suivant fait l'action de `host`.
  * Le défilement n'est pas gêné : on n'écoute que le clic, jamais touchmove.
  */
+/**
+ * Le perso se déplace-t-il DANS la planche (mesuré au build sur la tête, brut et comme en jeu) ?
+ * Un « défilement » visible vient alors de la planche elle-même, pas du lecteur.
+ */
+function glisseOf(anim, jeu) {
+  return anim && anim.glisse ? anim.glisse[jeu ? 1 : 0] : 0;
+}
+
+function glisseNote(anim, jeu = true) {
+  const g = glisseOf(anim, jeu);
+  return g >= 6 ? el('span', {
+    class: 'glisse', title: `Dans la planche elle-même, le perso se déplace de ${g} px d'une image à l'autre`
+      + (jeu ? ' (raccord du jeu compris : frame_offsets, decalage)' : '') + ' : ce n\'est pas le lecteur.',
+    text: `⚠ glisse de ${g} px dans la planche`,
+  }) : null;
+}
+
 /** Remplit `host` avec parts(mini) et branche l'animation au survol. */
 function hoverAnimCell(anim, box, host, parts) {
   const mini = miniAnim(anim, box);
@@ -1124,6 +1152,7 @@ function showDetail(a) {
     // Sol : la tuile répétée 2×2, puis la tuile seule.
     stage.classList.add('sol-stage');
     stage.append(solTile(a));
+    controls.append(el('p', { class: 'muted sol-note', text: 'Tuile de sol : pas de masque (collision par case).' }));
   } else if (a.decor && a.kind === 'objet') {
     const d = a.decor;
     const views = [['image', 'Sans masques', a], ['masques', 'Avec masques', d.calque ? a : null],
@@ -1299,7 +1328,12 @@ async function renderCommentList() {
 // peut les déplier ; les enfants restent des cartes qui vivent leur vie.
 
 const AUTHOR_LABEL = { julien: 'Julien', claude: 'Claude' };
-const KANBAN_REFRESH_MS = 30000;   // le board se met à jour seul (actions de Claude)
+// Mise à jour en direct du kanban : toutes les 10 s, on sonde la version de l'index des assets
+// (une nouvelle version publiée recharge tuiles, détail et plein écran) ; les cartes sont relues
+// toutes les 30 s, et à chaque fois tant que le détail d'une carte est ouvert.
+const KANBAN_TICK_MS = Number(store('producer-kb-tick')) || 10000;   // réglable pour les tests
+const KANBAN_CARDS_EVERY = 3;
+const FRESH_MS = 8000;               // durée du signe « ↻ nouvelle version »
 
 function cardById(id) {
   return state.cards.find((c) => c.id === id) || null;
@@ -1424,16 +1458,102 @@ function initKanban() {
     renderBoard();
   });
   $('kb-hats-only').addEventListener('change', () => setHatView($('kb-hats-only').checked, false));
-  // Rafraîchissement discret : seulement si l'on ne fait rien sur le board.
-  setInterval(async () => {
-    if (!state.index || !location.hash.startsWith('#/kanban') || document.hidden) return;
-    if ($('card-dialog').open || document.querySelector('.card.dragging')) return;
-    const active = document.activeElement;
-    if (active && active.closest('#board') && /INPUT|SELECT|TEXTAREA/.test(active.tagName)) return;
+  let tick = 0;
+  setInterval(() => { kanbanTick(++tick).catch(() => {}); }, KANBAN_TICK_MS);
+}
+
+/** Le board peut-il être redessiné sans gêner (glisser en cours, saisie dans le board) ? */
+function boardIdle() {
+  if (document.querySelector('.card.dragging')) return false;
+  const active = document.activeElement;
+  return !(active && active.closest('#board') && /INPUT|SELECT|TEXTAREA/.test(active.tagName));
+}
+
+async function kanbanTick(n) {
+  if (!state.index || !location.hash.startsWith('#/kanban') || document.hidden) return;
+  // 1. Nouvelle version des assets ?
+  const r = await api('index_version');
+  let assetsChanged = false;
+  if (r && r.v && state.indexV && r.v !== state.indexV) {
+    assetsChanged = await reloadIndex();
+  }
+  if (r && r.v) state.indexV = r.v;
+  // 2. Cartes : détail ouvert = à chaque tour, sinon toutes les 30 s.
+  const open = $('card-dialog').open;
+  let cardsChanged = false;
+  if (open || n % KANBAN_CARDS_EVERY === 0 || assetsChanged) {
     const before = JSON.stringify(state.cards);
-    const ok = await guarded(reloadCards);
-    if (ok !== null && JSON.stringify(state.cards) !== before) renderBoard();
-  }, KANBAN_REFRESH_MS);
+    await reloadCards();
+    cardsChanged = JSON.stringify(state.cards) !== before;
+  }
+  if ((cardsChanged || assetsChanged) && boardIdle()) renderBoard();
+  if (open) refreshOpenCard(assetsChanged);
+  if (assetsChanged && state.fs && state.fs.reload) state.fs.reload();
+}
+
+/**
+ * Recharge l'index des assets ; note les assets dont la version a changé (signe « ↻ nouvelle
+ * version » sur leurs cartes). Renvoie vrai si au moins un asset a changé.
+ */
+async function reloadIndex() {
+  const old = state.assetsById;
+  const index = await api('index');
+  state.index = index;
+  state.assetsById = new Map(index.assets.map((a) => [a.id, a]));
+  const now = Date.now();
+  let changed = false;
+  for (const [id, a] of state.assetsById) {
+    const o = old.get(id);
+    if (!o || o.version !== a.version) { state.fresh.set(id, now); changed = true; }
+  }
+  return changed;
+}
+
+function isFresh(assetId) {
+  const t = assetId ? state.fresh.get(assetId) : 0;
+  return !!t && Date.now() - t < FRESH_MS;
+}
+
+/** Détail ouvert : suit la carte (colonne, asset, commentaires…) sans écraser une saisie en cours. */
+function refreshOpenCard(assetsChanged) {
+  const cur = state.editing;
+  if (!cur) return;
+  const c = cardById(cur.id);
+  if (!c) { toast('Cette carte a été supprimée'); setDirty(false); $('card-dialog').close(); return; }
+  const same = JSON.stringify(c) === JSON.stringify(cur);
+  if (same && !(assetsChanged && isFresh(c.asset))) return;
+  state.editing = c;
+  $('card-dialog-title').textContent = `Carte #${c.id} · ${STATUS_LABEL[c.status]}`;
+  $('cf-mtitle').textContent = `#${c.id} · ${STATUS_LABEL[c.status]}`;
+  $('cf-qa').hidden = c.status !== 'qa';
+  $('cf-qa-bar').hidden = c.status !== 'qa';
+  $('cf-rework').hidden = !c.rework;
+  $('cf-night-children').hidden = !c.children;
+  const free = (id) => document.activeElement !== $(id) && !$(id).disabled;
+  if (free('cf-night')) $('cf-night').checked = !!c.night;
+  if (free('cf-type')) $('cf-type').value = c.type;
+  if (free('cf-priority')) $('cf-priority').value = c.priority;
+  if (free('cf-parent')) parentOptions($('cf-parent'), c.parent_id, familyIds(c.id));
+  const assetMoved = c.asset !== cur.asset || c.detail !== cur.detail;
+  if (!state.dirty) {
+    for (const [id, v] of [['cf-title', c.title], ['cf-desc', c.description], ['cf-asset', c.asset], ['cf-detail', c.detail]]) {
+      if (free(id)) $(id).value = v;
+    }
+    if (assetMoved) fillDetailOptions();
+  }
+  if (assetMoved || (assetsChanged && isFresh(c.asset))) {
+    renderCardAsset();
+    if (isFresh(c.asset)) flashFresh($('cf-asset-view'));
+  }
+  loadFeed(c.id);
+}
+
+/** Petit signe « ↻ nouvelle version » quelques secondes. */
+function flashFresh(node) {
+  if (!node) return;
+  const b = el('span', { class: 'fresh', text: '↻ nouvelle version' });
+  node.prepend(b);
+  setTimeout(() => b.remove(), FRESH_MS);
 }
 
 function renderHatFilter() {
@@ -1566,6 +1686,7 @@ function cardCompact(c) {
       typeBadge(c.type),
       c.priority ? el('span', { class: 'badge ' + c.priority, text: PRIO_LABEL[c.priority] }) : null,
       c.rework ? el('span', { class: 'rework', text: '↺ à retraiter' }) : null,
+      isFresh(c.asset) ? el('span', { class: 'fresh', text: '↻' }) : null,
       c.night ? el('span', { class: 'badge night', title: 'Night shift', text: '🌙' }) : null,
       c.children > 0 ? el('span', { class: 'muted', text: `▤ ${c.children_done}/${c.children}` }) : null,
       el('span', { class: 'muted', text: '#' + c.id }))),
@@ -1669,6 +1790,7 @@ function cardEl(c, col) {
     el('span', { class: 'spacer' }),
     el('span', { class: 'origin', title: 'Créée par ' + (AUTHOR_LABEL[c.origin] || c.origin), text: AUTHOR_LABEL[c.origin] || c.origin })),
   c.rework ? el('div', { class: 'rework', text: '↺ à retraiter' }) : null,
+  isFresh(c.asset) ? el('div', { class: 'fresh', text: '↻ nouvelle version' }) : null,
   parent ? el('a', {
     class: 'parent-link', href: '#/kanban', title: 'Ouvrir le chapeau',
     onclick: (ev) => { ev.preventDefault(); ev.stopPropagation(); openCardDialog(parent, ''); },
@@ -2003,7 +2125,7 @@ function renderCardAsset() {
     }, mode === 'image' ? 'Masques : non' : 'Masques : oui');
     view = el('div', { class: 'ca-decor' }, holder, decorBadges(a.decor), toggle);
   } else if (a.decor && a.kind === 'sol') {
-    view = el('div', { class: 'ca-sol' }, solTile(a));
+    view = el('div', { class: 'ca-sol' }, solTile(a), el('p', { class: 'muted', text: 'Tuile de sol : pas de masque (collision par case).' }));
   } else if (a.type === 'audio') {
     view = el('audio', { controls: true, preload: 'none', src: fileUrl(a.file) });
   } else if (a.preview) {
@@ -2016,12 +2138,14 @@ function renderCardAsset() {
       : [el('p', { class: 'muted', text: 'Aucun commentaire sur cet asset.' })]));
   };
   renderList();
-  box.replaceChildren(
+  // replaceChildren écrirait « null » : les blocs absents sont retirés.
+  box.replaceChildren(...[
     el('h3', {}, 'Asset : ', el('a', { href: '#/assets/' + encodeURIComponent(a.id), onclick: (ev) => { ev.preventDefault(); openAsset(); }, text: a.name })),
     view || el('p', { class: 'muted', text: a.id }),
     el('p', { class: 'meta', text: `${a.id} · version ${a.version}` }),
+    anim ? glisseNote(anim) : null,
     commentForm(a, () => (anim ? 'anim : ' + anim.name : ''), renderList),
-    list);
+    list].filter(Boolean));
 }
 
 // ------------------------------------------------------- night shift

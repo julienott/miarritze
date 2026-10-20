@@ -325,6 +325,30 @@ class Builder:
                 info["dec"] = [float(dec[0]), float(dec[1])]
             if float(meta.get("echelle", 1.0)) != 1.0:
                 info["echelle"] = float(meta["echelle"])
+            # Glissement du perso DANS la planche (tête : haut de la silhouette), brut et après le
+            # raccord du jeu : un perso qui « défile » vient de la planche, pas du lecteur.
+            # Tout le corps glisse si la tête (haut de la silhouette) ET les pieds (bas) se déplacent :
+            # on retient le plus petit des deux écarts (un geste de bras ou un pas n'y suffit pas).
+            hauts, bas = [], []
+            for fr in frames:
+                ys_, xs_ = np.nonzero(fr[..., 3] > 128)
+                if len(ys_) == 0:
+                    hauts.append(None)
+                    bas.append(None)
+                    continue
+                h_ = (ys_.max() - ys_.min()) * 0.2
+                hauts.append(float(xs_[ys_ <= ys_.min() + h_].mean()))
+                bas.append(float(xs_[ys_ >= ys_.max() - min(h_, 10)].mean()))
+            idx_ = [i for i, t in enumerate(hauts) if t is not None]
+            if idx_:
+                dx = float(dec[0]) if isinstance(dec, list) and len(dec) == 2 else 0.0
+                def ecart(vals, jeu_):
+                    v = [vals[i] + ((float(offs[i][0]) if i < len(offs) else 0.0) + dx if jeu_ else 0.0) for i in idx_]
+                    return max(v) - min(v)
+                brut = min(ecart(hauts, False), ecart(bas, False))
+                jeu = min(ecart(hauts, True), ecart(bas, True))
+                if max(brut, jeu) >= 8:
+                    info["glisse"] = [round(brut), round(jeu)]
             feet = meta.get("feet_anchor")
             if isinstance(feet, list) and len(feet) == 2:
                 info["feet"] = [int(feet[0]) - int(x0), int(feet[1]) - int(y0)]   # repère des pieds, recadré

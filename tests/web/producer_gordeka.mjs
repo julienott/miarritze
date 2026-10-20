@@ -343,6 +343,30 @@ for (const [label, browser, opts] of runs) {
     await page.waitForSelector('.fs canvas');
     await page.waitForTimeout(500);
     await verifie(`${pid}/${name}, plein écran`, frames);
+    // « Défile » : planche brute image par image (touche « . »), position de la tête et des pieds
+    // mesurée sur le canvas affiché ; le glissement vu doit être celui de la planche (index « glisse »).
+    const jeuOn = await page.evaluate(() => state.fs.jeu);
+    if (jeuOn) await page.click('.fs-bar button:has-text("Comme en jeu")');
+    const pos = [];
+    for (let f = 0; f < frames; f++) {
+      await page.keyboard.press('.');
+      pos.push(await page.evaluate(() => {
+        const c = document.querySelector('.fs-canvas');
+        const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+        let y0 = c.height, y1 = -1;
+        for (let i = 3; i < d.length; i += 4) if (d[i] > 128) { const y = Math.floor((i >> 2) / c.width); if (y < y0) y0 = y; if (y > y1) y1 = y; }
+        const band = (lo, hi) => { let s = 0, n = 0; for (let y = lo; y <= hi; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3] > 128) { s += x; n++; } return n ? s / n : null; };
+        const h = (y1 - y0) * 0.2;
+        return [band(y0, Math.floor(y0 + h)), band(Math.ceil(y1 - Math.min(h, 10)), y1)];
+      }));
+    }
+    const ec = (k) => { const v = pos.map((p) => p[k]).filter((x) => x !== null); return Math.max(...v) - Math.min(...v); };
+    const vu = Math.min(ec(0), ec(1));
+    const attendu = await page.evaluate(([p, n]) => (gkAnims(p).find((x) => x.name === n).glisse || [0])[0], [pid, name]);
+    check(`${pid}/${name} : glissement vu = celui de la planche (${Math.round(vu)} px, index ${attendu})`,
+      attendu ? Math.abs(vu - attendu) <= 2 : vu < 8, pos.slice(0, 4).map((p) => p.map((x) => Math.round(x)).join('/')).join(' '));
+    if (attendu >= 8) check(`${pid}/${name} : le lecteur l'annonce (⚠ glisse)`, (await page.textContent('.fs-info')).includes('glisse'));
+    if (jeuOn) await page.click('.fs-bar button:has-text("Comme en jeu")');
     await page.click('.fs-close');
     await page.mouse.move(2, 2);
   }
