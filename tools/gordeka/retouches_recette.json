@@ -3,10 +3,9 @@
  "decor/sol_rocher_phare/0": "Uniform natural grey-beige rock surface with soft irregular cracks spread evenly, no repeated motif, no circles, no turquoise puddles, calm and low contrast so characters stay readable on it.",
  "decor/toit_tuiles/0": "Seen from above: rows of overlapping rounded red-orange Basque clay roof tiles (canal tiles), staggered rows, uniform, low contrast, no red dots, no square grid.",
  "perso/xabi/hide_out": {
-  "action": "The jai alai cesta is a rigid wicker basket: it keeps exactly the same long curved shape and size in every frame, hanging down from his right hand along his leg, its tip pointing to the ground behind him; it never curls, flattens or folds.",
-  "hold": {
-   "right_arm": "down"
-  }
+  "action": "Springs up out of the hiding spot with a big joyful hop, arms open, lands, then stands up straight; the jai alai cesta stays strapped on his right hand, rigid, same shape.",
+  "exaggerate": 1.4,
+  "priority": "normal"
  },
  "decor/banc_chapelle/0": "Seen from the front, the front face of the bench is visible: a warm brown varnished wooden church pew with a carved backrest, not seen from straight above.",
  "perso/xabi/trapped": {
@@ -42,7 +41,9 @@
  "perso/kaio/search": {
   "action": "Clear rummaging: he bends his whole body far forward and pokes his beak down again and again into a hiding spot in front of him, both grey wings flapping and scraping fast at his sides, tail up."
  },
- "perso/maia/hunter_reveal": "In her outstretched hand she holds a small yellow flashlight, clearly drawn, that switches on with a bright yellow beam of light pointing forward.",
+ "perso/maia/hunter_reveal": {
+  "priority": "normal"
+ },
  "perso/ramuntxo/walk": "His small brown mustache and the small Basque flag on his hat band stay clearly drawn in every frame.",
  "perso/louis/run_scared": {
   "action": "His eyes stay wide open and visible in every frame, his hands never cover his face.",
@@ -86,6 +87,7 @@
   "variant": 0
  },
  "perso/amaia/walk": {
+  "action": "The wooden makila stays slung diagonally across her BACK, on the far side of her body (behind her, on the left side of the image), never in front of her body.",
   "priority": "normal"
  },
  "perso/patxi/ghost": {
@@ -121,6 +123,23 @@
  "perso/maia/ghost_move": {
   "character_task": "b80431ee22f34ecfb36c5f8d57194e12",
   "variant": 0,
+  "priority": "normal"
+ },
+ "perso/xabi/victory": {
+  "action": "Clear victory celebration: jumps high several times, raising his cesta high above his head with the right arm and pumping his left fist, big triumphant cheer; the cesta keeps its rigid shape.",
+  "exaggerate": 1.4,
+  "bounce": 0.1,
+  "priority": "normal"
+ },
+ "perso/xabi/hunter_reveal": {
+  "action": "The jai alai cesta stays strapped on his right hand, hanging down along his leg; with his LEFT hand he takes a small flashlight and holds it stretched forward, steady.",
+  "hold": {
+   "right_arm": "down"
+  },
+  "priority": "normal"
+ },
+ "perso/amaia/hunter_reveal": {
+  "action": "She takes a small flashlight and holds it perfectly still with her arm stretched forward; her hand does not move at all once the light is on. No beam is drawn, only the small lamp in her hand.",
   "priority": "normal"
  }
 }
