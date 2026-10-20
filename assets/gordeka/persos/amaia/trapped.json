@@ -1,0 +1,24 @@
+{
+ "motion": "trapped",
+ "quaternius": "Push_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "annoyed frustrated pout, cheeks puffed",
+ "tenue": "skirt",
+ "drive": {
+  "exaggerate": 1.4
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The wooden makila stick slung diagonally on the back: stays rigid on her back at the same diagonal angle, moving only with the torso, never in her hands. The red headscarf with knotted tails at the back of the head: stays tied on the head, the two knot tails flutter behind with the motion. The red skirt: flares and swirls with each step like a dancer."
+}
