@@ -976,7 +976,23 @@
     1
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/table_terrasse.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "62c9f54a53e046169b7984d612cce8c7",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/table_terrasse_ombre.png",
+   "ombre_decalage": [
+    13,
+    73
+   ]
   },
   "treteaux_cale": {
    "nom": "Tréteaux et planches de la cale",
