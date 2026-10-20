@@ -602,14 +602,14 @@
     {
      "job": 0,
      "variante": "image_00",
-     "task": "61e084bafeff455cafba367463a1584b",
-     "date": "2026-10-19"
+     "task": "e183f1081ec148ffbfc47d15b0886a89",
+     "date": "2026-10-20"
     }
    ],
    "ombre": "objets/caisses_poisson_ombre.png",
    "ombre_decalage": [
-    32,
-    180
+    30,
+    158
    ]
   },
   "barque_mouillage": {
