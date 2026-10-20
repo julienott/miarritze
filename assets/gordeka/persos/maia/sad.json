@@ -20,5 +20,39 @@
  "drive": {
   "exaggerate": 1.2
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Disappointed: shoulders drop, head hangs low, a slow big sigh (shoulders lift then sink), kicks a pebble lightly with one foot. The small yellow surfboard strapped upright on the back: stays strapped flat against her back, upright, moving only with the torso, never in front of her body, never in her hands. The brown ponytail: swings behind the head with the motion, with a little delay."
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Disappointed: shoulders drop, head hangs low, a slow big sigh (shoulders lift then sink), kicks a pebble lightly with one foot. The small yellow surfboard strapped upright on the back: stays strapped flat against her back, upright, moving only with the torso, never in front of her body, never in her hands. The brown ponytail: swings behind the head with the motion, with a little delay.",
+ "frame_offsets": [
+  [3.0, 0.0],
+  [2.0, 0.0],
+  [3.5, 0.0],
+  [5.0, 0.0],
+  [7.0, 0.0],
+  [9.5, 0.0],
+  [12.5, 0.0],
+  [15.0, 0.0],
+  [16.0, 0.0],
+  [17.5, 0.0],
+  [19.0, 0.0],
+  [20.5, 0.0],
+  [21.0, 0.0],
+  [21.0, 0.0],
+  [21.0, 0.0],
+  [20.0, 0.0],
+  [20.0, 0.0],
+  [19.5, 0.0],
+  [19.0, 0.0],
+  [18.0, 0.0],
+  [17.0, 0.0],
+  [16.0, 0.0],
+  [15.0, 0.0],
+  [14.0, 0.0],
+  [13.0, 0.0],
+  [11.0, 0.0],
+  [9.5, 0.0],
+  [8.0, 0.0],
+  [8.0, 0.0],
+  [7.5, 0.0],
+  [7.0, 0.0],
+  [5.0, 0.0]
+ ]
 }

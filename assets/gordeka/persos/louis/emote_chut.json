@@ -20,5 +20,40 @@
  "drive": {
   "clip": "shush"
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Shushes: puts one finger in front of the lips, leans forward slightly, looks left and right. The red beret: stays firmly on the head, tilted the same way in every frame."
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Shushes: puts one finger in front of the lips, leans forward slightly, looks left and right. The red beret: stays firmly on the head, tilted the same way in every frame.",
+ "frame_offsets": [
+  [-1.5, 0.0],
+  [-1.0, 0.0],
+  [0.5, 0.0],
+  [2.5, 0.0],
+  [4.5, 0.0],
+  [8.0, 0.0],
+  [12.5, 0.0],
+  [16.0, 0.0],
+  [17.5, 0.0],
+  [18.0, 0.0],
+  [19.0, 0.0],
+  [19.5, 0.0],
+  [20.0, 0.0],
+  [20.0, 0.0],
+  [20.0, 0.0],
+  [19.5, 0.0],
+  [19.5, 0.0],
+  [19.0, 0.0],
+  [18.5, 0.0],
+  [18.0, 0.0],
+  [17.5, 0.0],
+  [17.0, 0.0],
+  [16.5, 0.0],
+  [16.0, 0.0],
+  [16.5, 0.0],
+  [17.0, 0.0],
+  [18.0, 0.0],
+  [18.5, 0.0],
+  [19.0, 0.0],
+  [18.0, 0.0],
+  [16.5, 0.0],
+  [15.5, 0.0],
+  [15.0, 0.0]
+ ]
 }

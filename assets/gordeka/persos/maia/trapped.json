@@ -20,5 +20,39 @@
  "drive": {
   "exaggerate": 1.4
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The small yellow surfboard strapped upright on the back: stays strapped flat against her back, upright, moving only with the torso, never in front of her body, never in her hands. The brown ponytail: swings behind the head with the motion, with a little delay."
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The small yellow surfboard strapped upright on the back: stays strapped flat against her back, upright, moving only with the torso, never in front of her body, never in her hands. The brown ponytail: swings behind the head with the motion, with a little delay.",
+ "frame_offsets": [
+  [41.5, 0.0],
+  [42.5, 0.0],
+  [43.0, 0.0],
+  [43.5, 0.0],
+  [44.0, 0.0],
+  [44.5, 0.0],
+  [45.5, 0.0],
+  [46.0, 0.0],
+  [47.0, 0.0],
+  [47.5, 0.0],
+  [49.0, 0.0],
+  [49.5, 0.0],
+  [50.0, 0.0],
+  [50.0, 0.0],
+  [49.0, 0.0],
+  [47.5, 0.0],
+  [43.5, 0.0],
+  [38.0, 0.0],
+  [32.5, 0.0],
+  [29.0, 0.0],
+  [29.0, 0.0],
+  [30.0, 0.0],
+  [31.5, 0.0],
+  [32.0, 0.0],
+  [32.0, 0.0],
+  [32.0, 0.0],
+  [38.5, 0.0],
+  [44.0, 0.0],
+  [52.0, 0.0],
+  [54.0, 0.0],
+  [51.0, 0.0],
+  [46.5, 0.0]
+ ]
 }

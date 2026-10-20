@@ -20,5 +20,39 @@
  "drive": {
   "exaggerate": 1.2
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Disappointed: shoulders drop, head hangs low, a slow big sigh (shoulders lift then sink), kicks a pebble lightly with one foot. The fishing rod strapped diagonally on the back: stays rigid and fixed on the back at the same diagonal angle, moving only with the torso, never in his hands, the thin tip bends slightly with the motion. The blue beanie: stays on the head."
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Disappointed: shoulders drop, head hangs low, a slow big sigh (shoulders lift then sink), kicks a pebble lightly with one foot. The fishing rod strapped diagonally on the back: stays rigid and fixed on the back at the same diagonal angle, moving only with the torso, never in his hands, the thin tip bends slightly with the motion. The blue beanie: stays on the head.",
+ "frame_offsets": [
+  [-0.5, 0.0],
+  [-0.5, 0.0],
+  [0.0, 0.0],
+  [0.5, 0.0],
+  [1.5, 0.0],
+  [3.0, 0.0],
+  [4.5, 0.0],
+  [6.0, 0.0],
+  [6.5, 0.0],
+  [7.0, 0.0],
+  [7.5, 0.0],
+  [8.5, 0.0],
+  [9.0, 0.0],
+  [9.0, 0.0],
+  [8.0, 0.0],
+  [7.5, 0.0],
+  [6.5, 0.0],
+  [5.5, 0.0],
+  [4.5, 0.0],
+  [3.5, 0.0],
+  [2.5, 0.0],
+  [2.0, 0.0],
+  [1.5, 0.0],
+  [1.0, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [1.0, 0.0],
+  [1.0, 0.0],
+  [1.0, 0.0],
+  [0.5, 0.0],
+  [0.0, 0.0]
+ ]
 }

@@ -20,5 +20,39 @@
  "drive": {
   "exaggerate": 1.4
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The blue swim fins hanging from the belt at the hip: stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame. The swim fins stay hanging at his belt on his hip during the whole animation; his two hands are empty, flat palms pressing on the invisible wall, he never holds a fin in his hands."
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The blue swim fins hanging from the belt at the hip: stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame. The swim fins stay hanging at his belt on his hip during the whole animation; his two hands are empty, flat palms pressing on the invisible wall, he never holds a fin in his hands.",
+ "frame_offsets": [
+  [36.5, 0.0],
+  [37.5, 0.0],
+  [38.5, 0.0],
+  [39.5, 0.0],
+  [40.5, 0.0],
+  [40.5, 0.0],
+  [42.0, 0.0],
+  [42.5, 0.0],
+  [43.5, 0.0],
+  [44.0, 0.0],
+  [45.0, 0.0],
+  [46.0, 0.0],
+  [47.0, 0.0],
+  [47.0, 0.0],
+  [48.0, 0.0],
+  [47.5, 0.0],
+  [45.5, 0.0],
+  [45.0, 0.0],
+  [38.0, 0.0],
+  [33.0, 0.0],
+  [25.5, 0.0],
+  [25.0, 0.0],
+  [25.5, 0.0],
+  [26.0, 0.0],
+  [27.0, 0.0],
+  [28.0, 0.0],
+  [35.0, 0.0],
+  [41.5, 0.0],
+  [48.0, 0.0],
+  [48.0, 0.0],
+  [43.5, 0.0],
+  [40.5, 0.0]
+ ]
 }

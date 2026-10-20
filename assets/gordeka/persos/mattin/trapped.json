@@ -20,5 +20,39 @@
  "drive": {
   "exaggerate": 1.4
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The red beret: stays firmly on the head."
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The red beret: stays firmly on the head.",
+ "frame_offsets": [
+  [38.5, 0.0],
+  [34.5, 0.0],
+  [35.5, 0.0],
+  [37.0, 0.0],
+  [38.0, 0.0],
+  [39.0, 0.0],
+  [41.0, 0.0],
+  [42.0, 0.0],
+  [43.5, 0.0],
+  [44.0, 0.0],
+  [46.0, 0.0],
+  [47.5, 0.0],
+  [48.5, 0.0],
+  [48.5, 0.0],
+  [50.0, 0.0],
+  [51.5, 0.0],
+  [49.5, 0.0],
+  [43.0, 0.0],
+  [36.0, 0.0],
+  [32.5, 0.0],
+  [33.0, 0.0],
+  [34.0, 0.0],
+  [36.0, 0.0],
+  [37.5, 0.0],
+  [39.0, 0.0],
+  [40.0, 0.0],
+  [41.0, 0.0],
+  [42.5, 0.0],
+  [43.5, 0.0],
+  [45.5, 0.0],
+  [46.5, 0.0],
+  [43.0, 0.0]
+ ]
 }

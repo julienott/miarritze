@@ -23,5 +23,39 @@
    "right_arm": "down"
   }
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The long curved wicker chistera worn on the right hand: stays attached to his right hand as an extension of the arm, keeps its long curved banana shape and its length in every frame, follows the right arm swing like a long glove, never detaches, never changes into a racket or a ball. The red sash belt ends: the loose ends flutter behind at the hip. Only his free left hand presses flat on the invisible wall in front of him; his right arm hangs down along his body holding the jai alai cesta, a rigid wicker basket that keeps exactly the same long curved shape and size in every frame, tip pointing to the ground behind him; it never curls, flaps or folds, and nothing is held in front of his chest."
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The long curved wicker chistera worn on the right hand: stays attached to his right hand as an extension of the arm, keeps its long curved banana shape and its length in every frame, follows the right arm swing like a long glove, never detaches, never changes into a racket or a ball. The red sash belt ends: the loose ends flutter behind at the hip. Only his free left hand presses flat on the invisible wall in front of him; his right arm hangs down along his body holding the jai alai cesta, a rigid wicker basket that keeps exactly the same long curved shape and size in every frame, tip pointing to the ground behind him; it never curls, flaps or folds, and nothing is held in front of his chest.",
+ "frame_offsets": [
+  [20.0, 0.0],
+  [19.5, 0.0],
+  [19.5, 0.0],
+  [19.5, 0.0],
+  [19.5, 0.0],
+  [20.0, 0.0],
+  [20.5, 0.0],
+  [21.0, 0.0],
+  [21.0, 0.0],
+  [22.0, 0.0],
+  [22.0, 0.0],
+  [23.0, 0.0],
+  [23.5, 0.0],
+  [23.5, 0.0],
+  [24.0, 0.0],
+  [25.5, 0.0],
+  [27.0, 0.0],
+  [23.5, 0.0],
+  [18.5, 0.0],
+  [13.0, 0.0],
+  [12.0, 0.0],
+  [11.0, 0.0],
+  [10.5, 0.0],
+  [10.0, 0.0],
+  [9.5, 0.0],
+  [9.5, 0.0],
+  [9.5, 0.0],
+  [12.5, 0.0],
+  [16.5, 0.0],
+  [20.5, 0.0],
+  [21.0, 0.0],
+  [20.5, 0.0]
+ ]
 }

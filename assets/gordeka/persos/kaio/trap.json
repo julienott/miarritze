@@ -20,5 +20,40 @@
  "drive": {
   "exaggerate": 1.2
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Sets a trap: looks left and right sneakily, crouches down, places a small object on the ground in front of him, pats it, stands back up rubbing his wings with glee. The light grey wings used as arms: behave like arms with feathered fingertips, swinging with the walk; they are not flying wings. The small grey tail: wags with the waddle. The small neckerchief scarf: stays tied in place, the two short tips flutter with the motion."
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Sets a trap: looks left and right sneakily, crouches down, places a small object on the ground in front of him, pats it, stands back up rubbing his wings with glee. The light grey wings used as arms: behave like arms with feathered fingertips, swinging with the walk; they are not flying wings. The small grey tail: wags with the waddle. The small neckerchief scarf: stays tied in place, the two short tips flutter with the motion.",
+ "frame_offsets": [
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [4.0, 0.0],
+  [7.0, 0.0],
+  [10.5, 0.0],
+  [10.5, 0.0],
+  [11.0, 0.0],
+  [11.0, 0.0],
+  [11.5, 0.0],
+  [14.0, 0.0],
+  [18.0, 0.0],
+  [22.0, 0.0],
+  [23.5, 0.0],
+  [24.0, 0.0],
+  [24.5, 0.0],
+  [24.5, 0.0],
+  [25.0, 0.0],
+  [25.0, 0.0],
+  [25.5, 0.0],
+  [26.0, 0.0],
+  [26.0, 0.0],
+  [26.5, 0.0],
+  [25.0, 0.0],
+  [23.5, 0.0],
+  [22.0, 0.0],
+  [20.0, 0.0],
+  [18.5, 0.0],
+  [15.0, 0.0],
+  [11.0, 0.0],
+  [6.5, 0.0],
+  [4.0, 0.0],
+  [4.0, 0.0],
+  [4.0, 0.0]
+ ]
 }

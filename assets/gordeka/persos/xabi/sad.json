@@ -23,5 +23,39 @@
    "right_arm": "forward"
   }
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Disappointed: shoulders drop, head hangs low, a slow big sigh (shoulders lift then sink), kicks a pebble lightly with one foot. The long curved wicker chistera worn on the right hand: stays attached to his right hand as an extension of the arm, keeps its long curved banana shape and its length in every frame, follows the right arm swing like a long glove, never detaches, never changes into a racket or a ball. The red sash belt ends: the loose ends flutter behind at the hip."
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Disappointed: shoulders drop, head hangs low, a slow big sigh (shoulders lift then sink), kicks a pebble lightly with one foot. The long curved wicker chistera worn on the right hand: stays attached to his right hand as an extension of the arm, keeps its long curved banana shape and its length in every frame, follows the right arm swing like a long glove, never detaches, never changes into a racket or a ball. The red sash belt ends: the loose ends flutter behind at the hip.",
+ "frame_offsets": [
+  [1.0, 0.0],
+  [1.0, 0.0],
+  [2.0, 0.0],
+  [3.0, 0.0],
+  [4.0, 0.0],
+  [5.0, 0.0],
+  [6.0, 0.0],
+  [6.5, 0.0],
+  [6.5, 0.0],
+  [6.5, 0.0],
+  [6.5, 0.0],
+  [5.5, 0.0],
+  [4.5, 0.0],
+  [3.5, 0.0],
+  [2.5, 0.0],
+  [2.0, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [2.0, 0.0],
+  [3.0, 0.0],
+  [4.0, 0.0],
+  [4.5, 0.0],
+  [4.5, 0.0],
+  [4.5, 0.0],
+  [4.0, 0.0],
+  [3.5, 0.0],
+  [2.5, 0.0],
+  [1.5, 0.0],
+  [1.0, 0.0]
+ ]
 }

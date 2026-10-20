@@ -20,5 +20,40 @@
  "drive": {
   "exaggerate": 1.2
  },
- "action": "Side view facing right, the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Sets a trap: looks left and right sneakily, crouches down, places a small object on the ground in front of him, pats it, stands back up rubbing his hands with glee. The red beret: stays firmly on the head, tilted the same way in every frame."
+ "action": "Side view facing right, the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Sets a trap: looks left and right sneakily, crouches down, places a small object on the ground in front of him, pats it, stands back up rubbing his hands with glee. The red beret: stays firmly on the head, tilted the same way in every frame.",
+ "frame_offsets": [
+  [5.0, 0.0],
+  [4.5, 0.0],
+  [4.0, 0.0],
+  [4.0, 0.0],
+  [3.5, 0.0],
+  [10.0, 5.0],
+  [22.5, 6.0],
+  [35.5, 3.0],
+  [41.0, 0.0],
+  [42.0, 0.0],
+  [43.0, 0.0],
+  [43.5, 0.0],
+  [43.0, 0.0],
+  [42.0, 0.0],
+  [41.0, 0.0],
+  [40.5, 0.0],
+  [40.0, 0.0],
+  [39.5, 0.0],
+  [39.0, 0.0],
+  [38.0, 0.0],
+  [37.5, 0.0],
+  [37.0, 0.0],
+  [34.5, 0.0],
+  [32.0, 0.0],
+  [30.0, 0.0],
+  [29.5, 5.0],
+  [29.0, 4.0],
+  [23.5, 3.0],
+  [17.5, 3.0],
+  [7.5, 3.0],
+  [2.5, 3.0],
+  [-2.5, 3.0],
+  [-3.5, 3.0]
+ ]
 }
