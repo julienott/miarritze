@@ -1,0 +1,24 @@
+{
+ "motion": "trap",
+ "quaternius": "Farm_PlantSeed",
+ "lib": "ual2",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "sneaky mischievous grin",
+ "tenue": "wetsuit",
+ "drive": {
+  "exaggerate": 1.2
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Sets a trap: looks left and right sneakily, crouches down, places a small object on the ground in front of him, pats it, stands back up rubbing his hands with glee. The small yellow surfboard strapped upright on the back: stays on her back while she crouches. The brown ponytail: swings behind the head with the motion, with a little delay."
+}
