@@ -607,3 +607,8 @@ body.fs-open { overflow: hidden; }
 .card-asset .ca-anim > button.primary { align-self: flex-start; }
 .card-asset .ca-decor .dbox { height: min(320px, 45vh); }
 .card-asset .ca-img img { width: 100%; max-height: min(320px, 45vh); object-fit: contain; }
+
+/* Night shift. */
+.badge.night { background: #2b2d5c; color: #ffd75e; }
+.night-toggle { margin: 4px 0 2px; font-size: 14px; color: var(--text); }
+.quick-add .qa-night { flex: none; margin: 0; font-size: 16px; }

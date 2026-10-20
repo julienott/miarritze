@@ -50,6 +50,7 @@
       <button type="button" id="new-card" class="primary">+ Nouvelle carte</button>
       <label class="inline">Chapeau <select id="kb-hat" aria-label="Filtrer par chapeau"></select></label>
       <label class="inline"><input type="checkbox" id="kb-hats-only"> Chapeaux seulement</label>
+      <label class="inline"><input type="checkbox" id="kb-night-only"> 🌙 Night shift seulement</label>
     </div>
     <nav id="kb-tabs" class="kb-tabs" aria-label="Colonnes du kanban" hidden></nav>
     <div id="board" class="board"></div>
@@ -92,6 +93,8 @@
         </select>
       </label>
     </div>
+    <label class="inline night-toggle" title="La carte part en file la nuit (1 h – 8 h, heure de Paris) au lieu de tout de suite">
+      <input type="checkbox" id="cf-night"> 🌙 Night shift : à traiter la nuit (1 h – 8 h)</label>
     <label>Titre <input id="cf-title" maxlength="200" required></label>
     <label>Description <textarea id="cf-desc" rows="4" maxlength="8000"></textarea></label>
     <label>Chapeau (carte parent, optionnel) <select id="cf-parent"></select></label>
@@ -114,6 +117,7 @@
       <h3 id="cf-children-title">Enfants</h3>
       <ul id="cf-children" class="kids"></ul>
       <button type="button" id="cf-add-child" class="small">+ Carte enfant</button>
+      <button type="button" id="cf-night-children" class="small" title="Donne à tous les enfants le night shift coché ci-dessus">🌙 Appliquer le night shift aux enfants</button>
       <h3>Historique et commentaires</h3>
       <div id="cf-feed" class="feed"></div>
       <label>Commenter <textarea id="cf-note" rows="2" maxlength="8000" placeholder="Une remarque, une précision pour itérer…"></textarea></label>

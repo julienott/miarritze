@@ -41,6 +41,7 @@ Service privé : https://miarritze.ijulien.com/producer/
   - **Asset lié** : sur ordinateur, la tuile montre l'asset en haut, sur toute sa largeur (proportions gardées, hauteur bornée, fond clair ou damier pour le décor) ; sur iPhone, une petite miniature. Pour une animation, elle joue au survol de la tuile (premier toucher sur la miniature en tactile, le toucher suivant ouvre la carte), une seule à la fois, arrêtée et libérée quand la souris sort ; pour un objet du décor qui a des masques, les masques se superposent au survol (toucher la miniature les bascule) : la QA se fait sans ouvrir la carte. Dans le détail de la carte, l'asset est affiché en haut, en pleine largeur (animation qui joue au survol, cliquer ouvre le plein écran ; objet du décor avec ou sans masques ; image), avec le formulaire « Amélioration / Validé » de l'asset et ses commentaires : on commente l'asset sans quitter la carte. Pour une carte d'animation, le champ **Détail** donne le nom de l'animation (`walk`) : c'est elle qui s'affiche.
   - **QA** : une carte en QA porte deux gros boutons. **✓ Accepter** la passe en Done (sur un chapeau, ses enfants encore en QA sont acceptés aussi, après confirmation). **✗ Refuser** demande un commentaire obligatoire : la carte repart en Doing avec le badge **↺ à retraiter**, qui disparaît quand Claude la remet en QA.
   - **Sur iPhone** (portrait, ou paysage) : une colonne à la fois, avec des onglets collés en haut (Backlog · Todo · Doing · QA · Done, avec leurs compteurs). On change de colonne en touchant un onglet ou en balayant l'écran à gauche ou à droite. L'onglet choisi est retenu ; à défaut, QA s'ouvre s'il y a des cartes à tester, sinon Todo. Les tuiles sont compactes (titre, badges, miniature) : une dizaine par écran en portrait. En QA, ✓ et ✗ sont sur la tuile ; ailleurs, le menu ⇄ déplace la carte vers une autre colonne. ☰ déplie les filtres et « + Nouvelle carte ». Le détail s'ouvre en plein écran, avec l'asset en haut et Accepter / Refuser collés en bas ; « ← Retour » ou un balayage vers la droite le ferme. La vue ordinateur ne change pas.
+  - **🌙 Night shift** : coche « Night shift » dans le détail d'une carte (ou 🌙 à la création rapide) quand elle doit être traitée la nuit. Une carte en **Todo** avec night shift part en file la nuit (1 h – 8 h, heure de Paris), par Claude ou dans la file priorisée de pixelforge, au lieu de tout de suite. La tuile porte un badge 🌙 ; le filtre « 🌙 Night shift seulement » est dans la barre des filtres (☰ sur iPhone). Sur un chapeau, « 🌙 Appliquer le night shift aux enfants » donne à tous ses enfants l'état coché. Les cartes créées avant cette option sont sans night shift.
   - Le board se met à jour tout seul toutes les 30 secondes.
   - Sur un asset, « + Carte liée » crée une carte dans le Backlog avec l'asset préréglé.
 - Le bouton ◐ bascule entre le thème clair et le thème sombre.
@@ -58,21 +59,21 @@ tools/producer/cli.py reply 12 "Bras raccourcis de 2 px (commit abc1234)" --done
 tools/producer/cli.py close 12 [--reopen]
 
 tools/producer/cli.py events --since 5m          # TOUT ce qui a bougé sur le board (epoch, 15m, 2h, 1d, "2026-10-20 14:00") [--card N] [--json]
-tools/producer/cli.py cards [--status backlog|todo|doing|qa|done] [--parent N] [--full] [--json]
+tools/producer/cli.py cards [--status backlog|todo|doing|qa|done] [--parent N] [--night] [--full] [--json]   # [NIGHT] = night shift
 tools/producer/cli.py show 4 [--json]            # détail, enfants, historique et commentaires
 tools/producer/cli.py add-card --title "…" [--type feature|bug|perso|animation|asset|gameplay|pixelforge] \
     [--parent N] [--status backlog] [--desc …] [--priority haute] [--asset gordeka/persos/amaia/animations] [--detail walk]
 tools/producer/cli.py move 4 doing               # colonnes : backlog todo doing qa done
 tools/producer/cli.py comment 4 "Commencé : palette refaite"
 tools/producer/cli.py qa 4 "pieds recalés sur feet_anchor"   # carte refusée et retraitée -> QA, commentaire « retraité : … »
-tools/producer/cli.py set 4 [--priority haute|normale|basse|aucune] [--parent N|0] [--title …] [--desc …] [--type …] [--asset …] [--detail walk]
+tools/producer/cli.py set 4 [--priority haute|normale|basse|aucune] [--parent N|0] [--title …] [--desc …] [--type …] [--asset …] [--detail walk] [--night on|off]
 ```
 
 Les alias de l'ancien CLI marchent encore : `afaire` → todo, `encours` → doing, `averifier` et `review` → qa, `fait` → done ; `note` = `comment`. Toute action faite avec le jeton est signée **claude** (origine des cartes, historique, commentaires) ; celles de la session web sont signées **julien**.
 
 Routine conseillée (boucle toutes les 5 minutes) :
 
-1. `events --since <now du tour précédent>` : `events` écrit sur stderr la valeur `now` du serveur à repasser au tour suivant (`--json` la donne dans `now`). Regarder surtout les cartes que Julien a mises en **Todo**, ses **commentaires**, et les événements `refuse` (texte du refus dans `new` ; la carte est repartie en Doing « à retraiter » : la retraiter puis `qa N "ce qui a été corrigé"`) et `accepte` (carte passée en Done par Julien).
+1. `events --since <now du tour précédent>` : `events` écrit sur stderr la valeur `now` du serveur à repasser au tour suivant (`--json` la donne dans `now`). Regarder surtout les cartes que Julien a mises en **Todo** (sauf celles marquées `[NIGHT]` : elles attendent la nuit, 1 h – 8 h heure de Paris, de même que la file pixelforge correspondante), les événements `night` (affichés NIGHT ON / NIGHT OFF), ses **commentaires**, et les événements `refuse` (texte du refus dans `new` ; la carte est repartie en Doing « à retraiter » : la retraiter puis `qa N "ce qui a été corrigé"`) et `accepte` (carte passée en Done par Julien).
 2. Lire `comments --open` (retours sur les assets).
 3. Passer une carte en `doing` quand le travail commence ou part en file (pixelforge compris), avec un `comment` si utile.
 4. Quand c'est en ligne, la passer en `qa` avec un commentaire qui dit quoi tester : c'est à Julien de la mettre en Done.
@@ -92,11 +93,11 @@ Toutes les routes passent par `index.php?r=<route>` et répondent en JSON. Authe
 | POST | `comment` `{asset, kind: amelioration\|valide, body, context}` | ajoute un commentaire |
 | POST | `comment_update` `{id, status?, reply?}` | modifie un commentaire |
 | POST | `comment_delete` `{id}` | supprime un commentaire |
-| GET | `cards` (`&status=`, `&parent=`) | cartes, avec `notes` (commentaires), `children`, `children_done` (QA + Done, descendants compris) |
+| GET | `cards` (`&status=`, `&parent=`, `&night=1`) | cartes, avec `notes` (commentaires), `children`, `children_done` (QA + Done, descendants compris) |
 | GET | `card&id=N` | `{card, children, events}` : détail et historique (commentaires compris) |
 | GET | `events&since=<epoch>` (`&card=`) | événements du board depuis `since` inclus (1000 au plus), avec `card_title`, `card_status`, et `now` |
-| POST | `card` `{title, type?, description?, priority?, asset?, detail?, status? (défaut backlog), parent?}` | crée une carte |
-| POST | `card_update` `{id, type?, title?, description?, priority?, asset?, detail?, parent? (0 = aucun)}` | modifie une carte (seuls les vrais changements sont historisés) |
+| POST | `card` `{title, type?, description?, priority?, asset?, detail?, night?, status? (défaut backlog), parent?}` | crée une carte |
+| POST | `card_update` `{id, type?, title?, description?, priority?, asset?, detail?, night?, parent? (0 = aucun)}` | modifie une carte (seuls les vrais changements sont historisés) |
 | POST | `card_move` `{id, status, index?}` | déplace une carte (`review` accepté pour `qa`) |
 | POST | `card_comment` `{id, body}` | commente une carte (alias : `card_note`) |
 | POST | `card_delete` `{id}` | supprime une carte (ses enfants sont détachés) |
@@ -113,7 +114,8 @@ Toutes les routes passent par `index.php?r=<route>` et répondent en JSON. Authe
 - Les données vivent dans `producer/data/` sur le serveur (`producer.sqlite` et les sessions). Ce dossier n'est jamais dans le build, il est exclu du rsync et de git.
 - Schéma versionné par `PRAGMA user_version` (2 actuellement). Une base de version 1 est migrée automatiquement à la première requête, dans une transaction (`BEGIN IMMEDIATE`) : colonnes `todo`, `doing`, `done` gardées, `review` → `qa` ; notes conservées (auteur `agent` → `claude`) ; nouvelles colonnes `parent_id` et `origin` (`julien` pour les cartes migrées, faute de mieux) ; historique `card_events` amorcé avec la création de chaque carte et ses commentaires existants ; les ids de cartes ne sont pas réutilisés.
 - Version 3 : colonnes `cards.detail` (nom d'animation de l'asset), `cards.rework` (refusée, à retraiter, effacé quand la carte revient en QA) et `card_notes.kind` (`refus`), ajoutées automatiquement à une base v2.
-- Historique : `card_events (card_id, at, author julien|claude, type, old, new)` avec les types `creation`, `deplacement`, `titre`, `description`, `priorite`, `type`, `asset`, `detail`, `parent`, `commentaire`, `accepte`, `refuse`, `suppression`. Pas de clé étrangère, pour que la suppression d'une carte reste dans le fil.
+- Version 4 : colonne `cards.night` (night shift, booléen), à faux pour les cartes existantes ; son changement donne un événement `night` (`old`/`new` = `off`/`on`).
+- Historique : `card_events (card_id, at, author julien|claude, type, old, new)` avec les types `creation`, `deplacement`, `titre`, `description`, `priorite`, `type`, `asset`, `detail`, `parent`, `night`, `commentaire`, `accepte`, `refuse`, `suppression`. Pas de clé étrangère, pour que la suppression d'une carte reste dans le fil.
 - Sécurité :
   - session PHP avec cookie HttpOnly, Secure et SameSite=Strict ;
   - jeton CSRF (en-tête `X-CSRF-Token`) exigé sur toute écriture faite avec la session ;
@@ -152,7 +154,7 @@ PRODUCER_URL=http://127.0.0.1:8099/producer/ PRODUCER_TEST_PASSWORD=test-local \
   PRODUCER_TOKEN=tok_local_0123456789abcdefghij node tests/web/producer_kanban.mjs   # kanban (ordi + iPhone portrait/paysage)
 ```
 
-`producer_kanban.mjs` (78 vérifications : chapeaux, historique, asset lié, Accepter/Refuser, CLI, vue mobile iPhone portrait et paysage, balayage) tourne sur une base quelconque (titres uniques). Pour tester la migration, partir d'une base de version 1 : créer `data/producer.sqlite` avec `git show f0c4e41:producer/lib/schema.sql | sqlite3 …`, y insérer les cartes « Ancienne carte à faire » (todo), « Ancien bug en cours » (doing), « Ancienne carte à vérifier » (review, avec une note `agent` puis une note `julien`) et « Ancienne carte faite » (done), puis lancer le test avec `PRODUCER_EXPECT_MIGRATION=1`. Avec plusieurs requêtes en parallèle (images), lancer `php -S` avec `PHP_CLI_SERVER_WORKERS=6`.
+`producer_kanban.mjs` (86 vérifications : chapeaux, historique, asset lié, Accepter/Refuser, CLI, vue mobile iPhone portrait et paysage, balayage) tourne sur une base quelconque (titres uniques). Pour tester la migration, partir d'une base de version 1 : créer `data/producer.sqlite` avec `git show f0c4e41:producer/lib/schema.sql | sqlite3 …`, y insérer les cartes « Ancienne carte à faire » (todo), « Ancien bug en cours » (doing), « Ancienne carte à vérifier » (review, avec une note `agent` puis une note `julien`) et « Ancienne carte faite » (done), puis lancer le test avec `PRODUCER_EXPECT_MIGRATION=1`. Avec plusieurs requêtes en parallèle (images), lancer `php -S` avec `PHP_CLI_SERVER_WORKERS=6`.
 
 Le test (Chromium, 36 vérifications) couvre :
 

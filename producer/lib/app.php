@@ -17,7 +17,7 @@ const AUTH_WINDOW = 900;            // 15 min
 const SESSION_LIFETIME = 2592000;   // 30 jours
 const MAX_TITLE = 200;
 const MAX_TEXT = 8000;
-const SCHEMA_VERSION = 3;
+const SCHEMA_VERSION = 4;
 // Colonnes du kanban, dans l'ordre. « review » (ancienne colonne) = « qa ».
 const CARD_STATUSES = ['backlog', 'todo', 'doing', 'qa', 'done'];
 const STATUS_ALIASES = ['review' => 'qa'];
@@ -165,6 +165,7 @@ final class App
      * types libres, parent_id, origin, auteurs « agent » -> « claude »,
      * historique card_events amorcé (création + commentaires existants).
      * v2 -> v3 : colonnes cards.detail, cards.rework, card_notes.kind.
+     * v3 -> v4 : colonne cards.night (night shift), à 0 pour les cartes existantes.
      */
     private function migrate(PDO $pdo): void
     {
@@ -217,7 +218,8 @@ final class App
                 }
                 // v2 -> v3 : détail de l'asset, « à retraiter », type de commentaire.
                 foreach ([['cards', 'detail', "TEXT NOT NULL DEFAULT ''"], ['cards', 'rework', 'INTEGER NOT NULL DEFAULT 0'],
-                    ['card_notes', 'kind', "TEXT NOT NULL DEFAULT ''"]] as [$table, $col, $def]) {
+                    ['card_notes', 'kind', "TEXT NOT NULL DEFAULT ''"],
+                    ['cards', 'night', 'INTEGER NOT NULL DEFAULT 0']] as [$table, $col, $def]) {   // v3 -> v4 : night shift
                     $cols = array_column($pdo->query("PRAGMA table_info($table)")->fetchAll(), 'name');
                     if (!in_array($col, $cols, true)) {
                         $pdo->exec("ALTER TABLE $table ADD COLUMN $col $def");   // noms fixes ci-dessus
@@ -647,6 +649,28 @@ final class App
         return $v;
     }
 
+    /** Booléen lu dans le corps (true/false, 1/0, "on"/"off") ; absent -> null. */
+    private static function flag(array $b, string $key): ?bool
+    {
+        if (!array_key_exists($key, $b)) {
+            return null;
+        }
+        $v = $b[$key];
+        if (is_bool($v)) {
+            return $v;
+        }
+        if ($v === 1 || $v === 0) {
+            return $v === 1;
+        }
+        if (is_string($v) && in_array(strtolower($v), ['1', 'on', 'true', 'oui'], true)) {
+            return true;
+        }
+        if (is_string($v) && in_array(strtolower($v), ['0', 'off', 'false', 'non', ''], true)) {
+            return false;
+        }
+        throw new HttpError("Valeur invalide : $key", 400);
+    }
+
     /** Parent lu dans le corps : absent -> null, 0/''/null -> 0 (aucun), sinon id. */
     private static function parentArg(array $b): ?int
     {
@@ -740,6 +764,7 @@ final class App
         $c['created_at'] = (int) $c['created_at'];
         $c['updated_at'] = (int) $c['updated_at'];
         $c['rework'] = (bool) (int) $c['rework'];
+        $c['night'] = (bool) (int) $c['night'];
         return $c;
     }
 
@@ -787,8 +812,10 @@ final class App
             throw new HttpError('Statut invalide', 400);
         }
         $parent = isset($_GET['parent']) && is_string($_GET['parent']) && ctype_digit($_GET['parent']) ? (int) $_GET['parent'] : 0;
+        $night = ($_GET['night'] ?? '') === '1';
         $cards = array_values(array_filter($this->allCards(), static fn (array $c): bool =>
-            ($status === '' || $c['status'] === $status) && ($parent === 0 || $c['parent_id'] === $parent)));
+            ($status === '' || $c['status'] === $status) && ($parent === 0 || $c['parent_id'] === $parent)
+            && (!$night || $c['night'])));
         $this->json(['cards' => $cards]);
     }
 
@@ -850,6 +877,7 @@ final class App
             throw new HttpError('Asset inconnu', 400);
         }
         $detail = (string) (self::text($b, 'detail', 100) ?? '');
+        $night = (bool) self::flag($b, 'night');
         $status = (string) (self::status($b) ?? 'backlog');
         $parent = (int) self::parentArg($b);
         $this->checkParent(0, $parent);
@@ -861,10 +889,14 @@ final class App
             $pos = (int) $stmt->fetchColumn();
             $now = time();
             $db->prepare('INSERT INTO cards (type, title, description, priority, asset, detail, status, position, parent_id, origin,'
-                . ' created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-                ->execute([$type, $title, $desc, $prio, $asset, $detail, $status, $pos, $parent ?: null, $this->actor, $now, $now]);
+                . ' night, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+                ->execute([$type, $title, $desc, $prio, $asset, $detail, $status, $pos, $parent ?: null, $this->actor,
+                    $night ? 1 : 0, $now, $now]);
             $id = (int) $db->lastInsertId();
             $this->event($id, 'creation', '', $status, $now);
+            if ($night) {
+                $this->event($id, 'night', 'off', 'on', $now);
+            }
             $db->commit();
         } catch (Throwable $e) {
             $db->rollBack();
@@ -886,6 +918,7 @@ final class App
             'detail' => self::text($b, 'detail', 100),
         ];
         $parent = self::parentArg($b);
+        $night = self::flag($b, 'night');
         if ($fields['title'] === '') {
             throw new HttpError('Titre vide', 400);
         }
@@ -895,7 +928,7 @@ final class App
         if (($fields['asset'] ?? '') !== '' && $this->asset((string) $fields['asset']) === null) {
             throw new HttpError('Asset inconnu', 400);
         }
-        if ($parent === null && !array_filter($fields, static fn ($v) => $v !== null)) {
+        if ($parent === null && $night === null && !array_filter($fields, static fn ($v) => $v !== null)) {
             throw new HttpError('Rien à modifier', 400);
         }
         $db = $this->db();
@@ -913,6 +946,11 @@ final class App
                     $args[] = $v;
                     $this->event($id, $names[$col], (string) $cur[$col], $v);
                 }
+            }
+            if ($night !== null && $night !== (bool) (int) $cur['night']) {
+                $sets[] = 'night = ?';
+                $args[] = $night ? 1 : 0;
+                $this->event($id, 'night', $night ? 'off' : 'on', $night ? 'on' : 'off');
             }
             $oldParent = (int) ($cur['parent_id'] ?? 0);
             if ($parent !== null && $parent !== $oldParent) {

@@ -30,6 +30,7 @@ const state = {
   editing: null,     // carte en cours d'édition (null = nouvelle)
   hat: 0,            // filtre « par chapeau » du kanban (0 = tous)
   hatsOnly: false,   // kanban : enfants masqués (vue chapeaux seulement)
+  nightOnly: false,  // kanban : cartes night shift seulement
   expanded: new Set(),  // chapeaux dépliés sur le board
   decorMode: store('producer-decor-mode') || 'masques',   // image | masques | controle
   decorSansMasque: false,  // filtre « sans masque » du décor
@@ -1308,6 +1309,14 @@ function initKanban() {
   state.hat = Number(store('producer-kb-hat')) || 0;
   state.hatsOnly = store('producer-kb-hats-only') === '1';
   $('kb-hats-only').checked = state.hatsOnly;
+  state.nightOnly = store('producer-kb-night-only') === '1';
+  $('kb-night-only').checked = state.nightOnly;
+  $('kb-night-only').addEventListener('change', () => {
+    state.nightOnly = $('kb-night-only').checked;
+    store('producer-kb-night-only', state.nightOnly ? '1' : '0');
+    renderBoard();
+  });
+  $('cf-night-children').addEventListener('click', nightToChildren);
   $('kb-hat').addEventListener('change', () => {
     state.hat = Number($('kb-hat').value) || 0;
     store('producer-kb-hat', String(state.hat));
@@ -1346,6 +1355,7 @@ function renderHatFilter() {
 
 function visibleCards() {
   let cards = state.cards;
+  if (state.nightOnly) cards = cards.filter((c) => c.night);
   if (state.hat) {
     const fam = familyIds(state.hat);
     cards = cards.filter((c) => fam.has(c.id));
@@ -1364,13 +1374,16 @@ function quickAdd() {
   parentOptions(parent, state.hat, new Set());
   parent.options[0].textContent = 'sans chapeau';
   const send = el('button', { type: 'submit', class: 'small primary' }, 'Ajouter');
-  const form = el('form', { class: 'quick-add' }, title, el('div', { class: 'row' }, parent, send));
+  const night = el('input', { type: 'checkbox', 'aria-label': 'Night shift' });
+  const nightLbl = el('label', { class: 'inline qa-night', title: 'Night shift : à traiter la nuit (1 h – 8 h)' }, night, '🌙');
+  const form = el('form', { class: 'quick-add' }, title, el('div', { class: 'row' }, parent, nightLbl, send));
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     if (!title.value.trim()) return;
     send.disabled = true;
     const body = { title: title.value.trim(), status: 'backlog' };
     if (parent.value) body.parent = Number(parent.value);
+    if (night.checked) body.night = true;
     const ok = await guarded(async () => {
       await api('card', { method: 'POST', body });
       await reloadCards();
@@ -1419,7 +1432,7 @@ function renderKbTabs(cards) {
   }, el('span', { text: label }), el('span', { class: 'n', text: String(cards.filter((c) => c.status === status).length) }))),
   el('button', {
     type: 'button', class: 'kb-tab kb-filters' + ($('view-kanban').classList.contains('filters-open') ? ' active' : '')
-      + (state.hat || state.hatsOnly ? ' on' : ''),
+      + (state.hat || state.hatsOnly || state.nightOnly ? ' on' : ''),
     'aria-label': 'Filtres et nouvelle carte', title: 'Filtres et nouvelle carte',
     onclick: () => { $('view-kanban').classList.toggle('filters-open'); renderBoard(); },
   }, '☰'));
@@ -1454,6 +1467,7 @@ function cardCompact(c) {
       typeBadge(c.type),
       c.priority ? el('span', { class: 'badge ' + c.priority, text: PRIO_LABEL[c.priority] }) : null,
       c.rework ? el('span', { class: 'rework', text: '↺ à retraiter' }) : null,
+      c.night ? el('span', { class: 'badge night', title: 'Night shift', text: '🌙' }) : null,
       c.children > 0 ? el('span', { class: 'muted', text: `▤ ${c.children_done}/${c.children}` }) : null,
       el('span', { class: 'muted', text: '#' + c.id }))),
   el('div', { class: 'cact' }, act));
@@ -1551,6 +1565,7 @@ function cardEl(c, col) {
   el('div', { class: 'foot' },
     typeBadge(c.type),
     c.priority ? el('span', { class: 'badge ' + c.priority, text: PRIO_LABEL[c.priority] }) : null,
+    c.night ? el('span', { class: 'badge night', title: 'Night shift : traitée la nuit (1 h – 8 h)', text: '🌙' }) : null,
     el('span', { class: 'muted', text: '#' + c.id }),
     el('span', { class: 'spacer' }),
     el('span', { class: 'origin', title: 'Créée par ' + (AUTHOR_LABEL[c.origin] || c.origin), text: AUTHOR_LABEL[c.origin] || c.origin })),
@@ -1617,6 +1632,7 @@ function eventText(e) {
     case 'parent': return `a changé le chapeau : ${ref(e.old)} → ${ref(e.new)}`;
     case 'detail': return `a changé le détail de l'asset : ${e.new || 'aucun'}`;
     case 'accepte': return 'a accepté la carte : QA → Done';
+    case 'night': return e.new === 'on' ? 'a activé le night shift 🌙' : 'a désactivé le night shift';
     default: return e.type;
   }
 }
@@ -1662,6 +1678,8 @@ function openCardDialog(card, assetId, parentId) {
   $('cf-desc').value = card ? card.description : '';
   $('cf-asset').value = card ? card.asset : assetId;
   $('cf-detail').value = card ? card.detail : '';
+  $('cf-night').checked = card ? !!card.night : false;
+  $('cf-night-children').hidden = !card || !card.children;
   fillDetailOptions();
   renderCardAsset();
   $('cf-qa').hidden = !card || card.status !== 'qa';
@@ -1685,6 +1703,7 @@ function cardBody() {
   return {
     type: $('cf-type').value, priority: $('cf-priority').value, title: $('cf-title').value,
     description: $('cf-desc').value, asset: $('cf-asset').value.trim(), detail: $('cf-detail').value.trim(),
+    night: $('cf-night').checked,
     parent: Number($('cf-parent').value) || 0,
   };
 }
@@ -1850,6 +1869,27 @@ function renderCardAsset() {
     el('p', { class: 'meta', text: `${a.id} · version ${a.version}` }),
     commentForm(a, () => (anim ? 'anim : ' + anim.name : ''), renderList),
     list);
+}
+
+// ------------------------------------------------------- night shift
+
+/** Chapeau : applique son night shift (case du détail) à tous ses descendants. */
+async function nightToChildren() {
+  const card = state.editing;
+  if (!card) return;
+  const night = $('cf-night').checked;
+  const ids = [...familyIds(card.id)].filter((id) => id !== card.id && !!(cardById(id) || {}).night !== night);
+  const ok = await guarded(async () => {
+    if (!!card.night !== night) await api('card_update', { method: 'POST', body: { id: card.id, night } });
+    for (const id of ids) await api('card_update', { method: 'POST', body: { id, night } });
+    await reloadCards();
+    return true;
+  });
+  if (!ok) return;
+  toast(`Night shift ${night ? 'activé' : 'désactivé'} sur ${ids.length} enfant${ids.length > 1 ? 's' : ''}`);
+  state.editing = cardById(card.id) || card;
+  loadFeed(card.id);
+  renderBoard();
 }
 
 // ------------------------------------------------------- QA : accepter / refuser

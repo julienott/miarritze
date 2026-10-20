@@ -271,6 +271,47 @@ check('events : types accepte et refuse (avec le texte)', evq.filter((e) => e.ty
   && evq.some((e) => e.type === 'refuse' && e.author === 'julien' && e.new.includes('pieds à recaler')));
 check('cli events : ACCEPTÉE / REFUSÉE lisibles', /ACCEPTÉE/.test(cli('events', '--since', String(t0))) && /REFUSÉE QA -> Doing/.test(cli('events', '--since', String(t0))));
 
+// ------------------------------------------------------------- night shift
+{
+  const [, all] = await apiTok('cards');
+  check('night : champ présent, faux pour les cartes existantes', all.cards.every((c) => typeof c.night === 'boolean')
+    && all.cards.filter((c) => [hatId, hunterId, ...kidIds].includes(c.id)).every((c) => !c.night));
+  await page.reload();
+  await page.fill('.quick-add input', `${tag} nuit rapide`);
+  await page.check('.quick-add .qa-night input');
+  await page.click('.quick-add button[type=submit]');
+  const nightCard = page.locator(`.card:not(.is-hat):has-text("${tag} nuit rapide")`);
+  await nightCard.locator('.badge.night').waitFor();
+  const nightId = Number(await nightCard.getAttribute('data-id'));
+  check('night : création rapide avec 🌙, badge sur la tuile', (await apiTok('cards'))[1].cards.find((c) => c.id === nightId).night === true);
+  // Chapeau : night shift coché puis appliqué aux enfants.
+  await page.click(`.card[data-id="${hatId}"] .title`);
+  await page.waitForSelector('#cf-night-children:not([hidden])');
+  await page.check('#cf-night');
+  await page.click('#cf-night-children');
+  await page.waitForFunction(() => document.querySelector('#cf-feed') && document.querySelector('#cf-feed').textContent.includes('night shift'));
+  const fam2 = (await apiTok('cards'))[1].cards.filter((c) => c.id === hatId || c.parent_id === hatId);
+  check('night : appliqué au chapeau et à tous ses enfants', fam2.length >= 3 && fam2.every((c) => c.night), fam2.map((c) => c.id + ':' + c.night).join(','));
+  await shot(page, '04e_night_detail', false);
+  await page.click('#cf-cancel');
+  // Filtre « night shift seulement ».
+  await page.check('#kb-night-only');
+  const shownN = await page.$$eval('#board .column > .card', (l) => l.map((c) => !!c.querySelector('.badge.night')));
+  check('night : filtre « night shift seulement »', shownN.length >= 4 && shownN.every(Boolean), String(shownN.length));
+  await shot(page, '04f_night_filtre');
+  await page.uncheck('#kb-night-only');
+  // CLI et events.
+  cli('set', String(nightId), '--night', 'off');
+  check('cli : set --night off, show sans marque', !cli('show', String(nightId)).includes('[NIGHT]'));
+  const ln = cli('cards', '--night').trim().split('\n');
+  check('cli : cards --night', ln.every((l) => l.includes('[NIGHT]')) && ln.some((l) => l.includes(`#${hatId} `)), ln.length + ' lignes');
+  const evn = cli('events', '--since', String(t0));
+  check('events : NIGHT ON / NIGHT OFF avec auteur', new RegExp(`julien +#${nightId} .*NIGHT ON`).test(evn)
+    && new RegExp(`claude +#${nightId} .*NIGHT OFF`).test(evn));
+  const evj = JSON.parse(cli('events', '--since', String(t0), '--json')).events.filter((e) => e.type === 'night');
+  check('events --json : type night, new = on/off', evj.length >= 4 && evj.every((e) => ['on', 'off'].includes(e.new)));
+}
+
 // ------------------------------------------------------------------ iPhone
 // Vue mobile : une colonne à la fois, onglets collants, tuiles compactes.
 for (let k = 1; k <= 8; k++) {

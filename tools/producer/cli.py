@@ -16,6 +16,8 @@ Exemples :
   cli.py add-card --type perso --title "Amaia" --status backlog
   cli.py add-card --type animation --title "Amaia : run" --parent 12
   cli.py set 4 --priority haute --parent 12
+  cli.py set 4 --night on      (night shift : la carte part en file la nuit)
+  cli.py cards --night
   cli.py events --since 15m    (tout ce qui a bougé ; aussi epoch ou "2026-10-20 14:00")
   cli.py qa 4 "marche ralentie à 8 i/s"   (carte retraitée -> QA, commentaire « retraité : … »)
 """
@@ -48,7 +50,7 @@ EVENT_LABEL = {
     "creation": "création", "deplacement": "déplacement", "titre": "titre", "description": "description",
     "priorite": "priorité", "type": "type", "asset": "asset", "detail": "détail", "parent": "chapeau",
     "commentaire": "commentaire", "suppression": "suppression",
-    "accepte": "ACCEPTÉE", "refuse": "REFUSÉE",
+    "accepte": "ACCEPTÉE", "refuse": "REFUSÉE", "night": "NIGHT",
 }
 
 
@@ -170,6 +172,7 @@ def print_card(c: dict, full: bool, titles: dict | None = None) -> None:
     prio = f" !{c['priority']}" if c["priority"] else ""
     asset = f" · {c['asset']}" + (f" [{c['detail']}]" if c.get("detail") else "") if c["asset"] else ""
     rework = " [À RETRAITER]" if c.get("rework") else ""
+    rework += " [NIGHT]" if c.get("night") else ""
     kids = f" · enfants {c['children_done']}/{c['children']}" if c.get("children") else ""
     parent = ""
     if c.get("parent_id"):
@@ -191,6 +194,8 @@ def event_line(e: dict, with_card: bool) -> str:
         what = f"{STATUS_LABEL.get(e['old'], e['old'])} -> {STATUS_LABEL.get(e['new'], e['new'])}"
     elif t == "creation":
         what = f"dans {STATUS_LABEL.get(e['new'], e['new'])}"
+    elif t == "night":
+        what = "ON (traitée la nuit, 1 h – 8 h Paris)" if e["new"] == "on" else "OFF"
     elif t == "accepte":
         what = "QA -> Done"
     elif t == "refuse":
@@ -219,6 +224,8 @@ def cmd_cards(a: argparse.Namespace) -> None:
         q["status"] = a.status
     if a.parent:
         q["parent"] = a.parent
+    if a.night:
+        q["night"] = "1"
     r = call("cards", query=q)
     if a.json:
         print(json.dumps(r["cards"], ensure_ascii=False, indent=1))
@@ -281,7 +288,7 @@ def cmd_comment(a: argparse.Namespace) -> None:
 
 def cmd_add_card(a: argparse.Namespace) -> None:
     body = {"type": a.type, "title": a.title, "description": a.desc or "", "priority": a.priority or "",
-            "asset": a.asset or "", "detail": a.detail or "", "status": a.status}
+            "asset": a.asset or "", "detail": a.detail or "", "status": a.status, "night": a.night}
     if a.parent:
         body["parent"] = a.parent
     r = call("card", body)
@@ -299,8 +306,10 @@ def cmd_set(a: argparse.Namespace) -> None:
         body["priority"] = "" if a.priority == "aucune" else a.priority
     if a.parent is not None:
         body["parent"] = a.parent
+    if a.night is not None:
+        body["night"] = a.night == "on"
     if len(body) == 1:
-        sys.exit("Rien à modifier (--title, --desc, --type, --priority, --parent, --asset, --detail)")
+        sys.exit("Rien à modifier (--title, --desc, --type, --priority, --parent, --asset, --detail, --night)")
     r = call("card_update", body)
     print(f"Carte #{a.id} : {r.get('changed', 0)} champ(s) modifié(s)")
 
@@ -329,6 +338,7 @@ def main() -> None:
     s = sub.add_parser("cards", help="lister les cartes du kanban")
     s.add_argument("--status", type=status_arg, help="backlog | todo | doing | qa | done")
     s.add_argument("--parent", type=int, help="seulement les enfants de cette carte chapeau")
+    s.add_argument("--night", action="store_true", help="seulement les cartes night shift")
     s.add_argument("--full", action="store_true", help="description et commentaires")
     s.add_argument("--json", action="store_true")
     s.set_defaults(fn=cmd_cards)
@@ -363,6 +373,7 @@ def main() -> None:
     s.add_argument("--asset")
     s.add_argument("--detail", help="précise l'asset : nom de l'animation (ex. walk)")
     s.add_argument("--parent", type=int, help="carte chapeau")
+    s.add_argument("--night", action="store_true", help="night shift : à traiter la nuit (1 h – 8 h Paris)")
     s.add_argument("--status", type=status_arg, default="backlog")
     s.set_defaults(fn=cmd_add_card)
 
@@ -375,6 +386,7 @@ def main() -> None:
     s.add_argument("--parent", type=int, help="0 pour détacher")
     s.add_argument("--asset")
     s.add_argument("--detail", help="nom de l'animation de l'asset (vide pour effacer)")
+    s.add_argument("--night", choices=["on", "off"], help="night shift : traitée la nuit (1 h – 8 h Paris)")
     s.set_defaults(fn=cmd_set)
 
     s = sub.add_parser("qa", help="repasser en QA une carte retraitée, avec ce qui a été corrigé")
