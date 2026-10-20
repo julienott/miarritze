@@ -45,11 +45,12 @@
   "warnings": []
  },
  "cachette_casier_homards": {
-  "bloque_vue": true,
-  "confidence": 0.9,
+  "bloque_vue": false,
+  "confidence": 0.8,
   "source": "pixelforge",
   "warnings": [
-   "socle de sol détecté (13% de l'objet) : traversable, hors occluder"
+   "socle de sol détecté (13% de l'objet) : traversable, hors occluder",
+   "profondeur estimée (sur pieds, 117 px de large) : 41 px, faute de face du dessus lisible"
   ]
  },
  "cachette_coffre_cordages": {
@@ -68,6 +69,16 @@
    "socle de sol détecté (42% de l'objet) : traversable, hors occluder",
    "profondeur estimée (posé, 74 px de large) : 26 px, faute de face du dessus lisible",
    "2 morceaux d'emprise"
+  ]
+ },
+ "cachette_confessionnal": {
+  "bloque_vue": false,
+  "confidence": 0.8,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (16% de l'objet) : traversable, hors occluder",
+   "profondeur estimée (posé, 38 px de large) : 13 px, faute de face du dessus lisible",
+   "1 morceau(x) dans la face avant d'une base ronde : fusionné(s)"
   ]
  },
  "cachette_poubelle_ruelle": {
@@ -204,14 +215,25 @@
   ]
  },
  "mur_soutenement": {
-  "bloque_vue": true,
-  "refus_pixelforge": "emprise = 185 % de la silhouette",
-  "source": "repli"
+  "bloque_vue": false,
+  "confidence": 0.75,
+  "source": "pixelforge",
+  "warnings": [
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
  },
  "rayonnage_filets": {
   "bloque_vue": true,
-  "refus_pixelforge": "emprise = 128 % de la silhouette",
-  "source": "repli"
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (7% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "losange plafonné en profondeur",
+   "caméra en coin : emprise approchée (losange sur le bord bas)",
+   "losange dégénéré : emprise calculée sur la forme de la base"
+  ]
  },
  "table_terrasse": {
   "bloque_vue": false,
@@ -231,7 +253,7 @@
   "warnings": [
    "socle de sol détecté (10% de l'objet) : traversable, hors occluder",
    "profondeur estimée (posé, 137 px de large) : 48 px, faute de face du dessus lisible",
-   "2 morceaux d'emprise"
+   "1 morceau(x) dans la face avant d'une base ronde : fusionné(s)"
   ]
  },
  "treteaux_cale": {
