@@ -55,7 +55,13 @@ def carte(titre, typ, statut, parent=None, desc="", asset="", prio=""):
     body = {"type": typ, "title": titre, "description": desc, "priority": prio, "asset": asset, "status": statut}
     if parent and not str(parent).startswith("?"):
         body["parent"] = parent
-    r = cli.call("card", body)
+    try:
+        r = cli.call("card", body)
+    except SystemExit as e:                 # asset inconnu de l'index producer : carte créée sans lien
+        if "Asset inconnu" not in str(e):
+            raise
+        body["asset"] = ""
+        r = cli.call("card", body)
     existantes[titre] = {"id": r["id"]}
     crees += 1
     return r["id"]
