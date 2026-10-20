@@ -88,6 +88,21 @@ def detoure(img):
     return Image.fromarray(rgba, "RGBA")
 
 
+SEUIL_BORD = 0.05      # part d'un bord de l'image générée occupée par l'objet au-delà de laquelle on prévient
+
+
+def bords_coupes(src):
+    """Bords de l'image générée (<variante>_raw.png, fond blanc) que l'objet touche : il y est coupé
+    par le cadre de la génération (toit de maison_crampotte, lanterne de tour_phare, 2026-10-20) et le
+    recadrage ne peut pas le rendre ; à régénérer avec de la marge."""
+    raw = src.removesuffix(".png") + "_raw.png"
+    if not os.path.exists(raw):
+        return []
+    a = np.asarray(Image.open(raw).convert("RGB")).min(axis=2) < 235
+    bords = {"haut": a[0], "bas": a[-1], "gauche": a[:, 0], "droite": a[:, -1]}
+    return [nom for nom, ligne in bords.items() if ligne.mean() > SEUIL_BORD]
+
+
 def ombre_rgba(img, taille):
     """Calque d'ombre en RGBA : s'il n'a pas d'alpha, le sombre devient l'opacité d'un noir."""
     if img.size != taille:
@@ -168,6 +183,11 @@ def main():
     debord = int(el.get("debord_haut_cases", 0))
     img = Image.open(src)
     print(f"{o.id} ({typ}) ← {src} {img.size[0]}×{img.size[1]}")
+    if typ == "objet":
+        coupes = bords_coupes(src)
+        if coupes:
+            print(f"  ATTENTION : l'objet touche le cadre de l'image générée ({', '.join(coupes)}) : il y est "
+                  "sans doute coupé (toit tronqué…) ; à régénérer avec de la marge, à regarder sur la capture")
     index_path = os.path.join(dest, "index.json")
     index = json.load(open(index_path)) if os.path.exists(index_path) else {
         "_doc": "Décor en images intégré par tools/gordeka/integre_decor.py, lu par src/gordeka/gk_decor.gd.",

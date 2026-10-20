@@ -271,6 +271,25 @@ Vierge, Fronton.
 - Chaque objet a une **forme d'occlusion** (polygone) qui bloque la vision et une **forme de
   collision** qui bloque le passage. Elles sont souvent identiques. Les données sont dans
   `assets/maps/<id>/map.json`.
+- **Forme des objets du décor en images** (*2026-10-20, retour de Julien : « on doit pouvoir se
+  cacher derrière le mur d'une maison, la coque d'un bateau »*). Elle n'est plus le rectangle des cases :
+  le jeu la calcule au chargement depuis l'alpha de l'image (`src/gordeka/gk_decor.gd`, `_shape`),
+  une fois par image, avec les réglages de `data/gordeka/rules.json` :
+  1. silhouette à 4 px près, dont on retire les parties plus fines que `decor_finesse_px`
+     (ouverture morphologique : mât, pieds, perche, corde ne bloquent pas) ;
+  2. **enveloppe basse** : pour chaque colonne, le point le plus bas de l'objet, là où il touche le sol ;
+  3. le dessus de l'**empreinte au sol** s'en déduit par **symétrie centrale** : un rectangle vu de
+     face, le losange d'un objet vu en coin, le fuseau d'une coque, le disque d'une fontaine sont
+     tous symétriques par leur centre. Le centre est à la hauteur des coins gauche et droit, et au
+     moins à `decor_profondeur_min`/2 au-dessus du point le plus bas (objet vu de face). L'empreinte ne
+     dépasse jamais la silhouette ni les cases de l'objet ;
+  4. on bute sur l'empreinte et la vue du chasseur s'y arrête (objets bas : le passage seulement).
+     Le reste de l'image (toit, face haute, mât) passe devant un perso qui est derrière et le masque :
+     un chassé masqué n'est vu qu'à `masque_vue_portee` cases, et ses coéquipiers voient l'objet en
+     transparence.
+
+  Contrôle : `tools/gordeka/masques_decor.py` exporte, avec le même code, une image par objet
+  (empreinte en vert, zone qui masque en violet) dans `tools/gordeka/masques/`, visible sur /producer.
 - **Cachettes dans les objets dès la v1** (*décidé le 2026-10-19*) : cabines, poubelles, casiers,
   coffres de bateau, comme les bouches d'aération d'Among Us.
   - Près d'une cachette, le bouton Pouvoir d'un chassé devient **Entrer**, puis **Sortir** une fois

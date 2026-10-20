@@ -153,7 +153,7 @@ func _build_bodies() -> void:
 	low.collision_layer = LAYER_MOVE
 	low.collision_mask = 0
 	add_child(low)
-	# Cases d'un objet en image : sa forme réelle (base au sol) remplace le rectangle des cases.
+	# Cases d'un objet en image : son empreinte au sol (forme réelle) remplace le rectangle des cases.
 	var shaped: Dictionary = decor.shaped if decor else {}
 	for r: Rect2i in merged_rects(OCCLUDE, shaped):
 		var px: Rect2 = Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile)

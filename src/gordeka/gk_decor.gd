@@ -4,8 +4,8 @@ extends Node2D
 ## posé sur la carte avec repli sur le dessin procédural de GkMap pour tout ce qui n'a pas encore
 ## d'image. La grille A* reste celle des cases ; la collision et l'occlusion de la vue des objets en
 ## image suivent leur forme réelle, calculée au chargement depuis l'alpha de l'image (`_shape`) :
-## seule la base au sol (bas de la silhouette) arrête le passage et la vue, le haut de l'image (toit,
-## face haute) passe devant les persos qui sont derrière (tri par profondeur sur le pied de l'objet).
+## seule l'empreinte au sol arrête le passage et la vue, le haut de l'image (toit, face haute, mât)
+## passe devant les persos qui sont derrière (tri par profondeur sur le pied de l'objet).
 ##
 ## index.json (assets/gordeka/decor/) : {carte, elements: {id: {type, categorie, caractere, zones,
 ## taille_cases, debord_haut_cases, animation, fichiers: [chemins relatifs], ombre, ombre_decalage,
@@ -96,6 +96,9 @@ func setup(m: GkMap) -> void:
 	_build_floors()
 	_build_objects()
 	set_process(not _animated.is_empty())
+	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--gk-export-masques="):
+			export_masks(arg.trim_prefix("--gk-export-masques="))
 
 
 ## Accroche les nœuds : `under` sur la carte (après ses morceaux), les objets dans le calque y-trié
@@ -361,21 +364,19 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void
 
 # ---------------------------------------------------------------- forme des objets
 
-## Base au sol et silhouette de l'objet posé, depuis l'alpha de son image à la taille dessinée.
-## Objets qui cachent la vue (« bloque_vue » de l'index, sinon les caractères qui cachent la vue dans
-## GkMap.OCCLUDE) : base = bas de la silhouette (decor_base_haut de sa hauteur) ; objets bas : toute la
-## silhouette (decor_base_bas). `base_part` dans l'index l'impose pour un élément.
+## Empreinte au sol et silhouette de l'objet posé (`_shape`), ramenées dans le repère de la carte et
+## coupées aux cases de l'objet (la grille A* des IA reste juste). Objets qui cachent la vue
+## (« bloque_vue » de l'index, sinon les caractères de GkMap.OCCLUDE) : corps solide qui bloque aussi
+## la vue ; objets bas (GkMap.LOW) : le passage seulement.
 func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, drawn: Vector2) -> void:
 	var ch: String = str(el.get("caractere", ""))
 	var blocks: bool = bool(el.get("bloque_vue", GkMap.OCCLUDE.contains(ch)))
 	if not GkRules.on("decor_formes") or not blocks and not GkMap.LOW.contains(ch):
 		return
-	var part: float = float(el.get("base_part", GkRules.f("decor_base_haut" if blocks else "decor_base_bas")))
-	var sh: Dictionary = _shape(tex, rel, drawn, part)
+	var sh: Dictionary = _shape(tex, rel, drawn)
 	if (sh.get("polys", []) as Array).is_empty():
 		return
 	var holder: Node2D = inst["holder"]
-	# La base ne sort pas des cases de l'objet (la grille A* des IA reste juste).
 	var r: Rect2 = Rect2(Vector2((inst["rect"] as Rect2i).position) * map.tile, Vector2((inst["rect"] as Rect2i).size) * map.tile)
 	var box: PackedVector2Array = PackedVector2Array([r.position, Vector2(r.end.x, r.position.y), r.end,
 		Vector2(r.position.x, r.end.y)])
@@ -399,10 +400,25 @@ func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, d
 		shaped[c] = true
 
 
-## Masque (BitMap) de la silhouette à SHAPE_STEP px près et polygones de sa base, dans le repère du
-## porteur (pied de l'objet au milieu du bord bas). Calculé une fois par image et par taille.
-static func _shape(tex: Texture2D, key: String, drawn: Vector2, part: float) -> Dictionary:
-	var ck: String = "%s|%d|%d|%.3f" % [key, roundi(drawn.x), roundi(drawn.y), part]
+## Forme d'un objet à sa taille dessinée, calculée une fois par image et par taille (SPEC-GORDEKA,
+## décor) : {mask: BitMap de la silhouette, foot: BitMap de l'empreinte au sol, scale (px de jeu par
+## point), polys: contours de l'empreinte dans le repère du porteur (pied au milieu du bord bas)}.
+##
+## Empreinte au sol en vue 3/4 (de face ou en coin) :
+## 1. silhouette (alpha) à SHAPE_STEP px près, puis ouverture morphologique : les parties plus fines
+##    que decor_finesse_px (mât, pieds, perche, corde) disparaissent, elles ne bloquent pas ;
+## 2. enveloppe basse : pour chaque colonne, le point opaque le plus bas (le contact avec le sol) ;
+## 3. le dessus de l'empreinte s'en déduit par symétrie centrale (rectangle, losange d'une vue en coin,
+##    fuseau d'une coque, disque : toutes symétriques par leur centre), autour du centre placé à la
+##    hauteur des coins gauche et droit (les coins d'un losange) mais au moins decor_profondeur_min
+##    au-dessus du point le plus bas (objet vu de face) ; jamais au-dessus de la silhouette ;
+## 4. nouvelle ouverture, puis contours simplifiés (SHAPE_EPSILON).
+## Tout ce qui est au-dessus de l'empreinte (toit, face haute, mât) passe devant un perso qui est
+## derrière et le masque (`masking`).
+static func _shape(tex: Texture2D, key: String, drawn: Vector2) -> Dictionary:
+	var thin: float = GkRules.f("decor_finesse_px")
+	var dmin_px: float = GkRules.px("decor_profondeur_min")
+	var ck: String = "%s|%d|%d|%.1f|%.1f" % [key, roundi(drawn.x), roundi(drawn.y), thin, dmin_px]
 	if _shape_cache.has(ck):
 		return _shape_cache[ck]
 	var out: Dictionary = {}
@@ -425,24 +441,90 @@ static func _shape(tex: Texture2D, key: String, drawn: Vector2, part: float) -> 
 	var mw: int = maxi(1, ceili(drawn.x / SHAPE_STEP))
 	var mh: int = maxi(1, ceili(drawn.y / SHAPE_STEP))
 	img.resize(mw, mh, Image.INTERPOLATE_BILINEAR)
+	var full: Rect2i = Rect2i(0, 0, mw, mh)
+	var sc: Vector2 = Vector2(drawn.x / mw, drawn.y / mh)
+	var r: int = maxi(0, roundi(thin * 0.5 / SHAPE_STEP))
 	var bm: BitMap = BitMap.new()
 	bm.create_from_image_alpha(img, SHAPE_ALPHA)
-	var y0: int = clampi(mh - ceili(float(mh) * clampf(part, 0.0, 1.0)), 0, mh - 1)
-	var sc: Vector2 = Vector2(drawn.x / mw, drawn.y / mh)
+	# 1. Silhouette sans ses parties fines.
+	var solid: BitMap = BitMap.new()
+	solid.create_from_image_alpha(img, SHAPE_ALPHA)
+	if r > 0:
+		solid.grow_mask(-r, full)
+		solid.grow_mask(r, full)
+	var sil: PackedByteArray = bm.convert_to_image().get_data()
+	var sol: PackedByteArray = solid.convert_to_image().get_data()
+	# 2. Enveloppe basse (et haut de la silhouette, que l'empreinte ne dépasse pas).
+	var bottom: PackedInt32Array = PackedInt32Array()
+	var top: PackedInt32Array = PackedInt32Array()
+	bottom.resize(mw)
+	top.resize(mw)
+	var x0: int = -1
+	var x1: int = -1
+	var ymax: int = -1
+	for x: int in mw:
+		bottom[x] = -1
+		for y: int in range(mh - 1, -1, -1):
+			if sol[y * mw + x] > 0:
+				bottom[x] = y
+				break
+		top[x] = mh
+		for y: int in mh:
+			if sil[y * mw + x] > 0:
+				top[x] = y
+				break
+		if bottom[x] >= 0:
+			x1 = x
+			if x0 < 0:
+				x0 = x
+			ymax = maxi(ymax, bottom[x])
+	if x0 < 0:
+		return out
+	# 3. Centre : hauteur des coins gauche et droit (quelques colonnes), au moins dmin/2 au-dessus du bas.
+	var k: int = maxi(1, (x1 - x0 + 1) / 16)
+	var side: float = (_mean_valid(bottom, x0, x0 + k) + _mean_valid(bottom, x1 - k, x1)) * 0.5
+	var yc: float = minf(side, float(ymax) - dmin_px / sc.y * 0.5)
+	var foot_data: PackedByteArray = PackedByteArray()
+	foot_data.resize(mw * mh * 2)
+	for x: int in range(x0, x1 + 1):
+		if bottom[x] < 0:
+			continue
+		var xm: int = x0 + x1 - x
+		var bm_y: int = bottom[xm] if bottom[xm] >= 0 else bottom[x]
+		var t: int = maxi(roundi(2.0 * yc - float(bm_y)), top[x])
+		for y: int in range(maxi(t, 0), bottom[x] + 1):
+			foot_data[(y * mw + x) * 2] = 255
+			foot_data[(y * mw + x) * 2 + 1] = 255
+	var foot: BitMap = BitMap.new()
+	foot.create_from_image_alpha(Image.create_from_data(mw, mh, false, Image.FORMAT_LA8, foot_data), 0.5)
+	# 4. Sans parties fines, puis contours.
+	if r > 0:
+		foot.grow_mask(-r, full)
+		foot.grow_mask(r, full)
 	var org: Vector2 = Vector2(-drawn.x * 0.5, -drawn.y)
 	var polys: Array[PackedVector2Array] = []
-	# Les points rendus sont relatifs au coin du rectangle demandé.
-	for poly: PackedVector2Array in bm.opaque_to_polygons(Rect2i(0, y0, mw, mh - y0), SHAPE_EPSILON):
+	for poly: PackedVector2Array in foot.opaque_to_polygons(full, SHAPE_EPSILON):
 		if poly.size() < 3 or absf(_area(poly)) < SHAPE_MIN_AREA:
 			continue
 		var pts: PackedVector2Array = PackedVector2Array()
 		for p: Vector2 in poly:
-			pts.append(org + (p + Vector2(0, y0)) * sc)
+			pts.append(org + p * sc)
 		polys.append(pts)
 	out["mask"] = bm
+	out["foot"] = foot
 	out["scale"] = sc
 	out["polys"] = polys
 	return out
+
+
+static func _mean_valid(a: PackedInt32Array, from: int, to: int) -> float:
+	var s: float = 0.0
+	var n: int = 0
+	for i: int in range(maxi(from, 0), mini(to, a.size() - 1) + 1):
+		if a[i] >= 0:
+			s += a[i]
+			n += 1
+	return s / maxf(1.0, n)
 
 
 static func _area(poly: PackedVector2Array) -> float:
@@ -489,6 +571,61 @@ func update_fades(which: Dictionary, alpha: float, dt: float) -> void:
 		if f != float(inst["fade"]):
 			inst["fade"] = f
 			(inst["holder"] as Node2D).modulate.a = f
+
+
+## Contrôle des formes (tools/gordeka/masques_decor.py, `--gk-export-masques=<dossier>`) : pour chaque
+## objet en image, sa première pose sur la carte en PNG (2 px par px de jeu) : l'image, l'empreinte au
+## sol en vert (ce qui bloque, coupée aux cases de l'objet), la zone qui masque un perso derrière en
+## violet, le cadre des cases en pointillé blanc.
+func export_masks(dir: String) -> void:
+	DirAccess.make_dir_recursive_absolute(dir)
+	var done: Dictionary = {}
+	var n: int = 0
+	for inst: Dictionary in instances:
+		var id: String = str(inst["id"])
+		if done.has(id) or not inst.has("polys"):
+			continue
+		done[id] = true
+		var sp: Sprite2D = inst["sprite"]
+		var src: Image = sp.texture.get_image().duplicate() as Image
+		if src.is_compressed():
+			src.decompress()
+		src.convert(Image.FORMAT_RGBA8)
+		var r: Rect2 = inst["mask_rect"]
+		var cells: Rect2 = Rect2(Vector2((inst["rect"] as Rect2i).position) * map.tile, Vector2((inst["rect"] as Rect2i).size) * map.tile)
+		var view: Rect2 = r.merge(cells).grow(8.0)
+		var k: float = 2.0
+		var w: int = ceili(view.size.x * k)
+		var h: int = ceili(view.size.y * k)
+		src.resize(ceili(r.size.x * k), ceili(r.size.y * k), Image.INTERPOLATE_BILINEAR)
+		var outi: Image = Image.create(w, h, false, Image.FORMAT_RGBA8)
+		var off: Vector2i = Vector2i(((r.position - view.position) * k).round())
+		var sh: Dictionary = _shape(sp.texture, str((elements[id] as Dictionary)["fichiers"][0]), r.size)
+		var foot: BitMap = sh["foot"]
+		var bm: BitMap = sh["mask"]
+		var sc: Vector2 = sh["scale"]
+		for y: int in h:
+			for x: int in w:
+				var wp: Vector2 = view.position + Vector2(x, y) / k        # repère de la carte
+				var c: Color = Color("cfc8b6") if (x / 16 + y / 16) % 2 == 0 else Color("bdb6a4")
+				var q: Vector2i = Vector2i(x, y) - off
+				if q.x >= 0 and q.y >= 0 and q.x < src.get_width() and q.y < src.get_height():
+					c = c.blend(src.get_pixelv(q))
+				var mq: Vector2i = Vector2i((wp - r.position) / sc)
+				if mq.x >= 0 and mq.y >= 0 and mq.x < bm.get_size().x and mq.y < bm.get_size().y:
+					if foot.get_bitv(mq) and cells.has_point(wp):
+						c = c.blend(Color(0.1, 0.85, 0.3, 0.55))
+					elif bm.get_bitv(mq):
+						c = c.blend(Color(0.6, 0.2, 0.9, 0.35))
+				var on_edge: bool = absf(wp.x - cells.position.x) < 1.0 or absf(wp.x - cells.end.x) < 1.0 \
+					or absf(wp.y - cells.position.y) < 1.0 or absf(wp.y - cells.end.y) < 1.0
+				if on_edge and cells.grow(1.0).has_point(wp) and (x + y) / 6 % 2 == 0:
+					c = Color.WHITE
+				outi.set_pixel(x, y, c)
+		outi.save_png(dir.path_join(id + ".png"))
+		n += 1
+	print("[gk] masques du décor : %d images dans %s" % [n, dir])
+	map.get_tree().quit.call_deferred()
 
 
 func _instance_at(t: Vector2i) -> int:

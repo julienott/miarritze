@@ -14,7 +14,8 @@ Usage : build_index.py <dossier_sortie>   (ex. web/build/producer/files)
   profil validé (modele.png), profils candidats (tools/rd/out/<id>/gk2d/profil,
   réduits, seulement s'ils sont présents : dossier non versionné), pièces du
   mannequin, chorégraphies et données JSON, textures, aperçu de la carte rendu
-  depuis map.txt.
+  depuis map.txt, masques de forme du décor (tools/gordeka/masques, produits par
+  tools/gordeka/masques_decor.py).
 - Audio : .ogg copié ; si ffmpeg est présent, un .mp3 est ajouté (Safari iOS
   ne lit pas toujours le Vorbis).
 - index.json : liste des assets (id = chemin relatif à assets/), version =
@@ -50,9 +51,10 @@ CAT_GK_PERSOS = "Persos"
 CAT_GK_MAP = "Carte"
 CAT_GK_MANNEQUIN = "Mannequin"
 CAT_GK_DECOR = "Textures & modèles"
+CAT_GK_MASQUES = "Masques du décor"
 # Sections de la barre latérale ; la page s'ouvre sur la première catégorie.
 SECTIONS = [
-    {"name": "Gordeka", "categories": [CAT_GK_PERSOS, CAT_GK_MAP, CAT_GK_MANNEQUIN, CAT_GK_DECOR]},
+    {"name": "Gordeka", "categories": [CAT_GK_PERSOS, CAT_GK_MAP, CAT_GK_MASQUES, CAT_GK_MANNEQUIN, CAT_GK_DECOR]},
     {"name": "Borroka", "categories": [CAT_FIGHTERS, CAT_VFX, CAT_STAGES, CAT_SPRITES, CAT_UI]},
     {"name": "Audio", "categories": [CAT_MUSIC, CAT_SFX, CAT_VOICE]},
 ]
@@ -60,6 +62,7 @@ CATEGORIES = [c for s in SECTIONS for c in s["categories"]]
 
 GK = ASSETS / "gordeka"
 GK_CANDIDATS = ROOT / "tools" / "gordeka" / "candidats"   # copies réduites versionnées (sync_candidats.py)
+GK_MASQUES = ROOT / "tools" / "gordeka" / "masques"       # contrôles des formes du décor (masques_decor.py)
 # Ordre des animations (tools/gordeka/anime_perso.py), les autres ensuite par nom.
 GK_ANIM_ORDER = ["idle", "walk", "run_scared", "hide_in", "hide_out", "found", "trap", "trapped",
                  "search", "detect", "extract", "victory", "sad", "ghost", "ghost_move"]
@@ -252,6 +255,7 @@ class Builder:
                 self.gk_perso(pid, GK / "persos" / pid)
             self.gk_candidats(pid)
         self.gk_map()
+        self.gk_masques()
         self.gk_mannequin()
         self.gk_decor()
 
@@ -415,6 +419,18 @@ class Builder:
                 self.data(js, CAT_GK_MANNEQUIN, mdir.name)
         for js in sorted((GK / "choreo").glob("*.json")):
             self.data(js, CAT_GK_MANNEQUIN, "chorégraphies", "choreo")
+
+    def gk_masques(self) -> None:
+        """Objet du décor + empreinte au sol (vert : bloque) + zone qui masque un perso (violet)."""
+        for png in sorted(GK_MASQUES.glob("*.png")):
+            rel = self.rel_src(png)
+            img = Image.open(png)
+            f = self.copy(png, rel)
+            group = "cachettes" if png.stem.startswith("cachette_") else "objets"
+            self.add(id=rel, cat=CAT_GK_MASQUES, group=group, kind="masque_decor", name=f"{group} · {png.stem}",
+                     type="image", smooth=True, version=short_hash(png), w=img.width, h=img.height,
+                     file=f, preview=f, note="vert : empreinte au sol (bloque le passage et la vue) ; "
+                     "violet : passe devant le perso et le masque ; pointillé : cases de l'objet")
 
     def gk_decor(self) -> None:
         for sub, group in (("textures", "textures"), ("models", "modèles")):
