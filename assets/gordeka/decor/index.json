@@ -386,7 +386,23 @@
    "animation": {
     "methode": "planche",
     "description": "faisceau de la lanterne qui tourne ; le halo lumineux peut être ajouté par le jeu"
-   }
+   },
+   "fichiers": [
+    "objets/tour_phare.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "896d94dfe59a4eebafb850a50dde783c",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/tour_phare_ombre.png",
+   "ombre_decalage": [
+    87,
+    478
+   ]
   },
   "fronton": {
    "nom": "Fronton de pelote basque",
