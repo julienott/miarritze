@@ -9,11 +9,14 @@ Configuration :
 Exemples :
   cli.py comments --open
   cli.py reply 12 "Couleurs du maillot corrigées (commit abc1234)" --done
-  cli.py cards --status todo
-  cli.py show 4
-  cli.py move 4 doing          (todo | doing | review | done)
-  cli.py note 4 "Commencé : nouvelle palette"
-  cli.py add-card --type bug --title "Ombre de Maia décalée" --asset fighters/maia/sheet.png
+  cli.py cards --status todo [--parent 3] [--json]
+  cli.py show 4                (détail + historique + enfants)
+  cli.py move 4 doing          (backlog | todo | doing | qa | done)
+  cli.py comment 4 "Commencé : nouvelle palette"
+  cli.py add-card --type perso --title "Amaia" --status backlog
+  cli.py add-card --type animation --title "Amaia : run" --parent 12
+  cli.py set 4 --priority haute --parent 12
+  cli.py events --since 15m    (tout ce qui a bougé ; aussi epoch ou "2026-10-20 14:00")
 """
 from __future__ import annotations
 
@@ -24,18 +27,27 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import time
 from datetime import datetime
 from pathlib import Path
 
 DEFAULT_URL = "https://miarritze.ijulien.com/producer/"
 ROOT = Path(__file__).resolve().parents[2]
+# Colonnes du kanban, et alias de l'ancien CLI (afaire, encours, averifier, review, fait).
+STATUS_LABEL = {"backlog": "Backlog", "todo": "Todo", "doing": "Doing", "qa": "QA", "done": "Done"}
 STATUS_ALIASES = {
+    "backlog": "backlog",
     "todo": "todo", "afaire": "todo", "a-faire": "todo",
     "doing": "doing", "encours": "doing", "en-cours": "doing",
-    "review": "review", "averifier": "review", "a-verifier": "review",
+    "qa": "qa", "review": "qa", "averifier": "qa", "a-verifier": "qa",
     "done": "done", "fait": "done",
 }
-STATUS_LABEL = {"todo": "À faire", "doing": "En cours", "review": "À vérifier", "done": "Fait"}
+CARD_TYPES = ["feature", "bug", "perso", "animation", "asset", "gameplay", "pixelforge"]
+EVENT_LABEL = {
+    "creation": "création", "deplacement": "déplacement", "titre": "titre", "description": "description",
+    "priorite": "priorité", "type": "type", "asset": "asset", "parent": "chapeau",
+    "commentaire": "commentaire", "suppression": "suppression",
+}
 
 
 def token() -> str:
@@ -85,10 +97,26 @@ def when(ts: int) -> str:
     return datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M")
 
 
+def since_arg(s: str) -> int:
+    """Epoch, durée relative (90s, 15m, 2h, 1d) ou date locale « AAAA-MM-JJ[ HH:MM[:SS]] »."""
+    s = s.strip()
+    if s.isdigit():
+        return int(s)
+    units = {"s": 1, "m": 60, "h": 3600, "d": 86400, "j": 86400}
+    if len(s) > 1 and s[-1] in units and s[:-1].isdigit():
+        return int(time.time()) - int(s[:-1]) * units[s[-1]]
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M", "%Y-%m-%d"):
+        try:
+            return int(datetime.strptime(s, fmt).timestamp())
+        except ValueError:
+            pass
+    raise argparse.ArgumentTypeError("--since : epoch, 15m / 2h / 1d, ou AAAA-MM-JJ HH:MM")
+
+
 def status_arg(s: str) -> str:
     key = s.lower().replace("à", "a").replace("é", "e").replace(" ", "-")
     if key not in STATUS_ALIASES:
-        raise argparse.ArgumentTypeError("statut : todo | doing | review | done")
+        raise argparse.ArgumentTypeError("colonne : backlog | todo | doing | qa | done")
     return STATUS_ALIASES[key]
 
 
@@ -131,10 +159,21 @@ def cmd_close(a: argparse.Namespace) -> None:
     print(f"Commentaire #{a.id} : " + ("rouvert" if a.reopen else "traité"))
 
 
-def print_card(c: dict, full: bool) -> None:
+def short(text: str, n: int = 70) -> str:
+    text = " ".join(text.split())
+    return text if len(text) <= n else text[: n - 1] + "…"
+
+
+def print_card(c: dict, full: bool, titles: dict | None = None) -> None:
     prio = f" !{c['priority']}" if c["priority"] else ""
     asset = f" · {c['asset']}" if c["asset"] else ""
-    print(f"#{c['id']} [{STATUS_LABEL[c['status']]}] {c['type']}{prio} · {c['title']}{asset}")
+    kids = f" · enfants {c['children_done']}/{c['children']}" if c.get("children") else ""
+    parent = ""
+    if c.get("parent_id"):
+        t = (titles or {}).get(c["parent_id"])
+        parent = f" · ↑ #{c['parent_id']}" + (f" {short(t, 30)}" if t else "")
+    print(f"#{c['id']} [{STATUS_LABEL[c['status']]}] {c['type']}{prio} · {c['title']}{asset}{parent}{kids}"
+          f" · par {c.get('origin', '?')}")
     if full:
         print(f"    créée {when(c['created_at'])}, modifiée {when(c['updated_at'])}")
         for line in (c["description"] or "").splitlines():
@@ -143,25 +182,77 @@ def print_card(c: dict, full: bool) -> None:
             print(f"    — {n['author']} {when(n['created_at'])} : " + n["body"].replace("\n", "\n      "))
 
 
+def event_line(e: dict, with_card: bool) -> str:
+    t = e["type"]
+    if t == "deplacement":
+        what = f"{STATUS_LABEL.get(e['old'], e['old'])} -> {STATUS_LABEL.get(e['new'], e['new'])}"
+    elif t == "creation":
+        what = f"dans {STATUS_LABEL.get(e['new'], e['new'])}"
+    elif t == "commentaire":
+        what = "« " + e["new"].replace("\n", "\n      ") + " »"
+    elif t == "suppression":
+        what = f"« {e['old']} »"
+    elif t == "parent":
+        what = f"#{e['old'] or '—'} -> #{e['new'] or '—'}"
+    elif t == "description":
+        what = f"« {short(e['new'])} »"
+    else:
+        what = f"{e['old'] or '—'} -> {e['new'] or '—'}"
+    card = ""
+    if with_card:
+        title = e.get("card_title") or "(supprimée)"
+        col = f" [{STATUS_LABEL.get(e.get('card_status'), '')}]" if e.get("card_status") else ""
+        card = f"#{e['card_id']}{col} {short(title, 40)} · "
+    return f"{when(e['at'])} {e['author']:<6} {card}{EVENT_LABEL.get(t, t)} {what}"
+
+
 def cmd_cards(a: argparse.Namespace) -> None:
-    q = {"status": a.status} if a.status else {}
+    q = {}
+    if a.status:
+        q["status"] = a.status
+    if a.parent:
+        q["parent"] = a.parent
     r = call("cards", query=q)
     if a.json:
         print(json.dumps(r["cards"], ensure_ascii=False, indent=1))
         return
     if not r["cards"]:
         print("Aucune carte.")
+    titles = {c["id"]: c["title"] for c in r["cards"]}
     order = list(STATUS_LABEL)
     for c in sorted(r["cards"], key=lambda c: (order.index(c["status"]), c["position"])):
-        print_card(c, a.full)
+        print_card(c, a.full, titles)
 
 
 def cmd_show(a: argparse.Namespace) -> None:
-    for c in call("cards")["cards"]:
-        if c["id"] == a.id:
-            print_card(c, True)
-            return
-    sys.exit(f"Carte #{a.id} introuvable")
+    r = call("card", query={"id": a.id})
+    if a.json:
+        print(json.dumps(r, ensure_ascii=False, indent=1))
+        return
+    c = r["card"]
+    print_card({**c, "notes": []}, True)
+    if r["children"]:
+        print(f"  Enfants ({c['children_done']}/{c['children']} en QA ou Done) :")
+        for k in r["children"]:
+            print(f"    #{k['id']} [{STATUS_LABEL[k['status']]}] {k['type']} · {k['title']}")
+    print("  Historique :")
+    for e in r["events"]:
+        print("    " + event_line(e, False))
+
+
+def cmd_events(a: argparse.Namespace) -> None:
+    q = {"since": a.since}
+    if a.card:
+        q["card"] = a.card
+    r = call("events", query=q)
+    if a.json:
+        print(json.dumps(r, ensure_ascii=False, indent=1))
+        return
+    if not r["events"]:
+        print("Rien de neuf.")
+    for e in r["events"]:
+        print(event_line(e, True))
+    print(f"(serveur : {r['now']} — repasser --since {r['now']} au prochain tour)", file=sys.stderr)
 
 
 def cmd_move(a: argparse.Namespace) -> None:
@@ -169,16 +260,35 @@ def cmd_move(a: argparse.Namespace) -> None:
     print(f"Carte #{a.id} -> {STATUS_LABEL[a.status]}")
 
 
-def cmd_note(a: argparse.Namespace) -> None:
-    call("card_note", {"id": a.id, "body": a.text})
-    print(f"Note ajoutée à la carte #{a.id}")
+def cmd_comment(a: argparse.Namespace) -> None:
+    call("card_comment", {"id": a.id, "body": a.text})
+    print(f"Commentaire ajouté à la carte #{a.id}")
 
 
 def cmd_add_card(a: argparse.Namespace) -> None:
     body = {"type": a.type, "title": a.title, "description": a.desc or "", "priority": a.priority or "",
             "asset": a.asset or "", "status": a.status}
+    if a.parent:
+        body["parent"] = a.parent
     r = call("card", body)
-    print(f"Carte #{r['id']} créée")
+    print(f"Carte #{r['id']} créée ({STATUS_LABEL[a.status]})")
+
+
+def cmd_set(a: argparse.Namespace) -> None:
+    body: dict = {"id": a.id}
+    for key in ("title", "type", "asset"):
+        if getattr(a, key) is not None:
+            body[key] = getattr(a, key)
+    if a.desc is not None:
+        body["description"] = a.desc
+    if a.priority is not None:
+        body["priority"] = "" if a.priority == "aucune" else a.priority
+    if a.parent is not None:
+        body["parent"] = a.parent
+    if len(body) == 1:
+        sys.exit("Rien à modifier (--title, --desc, --type, --priority, --parent, --asset)")
+    r = call("card_update", body)
+    print(f"Carte #{a.id} : {r.get('changed', 0)} champ(s) modifié(s)")
 
 
 def main() -> None:
@@ -203,33 +313,53 @@ def main() -> None:
     s.set_defaults(fn=cmd_close)
 
     s = sub.add_parser("cards", help="lister les cartes du kanban")
-    s.add_argument("--status", type=status_arg)
-    s.add_argument("--full", action="store_true", help="description et notes")
+    s.add_argument("--status", type=status_arg, help="backlog | todo | doing | qa | done")
+    s.add_argument("--parent", type=int, help="seulement les enfants de cette carte chapeau")
+    s.add_argument("--full", action="store_true", help="description et commentaires")
     s.add_argument("--json", action="store_true")
     s.set_defaults(fn=cmd_cards)
 
-    s = sub.add_parser("show", help="détail d'une carte")
+    s = sub.add_parser("show", help="détail d'une carte, enfants et historique")
     s.add_argument("id", type=int)
+    s.add_argument("--json", action="store_true")
     s.set_defaults(fn=cmd_show)
+
+    s = sub.add_parser("events", help="tous les événements du board depuis --since")
+    s.add_argument("--since", type=since_arg, default="1d", help="epoch, 15m / 2h / 1d, ou AAAA-MM-JJ HH:MM (défaut 1d)")
+    s.add_argument("--card", type=int, help="une seule carte")
+    s.add_argument("--json", action="store_true")
+    s.set_defaults(fn=cmd_events)
 
     s = sub.add_parser("move", help="déplacer une carte")
     s.add_argument("id", type=int)
-    s.add_argument("status", type=status_arg)
+    s.add_argument("status", type=status_arg, help="backlog | todo | doing | qa | done")
     s.set_defaults(fn=cmd_move)
 
-    s = sub.add_parser("note", help="ajouter une note à une carte")
-    s.add_argument("id", type=int)
-    s.add_argument("text")
-    s.set_defaults(fn=cmd_note)
+    for name in ("comment", "note"):   # « note » : ancien nom
+        s = sub.add_parser(name, help="commenter une carte" if name == "comment" else "alias de comment")
+        s.add_argument("id", type=int)
+        s.add_argument("text")
+        s.set_defaults(fn=cmd_comment)
 
     s = sub.add_parser("add-card", help="créer une carte")
-    s.add_argument("--type", choices=["feature", "bug"], default="feature")
+    s.add_argument("--type", choices=CARD_TYPES, default="feature")
     s.add_argument("--title", required=True)
     s.add_argument("--desc")
     s.add_argument("--priority", choices=["basse", "normale", "haute"])
     s.add_argument("--asset")
-    s.add_argument("--status", type=status_arg, default="todo")
+    s.add_argument("--parent", type=int, help="carte chapeau")
+    s.add_argument("--status", type=status_arg, default="backlog")
     s.set_defaults(fn=cmd_add_card)
+
+    s = sub.add_parser("set", help="modifier une carte")
+    s.add_argument("id", type=int)
+    s.add_argument("--title")
+    s.add_argument("--desc")
+    s.add_argument("--type", choices=CARD_TYPES)
+    s.add_argument("--priority", choices=["basse", "normale", "haute", "aucune"])
+    s.add_argument("--parent", type=int, help="0 pour détacher")
+    s.add_argument("--asset")
+    s.set_defaults(fn=cmd_set)
 
     a = p.parse_args()
     a.fn(a)

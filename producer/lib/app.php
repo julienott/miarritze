@@ -17,8 +17,13 @@ const AUTH_WINDOW = 900;            // 15 min
 const SESSION_LIFETIME = 2592000;   // 30 jours
 const MAX_TITLE = 200;
 const MAX_TEXT = 8000;
-const CARD_STATUSES = ['todo', 'doing', 'review', 'done'];
-const CARD_TYPES = ['feature', 'bug'];
+const SCHEMA_VERSION = 2;
+// Colonnes du kanban, dans l'ordre. « review » (ancienne colonne) = « qa ».
+const CARD_STATUSES = ['backlog', 'todo', 'doing', 'qa', 'done'];
+const STATUS_ALIASES = ['review' => 'qa'];
+const CARD_TYPES = ['feature', 'bug', 'perso', 'animation', 'asset', 'gameplay', 'pixelforge'];
+const MAX_DEPTH = 3;                // chapeau > sous-chapeau > carte
+const MAX_EVENTS = 1000;
 const PRIORITIES = ['', 'basse', 'normale', 'haute'];
 const COMMENT_KINDS = ['amelioration', 'valide'];
 const COMMENT_STATUSES = ['open', 'done'];
@@ -41,7 +46,7 @@ final class App
     private string $root;
     private ?PDO $pdo = null;
     private ?array $index = null;
-    /** 'julien' | 'agent' | null */
+    /** 'julien' (session web) | 'claude' (jeton API) | null */
     private ?string $actor = null;
 
     public function __construct(string $root)
@@ -97,10 +102,12 @@ final class App
             'POST comment_update' => $this->updateComment(),
             'POST comment_delete' => $this->deleteComment(),
             'GET cards' => $this->listCards(),
+            'GET card' => $this->showCard(),
+            'GET events' => $this->listEvents(),
             'POST card' => $this->addCard(),
             'POST card_update' => $this->updateCard(),
             'POST card_move' => $this->moveCard(),
-            'POST card_note' => $this->addNote(),
+            'POST card_comment', 'POST card_note' => $this->addNote(),
             'POST card_delete' => $this->deleteCard(),
             default => throw new HttpError('Route inconnue', 404),
         };
@@ -141,11 +148,79 @@ final class App
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]);
             $pdo->exec('PRAGMA busy_timeout = 3000');
+            $pdo->exec('PRAGMA journal_mode = WAL');
+            $this->migrate($pdo);
             $pdo->exec('PRAGMA foreign_keys = ON');
-            $pdo->exec((string) file_get_contents(__DIR__ . '/schema.sql'));
             $this->pdo = $pdo;
         }
         return $this->pdo;
+    }
+
+    /**
+     * Applique schema.sql et migre une base de version 1 (idempotent, sûr en
+     * concurrence : BEGIN IMMEDIATE puis nouvelle lecture de user_version).
+     * v1 -> v2 : colonnes todo/doing/review/done -> todo/doing/qa/done (+ backlog),
+     * types libres, parent_id, origin, auteurs « agent » -> « claude »,
+     * historique card_events amorcé (création + commentaires existants).
+     */
+    private function migrate(PDO $pdo): void
+    {
+        $schema = (string) file_get_contents(__DIR__ . '/schema.sql');
+        $version = static fn (): int => (int) $pdo->query('PRAGMA user_version')->fetchColumn();
+        if ($version() >= SCHEMA_VERSION) {
+            $pdo->exec($schema);
+            return;
+        }
+        $exists = static function (string $table) use ($pdo): bool {
+            $st = $pdo->prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?");
+            $st->execute([$table]);
+            return $st->fetchColumn() !== false;
+        };
+        $pdo->exec('PRAGMA foreign_keys = OFF');   // sans effet dans une transaction
+        $pdo->exec('BEGIN IMMEDIATE');
+        try {
+            if ($version() < SCHEMA_VERSION) {
+                $old = $exists('cards') && !$exists('card_events');
+                $seq = 0;
+                if ($old) {
+                    $seq = (int) $pdo->query("SELECT COALESCE(MAX(seq), 0) FROM sqlite_sequence WHERE name = 'cards'")->fetchColumn();
+                    // L'index suivrait la table renommée et masquerait le nouveau.
+                    $pdo->exec('DROP INDEX IF EXISTS card_notes_card');
+                    $pdo->exec('ALTER TABLE card_notes RENAME TO card_notes_v1');
+                    $pdo->exec('ALTER TABLE cards RENAME TO cards_v1');
+                }
+                $pdo->exec($schema);
+                if ($old) {
+                    $pdo->exec("INSERT INTO cards (id, type, title, description, priority, asset, status, position,"
+                        . " parent_id, origin, created_at, updated_at)"
+                        . " SELECT id, type, title, description, priority, asset,"
+                        . " CASE status WHEN 'review' THEN 'qa' ELSE status END, position, NULL, 'julien', created_at, updated_at"
+                        . " FROM cards_v1");
+                    $pdo->exec("INSERT INTO card_notes (id, card_id, author, body, created_at)"
+                        . " SELECT id, card_id, CASE author WHEN 'agent' THEN 'claude' ELSE 'julien' END, body, created_at"
+                        . " FROM card_notes_v1 WHERE card_id IN (SELECT id FROM cards)");
+                    $pdo->exec("INSERT INTO card_events (card_id, at, author, type, old, new)"
+                        . " SELECT id, created_at, origin, 'creation', '', status FROM cards");
+                    $pdo->exec("INSERT INTO card_events (card_id, at, author, type, old, new)"
+                        . " SELECT card_id, created_at, author, 'commentaire', '', body FROM card_notes ORDER BY id");
+                    $pdo->exec('DROP TABLE card_notes_v1');
+                    $pdo->exec('DROP TABLE cards_v1');
+                    // Les ids de cartes supprimées ne sont jamais réutilisés.
+                    if ($seq > 0) {
+                        $pdo->exec("INSERT INTO sqlite_sequence (name, seq) SELECT 'cards', 0"
+                            . " WHERE NOT EXISTS (SELECT 1 FROM sqlite_sequence WHERE name = 'cards')");
+                        $pdo->prepare("UPDATE sqlite_sequence SET seq = MAX(seq, ?) WHERE name = 'cards'")->execute([$seq]);
+                    }
+                }
+                $pdo->exec('PRAGMA user_version = ' . SCHEMA_VERSION);
+            }
+            $pdo->exec('COMMIT');
+        } catch (Throwable $e) {
+            $pdo->exec('ROLLBACK');
+            throw $e;
+        } finally {
+            $pdo->exec('PRAGMA foreign_keys = ON');
+        }
     }
 
     private function clientIp(): string
@@ -228,7 +303,7 @@ final class App
                 $this->recordFailure();
                 throw new HttpError('Jeton invalide', 401);
             }
-            $this->actor = 'agent';
+            $this->actor = 'claude';
             return;    // pas de cookie, donc pas de CSRF possible
         }
         $this->startSession();
@@ -547,38 +622,213 @@ final class App
 
     // ================================================================== kanban
 
+    /** Statut lu dans le corps (alias « review » -> « qa »). */
+    private static function status(array $b, bool $required = false): ?string
+    {
+        $v = self::text($b, 'status', 32, $required);
+        if ($v === null) {
+            return null;
+        }
+        $v = STATUS_ALIASES[$v] ?? $v;
+        if (!in_array($v, CARD_STATUSES, true)) {
+            throw new HttpError('Statut invalide', 400);
+        }
+        return $v;
+    }
+
+    /** Parent lu dans le corps : absent -> null, 0/''/null -> 0 (aucun), sinon id. */
+    private static function parentArg(array $b): ?int
+    {
+        if (!array_key_exists('parent', $b)) {
+            return null;
+        }
+        $p = $b['parent'];
+        if ($p === null || $p === '' || $p === 0 || $p === '0') {
+            return 0;
+        }
+        if (is_string($p) && ctype_digit($p)) {
+            $p = (int) $p;
+        }
+        if (!is_int($p) || $p < 0) {
+            throw new HttpError('parent invalide', 400);
+        }
+        return $p;
+    }
+
+    /** Une carte par id, ou 404. */
+    private function card(int $id): array
+    {
+        $stmt = $this->db()->prepare('SELECT * FROM cards WHERE id = ?');
+        $stmt->execute([$id]);
+        $c = $stmt->fetch();
+        if ($c === false) {
+            throw new HttpError('Carte introuvable', 404);
+        }
+        return $c;
+    }
+
+    /**
+     * Vérifie qu'on peut accrocher la carte $id (0 = nouvelle) sous $parent :
+     * parent existant, pas de boucle, au plus MAX_DEPTH niveaux.
+     */
+    private function checkParent(int $id, int $parent): void
+    {
+        if ($parent === 0) {
+            return;
+        }
+        $db = $this->db();
+        $up = $db->prepare('SELECT parent_id FROM cards WHERE id = ?');
+        // Ancêtres du parent (le parent compris).
+        $depth = 0;
+        for ($cur = $parent; $cur !== 0; $depth++) {
+            if ($cur === $id || $depth > MAX_DEPTH) {
+                throw new HttpError('Parent invalide : boucle', 400);
+            }
+            $up->execute([$cur]);
+            $row = $up->fetch();
+            if ($row === false) {
+                throw new HttpError('Carte parent introuvable', 400);
+            }
+            $cur = (int) ($row['parent_id'] ?? 0);
+        }
+        // Hauteur du sous-arbre de la carte déplacée.
+        $height = 1;
+        $down = $db->prepare('SELECT id FROM cards WHERE parent_id = ?');
+        $level = $id > 0 ? [$id] : [];
+        while ($level) {
+            $next = [];
+            foreach ($level as $cid) {
+                $down->execute([$cid]);
+                foreach ($down->fetchAll() as $r) {
+                    $next[] = (int) $r['id'];
+                }
+            }
+            if ($next) {
+                $height++;
+            }
+            $level = $next;
+        }
+        if ($depth + $height > MAX_DEPTH) {
+            throw new HttpError('Trop de niveaux de chapeaux (' . MAX_DEPTH . ' au plus)', 400);
+        }
+    }
+
+    /** Écrit un événement d'historique (auteur = l'acteur authentifié). */
+    private function event(int $cardId, string $type, string $old = '', string $new = '', ?int $at = null): void
+    {
+        $this->db()->prepare('INSERT INTO card_events (card_id, at, author, type, old, new) VALUES (?, ?, ?, ?, ?, ?)')
+            ->execute([$cardId, $at ?? time(), $this->actor, $type, $old, $new]);
+    }
+
+    /** Typage JSON d'une ligne de carte. */
+    private static function castCard(array $c): array
+    {
+        $c['id'] = (int) $c['id'];
+        $c['position'] = (int) $c['position'];
+        $c['parent_id'] = $c['parent_id'] === null ? null : (int) $c['parent_id'];
+        $c['created_at'] = (int) $c['created_at'];
+        $c['updated_at'] = (int) $c['updated_at'];
+        return $c;
+    }
+
+    /**
+     * Toutes les cartes, avec commentaires (`notes`) et avancement des enfants
+     * (`children` : total, `children_done` : qa + done, descendants compris).
+     */
+    private function allCards(): array
+    {
+        $db = $this->db();
+        $cards = [];
+        foreach ($db->query('SELECT * FROM cards ORDER BY position, id')->fetchAll() as $c) {
+            $c = self::castCard($c);
+            $c['notes'] = [];
+            $c['children'] = 0;
+            $c['children_done'] = 0;
+            $cards[$c['id']] = $c;
+        }
+        foreach ($db->query('SELECT * FROM card_notes ORDER BY id')->fetchAll() as $n) {
+            $cid = (int) $n['card_id'];
+            if (isset($cards[$cid])) {
+                $cards[$cid]['notes'][] = [
+                    'id' => (int) $n['id'], 'author' => $n['author'], 'body' => $n['body'], 'created_at' => (int) $n['created_at'],
+                ];
+            }
+        }
+        foreach ($cards as $c) {
+            $done = in_array($c['status'], ['qa', 'done'], true) ? 1 : 0;
+            // Remonte la chaîne : chaque ancêtre compte ce descendant.
+            for ($p = $c['parent_id'], $guard = 0; $p !== null && isset($cards[$p]) && $guard < 10; $guard++) {
+                $cards[$p]['children']++;
+                $cards[$p]['children_done'] += $done;
+                $p = $cards[$p]['parent_id'];
+            }
+        }
+        return array_values($cards);
+    }
+
     private function listCards(): void
     {
         $status = isset($_GET['status']) && is_string($_GET['status']) ? $_GET['status'] : '';
+        $status = STATUS_ALIASES[$status] ?? $status;
         if ($status !== '' && !in_array($status, CARD_STATUSES, true)) {
             throw new HttpError('Statut invalide', 400);
         }
-        $db = $this->db();
-        if ($status !== '') {
-            $stmt = $db->prepare('SELECT * FROM cards WHERE status = ? ORDER BY position, id');
-            $stmt->execute([$status]);
-        } else {
-            $stmt = $db->query('SELECT * FROM cards ORDER BY position, id');
-        }
-        $cards = $stmt->fetchAll();
-        $notes = [];
-        foreach ($db->query('SELECT * FROM card_notes ORDER BY id')->fetchAll() as $n) {
-            $notes[(int) $n['card_id']][] = [
-                'id' => (int) $n['id'], 'author' => $n['author'], 'body' => $n['body'], 'created_at' => (int) $n['created_at'],
-            ];
-        }
-        foreach ($cards as &$c) {
-            $c['id'] = (int) $c['id'];
-            $c['position'] = (int) $c['position'];
-            $c['notes'] = $notes[$c['id']] ?? [];
-        }
+        $parent = isset($_GET['parent']) && is_string($_GET['parent']) && ctype_digit($_GET['parent']) ? (int) $_GET['parent'] : 0;
+        $cards = array_values(array_filter($this->allCards(), static fn (array $c): bool =>
+            ($status === '' || $c['status'] === $status) && ($parent === 0 || $c['parent_id'] === $parent)));
         $this->json(['cards' => $cards]);
+    }
+
+    private function eventRows(string $where, array $args): array
+    {
+        $stmt = $this->db()->prepare('SELECT e.*, c.title AS card_title, c.status AS card_status FROM card_events e'
+            . ' LEFT JOIN cards c ON c.id = e.card_id' . $where . ' ORDER BY e.at, e.id LIMIT ' . MAX_EVENTS);
+        $stmt->execute($args);
+        $rows = $stmt->fetchAll();
+        foreach ($rows as &$r) {
+            $r['id'] = (int) $r['id'];
+            $r['card_id'] = (int) $r['card_id'];
+            $r['at'] = (int) $r['at'];
+        }
+        return $rows;
+    }
+
+    /** Une carte, son historique (commentaires compris) et ses enfants. */
+    private function showCard(): void
+    {
+        $id = self::id($_GET);
+        $card = null;
+        $children = [];
+        foreach ($this->allCards() as $c) {
+            if ($c['id'] === $id) {
+                $card = $c;
+            } elseif ($c['parent_id'] === $id) {
+                $children[] = $c;
+            }
+        }
+        if ($card === null) {
+            throw new HttpError('Carte introuvable', 404);
+        }
+        $this->json(['card' => $card, 'children' => $children, 'events' => $this->eventRows(' WHERE e.card_id = ?', [$id])]);
+    }
+
+    /** Tous les événements du board depuis `since` (inclus), pour la boucle de l'agent. */
+    private function listEvents(): void
+    {
+        $since = isset($_GET['since']) && is_string($_GET['since']) && ctype_digit($_GET['since']) ? (int) $_GET['since'] : 0;
+        $where = ' WHERE e.at >= ?';
+        $args = [$since];
+        if (isset($_GET['card']) && is_string($_GET['card']) && ctype_digit($_GET['card'])) {
+            $where .= ' AND e.card_id = ?';
+            $args[] = (int) $_GET['card'];
+        }
+        $this->json(['events' => $this->eventRows($where, $args), 'now' => time()]);
     }
 
     private function addCard(): void
     {
         $b = $this->body();
-        $type = (string) self::oneOf($b, 'type', CARD_TYPES, true);
+        $type = (string) (self::oneOf($b, 'type', CARD_TYPES) ?: 'feature');
         $title = (string) self::text($b, 'title', MAX_TITLE, true);
         $desc = (string) (self::text($b, 'description', MAX_TEXT) ?? '');
         $prio = (string) (self::oneOf($b, 'priority', PRIORITIES) ?? '');
@@ -586,16 +836,27 @@ final class App
         if ($asset !== '' && $this->asset($asset) === null) {
             throw new HttpError('Asset inconnu', 400);
         }
-        $status = (string) (self::oneOf($b, 'status', CARD_STATUSES) ?? 'todo');
+        $status = (string) (self::status($b) ?? 'backlog');
+        $parent = (int) self::parentArg($b);
+        $this->checkParent(0, $parent);
         $db = $this->db();
-        $stmt = $db->prepare('SELECT COALESCE(MAX(position), -1) + 1 FROM cards WHERE status = ?');
-        $stmt->execute([$status]);
-        $pos = (int) $stmt->fetchColumn();
-        $now = time();
-        $db->prepare('INSERT INTO cards (type, title, description, priority, asset, status, position, created_at, updated_at)'
-            . ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-            ->execute([$type, $title, $desc, $prio, $asset, $status, $pos, $now, $now]);
-        $this->json(['id' => (int) $db->lastInsertId()], 201);
+        $db->beginTransaction();
+        try {
+            $stmt = $db->prepare('SELECT COALESCE(MAX(position), -1) + 1 FROM cards WHERE status = ?');
+            $stmt->execute([$status]);
+            $pos = (int) $stmt->fetchColumn();
+            $now = time();
+            $db->prepare('INSERT INTO cards (type, title, description, priority, asset, status, position, parent_id, origin,'
+                . ' created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+                ->execute([$type, $title, $desc, $prio, $asset, $status, $pos, $parent ?: null, $this->actor, $now, $now]);
+            $id = (int) $db->lastInsertId();
+            $this->event($id, 'creation', '', $status, $now);
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
+        $this->json(['id' => $id], 201);
     }
 
     private function updateCard(): void
@@ -609,47 +870,64 @@ final class App
             'priority' => self::oneOf($b, 'priority', PRIORITIES),
             'asset' => self::text($b, 'asset', 300),
         ];
+        $parent = self::parentArg($b);
         if ($fields['title'] === '') {
             throw new HttpError('Titre vide', 400);
+        }
+        if ($fields['type'] === '') {
+            $fields['type'] = null;
         }
         if (($fields['asset'] ?? '') !== '' && $this->asset((string) $fields['asset']) === null) {
             throw new HttpError('Asset inconnu', 400);
         }
-        $sets = [];
-        $args = [];
-        foreach ($fields as $col => $v) {
-            if ($v !== null) {
-                $sets[] = "$col = ?";   // $col vient de la liste fixe ci-dessus
-                $args[] = $v;
-            }
-        }
-        if (!$sets) {
+        if ($parent === null && !array_filter($fields, static fn ($v) => $v !== null)) {
             throw new HttpError('Rien à modifier', 400);
         }
-        $args[] = time();
-        $args[] = $id;
-        $stmt = $this->db()->prepare('UPDATE cards SET ' . implode(', ', $sets) . ', updated_at = ? WHERE id = ?');
-        $stmt->execute($args);
-        if ($stmt->rowCount() === 0) {
-            throw new HttpError('Carte introuvable', 404);
+        $db = $this->db();
+        $db->beginTransaction();
+        try {
+            $cur = $this->card($id);
+            // Nom de l'événement par colonne (« $col » vient de cette liste fixe).
+            $names = ['type' => 'type', 'title' => 'titre', 'description' => 'description', 'priority' => 'priorite', 'asset' => 'asset'];
+            $sets = [];
+            $args = [];
+            foreach ($fields as $col => $v) {
+                if ($v !== null && $v !== (string) $cur[$col]) {
+                    $sets[] = "$col = ?";
+                    $args[] = $v;
+                    $this->event($id, $names[$col], (string) $cur[$col], $v);
+                }
+            }
+            $oldParent = (int) ($cur['parent_id'] ?? 0);
+            if ($parent !== null && $parent !== $oldParent) {
+                $this->checkParent($id, $parent);
+                $sets[] = 'parent_id = ?';
+                $args[] = $parent ?: null;
+                $this->event($id, 'parent', $oldParent ? (string) $oldParent : '', $parent ? (string) $parent : '');
+            }
+            if ($sets) {
+                $args[] = time();
+                $args[] = $id;
+                $db->prepare('UPDATE cards SET ' . implode(', ', $sets) . ', updated_at = ? WHERE id = ?')->execute($args);
+            }
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
         }
-        $this->json(['ok' => true]);
+        $this->json(['ok' => true, 'changed' => count($sets)]);
     }
 
     private function moveCard(): void
     {
         $b = $this->body();
         $id = self::id($b);
-        $status = (string) self::oneOf($b, 'status', CARD_STATUSES, true);
+        $status = (string) self::status($b, true);
         $index = $b['index'] ?? null;
         $db = $this->db();
         $db->beginTransaction();
         try {
-            $stmt = $db->prepare('SELECT id FROM cards WHERE id = ?');
-            $stmt->execute([$id]);
-            if ($stmt->fetch() === false) {
-                throw new HttpError('Carte introuvable', 404);
-            }
+            $old = (string) $this->card($id)['status'];
             $stmt = $db->prepare('SELECT id FROM cards WHERE status = ? AND id != ? ORDER BY position, id');
             $stmt->execute([$status, $id]);
             $ids = array_map('intval', array_column($stmt->fetchAll(), 'id'));
@@ -659,6 +937,10 @@ final class App
             foreach ($ids as $pos => $cid) {
                 $upd->execute([$status, $pos, $id, time(), $cid]);
             }
+            // Le simple réordonnancement dans une colonne n'est pas historisé.
+            if ($old !== $status) {
+                $this->event($id, 'deplacement', $old, $status);
+            }
             $db->commit();
         } catch (Throwable $e) {
             $db->rollBack();
@@ -667,31 +949,44 @@ final class App
         $this->json(['ok' => true]);
     }
 
+    /** Commentaire sur une carte (route card_comment, alias historique card_note). */
     private function addNote(): void
     {
         $b = $this->body();
         $id = self::id($b);
         $text = (string) self::text($b, 'body', MAX_TEXT, true);
         $db = $this->db();
-        $stmt = $db->prepare('SELECT id FROM cards WHERE id = ?');
-        $stmt->execute([$id]);
-        if ($stmt->fetch() === false) {
-            throw new HttpError('Carte introuvable', 404);
+        $db->beginTransaction();
+        try {
+            $this->card($id);
+            $now = time();
+            $db->prepare('INSERT INTO card_notes (card_id, author, body, created_at) VALUES (?, ?, ?, ?)')
+                ->execute([$id, $this->actor, $text, $now]);
+            $nid = (int) $db->lastInsertId();
+            $db->prepare('UPDATE cards SET updated_at = ? WHERE id = ?')->execute([$now, $id]);
+            $this->event($id, 'commentaire', '', $text, $now);
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
         }
-        $now = time();
-        $db->prepare('INSERT INTO card_notes (card_id, author, body, created_at) VALUES (?, ?, ?, ?)')
-            ->execute([$id, $this->actor, $text, $now]);
-        $db->prepare('UPDATE cards SET updated_at = ? WHERE id = ?')->execute([$now, $id]);
-        $this->json(['id' => (int) $db->lastInsertId()], 201);
+        $this->json(['id' => $nid], 201);
     }
 
     private function deleteCard(): void
     {
         $id = self::id($this->body());
-        $stmt = $this->db()->prepare('DELETE FROM cards WHERE id = ?');
-        $stmt->execute([$id]);
-        if ($stmt->rowCount() === 0) {
-            throw new HttpError('Carte introuvable', 404);
+        $db = $this->db();
+        $db->beginTransaction();
+        try {
+            $title = (string) $this->card($id)['title'];
+            // Les enfants restent, détachés (ON DELETE SET NULL).
+            $db->prepare('DELETE FROM cards WHERE id = ?')->execute([$id]);
+            $this->event($id, 'suppression', $title, '');
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
         }
         $this->json(['ok' => true]);
     }

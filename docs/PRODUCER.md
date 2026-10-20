@@ -28,10 +28,17 @@ Service privé : https://miarritze.ijulien.com/producer/
   - Le commentaire garde la version de l'asset et le commit du build. Si l'asset a changé depuis, il porte le badge « version précédente ».
   - L'agent répond dans le commentaire et le marque « Traité ». Tu peux le rouvrir.
   - L'onglet « Commentaires » liste tout, par défaut les commentaires ouverts seulement.
-- **Kanban** : quatre colonnes, À faire → En cours → À vérifier → Fait.
-  - « + Nouvelle carte » crée une feature ou un bug, avec priorité et asset lié en option. Sur un asset, « + Carte liée » préremplit l'asset.
-  - Pour déplacer une carte, glisse-la (ordinateur) ou utilise les boutons ◀ ▶ (iPhone).
-  - Touche une carte pour la modifier, lire les notes de l'agent ou ajouter une note.
+- **Kanban** : cinq colonnes, **Backlog → Todo → Doing → QA → Done**.
+  - **Backlog** : tout ce qui est identifié (assets, gameplay…), par Claude ou par toi. En haut de la colonne, la **création rapide** : un titre suffit, le chapeau est optionnel.
+  - **Todo** : ce que Claude doit passer en file. C'est toi qui priorises et qui mets une carte en Todo : Claude le voit à son prochain tour (toutes les 5 minutes environ).
+  - **Doing** : en cours ou en file d'attente, pixelforge compris. **QA** : en ligne sur le site, à tester. **Done** : réglé.
+  - Pour déplacer une carte, glisse-la (ordinateur, l'ordre dans la colonne compte) ou utilise ◀ ▶ (iPhone).
+  - Chaque carte a un **type** en petit badge (Feature, Bug, Perso, Animation, Asset, Gameplay, Pixelforge), une priorité (haute, normale, basse) et, discrètement en haut à droite, qui l'a créée (Julien ou Claude).
+  - **Chapeaux** : une carte peut avoir une carte parent, par exemple « Amaia » (type Perso) avec en enfants son image de référence et chacune de ses animations. Le chapeau montre une barre d'avancement (enfants en QA ou Done / total) et « ▸ N enfants » pour les déplier ; un enfant affiche « ↑ nom du chapeau », qui ouvre le chapeau. Les enfants se déplacent librement, chacun dans sa colonne. Trois niveaux au plus.
+  - En haut du board : filtre **Chapeau** (un chapeau et toute sa famille) et **Chapeaux seulement** (les enfants sont masqués, on les voit en dépliant).
+  - Touche une carte pour la modifier (type, priorité, titre, description, chapeau, asset lié), voir ses enfants (« + Carte enfant » en crée un), et lire son **historique** : création, déplacements, changements, et les **commentaires** de Julien et de Claude mêlés dans l'ordre. « Commenter » envoie tout de suite.
+  - Le board se met à jour tout seul toutes les 30 secondes.
+  - Sur un asset, « + Carte liée » crée une carte dans le Backlog avec l'asset préréglé.
 - Le bouton ◐ bascule entre le thème clair et le thème sombre.
 
 ## Pour l'agent (terminal)
@@ -42,22 +49,29 @@ Service privé : https://miarritze.ijulien.com/producer/
 - `PRODUCER_URL` : l'adresse du service, par défaut `https://miarritze.ijulien.com/producer/`.
 
 ```bash
-tools/producer/cli.py comments --open            # retours à traiter (--asset <id>, --json)
+tools/producer/cli.py comments --open            # retours sur les assets (--asset <id>, --json)
 tools/producer/cli.py reply 12 "Bras raccourcis de 2 px (commit abc1234)" --done
 tools/producer/cli.py close 12 [--reopen]
-tools/producer/cli.py cards [--status todo|doing|review|done] [--full] [--json]
-tools/producer/cli.py show 4                     # description + notes
-tools/producer/cli.py move 4 doing               # alias : afaire, encours, averifier, fait
-tools/producer/cli.py note 4 "Commencé : palette refaite"
-tools/producer/cli.py add-card --type bug --title "…" [--desc …] [--priority haute] [--asset fighters/maia/sheet.png]
+
+tools/producer/cli.py events --since 5m          # TOUT ce qui a bougé sur le board (epoch, 15m, 2h, 1d, "2026-10-20 14:00") [--card N] [--json]
+tools/producer/cli.py cards [--status backlog|todo|doing|qa|done] [--parent N] [--full] [--json]
+tools/producer/cli.py show 4 [--json]            # détail, enfants, historique et commentaires
+tools/producer/cli.py add-card --title "…" [--type feature|bug|perso|animation|asset|gameplay|pixelforge] \
+    [--parent N] [--status backlog] [--desc …] [--priority haute] [--asset gordeka/persos/amaia/animations]
+tools/producer/cli.py move 4 doing               # colonnes : backlog todo doing qa done
+tools/producer/cli.py comment 4 "Commencé : palette refaite"
+tools/producer/cli.py set 4 [--priority haute|normale|basse|aucune] [--parent N|0] [--title …] [--desc …] [--type …] [--asset …]
 ```
 
-Routine conseillée :
+Les alias de l'ancien CLI marchent encore : `afaire` → todo, `encours` → doing, `averifier` et `review` → qa, `fait` → done ; `note` = `comment`. Toute action faite avec le jeton est signée **claude** (origine des cartes, historique, commentaires) ; celles de la session web sont signées **julien**.
 
-1. Lire `comments --open` et `cards --status todo`.
-2. Passer une carte en `doing` quand le travail commence.
-3. Quand c'est fini, la passer en `review` avec une note : c'est à Julien de la mettre en « Fait ».
-4. Répondre aux commentaires avec `reply … --done`.
+Routine conseillée (boucle toutes les 5 minutes) :
+
+1. `events --since <now du tour précédent>` : `events` écrit sur stderr la valeur `now` du serveur à repasser au tour suivant (`--json` la donne dans `now`). Regarder surtout les cartes que Julien a mises en **Todo** et ses **commentaires**.
+2. Lire `comments --open` (retours sur les assets).
+3. Passer une carte en `doing` quand le travail commence ou part en file (pixelforge compris), avec un `comment` si utile.
+4. Quand c'est en ligne, la passer en `qa` avec un commentaire qui dit quoi tester : c'est à Julien de la mettre en Done.
+5. Ce qui est repéré en route va dans le Backlog (`add-card`, `--parent` pour l'accrocher à son chapeau, par exemple le perso).
 
 Les ids d'asset sont les chemins relatifs à `assets/`, par exemple `fighters/maia/sheet.png`, qui regroupe les animations de Maia. La version d'un asset est un hash court de ses sources.
 
@@ -73,12 +87,14 @@ Toutes les routes passent par `index.php?r=<route>` et répondent en JSON. Authe
 | POST | `comment` `{asset, kind: amelioration\|valide, body, context}` | ajoute un commentaire |
 | POST | `comment_update` `{id, status?, reply?}` | modifie un commentaire |
 | POST | `comment_delete` `{id}` | supprime un commentaire |
-| GET | `cards` (`&status=`) | cartes, avec leurs `notes` |
-| POST | `card` `{type, title, description?, priority?, asset?, status?}` | crée une carte |
-| POST | `card_update` `{id, …}` | modifie une carte |
-| POST | `card_move` `{id, status, index?}` | déplace une carte |
-| POST | `card_note` `{id, body}` | ajoute une note |
-| POST | `card_delete` `{id}` | supprime une carte |
+| GET | `cards` (`&status=`, `&parent=`) | cartes, avec `notes` (commentaires), `children`, `children_done` (QA + Done, descendants compris) |
+| GET | `card&id=N` | `{card, children, events}` : détail et historique (commentaires compris) |
+| GET | `events&since=<epoch>` (`&card=`) | événements du board depuis `since` inclus (1000 au plus), avec `card_title`, `card_status`, et `now` |
+| POST | `card` `{title, type?, description?, priority?, asset?, status? (défaut backlog), parent?}` | crée une carte |
+| POST | `card_update` `{id, type?, title?, description?, priority?, asset?, parent? (0 = aucun)}` | modifie une carte (seuls les vrais changements sont historisés) |
+| POST | `card_move` `{id, status, index?}` | déplace une carte (`review` accepté pour `qa`) |
+| POST | `card_comment` `{id, body}` | commente une carte (alias : `card_note`) |
+| POST | `card_delete` `{id}` | supprime une carte (ses enfants sont détachés) |
 | GET | `index` | index des assets |
 | GET | `file&p=<chemin>` | sert un fichier listé par l'index (liste blanche) |
 
@@ -87,6 +103,8 @@ Toutes les routes passent par `index.php?r=<route>` et répondent en JSON. Authe
 - `producer/index.php` est le point d'entrée unique. La logique est dans `lib/app.php`, le schéma SQLite dans `lib/schema.sql`, la coquille HTML dans `lib/page.html`, l'interface dans `static/`. Pas de dépendance, tout est same-origin (compatible COOP/COEP).
 - `tools/producer/build.sh <dossier>` assemble le service. Il lance `build_index.py`, qui génère `files/` : les planches d'animation colorisées, les portraits colorisés, des copies des images et de l'audio, des `.mp3` si ffmpeg est présent, et `index.json`.
 - Les données vivent dans `producer/data/` sur le serveur (`producer.sqlite` et les sessions). Ce dossier n'est jamais dans le build, il est exclu du rsync et de git.
+- Schéma versionné par `PRAGMA user_version` (2 actuellement). Une base de version 1 est migrée automatiquement à la première requête, dans une transaction (`BEGIN IMMEDIATE`) : colonnes `todo`, `doing`, `done` gardées, `review` → `qa` ; notes conservées (auteur `agent` → `claude`) ; nouvelles colonnes `parent_id` et `origin` (`julien` pour les cartes migrées, faute de mieux) ; historique `card_events` amorcé avec la création de chaque carte et ses commentaires existants ; les ids de cartes ne sont pas réutilisés.
+- Historique : `card_events (card_id, at, author julien|claude, type, old, new)` avec les types `creation`, `deplacement`, `titre`, `description`, `priorite`, `type`, `asset`, `parent`, `commentaire`, `suppression`. Pas de clé étrangère, pour que la suppression d'une carte reste dans le fil.
 - Sécurité :
   - session PHP avec cookie HttpOnly, Secure et SameSite=Strict ;
   - jeton CSRF (en-tête `X-CSRF-Token`) exigé sur toute écriture faite avec la session ;
@@ -121,7 +139,11 @@ PRODUCER_URL=http://127.0.0.1:8099/producer/ PRODUCER_TEST_PASSWORD=test-local \
   PRODUCER_TOKEN=tok_local_0123456789abcdefghij node tests/web/producer.mjs   # base vide requise
 PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_anims.mjs   # page d'un perso + galerie animée
 PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_gordeka.mjs # persos, manquantes, plein écran, décor (ordi + iPhone)
+PRODUCER_URL=http://127.0.0.1:8099/producer/ PRODUCER_TEST_PASSWORD=test-local \
+  PRODUCER_TOKEN=tok_local_0123456789abcdefghij node tests/web/producer_kanban.mjs   # kanban (ordi + iPhone portrait/paysage)
 ```
+
+`producer_kanban.mjs` (30 vérifications) tourne sur une base quelconque (titres uniques). Pour tester la migration, partir d'une base de version 1 : créer `data/producer.sqlite` avec `git show f0c4e41:producer/lib/schema.sql | sqlite3 …`, y insérer les cartes « Ancienne carte à faire » (todo), « Ancien bug en cours » (doing), « Ancienne carte à vérifier » (review, avec une note `agent` puis une note `julien`) et « Ancienne carte faite » (done), puis lancer le test avec `PRODUCER_EXPECT_MIGRATION=1`. Avec plusieurs requêtes en parallèle (images), lancer `php -S` avec `PHP_CLI_SERVER_WORKERS=6`.
 
 Le test (Chromium, 36 vérifications) couvre :
 

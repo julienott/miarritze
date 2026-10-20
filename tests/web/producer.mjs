@@ -127,15 +127,15 @@ await page.fill('#cf-desc', 'Maillot rayé, lunettes.\n<b>pas du HTML</b>');
 await page.selectOption('#cf-priority', 'normale');
 await page.fill('#cf-asset', 'fighters/peio/sheet.png');
 await page.click('#cf-save');
-await page.waitForSelector('.column[data-status=todo] .card:has-text("costume d\'été")');
-check('carte créée dans « À faire »', true);
+await page.waitForSelector('.column[data-status=backlog] .card:has-text("costume d\'été")');
+check('carte créée dans « Backlog »', true);
 const card = page.locator('.card:has-text("costume d\'été")');
 await card.locator('button[aria-label="Colonne suivante"]').click();
-await page.waitForSelector('.column[data-status=doing] .card:has-text("costume d\'été")');
-check('carte déplacée par bouton vers « En cours »', true);
-await page.dragAndDrop('.column[data-status=doing] .card:has-text("costume d\'été")', '.column[data-status=review]');
-await page.waitForSelector('.column[data-status=review] .card:has-text("costume d\'été")');
-check('carte déplacée par glisser-déposer vers « À vérifier »', true);
+await page.waitForSelector('.column[data-status=todo] .card:has-text("costume d\'été")');
+check('carte déplacée par bouton vers « Todo »', true);
+await page.dragAndDrop('.column[data-status=todo] .card:has-text("costume d\'été")', '.column[data-status=qa]');
+await page.waitForSelector('.column[data-status=qa] .card:has-text("costume d\'été")');
+check('carte déplacée par glisser-déposer vers « QA »', true);
 await shot('08_kanban');
 
 // ----------------------------------------------------------- agent (cli.py)
@@ -144,9 +144,9 @@ check('cli comments --open', listed.includes('fighters/maia/sheet.png') && liste
 const cid = Number(/#(\d+) \[open\] amelioration/.exec(listed)[1]);
 cli('reply', String(cid), 'Bras raccourcis de 2 px (exemple)', '--done');
 const cards = cli('cards', '--full');
-check('cli cards', cards.includes('costume d\'été') && cards.includes('Test CLI'));
-const kid = Number(/#(\d+) \[À vérifier\]/.exec(cards)[1]);
-cli('note', String(kid), 'Palette prête, à valider');
+check('cli cards', cards.includes('costume d\'été'));
+const kid = Number(/#(\d+) \[QA\]/.exec(cards)[1]);
+cli('comment', String(kid), 'Palette prête, à valider');
 cli('move', String(kid), 'done');
 const after = cli('comments');
 check('cli reply + done', after.includes('[done]') && after.includes('Bras raccourcis'));
@@ -160,8 +160,8 @@ await shot('09_commentaires');
 await page.goto(BASE + '#/kanban');
 await page.waitForSelector('.column[data-status=done] .card:has-text("costume d\'été")');
 await page.click('.column[data-status=done] .card:has-text("costume d\'été")');
-await page.waitForSelector('#card-dialog[open] .note.agent');
-check('note de l\'agent visible sur la carte', true);
+await page.waitForSelector('#card-dialog[open] .note.claude');
+check('commentaire de Claude visible sur la carte', true);
 await shot('10_carte_notes');
 await page.click('#cf-cancel');
 

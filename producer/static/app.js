@@ -4,8 +4,12 @@
 'use strict';
 
 const STATUSES = [
-  ['todo', 'À faire'], ['doing', 'En cours'], ['review', 'À vérifier'], ['done', 'Fait'],
+  ['backlog', 'Backlog'], ['todo', 'Todo'], ['doing', 'Doing'], ['qa', 'QA'], ['done', 'Done'],
 ];
+const TYPE_LABEL = {
+  feature: 'Feature', bug: 'Bug', perso: 'Perso', animation: 'Animation', asset: 'Asset',
+  gameplay: 'Gameplay', pixelforge: 'Pixelforge',
+};
 const STATUS_LABEL = Object.fromEntries(STATUSES);
 const KIND_LABEL = { amelioration: 'Amélioration', valide: 'Validé' };
 const PRIO_LABEL = { '': '', basse: 'Basse', normale: 'Normale', haute: 'Haute' };
@@ -24,6 +28,9 @@ const state = {
   zoom: 0,           // 0 = automatique
   player: null,      // lecteur d'animation en cours
   editing: null,     // carte en cours d'édition (null = nouvelle)
+  hat: 0,            // filtre « par chapeau » du kanban (0 = tous)
+  hatsOnly: false,   // kanban : enfants masqués (vue chapeaux seulement)
+  expanded: new Set(),  // chapeaux dépliés sur le board
   decorMode: store('producer-decor-mode') || 'masques',   // image | masques | controle
   decorSansMasque: false,  // filtre « sans masque » du décor
   fs: null,          // lecteur plein écran ouvert
@@ -1154,21 +1161,149 @@ async function renderCommentList() {
 }
 
 // ================================================================== KANBAN
+// Colonnes Backlog → Todo → Doing → QA → Done. Une carte peut avoir une carte
+// « chapeau » (parent_id) : le chapeau affiche l'avancement de ses enfants et
+// peut les déplier ; les enfants restent des cartes qui vivent leur vie.
+
+const AUTHOR_LABEL = { julien: 'Julien', claude: 'Claude' };
+const KANBAN_REFRESH_MS = 30000;   // le board se met à jour seul (actions de Claude)
+
+function cardById(id) {
+  return state.cards.find((c) => c.id === id) || null;
+}
+
+function childrenOf(id) {
+  return state.cards.filter((c) => c.parent_id === id);
+}
+
+/** Ids de la carte et de tous ses descendants. */
+function familyIds(id) {
+  const out = new Set([id]);
+  for (let added = true; added;) {
+    added = false;
+    for (const c of state.cards) {
+      if (c.parent_id !== null && out.has(c.parent_id) && !out.has(c.id)) { out.add(c.id); added = true; }
+    }
+  }
+  return out;
+}
+
+/** Cartes proposées comme chapeau : celles qui ont des enfants, et les persos. */
+function hatCards() {
+  return state.cards.filter((c) => c.children > 0 || c.type === 'perso')
+    .sort((a, b) => a.title.localeCompare(b.title, 'fr'));
+}
+
+function parentOptions(select, current, excluded) {
+  select.replaceChildren(el('option', { value: '' }, '— aucun —'),
+    ...state.cards.filter((c) => !excluded.has(c.id))
+      .sort((a, b) => (b.children - a.children) || a.title.localeCompare(b.title, 'fr'))
+      .map((c) => el('option', { value: c.id }, `#${c.id} ${c.title}`)));
+  select.value = current ? String(current) : '';
+}
 
 function initKanban() {
   $('new-card').addEventListener('click', () => openCardDialog(null, ''));
   $('cf-cancel').addEventListener('click', () => $('card-dialog').close());
   $('card-form').addEventListener('submit', saveCard);
   $('cf-delete').addEventListener('click', deleteCard);
+  $('cf-comment-send').addEventListener('click', sendComment);
+  $('cf-add-child').addEventListener('click', () => {
+    const parent = state.editing;
+    if (parent) openCardDialog(null, '', parent.id);
+  });
+  state.hat = Number(store('producer-kb-hat')) || 0;
+  state.hatsOnly = store('producer-kb-hats-only') === '1';
+  $('kb-hats-only').checked = state.hatsOnly;
+  $('kb-hat').addEventListener('change', () => {
+    state.hat = Number($('kb-hat').value) || 0;
+    store('producer-kb-hat', String(state.hat));
+    renderBoard();
+  });
+  $('kb-hats-only').addEventListener('change', () => {
+    state.hatsOnly = $('kb-hats-only').checked;
+    store('producer-kb-hats-only', state.hatsOnly ? '1' : '0');
+    renderBoard();
+  });
+  // Rafraîchissement discret : seulement si l'on ne fait rien sur le board.
+  setInterval(async () => {
+    if (!state.index || !location.hash.startsWith('#/kanban') || document.hidden) return;
+    if ($('card-dialog').open || document.querySelector('.card.dragging')) return;
+    const active = document.activeElement;
+    if (active && active.closest('#board') && /INPUT|SELECT|TEXTAREA/.test(active.tagName)) return;
+    const before = JSON.stringify(state.cards);
+    const ok = await guarded(reloadCards);
+    if (ok !== null && JSON.stringify(state.cards) !== before) renderBoard();
+  }, KANBAN_REFRESH_MS);
+}
+
+function renderHatFilter() {
+  const sel = $('kb-hat');
+  const hats = hatCards();
+  if (state.hat && !cardById(state.hat)) state.hat = 0;
+  sel.replaceChildren(el('option', { value: '' }, 'Tous'),
+    ...hats.map((c) => el('option', { value: c.id }, `${c.title} (${c.children_done}/${c.children})`)));
+  // Un chapeau choisi qui n'a pas (encore) d'enfant reste sélectionnable.
+  if (state.hat && !hats.some((c) => c.id === state.hat)) {
+    const c = cardById(state.hat);
+    sel.append(el('option', { value: c.id }, c.title));
+  }
+  sel.value = state.hat ? String(state.hat) : '';
+}
+
+function visibleCards() {
+  let cards = state.cards;
+  if (state.hat) {
+    const fam = familyIds(state.hat);
+    cards = cards.filter((c) => fam.has(c.id));
+  }
+  if (state.hatsOnly) {
+    // Un enfant dont le chapeau est affiché est caché (il se voit en dépliant).
+    const shown = new Set(cards.map((c) => c.id));
+    cards = cards.filter((c) => c.parent_id === null || !shown.has(c.parent_id));
+  }
+  return cards;
+}
+
+function quickAdd() {
+  const title = el('input', { maxlength: 200, placeholder: 'Nouvelle idée…', 'aria-label': 'Titre de la nouvelle carte', required: true });
+  const parent = el('select', { 'aria-label': 'Chapeau (optionnel)', class: 'qa-parent' });
+  parentOptions(parent, state.hat, new Set());
+  parent.options[0].textContent = 'sans chapeau';
+  const send = el('button', { type: 'submit', class: 'small primary' }, 'Ajouter');
+  const form = el('form', { class: 'quick-add' }, title, el('div', { class: 'row' }, parent, send));
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    if (!title.value.trim()) return;
+    send.disabled = true;
+    const body = { title: title.value.trim(), status: 'backlog' };
+    if (parent.value) body.parent = Number(parent.value);
+    const ok = await guarded(async () => {
+      await api('card', { method: 'POST', body });
+      await reloadCards();
+      return true;
+    });
+    send.disabled = false;
+    if (ok) {
+      toast('Carte ajoutée au Backlog');
+      renderBoard();
+      const again = document.querySelector('.quick-add input');
+      if (again) again.focus();
+    }
+  });
+  return form;
 }
 
 function renderBoard() {
+  renderHatFilter();
   const board = $('board');
+  const cards = visibleCards();
   board.replaceChildren(...STATUSES.map(([status, label], col) => {
-    const cards = state.cards.filter((c) => c.status === status);
+    const list = cards.filter((c) => c.status === status);
     const column = el('div', { class: 'column', 'data-status': status },
-      el('h3', {}, el('span', { text: label }), el('span', { class: 'muted', text: String(cards.length) })),
-      cards.map((c) => cardEl(c, col)));
+      el('h3', {}, el('span', { text: label }), el('span', { class: 'muted', text: String(list.length) })),
+      status === 'backlog' ? quickAdd() : null,
+      list.map((c) => cardEl(c, col)));
     column.addEventListener('dragover', (ev) => { ev.preventDefault(); column.classList.add('over'); });
     column.addEventListener('dragleave', () => column.classList.remove('over'));
     column.addEventListener('drop', (ev) => {
@@ -1176,12 +1311,14 @@ function renderBoard() {
       column.classList.remove('over');
       const id = Number(ev.dataTransfer.getData('text/plain'));
       if (!id) return;
-      // Position d'insertion : avant la première carte dont le milieu est sous le curseur.
-      const others = [...column.querySelectorAll('.card')].filter((n) => Number(n.dataset.id) !== id);
-      let index = others.length;
-      for (let i = 0; i < others.length; i++) {
-        const r = others[i].getBoundingClientRect();
-        if (ev.clientY < r.top + r.height / 2) { index = i; break; }
+      // Position d'insertion parmi TOUTES les cartes de la colonne (filtrées ou
+      // non) : avant la première carte affichée dont le milieu est sous le curseur.
+      const others = [...column.querySelectorAll(':scope > .card')].filter((n) => Number(n.dataset.id) !== id);
+      const all = state.cards.filter((c) => c.status === status && c.id !== id).map((c) => c.id);
+      let index = all.length;
+      for (const n of others) {
+        const r = n.getBoundingClientRect();
+        if (ev.clientY < r.top + r.height / 2) { index = all.indexOf(Number(n.dataset.id)); break; }
       }
       moveCard(id, status, index);
     });
@@ -1189,29 +1326,70 @@ function renderBoard() {
   }));
 }
 
+function typeBadge(type) {
+  return el('span', { class: 'badge t-' + type, text: TYPE_LABEL[type] || type });
+}
+
 function cardEl(c, col) {
   const asset = c.asset ? state.assetsById.get(c.asset) : null;
+  const parent = c.parent_id ? cardById(c.parent_id) : null;
   const move = (dir) => (ev) => {
     ev.stopPropagation();
     moveCard(c.id, STATUSES[col + dir][0]);
   };
+  const stop = (ev) => ev.stopPropagation();
+  let hat = null;
+  if (c.children > 0) {
+    const pct = Math.round((100 * c.children_done) / c.children);
+    const open = state.expanded.has(c.id);
+    const kids = childrenOf(c.id);
+    hat = el('div', { class: 'hat' },
+      el('div', { class: 'progress', title: `${c.children_done} sur ${c.children} en QA ou Done`, role: 'img', 'aria-label': `Avancement ${pct} %` },
+        el('span', { style: null, class: 'bar' })),
+      el('div', { class: 'hat-row' },
+        el('span', { class: 'muted', text: `${c.children_done}/${c.children}` }),
+        el('button', {
+          type: 'button', class: 'small ghost unfold', 'aria-expanded': open ? 'true' : 'false',
+          onclick: (ev) => {
+            ev.stopPropagation();
+            if (state.expanded.has(c.id)) state.expanded.delete(c.id); else state.expanded.add(c.id);
+            renderBoard();
+          },
+        }, (open ? '▾ ' : '▸ ') + `${kids.length} enfant${kids.length > 1 ? 's' : ''}`)),
+      open ? el('ul', { class: 'kids' }, kids.map((k) => el('li', {},
+        el('button', {
+          type: 'button', class: 'kid',
+          onclick: (ev) => { ev.stopPropagation(); openCardDialog(k, ''); },
+        }, el('span', { class: 'st st-' + k.status, text: STATUS_LABEL[k.status] }), el('span', { text: k.title }))))) : null);
+    // La largeur passe par le style de l'élément (CSP : pas d'attribut style).
+    hat.querySelector('.bar').style.width = pct + '%';
+  }
+  const comments = c.notes.length;
   const card = el('div', {
-    class: 'card ' + c.type, draggable: 'true', 'data-id': c.id, tabindex: '0',
+    class: 'card t-' + c.type + (c.children > 0 ? ' is-hat' : ''), draggable: 'true', 'data-id': c.id, tabindex: '0',
     onclick: () => openCardDialog(c, ''),
-    onkeydown: (ev) => { if (ev.key === 'Enter') openCardDialog(c, ''); },
+    onkeydown: (ev) => { if (ev.key === 'Enter' && ev.target === ev.currentTarget) openCardDialog(c, ''); },
   },
   el('div', { class: 'foot' },
-    el('span', { class: 'badge ' + c.type, text: c.type === 'bug' ? 'Bug' : 'Feature' }),
+    typeBadge(c.type),
     c.priority ? el('span', { class: 'badge ' + c.priority, text: PRIO_LABEL[c.priority] }) : null,
-    el('span', { class: 'muted', text: '#' + c.id })),
+    el('span', { class: 'muted', text: '#' + c.id }),
+    el('span', { class: 'spacer' }),
+    el('span', { class: 'origin', title: 'Créée par ' + (AUTHOR_LABEL[c.origin] || c.origin), text: AUTHOR_LABEL[c.origin] || c.origin })),
+  parent ? el('a', {
+    class: 'parent-link', href: '#/kanban', title: 'Ouvrir le chapeau',
+    onclick: (ev) => { ev.preventDefault(); ev.stopPropagation(); openCardDialog(parent, ''); },
+    text: '↑ ' + parent.title,
+  }) : null,
   el('div', { class: 'title', text: c.title }),
   c.description ? el('div', { class: 'desc', text: c.description }) : null,
   c.asset ? el('a', {
     class: 'asset-link', href: '#/assets/' + encodeURIComponent(c.asset),
-    onclick: (ev) => ev.stopPropagation(), text: '↗ ' + (asset ? asset.name : c.asset),
+    onclick: stop, text: '↗ ' + (asset ? asset.name : c.asset),
   }) : null,
+  hat,
   el('div', { class: 'foot' },
-    c.notes.length ? el('span', { class: 'muted', text: `${c.notes.length} note${c.notes.length > 1 ? 's' : ''}` }) : null,
+    comments ? el('span', { class: 'muted', text: `${comments} commentaire${comments > 1 ? 's' : ''}` }) : null,
     el('span', { class: 'spacer' }),
     col > 0 ? el('button', { type: 'button', class: 'small', onclick: move(-1), 'aria-label': 'Colonne précédente', title: STATUSES[col - 1][1] }, '◀') : null,
     col < STATUSES.length - 1 ? el('button', { type: 'button', class: 'small', onclick: move(1), 'aria-label': 'Colonne suivante', title: STATUSES[col + 1][1] }, '▶') : null));
@@ -1234,38 +1412,113 @@ async function moveCard(id, status, index) {
   renderBoard();
 }
 
-function openCardDialog(card, assetId) {
+// ------------------------------------------------------------- détail d'une carte
+
+function eventText(e) {
+  const st = (s) => STATUS_LABEL[s] || s;
+  const ref = (id) => {
+    if (!id) return 'aucun';
+    const c = cardById(Number(id));
+    return c ? `« ${c.title} »` : '#' + id;
+  };
+  switch (e.type) {
+    case 'creation': return `a créé la carte dans ${st(e.new)}`;
+    case 'deplacement': return `a déplacé la carte : ${st(e.old)} → ${st(e.new)}`;
+    case 'titre': return `a renommé la carte (avant : « ${e.old} »)`;
+    case 'description': return 'a modifié la description';
+    case 'priorite': return `a changé la priorité : ${PRIO_LABEL[e.old] || 'aucune'} → ${PRIO_LABEL[e.new] || 'aucune'}`;
+    case 'type': return `a changé le type : ${TYPE_LABEL[e.old] || e.old} → ${TYPE_LABEL[e.new] || e.new}`;
+    case 'asset': return `a changé l'asset lié : ${e.new || 'aucun'}`;
+    case 'parent': return `a changé le chapeau : ${ref(e.old)} → ${ref(e.new)}`;
+    default: return e.type;
+  }
+}
+
+/** Fil chronologique : événements et commentaires mêlés. */
+function renderFeed(events) {
+  const feed = $('cf-feed');
+  feed.replaceChildren(...events.map((e) => {
+    const who = AUTHOR_LABEL[e.author] || e.author;
+    if (e.type === 'commentaire') {
+      return el('div', { class: 'note ' + e.author },
+        el('strong', { text: `${who} · ${fmtDate(e.at)}` }), el('br'), e.new);
+    }
+    return el('div', { class: 'event' },
+      el('span', { class: 'muted', text: fmtDate(e.at) + ' · ' }), el('strong', { text: who }), ' ' + eventText(e));
+  }));
+  if (!events.length) feed.append(el('p', { class: 'muted', text: 'Pas encore d\'historique.' }));
+}
+
+async function loadFeed(id) {
+  const r = await guarded(() => api('card', { query: { id } }));
+  if (!r || !state.editing || state.editing.id !== id) return;
+  renderFeed(r.events);
+  const kids = r.children;
+  $('cf-children').replaceChildren(...kids.map((k) => el('li', {},
+    el('button', { type: 'button', class: 'kid', onclick: () => openCardDialog(k, '') },
+      el('span', { class: 'st st-' + k.status, text: STATUS_LABEL[k.status] }), typeBadge(k.type), el('span', { text: k.title })))));
+  $('cf-children-title').textContent = kids.length
+    ? `Enfants (${r.card.children_done}/${r.card.children} en QA ou Done)` : 'Enfants';
+}
+
+function openCardDialog(card, assetId, parentId) {
   state.editing = card;
-  $('card-dialog-title').textContent = card ? `Carte #${card.id} · ${STATUS_LABEL[card.status]}` : 'Nouvelle carte';
+  $('card-dialog-title').textContent = card ? `Carte #${card.id} · ${STATUS_LABEL[card.status]}` : 'Nouvelle carte (Backlog)';
+  $('cf-origin').textContent = card ? `Créée par ${AUTHOR_LABEL[card.origin] || card.origin} le ${fmtDate(card.created_at)}` : '';
   $('cf-type').value = card ? card.type : 'feature';
   $('cf-priority').value = card ? card.priority : '';
   $('cf-title').value = card ? card.title : '';
   $('cf-desc').value = card ? card.description : '';
   $('cf-asset').value = card ? card.asset : assetId;
+  parentOptions($('cf-parent'), card ? card.parent_id : (parentId || 0), card ? familyIds(card.id) : new Set());
   $('cf-note').value = '';
   $('card-error').textContent = '';
   $('cf-delete').hidden = !card;
-  $('cf-note-label').hidden = !card;
-  $('cf-notes').replaceChildren(...(card ? card.notes.map((n) => el('div', { class: 'note ' + n.author },
-    el('strong', { text: (n.author === 'agent' ? 'Agent' : 'Julien') + ' · ' + fmtDate(n.created_at) }),
-    el('br'), n.body)) : []));
-  $('card-dialog').showModal();
+  $('cf-thread').hidden = !card;
+  $('cf-feed').replaceChildren();
+  $('cf-children').replaceChildren();
+  $('cf-children-title').textContent = 'Enfants';
+  if (!$('card-dialog').open) $('card-dialog').showModal();
+  $('card-dialog').scrollTop = 0;
+  if (card) loadFeed(card.id);
+}
+
+function cardBody() {
+  return {
+    type: $('cf-type').value, priority: $('cf-priority').value, title: $('cf-title').value,
+    description: $('cf-desc').value, asset: $('cf-asset').value.trim(), parent: Number($('cf-parent').value) || 0,
+  };
+}
+
+async function sendComment() {
+  const card = state.editing;
+  const text = $('cf-note').value.trim();
+  if (!card || !text) return;
+  $('cf-comment-send').disabled = true;
+  const ok = await guarded(async () => {
+    await api('card_comment', { method: 'POST', body: { id: card.id, body: text } });
+    await reloadCards();
+    return true;
+  });
+  $('cf-comment-send').disabled = false;
+  if (!ok) return;
+  $('cf-note').value = '';
+  state.editing = cardById(card.id) || card;
+  loadFeed(card.id);
+  if (location.hash.startsWith('#/kanban')) renderBoard();
 }
 
 async function saveCard(ev) {
   ev.preventDefault();
   const card = state.editing;
-  const body = {
-    type: $('cf-type').value, priority: $('cf-priority').value, title: $('cf-title').value,
-    description: $('cf-desc').value, asset: $('cf-asset').value.trim(),
-  };
+  const body = cardBody();
   try {
     if (card) {
       await api('card_update', { method: 'POST', body: { id: card.id, ...body } });
       const note = $('cf-note').value.trim();
-      if (note) await api('card_note', { method: 'POST', body: { id: card.id, body: note } });
+      if (note) await api('card_comment', { method: 'POST', body: { id: card.id, body: note } });
     } else {
-      await api('card', { method: 'POST', body });
+      await api('card', { method: 'POST', body: { ...body, status: 'backlog' } });
     }
     await reloadCards();
   } catch (e) {
@@ -1273,13 +1526,15 @@ async function saveCard(ev) {
     return;
   }
   $('card-dialog').close();
-  toast(card ? 'Carte mise à jour' : 'Carte créée');
+  toast(card ? 'Carte mise à jour' : 'Carte créée dans le Backlog');
   if (location.hash.startsWith('#/kanban')) renderBoard();
 }
 
 async function deleteCard() {
   const card = state.editing;
-  if (!card || !confirm(`Supprimer la carte #${card.id} ?`)) return;
+  if (!card) return;
+  const kids = childrenOf(card.id).length;
+  if (!confirm(`Supprimer la carte #${card.id} ?` + (kids ? ` Ses ${kids} enfant(s) seront détachés, pas supprimés.` : ''))) return;
   const ok = await guarded(async () => {
     await api('card_delete', { method: 'POST', body: { id: card.id } });
     await reloadCards();
