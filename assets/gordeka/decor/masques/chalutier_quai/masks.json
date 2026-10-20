@@ -1,0 +1,48 @@
+{
+ "polygons": [
+  [
+   [
+    96,
+    584
+   ],
+   [
+    191,
+    625
+   ],
+   [
+    519,
+    481
+   ],
+   [
+    424,
+    440
+   ]
+  ]
+ ],
+ "bbox": [
+  0,
+  0,
+  614,
+  654
+ ],
+ "front_y": 637,
+ "back_y": 440,
+ "baseline_y": 538,
+ "height_px": 637,
+ "blocks_view": true,
+ "camera": "corner",
+ "scale": 2.0,
+ "depth_px": 197.0,
+ "shapes": [],
+ "confidence": 0.65,
+ "warnings": [
+  "socle de sol d\u00e9tect\u00e9 (20% de l'objet) : traversable, hors occluder",
+  "vue en coin d\u00e9tect\u00e9e sur l'image : emprise calcul\u00e9e en camera corner",
+  "cam\u00e9ra en coin : emprise approch\u00e9e (losange sur le bord bas)"
+ ],
+ "size": [
+  598,
+  640
+ ],
+ "marge_retiree": 16
+}

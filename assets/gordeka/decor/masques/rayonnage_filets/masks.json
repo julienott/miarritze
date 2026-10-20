@@ -1,0 +1,46 @@
+{
+ "polygons": [
+  [
+   [
+    23,
+    0
+   ],
+   [
+    245,
+    0
+   ],
+   [
+    245,
+    350
+   ],
+   [
+    23,
+    350
+   ]
+  ]
+ ],
+ "bbox": [
+  1,
+  0,
+  256,
+  350
+ ],
+ "front_y": 349,
+ "back_y": -163,
+ "baseline_y": 93,
+ "height_px": 349,
+ "blocks_view": false,
+ "camera": "front34",
+ "scale": 2.0,
+ "depth_px": 512.0,
+ "confidence": 0.65,
+ "warnings": [
+  "socle de sol détecté (7% de l'objet) : traversable, hors occluder",
+  "objet coupé au bord de l'image",
+  "emprise plus profonde que l'image : coupée en haut"
+ ],
+ "size": [
+  256,
+  351
+ ]
+}

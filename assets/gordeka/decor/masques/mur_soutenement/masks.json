@@ -1,0 +1,45 @@
+{
+ "polygons": [
+  [
+   [
+    0,
+    0
+   ],
+   [
+    256,
+    0
+   ],
+   [
+    256,
+    209
+   ],
+   [
+    0,
+    209
+   ]
+  ]
+ ],
+ "bbox": [
+  0,
+  0,
+  256,
+  209
+ ],
+ "front_y": 208,
+ "back_y": -816,
+ "baseline_y": -304,
+ "height_px": 208,
+ "blocks_view": false,
+ "camera": "front34",
+ "scale": 2.0,
+ "depth_px": 1024.0,
+ "confidence": 0.75,
+ "warnings": [
+  "objet coupé au bord de l'image",
+  "emprise plus profonde que l'image : coupée en haut"
+ ],
+ "size": [
+  256,
+  209
+ ]
+}

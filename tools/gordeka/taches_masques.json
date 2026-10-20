@@ -6,14 +6,14 @@
   "essai": "v2"
  },
  "rayonnage_filets": {
-  "tid": "da7c6862a72d4900b98dc6839aadcdff",
+  "tid": "72e7ec55e51e400fa4595098e97ecf89",
   "fichier": "objets/rayonnage_filets.png",
-  "statut": "succeeded"
+  "statut": "en_vol"
  },
  "mur_soutenement": {
-  "tid": "237bdae0716d4109a33b2e6c8fd7936e",
+  "tid": "1e874f2a311a4dbc8c230324b051f6a3",
   "fichier": "objets/mur_soutenement.png",
-  "statut": "succeeded"
+  "statut": "en_vol"
  },
  "chalutier_quai": {
   "tid": "fb76e21c2efb42328c782161d0797cf2",
@@ -24,17 +24,17 @@
  "etal_criee": {
   "tid": "6106a319054641bf8800e1c2dafe511d",
   "fichier": "objets/etal_criee.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "bitte_amarrage": {
   "tid": "bec8426d9dac415cb885ed73de8e3e7d",
   "fichier": "objets/bitte_amarrage.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "fontaine_place": {
   "tid": "62a34fc2c5074076b2a49d0061fcaaeb",
   "fichier": "objets/fontaine_place.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "banc_vert": {
   "tid": "774cdb6d85a94e93b14de0fc8d2f2116",
@@ -45,32 +45,32 @@
  "cachette_casier_homards": {
   "tid": "5d92f09703044884aaab79737d4dc180",
   "fichier": "objets/cachette_casier_homards.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "cachette_coffre_quai": {
   "tid": "7411a426d76c44d29371006af18fa128",
   "fichier": "objets/cachette_coffre_quai.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "cachette_caisse_glace": {
   "tid": "c0157977068046c4ad82bb2d6c83f696",
   "fichier": "objets/cachette_caisse_glace.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "cachette_coffre_cordages": {
   "tid": "5b823722f0364cc69ae2ab7f0cf6c688",
   "fichier": "objets/cachette_coffre_cordages.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "cachette_poubelle_ruelle": {
   "tid": "87c5fcc08a0747a8af272aaf22e486d4",
   "fichier": "objets/cachette_poubelle_ruelle.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "cachette_bac_poissons": {
   "tid": "d483ee23a5734446be56e47931e0329a",
   "fichier": "objets/cachette_bac_poissons.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "maison_crampotte": {
   "tid": "1552f7a7cbef4c4da5c4843fd19204ad",
@@ -110,36 +110,36 @@
  "coque_chantier": {
   "tid": "d1f9b14bdba94a5885c6613f0dcb2637",
   "fichier": "objets/coque_chantier.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "banc_chapelle": {
   "tid": "f897a20027bb41bdb40e5b0320c5a1ae",
   "fichier": "objets/banc_chapelle.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "etabli_atelier": {
   "tid": "ffddb896bb004278a40fc2f5e638f17c",
   "fichier": "objets/etabli_atelier.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "marches_escalier": {
   "tid": "3710b6afb9894dd3b36e622aba0b3e7b",
   "fichier": "objets/marches_escalier.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "table_terrasse": {
   "tid": "9b05f7099f2d49f3912cb2babcb29601",
   "fichier": "objets/table_terrasse.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "treteaux_cale": {
   "tid": "d136cceb33fc4097b2a190f75dc40fe3",
   "fichier": "objets/treteaux_cale.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  },
  "lavoir_bassin": {
   "tid": "b39b13b27f504c15bde9984bfef8e12a",
   "fichier": "objets/lavoir_bassin.png",
-  "statut": "en_vol"
+  "statut": "succeeded"
  }
 }
