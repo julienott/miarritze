@@ -352,7 +352,23 @@
     4
    ],
    "debord_haut_cases": 1,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/chambre_froide.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "d639d58847ae4a1e9217e470bac176e1",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/chambre_froide_ombre.png",
+   "ombre_decalage": [
+    64,
+    287
+   ]
   },
   "tour_phare": {
    "nom": "Tour du phare (feu du port)",
