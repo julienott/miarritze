@@ -72,7 +72,11 @@ def telecharge(r, d):
 def payload_perso(pid, anim):
     pl = ap.payload(pid, anim)
     plus = lire(RETOUCHES, {}).get(f"perso/{pid}/{anim}")
-    if plus:
+    if isinstance(plus, dict):        # {"action": "...", "hold": {...}} : réglages du mannequin en plus
+        if plus.get("action"):
+            pl["action"] += " " + plus["action"]
+        pl.update({k: v for k, v in plus.items() if k != "action"})
+    elif plus:
         pl["action"] += " " + plus
     return pl
 

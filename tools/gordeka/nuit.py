@@ -40,7 +40,18 @@ PERSOS = ["louis", "txomin", "patxi", "maia", "xabi", "mattin", "amaia", "kaio",
           "itsaso", "peio"]
 # Profil fantôme déjà fait (Patxi, 2026-10-20).
 FANTOME_TACHE = {"patxi": "5dd49f252886444b81fa012b16d535c1"}
-FANTOME_LOUIS = os.path.join(OUT, "louis", "gk2d", "v4", "ailes_image_00_white.png")
+# Version HD (1024 px) du profil validé, pour la retouche « ailes » : depuis le petit sprite, Qwen ne voit
+# plus les détails et redessine un perso générique (Mattin sans barbe, pixelforge 2026-10-20).
+PROFIL_HD = {
+    "mattin": "mattin/gk2d/pieds/image_00_raw.png",
+    "amaia": "amaia/gk2d/profil/image_00_white.png",
+    "kaio": "kaio/gk2d/foulard/image_00_raw.png",
+    "karramarro": "karramarro/gk2d/foulard_pointe/image_00_raw.png",
+    "ramuntxo": "ramuntxo/gk2d/retouche/image_00_raw.png",
+    "itsaso": "itsaso/gk2d/profil/image_00_white.png",
+    "peio": "peio/gk2d/profil_ballon/image_00_white.png",
+}
+FANTOME_LOUIS =os.path.join(OUT, "louis", "gk2d", "v4", "ailes_image_00_white.png")
 MODELE_LOUIS = os.path.join(OUT, "louis", "gk2d", "v4", "image_02_white.png")
 
 
@@ -126,7 +137,9 @@ class Perso:
                 # Vraie retouche du profil validé (params.edit, pixelforge 2026-10-20) : le prompt ne dit que
                 # ce qui change ; l'ancien mode « the same character… » inventait une casquette.
                 self.fantome_tid = deposer({
-                    "prompt_style": "pf_2d__character", "input_image": ex.b64(Image.open(self.modele())),
+                    "prompt_style": "pf_2d__character",
+                    "input_image": ex.b64(Image.open(os.path.join(OUT, PROFIL_HD[self.pid]) if self.pid in PROFIL_HD
+                                                     else self.modele()).convert("RGB")),
                     "prompt": "add small white feathered angel wings on the back", "params": {"edit": True},
                     "num_images": 1, "seed": 7, "priority": "normal", "tag": f"miarritze/gk2d_{self.pid}"})
                 log(self.pid, "profil fantôme déposé", self.fantome_tid)

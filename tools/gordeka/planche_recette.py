@@ -75,7 +75,7 @@ def perso(pid, out, anims=None):
 
 def decor(dossier, out):
     imgs = sorted(f for f in os.listdir(dossier)
-                  if f.startswith(("image_", "preview_")) and f.endswith(".png") and "_raw" not in f and "_shadow" not in f)
+                  if f.startswith(("image_", "preview_")) and f.endswith(".png") and "_raw" not in f and "_shadow" not in f and "_base" not in f)
     vues = []
     for f in imgs:
         src = os.path.join(dossier, f.replace(".png", "_with_shadow.png"))
