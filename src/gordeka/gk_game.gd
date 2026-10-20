@@ -110,11 +110,23 @@ var _qa_clock: float = 0.0
 ## x et y en cases, décimales permises) pose un acteur au premier round (à lancer avec
 ## `--gk-rules=phase_draw:60` : tout le monde reste figé).
 var _qa_place: Array = []
+## TEMPORAIRE, debug (Julien, 2026-10-20) : « visite en tant que chassé / chasseur ». Carte complète,
+## ni chrono ni fin de manche, personne d'autre (`--gk-visite-figurants` : les autres sont là,
+## immobiles), pour vérifier collisions, masquage, cachettes, décor et animations. Lancement : menu
+## (config["visite"]), `--gk-visite=chasse|chasseur`, web `#scene=gk_game&visite=…`. Touches : F les
+## formes du décor, C le perso suivant ; Échap ou Quitter : retour au menu. À retirer après la mise au point.
+var visite: String = ""
+var _figurants: bool = false
 
 
 func _ready() -> void:
-	for arg: String in OS.get_cmdline_user_args():
-		if arg == "--gk-bots-only":
+	visite = str(config.get("visite", ""))
+	for arg: String in GkRules.args():
+		if arg.begins_with("--gk-visite="):
+			visite = arg.trim_prefix("--gk-visite=")
+		elif arg == "--gk-visite-figurants" or arg == "--gk-visite_figurants=1":
+			_figurants = true
+		elif arg == "--gk-bots-only":
 			_bots_only = true
 		elif arg == "--gk-local-bot":
 			_local_bot = true
@@ -190,6 +202,10 @@ func _ready() -> void:
 
 func _make_actors(parent: Node2D) -> void:
 	var n: int = clampi(int(config.get("players", 6)), 2, 8)
+	if visite != "":
+		_force_role = "hunter" if visite == "chasseur" else "hider"
+		if not _figurants:
+			n = 2                  # le joueur, et l'autre rôle caché hors de la carte
 	var all_names: Array = GkRules.data().get("bot_names", [])
 	var all_chars: Array = GkRules.data().get("characters", [])
 	var my_name: String = str(config.get("name", "Toi"))
@@ -225,7 +241,7 @@ func _make_actors(parent: Node2D) -> void:
 		a.setup(i, nm, GkRules.color(my_color if i == 0 else colors[i - 1]), bot)
 		parent.add_child(a)
 		actors.append(a)
-		if bot:
+		if bot and visite == "":
 			brains[i] = GkAi.new(self, a, str(config.get("level", "normal")))
 	local = actors[0]
 
@@ -375,8 +391,54 @@ func _start_round() -> void:
 			actors[i].position = Vector2(float(xy[0]), float(xy[1])) * map.tile
 			if spec.size() > 2:
 				actors[i].look = deg_to_rad(float(spec[2]))
+	if visite != "":
+		_start_visite()
+		return
 	_say("Tu es le CHASSEUR !" if local == hunter else "%s est le chasseur. Cache-toi !" % hunter.display_name,
 		Color("ff3b30") if local == hunter else Color("ffffff"), 3.0)
+
+
+## Visite (debug, temporaire) : chasse tout de suite, sans fin ; les autres restent immobiles, ou
+## sont rangés hors de la carte, invisibles, sans figurants.
+func _start_visite() -> void:
+	phase = Phase.HUNT
+	phase_t = 1.0e9
+	for a: GkActor in actors:
+		a.frozen = a != local
+		if a != local and not _figurants:
+			a.position = Vector2(-100000, -100000)
+			a.visible = false
+			a.collision_layer = 0
+	messages.clear()
+	_say("Visite %s (debug) : F formes, C perso" % ("du chasseur" if local == hunter else "du chassé"),
+		Color("ffd34a"), 4.0)
+
+
+## Visite : perso suivant du roster (seulement ceux qui sont dessinés).
+func visite_next_character() -> void:
+	var chars: Array = GkRules.data().get("characters", [])
+	var i: int = chars.find(local.character)
+	for k: int in range(1, chars.size() + 1):
+		var c: String = str(chars[(i + k) % chars.size()])
+		if GkPerso.available(c):
+			local.set_character(c)
+			_say(c.capitalize(), Color.WHITE, 1.5)
+			return
+
+
+func visite_toggle_formes() -> void:
+	if map.formes:
+		map.formes.visible = not map.formes.visible
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if visite == "" or not event is InputEventKey or not (event as InputEventKey).pressed or (event as InputEventKey).echo:
+		return
+	match (event as InputEventKey).physical_keycode:
+		KEY_F:
+			visite_toggle_formes()
+		KEY_C:
+			visite_next_character()
 
 
 ## Tirage « en sac » : chacun est chasseur une fois avant qu'on recommence, jamais deux fois de suite.
@@ -457,6 +519,9 @@ func _give(a: GkActor, pts: int) -> void:
 
 
 func quit_to_podium() -> void:
+	if visite != "":
+		go_menu()
+		return
 	if phase == Phase.PODIUM:
 		return
 	phase = Phase.PODIUM
@@ -498,7 +563,7 @@ func _physics_process(dt: float) -> void:
 			hunt_elapsed += dt
 			if absf(hunt_elapsed - GkRules.f("exits_open_at")) < dt * 0.5 + 0.0001:
 				_say("Les sorties sont ouvertes !", Color("6fe08a"), 3.0)
-			if phase_t <= 0.0 or _hiders_left() == 0:
+			if visite == "" and (phase_t <= 0.0 or _hiders_left() == 0):
 				_finish_round()
 		Phase.END:
 			if phase_t <= 0.0:
@@ -508,8 +573,10 @@ func _physics_process(dt: float) -> void:
 	if phase == Phase.HUNT:
 		_update_searches(dt)
 		_update_traps()
-		_update_capture(dt)
-		_update_exits(dt)
+		if visite != "chasse":
+			_update_capture(dt)
+		if visite == "":
+			_update_exits(dt)
 		_update_ideas(dt)
 		for a: GkActor in actors:
 			if a.role == GkActor.Role.HIDER:
@@ -531,6 +598,9 @@ func _control(dt: float) -> void:
 		var move: Vector2 = Vector2.ZERO
 		var look_dir: Vector2 = Vector2.ZERO
 		var act: bool = false
+		if a.is_bot and not brains.has(a.id):
+			a.step(Vector2.ZERO, Vector2.ZERO, dt)      # figurant immobile de la visite
+			continue
 		if a.is_bot:
 			var cmd: Dictionary = (brains[a.id] as GkAi).update(dt)
 			move = cmd.get("move", Vector2.ZERO)
@@ -979,7 +1049,7 @@ func _detect(h: GkActor) -> void:
 		_st["montres"] += found.size()
 		if not found.is_empty():
 			_st["ondes_utiles"] += 1
-	if h.is_bot:
+	if brains.has(h.id):
 		(brains[h.id] as GkAi).on_detect(found, hint)
 	if h != local:
 		_say("Le chasseur lance une onde !", Color("9fd8ef"), 1.4)
@@ -1029,7 +1099,7 @@ func _noise(pos: Vector2, stat: String) -> void:
 	if _stats:
 		_st[stat] = int(_st[stat]) + 1
 	var hear: float = GkRules.px("grince_ouie" if stat == "grincements" else "mouettes_ouie")
-	if hunter.is_bot and hunter.position.distance_to(pos) <= hear:
+	if brains.has(hunter.id) and hunter.position.distance_to(pos) <= hear:
 		(brains[hunter.id] as GkAi).on_noise(pos)
 
 

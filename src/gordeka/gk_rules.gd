@@ -21,6 +21,17 @@ static func data() -> Dictionary:
 	return _data
 
 
+## Arguments du jeu : ligne de commande, plus, sur le web, le hash de l'adresse
+## (`#scene=gk_game&visite=chasse` → `--scene=gk_game`, `--gk-visite=chasse`).
+static func args() -> PackedStringArray:
+	var out: PackedStringArray = OS.get_cmdline_user_args()
+	if OS.has_feature("web"):
+		var h: String = str(JavaScriptBridge.eval("window.location.hash", true)).trim_prefix("#")
+		for part: String in h.split("&", false):
+			out.append("--" + part if part.begins_with("scene=") or part.begins_with("gk-") else "--gk-" + part)
+	return out
+
+
 static func f(key: String) -> float:
 	return float(data().get(key, 0.0))
 

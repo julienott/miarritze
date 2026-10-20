@@ -43,7 +43,7 @@ func _ready() -> void:
 	play.text = "Jouer contre l'IA"
 	play.custom_minimum_size = Vector2(420, 84)
 	play.add_theme_font_size_override(&"font_size", 36)
-	play.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://src/gordeka/gk_game.tscn"))
+	play.pressed.connect(func() -> void: _start(""))
 	col.add_child(play)
 	var online: Button = Button.new()
 	online.text = "En ligne avec les copains (bientôt)"
@@ -51,9 +51,28 @@ func _ready() -> void:
 	online.custom_minimum_size = Vector2(420, 60)
 	online.add_theme_font_size_override(&"font_size", 24)
 	col.add_child(online)
+	# TEMPORAIRE, debug (Julien, 2026-10-20) : visite de la carte en chassé ou en chasseur (GkGame.visite).
+	var dbg: HBoxContainer = HBoxContainer.new()
+	dbg.alignment = BoxContainer.ALIGNMENT_CENTER
+	dbg.add_theme_constant_override(&"separation", 12)
+	for spec: Array in [["DEBUG · Visite : chassé", "chasse"], ["DEBUG · Visite : chasseur", "chasseur"]]:
+		var b: Button = Button.new()
+		b.text = str(spec[0])
+		b.custom_minimum_size = Vector2(300, 52)
+		b.add_theme_font_size_override(&"font_size", 22)
+		b.add_theme_color_override(&"font_color", Color("ffd34a"))
+		var mode: String = str(spec[1])
+		b.pressed.connect(func() -> void: _start(mode))
+		dbg.add_child(b)
+	col.add_child(dbg)
 	col.add_child(_label("Bouger : flèches, ZQSD, stick ou pouce gauche — Action : Espace, A ou pouce droit", 20, Color(1, 1, 1, 0.6)))
 	_refresh()
 	play.grab_focus.call_deferred()
+
+
+func _start(visite: String) -> void:
+	GkGame.config["visite"] = visite
+	get_tree().change_scene_to_file("res://src/gordeka/gk_game.tscn")
 
 
 func _label(text: String, size: int, color: Color) -> Label:

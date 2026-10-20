@@ -198,6 +198,10 @@ Retenus après des rounds IA contre IA (`docs/GORDEKA_EQUILIBRAGE.md`), chacun d
 - Réglages : nombre de joueurs (4 à 8, complétés par des IA), difficulté (Facile, Normal, Malin),
   carte (ou au hasard). Par défaut : **6 joueurs (toi et 5 IA), Normal, Port des Pêcheurs**.
 - Le joueur est chasseur à son tour comme les autres, grâce au sac du tirage.
+- **Visite de debug, TEMPORAIRE** (*Julien, 2026-10-20*) : « Visite : chassé » et « Visite : chasseur »
+  dans le menu (ou `--gk-visite=chasse|chasseur`, web `#scene=gk_game&visite=…`) : carte complète,
+  ni chrono ni fin de manche, personne d'autre, F montre les formes du décor, C change de perso. À
+  retirer une fois les collisions, masques et décor mis au point.
 
 ### 6.2 Salon entre copains (en ligne)
 - **Créer un salon** : l'hôte choisit la carte et le nombre de places (4 à 8).

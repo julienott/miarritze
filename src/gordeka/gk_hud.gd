@@ -24,12 +24,32 @@ func _ready() -> void:
 	_quit.offset_bottom = 64
 	_quit.pressed.connect(func() -> void: game.quit_to_podium())
 	add_child(_quit)
+	# Visite de debug (temporaire) : boutons Formes et Perso, pour le tactile.
+	_visite_buttons()
 	_menu = Button.new()
 	_menu.text = "Retour au menu"
 	_menu.add_theme_font_size_override(&"font_size", 30)
 	_menu.visible = false
 	_menu.pressed.connect(func() -> void: game.go_menu())
 	add_child(_menu)
+
+
+func _visite_buttons() -> void:
+	if game == null or game.visite == "":
+		return
+	var specs: Array = [["Formes", game.visite_toggle_formes], ["Perso", game.visite_next_character]]
+	for i: int in specs.size():
+		var b: Button = Button.new()
+		b.text = str(specs[i][0])
+		b.focus_mode = Control.FOCUS_NONE
+		b.add_theme_font_size_override(&"font_size", 20)
+		b.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+		b.offset_left = -300 - i * 140
+		b.offset_right = -170 - i * 140
+		b.offset_top = 16
+		b.offset_bottom = 64
+		b.pressed.connect(specs[i][1])
+		add_child(b)
 
 
 func _draw() -> void:
@@ -56,22 +76,27 @@ func _draw() -> void:
 		GkActor.Role.GHOST: Color("b8c0cc"), GkActor.Role.OUT: Color("6fe08a")}[me.role]
 	draw_rect(Rect2(16, 16, 230, 52), Color(0, 0, 0, 0.55))
 	_text(font, Vector2(131, 52), role_text, 30, role_col)
-	var phase_text: String = {GkGame.Phase.DRAW: "Tirage…", GkGame.Phase.HIDE: "Cachez-vous !",
-		GkGame.Phase.HUNT: "Chasse", GkGame.Phase.END: "Fin du round"}.get(game.phase, "")
-	var t: int = maxi(0, ceili(game.phase_t))
-	draw_rect(Rect2(s.x * 0.5 - 150, 12, 300, 70), Color(0, 0, 0, 0.55))
-	_text(font, Vector2(s.x * 0.5, 42), "%s · round %d" % [phase_text, game.round_no], 22, Color(1, 1, 1, 0.85))
-	_text(font, Vector2(s.x * 0.5, 74), "%d:%02d" % [t / 60, t % 60], 32,
-		Color("ff6b5e") if game.phase == GkGame.Phase.HUNT and t <= 20 else Color.WHITE)
-	var left: int = game.actors.filter(func(a: GkActor) -> bool: return a.role == GkActor.Role.HIDER).size()
-	_text(font, Vector2(s.x * 0.5, 104), "%d chassé%s encore libre%s" % [left, "s" if left > 1 else "", "s" if left > 1 else ""],
-		20, Color(1, 1, 1, 0.8))
-	if not game.open_exit_zones.is_empty() and (game.phase == GkGame.Phase.HIDE or game.phase == GkGame.Phase.HUNT):
-		var where: String = " et ".join(game.open_exit_zones)
-		if game.exits_open():
-			_text(font, Vector2(s.x * 0.5, 128), "Sorties ouvertes : " + where, 20, Color("6fe08a"))
-		else:
-			_text(font, Vector2(s.x * 0.5, 128), "Sorties du round : " + where, 20, Color(1, 1, 1, 0.7))
+	if game.visite != "":
+		# Visite de debug (temporaire) : pas de chrono, un bandeau discret.
+		draw_rect(Rect2(s.x * 0.5 - 170, 12, 340, 36), Color(0, 0, 0, 0.45))
+		_text(font, Vector2(s.x * 0.5, 37), "VISITE (debug) · F : formes · C : perso", 17, Color("ffd34a"))
+	else:
+		var phase_text: String = {GkGame.Phase.DRAW: "Tirage…", GkGame.Phase.HIDE: "Cachez-vous !",
+			GkGame.Phase.HUNT: "Chasse", GkGame.Phase.END: "Fin du round"}.get(game.phase, "")
+		var t: int = maxi(0, ceili(game.phase_t))
+		draw_rect(Rect2(s.x * 0.5 - 150, 12, 300, 70), Color(0, 0, 0, 0.55))
+		_text(font, Vector2(s.x * 0.5, 42), "%s · round %d" % [phase_text, game.round_no], 22, Color(1, 1, 1, 0.85))
+		_text(font, Vector2(s.x * 0.5, 74), "%d:%02d" % [t / 60, t % 60], 32,
+			Color("ff6b5e") if game.phase == GkGame.Phase.HUNT and t <= 20 else Color.WHITE)
+		var left: int = game.actors.filter(func(a: GkActor) -> bool: return a.role == GkActor.Role.HIDER).size()
+		_text(font, Vector2(s.x * 0.5, 104), "%d chassé%s encore libre%s" % [left, "s" if left > 1 else "", "s" if left > 1 else ""],
+			20, Color(1, 1, 1, 0.8))
+		if not game.open_exit_zones.is_empty() and (game.phase == GkGame.Phase.HIDE or game.phase == GkGame.Phase.HUNT):
+			var where: String = " et ".join(game.open_exit_zones)
+			if game.exits_open():
+				_text(font, Vector2(s.x * 0.5, 128), "Sorties ouvertes : " + where, 20, Color("6fe08a"))
+			else:
+				_text(font, Vector2(s.x * 0.5, 128), "Sorties du round : " + where, 20, Color(1, 1, 1, 0.7))
 	# Fantôme : ce qu'il peut encore faire (idées chatouille et délivrance).
 	if me.role == GkActor.Role.GHOST and game.phase == GkGame.Phase.HUNT:
 		var tips: PackedStringArray = []
@@ -91,7 +116,7 @@ func _draw() -> void:
 		_text(font, Vector2(s.x * 0.5, y), str(m["text"]), 38, m["color"])
 		y += 48
 	# Flèche vers le chasseur quand il est hors champ (chassés et fantômes).
-	if me != game.hunter and game.hunter and game.phase == GkGame.Phase.HUNT:
+	if me != game.hunter and game.hunter and game.hunter.visible and game.phase == GkGame.Phase.HUNT:
 		var sp: Vector2 = game.screen_pos(game.hunter.position)
 		var r: Rect2 = Rect2(Vector2.ZERO, s).grow(-40)
 		if not r.has_point(sp):

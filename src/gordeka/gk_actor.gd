@@ -81,6 +81,19 @@ func setup(p_id: int, p_name: String, p_color: Color, bot: bool) -> void:
 		add_child(perso)
 
 
+## Change de perso dessiné (visite de debug).
+func set_character(c: String) -> void:
+	character = c
+	if perso != null:
+		perso.queue_free()
+		perso = null
+	if GkPerso.available(character):
+		perso = GkPerso.new()
+		perso.setup(self)
+		add_child(perso)
+	queue_redraw()
+
+
 ## Geste ponctuel du perso dessiné (piège, détection, trouvé, cachette, sortie).
 func play_once(anim: String) -> void:
 	if perso != null:

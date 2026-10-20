@@ -42,6 +42,8 @@ var draw_2d: bool = true
 ## Décor en images (assets/gordeka/decor/, au fil des livraisons de pixelforge) ; tout ce qui n'a
 ## pas d'image garde le dessin procédural ci-dessous.
 var decor: GkDecor
+## Contours des formes du décor (QA), cachés sauf `--gk-qa-formes` ou la touche F de la visite.
+var formes: Node2D
 
 
 func load_map(id: String) -> void:
@@ -164,12 +166,13 @@ func _build_bodies() -> void:
 		_add_shape(low, Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile))
 	if decor == null:
 		return
-	# QA : `--gk-qa-formes` montre les bases calculées (vert : bloque la vue ; jaune : le passage seul).
-	var qa: Node2D = null
-	if OS.get_cmdline_user_args().has("--gk-qa-formes"):
-		qa = Node2D.new()
-		qa.z_index = 100
-		add_child(qa)
+	# QA : `--gk-qa-formes` (ou la touche F de la visite) montre les formes (vert : bloque la vue ;
+	# jaune : le passage seul).
+	var qa: Node2D = Node2D.new()
+	qa.z_index = 100
+	qa.visible = OS.get_cmdline_user_args().has("--gk-qa-formes")
+	add_child(qa)
+	formes = qa
 	for inst: Dictionary in decor.instances:
 		if not inst.has("polys"):
 			continue
