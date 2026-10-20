@@ -486,7 +486,9 @@ func _pf_shape(id: String, tex: Texture2D, rel: String, drawn: Vector2) -> Dicti
 	out["polys"] = polys
 	out["mask"] = bm
 	out["scale"] = Vector2(drawn.x / mw, drawn.y / mh)
-	out["baseline"] = clampf(float(md.get("baseline_y", tex_size.y)), 0.0, tex_size.y) * k.y
+	# Tri sur le bord ARRIÈRE de l'emprise (pratique courante pour les objets fixes : la collision empêche
+	# d'entrer dans l'emprise, tout perso aux pieds plus bas que back_y est devant) ; baseline_y en repli.
+	out["baseline"] = clampf(float(md.get("back_y", md.get("baseline_y", tex_size.y))), 0.0, tex_size.y) * k.y
 	out["blocks_view"] = bool(md.get("blocks_view", true))
 	out["source"] = "pixelforge"
 	out["info"] = {"confidence": md.get("confidence", 0.0), "warnings": md.get("warnings", [])}
