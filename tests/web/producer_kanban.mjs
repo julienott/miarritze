@@ -190,6 +190,15 @@ cli('set', String(kidIds[1]), '--asset', ASSET, '--detail', 'walk');
 cli('move', String(kidIds[1]), 'qa');
 const DECOR = 'gordeka/decor/objets/fronton.png';
 const decorId = Number(/#(\d+)/.exec(cli('add-card', '--type', 'asset', '--title', `${tag} fronton masques`, '--asset', DECOR, '--status', 'qa'))[1]);
+// Trace de chaque image dessinée (case source) : lecture case par case vérifiée sur la tuile.
+await page.addInitScript(() => {
+  window.__draws = [];
+  const orig = CanvasRenderingContext2D.prototype.drawImage;
+  CanvasRenderingContext2D.prototype.drawImage = function (img, ...a) {
+    if (a.length === 8 && img.naturalWidth) window.__draws.push({ sx: a[0], sw: a[2], iw: img.naturalWidth });
+    return orig.call(this, img, ...a);
+  };
+});
 await page.reload();
 const thumb = page.locator(`.card[data-id="${kidIds[1]}"] img.card-thumb`);
 await thumb.waitFor();
@@ -206,6 +215,10 @@ const moving = await page.evaluate(async (id) => {
   return a !== snap();
 }, kidIds[1]);
 check('tuile : l\'animation joue au survol', moving && (await page.$$('#board canvas')).length === 1);
+const tdraws = await page.evaluate(() => window.__draws);
+const walkFrames = await page.evaluate(() => state.assetsById.get('gordeka/persos/louis/animations').anims.find((x) => x.name === 'walk').frames);
+check('tuile : case par case (décalage multiple exact de la case)', tdraws.length >= 3
+  && tdraws.every((d) => d.sw * walkFrames === d.iw && d.sx % d.sw === 0), `${tdraws.length} images`);
 await shot(page, '04a_tuile_survol', false);
 await page.mouse.move(2, 2);
 await page.waitForTimeout(150);

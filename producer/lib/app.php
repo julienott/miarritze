@@ -483,7 +483,13 @@ final class App
         header('Content-Type: ' . $mime);
         header('ETag: ' . $etag);
         header('Accept-Ranges: bytes');
-        header('Cache-Control: private, no-cache');
+        // URL versionnée (&v = empreinte du contenu dans l'index) : immuable. Une empreinte qui ne
+        // correspond pas (index périmé côté client) n'est jamais mise en cache longtemps.
+        $v = isset($_GET['v']) && is_string($_GET['v']) ? $_GET['v'] : '';
+        $current = (string) (($this->index()['versions'] ?? [])[$p] ?? '');
+        header($v !== '' && $current !== '' && hash_equals($current, $v)
+            ? 'Cache-Control: private, max-age=31536000, immutable'
+            : 'Cache-Control: private, no-cache');
         if (($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {
             http_response_code(304);
             return;

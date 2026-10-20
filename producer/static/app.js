@@ -81,8 +81,36 @@ function fmtDate(ts) {
   return new Date(ts * 1000).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
 }
 
+/** URL d'un fichier servi, avec l'empreinte de son contenu (&v) : une planche réécrite
+ *  sous le même nom change d'URL, le navigateur ne ressert pas l'ancienne. */
 function fileUrl(p) {
-  return 'index.php?r=file&p=' + encodeURIComponent(p);
+  const v = state.index && state.index.versions ? state.index.versions[p] : '';
+  return 'index.php?r=file&p=' + encodeURIComponent(p) + (v ? '&v=' + v : '');
+}
+
+/**
+ * Case d'une planche d'après l'image réellement chargée : largeur = largeur de la planche /
+ * nombre d'images. Si l'index ne correspond plus à la planche (rebuild pendant que la page était
+ * ouverte), on suit la planche (lecture case par case, jamais de glissement) et on recharge l'index.
+ */
+function sheetCell(anim, img) {
+  const w = img.naturalWidth / anim.frames;
+  const h = img.naturalHeight;
+  if (Math.abs(w - anim.w) > 0.01 || h !== anim.h) {
+    console.warn(`planche ${anim.file} : ${img.naturalWidth}×${h} pour ${anim.frames} cases de ${anim.w}×${anim.h} (index périmé)`);
+    refreshIndexSoon();
+    return { w: Math.floor(w), h };
+  }
+  return { w: anim.w, h: anim.h };
+}
+
+let indexRefreshing = null;
+function refreshIndexSoon() {
+  if (indexRefreshing) return;
+  indexRefreshing = api('index').then((index) => {
+    state.index = index;
+    state.assetsById = new Map(index.assets.map((a) => [a.id, a]));
+  }).catch(() => {}).finally(() => { indexRefreshing = null; });
 }
 
 let toastTimer = 0;
@@ -513,6 +541,11 @@ function openPlayer(pid, name) {
   const playBtn = el('button', { type: 'button', 'aria-label': 'Lecture ou pause' }, '⏸');
   const maskBtn = el('button', { type: 'button', title: 'Masque de tenue par-dessus' }, 'Masque');
   const feetBtn = el('button', { type: 'button', title: 'Ligne des pieds (feet_anchor)' }, 'Pieds');
+  // « Comme en jeu » : recalage par image (frame_offsets), décalage et échelle de la planche,
+  // appliqués comme gk_perso.gd ; sinon la planche brute, case par case.
+  fs.jeu = store('producer-fs-jeu') !== '0';
+  const jeuBtn = el('button', { type: 'button', class: fs.jeu ? 'on' : null,
+    title: 'Comme en jeu : recalage par image (frame_offsets), décalage et échelle appliqués ; sinon planche brute' }, 'Comme en jeu');
   const bgBtn = el('button', { type: 'button', title: 'Fond' });
   const stage = el('div', { class: 'fs-stage' }, canvas);
   const root = el('div', { class: 'fs bg-' + fs.bg, role: 'dialog', 'aria-label': 'Lecteur plein écran' },
@@ -526,7 +559,7 @@ function openPlayer(pid, name) {
       playBtn,
       el('button', { type: 'button', 'aria-label': 'Image suivante', title: 'Image suivante (.)', onclick: () => step(1) }, '▶'),
       el('button', { type: 'button', 'aria-label': 'Animation suivante', title: 'Animation suivante (→, glisser à gauche)', onclick: () => go(1) }, 'anim ›'),
-      bgBtn, maskBtn, feetBtn,
+      bgBtn, maskBtn, feetBtn, jeuBtn,
       document.fullscreenEnabled ? el('button', { type: 'button', title: 'Plein écran du navigateur', onclick: toggleRealFs }, '⛶') : null));
   fs.root = root;
 
@@ -543,18 +576,27 @@ function openPlayer(pid, name) {
 
   const draw = () => {
     const a = fs.anim;
-    if (!a || !fs.img) return;
-    ctx.clearRect(0, 0, a.w, a.h);
-    ctx.drawImage(fs.img, fs.frame * a.w, 0, a.w, a.h, 0, 0, a.w, a.h);
+    const L = fs.layout;
+    if (!a || !fs.img || !L) return;
+    const { w, h } = L.cell;
+    const [ox, oy] = L.off(fs.frame);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    // Pieds de la case sur l'ancre (comme le jeu) ; la source est toujours une case entière.
+    ctx.translate(L.ax, L.ay);
+    ctx.scale(L.e, L.e);
+    ctx.translate(-L.feet[0] + ox, -L.feet[1] + oy);
+    ctx.drawImage(fs.img, fs.frame * w, 0, w, h, 0, 0, w, h);
     if (fs.showMask && fs.mask) {
       ctx.globalAlpha = 0.6;
-      ctx.drawImage(fs.mask, fs.frame * a.w, 0, a.w, a.h, 0, 0, a.w, a.h);
+      ctx.drawImage(fs.mask, fs.frame * w, 0, w, h, 0, 0, w, h);
       ctx.globalAlpha = 1;
     }
+    ctx.restore();
     if (fs.showFeet && a.feet) {
       ctx.strokeStyle = '#ce3434'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0, a.feet[1] + 0.5); ctx.lineTo(a.w, a.feet[1] + 0.5);
-      ctx.moveTo(a.feet[0] + 0.5, a.feet[1] - 6); ctx.lineTo(a.feet[0] + 0.5, a.feet[1] + 6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, Math.round(L.ay) + 0.5); ctx.lineTo(canvas.width, Math.round(L.ay) + 0.5);
+      ctx.moveTo(Math.round(L.ax) + 0.5, L.ay - 6); ctx.lineTo(Math.round(L.ax) + 0.5, L.ay + 6); ctx.stroke();
     }
     const i = fs.anims.indexOf(a);
     info.textContent = `image ${fs.frame + 1}/${a.frames} · ${a.fps} i/s` + (a.loop ? ' · boucle' : '') +
@@ -574,6 +616,11 @@ function openPlayer(pid, name) {
   const setPlaying = (on) => { fs.playing = on; playBtn.textContent = on ? '⏸' : '▶︎ Lire'; schedule(); };
   playBtn.addEventListener('click', () => setPlaying(!fs.playing));
   const step = (d) => { setPlaying(false); fs.frame = (fs.frame + d + fs.anim.frames) % fs.anim.frames; draw(); };
+  jeuBtn.addEventListener('click', () => {
+    fs.jeu = !fs.jeu; store('producer-fs-jeu', fs.jeu ? '1' : '0');
+    jeuBtn.classList.toggle('on', fs.jeu);
+    if (fs.img) { fs.layout = gameLayout(fs.anim, fs.layout.cell, fs.jeu); canvas.width = fs.layout.W; canvas.height = fs.layout.H; draw(); }
+  });
   maskBtn.addEventListener('click', () => { fs.showMask = !fs.showMask; maskBtn.classList.toggle('on', fs.showMask); draw(); });
   feetBtn.addEventListener('click', () => { fs.showFeet = !fs.showFeet; feetBtn.classList.toggle('on', fs.showFeet); draw(); });
 
@@ -584,7 +631,7 @@ function openPlayer(pid, name) {
     const a = fs.anims.find((x) => x.name === n) || fs.anims[0];
     if (!a) return;
     const m = masks.find((x) => x.name === a.name);
-    fs.anim = a; fs.frame = 0; fs.img = null; fs.mask = null;
+    fs.anim = a; fs.frame = 0; fs.img = null; fs.mask = null; fs.layout = null;
     clearTimeout(fs.timer);
     canvas.width = a.w; canvas.height = a.h;
     title.textContent = `${p} · ${a.name}`;
@@ -592,7 +639,12 @@ function openPlayer(pid, name) {
     feetBtn.disabled = !a.feet;
     info.textContent = 'chargement…';
     const img = new Image();
-    img.onload = () => { if (fs.anim === a) { fs.img = img; draw(); schedule(); } };
+    img.onload = () => {
+      if (fs.anim !== a) return;
+      fs.layout = gameLayout(a, sheetCell(a, img), fs.jeu);
+      canvas.width = fs.layout.W; canvas.height = fs.layout.H;
+      fs.img = img; draw(); schedule();
+    };
     img.src = fileUrl(a.file);
     if (m) {
       const mi = new Image();
@@ -654,6 +706,26 @@ function openPlayer(pid, name) {
   history.pushState({ fs: true }, '');
   fs.pushed = true;
   load(pid, name);
+}
+
+/**
+ * Mise en place d'une planche dans le lecteur plein écran. `jeu` : comme gk_perso.gd, chaque case
+ * est posée pieds sur l'ancre, décalée de frame_offsets[f] + decalage et mise à l'échelle `echelle`
+ * autour des pieds ; le canvas englobe toutes les images. Sinon : la case brute.
+ */
+function gameLayout(a, cell, jeu) {
+  const feet = a.feet || [cell.w / 2, cell.h];
+  const offs = jeu && a.offs ? a.offs : [];
+  const dec = jeu && a.dec ? a.dec : [0, 0];
+  const e = jeu && a.echelle ? a.echelle : 1;
+  const off = (f) => [(offs[f] ? offs[f][0] : 0) + dec[0], (offs[f] ? offs[f][1] : 0) + dec[1]];
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (let f = 0; f < a.frames; f++) {
+    const [ox, oy] = off(f);
+    x0 = Math.min(x0, (-feet[0] + ox) * e); x1 = Math.max(x1, (cell.w - feet[0] + ox) * e);
+    y0 = Math.min(y0, (-feet[1] + oy) * e); y1 = Math.max(y1, (cell.h - feet[1] + oy) * e);
+  }
+  return { cell, feet, e, off, ax: -x0, ay: -y0, W: Math.ceil(x1 - x0), H: Math.ceil(y1 - y0) };
 }
 
 function toggleRealFs() {
@@ -856,13 +928,15 @@ function startMini(m) {
   m.img = img;
   img.onload = () => {
     if (m.img !== img) return;
+    const cell = sheetCell(a, img);
+    canvas.width = cell.w; canvas.height = cell.h;
     m.poster.replaceWith(canvas);
     const ctx = canvas.getContext('2d');
     const tick = () => {
       if (m.img !== img) return;
       if (!canvas.isConnected) { stopMini(m); return; }
-      ctx.clearRect(0, 0, a.w, a.h);
-      ctx.drawImage(img, m.frame * a.w, 0, a.w, a.h, 0, 0, a.w, a.h);
+      ctx.clearRect(0, 0, cell.w, cell.h);
+      ctx.drawImage(img, m.frame * cell.w, 0, cell.w, cell.h, 0, 0, cell.w, cell.h);
       const last = m.frame === a.frames - 1;
       m.frame = (m.frame + 1) % a.frames;
       // Comme le lecteur : une animation sans boucle marque une pause avant de recommencer.
@@ -975,11 +1049,11 @@ function showDetail(a) {
     const frameLbl = el('span', { class: 'muted' });
     const playBtn = el('button', { type: 'button', class: 'small', text: '⏸ Pause' });
     stage.append(canvas);
-    const p = { anim: def, img: null, frame: 0, playing: true, timer: 0 };
+    const p = { anim: def, img: null, cell: null, frame: 0, playing: true, timer: 0 };
     state.player = p;
     const draw = () => {
       if (!p.img) return;
-      const { w, h } = p.anim;
+      const { w, h } = p.cell;
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(p.img, p.frame * w, 0, w, h, 0, 0, w, h);
       frameLbl.textContent = `frame ${p.frame + 1}/${p.anim.frames} · ${p.anim.fps} i/s` + (p.anim.loop ? ' · boucle' : '');
@@ -1006,6 +1080,8 @@ function showDetail(a) {
       const img = new Image();
       img.onload = () => {
         if (p.anim !== anim) return;
+        p.cell = sheetCell(anim, img);
+        canvas.width = p.cell.w; canvas.height = p.cell.h;
         p.img = img; draw();
         if (p.playing) p.timer = setTimeout(tick, 1000 / anim.fps);
       };

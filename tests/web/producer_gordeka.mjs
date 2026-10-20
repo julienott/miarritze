@@ -302,6 +302,77 @@ for (const [label, browser, opts] of runs) {
   check('tactile : glisser vers le haut = perso suivant', (await page.textContent('.fs-title')) === 'txomin · walk', await page.textContent('.fs-title'));
   await context.close();
 }
+// Lecture case par case : entre deux images, la planche avance d'un multiple exact de la case
+// (largeur de la planche / nombre d'images), en vignette, page d'animations et plein écran, même
+// si l'index est périmé (planches réécrites pendant que la page est ouverte).
+{
+  const context = await cr.newContext({ viewport: { width: 1440, height: 900 } });
+  await context.addInitScript(() => {
+    window.__draws = [];
+    const orig = CanvasRenderingContext2D.prototype.drawImage;
+    CanvasRenderingContext2D.prototype.drawImage = function (img, ...a) {
+      if (a.length === 8 && img.naturalWidth) window.__draws.push({ sx: a[0], sw: a[2], iw: img.naturalWidth, src: img.src });
+      return orig.call(this, img, ...a);
+    };
+  });
+  const page = await context.newPage();
+  await page.goto(BASE);
+  await page.waitForSelector('#login:not([hidden])');
+  await page.fill('#password', PASSWORD);
+  await page.click('#login-form button[type=submit]');
+  await page.waitForSelector('.gk-perso');
+  const CAS = [['txomin', 'ghost'], ['mattin', 'ghost'], ['amaia', 'hunter_reveal'], ['amaia', 'walk'], ['louis', 'walk']];
+  const present = await page.evaluate((cas) => cas.filter(([p, n]) => gkAnims(p).some((x) => x.name === n)), CAS);
+  const verifie = async (lieu, frames) => {
+    const d = await page.evaluate(() => { const d = window.__draws; window.__draws = []; return d; });
+    const faux = d.filter((x) => x.sw * frames !== x.iw || x.sx % x.sw !== 0);
+    const sauts = new Set(d.map((x) => x.sx / x.sw)).size;
+    check(`case par case : ${lieu}`, d.length >= 3 && faux.length === 0 && sauts >= 2, `${d.length} images, ${faux.length} fausses, ${sauts} cases`);
+    return d;
+  };
+  for (const [pid, name] of present) {
+    const frames = await page.evaluate(([p, n]) => gkAnims(p).find((x) => x.name === n).frames, [pid, name]);
+    const cell = `.gk-perso[data-perso="${pid}"] .gk-anim[data-anim="${name}"]`;
+    await page.locator(cell).scrollIntoViewIfNeeded();
+    await page.evaluate(() => { window.__draws = []; });
+    await page.hover(cell);
+    await page.waitForTimeout(500);
+    const d = await verifie(`${pid}/${name}, vignette`, frames);
+    check(`${pid}/${name} : planche en URL versionnée (&v=)`, d.every((x) => /[?&]v=[0-9a-f]{10}/.test(x.src)));
+    await page.click(cell);
+    await page.waitForSelector('.fs canvas');
+    await page.waitForTimeout(500);
+    await verifie(`${pid}/${name}, plein écran`, frames);
+    await page.click('.fs-close');
+    await page.mouse.move(2, 2);
+  }
+  // Page des animations (lecteur du détail).
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/persos/amaia/animations'));
+  await page.waitForSelector('.stage canvas');
+  await page.selectOption('.controls select[aria-label=Animation]', 'walk').catch(() => {});
+  await page.evaluate(() => { window.__draws = []; });
+  await page.waitForTimeout(600);
+  await verifie('amaia/walk, page des animations', await page.evaluate(() => gkAnims('amaia').find((x) => x.name === 'walk').frames));
+  // Index périmé : largeurs de case fausses dans l'index, la planche fait foi.
+  await page.goto(BASE + '#/assets');
+  await page.waitForSelector('.gk-perso');
+  await page.evaluate(() => { for (const x of gkAnims('amaia')) x.w += 22; window.__draws = []; });
+  const c2 = '.gk-perso[data-perso="amaia"] .gk-anim[data-anim="walk"]';
+  await page.locator(c2).scrollIntoViewIfNeeded();
+  await page.hover(c2);
+  await page.waitForTimeout(500);
+  await verifie('index périmé : la planche fait foi', await page.evaluate(() => gkAnims('amaia').find((x) => x.name === 'walk').frames));
+  // En-têtes : URL versionnée immuable, sinon revalidée.
+  const hdr = await page.evaluate(async () => {
+    const f = gkAnims('amaia').find((x) => x.name === 'walk').file;
+    const v = state.index.versions[f];
+    const ok = await fetch('index.php?r=file&p=' + encodeURIComponent(f) + '&v=' + v);
+    const vieux = await fetch('index.php?r=file&p=' + encodeURIComponent(f) + '&v=0000000000');
+    return [ok.headers.get('cache-control'), vieux.headers.get('cache-control')];
+  });
+  check('cache : URL à jour immuable, empreinte périmée revalidée', /immutable/.test(hdr[0]) && /no-cache/.test(hdr[1]), hdr.join(' | '));
+  await context.close();
+}
 await cr.close();
 if (wk) await wk.close();
 console.log(fails ? `${fails} échec(s)` : 'tout est vert');

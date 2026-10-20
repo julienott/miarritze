@@ -315,6 +315,16 @@ class Builder:
             fps = float(meta.get("fps", 24))
             info = {"frames": n, "fps": int(fps) if fps.is_integer() else fps,
                     "loop": bool(meta.get("loop", False)), "w": w, "h": h}
+            # Raccord du jeu (gk_perso.gd) : recalage par image, décalage et échelle de la planche,
+            # pour que le lecteur plein écran montre ce que voit le joueur.
+            offs = meta.get("frame_offsets") or []
+            if any(abs(float(o[0])) + abs(float(o[1])) > 0.01 for o in offs[:n]):
+                info["offs"] = [[round(float(o[0]), 1), round(float(o[1]), 1)] for o in offs[:n]]
+            dec = meta.get("decalage")
+            if isinstance(dec, list) and len(dec) == 2 and (dec[0] or dec[1]):
+                info["dec"] = [float(dec[0]), float(dec[1])]
+            if float(meta.get("echelle", 1.0)) != 1.0:
+                info["echelle"] = float(meta["echelle"])
             feet = meta.get("feet_anchor")
             if isinstance(feet, list) and len(feet) == 2:
                 info["feet"] = [int(feet[0]) - int(x0), int(feet[1]) - int(y0)]   # repère des pieds, recadré
@@ -631,6 +641,10 @@ class Builder:
             "gordeka": self.gk,
             "assets": self.assets,
             "files": sorted(set(self.files)),
+            # Empreinte du contenu de chaque fichier servi : le client l'ajoute à l'URL (&v=…),
+            # une planche réécrite sous le même nom change donc d'URL (pas de vieux cache).
+            "versions": {f: hashlib.sha1((self.out / f).read_bytes()).hexdigest()[:10]
+                         for f in sorted(set(self.files)) if (self.out / f).is_file()},
         }
         (self.out / "index.json").write_text(json.dumps(index, ensure_ascii=False, separators=(",", ":")))
         print(f"producer : {len(self.assets)} assets, {len(index['files'])} fichiers -> {self.out}")
