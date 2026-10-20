@@ -30,6 +30,10 @@ var pop_from: Vector2 = Vector2.ZERO
 var pop_left: float = 0.0
 var search_left: float = 0.0
 var gauge: float = 0.0               # repérage par le chasseur (0 → 1 = trouvé)
+## Détection progressive : la jauge a passé le « ? » (detection_doute) ; « ouf ! » restant (s) quand
+## elle est retombée à zéro sans capture (frôlement).
+var doubted: bool = false
+var ouf_t: float = 0.0
 var extract_t: float = 0.0
 var alive_t: float = 0.0             # temps de chasse passé non trouvé (points)
 var score: int = 0

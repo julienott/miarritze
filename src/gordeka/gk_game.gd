@@ -20,6 +20,23 @@ const SHIVER_PX: float = 1.5
 ## Caisse procédurale (sans image) : couvercle ouvert, en part de la hauteur de la caisse.
 const LID_K: float = 0.35
 const LID_OPEN_K: float = 0.5
+## Mesures de tension (statistiques seulement, pas des règles) : hystérésis d'un frôlement (cases),
+## temps hors de vue qui clôt un « vu » (s), part de la vitesse au-dessus de laquelle on bouge, rayon
+## et durée d'une planque, écart entre deux planques (cases), portée d'une sortie de cachette « en
+## fuite » (cases), fenêtre d'une capture après évasion et des captures de fin de round (s).
+const TENSION_HYST: float = 0.5
+const TENSION_VU_GRACE: float = 0.4
+const TENSION_BOUGE: float = 0.3
+const TENSION_PLANQUE_R: float = 1.0
+const TENSION_PLANQUE_S: float = 3.0
+const TENSION_PLANQUE_ECART: float = 4.0
+const TENSION_FUITE: float = 6.0
+const TENSION_JUSTESSE_S: float = 15.0
+const TENSION_FIN_S: float = 30.0
+## Détection progressive : durée du « ! » d'une capture, du « ? » qui retombe et du « ouf ! » (s).
+const ALERT_BANG_S: float = 0.9
+const ALERT_LOST_S: float = 1.2
+const OUF_S: float = 1.4
 ## QA `--gk-qa-cachette` : temps passé dedans, puis dehors, avant la prochaine entrée (s).
 const QA_OUT_S: float = 2.0
 const QA_GAP_S: float = 2.0
@@ -88,11 +105,24 @@ var _trap_hit_at: float = -100.0
 ## dernière capture (chasseur bredouille), derniers bruits entendus (statistiques).
 var gateaux: Array = []
 var mouettes: Array = []
+var _cake_respawn: Array[float] = []    # instants de réapparition des gâteaux mangés (idee_mouvement)
 var _last_find_t: float = 0.0
 var _noise_at: float = -100.0
 var _tickle_free_until: float = 0.0     # chasseur à l'abri des chatouilles jusqu'à cet instant (répit)
 var _rescues: int = 0                   # délivrances déjà faites ce round
+## Mesures de tension (`--gk-stats`, docs/GORDEKA_EQUILIBRAGE.md) : état par chassé (id → {…}) pour
+## les frôlements, les « vu puis perdu », le mouvement et les changements de planque.
+var _tens: Dictionary = {}
+## Statistiques du dernier round terminé (tests).
+var last_stats: Dictionary = {}
+## Détection progressive (`idee_detection`) : jauge affichée au-dessus du chasseur (la plus haute des
+## jauges des chassés), « ! » d'une capture (s restantes) et « ? » qui retombe après un frôlement (s).
+var hunter_alert: float = 0.0
+var alert_bang: float = 0.0
+var alert_lost: float = 0.0
 var view: GkView3D
+## Ressenti du chassé local (idee_frisson) : battement, vignettage, vibration.
+var frisson: GkFrisson
 var _last_dt: float = 0.0
 ## QA : `--gk-qa-emotes` fait enchaîner les emotes à tout le monde et ouvre l'éventail ;
 ## `--gk-qa-podium` passe directement au podium.
@@ -205,6 +235,9 @@ func _ready() -> void:
 		view = GkView3D.new()
 		add_child(view)
 		view.setup(self)
+	frisson = GkFrisson.new()
+	frisson.game = self
+	add_child(frisson)
 	input = GkInput.new()
 	add_child(input)
 	input.quit_requested.connect(quit_to_podium)
@@ -358,6 +391,8 @@ func _start_round() -> void:
 		"evasions_de_vue": 0, "t_trouves": [], "lieux_trouves": [], "sorties_round": open_exit_zones.duplicate(),
 		"chatouilles": 0, "delivres": 0, "grincements": 0, "gateaux": 0, "mouettes": 0,
 		"trouves_apres_bruit": 0, "elan_s": 0.0, "fantome_s": 0.0}
+	_st.merge(tension_keys())
+	_tens.clear()
 	_revealed_at.clear()
 	_trap_hit_at = -100.0
 	_last_find_t = 0.0
@@ -365,7 +400,12 @@ func _start_round() -> void:
 	_tickle_free_until = 0.0
 	_rescues = 0
 	_place_bonus()
+	hunter_alert = 0.0
+	alert_bang = 0.0
+	alert_lost = 0.0
 	for a2: GkActor in actors:
+		a2.doubted = false
+		a2.ouf_t = 0.0
 		a2.speed_mult = 1.0
 		a2.tickle_left = 0.0
 		a2.sprint_left = 0.0
@@ -548,6 +588,11 @@ func _finish_round() -> void:
 		if a.role == GkActor.Role.HIDER or a.role == GkActor.Role.HUNTER:
 			a.end_pose = "victory" if a.won_round else "sad"
 	if _stats:
+		# Épisodes encore ouverts au chrono : le chasseur est passé tout près sans trouver.
+		for id: int in _tens:
+			for r: int in [2, 3]:
+				if bool(_tens[id]["near%d" % r]):
+					_st["frolements_%d" % r] += 1
 		_st["round"] = round_no
 		_st["niveau"] = str(config.get("level", "normal"))
 		_st["niveau_chasseur"] = _hunter_level if _hunter_level != "" else _st["niveau"]
@@ -555,6 +600,7 @@ func _finish_round() -> void:
 		_st["trouves"] = _round_found
 		_st["restes_caches"] = _hiders_left()
 		_st["duree"] = snappedf(hunt_elapsed, 0.1)
+		last_stats = _st.duplicate(true)
 		print("[gk-stats] " + JSON.stringify(_st))
 		if _rounds_max > 0 and round_no >= _rounds_max:
 			get_tree().quit()
@@ -563,6 +609,10 @@ func _finish_round() -> void:
 		print("[gk] round %d : chasseur %s, trouvés %d/%d, échappés %d, restés cachés %d, durée %.0f s" % [
 			round_no, hunter.display_name, _round_found, _round_hiders, out,
 			_round_hiders - _round_found - out, hunt_elapsed])
+		if _stats:
+			print("[gk]   tension : frôlements %d (< 2 cases) / %d (< 3), vu puis perdu %d sur %d, %.1f cases/min, changements de planque %d" % [
+				_st["frolements_2"], _st["frolements_3"], _st["vu_perdu"], _st["vus"],
+				float(_st["cases_parcourues"]) / maxf(float(_st["chasse_s"]) / 60.0, 0.01), _st["changements_planque"]])
 
 
 func _give(a: GkActor, pts: int) -> void:
@@ -638,6 +688,8 @@ func _physics_process(dt: float) -> void:
 		_update_traps()
 		if visite != "chasse":
 			_update_capture(dt)
+		if _stats:
+			track_tension(dt)
 		if visite == "":
 			_update_exits(dt)
 		_update_ideas(dt)
@@ -647,6 +699,10 @@ func _physics_process(dt: float) -> void:
 			elif a.role == GkActor.Role.GHOST and _stats:
 				_st["fantome_s"] = float(_st["fantome_s"]) + dt
 	_update_cachettes(dt)
+	alert_bang = maxf(0.0, alert_bang - dt)
+	alert_lost = maxf(0.0, alert_lost - dt)
+	for a3: GkActor in actors:
+		a3.ouf_t = maxf(0.0, a3.ouf_t - dt)
 	for r: Dictionary in reveals:
 		r["left"] = float(r["left"]) - dt
 	reveals = reveals.filter(func(r: Dictionary) -> bool: return float(r["left"]) > 0.0)
@@ -686,6 +742,8 @@ func act_for(a: GkActor) -> void:
 	match a.role:
 		GkActor.Role.HIDER:
 			if a.hidden_in >= 0:
+				if _stats and phase == Phase.HUNT and hunter.position.distance_to(a.position) < TENSION_FUITE * map.tile:
+					_st["sorties_fuite"] += 1
 				_leave_cachette(a, false)
 				return
 			var c: int = near_cachette(a, true)
@@ -781,22 +839,54 @@ func _hiders_left() -> int:
 ## Le chasseur voit-il un corps de rayon `r` en `p` ? Cône (ou petit cercle) puis ligne de vue
 ## libre vers le centre ou un des bords du corps (couche 2 : murs, caisses, bateaux, cachettes).
 func sees(h: GkActor, p: Vector2, r: float) -> bool:
+	return sight_fraction(h, p, r, false) > 0.0
+
+
+## Part visible d'un corps de rayon `r` en `p` (0, 1/3, 2/3 ou 1 : centre et deux bords, lignes de vue
+## libres) ; 0 hors du cône et du petit cercle. `all_rays` faux : s'arrête au premier rayon libre.
+func sight_fraction(h: GkActor, p: Vector2, r: float, all_rays: bool = true) -> float:
 	var v: Vector2 = p - h.position
 	var d: float = v.length()
 	if d > GkRules.px("cone_range") + r:
-		return false
+		return 0.0
 	# Caché derrière un objet haut (son toit, sa face haute le recouvre) : vu de près seulement.
 	if map.decor and d > GkRules.px("masque_vue_portee") + r and map.decor.masking(p, mask_height(r)) >= 0:
-		return false
+		return 0.0
 	if d > GkRules.px("near_radius") + r:
 		var half: float = deg_to_rad(GkRules.f("cone_deg")) * 0.5 + atan2(r, maxf(d, 1.0))
 		if absf(angle_difference(h.look, v.angle())) > half:
-			return false
+			return 0.0
 	var side: Vector2 = v.orthogonal().normalized() * r * 0.8
+	var n: int = 0
 	for target: Vector2 in [p, p + side, p - side]:
 		if clear_line(h.position, target):
-			return true
-	return false
+			n += 1
+			if not all_rays:
+				return 1.0
+	return float(n) / 3.0
+
+
+## Détection progressive (`idee_detection`) : vitesse de remplissage de la jauge (par seconde) d'un
+## chassé en `p` dont la part `vis` est visible. Pleine en detection_temps_pres s tout près (petit
+## cercle), en detection_temps_loin s au bout du cône ; plus lente s'il n'est vu qu'en partie.
+static func detection_rate(d: float, vis: float) -> float:
+	var near: float = GkRules.px("near_radius")
+	var far: float = GkRules.px("cone_range")
+	var k: float = clampf((d - near) / maxf(far - near, 1.0), 0.0, 1.0)
+	var t: float = lerpf(GkRules.f("detection_temps_pres"), GkRules.f("detection_temps_loin"), k)
+	return lerpf(GkRules.f("detection_partiel"), 1.0, clampf(vis, 0.0, 1.0)) / maxf(t, 0.05)
+
+
+## Jauge d'un chassé après `dt` s : remplie s'il est vu (`vis` > 0, à `d` px du chasseur), sinon
+## vidée doucement. Sans détection progressive : capture en capture_time s, vidage capture_decay fois
+## plus vite (règle d'avant, gardée pour l'A/B).
+static func next_gauge(gauge: float, vis: float, d: float, dt: float) -> float:
+	var progressive: bool = GkRules.on("idee_detection")
+	if vis > 0.0:
+		return gauge + dt * (detection_rate(d, vis) if progressive else 1.0 / GkRules.f("capture_time"))
+	var decay: float = GkRules.f("detection_decroissance") if progressive \
+		else GkRules.f("capture_decay") / GkRules.f("capture_time")
+	return maxf(0.0, gauge - dt * decay)
 
 
 ## Hauteur du corps (px au-dessus du pied) qui doit être recouverte pour qu'un corps de rayon `r`
@@ -815,20 +905,120 @@ func _update_capture(dt: float) -> void:
 	_seen.clear()
 	if hunter.frozen:
 		return
+	var progressive: bool = GkRules.on("idee_detection")
+	var peak: float = 0.0
 	for a: GkActor in actors:
 		if a.role != GkActor.Role.HIDER or a.hidden_in >= 0:
 			a.gauge = 0.0
+			a.doubted = false
 			continue
-		var seen: bool = sees(hunter, a.position, a.radius)
-		_seen[a.id] = seen
-		if seen:
-			a.gauge += dt / GkRules.f("capture_time")
-			if a.gauge >= 1.0:
-				_found(a)
-		elif a.gauge > 0.0:
-			a.gauge = maxf(0.0, a.gauge - dt * GkRules.f("capture_decay") / GkRules.f("capture_time"))
-			if a.gauge <= 0.0 and _stats:
+		var vis: float = sight_fraction(hunter, a.position, a.radius, progressive)
+		_seen[a.id] = vis > 0.0
+		var before: float = a.gauge
+		a.gauge = next_gauge(a.gauge, vis, a.position.distance_to(hunter.position), dt)
+		if a.gauge >= 1.0:
+			_found(a)
+			if progressive:
+				alert_bang = ALERT_BANG_S
+			continue
+		if a.gauge >= GkRules.f("detection_doute"):
+			a.doubted = true
+		if before > 0.0 and a.gauge <= 0.0:
+			if _stats:
 				_st["evasions_de_vue"] += 1
+			# Frôlement visible de tous : le « ? » du chasseur retombe, le chassé souffle « ouf ! ».
+			if progressive and a.doubted:
+				a.ouf_t = OUF_S
+				alert_lost = ALERT_LOST_S
+			a.doubted = false
+		peak = maxf(peak, a.gauge)
+	hunter_alert = peak
+
+
+## Compteurs de tension d'un round (`--gk-stats`) : frôlements (le chasseur passe à moins de 2 ou
+## 3 cases d'un chassé sans le trouver), « vu puis perdu » (un chassé entre dans la vue du chasseur
+## puis en sort sans être trouvé), doutes (« ? » de la détection progressive), mouvement des chassés
+## (cases parcourues ; secondes en mouvement, immobile ou en cachette ; changements de planque ;
+## sorties de cachette en fuite) et captures « au dernier moment ».
+static func tension_keys() -> Dictionary:
+	return {"frolements_2": 0, "frolements_3": 0, "frolements_2_cachette": 0, "vus": 0, "vu_perdu": 0,
+		"doutes": 0, "doutes_perdus": 0, "cases_parcourues": 0.0, "chasse_s": 0.0, "bouge_s": 0.0,
+		"immobile_s": 0.0, "cachette_s": 0.0, "changements_planque": 0, "sorties_fuite": 0,
+		"captures_course": 0, "captures_apres_evasion": 0, "captures_fin": 0}
+
+
+## Met à jour les compteurs de tension (après la capture de cette image : un chassé trouvé a déjà
+## perdu son état, son épisode en cours ne compte donc pas).
+func track_tension(dt: float) -> void:
+	if hunter == null or hunter.frozen:
+		return
+	var t: float = map.tile
+	for a: GkActor in actors:
+		if a == hunter:
+			continue
+		if a.role != GkActor.Role.HIDER:
+			_tens.erase(a.id)
+			continue
+		if not _tens.has(a.id):
+			_tens[a.id] = {"near2": false, "near3": false, "near2_in": false, "vu": false, "unseen": 0.0,
+				"doute": false, "last": a.position, "anchor": a.position, "anchor_t": 0.0,
+				"spot": Vector2.INF, "escaped_at": -100.0}
+		var s: Dictionary = _tens[a.id]
+		# Frôlements : épisode ouvert sous r cases, refermé au-delà de r + TENSION_HYST.
+		var d: float = a.position.distance_to(hunter.position) / t
+		for r: int in [2, 3]:
+			var k: String = "near%d" % r
+			if not bool(s[k]) and d < float(r):
+				s[k] = true
+			elif bool(s[k]) and d > float(r) + TENSION_HYST:
+				s[k] = false
+				_st["frolements_%d" % r] += 1
+				if r == 2 and bool(s["near2_in"]):
+					_st["frolements_2_cachette"] += 1
+		s["near2_in"] = bool(s["near2"]) and (bool(s["near2_in"]) or a.hidden_in >= 0)
+		# Vu puis perdu : hors de vue pendant TENSION_VU_GRACE s sans avoir été trouvé.
+		if bool(_seen.get(a.id, false)):
+			s["unseen"] = 0.0
+			if not bool(s["vu"]):
+				s["vu"] = true
+				_st["vus"] += 1
+		elif bool(s["vu"]):
+			s["unseen"] = float(s["unseen"]) + dt
+			if float(s["unseen"]) >= TENSION_VU_GRACE:
+				s["vu"] = false
+				s["escaped_at"] = hunt_elapsed
+				_st["vu_perdu"] += 1
+		# Doutes : la jauge passe le seuil du « ? », puis retombe à zéro sans capture.
+		if not bool(s["doute"]) and a.gauge >= GkRules.f("detection_doute"):
+			s["doute"] = true
+			_st["doutes"] += 1
+		elif bool(s["doute"]) and a.gauge <= 0.0:
+			s["doute"] = false
+			_st["doutes_perdus"] += 1
+		# Mouvement (un saut d'entrée ou de sortie de cachette ne compte que pour un pas).
+		var step: float = minf(a.position.distance_to(s["last"]), a.speed() * dt * 2.0)
+		s["last"] = a.position
+		_st["chasse_s"] += dt
+		_st["cases_parcourues"] += step / t
+		if a.hidden_in >= 0:
+			_st["cachette_s"] += dt
+		elif step > a.speed() * dt * TENSION_BOUGE:
+			_st["bouge_s"] += dt
+		else:
+			_st["immobile_s"] += dt
+		# Planques : on reste TENSION_PLANQUE_S s dans un rayon de TENSION_PLANQUE_R case ; une
+		# nouvelle planque à plus de TENSION_PLANQUE_ECART cases de la précédente est un changement.
+		var here: Vector2 = cachettes[a.hidden_in]["pos"] if a.hidden_in >= 0 else a.position
+		if here.distance_to(s["anchor"]) > t * TENSION_PLANQUE_R:
+			s["anchor"] = here
+			s["anchor_t"] = 0.0
+		else:
+			s["anchor_t"] = float(s["anchor_t"]) + dt
+			var anchor: Vector2 = s["anchor"]
+			if float(s["anchor_t"]) >= TENSION_PLANQUE_S and anchor.distance_to(s["spot"]) > t * TENSION_PLANQUE_ECART:
+				if s["spot"] != Vector2.INF:
+					_st["changements_planque"] += 1
+				s["spot"] = anchor
 
 
 func _found(a: GkActor, via: String = "vue") -> void:
@@ -843,6 +1033,13 @@ func _found(a: GkActor, via: String = "vue") -> void:
 			_st["trouves_apres_piege"] += 1
 		if hunt_elapsed - _noise_at < 10.0:
 			_st["trouves_apres_bruit"] += 1
+		# Captures « au dernier moment » : en pleine course, juste après une évasion, ou en fin de round.
+		if via == "vue" and a.velocity.length() > a.speed() * TENSION_BOUGE:
+			_st["captures_course"] += 1
+		if _tens.has(a.id) and hunt_elapsed - float(_tens[a.id]["escaped_at"]) < TENSION_JUSTESSE_S:
+			_st["captures_apres_evasion"] += 1
+		if hunt_elapsed > GkRules.f("phase_hunt") - TENSION_FIN_S:
+			_st["captures_fin"] += 1
 	_last_find_t = hunt_elapsed
 	hunter.elan_mult = 1.0
 	a.rescue_k = 0.0
@@ -1127,34 +1324,45 @@ func _detect(h: GkActor) -> void:
 func _place_bonus() -> void:
 	gateaux.clear()
 	mouettes.clear()
+	_cake_respawn.clear()
 	var want_g: int = int(GkRules.f("gateaux_nombre")) if GkRules.on("idee_gateaux") else 0
 	var want_m: int = int(GkRules.f("mouettes_nombre")) if GkRules.on("idee_mouettes") else 0
 	if want_g + want_m == 0:
 		return
 	var spawn: Vector2 = map.center(map.spawns[0]) if not map.spawns.is_empty() else map.size_px() * 0.5
-	var keys: Array = map.cover.keys()
 	var taken: Array[Vector2] = []
-	for tries: int in 400:
+	for tries: int in 40:
 		if gateaux.size() >= want_g and mouettes.size() >= want_m:
 			break
-		var t: Vector2i = keys[randi() % keys.size()]
-		if int(map.cover[t]) > 2 or map.at(t) != "." and map.at(t) != ":" and map.at(t) != "=":
-			continue
-		var p: Vector2 = map.center(t)
-		if p.distance_to(spawn) < 8.0 * map.tile:
-			continue
-		var ok: bool = true
-		for q: Vector2 in taken:
-			if p.distance_to(q) < 9.0 * map.tile:
-				ok = false
-				break
-		if not ok:
+		var p: Vector2 = _bonus_spot(taken, spawn)
+		if p == Vector2.INF:
 			continue
 		taken.append(p)
 		if gateaux.size() < want_g:
 			gateaux.append({"pos": p})
 		else:
 			mouettes.append({"pos": p, "away": 0.0, "fly": 0.0})
+
+
+## Case libre et dégagée (couverture ≤ 2) à au moins 8 cases de `away` et 9 cases de chaque point
+## de `taken`, au hasard ; Vector2.INF si on n'en trouve pas.
+func _bonus_spot(taken: Array[Vector2], away: Vector2) -> Vector2:
+	var keys: Array = map.cover.keys()
+	for tries: int in 40:
+		var t: Vector2i = keys[randi() % keys.size()]
+		if int(map.cover[t]) > 2 or map.at(t) != "." and map.at(t) != ":" and map.at(t) != "=":
+			continue
+		var p: Vector2 = map.center(t)
+		if p.distance_to(away) < 8.0 * map.tile:
+			continue
+		var ok: bool = true
+		for q: Vector2 in taken:
+			if p.distance_to(q) < 9.0 * map.tile:
+				ok = false
+				break
+		if ok:
+			return p
+	return Vector2.INF
 
 
 ## Un bruit (cachette qui grince, mouettes qui s'envolent) : le chasseur IA l'entend s'il est à
@@ -1205,6 +1413,8 @@ func _update_ideas(dt: float) -> void:
 			if a.role == GkActor.Role.HIDER and a.hidden_in < 0 \
 					and a.position.distance_to(g2["pos"]) < GkRules.px("gateau_portee"):
 				gateaux.erase(g2)
+				if GkRules.on("idee_mouvement"):
+					_cake_respawn.append(hunt_elapsed + GkRules.f("gateaux_reapparition"))
 				a.sprint_left = GkRules.f("gateau_duree")
 				_give(a, GkRules.score("hider_cake"))
 				if a == local:
@@ -1212,6 +1422,15 @@ func _update_ideas(dt: float) -> void:
 				if _stats:
 					_st["gateaux"] += 1
 				break
+	# Mouvement : un gâteau mangé réapparaît ailleurs, loin du chasseur (on a une raison de bouger).
+	if not _cake_respawn.is_empty() and hunt_elapsed >= _cake_respawn[0]:
+		var taken: Array[Vector2] = []
+		for g3: Dictionary in gateaux:
+			taken.append(g3["pos"])
+		var p: Vector2 = _bonus_spot(taken, hunter.position)
+		if p != Vector2.INF:
+			_cake_respawn.pop_front()
+			gateaux.append({"pos": p})
 	# Mouettes : un chassé qui passe trop près les fait s'envoler en criant (indice pour le chasseur).
 	for m: Dictionary in mouettes:
 		m["fly"] = maxf(0.0, float(m["fly"]) - dt)
@@ -1473,6 +1692,16 @@ func _draw_overlay(ci: CanvasItem) -> void:
 		ci.draw_colored_polygon(poly, Color(1, 0.15, 0.1, 0.22 if phase == Phase.HUNT else 0.1))
 		ci.draw_polyline(poly, Color(1, 0.2, 0.15, 0.5), 2.0)
 		ci.draw_arc(hunter.position, GkRules.px("near_radius"), 0, TAU, 32, Color(1, 0.2, 0.15, 0.45), 2.0)
+	# Détection progressive : jauge, « ? » et « ! » au-dessus du chasseur (vus de tous), « ouf ! » d'un
+	# chassé qui s'en tire (vu des chassés et des fantômes, et du chasseur s'il le voit).
+	if GkRules.on("idee_detection") and hunter and phase == Phase.HUNT:
+		_draw_alert(ci, font)
+		for a4: GkActor in actors:
+			if a4.ouf_t > 0.0 and a4.role == GkActor.Role.HIDER and a4.hidden_in < 0 \
+					and (not as_hunter or bool(_seen.get(a4.id, false))):
+				var k4: float = a4.ouf_t / OUF_S
+				_draw_noise_bubble(ci, font, a4.position + Vector2(0, a4.name_y() - 20.0 - 30.0 * (1.0 - k4)), "ouf !",
+					k4, Color("6fe08a"))
 	# Onde de détection et silhouettes révélées.
 	for r2: Dictionary in reveals:
 		var left: float = float(r2["left"])
@@ -1526,12 +1755,41 @@ func _draw_gull(ci: CanvasItem, p: Vector2, face: float) -> void:
 	ci.draw_circle(p + Vector2(13 * face, -11), 1.8, GkDraw.INK)
 
 
-## Bulle de bruit (grincement, mouettes) : texte blanc cerné d'encre, qui s'efface avec `k` (1 → 0).
-func _draw_noise_bubble(ci: CanvasItem, font: Font, at: Vector2, text: String, k: float) -> void:
+## Bulle de bruit (grincement, mouettes) : texte cerné d'encre, qui s'efface avec `k` (1 → 0).
+func _draw_noise_bubble(ci: CanvasItem, font: Font, at: Vector2, text: String, k: float,
+		col: Color = Color("ffd34a"), fsize: int = 30) -> void:
 	var a: float = clampf(k * 3.0, 0.0, 1.0)
-	ci.draw_string_outline(font, at - Vector2(100, 0), text, HORIZONTAL_ALIGNMENT_CENTER, 200, 30, 8,
+	ci.draw_string_outline(font, at - Vector2(100, 0), text, HORIZONTAL_ALIGNMENT_CENTER, 200, fsize, 8,
 		Color(GkDraw.INK, a))
-	ci.draw_string(font, at - Vector2(100, 0), text, HORIZONTAL_ALIGNMENT_CENTER, 200, 30, Color(Color("ffd34a"), a))
+	ci.draw_string(font, at - Vector2(100, 0), text, HORIZONTAL_ALIGNMENT_CENTER, 200, fsize, Color(col, a))
+
+
+## Jauge de détection au-dessus du chasseur : barre jaune → rouge (la plus haute des jauges des
+## chassés), « ? » qui gonfle dès detection_doute, « ! » rouge à la capture, « ? » gris qui retombe
+## quand un chassé s'en tire.
+func _draw_alert(ci: CanvasItem, font: Font) -> void:
+	var head: Vector2 = hunter.position + Vector2(0, hunter.name_y() - 40.0)
+	if alert_bang > 0.0:
+		var k: float = alert_bang / ALERT_BANG_S
+		var pop: int = int(64.0 + 24.0 * sin((1.0 - k) * PI))
+		_draw_noise_bubble(ci, font, head + Vector2(0, 8), "!", k, Color("ff3b30"), pop)
+		return
+	var g: float = hunter_alert
+	if g <= 0.0 and alert_lost <= 0.0:
+		return
+	if g > 0.0:
+		var w: float = 76.0
+		var r: Rect2 = Rect2(head + Vector2(-w * 0.5, 10), Vector2(w, 12))
+		ci.draw_rect(r.grow(3), GkDraw.INK)
+		ci.draw_rect(r, Color(1, 1, 1, 0.25))
+		ci.draw_rect(Rect2(r.position, Vector2(w * clampf(g, 0.0, 1.0), r.size.y)),
+			Color("ffd34a").lerp(Color("ff3b30"), clampf(g, 0.0, 1.0)))
+	if g >= GkRules.f("detection_doute"):
+		var pulse: float = 1.0 + 0.15 * sin(hunt_elapsed * 18.0)
+		_draw_noise_bubble(ci, font, head, "?", 1.0, Color("ffd34a").lerp(Color("ff3b30"), g), int(44.0 * pulse * (0.8 + 0.4 * g)))
+	elif alert_lost > 0.0:
+		var k2: float = alert_lost / ALERT_LOST_S
+		_draw_noise_bubble(ci, font, head + Vector2(0, 10.0 * (1.0 - k2)), "?", k2, Color("c8ccd4"), 40)
 
 
 ## Flèche d'indice de l'onde : part du chasseur dans la direction du chassé le plus proche.

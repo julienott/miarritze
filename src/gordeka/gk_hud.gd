@@ -8,6 +8,8 @@ extends Control
 var game: GkGame
 var _quit: Button
 var _menu: Button
+## Vignettage du chassé local (idee_frisson) : bords sombres et rougeâtres, centre libre.
+var _vignette: TextureRect
 
 
 func _ready() -> void:
@@ -32,6 +34,47 @@ func _ready() -> void:
 	_menu.visible = false
 	_menu.pressed.connect(func() -> void: game.go_menu())
 	add_child(_menu)
+	# Vignettage : un TextureRect plein écran (un draw_texture_rect modulé ne s'affiche pas ici).
+	_vignette = TextureRect.new()
+	_vignette.texture = vignette_texture()
+	_vignette.stretch_mode = TextureRect.STRETCH_SCALE
+	_vignette.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_vignette.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_vignette.visible = false
+	add_child(_vignette)
+	move_child(_vignette, 0)
+
+
+## Vignettage : transparent au centre, rouge sombre vers les bords (ellipse étirée à l'écran).
+## Image calculée une fois (un GradientTexture2D ne s'affiche pas en rendu Compatibility).
+static func vignette_texture() -> ImageTexture:
+	var w: int = 160
+	var h: int = 90
+	var img: Image = Image.create(w, h, false, Image.FORMAT_RGBA8)
+	for y: int in h:
+		for x: int in w:
+			var u: Vector2 = Vector2((x + 0.5) / w - 0.5, (y + 0.5) / h - 0.5) * 2.0
+			var k: float = clampf((u.length() - 0.45) / 0.55, 0.0, 1.0)
+			img.set_pixel(x, y, Color(0.22, 0.0, 0.03, 0.95 * k * k * (3.0 - 2.0 * k)))
+	return ImageTexture.create_from_image(img)
+
+
+## Ressenti du chassé (idee_frisson) : vignettage qui pulse avec le cœur, et « Il fouille à côté ! ».
+func _draw_frisson(s: Vector2, font: Font) -> void:
+	var f: GkFrisson = game.frisson
+	if f == null:
+		return
+	if f.level > 0.01:
+		# Le cœur bat : le voile fonce un instant à chaque battement.
+		_vignette.modulate.a = clampf((0.3 + 0.7 * f.level) * (0.75 + 0.25 * f.beat), 0.0, 1.0)
+	_vignette.visible = f.level > 0.01
+	if f.search_near > 0.0:
+		var k: float = clampf(f.search_near / 0.3, 0.0, 1.0)
+		var wob: float = sin(Time.get_ticks_msec() * 0.03) * 3.0
+		var at: Vector2 = Vector2(s.x * 0.5 + wob, s.y - 150.0)
+		draw_rect(Rect2(at - Vector2(230, 34), Vector2(460, 48)), Color(0, 0, 0, 0.55 * k))
+		_text(font, at, "Il fouille à côté !", 32, Color(Color("ffd34a"), k))
 
 
 func _visite_buttons() -> void:
@@ -69,6 +112,7 @@ func _draw() -> void:
 		var n: int = clampi(int(GkRules.f("phase_hide") - game.phase_t) + 1, 1, GkGame.COUNT_WORDS.size())
 		_text(font, s * Vector2(0.5, 0.42), GkGame.COUNT_WORDS[n - 1].capitalize() + "…", 96, Color.WHITE)
 		_text(font, s * Vector2(0.5, 0.58), "Tu comptes, les autres se cachent", 30, Color(1, 1, 1, 0.7))
+	_draw_frisson(s, font)
 	# Bandeau du haut : rôle, phase, chrono.
 	var role_text: String = {GkActor.Role.HIDER: "CHASSÉ", GkActor.Role.HUNTER: "CHASSEUR",
 		GkActor.Role.GHOST: "FANTÔME", GkActor.Role.OUT: "ÉCHAPPÉ"}[me.role]
