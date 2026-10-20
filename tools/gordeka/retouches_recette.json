@@ -49,7 +49,8 @@
   "priority": "normal"
  },
  "perso/louis/found": {
-  "action": "His feet stay planted on the ground in the same place, with no sliding at all, except during the jump itself.",
+  "character_task": "4428eb571600497d858f9b4e56b67c2e",
+  "variant": 0,
   "priority": "normal"
  },
  "perso/louis/trap": {
@@ -62,7 +63,8 @@
   "priority": "normal"
  },
  "perso/patxi/found": {
-  "action": "Clean drawing with no artifacts: a big startled jump straight up, both feet leave the ground, arms flung out wide, then he lands on the same spot.",
+  "character_task": "acacca6125754683ae9d77e6bd5baafc",
+  "variant": 0,
   "priority": "normal"
  },
  "perso/louis/hunter_reveal": {
@@ -109,6 +111,16 @@
   "priority": "normal"
  },
  "perso/kaio/hide_in": {
+  "priority": "normal"
+ },
+ "perso/maia/ghost": {
+  "character_task": "b80431ee22f34ecfb36c5f8d57194e12",
+  "variant": 0,
+  "priority": "normal"
+ },
+ "perso/maia/ghost_move": {
+  "character_task": "b80431ee22f34ecfb36c5f8d57194e12",
+  "variant": 0,
   "priority": "normal"
  }
 }

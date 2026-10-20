@@ -3,39 +3,39 @@
   [
    [
     6,
-    103
+    96
    ],
    [
     186,
-    103
+    96
    ],
    [
     186,
-    122
+    125
    ],
    [
     6,
-    122
+    125
    ]
   ]
  ],
  "convex_polygons": [
   [
    [
-    22,
-    119
+    28,
+    118
    ],
    [
-    202,
-    119
+    197,
+    118
    ],
    [
-    202,
-    138
+    197,
+    136
    ],
    [
-    22,
-    138
+    28,
+    136
    ]
   ]
  ],
@@ -46,21 +46,22 @@
   208,
   144
  ],
- "front_y": 127,
- "back_y": 97,
- "baseline_y": 112,
- "height_px": 127,
- "blocks_view": true,
- "sort_y": 113,
+ "front_y": 125,
+ "back_y": 96,
+ "baseline_y": 110,
+ "height_px": 125,
+ "blocks_view": false,
+ "sort_y": 112,
  "camera": "front34",
  "scale": 2.0,
- "depth_px": 30.0,
+ "depth_px": 29.0,
  "shapes": [
-  "sur pieds (pieds arri\u00e8re)"
+  "manuel"
  ],
  "confidence": 0.95,
  "warnings": [
-  "rapport largeur/profondeur 6.5 hors de [1.5 ; 6] (sur pieds (pieds arri\u00e8re), x 16-207)"
+  "rapport largeur/profondeur 6.5 hors de [1.5 ; 6] (sur pieds (pieds arri\u00e8re), x 16-207)",
+  "emprise impos\u00e9e (footprint_override)"
  ],
  "size": [
   192,

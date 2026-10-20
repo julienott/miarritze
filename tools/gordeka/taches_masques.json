@@ -7,7 +7,7 @@
  "rayonnage_filets": {
   "tid": "8eb618cd19214501a10bd4981432d18b",
   "fichier": "objets/rayonnage_filets.png",
-  "statut": "en_vol",
+  "statut": "succeeded",
   "essai": "override"
  },
  "mur_soutenement": {
@@ -41,7 +41,7 @@
  "banc_vert": {
   "tid": "c52aa69bfc454e7d86e566beffe5400b",
   "fichier": "objets/banc_vert.png",
-  "statut": "en_vol",
+  "statut": "succeeded",
   "essai": "override"
  },
  "cachette_casier_homards": {
