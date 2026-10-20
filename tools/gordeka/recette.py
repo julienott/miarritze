@@ -87,13 +87,26 @@ def payload_perso(pid, anim):
     return pl
 
 
+class Occupe(Exception):
+    """File pixelforge pleine : on réessaiera au tour suivant, sans bloquer la boucle."""
+
+
+def deposer_une_fois(pl):
+    try:
+        return pf._post_json(pf.PF + "/v2/inferences", pl, timeout=300)["task_id"]
+    except Exception as e:
+        if "provider_busy" in str(e) or "503" in str(e) or "502" in str(e):
+            raise Occupe(str(e)[:120])
+        raise
+
+
 def depose_perso(pid, anim):
     from PIL import Image
     p = nuit.Perso(pid)
     img = Image.open(p.fantome_png() if anim in ap.FANTOMES else p.modele()).convert("RGB")
     pl = payload_perso(pid, anim)
     pl["input_image"] = nuit.ex.b64(img)
-    tid = nuit.deposer(pl)
+    tid = deposer_une_fois(pl)
     taches = lire(p.taches_p, {})
     taches[anim] = tid
     ecrire(p.taches_p, taches)
@@ -116,7 +129,7 @@ def payloads_decor(eid):
 
 
 def depose_decor(eid, n):
-    tid = nuit.deposer(payloads_decor(eid)[n])
+    tid = deposer_une_fois(payloads_decor(eid)[n])
     suivi = lire(ed.SUIVI, {})
     suivi.setdefault(eid, [])
     while len(suivi[eid]) <= n:
@@ -175,7 +188,15 @@ class Routine:
             log("ÉCHEC", cle, f"après {MAX_ESSAIS} essais : à signaler")
             return
         sorte, a, b = cle.split("/")
-        it["tid"] = depose_perso(a, b) if sorte == "perso" else depose_decor(a, int(b))
+        try:
+            it["tid"] = depose_perso(a, b) if sorte == "perso" else depose_decor(a, int(b))
+        except Occupe:
+            it["essais"] -= 1
+            it["statut"] = "attente"
+            attente = self.e.setdefault("a_deposer", [])
+            if cle not in attente:
+                attente.insert(0, cle)
+            raise
         it["statut"] = "en_vol"
         log("renvoyé" if consigne else "relancé", cle, it["tid"], consigne or "")
 
@@ -245,9 +266,15 @@ class Routine:
                 lances.remove(pid)
         # Animations ajoutées après coup (clips sur mesure…), au rythme de la file.
         attente = self.e.setdefault("a_deposer", [])
-        while attente and len(self.items("en_vol", "perso")) < MAX_PERSO_VOL:
-            self.relance(attente.pop(0), None)
-            self.sauve()
+        try:
+            while attente and len(self.items("en_vol", "perso")) < MAX_PERSO_VOL:
+                cle = attente.pop(0)
+                if self.e["items"].get(cle, {}).get("statut") in ("en_vol", "a_voir", "ok", "echec"):
+                    continue                     # déjà déposée (reprise après arrêt)
+                self.relance(cle, None)
+                self.sauve()
+        except Occupe:
+            pass
         # Profil fantôme d'abord, SANS bloquer la boucle (une erreur réseau ne doit plus perdre le perso).
         fantomes = self.e.setdefault("fantomes", {})
         while self.e["persos"] and len(fantomes) < 2 and len(self.items("en_vol", "perso")) < MAX_PERSO_VOL:
@@ -256,8 +283,9 @@ class Routine:
             self.sauve()
         for pid in list(fantomes):
             if self.fantome(pid, fantomes):
-                for anim in ap.pretes():
-                    self.relance(f"perso/{pid}/{anim}", None)
+                for anim in ap.pretes():                 # déposées au rythme de la file
+                    if f"perso/{pid}/{anim}" not in attente:
+                        attente.append(f"perso/{pid}/{anim}")
                 del fantomes[pid]
                 lances.append(pid)
                 self.e["courant"] = pid
@@ -300,10 +328,14 @@ class Routine:
         if tid is None:
             from PIL import Image
             src = os.path.join(nuit.OUT, nuit.PROFIL_HD[pid]) if pid in nuit.PROFIL_HD else p.modele()
-            fantomes[pid] = nuit.deposer({
-                "prompt_style": "pf_2d__character", "input_image": nuit.ex.b64(Image.open(src).convert("RGB")),
-                "prompt": "add small white feathered angel wings on the back", "edit": True,
-                "num_images": 2, "seed": 7, "priority": "normal", "tag": f"miarritze/gk2d_{pid}"})
+            try:
+                tid_f = deposer_une_fois({
+                    "prompt_style": "pf_2d__character", "input_image": nuit.ex.b64(Image.open(src).convert("RGB")),
+                    "prompt": "add small white feathered angel wings on the back", "edit": True,
+                    "num_images": 2, "seed": 7, "priority": "normal", "tag": f"miarritze/gk2d_{pid}"})
+            except Occupe:
+                return False
+            fantomes[pid] = tid_f
             log(pid, "profil fantôme déposé", fantomes[pid])
             return False
         r = nuit.tache(tid)
