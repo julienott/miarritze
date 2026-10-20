@@ -163,8 +163,8 @@
    }
   },
   "emote_danse": {
-   "action": "Short silly dance: hips swinging, arms waving up and down in turn, a little spin at the end.",
-   "expression": "happy grin",
+   "action": "Happy little dance: both arms stretched forward at shoulder height going up and down in turn, body swaying, head bobbing, small hops on the spot.",
+   "expression": "laughing with joy, eyes closed, big open smile",
    "boucle": true,
    "mouvement": {
     "motion": "dance"
