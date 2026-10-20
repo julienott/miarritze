@@ -123,11 +123,11 @@ class Perso:
             if os.path.exists(self.fantome_png()):
                 self.etape = "depot"
             elif self.fantome_tid is None:
-                desc = ap.PROMPTS["persos"][self.pid]["description"]
+                # Vraie retouche du profil validé (params.edit, pixelforge 2026-10-20) : le prompt ne dit que
+                # ce qui change ; l'ancien mode « the same character… » inventait une casquette.
                 self.fantome_tid = deposer({
                     "prompt_style": "pf_2d__character", "input_image": ex.b64(Image.open(self.modele())),
-                    "prompt": "the same character: " + desc + ", with small white feathered angel wings on the back, "
-                              "same pose, same colors, smooth clean cartoon, no pixel art",
+                    "prompt": "add small white feathered angel wings on the back", "params": {"edit": True},
                     "num_images": 1, "seed": 7, "priority": "normal", "tag": f"miarritze/gk2d_{self.pid}"})
                 log(self.pid, "profil fantôme déposé", self.fantome_tid)
                 return False
