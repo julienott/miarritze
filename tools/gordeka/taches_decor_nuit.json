@@ -1,0 +1,1074 @@
+{
+ "244": {
+  "titre": "Eau du port et de la mer : animation",
+  "sorte": "anim",
+  "element": "eau_mer",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "04dec2b2761c4cccaeb7a88ea07185f6",
+    "quoi": "houle (warp water fort)",
+    "style": "pf_2d__loop"
+   },
+   {
+    "tid": "b98e99e4ece2414d97e94881757a7754",
+    "quoi": "grande houle lente (warp water ample)",
+    "style": "pf_2d__loop"
+   },
+   {
+    "tid": "b28bbd5ab6124a70a6957b50eab0b160",
+    "quoi": "océan vivant (vidéo)",
+    "style": "pf_2d__loop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "245": {
+  "titre": "Bord de quai sur l'eau : image",
+  "sorte": "image",
+  "element": "bord_quai_eau",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "b978f761e6534251a7fcee8b40a20e22",
+    "quoi": "pf_2d__ground ×2",
+    "style": "pf_2d__ground"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "246": {
+  "titre": "Bord de quai sur l'eau : animation",
+  "sorte": "anim",
+  "element": "bord_quai_eau",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "245"
+ },
+ "247": {
+  "titre": "Mur de pierre (bord de carte, murs entre zones) : image",
+  "sorte": "image",
+  "element": "mur_pierre",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "2d0a3baabab148f8b1ba783168513ea6",
+    "quoi": "pf_2d__ground ×2",
+    "style": "pf_2d__ground"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "249": {
+  "titre": "Façade blanche à colombages : image",
+  "sorte": "image",
+  "element": "facade_labourdine",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "8ccd3e8c988243648f5c0efa3edd41cb",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "250": {
+  "titre": "Crampotte (cabane de pêcheur) : refaire de face",
+  "sorte": "refaire",
+  "element": "maison_crampotte",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "0fe79a02b2fb4af38e0ab4cce0c5fcf0",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "251": {
+  "titre": "Crampotte (cabane de pêcheur) : masque v3",
+  "sorte": "masque",
+  "element": "maison_crampotte",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "250"
+ },
+ "252": {
+  "titre": "Chambre froide de la criée : refaire de face",
+  "sorte": "refaire",
+  "element": "chambre_froide",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "1e363b78f7d64b2a906a96acb456386e",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "253": {
+  "titre": "Chambre froide de la criée : masque v3",
+  "sorte": "masque",
+  "element": "chambre_froide",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "252"
+ },
+ "255": {
+  "titre": "Tour du phare (feu du port) : animation",
+  "sorte": "anim",
+  "element": "tour_phare",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "afa1f8abd03c46538a16ac0ff7dd5cd0",
+    "quoi": "faisceau qui tourne (vidéo)",
+    "style": "pf_2d__loop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "256": {
+  "titre": "Tour du phare (feu du port) : masque v3",
+  "sorte": "masque",
+  "element": "tour_phare",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "1760c90aa7e54237ba2b3c444cef4358",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "257": {
+  "titre": "Fronton de pelote basque : refaire de face",
+  "sorte": "refaire",
+  "element": "fronton",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "e4aa92511be14bc4a8c685b75f8fce24",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "258": {
+  "titre": "Fronton de pelote basque : masque v3",
+  "sorte": "masque",
+  "element": "fronton",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "257"
+ },
+ "260": {
+  "titre": "Rayonnage du hangar à filets : masque v3",
+  "sorte": "masque",
+  "element": "rayonnage_filets",
+  "priorite": "night",
+  "statut": "deja_fait"
+ },
+ "261": {
+  "titre": "Autel de la chapelle des marins : refaire de face",
+  "sorte": "refaire",
+  "element": "autel_chapelle",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "738f112ece1c489ead35e479b48d93a2",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "262": {
+  "titre": "Autel de la chapelle des marins : masque v3",
+  "sorte": "masque",
+  "element": "autel_chapelle",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "261"
+ },
+ "263": {
+  "titre": "Comptoir de la terrasse : refaire de face",
+  "sorte": "refaire",
+  "element": "comptoir_bar",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "54988b9579784e4ba7a051d9163b7498",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "264": {
+  "titre": "Comptoir de la terrasse : masque v3",
+  "sorte": "masque",
+  "element": "comptoir_bar",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "263"
+ },
+ "266": {
+  "titre": "Mur de soutènement de l'escalier : masque v3",
+  "sorte": "masque",
+  "element": "mur_soutenement",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "8d7c99fdc3bb49b797c14ea6be62cc53",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "267": {
+  "titre": "Pile de caisses de poisson : refaire de face",
+  "sorte": "refaire",
+  "element": "caisses_poisson",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "5df4cb503ede43d2958702da4c16256f",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "268": {
+  "titre": "Pile de caisses de poisson : masque v3",
+  "sorte": "masque",
+  "element": "caisses_poisson",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "267"
+ },
+ "269": {
+  "titre": "Barque basque au mouillage : image",
+  "sorte": "image",
+  "element": "barque_mouillage",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "c06456d5df0648df9c7852fd4a3753a4",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "271": {
+  "titre": "Chalutier à quai : animation",
+  "sorte": "anim",
+  "element": "chalutier_quai",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "d6dd511ea01346909e1215fe0393838f",
+    "quoi": "drapeau (warp flag, zone du drapeau)",
+    "style": "pf_2d__loop"
+   },
+   {
+    "tid": "9dc752da49034cacbb6ea6e79bfbe0ed",
+    "quoi": "drapeau (vidéo)",
+    "style": "pf_2d__loop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "272": {
+  "titre": "Chalutier à quai : masque v3",
+  "sorte": "masque",
+  "element": "chalutier_quai",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "f4889f4e45da4372b545e1e0bbe976c5",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "273": {
+  "titre": "Coque sur ber (cale sèche) : refaire de face",
+  "sorte": "refaire",
+  "element": "coque_sur_ber",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "22b5036a014c46bda7d69487e0f889c5",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "274": {
+  "titre": "Coque sur ber (cale sèche) : masque v3",
+  "sorte": "masque",
+  "element": "coque_sur_ber",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "273"
+ },
+ "275": {
+  "titre": "Coque en chantier (atelier) : refaire de face",
+  "sorte": "refaire",
+  "element": "coque_chantier",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "1e68146d38314c4daf8f17347a869311",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "276": {
+  "titre": "Coque en chantier (atelier) : masque v3",
+  "sorte": "masque",
+  "element": "coque_chantier",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "275"
+ },
+ "278": {
+  "titre": "Étal de la criée : masque v3",
+  "sorte": "masque",
+  "element": "etal_criee",
+  "priorite": "night",
+  "statut": "deja_fait"
+ },
+ "280": {
+  "titre": "Bitte d'amarrage : masque v3",
+  "sorte": "masque",
+  "element": "bitte_amarrage",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "d48b9a603dc749d5a9122b953c30a3aa",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "281": {
+  "titre": "Filets et casiers posés au sol : image",
+  "sorte": "image",
+  "element": "tas_filets",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "18863d92006b490a9346e0d621e06f87",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "283": {
+  "titre": "Fontaine de la place : animation",
+  "sorte": "anim",
+  "element": "fontaine_place",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "6a80a5d14b604cd49778ea3e7cd4a4c8",
+    "quoi": "jet d'eau et rides (vidéo)",
+    "style": "pf_2d__loop"
+   },
+   {
+    "tid": "93fafdb2623b4804a74f24e29e2dc2e4",
+    "quoi": "gouttes du bec (particles drops)",
+    "style": "pf_2d__loop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "284": {
+  "titre": "Fontaine de la place : masque v3",
+  "sorte": "masque",
+  "element": "fontaine_place",
+  "priorite": "night",
+  "statut": "deja_fait"
+ },
+ "286": {
+  "titre": "Banc vert du front de mer : masque v3",
+  "sorte": "masque",
+  "element": "banc_vert",
+  "priorite": "night",
+  "statut": "deja_fait"
+ },
+ "287": {
+  "titre": "Banc de la chapelle : refaire de face",
+  "sorte": "refaire",
+  "element": "banc_chapelle",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "0e954b948e5e490b88c69ac80aa60cfa",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "288": {
+  "titre": "Banc de la chapelle : masque v3",
+  "sorte": "masque",
+  "element": "banc_chapelle",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "287"
+ },
+ "289": {
+  "titre": "Établi de l'atelier : refaire de face",
+  "sorte": "refaire",
+  "element": "etabli_atelier",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "b3f18581e3434603bd3f3eb416cfa871",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "290": {
+  "titre": "Établi de l'atelier : masque v3",
+  "sorte": "masque",
+  "element": "etabli_atelier",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "289"
+ },
+ "291": {
+  "titre": "Marches de l'escalier de la ville : refaire de face",
+  "sorte": "refaire",
+  "element": "marches_escalier",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "c6d493c7788f41f4bd1fd55017e871a7",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "292": {
+  "titre": "Marches de l'escalier de la ville : masque v3",
+  "sorte": "masque",
+  "element": "marches_escalier",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "291"
+ },
+ "293": {
+  "titre": "Table de terrasse : refaire de face",
+  "sorte": "refaire",
+  "element": "table_terrasse",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "7370943e7da8405eb56f28937202baf7",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "294": {
+  "titre": "Table de terrasse : masque v3",
+  "sorte": "masque",
+  "element": "table_terrasse",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "293"
+ },
+ "295": {
+  "titre": "Tréteaux et planches de la cale : refaire de face",
+  "sorte": "refaire",
+  "element": "treteaux_cale",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "6e223d68d5ca4429ac5e8e074ab226f3",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "296": {
+  "titre": "Tréteaux et planches de la cale : masque v3",
+  "sorte": "masque",
+  "element": "treteaux_cale",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "295"
+ },
+ "297": {
+  "titre": "Bassin du lavoir : refaire de face",
+  "sorte": "refaire",
+  "element": "lavoir_bassin",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "c36b03f412954f37879f22de7e816d88",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "298": {
+  "titre": "Bassin du lavoir : animation",
+  "sorte": "anim",
+  "element": "lavoir_bassin",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "297"
+ },
+ "299": {
+  "titre": "Bassin du lavoir : masque v3",
+  "sorte": "masque",
+  "element": "lavoir_bassin",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "297"
+ },
+ "301": {
+  "titre": "Casier à homards géant : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_casier_homards",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "2bf576c43bfa4ec9b880190b8cd6681e",
+    "quoi": "pf_hd__edit ×2 (ouverte)",
+    "style": "pf_hd__edit"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "302": {
+  "titre": "Casier à homards géant : masque v3",
+  "sorte": "masque",
+  "element": "cachette_casier_homards",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "33eea6023b2a48a4a84111ba09735428",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "304": {
+  "titre": "Coffre de quai : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_coffre_quai",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "ea81cb10948049d3bd4d46417a7fc214",
+    "quoi": "pf_hd__edit ×2 (ouverte)",
+    "style": "pf_hd__edit"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "305": {
+  "titre": "Coffre de quai : masque v3",
+  "sorte": "masque",
+  "element": "cachette_coffre_quai",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "cbcdf8201de843c0863ee83a10f36ffa",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "307": {
+  "titre": "Caisse à glace : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_caisse_glace",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "f5b5d8b55f0141c99c243a2727f7e1a2",
+    "quoi": "pf_hd__edit ×2 (ouverte)",
+    "style": "pf_hd__edit"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "308": {
+  "titre": "Caisse à glace : masque v3",
+  "sorte": "masque",
+  "element": "cachette_caisse_glace",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "3c6226ddd1e54adbbc0cbefeb9be052a",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "310": {
+  "titre": "Coffre à cordages du phare : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_coffre_cordages",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "97d9eda0428b407c81c985344518a534",
+    "quoi": "pf_hd__edit ×2 (ouverte)",
+    "style": "pf_hd__edit"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "311": {
+  "titre": "Coffre à cordages du phare : masque v3",
+  "sorte": "masque",
+  "element": "cachette_coffre_cordages",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "98a2b22a58864debb6745f6e56aeb0c3",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "313": {
+  "titre": "Grande poubelle de ruelle : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_poubelle_ruelle",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "12372d6ceb14497da3c1c33e37a02ace",
+    "quoi": "pf_hd__edit ×2 (ouverte)",
+    "style": "pf_hd__edit"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "314": {
+  "titre": "Grande poubelle de ruelle : masque v3",
+  "sorte": "masque",
+  "element": "cachette_poubelle_ruelle",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "897cd3041dab44dc925434f1dfe9aa50",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "316": {
+  "titre": "Grand bac à poissons : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_bac_poissons",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "8eb4c4a5d24f4f23aa09b86534a53f99",
+    "quoi": "pf_hd__edit ×2 (ouverte)",
+    "style": "pf_hd__edit"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "317": {
+  "titre": "Grand bac à poissons : masque v3",
+  "sorte": "masque",
+  "element": "cachette_bac_poissons",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "13c7ceca66c24c9ab693105d6b19a717",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "318": {
+  "titre": "Malle à pelotes : image",
+  "sorte": "image",
+  "element": "cachette_malle_pelotes",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "a49325237da7409794b131c844ac578b",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "319": {
+  "titre": "Malle à pelotes : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_malle_pelotes",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "318"
+ },
+ "320": {
+  "titre": "Montagne de filets : image",
+  "sorte": "image",
+  "element": "cachette_tas_filets_cachette",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "36dc398daf6c4c25bd00db36c0bc886d",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "321": {
+  "titre": "Montagne de filets : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_tas_filets_cachette",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "320"
+ },
+ "323": {
+  "titre": "Confessionnal en bois : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_confessionnal",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "df07f9839a4840949db2003e3dc85ede",
+    "quoi": "pf_hd__edit ×2 (ouverte)",
+    "style": "pf_hd__edit"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "324": {
+  "titre": "Confessionnal en bois : masque v3",
+  "sorte": "masque",
+  "element": "cachette_confessionnal",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "3b5533e1268e43a6a094c4c1a3ae1749",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "325": {
+  "titre": "Barque retournée : image",
+  "sorte": "image",
+  "element": "cachette_barque_retournee",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "f7bdd2c3b5bd49efbe541ea13ab06104",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "326": {
+  "titre": "Barque retournée : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_barque_retournee",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "325"
+ },
+ "327": {
+  "titre": "Tonneau de cidre géant : image",
+  "sorte": "image",
+  "element": "cachette_tonneau_cidre",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "ee7d379cc35244c1b231857ab7f19b73",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "328": {
+  "titre": "Tonneau de cidre géant : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_tonneau_cidre",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "327"
+ },
+ "329": {
+  "titre": "Grand panier à linge : image",
+  "sorte": "image",
+  "element": "cachette_panier_linge",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "af3ac18b2eee4474bbcf36040d7b66b2",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "330": {
+  "titre": "Grand panier à linge : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_panier_linge",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "329"
+ },
+ "331": {
+  "titre": "Caisse à voiles de l'atelier : image",
+  "sorte": "image",
+  "element": "cachette_caisse_voiles",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "79094137d43142baaaf9c39d53af9cec",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "332": {
+  "titre": "Caisse à voiles de l'atelier : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_caisse_voiles",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "331"
+ },
+ "333": {
+  "titre": "Cabine de plage rayée : image",
+  "sorte": "image",
+  "element": "cachette_cabine_plage",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "271f328bc9e24a0592a98a6ff9fb4079",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "334": {
+  "titre": "Cabine de plage rayée : version ouverte",
+  "sorte": "ouvert",
+  "element": "cachette_cabine_plage",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "333"
+ },
+ "335": {
+  "titre": "Sortie : barque au bout de la jetée : image",
+  "sorte": "image",
+  "element": "sortie_barque_jetee",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "2c2537bab5a14e7eb18ecdd2fd88ed5b",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "336": {
+  "titre": "Sortie : échelle derrière le phare : image",
+  "sorte": "image",
+  "element": "sortie_echelle_phare",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "6b87d856e6e948bea0390a56ef722669",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "337": {
+  "titre": "Sortie : barque de la cale : image",
+  "sorte": "image",
+  "element": "sortie_barque_cale",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "7ef30a95e4f743b6bce08105ec3b3972",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "338": {
+  "titre": "Sortie : porte de la ville : image",
+  "sorte": "image",
+  "element": "sortie_porte_ville",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "15fb6f4fa9734197886c016474a4cad7",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "339": {
+  "titre": "Marque de départ : image",
+  "sorte": "image",
+  "element": "depart_lauburu",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "0822fca5e9484e2aa98ea7cd6179e25d",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "340": {
+  "titre": "Piège générique (flaque collante) : image",
+  "sorte": "image",
+  "element": "piege_generique",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "78432456f7944e69986f5669b87b6dbf",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ },
+ "341": {
+  "titre": "Piège générique (flaque collante) : animation",
+  "sorte": "anim",
+  "element": "piege_generique",
+  "priorite": "night",
+  "statut": "attend",
+  "depend": "340"
+ },
+ "342": {
+  "titre": "Décor · dalles du quai : passer la tuile à 4×4 cases ?",
+  "sorte": "question",
+  "element": "sol_dalles_quai",
+  "priorite": "night",
+  "statut": "question"
+ },
+ "343": {
+  "titre": "Décor · toit en tuiles : version calme",
+  "sorte": "toit",
+  "element": "toit_tuiles",
+  "priorite": "night",
+  "jobs": [
+   {
+    "tid": "d9f0608b3e5847f6938724316ef2b3f2",
+    "quoi": "pf_2d__ground ×2",
+    "style": "pf_2d__ground"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
+ }
+}
