@@ -238,18 +238,21 @@ class Routine:
                        for k, v in self.e["items"].items()):
                 log("perso fini :", pid)
                 lances.remove(pid)
-        while self.e["persos"] and len(self.items("en_vol", "perso")) < MAX_PERSO_VOL:
-            pid = self.e["courant"] = self.e["persos"].pop(0)
-            p = nuit.Perso(pid)
-            while p.etape == "fantome":              # profil fantôme (bloquant court)
-                p.tour()
-                if p.etape == "fantome":
-                    time.sleep(20)
-            for anim in ap.pretes():
-                self.relance(f"perso/{pid}/{anim}", None)
-            lances.append(pid)
+        # Profil fantôme d'abord, SANS bloquer la boucle (une erreur réseau ne doit plus perdre le perso).
+        fantomes = self.e.setdefault("fantomes", {})
+        while self.e["persos"] and len(fantomes) < 2 and len(self.items("en_vol", "perso")) < MAX_PERSO_VOL:
+            pid = self.e["persos"].pop(0)
+            fantomes[pid] = None
             self.sauve()
-            log("perso :", pid)
+        for pid in list(fantomes):
+            if self.fantome(pid, fantomes):
+                for anim in ap.pretes():
+                    self.relance(f"perso/{pid}/{anim}", None)
+                del fantomes[pid]
+                lances.append(pid)
+                self.e["courant"] = pid
+                self.sauve()
+                log("perso :", pid, "(profil fantôme à relire avant ses animations fantôme)")
         # décor : file glissante (suspendue tant que tools/gordeka/.decor_pause existe, Julien 2026-10-20)
         if os.path.exists(os.path.join(HERE, ".decor_pause")):
             return
@@ -277,6 +280,37 @@ class Routine:
         for eid, s in lire(mp.SUIVI, {}).items():
             if avant.get(eid) == "en_vol" and s["statut"] != "en_vol":
                 log("À VOIR masque", eid, s["statut"], os.path.join(mp.APERCUS, eid + ".png"))
+
+    def fantome(self, pid, fantomes):
+        """Un pas du profil fantôme de pid (vraie retouche du profil HD) ; True quand il est prêt."""
+        p = nuit.Perso(pid)
+        if os.path.exists(p.fantome_png()):
+            return True
+        tid = fantomes[pid]
+        if tid is None:
+            from PIL import Image
+            src = os.path.join(nuit.OUT, nuit.PROFIL_HD[pid]) if pid in nuit.PROFIL_HD else p.modele()
+            fantomes[pid] = nuit.deposer({
+                "prompt_style": "pf_2d__character", "input_image": nuit.ex.b64(Image.open(src).convert("RGB")),
+                "prompt": "add small white feathered angel wings on the back", "edit": True,
+                "num_images": 2, "seed": 7, "priority": "normal", "tag": f"miarritze/gk2d_{pid}"})
+            log(pid, "profil fantôme déposé", fantomes[pid])
+            return False
+        r = nuit.tache(tid)
+        if r["status"] not in FINI:
+            return False
+        if r["status"] != "succeeded":
+            log(pid, "profil fantôme", r["status"], "→ relance")
+            fantomes[pid] = None
+            return False
+        d = os.path.join(p.dir, "fantome")
+        telecharge(r, d)
+        json.dump({"style": "pf_2d__character", "edit": True, "task": tid, "seed": 7,
+                   "prompt": "add small white feathered angel wings on the back"},
+                  open(os.path.join(d, "params.json"), "w"), indent=1)
+        nuit.sur_blanc(os.path.join(d, "image_00.png"), p.fantome_png())
+        log("À VOIR fantôme", pid, d)
+        return True
 
     def surveille(self):
         """File bloquée : du travail en vol mais pixelforge ne fait rien depuis 10 min."""
