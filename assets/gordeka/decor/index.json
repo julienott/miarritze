@@ -1315,7 +1315,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_confessionnal.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "f11e8c683c6340db95debd136d76d918",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_confessionnal_ombre.png",
+   "ombre_decalage": [
+    14,
+    75
+   ]
   },
   "cachette_barque_retournee": {
    "nom": "Barque retournée",
