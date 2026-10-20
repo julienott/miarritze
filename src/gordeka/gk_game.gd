@@ -126,6 +126,8 @@ var _qa_zoom: float = 0.0             # QA `--gk-qa-zoom=<z>` : zoom de la camé
 var _rafale: Array = []
 var _rafale_t: float = 0.0
 var _rafale_i: int = 0
+## Lampe du chasseur allumée pour cette manche (hunter_reveal joué en fin de phase cachée).
+var _reveal_joue: bool = false
 
 
 func _ready() -> void:
@@ -603,13 +605,22 @@ func _physics_process(dt: float) -> void:
 				phase_t = GkRules.f("phase_hide")
 				for a: GkActor in actors:
 					a.frozen = a == hunter
+				_reveal_joue = false
 				_say("Cachez-vous !" if local != hunter else "Compte jusqu'à quinze…", Color.WHITE, 2.0)
 		Phase.HIDE:
+			# Le chasseur allume sa lampe juste avant d'être lâché, encore figé (anim_reveal_avance) :
+			# le geste se joue en entier, sans glisser sous ses pieds quand il part.
+			if not _reveal_joue and GkRules.f("anim_reveal_avance") > 0.5 \
+					and phase_t <= hunter.once_length("hunter_reveal"):
+				_reveal_joue = true
+				hunter.play_once("hunter_reveal")
 			if phase_t <= 0.0:
 				phase = Phase.HUNT
 				phase_t = GkRules.f("phase_hunt")
 				hunter.frozen = false
-				hunter.play_once("hunter_reveal")
+				if not _reveal_joue:
+					hunter.play_once("hunter_reveal")
+				_reveal_joue = true
 				_say("Le chasseur arrive !", Color("ff3b30"), 2.0)
 		Phase.HUNT:
 			hunt_elapsed += dt

@@ -525,6 +525,63 @@ ombre douce, fond transparent. Il doit aussi garder un personnage identique d'un
 - Fantôme : le même perso avec de petites ailes d'ange (idée de Julien), à moitié transparent et
   flottant dans le jeu.
 
+### 16.3 Raccord des animations et transitions (2026-10-20)
+
+Une commande par perso, appelée aussi par `import_perso.py` après chaque import (un nouvel idle
+change la référence : tout le perso est recalculé). Chaque étape est idempotente, les PNG ne sont
+jamais modifiés, tout va dans les `<anim>.json` :
+
+```bash
+.venv/bin/python tools/gordeka/post_anims.py <id>… | --tous [--controle] [--sortie <dossier>]
+```
+
+1. `pieds.py` : `frame_offsets` (pieds posés fixes, sur ceux de l'idle), `stride_px` ;
+2. `lampe.py` : main qui tient la lampe dans `hunter_reveal` ;
+3. `echelle` : pixelforge redessine parfois le perso plus grand ou plus petit (Amaia : found ×0,8,
+   hide_out ×0,86 ; fantômes de Txomin et de Maïa ×1,25). On mesure l'échelle qui fait coïncider le
+   haut de la silhouette (tête, épaules) avec celui de l'idle. On ne corrige que si la coïncidence est
+   franche, ce qui exclut la course et le vol ;
+4. `decalage` [dx, dy] : les planches de déplacement sont calées sur leur pose de repos (idle, ou
+   ghost pour ghost_move). Le sol des images d'appui va sur le sol du repos, le buste au-dessus du
+   buste du repos ;
+5. `debut`, `fin` : images jouées d'un geste, sans images figées ni dernière image en rupture ;
+6. `entrees` {B: {"i", "e"}} : pour chaque état B qui peut suivre (graphe `TRANSITIONS` de
+   `audit_anims.py`) et chaque image de l'anim, l'image de B où entrer (la plus proche pour une
+   boucle) et l'écart des silhouettes (1 − IoU, en centièmes).
+
+Les exceptions se déclarent par données, jamais dans le code : section facultative `post` du perso
+dans `tools/gordeka/prompts_anims.json`, par exemple `{"echelle": {"found": 1.0}, "decalage":
+{"walk": [0, -4]}, "echelle_tol": 0.05}`.
+
+`--controle` produit le rapport d'audit (`audit_anims.py`) et la planche des pires transitions,
+par défaut dans `tools/rd/out/<id>/gk2d/controle/`. Le rapport couvre quatre points :
+- les durées jouées face à la durée de l'état de jeu ;
+- les transitions ;
+- le raccord avec l'idle (taille, couleur, pieds) ;
+- le déplacement parasite.
+
+Recette d'un nouveau perso : `post_anims.py <id> --controle`.
+
+**Transitions en jeu** (`GkPerso`, réglages `anim_*` et `anims` de `rules.json`) :
+- **point d'entrée** : une boucle (idle, walk, run_scared, ghost…) commence à l'image la plus proche
+  de l'image quittée, pas à l'image 0 ;
+- **fondu enchaîné** : l'image quittée reste posée par-dessus la nouvelle et s'efface en 0,11 s au
+  plus. La durée dépend de l'écart des silhouettes : pas de fondu sous 0,12, fondu entier à
+  partir de 0,45 ;
+- **pouf** : found, hide_out et extract commencent par un petit squash & stretch amorti (0,18 s) ;
+- **durées** :
+  - un geste trop long pour son état est joué plus vite, en entier (`anims.duree_max`, par exemple
+    hide_in en 1,15 s, dans la plongée de 1,2 s au plus) ;
+  - un pas coupe un geste au-delà d'une part de sa durée (`anims.coupe_mouv`), au lieu de le laisser
+    glisser sous les pieds ;
+  - la fouille joue un cycle exactement (`anims.cale_etat`) ;
+  - la lampe du chasseur s'allume à la fin de la phase cachée, quand il est encore figé
+    (`anim_reveal_avance`) ;
+  - le chasseur piégé qui avance marche au lieu de glisser (`anim_piege_marche`).
+
+Comparaison A/B : `--gk-rules=anim_raccord:0,anim_fondu_s:0,anim_entrees:0,anim_durees:0,anim_pouf_s:0`
+remet les planches brutes et le comportement d'avant.
+
 ### 16.2 Historique des prompts par perso
 
 But : pouvoir refaire un perso à l'identique. On note **chaque** génération retenue (style,

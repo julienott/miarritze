@@ -57,6 +57,13 @@ const WING_FLAP_DEG: float = 14.0
 const SHOULDER_K: float = 0.52       # épaule : part de la hauteur de la silhouette, depuis le haut
 const SHOULDER_INSET_K: float = 0.06 # rentrée dans le dos, en part de la largeur de la silhouette
 
+## Raccord des animations (SPEC-GORDEKA §16.3, tools/gordeka/post_anims.py) : chaque planche est
+## ramenée à la taille (`echelle`) et à la place (`decalage`, `frame_offsets`) de l'idle du perso, ne
+## joue que ses images utiles (`debut`, `fin`) et sait où entrer dans l'anim suivante (`entrees`).
+## Passage d'un état à l'autre : on entre dans la boucle suivante à l'image la plus proche de l'image
+## courante, puis un fondu enchaîné très court (anim_fondu_s, dosé par l'écart des deux silhouettes)
+## efface le reste ; les gestes brusques (found, hide_out, extract) partent d'un petit « pouf » de
+## squash & stretch. Réglages dans data/gordeka/rules.json (anim_*, anims).
 static var _anims: Dictionary = {}     # "louis/walk" -> {tex, mask, n, fps, loop, cell, feet}
 static var _shader: Shader
 ## QA (`--gk-mannequin`) : tous les persos en pantin articulé.
@@ -76,6 +83,14 @@ var hover_lift: float = 0.0
 var _wings: Array[Sprite2D] = []
 ## Cône de lumière de la lampe pendant hunter_reveal (GkLampe), créé à la première utilisation.
 var _lampe: GkLampe
+## Fondu enchaîné : l'image quittée, posée par-dessus la nouvelle, s'efface en `_prev_s` s.
+var _prev: Sprite2D
+var _prev_left: float = 0.0
+var _prev_s: float = 0.0
+var _prev_a: float = 1.0
+var _pouf_left: float = 0.0
+var _rate_once: float = 1.0
+var _f: int = 0                        # image dessinée
 static var _wing_tex: Texture2D
 static var _wing_root: Vector2 = Vector2.ZERO
 
@@ -132,7 +147,20 @@ static func _data(character: String, anim: String) -> Dictionary:
 		var lj: Dictionary = j.get("lampe", {})
 		for p: Variant in lj.get("points", []):
 			lampe.append(Vector2(float(p[0]), float(p[1])) if p is Array else null)
+		# Raccord (post_anims.py) ; `anim_raccord` = 0 : planches brutes (comparaison A/B).
+		var rac: bool = _regle("anim_raccord", 1.0) > 0.5
+		var dec: Array = j.get("decalage", [0.0, 0.0]) if rac else [0.0, 0.0]
+		var entrees: Dictionary = {}
+		if rac:
+			for b: String in (j.get("entrees", {}) as Dictionary):
+				var t: Dictionary = j["entrees"][b]
+				entrees[b] = {"i": PackedInt32Array(t.get("i", [])), "e": PackedInt32Array(t.get("e", []))}
 		d = {
+			"echelle": float(j.get("echelle", 1.0)) if rac else 1.0,
+			"dec": Vector2(float(dec[0]), float(dec[1])),
+			"debut": clampi(int(j.get("debut", 0)), 0, n - 1) if rac else 0,
+			"fin": clampi(int(j.get("fin", n)), 1, n) if rac else n,
+			"entrees": entrees,
 			"lampe": lampe,
 			"lampe_debut": int(lj.get("debut", -1)),
 			"offs": offs,
@@ -171,7 +199,16 @@ static func _static(character: String, anim: String) -> Dictionary:
 		"feet": Vector2(used.position.x + used.size.x * 0.5, used.end.y),
 		"height": float(used.size.y),
 		"static": true,
+		"debut": 0,
+		"fin": 1,
 	}
+
+
+## Le perso change (set_character) : l'image en fondu part avec lui.
+func _exit_tree() -> void:
+	if _prev != null:
+		_prev.queue_free()
+		_prev = null
 
 
 func setup(a: GkActor) -> void:
@@ -200,16 +237,52 @@ func play_once(anim: String) -> void:
 		return
 	_once = anim
 	_once_visible = actor.shown
+	_rate_once = 1.0
+	# Geste trop long pour son état (rules.json anims.duree_max) : joué plus vite, en entier.
+	var dmax: float = _par_anim("duree_max", anim)
+	if dmax > 0.0 and pantin == null:
+		_rate_once = maxf(1.0, _utile(_get_data(anim)) / dmax)
+	if _anim == anim:
+		_t = _t0(_get_data(anim)) if pantin == null else 0.0     # rejouer le même geste repart du début
 	_set_anim(anim)
 
 
-## Durée d'une animation (s) : planche, chorégraphie du pantin ou profil fixe ; 0 si absente.
+## Durée jouée d'une animation (s) : images utiles, accélérée par anims.duree_max ; 0 si absente.
 func length(anim: String) -> float:
 	var d: Dictionary = _get_data(anim)
 	if d.is_empty():
 		return 0.0
+	var u: float = _utile(d)
+	var dmax: float = _par_anim("duree_max", anim)
+	return minf(u, dmax) if dmax > 0.0 and pantin == null else u
+
+
+## Début et fin (s) des images jouées d'une planche.
+static func _t0(d: Dictionary) -> float:
+	var deb: int = int(d.get("debut", 0))
+	return (d["ends"] as PackedFloat32Array)[deb - 1] if deb > 0 else 0.0
+
+
+static func _t1(d: Dictionary) -> float:
 	var ends: PackedFloat32Array = d["ends"]
-	return ends[ends.size() - 1]
+	return ends[clampi(int(d.get("fin", ends.size())), 1, ends.size()) - 1]
+
+
+static func _utile(d: Dictionary) -> float:
+	return _t1(d) - _t0(d)
+
+
+## Réglage du raccord (rules.json), avec sa valeur par défaut si la clé manque.
+static func _regle(key: String, def: float) -> float:
+	return float(GkRules.data().get(key, def))
+
+
+## Réglage par geste (rules.json anims.<table>.<anim>, `emote` pour toutes les emotes) ; 0 si absent.
+static func _par_anim(table: String, anim: String) -> float:
+	if _regle("anim_durees", 1.0) < 0.5:
+		return 0.0
+	var t: Dictionary = (GkRules.data().get("anims", {}) as Dictionary).get(table, {})
+	return float(t.get("emote" if anim.begins_with("emote_") else anim, 0.0))
 
 
 ## Arrête une emote en cours ; l'animation d'état reprend à l'image suivante.
@@ -221,6 +294,7 @@ func stop_emote() -> void:
 func _set_anim(anim: String) -> void:
 	if anim == _anim:
 		return
+	var old: Dictionary = _get_data(_anim) if _anim != "" else {}
 	_anim = anim
 	_t = 0.0
 	if pantin != null:
@@ -229,8 +303,68 @@ func _set_anim(anim: String) -> void:
 	var d: Dictionary = _get_data(anim)
 	if d.is_empty():
 		return
+	_t = _t0(d)
+	# Point d'entrée : l'image de la boucle suivante la plus proche de l'image quittée (table
+	# `entrees` de l'anim quittée) ; l'écart des deux silhouettes dose le fondu.
+	var ecart: float = 1.0
+	var tab: Dictionary = (old.get("entrees", {}) as Dictionary).get(_source_anim(anim), {})
+	if not tab.is_empty():
+		var e: PackedInt32Array = tab["e"]
+		var ii: PackedInt32Array = tab["i"]
+		if _f < e.size():
+			ecart = float(e[_f]) / 100.0
+		if _f < ii.size() and bool(d["loop"]) and _regle("anim_entrees", 1.0) > 0.5:
+			var j: int = ii[_f]
+			_t = (d["ends"] as PackedFloat32Array)[j - 1] if j > 0 else 0.0
+	if not old.is_empty() and visible:
+		_fondu(ecart)
+	if (GkRules.data().get("anims", {}) as Dictionary).get("pouf", []).has(anim):
+		_pouf_left = _regle("anim_pouf_s", 0.0)
 	texture = d["tex"]
 	(material as ShaderMaterial).set_shader_parameter("tenue", d["mask"])
+
+
+## Fondu enchaîné : l'image quittée reste posée par-dessus la nouvelle et s'efface, d'autant plus
+## longtemps que les deux silhouettes diffèrent (écart 1 − IoU, entre anim_fondu_ecart_min et _plein).
+func _fondu(ecart: float) -> void:
+	var lo: float = _regle("anim_fondu_ecart_min", 0.12)
+	var hi: float = maxf(_regle("anim_fondu_ecart_plein", 0.45), lo + 0.01)
+	var s: float = _regle("anim_fondu_s", 0.0) * clampf((ecart - lo) / (hi - lo), 0.0, 1.0)
+	if s <= 0.01 or texture == null or actor == null:
+		return
+	if _prev == null:
+		_prev = Sprite2D.new()
+		_prev.centered = false
+		_prev.region_enabled = true
+		_prev.texture_filter = texture_filter
+		var m: ShaderMaterial = ShaderMaterial.new()
+		m.shader = _shader
+		_prev.material = m
+		actor.add_child(_prev)
+	actor.move_child(_prev, get_index() + 1)
+	var pm: ShaderMaterial = material as ShaderMaterial
+	var mm: ShaderMaterial = _prev.material as ShaderMaterial
+	mm.set_shader_parameter("tenue", pm.get_shader_parameter("tenue"))
+	mm.set_shader_parameter("couleur", actor.color)
+	_prev.texture = texture
+	_prev.region_rect = region_rect
+	_prev.flip_h = flip_h
+	_prev.position = position
+	_prev.rotation = rotation
+	_prev.scale = scale
+	_prev_a = modulate.a
+	_prev_s = s
+	_prev_left = s
+	_prev.visible = true
+
+
+func _update_fondu(dt: float) -> void:
+	if _prev == null:
+		return
+	_prev_left = maxf(0.0, _prev_left - dt)
+	_prev.visible = _prev_left > 0.0 and visible
+	var k: float = _prev_left / maxf(_prev_s, 0.001)
+	_prev.modulate.a = _prev_a * k * k * (3.0 - 2.0 * k)
 
 
 ## Animation qui découle de l'état de l'acteur.
@@ -243,7 +377,9 @@ func _state_anim() -> String:
 	if a.role == GkActor.Role.HUNTER:
 		if a.search_left > 0.0:
 			return "search"
-		if a.slow_left > 0.0:
+		# Piégé : il se débat sur place ; s'il avance (à vitesse réduite), il marche, sinon la planche
+		# sur place glisserait sous ses pieds (anim_piege_marche).
+		if a.slow_left > 0.0 and (a.velocity.length() <= 5.0 or _regle("anim_piege_marche", 1.0) < 0.5):
 			return "trapped"
 	if a.velocity.length() > 5.0:
 		return "run_scared" if a.scared else "walk"
@@ -261,8 +397,13 @@ func _process(dt: float) -> void:
 		return
 	var ends: PackedFloat32Array = d["ends"]
 	var total: float = ends[ends.size() - 1]
-	var rate: float = 1.0
+	var rate: float = _rate_once if _once != "" else 1.0
 	var fake: bool = _once == "" and _fake_ghost(_anim)
+	# Boucle calée sur la durée de son état (anims.cale_etat, ex. la fouille : un cycle exactement).
+	var cales: Dictionary = (GkRules.data().get("anims", {}) as Dictionary).get("cale_etat", {})
+	var cale: String = str(cales.get(_anim, ""))
+	if _once == "" and cale != "" and GkRules.f(cale) > 0.0 and not d.has("static") and _regle("anim_durees", 1.0) > 0.5:
+		rate = total / GkRules.f(cale)
 	if CYCLE_S.has(_anim) and pantin == null and not d.has("static"):
 		var stride: float = float(d.get("stride", 0.0))
 		if stride > 0.0 and not fake:
@@ -274,7 +415,13 @@ func _process(dt: float) -> void:
 		if fake:
 			rate *= HOVER_WALK_RATE
 	_t += dt * rate
-	if _t >= total:
+	# Geste coupé par le mouvement (anims.coupe_mouv : part du geste jouée avant qu'un pas le coupe) :
+	# sans ça, une planche sur place glisserait sous ses pieds pendant qu'il avance.
+	var coupe: float = _par_anim("coupe_mouv", _once) if _once != "" else 0.0
+	var fini: bool = _t >= _t1(d)
+	if coupe > 0.0 and actor.velocity.length() > 5.0 and (_t - _t0(d)) >= coupe * _utile(d):
+		fini = true
+	if fini:
 		if _once != "":
 			_once = ""
 			_set_anim(_state_anim())
@@ -282,10 +429,12 @@ func _process(dt: float) -> void:
 			ends = d["ends"]
 			total = ends[ends.size() - 1]
 		elif bool(d["loop"]):
-			_t = fmod(_t, total)
-	var f: int = 0
-	while f < ends.size() - 1 and _t >= ends[f]:
+			_t = _t0(d) + fmod(_t - _t0(d), maxf(_utile(d), 0.001))
+	var f: int = int(d.get("debut", 0))
+	var f_fin: int = int(d.get("fin", ends.size())) - 1
+	while f < f_fin and _t >= ends[f]:
 		f += 1
+	_f = f
 	var face: float = 1.0 if cos(actor.look) >= 0.0 else -1.0
 	var ghost: bool = (actor.role == GkActor.Role.GHOST or actor.role == GkActor.Role.OUT) and _once != "found" \
 		and _once != "extract"
@@ -314,16 +463,22 @@ func _process(dt: float) -> void:
 	var offs: PackedVector2Array = d.get("offs", PackedVector2Array())
 	if f < offs.size():
 		feet -= offs[f]      # l'image décalée de offs : ses pieds posés restent sous l'acteur
+	feet -= d.get("dec", Vector2.ZERO)
 	var fx: float = cell.x - feet.x if flip_h else feet.x
 	# Petit rebond façon Among Us à chaque pas, avec un léger écrasement quand le pied touche le sol
 	# (idée de Julien) : deux rebonds par cycle, au rythme de la planche.
-	var k: float = HEIGHT_PX / float(d["height"])
+	var k: float = HEIGHT_PX / float(d["height"]) * float(d.get("echelle", 1.0))
 	var lift: float = 0.0
 	var squash: float = 0.0
 	if CYCLE_S.has(_anim) and actor.velocity.length() > 5.0 and not ghost:
 		var b: float = absf(sin(_t / total * TAU))       # 0 au contact du pied, 1 en l'air
 		lift = BOUNCE_PX * (1.4 if _anim == "run_scared" else 1.0) * b
 		squash = SQUASH * pow(1.0 - b, 3.0)
+	# Pouf : étiré puis écrasé, amorti, autour des pieds (anim_pouf_s, anim_pouf_k).
+	if _pouf_left > 0.0:
+		_pouf_left = maxf(0.0, _pouf_left - dt)
+		var p: float = 1.0 - _pouf_left / maxf(_regle("anim_pouf_s", 0.1), 0.001)
+		squash -= _regle("anim_pouf_k", 0.0) * sin(p * TAU) * (1.0 - p)
 	scale = Vector2(k * (1.0 + squash * 0.6), k * (1.0 - squash))
 	var anchor: Vector2 = Vector2(0.0, actor.radius * 0.6 - lift) + pop
 	var rot: float = 0.0
@@ -342,7 +497,8 @@ func _process(dt: float) -> void:
 	rotation = rot
 	position = anchor + o.rotated(rot)
 	_update_wings(fake and ghost, d, f, flip_h, _float_t)
-	_update_lampe(d, f, total, dt)
+	_update_lampe(d, f, _t1(d), dt)
+	_update_fondu(dt)
 	(material as ShaderMaterial).set_shader_parameter("couleur", actor.color)
 
 
