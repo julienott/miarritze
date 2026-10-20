@@ -34,6 +34,7 @@ import anime_perso as ap  # noqa: E402
 import envoie_decor as ed  # noqa: E402
 import planche_recette as pr  # noqa: E402
 import masques_pf as mp  # noqa: E402
+import retire_ombre as ro  # noqa: E402
 
 PY = nuit.PY
 DIR = os.path.join(ROOT, "tools", "rd", "out", "recette")
@@ -42,6 +43,8 @@ CMD = os.path.join(DIR, "commandes.jsonl")
 LOG = os.path.join(DIR, "journal.log")
 RETOUCHES = os.path.join(HERE, "retouches_recette.json")
 MAX_DECOR = 10
+OMBRE_MIN_PX = 1500     # en dessous : reflets gris des chaussures, pas une ombre
+MAX_PERSO_VOL = 30     # pixelforge refuse au-delà de 50 tâches en attente
 MAX_ESSAIS = 4
 FINI = nuit.FINI
 
@@ -201,6 +204,9 @@ class Routine:
             une = os.path.join(DIR, "_une.json")
             json.dump({b: it["tid"]}, open(une, "w"))
             subprocess.run([PY, os.path.join(HERE, "import_perso.py"), a, une], cwd=ROOT, check=True)
+            # Ombre peinte sous les pieds : le jeu ajoute déjà la sienne (Julien 2026-10-20).
+            if ro.traite(a, b, False) > OMBRE_MIN_PX:
+                log("ombre peinte retirée :", a, b, ro.traite(a, b, True), "px")
             base = f"assets/gordeka/persos/{a}/{b}"
             nuit.commit([base + ".png", base + "_tenue.png", base + ".json", f"tools/gordeka/taches_{a}.json"],
                         f"Gordeka : {a}, animation {b} (recette OK)")
@@ -224,21 +230,25 @@ class Routine:
 
     # --- alimentation
     def alimente(self):
-        # perso courant : fini quand plus rien en vol ni à voir
-        pid = self.e["courant"]
-        if pid and not any(k.startswith(f"perso/{pid}/") and v["statut"] in ("en_vol", "a_voir", "nouveau")
-                           for k, v in self.e["items"].items()):
-            log("perso fini :", pid)
-            self.e["courant"] = pid = None
-        if pid is None and self.e["persos"]:
+        # Persos : la file reste pleine (Julien 2026-10-20 : toutes les animations manquantes en
+        # priorité basse) ; un nouveau perso démarre tant qu'il y a moins de MAX_PERSO_VOL animations en vol.
+        lances = self.e.setdefault("lances", [self.e["courant"]] if self.e.get("courant") else [])
+        for pid in list(lances):
+            if not any(k.startswith(f"perso/{pid}/") and v["statut"] in ("en_vol", "a_voir", "nouveau")
+                       for k, v in self.e["items"].items()):
+                log("perso fini :", pid)
+                lances.remove(pid)
+        while self.e["persos"] and len(self.items("en_vol", "perso")) < MAX_PERSO_VOL:
             pid = self.e["courant"] = self.e["persos"].pop(0)
             p = nuit.Perso(pid)
-            while p.etape == "fantome":              # profil fantôme (rare : bloquant court)
+            while p.etape == "fantome":              # profil fantôme (bloquant court)
                 p.tour()
                 if p.etape == "fantome":
                     time.sleep(20)
             for anim in ap.pretes():
                 self.relance(f"perso/{pid}/{anim}", None)
+            lances.append(pid)
+            self.sauve()
             log("perso :", pid)
         # décor : file glissante (suspendue tant que tools/gordeka/.decor_pause existe, Julien 2026-10-20)
         if os.path.exists(os.path.join(HERE, ".decor_pause")):
