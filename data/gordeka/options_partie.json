@@ -9,9 +9,148 @@
 			"valide_le": "2026-10-20",
 			"carte_kanban": 347,
 			"reglages": [
-				{"cle": "idee_gateaux", "type": "on_off", "libelle": "Activés", "defaut": 1},
-				{"cle": "gateaux_nombre", "type": "curseur", "libelle": "Nombre de gâteaux", "min": 1, "max": 8, "pas": 1, "defaut": 4},
-				{"cle": "gateau_duree", "type": "curseur", "libelle": "Durée du sprint (s)", "min": 2, "max": 8, "pas": 1, "defaut": 4}
+				{
+					"cle": "idee_gateaux",
+					"type": "on_off",
+					"libelle": "Activés",
+					"defaut": 1
+				},
+				{
+					"cle": "gateaux_nombre",
+					"type": "curseur",
+					"libelle": "Nombre de gâteaux",
+					"min": 1,
+					"max": 8,
+					"pas": 1,
+					"defaut": 4
+				},
+				{
+					"cle": "gateau_duree",
+					"type": "curseur",
+					"libelle": "Durée du sprint (s)",
+					"min": 2,
+					"max": 8,
+					"pas": 1,
+					"defaut": 4
+				}
+			]
+		},
+		{
+			"id": "chatouille",
+			"groupe": "Fantômes",
+			"libelle": "Chatouille",
+			"aide": "Un fantôme qui touche le chasseur le fait rire et le ralentit un instant.",
+			"valide_le": "2026-10-20",
+			"carte_kanban": 345,
+			"reglages": [
+				{
+					"cle": "idee_chatouille",
+					"type": "on_off",
+					"libelle": "Activée",
+					"defaut": 1
+				},
+				{
+					"cle": "chatouille_duree",
+					"type": "curseur",
+					"libelle": "Durée du fou rire (s)",
+					"min": 0.5,
+					"max": 3,
+					"pas": 0.5,
+					"defaut": 1.5
+				},
+				{
+					"cle": "chatouille_repit",
+					"type": "curseur",
+					"libelle": "Répit entre deux chatouilles (s)",
+					"min": 3,
+					"max": 20,
+					"pas": 1,
+					"defaut": 8
+				}
+			]
+		},
+		{
+			"id": "delivrance",
+			"groupe": "Fantômes",
+			"libelle": "Délivrance",
+			"aide": "Un chassé libre qui reste près d'un fantôme le remet en jeu.",
+			"valide_le": "2026-10-20",
+			"carte_kanban": 346,
+			"reglages": [
+				{
+					"cle": "idee_delivrance",
+					"type": "on_off",
+					"libelle": "Activée",
+					"defaut": 1
+				},
+				{
+					"cle": "delivrance_temps",
+					"type": "curseur",
+					"libelle": "Temps pour délivrer (s)",
+					"min": 1,
+					"max": 6,
+					"pas": 0.5,
+					"defaut": 3
+				},
+				{
+					"cle": "delivrance_max",
+					"type": "curseur",
+					"libelle": "Délivrances par manche",
+					"min": 1,
+					"max": 5,
+					"pas": 1,
+					"defaut": 1
+				}
+			]
+		},
+		{
+			"id": "mouettes",
+			"groupe": "Carte",
+			"libelle": "Mouettes",
+			"aide": "Des mouettes s'envolent en criant quand un chassé passe trop près : un indice pour le chasseur.",
+			"valide_le": "2026-10-20",
+			"carte_kanban": 348,
+			"reglages": [
+				{
+					"cle": "idee_mouettes",
+					"type": "on_off",
+					"libelle": "Activées",
+					"defaut": 1
+				},
+				{
+					"cle": "mouettes_nombre",
+					"type": "curseur",
+					"libelle": "Groupes de mouettes",
+					"min": 2,
+					"max": 10,
+					"pas": 1,
+					"defaut": 6
+				}
+			]
+		},
+		{
+			"id": "cachettes_derriere",
+			"groupe": "Carte",
+			"libelle": "Se cacher derrière les gros objets",
+			"aide": "Derrière une maison ou un bateau, on est caché ; le chasseur ne nous voit que de tout près.",
+			"valide_le": "2026-10-20",
+			"carte_kanban": 349,
+			"reglages": [
+				{
+					"cle": "decor_formes",
+					"type": "on_off",
+					"libelle": "Activé",
+					"defaut": 1
+				},
+				{
+					"cle": "masque_vue_portee",
+					"type": "curseur",
+					"libelle": "Le chasseur voit derrière à (cases)",
+					"min": 1,
+					"max": 4,
+					"pas": 0.5,
+					"defaut": 2
+				}
 			]
 		}
 	]
