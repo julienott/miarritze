@@ -1,6 +1,6 @@
 {
  "_doc": "Prompts des animations des persos de Gordeka (pf_2d__animate), 2026-10-20, demande de Julien : mouvements exagérés et lisibles, mouvement de CHAQUE accessoire décrit pour chaque animation. Contrat pixelforge : le squelette Quaternius (`motion`) fait le mouvement du corps, le texte agit sur le visage, les détails et les éléments souples ; l'exagération passe par `mouvement` (exaggerate, bounce, arms, cycles) et les objets tenus par `hold`. Payload = motion + mouvement + description du perso + action (animation + allure + accessoires) + expression + tenue (mot simple pour SAM 3).",
- "regles_communes": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference.",
+ "regles_communes": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size.",
  "animations": {
   "idle": {
    "action": "Standing still, relaxed, gentle breathing (chest rises and falls slightly), one slow blink, tiny weight shift from foot to foot. Almost still, like a calm pause.",
@@ -364,7 +364,13 @@
      }
     }
    ],
-   "allure": "light dancer's steps, on her toes"
+   "allure": "light dancer's steps, on her toes",
+   "lexique": {
+    "\\bhimself\\b": "herself",
+    "\\bhim\\b": "her",
+    "\\bhis\\b": "her",
+    "\\bhe\\b": "she"
+   }
   },
   "kaio": {
    "description": "a cheeky anthropomorphic seagull standing upright on two orange webbed feet, big yellow beak with a red dot, white head and belly, light grey wings used as arms with feathered fingertips, small grey tail, a small neckerchief scarf tied at the front",
@@ -399,6 +405,24 @@
    },
    "actions": {
     "run_scared": "Panicked cartoon sprint, running for dear life: very long strides, webbed feet spinning fast, body leaning far forward, both grey wings flapping wildly at his sides, sweat drops flying off the head, a little dust puff at the heels. Hugely exaggerated, comic, never violent."
+   },
+   "lexique": {
+    "\\ba big thumbs up\\b": "a big raised wing tip",
+    "\\bthumbs up\\b": "raised wing tip",
+    "\\bboth fists\\b": "both wing tips",
+    "\\bfists\\b": "wing tips",
+    "\\bfist\\b": "wing tip",
+    "\\bboth hands\\b": "both wings",
+    "\\bhands\\b": "wings",
+    "\\bhand\\b": "wing tip",
+    "\\bfingers\\b": "feathers",
+    "\\bfinger\\b": "feather tip",
+    "\\bthumbs\\b": "wing tips",
+    "\\bthumb\\b": "wing tip",
+    "\\bboth arms\\b": "both wings",
+    "\\barms\\b": "wings",
+    "\\barm\\b": "wing",
+    "\\bnose\\b": "beak"
    }
   },
   "karramarro": {
@@ -433,7 +457,24 @@
      "par_animation": {}
     }
    ],
-   "allure": "fast scuttling with all legs rippling, little hops"
+   "allure": "fast scuttling with all legs rippling, little hops",
+   "lexique": {
+    "\\ba big thumbs up\\b": "a big raised pincer",
+    "\\bthumbs up\\b": "raised pincer",
+    "\\bboth fists\\b": "both pincers",
+    "\\bfists\\b": "pincers",
+    "\\bfist\\b": "pincer",
+    "\\bboth hands\\b": "both pincers",
+    "\\bhands\\b": "pincers",
+    "\\bhand\\b": "pincer",
+    "\\bfingers\\b": "pincer tips",
+    "\\bfinger\\b": "pincer tip",
+    "\\bthumbs\\b": "pincers",
+    "\\bthumb\\b": "pincer",
+    "\\bboth arms\\b": "both pincers",
+    "\\barms\\b": "pincers",
+    "\\barm\\b": "pincer"
+   }
   },
   "ramuntxo": {
    "description": "a jolly Basque chef with light peach skin, a small brown mustache, tall white chef hat with a small Basque flag on its band, white chef jacket, red neck scarf, red and white checkered trousers, white apron, a black frying pan hanging from his belt",
@@ -486,7 +527,13 @@
      }
     }
    ],
-   "allure": "graceful gliding steps, as light as water; she is a magical sea creature"
+   "allure": "graceful gliding steps, as light as water; she is a magical sea creature",
+   "lexique": {
+    "\\bhimself\\b": "herself",
+    "\\bhim\\b": "her",
+    "\\bhis\\b": "her",
+    "\\bhe\\b": "she"
+   }
   },
   "peio": {
    "description": "a sturdy young Basque rugby player with medium brown skin and short black hair, red and white hooped rugby jersey, black shorts, white socks, black boots, a brown oval rugby ball tucked under his near arm",
@@ -500,7 +547,8 @@
       "trap": "kept under the arm, he places the trap with his free hand",
       "victory": "held high above his head with both hands",
       "found": "he juggles it in surprise then catches it back",
-      "emote_pouce": "ball under the arm, thumbs up with the free hand"
+      "emote_pouce": "ball under the arm, thumbs up with the free hand",
+      "emote_danse": "stays tucked under the near arm, only the free arm dances"
      }
     }
    ],

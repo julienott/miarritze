@@ -13,6 +13,7 @@ tools/rd/out/<id>/gk2d/anims/<anim>.gif. Les paramètres sont recopiés dans SPE
 """
 import json
 import os
+import re
 import sys
 import time
 import urllib.request
@@ -38,14 +39,18 @@ def payload(pid, anim):
     # Réglages propres au perso (ex. une mouette n'a pas de bras à lever : ses ailes en tiennent lieu).
     mvt.update(p.get("mouvement", {}).get(anim, {}))
     mvt = {k: v for k, v in mvt.items() if v is not None}
-    morceaux = [PROMPTS["regles_communes"], p.get("actions", {}).get(anim, a["action"])]
+    action = p.get("actions", {}).get(anim, a["action"])
+    for motif, mot in p.get("lexique", {}).items():      # corps non humain, féminin : on décrit ce qu'il a
+        action = re.sub(motif, mot, action)
+    morceaux = [PROMPTS["regles_communes"], action]
     if p.get("allure") and anim in ("walk", "run_scared", "idle", "victory"):
         morceaux.append("Way of moving: " + p["allure"] + ".")
     for acc in p.get("accessoires", []):
         geste = acc.get("par_animation", {}).get(anim, acc["defaut"])
         morceaux.append(f"The {acc['objet']}: {geste}.")
     desc = p["description"] + (AILES if anim in FANTOMES else "")
-    pl = {"prompt_style": "pf_2d__animate", **mvt, "description": desc, "action": " ".join(morceaux),
+    texte = " ".join(morceaux)
+    pl = {"prompt_style": "pf_2d__animate", **mvt, "description": desc, "action": texte,
           "expression": a["expression"], "loop": bool(a["boucle"]), "priority": "normal",
           "tag": f"miarritze/gk2d_{pid}"}
     if p.get("tenue"):

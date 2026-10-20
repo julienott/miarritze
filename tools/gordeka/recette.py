@@ -269,7 +269,7 @@ class Routine:
         try:
             while attente and len(self.items("en_vol", "perso")) < MAX_PERSO_VOL:
                 cle = attente.pop(0)
-                if self.e["items"].get(cle, {}).get("statut") in ("en_vol", "a_voir", "ok", "echec"):
+                if self.e["items"].get(cle, {}).get("statut") in ("en_vol", "a_voir", "ok", "echec", "pause"):
                     continue                     # déjà déposée (reprise après arrêt)
                 self.relance(cle, None)
                 self.sauve()
