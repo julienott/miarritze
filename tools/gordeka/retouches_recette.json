@@ -31,5 +31,14 @@
  "perso/kaio/search": {
   "action": "Clear rummaging: he bends his whole body far forward and pokes his beak down again and again into a hiding spot in front of him, both grey wings flapping and scraping fast at his sides, tail up."
  },
- "perso/maia/hunter_reveal": "In her outstretched hand she holds a small yellow flashlight, clearly drawn, that switches on with a bright yellow beam of light pointing forward."
+ "perso/maia/hunter_reveal": "In her outstretched hand she holds a small yellow flashlight, clearly drawn, that switches on with a bright yellow beam of light pointing forward.",
+ "perso/ramuntxo/walk": "His small brown mustache and the small Basque flag on his hat band stay clearly drawn in every frame.",
+ "perso/louis/run_scared": {
+  "action": "His eyes stay wide open and visible in every frame, his hands never cover his face.",
+  "priority": "normal"
+ },
+ "perso/louis/found": {
+  "action": "His feet stay planted on the ground in the same place, with no sliding at all, except during the jump itself.",
+  "priority": "normal"
+ }
 }
