@@ -466,6 +466,10 @@ Vierge, Fronton.
   ordre d'arrivée, exclusions, purge des salons inactifs), présence par salon, signalisation à
   plusieurs destinataires (étoile). Pas de partie côté serveur. Les groupes de Borroka ne sont plus
   utilisés par Gordeka.
+- **API des salons** (*2026-10-20*) : `docs/ONLINE_GORDEKA.md`. Joueurs Gordeka sans groupe (table
+  `gk_players`, pseudo + secret), tables additives (Borroka intact). Présence par battement de cœur
+  (2–3 s) ; l'hôte publie round k/N et la phase (`round` | `scores`) et peut y joindre l'état de partie
+  (scores) pour qu'un nouvel hôte reprenne ; signalisation à destinataire explicite, toujours via l'hôte.
 
 ## 12. Plateformes et technique
 

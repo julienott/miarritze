@@ -8,6 +8,8 @@ declare(strict_types=1);
  *             GET /net/config, POST /net/report, GET /net/reports, GET /leaderboard
  * Avec auth (player_id + secret) : /profile, /presence, /group/decide, /match/*, /signal,
  *             /tower/score
+ * Gordeka (salons, sans groupe) : POST /gk/player, GET /rooms, POST /room/{create,join,presence,me,
+ *             settings,launch,round,end,kick,leave,signal}, GET /room/signal — voir src/Rooms.php.
  * Le serveur ne fait pas de temps réel : présence, invitations, matchs et
  * signalisation WebRTC par polling. Le combat passe en pair-à-pair.
  */
@@ -15,6 +17,7 @@ declare(strict_types=1);
 require __DIR__ . '/../src/Db.php';
 require __DIR__ . '/../src/Validation.php';
 require __DIR__ . '/../src/Profanity.php';
+require __DIR__ . '/../src/Rooms.php';   // salons de Gordeka (SPEC-GORDEKA §6.2, docs/ONLINE_GORDEKA.md)
 
 const ONLINE_SECONDS = 15;
 const INVITE_SECONDS = 20;
@@ -81,6 +84,20 @@ try {
         $method === 'POST' && $route === '/signal' => handlePostSignal($pdo),
         $method === 'GET' && $route === '/signal' => handleGetSignal($pdo),
         $method === 'POST' && $route === '/tower/score' => handleTowerScore($pdo),
+        $method === 'POST' && $route === '/gk/player' => handleGkPlayer($pdo),
+        $method === 'GET' && $route === '/rooms' => handleRoomList($pdo),
+        $method === 'POST' && $route === '/room/create' => handleRoomCreate($pdo),
+        $method === 'POST' && $route === '/room/join' => handleRoomJoin($pdo),
+        $method === 'POST' && $route === '/room/presence' => handleRoomPresence($pdo),
+        $method === 'POST' && $route === '/room/me' => handleRoomMe($pdo),
+        $method === 'POST' && $route === '/room/settings' => handleRoomSettings($pdo),
+        $method === 'POST' && $route === '/room/launch' => handleRoomLaunch($pdo),
+        $method === 'POST' && $route === '/room/round' => handleRoomRound($pdo),
+        $method === 'POST' && $route === '/room/end' => handleRoomEnd($pdo),
+        $method === 'POST' && $route === '/room/kick' => handleRoomKick($pdo),
+        $method === 'POST' && $route === '/room/leave' => handleRoomLeave($pdo),
+        $method === 'POST' && $route === '/room/signal' => handleRoomSignalPost($pdo),
+        $method === 'GET' && $route === '/room/signal' => handleRoomSignalGet($pdo),
         default => fail(404, 'Route inconnue'),
     };
 } catch (Throwable $e) {
@@ -828,6 +845,7 @@ function purge(PDO $pdo): void
     $pdo->prepare('DELETE FROM presence WHERE last_seen < ?')->execute([$now - 86400]);
     $pdo->prepare('DELETE FROM net_reports WHERE created_at < ?')->execute([$now - 30 * 86400]);
     $pdo->prepare('DELETE FROM join_requests WHERE created_at < ?')->execute([$now - 3600]);
+    gkPurge($pdo);
 }
 
 /** Rate limiting fenêtre fixe de 60 s par clé. */
@@ -863,9 +881,14 @@ function ok(mixed $data): never
     exit;
 }
 
-function fail(int $status, string $message): never
+/** $reason : code machine facultatif (routes Gordeka), le message reste pour l'affichage. */
+function fail(int $status, string $message, string $reason = ''): never
 {
     http_response_code($status);
-    echo json_encode(['error' => $message], JSON_UNESCAPED_UNICODE);
+    $out = ['error' => $message];
+    if ($reason !== '') {
+        $out['reason'] = $reason;
+    }
+    echo json_encode($out, JSON_UNESCAPED_UNICODE);
     exit;
 }
