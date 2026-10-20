@@ -13,5 +13,12 @@
  "victory": "3b99ccde571c4cbe8bc5c31b0d38f9d0",
  "sad": "1d2bc116f214420eb30e57056716c297",
  "ghost": "b02b514f9be040289f2c699bac4b360d",
- "ghost_move": "376e28fb319e4287a10fa1abb3d103b2"
+ "ghost_move": "376e28fb319e4287a10fa1abb3d103b2",
+ "hunter_reveal": "a00294055f204317b5ede262d06b103b",
+ "emote_salut": "e1c760fb54aa482d9e2393d918f5d1b4",
+ "emote_rire": "824b0ca12593429e862702d4fddb27e7",
+ "emote_danse": "c4f05d9f09174f8a8b4cfb6e6c5d3540",
+ "emote_pouce": "f857006ad0744106a0733cde591e2aab",
+ "emote_chut": "b57e9093e9994bec9ca5a5756568c4ce",
+ "emote_langue": "1f90779725b24018b5fe81fafd32ecf5"
 }
