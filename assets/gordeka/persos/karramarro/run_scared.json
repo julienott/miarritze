@@ -1,0 +1,26 @@
+{
+ "motion": "run_scared",
+ "quaternius": "Sprint_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "terrified comic face: eyes wide open and round, looking ahead, mouth open in a big round O of fear",
+ "tenue": "scarf",
+ "drive": {
+  "arms": "side",
+  "exaggerate": 1.15
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Panicked cartoon sprint, running for dear life: very long strides, legs spinning fast, body leaning far forward, both pincers flailing wildly forward and back at shoulder height, pincers never in front of the face, sweat drops flying off the head, a little dust puff at the heels. Hugely exaggerated, comic, never violent. Way of moving: fast scuttling with all legs rippling, little hops. The two big pincers: waving wildly above the head. The eyes on stalks: wobble with the motion, slightly delayed. The thin legs: all legs scuttle in a fast ripple, the crab keeps facing right. The small neckerchief scarf: stays tied in place, the two short tips flutter with the motion.",
+ "stride_px": 115.0
+}
