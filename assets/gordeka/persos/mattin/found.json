@@ -1,0 +1,24 @@
+{
+ "motion": "found",
+ "quaternius": "Hit_Chest",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "shocked surprise with round eyes and open mouth, then laughing",
+ "tenue": "shirt",
+ "drive": {
+  "exaggerate": 1.5
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Being caught: huge startled jump straight up, feet leaving the ground, arms flung out, a big exclamation mark pops above the head, then lands and slumps down laughing, hand on the belly. The red beret: stays firmly on the head."
+}
