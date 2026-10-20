@@ -1,7 +1,7 @@
 name: Build & deploy web export
 
 # Depuis le 2026-10-20 (Julien) : main = Miarritze Gordeka, publié À LA RACINE du site (remplace
-# Borroka) avec /producer. Steam Deck et Recalbox sont sautés « jusqu'à nouvel ordre ».
+# Borroka) ; /producer est publié ENSUITE par producer.yml (relancé en fin de job). Steam Deck et Recalbox sont sautés « jusqu'à nouvel ordre ».
 # Déploiement à la main seulement, sur décision de Julien.
 on:
   workflow_dispatch:
@@ -15,6 +15,9 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write     # relancer producer.yml une fois le jeu en ligne
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,28 +61,8 @@ jobs:
       - name: PHP lint
         run: find backend producer tools/producer -name '*.php' -print0 | xargs -0 -n1 php -l
 
-      # /producer : service privé de Julien (assets, commentaires, kanban),
-      # voir docs/PRODUCER.md. Aperçus colorisés + index générés depuis assets/.
-      - name: Build producer
-        run: |
-          sudo apt-get update && sudo apt-get install -y ffmpeg
-          python3 -m venv /tmp/producer-venv
-          /tmp/producer-venv/bin/pip install --quiet pillow numpy
-          tools/producer/build.sh web/build/producer /tmp/producer-venv/bin/python
-
-      # Le mot de passe et le jeton ne sont jamais écrits en clair : config.php
-      # (non versionné) ne contient que leurs hachages. Sans les secrets, on
-      # n'envoie pas de config et celle du serveur reste en place.
-      - name: Producer config (secrets)
-        env:
-          PRODUCER_PASSWORD: ${{ secrets.PRODUCER_PASSWORD }}
-          PRODUCER_TOKEN: ${{ secrets.PRODUCER_TOKEN }}
-        run: |
-          if [ -z "$PRODUCER_PASSWORD" ] || [ -z "$PRODUCER_TOKEN" ]; then
-            echo "::warning::Secrets PRODUCER_PASSWORD / PRODUCER_TOKEN absents : config producer non générée"
-          else
-            php tools/producer/make_config.php web/build/producer/config.php
-          fi
+      # /producer n'est plus construit ici (Julien 2026-10-20 : le jeu d'abord) : producer.yml le
+      # reconstruit et le publie à chaque push sur main, et peut se relancer à la main.
 
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
@@ -122,14 +105,17 @@ jobs:
           sshpass -e rsync -avz -e "$SSH_OPTS" \
             --exclude='producer/data/' --exclude='producer/files/' \
             web/build/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/"
-          # Aperçus producer : miroir exact (--delete limité à producer/files/).
-          sshpass -e rsync -az --delete -e "$SSH_OPTS" \
-            web/build/producer/files/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/producer/files/"
           # API : backend/ → api/ (la base SQLite vit dans api/db/, jamais écrasée
           # car *.sqlite est exclu ; config.php prod pareil).
           sshpass -e rsync -avz -e "$SSH_OPTS" \
             --exclude='*.sqlite*' --exclude='config.php' \
             backend/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/api/"
+
+      # Le jeu est en ligne : /producer se reconstruit ensuite (Julien 2026-10-20).
+      - name: Relancer producer
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run producer.yml --ref "${{ github.ref_name }}"
 
   # Version Steam Deck (Linux x86_64), voir docs/STEAMDECK.md : export,
   # archive + .pck + manifest.json, publiés dans /steamdeck/ à côté du jeu
