@@ -821,7 +821,23 @@
    "animation": {
     "methode": "planche",
     "description": "jet d'eau et rides du bassin, boucle"
-   }
+   },
+   "fichiers": [
+    "objets/fontaine_place.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "d4f43361cb0841b9864eb4b60654a0b1",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/fontaine_place_ombre.png",
+   "ombre_decalage": [
+    49,
+    284
+   ]
   },
   "banc_vert": {
    "nom": "Banc vert du front de mer",
