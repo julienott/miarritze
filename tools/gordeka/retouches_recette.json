@@ -40,5 +40,11 @@
  "perso/louis/found": {
   "action": "His feet stay planted on the ground in the same place, with no sliding at all, except during the jump itself.",
   "priority": "normal"
+ },
+ "perso/louis/trap": {
+  "priority": "normal"
+ },
+ "perso/txomin/walk": {
+  "priority": "normal"
  }
 }

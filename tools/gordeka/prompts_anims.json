@@ -58,7 +58,7 @@
    }
   },
   "trap": {
-   "action": "Sets a trap: looks left and right sneakily, crouches down, places a small object on the ground in front of him, pats it, stands back up rubbing his hands with glee.",
+   "action": "Sets a trap: looks left and right sneakily, bends forward at the waist with both legs straight, places a small object on the ground in front of him, pats it, straightens up rubbing his hands with glee.",
    "expression": "sneaky mischievous grin",
    "boucle": false,
    "mouvement": {
@@ -224,7 +224,7 @@
    "accessoires": [
     {
      "objet": "blue swim fins hanging from the belt at the hip",
-     "defaut": "stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet",
+     "defaut": "stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet; they stay on the same hip as in the reference image in every frame, never switching to the other side",
      "par_animation": {
       "idle": "hang still, tiny sway",
       "run_scared": "flap wildly behind him",
