@@ -344,15 +344,15 @@
    "sources": [
     {
      "job": 0,
-     "variante": "image_00",
-     "task": "1d97cefe8a20400dbe6b8a7d3898eb3c",
+     "variante": "image_01",
+     "task": "56a1ec302d1b41bdba879a6509a6a645",
      "date": "2026-10-20"
     }
    ],
    "ombre": "objets/maison_crampotte_ombre.png",
    "ombre_decalage": [
-    48,
-    249
+    53,
+    258
    ]
   },
   "chambre_froide": {
@@ -409,15 +409,15 @@
    "sources": [
     {
      "job": 0,
-     "variante": "image_00",
+     "variante": "image_01",
      "task": "896d94dfe59a4eebafb850a50dde783c",
      "date": "2026-10-20"
     }
    ],
    "ombre": "objets/tour_phare_ombre.png",
    "ombre_decalage": [
-    87,
-    478
+    120,
+    584
    ]
   },
   "fronton": {
