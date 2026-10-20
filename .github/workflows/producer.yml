@@ -1,0 +1,52 @@
+name: Producer (à chaque push)
+
+# Julien (2026-10-20) : /producer est reconstruit et publié automatiquement à chaque push sur main.
+# Seul le service privé /producer est publié ici : le jeu, l'API, Steam Deck et Recalbox restent
+# déployés à la main (deploy.yml). producer/data/ (SQLite, sessions) et config.php ne sont jamais
+# écrasés ; la config n'est régénérée que si les secrets sont présents.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  producer:
+    runs-on: ubuntu-latest
+    # Deux pushs rapprochés : on publie dans l'ordre, le dernier gagne.
+    concurrency:
+      group: producer-deploy
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP lint
+        run: find producer tools/producer -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Build producer
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg sshpass
+          python3 -m venv /tmp/producer-venv
+          /tmp/producer-venv/bin/pip install --quiet pillow numpy
+          tools/producer/build.sh build/producer /tmp/producer-venv/bin/python
+
+      - name: Producer config (secrets)
+        env:
+          PRODUCER_PASSWORD: ${{ secrets.PRODUCER_PASSWORD }}
+          PRODUCER_TOKEN: ${{ secrets.PRODUCER_TOKEN }}
+        run: |
+          if [ -z "$PRODUCER_PASSWORD" ] || [ -z "$PRODUCER_TOKEN" ]; then
+            echo "::warning::Secrets PRODUCER_PASSWORD / PRODUCER_TOKEN absents : config producer non générée"
+          else
+            php tools/producer/make_config.php build/producer/config.php
+          fi
+
+      - name: Deploy /producer via rsync over SSH
+        env:
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          SSH_OPTS="ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1"
+          DEST="${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/producer/"
+          sshpass -e rsync -avz -e "$SSH_OPTS" --exclude='data/' --exclude='files/' build/producer/ "$DEST"
+          # Aperçus : miroir exact (--delete limité à files/).
+          sshpass -e rsync -az --delete -e "$SSH_OPTS" build/producer/files/ "${DEST}files/"
