@@ -24,7 +24,7 @@
  "etal_criee": {
   "tid": "eb527a1f6cb5496cb3e3642c0402aa21",
   "fichier": "objets/etal_criee.png",
-  "statut": "en_vol",
+  "statut": "succeeded",
   "essai": "override"
  },
  "bitte_amarrage": {
@@ -35,13 +35,13 @@
  "fontaine_place": {
   "tid": "41464a37e4024dd5af42f41dafa9e963",
   "fichier": "objets/fontaine_place.png",
-  "statut": "en_vol",
+  "statut": "succeeded",
   "essai": "override"
  },
  "banc_vert": {
   "tid": "d0993c64d5f74da9ba66407bec107686",
   "fichier": "objets/banc_vert.png",
-  "statut": "en_vol",
+  "statut": "succeeded",
   "essai": "override2"
  },
  "cachette_casier_homards": {

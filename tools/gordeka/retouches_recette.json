@@ -34,17 +34,23 @@
  "perso/kaio/walk": {
   "priority": "normal"
  },
- "perso/kaio/hunter_reveal": "He holds the flashlight clamped in the feathered tip of his grey wing, the wing stays a clean grey wing in every frame.",
+ "perso/kaio/hunter_reveal": {
+  "priority": "night"
+ },
  "perso/kaio/victory": {
-  "action": "Clear joyful celebration: he hops up and down on his webbed feet several times, both grey wings spread wide open and flapping at each hop, beak wide open in a happy squawk."
+  "action": "Clear joyful celebration: he hops up and down on his webbed feet several times, both grey wings spread wide open and flapping at each hop, beak wide open in a happy squawk.",
+  "priority": "night"
  },
  "perso/kaio/search": {
-  "action": "Clear rummaging: he bends his whole body far forward and pokes his beak down again and again into a hiding spot in front of him, both grey wings flapping and scraping fast at his sides, tail up."
+  "action": "Clear rummaging: he bends his whole body far forward and pokes his beak down again and again into a hiding spot in front of him, both grey wings flapping and scraping fast at his sides, tail up.",
+  "priority": "night"
  },
  "perso/maia/hunter_reveal": {
   "priority": "normal"
  },
- "perso/ramuntxo/walk": "His small brown mustache and the small Basque flag on his hat band stay clearly drawn in every frame.",
+ "perso/ramuntxo/walk": {
+  "priority": "night"
+ },
  "perso/louis/run_scared": {
   "action": "His eyes stay wide open and visible in every frame, his hands never cover his face.",
   "priority": "normal"
@@ -141,5 +147,239 @@
  "perso/amaia/hunter_reveal": {
   "action": "She takes a small flashlight and holds it perfectly still with her arm stretched forward; her hand does not move at all once the light is on. No beam is drawn, only the small lamp in her hand.",
   "priority": "normal"
+ },
+ "perso/karramarro/idle": {
+  "priority": "night"
+ },
+ "perso/karramarro/walk": {
+  "priority": "night"
+ },
+ "perso/karramarro/run_scared": {
+  "priority": "night"
+ },
+ "perso/karramarro/hide_in": {
+  "priority": "night"
+ },
+ "perso/karramarro/hide_out": {
+  "priority": "night"
+ },
+ "perso/karramarro/found": {
+  "priority": "night"
+ },
+ "perso/karramarro/trap": {
+  "priority": "night"
+ },
+ "perso/karramarro/trapped": {
+  "priority": "night"
+ },
+ "perso/karramarro/search": {
+  "priority": "night"
+ },
+ "perso/karramarro/detect": {
+  "priority": "night"
+ },
+ "perso/karramarro/extract": {
+  "priority": "night"
+ },
+ "perso/karramarro/victory": {
+  "priority": "night"
+ },
+ "perso/karramarro/sad": {
+  "priority": "night"
+ },
+ "perso/karramarro/hunter_reveal": {
+  "priority": "night"
+ },
+ "perso/karramarro/emote_salut": {
+  "priority": "night"
+ },
+ "perso/karramarro/emote_rire": {
+  "priority": "night"
+ },
+ "perso/karramarro/emote_danse": {
+  "priority": "night"
+ },
+ "perso/karramarro/emote_pouce": {
+  "priority": "night"
+ },
+ "perso/karramarro/emote_chut": {
+  "priority": "night"
+ },
+ "perso/karramarro/emote_langue": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/run_scared": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/hide_in": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/hide_out": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/found": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/trap": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/trapped": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/search": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/detect": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/extract": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/victory": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/sad": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/hunter_reveal": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/emote_salut": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/emote_rire": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/emote_danse": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/emote_pouce": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/emote_chut": {
+  "priority": "night"
+ },
+ "perso/ramuntxo/emote_langue": {
+  "priority": "night"
+ },
+ "perso/itsaso/idle": {
+  "priority": "night"
+ },
+ "perso/itsaso/walk": {
+  "priority": "night"
+ },
+ "perso/itsaso/run_scared": {
+  "priority": "night"
+ },
+ "perso/itsaso/hide_in": {
+  "priority": "night"
+ },
+ "perso/itsaso/hide_out": {
+  "priority": "night"
+ },
+ "perso/itsaso/found": {
+  "priority": "night"
+ },
+ "perso/itsaso/trap": {
+  "priority": "night"
+ },
+ "perso/itsaso/trapped": {
+  "priority": "night"
+ },
+ "perso/itsaso/search": {
+  "priority": "night"
+ },
+ "perso/itsaso/detect": {
+  "priority": "night"
+ },
+ "perso/itsaso/extract": {
+  "priority": "night"
+ },
+ "perso/itsaso/victory": {
+  "priority": "night"
+ },
+ "perso/itsaso/sad": {
+  "priority": "night"
+ },
+ "perso/itsaso/hunter_reveal": {
+  "priority": "night"
+ },
+ "perso/itsaso/emote_salut": {
+  "priority": "night"
+ },
+ "perso/itsaso/emote_rire": {
+  "priority": "night"
+ },
+ "perso/itsaso/emote_danse": {
+  "priority": "night"
+ },
+ "perso/itsaso/emote_pouce": {
+  "priority": "night"
+ },
+ "perso/itsaso/emote_chut": {
+  "priority": "night"
+ },
+ "perso/itsaso/emote_langue": {
+  "priority": "night"
+ },
+ "perso/peio/idle": {
+  "priority": "night"
+ },
+ "perso/peio/walk": {
+  "priority": "night"
+ },
+ "perso/peio/run_scared": {
+  "priority": "night"
+ },
+ "perso/peio/hide_in": {
+  "priority": "night"
+ },
+ "perso/peio/hide_out": {
+  "priority": "night"
+ },
+ "perso/peio/found": {
+  "priority": "night"
+ },
+ "perso/peio/trap": {
+  "priority": "night"
+ },
+ "perso/peio/trapped": {
+  "priority": "night"
+ },
+ "perso/peio/search": {
+  "priority": "night"
+ },
+ "perso/peio/detect": {
+  "priority": "night"
+ },
+ "perso/peio/extract": {
+  "priority": "night"
+ },
+ "perso/peio/victory": {
+  "priority": "night"
+ },
+ "perso/peio/sad": {
+  "priority": "night"
+ },
+ "perso/peio/hunter_reveal": {
+  "priority": "night"
+ },
+ "perso/peio/emote_salut": {
+  "priority": "night"
+ },
+ "perso/peio/emote_rire": {
+  "priority": "night"
+ },
+ "perso/peio/emote_danse": {
+  "priority": "night"
+ },
+ "perso/peio/emote_pouce": {
+  "priority": "night"
+ },
+ "perso/peio/emote_chut": {
+  "priority": "night"
+ },
+ "perso/peio/emote_langue": {
+  "priority": "night"
  }
 }

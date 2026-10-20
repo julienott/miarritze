@@ -2,40 +2,80 @@
  "polygons": [
   [
    [
-    7,
-    98
+    6,
+    92
    ],
    [
-    107,
-    98
+    64,
+    125
    ],
    [
-    107,
-    122
+    104,
+    106
    ],
    [
-    7,
-    122
+    46,
+    73
    ]
   ]
  ],
  "convex_polygons": [
   [
    [
-    23,
-    114
+    34,
+    109
    ],
    [
-    123,
-    114
+    35,
+    108
    ],
    [
-    123,
-    138
+    51,
+    100
    ],
    [
-    23,
-    138
+    62,
+    95
+   ],
+   [
+    63,
+    95
+   ],
+   [
+    67,
+    97
+   ],
+   [
+    109,
+    121
+   ],
+   [
+    109,
+    122
+   ],
+   [
+    108,
+    123
+   ],
+   [
+    92,
+    131
+   ],
+   [
+    81,
+    136
+   ],
+   [
+    80,
+    136
+   ],
+   [
+    76,
+    134
+   ],
+   [
+    34,
+    110
    ]
   ]
  ],
@@ -46,21 +86,23 @@
   129,
   144
  ],
- "front_y": 127,
- "back_y": 92,
- "baseline_y": 110,
- "height_px": 127,
+ "front_y": 125,
+ "back_y": 73,
+ "baseline_y": 99,
+ "height_px": 125,
  "blocks_view": false,
- "sort_y": 108,
- "camera": "front34",
+ "sort_y": 89,
+ "camera": "corner",
  "scale": 2.0139,
- "depth_px": 35.0,
+ "depth_px": 52.0,
  "shapes": [
-  "sur pieds (pieds arri\u00e8re)"
+  "manuel"
  ],
- "confidence": 0.9,
+ "confidence": 0.65,
  "warnings": [
-  "socle de sol d\u00e9tect\u00e9 (19% de l'objet) : traversable, hors occluder"
+  "socle de sol d\u00e9tect\u00e9 (19% de l'objet) : traversable, hors occluder",
+  "cam\u00e9ra en coin : emprise approch\u00e9e (losange sur le bord bas)",
+  "emprise impos\u00e9e (footprint_override)"
  ],
  "size": [
   113,
