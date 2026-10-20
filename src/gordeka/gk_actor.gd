@@ -176,6 +176,10 @@ func _draw() -> void:
 	# Ombre au sol, et anneau rouge sous le chasseur.
 	if not ghost:
 		GkDraw.ellipse(self, Vector2(0, 5.5 * u), 10.5 * u, 3.6 * u, Color(0, 0, 0, 0.22))
+	elif perso != null and perso.hover_lift > 0.0:
+		# Fantôme en vol (TEMPORAIRE, GkPerso) : l'ombre reste au sol, plus petite et plus pâle en haut.
+		var k: float = clampf(1.0 - perso.hover_lift / 40.0, 0.4, 1.0)
+		GkDraw.ellipse(self, Vector2(0, 5.5 * u), 9.0 * u * k, 3.0 * u * k, Color(0, 0, 0, 0.16 * k))
 	if role == Role.HUNTER:
 		var ring: PackedVector2Array = GkDraw.ellipse_points(Vector2(0, 5.5 * u), 13.0 * u, 5.0 * u, 32)
 		ring.append(ring[0])

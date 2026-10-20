@@ -111,6 +111,9 @@ s'amuser, sans classement en ligne en v1.
   spectateur (*décidé le 2026-10-19*). Il se déplace
   librement, traverse les murs, voit tout, mais ne peut plus rien faire ni être vu par le chasseur.
   Il peut envoyer les emotes prédéfinies.
+  *TEMPORAIRE (2026-10-20, génération des fantômes arrêtée)* : les persos sans planches ghost/ghost_move
+  volent avec leurs idle/walk (vol stationnaire, ombre au sol) et des ailes blanches dessinées par code
+  (`tools/gordeka/dessine_ailes.py`) ; ceux qui ont leurs planches gardent leurs ailes, avec le même vol.
 - ~~Un chassé ne peut pas « sauver » un autre en v1.~~ **Délivrance** (*essai A/B du 2026-10-20, à
   valider par Julien*) : un chassé libre et hors de vue qui reste 3 s près d'un fantôme le ramène en jeu
   (anneau vert sur le fantôme), **une seule fois par round**, +2 points au sauveur.

@@ -117,6 +117,15 @@ var _qa_place: Array = []
 ## formes du décor, C le perso suivant ; Échap ou Quitter : retour au menu. À retirer après la mise au point.
 var visite: String = ""
 var _figurants: bool = false
+## QA de la visite : `--gk-visite-fantome` (ou la touche G) met le joueur en fantôme ; `--gk-qa-tourne`
+## le fait tourner en rond tout seul ; `--gk-qa-rafale=<dossier>,<n>,<intervalle s>,<début s>` enregistre
+## n captures d'écran de suite puis quitte (planches d'animation).
+var _visite_fantome: bool = false
+var _qa_tourne: bool = false
+var _qa_zoom: float = 0.0             # QA `--gk-qa-zoom=<z>` : zoom de la caméra du joueur
+var _rafale: Array = []
+var _rafale_t: float = 0.0
+var _rafale_i: int = 0
 
 
 func _ready() -> void:
@@ -126,6 +135,14 @@ func _ready() -> void:
 			visite = arg.trim_prefix("--gk-visite=")
 		elif arg == "--gk-visite-figurants" or arg == "--gk-visite_figurants=1":
 			_figurants = true
+		elif arg == "--gk-visite-fantome":
+			_visite_fantome = true
+		elif arg == "--gk-qa-tourne":
+			_qa_tourne = true
+		elif arg.begins_with("--gk-qa-zoom="):
+			_qa_zoom = float(arg.trim_prefix("--gk-qa-zoom="))
+		elif arg.begins_with("--gk-qa-rafale="):
+			_rafale = Array(arg.trim_prefix("--gk-qa-rafale=").split(","))
 		elif arg == "--gk-bots-only":
 			_bots_only = true
 		elif arg == "--gk-local-bot":
@@ -252,6 +269,8 @@ func _make_view() -> void:
 	_camera.position_smoothing_speed = 8.0
 	# Zoom proche d'Among Us : un personnage fait environ 1/11 de la hauteur d'écran.
 	_camera.zoom = Vector2(1.25, 1.25)
+	if _qa_zoom > 0.0:
+		_camera.zoom = Vector2(_qa_zoom, _qa_zoom)
 	_camera.limit_left = 0
 	_camera.limit_top = 0
 	_camera.limit_right = int(map.size_px().x)
@@ -410,8 +429,33 @@ func _start_visite() -> void:
 			a.visible = false
 			a.collision_layer = 0
 	messages.clear()
-	_say("Visite %s (debug) : F formes, C perso" % ("du chasseur" if local == hunter else "du chassé"),
+	if _visite_fantome:
+		visite_toggle_ghost()
+	_say("Visite %s (debug) : F formes, C perso, G fantôme" % ("du chasseur" if local == hunter else "du chassé"),
 		Color("ffd34a"), 4.0)
+
+
+## Visite : le chassé passe en fantôme (et revient), pour voir le vol et les ailes.
+func visite_toggle_ghost() -> void:
+	if local == hunter:
+		return
+	local.set_role(GkActor.Role.HIDER if local.role == GkActor.Role.GHOST else GkActor.Role.GHOST)
+
+
+## QA `--gk-qa-rafale` : captures successives de l'écran, puis on quitte.
+func _qa_rafale(dt: float) -> void:
+	_rafale_t += dt
+	var n: int = int(_rafale[1]) if _rafale.size() > 1 else 8
+	var step: float = float(_rafale[2]) if _rafale.size() > 2 else 0.12
+	var start: float = float(_rafale[3]) if _rafale.size() > 3 else 2.0
+	if _rafale_t < start + step * _rafale_i:
+		return
+	if _rafale_i >= n:
+		get_tree().quit()
+		return
+	DirAccess.make_dir_recursive_absolute(str(_rafale[0]))
+	get_viewport().get_texture().get_image().save_png(str(_rafale[0]).path_join("rafale_%02d.png" % _rafale_i))
+	_rafale_i += 1
 
 
 ## Visite : perso suivant du roster (seulement ceux qui sont dessinés).
@@ -439,6 +483,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			visite_toggle_formes()
 		KEY_C:
 			visite_next_character()
+		KEY_G:
+			visite_toggle_ghost()
 
 
 ## Tirage « en sac » : chacun est chasseur une fois avant qu'on recommence, jamais deux fois de suite.
@@ -536,6 +582,8 @@ func go_menu() -> void:
 # ---------------------------------------------------------------- boucle
 
 func _physics_process(dt: float) -> void:
+	if not _rafale.is_empty():
+		_qa_rafale(dt)
 	_last_dt = dt
 	_update_emotes(dt)
 	if _qa_cachette != "":
@@ -608,6 +656,8 @@ func _control(dt: float) -> void:
 			act = bool(cmd.get("action", false))
 		else:
 			move = input.move()
+			if _qa_tourne:
+				move = Vector2.from_angle(hunt_elapsed * 1.6)
 			act = input.take_action()
 		a.step(move, look_dir, dt)
 		if act:

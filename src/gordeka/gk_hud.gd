@@ -79,7 +79,7 @@ func _draw() -> void:
 	if game.visite != "":
 		# Visite de debug (temporaire) : pas de chrono, un bandeau discret.
 		draw_rect(Rect2(s.x * 0.5 - 170, 12, 340, 36), Color(0, 0, 0, 0.45))
-		_text(font, Vector2(s.x * 0.5, 37), "VISITE (debug) · F : formes · C : perso", 17, Color("ffd34a"))
+		_text(font, Vector2(s.x * 0.5, 37), "VISITE (debug) · F formes · C perso · G fantôme", 17, Color("ffd34a"))
 	else:
 		var phase_text: String = {GkGame.Phase.DRAW: "Tirage…", GkGame.Phase.HIDE: "Cachez-vous !",
 			GkGame.Phase.HUNT: "Chasse", GkGame.Phase.END: "Fin du round"}.get(game.phase, "")

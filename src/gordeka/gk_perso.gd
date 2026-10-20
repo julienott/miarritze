@@ -35,6 +35,22 @@ void fragment() {
 }
 """
 
+## TEMPORAIRE (Julien, 2026-10-20 : génération des fantômes arrêtée) : fantôme des persos sans planches
+## ghost/ghost_move = leurs idle/walk en vol stationnaire, avec des ailes blanches dessinées par code
+## (tools/gordeka/dessine_ailes.py). Les persos qui ont leurs planches fantôme (ailes comprises) gardent
+## les leurs, avec le même vol stationnaire. À retirer quand tous les persos auront leurs planches.
+const HOVER_PX: float = 14.0         # hauteur moyenne au-dessus du sol (px à l'écran)
+const HOVER_BOB_PX: float = 4.0      # amplitude du bobbing
+const HOVER_HZ: float = 1.0          # bobbing et battement d'ailes, par seconde
+const HOVER_TILT_DEG: float = 7.0    # penché vers l'avant en déplacement
+const HOVER_SWAY_PX: float = 2.0     # petite oscillation d'avance et de recul
+const HOVER_WALK_RATE: float = 0.45  # cadence de la marche en vol : elle « nage »
+const WING_PATH: String = "res://assets/gordeka/communs/aile_fantome"
+const WING_HEIGHT_K: float = 0.28    # hauteur de l'aile / hauteur du perso
+const WING_FLAP_DEG: float = 14.0
+const SHOULDER_K: float = 0.52       # épaule : part de la hauteur de la silhouette, depuis le haut
+const SHOULDER_INSET_K: float = 0.06 # rentrée dans le dos, en part de la largeur de la silhouette
+
 static var _anims: Dictionary = {}     # "louis/walk" -> {tex, mask, n, fps, loop, cell, feet}
 static var _shader: Shader
 ## QA (`--gk-mannequin`) : tous les persos en pantin articulé.
@@ -49,6 +65,11 @@ var _t: float = 0.0
 var _once: String = ""
 var _once_visible: bool = true
 var _float_t: float = 0.0
+## Hauteur de vol du fantôme (px à l'écran) : l'acteur dessine son ombre en conséquence.
+var hover_lift: float = 0.0
+var _wings: Array[Sprite2D] = []
+static var _wing_tex: Texture2D
+static var _wing_root: Vector2 = Vector2.ZERO
 
 
 ## Durée d'affichage du profil fixe quand un geste ponctuel n'a pas encore son animation (s).
@@ -184,7 +205,7 @@ func _set_anim(anim: String) -> void:
 	if pantin != null:
 		pantin.play(anim)
 		return
-	var d: Dictionary = _data(actor.character, anim)
+	var d: Dictionary = _get_data(anim)
 	if d.is_empty():
 		return
 	texture = d["tex"]
@@ -220,8 +241,11 @@ func _process(dt: float) -> void:
 	var ends: PackedFloat32Array = d["ends"]
 	var total: float = ends[ends.size() - 1]
 	var rate: float = 1.0
+	var fake: bool = _once == "" and _fake_ghost(_anim)
 	if CYCLE_S.has(_anim) and pantin == null and not d.has("static"):
 		rate = total / float(CYCLE_S[_anim]) * clampf(actor.velocity.length() / GkRules.px("speed_hider"), 0.5, 1.5)
+		if fake:
+			rate *= HOVER_WALK_RATE
 	_t += dt * rate
 	if _t >= total:
 		if _once != "":
@@ -266,16 +290,28 @@ func _process(dt: float) -> void:
 	var k: float = HEIGHT_PX / float(d["height"])
 	var lift: float = 0.0
 	var squash: float = 0.0
-	if CYCLE_S.has(_anim) and actor.velocity.length() > 5.0:
+	if CYCLE_S.has(_anim) and actor.velocity.length() > 5.0 and not ghost:
 		var b: float = absf(sin(_t / total * TAU))       # 0 au contact du pied, 1 en l'air
 		lift = BOUNCE_PX * (1.4 if _anim == "run_scared" else 1.0) * b
 		squash = SQUASH * pow(1.0 - b, 3.0)
 	scale = Vector2(k * (1.0 + squash * 0.6), k * (1.0 - squash))
-	position = Vector2(-fx * scale.x, actor.radius * 0.6 - feet.y * scale.y - lift) + pop
+	var anchor: Vector2 = Vector2(0.0, actor.radius * 0.6 - lift) + pop
+	var rot: float = 0.0
+	hover_lift = 0.0
 	if ghost:
-		# Le fantôme (ailes d'ange) flotte au-dessus du sol.
-		_float_t += get_process_delta_time()
-		position.y -= 10.0 + 5.0 * sin(_float_t * 3.0)
+		# Vol stationnaire : il décolle, monte et descend doucement, penché vers l'avant et avec un
+		# petit mouvement d'avance et de recul quand il se déplace ; l'ombre reste au sol (GkActor).
+		_float_t += dt
+		var w: float = TAU * HOVER_HZ * _float_t
+		hover_lift = HOVER_PX + HOVER_BOB_PX * sin(w)
+		anchor.y -= hover_lift
+		var moving: float = clampf(actor.velocity.length() / maxf(GkRules.px("speed_ghost"), 1.0), 0.0, 1.0)
+		anchor.x += face * HOVER_SWAY_PX * (0.5 + moving) * cos(w)
+		rot = face * deg_to_rad(HOVER_TILT_DEG) * moving
+	var o: Vector2 = Vector2(-fx * scale.x, -feet.y * scale.y)
+	rotation = rot
+	position = anchor + o.rotated(rot)
+	_update_wings(fake and ghost, d, f, flip_h, _float_t)
 	(material as ShaderMaterial).set_shader_parameter("couleur", actor.color)
 
 
@@ -290,4 +326,106 @@ func _pop_offset() -> Vector2:
 
 
 func _get_data(anim: String) -> Dictionary:
-	return _pantin_data(anim) if pantin != null else _data(actor.character, anim)
+	return _pantin_data(anim) if pantin != null else _data(actor.character, _source_anim(anim))
+
+
+## Planche réellement jouée : un fantôme sans planches fantôme prend idle (immobile) ou walk.
+func _source_anim(anim: String) -> String:
+	if not _fake_ghost(anim):
+		return anim
+	var alt: String = "walk" if anim == "ghost_move" else "idle"
+	if not ResourceLoader.exists((DIR % actor.character) + alt + ".png"):
+		alt = "idle"
+	return alt
+
+
+func _fake_ghost(anim: String) -> bool:
+	return (anim == "ghost" or anim == "ghost_move") and pantin == null \
+		and not ResourceLoader.exists((DIR % actor.character) + anim + ".png")
+
+
+## Épaule (dos) de chaque image d'une planche, en px de la case : bord gauche de la silhouette (le
+## perso regarde à droite) à SHOULDER_K de sa hauteur, un peu rentré. Lu une fois sur l'image.
+static func _shoulders(d: Dictionary) -> PackedVector2Array:
+	if d.has("shoulders"):
+		return d["shoulders"]
+	var out: PackedVector2Array = PackedVector2Array()
+	var cell: Vector2 = d["cell"]
+	var n: int = int(d["n"])
+	var img: Image = (d["tex"] as Texture2D).get_image()
+	if img != null and not img.is_empty():
+		img = img.duplicate() as Image
+		if img.is_compressed():
+			img.decompress()
+		img.convert(Image.FORMAT_RGBA8)
+		var q: int = 4                       # une mesure pour q px
+		var cw: int = maxi(1, int(cell.x) / q)
+		var ch: int = maxi(1, int(cell.y) / q)
+		img.resize(cw * n, ch, Image.INTERPOLATE_BILINEAR)
+		var px: PackedByteArray = img.get_data()
+		var w: int = cw * n
+		for f: int in n:
+			var top: int = -1
+			var bottom: int = -1
+			var left: int = cw
+			var right: int = -1
+			for y: int in ch:
+				for x: int in cw:
+					if px[(y * w + f * cw + x) * 4 + 3] > 96:
+						if top < 0:
+							top = y
+						bottom = y
+						left = mini(left, x)
+						right = maxi(right, x)
+			if top < 0:
+				out.append(cell * 0.5)
+				continue
+			var row: int = top + roundi(float(bottom - top) * SHOULDER_K)
+			var lx: int = cw
+			for x: int in cw:
+				if px[(row * w + f * cw + x) * 4 + 3] > 96:
+					lx = x
+					break
+			out.append(Vector2((float(lx) + float(right - left) * SHOULDER_INSET_K) * q, float(row) * q))
+	d["shoulders"] = out
+	return out
+
+
+## Ailes du fantôme sans planches fantôme : deux ailes dans le dos (celle du fond plus petite et
+## grisée), derrière le corps, qui battent au rythme du vol.
+func _update_wings(on: bool, d: Dictionary, f: int, flip: bool, t: float) -> void:
+	if not on or not ResourceLoader.exists(WING_PATH + ".png"):
+		for w: Sprite2D in _wings:
+			w.visible = false
+		return
+	if _wings.is_empty():
+		if _wing_tex == null:
+			_wing_tex = load(WING_PATH + ".png")
+			var j: Variant = JSON.parse_string(FileAccess.get_file_as_string(WING_PATH + ".json"))
+			var a: Array = (j as Dictionary).get("attache", [0, 0]) if j is Dictionary else [0, 0]
+			_wing_root = Vector2(float(a[0]), float(a[1]))
+		for i: int in 2:
+			var w: Sprite2D = Sprite2D.new()
+			w.texture = _wing_tex
+			w.centered = false
+			w.show_behind_parent = true
+			w.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+			if i == 0:
+				w.self_modulate = Color(0.82, 0.86, 0.92)     # aile du fond
+			add_child(w)
+			_wings.append(w)
+	var sh: PackedVector2Array = _shoulders(d)
+	var cell: Vector2 = d["cell"]
+	var p: Vector2 = sh[mini(f, sh.size() - 1)] if not sh.is_empty() else cell * 0.5
+	var k: float = WING_HEIGHT_K * float(d["height"]) / float(_wing_tex.get_height())
+	var flap: float = deg_to_rad(WING_FLAP_DEG) * sin(TAU * HOVER_HZ * t)
+	for i: int in 2:
+		var w: Sprite2D = _wings[i]
+		var kk: float = k * (0.85 if i == 0 else 1.0)
+		var at: Vector2 = p + (Vector2(cell.x * 0.03, -cell.y * 0.02) if i == 0 else Vector2.ZERO)
+		w.visible = true
+		w.offset = -_wing_root
+		w.position = Vector2(cell.x - at.x if flip else at.x, at.y)
+		w.scale = Vector2(-kk if flip else kk, kk)
+		var a: float = -flap * (0.8 if i == 0 else 1.0) - deg_to_rad(4.0 if i == 0 else 0.0)
+		w.rotation = -a if flip else a
