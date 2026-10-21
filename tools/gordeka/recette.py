@@ -36,6 +36,7 @@ import envoie_decor as ed  # noqa: E402
 import planche_recette as pr  # noqa: E402
 import masques_pf as mp  # noqa: E402
 import retire_ombre as ro  # noqa: E402
+import tenue_couleur as tc  # noqa: E402
 
 PY = nuit.PY
 DIR = os.path.join(ROOT, "tools", "rd", "out", "recette")
@@ -76,7 +77,7 @@ def telecharge(r, d):
 
 def payload_perso(pid, anim):
     pl = ap.payload(pid, anim)
-    pl["priority"] = "night"  # Julien 2026-10-20 : persos restants la nuit (1 h–8 h Paris), le jour pour le jeu
+    pl["priority"] = "normal"   # « night » quand la carte kanban porte le night shift (via retouches_recette)
     plus = lire(RETOUCHES, {}).get(f"perso/{pid}/{anim}")
     if isinstance(plus, dict):        # {"action": "...", "hold": {...}} : réglages du mannequin en plus
         if plus.get("action"):
@@ -234,6 +235,9 @@ class Routine:
             # Ombre peinte sous les pieds : le jeu ajoute déjà la sienne (Julien 2026-10-20).
             if ro.traite(a, b, False) > OMBRE_MIN_PX:
                 log("ombre peinte retirée :", a, b, ro.traite(a, b, True), "px")
+            # Peau confondue avec la tenue par SAM (Itsaso) : masque recalculé par la couleur.
+            if tc.traite(a, [b]):
+                log("tenue par la couleur :", a, b)
             base = f"assets/gordeka/persos/{a}/{b}"
             nuit.commit([base + ".png", base + "_tenue.png", base + ".json", f"tools/gordeka/taches_{a}.json"],
                         f"Gordeka : {a}, animation {b} (recette OK)")

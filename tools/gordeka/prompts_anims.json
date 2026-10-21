@@ -608,6 +608,16 @@
     "\\bhim\\b": "her",
     "\\bhis\\b": "her",
     "\\bhe\\b": "she"
+   },
+   "tenue_couleur": {
+    "teinte": [
+     196,
+     235
+    ],
+    "sat_min": 0.6,
+    "val_max": 0.82,
+    "liseré_px": 3,
+    "val_min": 0.42
    }
   },
   "peio": {
