@@ -1,0 +1,109 @@
+{
+ "motion": "hunter_reveal",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "playful determined grin, one eyebrow raised",
+ "tenue": "scarf",
+ "drive": {
+  "clip": "hunter_reveal",
+  "exaggerate": 1.4,
+  "bounce": 0.05
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. he rises tall on his legs and swings the flashlight held in his right pincer from his side to point it forward, eyes on stalks stretching tall The two big pincers: held up, clacking open and shut with the rhythm. The eyes on stalks: wobble with the motion, slightly delayed. The thin legs: all legs scuttle in a fast ripple, the crab keeps facing right. The small neckerchief scarf: stays tied in place, the two short tips flutter with the motion. the flashlight stays in his right pincer in every frame, a big readable body motion",
+ "frame_offsets": [
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [-13.0, 0.0],
+  [-27.0, 0.0],
+  [-41.5, 0.0],
+  [-34.0, 0.0],
+  [-26.0, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.0, 0.0],
+  [-16.5, 0.0],
+  [-16.5, 0.0],
+  [-16.5, 0.0],
+  [-17.0, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-17.5, 0.0],
+  [-18.0, 0.0],
+  [-18.0, 0.0],
+  [-18.0, 0.0],
+  [-17.5, 0.0],
+  [-17.0, 0.0],
+  [-17.0, 0.0]
+ ],
+ "lampe": {
+  "debut": 6,
+  "points": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   [216, 105],
+   [216, 104],
+   [217, 104],
+   [218, 102],
+   [220, 101],
+   [220, 101],
+   [220, 101],
+   [220, 101],
+   [220, 102],
+   [220, 103],
+   [220, 104],
+   [220, 105],
+   [220, 105],
+   [219, 105],
+   [219, 105],
+   [219, 104],
+   [219, 102],
+   [219, 102],
+   [219, 102],
+   [219, 102],
+   [220, 102],
+   [220, 102],
+   [220, 102],
+   [220, 102],
+   [220, 103],
+   [220, 104],
+   [220, 105]
+  ]
+ },
+ "entrees": {
+  "idle": {
+   "i": [19, 19, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
+   "e": [64, 64, 73, 75, 79, 75, 72, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 66, 66]
+  },
+  "walk": {
+   "i": [26, 26, 27, 30, 30, 17, 17, 14, 14, 14, 14, 14, 14, 14, 14, 15, 16, 16, 19, 15, 15, 15, 14, 14, 14, 14, 14, 15, 15, 15, 16, 19, 19],
+   "e": [59, 59, 68, 75, 83, 78, 74, 66, 66, 66, 65, 65, 65, 65, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 65, 65]
+  }
+ }
+}
