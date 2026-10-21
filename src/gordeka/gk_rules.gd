@@ -61,6 +61,36 @@ static func appliquer_options(choix: Dictionary) -> void:
 			data()[cle] = v
 
 
+## Réglages propres à une carte (zones.json → « regles », écrit par le générateur de la carte) : posés
+## par-dessus rules.json pour la partie, retirés quand elle se termine (`retire_carte`). Une clé passée
+## en ligne de commande (`--gk-rules=`, A/B) garde la priorité. Valeurs d'avant, pour les remettre.
+static var _carte: Dictionary = {}
+
+
+static func surcharge_carte(regles: Dictionary) -> void:
+	retire_carte()
+	var cli: Array = []
+	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--gk-rules="):
+			for pair: String in arg.trim_prefix("--gk-rules=").split(","):
+				cli.append(pair.split(":")[0])
+	for k: Variant in regles:
+		var key: String = str(k)
+		if cli.has(key):
+			continue
+		_carte[key] = data().get(key)
+		data()[key] = float(regles[k])
+
+
+static func retire_carte() -> void:
+	for k: String in _carte:
+		if _carte[k] == null:
+			data().erase(k)
+		else:
+			data()[k] = _carte[k]
+	_carte.clear()
+
+
 static func f(key: String) -> float:
 	return float(data().get(key, 0.0))
 

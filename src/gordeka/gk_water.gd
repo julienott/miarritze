@@ -7,12 +7,26 @@ var map: GkMap
 var _t: float = 0.0
 var _acc: float = 0.0
 var _rects: Array[Rect2i] = []
+## Eau couverte par une image (texture de mer) : seulement l'écume au pied des quais et des reflets
+## qui scintillent par-dessus (provisoire, en attendant les boucles eau_mer et bord_quai_eau).
+var _over: Array[Rect2i] = []
 
 
 func _ready() -> void:
 	# L'eau couverte par une image du décor (texture de mer, lavoir…) n'est plus dessinée ici ; sous
 	# un objet posé sur l'eau (barques), si.
 	_rects = map.merged_rects("~", map.decor.covered if map.decor else {})
+	if map.decor:
+		var mine: Dictionary = {}
+		for r: Rect2i in _rects:
+			for y: int in range(r.position.y, r.end.y):
+				for x: int in range(r.position.x, r.end.x):
+					mine[Vector2i(x, y)] = true
+		# Le lavoir (objet posé sur « ~ ») n'est pas la mer.
+		for c: Vector2i in map.decor.covered:
+			if map.at(c) == "~" and not mine.has(c) and map.decor.zone_at(c) >= 0 \
+					and map.zones[map.decor.zone_at(c)]["name"] != "Lavoir":
+				_over.append(Rect2i(c, Vector2i.ONE))
 	if map.decor:
 		for c: Vector2i in map.decor.water_under:
 			_rects.append(Rect2i(c, Vector2i.ONE))
@@ -48,6 +62,27 @@ func _draw() -> void:
 	for r: Rect2i in _rects:
 		if r.intersects(vis):
 			rects.append(r.intersection(vis))
+	for r: Rect2i in _over:
+		if not r.intersects(vis):
+			continue
+		var x: int = r.position.x
+		var y: int = r.position.y
+		var above: String = map.at(Vector2i(x, y - 1))
+		if above != "~" and above != "B":
+			var y1: float = y * t + 8.0 + 4.0 * sin(_t * 1.8 + x * 0.7)
+			draw_line(Vector2(x * t, y1), Vector2((x + 1) * t, y1 + 2.0 * sin(_t * 2.3 + x)), Color(1, 1, 1, 0.55), 6.0)
+			draw_line(Vector2(x * t + 10, y1 + 10), Vector2((x + 1) * t - 14, y1 + 10), Color(1, 1, 1, 0.25), 3.0)
+		var below: String = map.at(Vector2i(x, y + 1))
+		if below != "~" and below != "B":
+			var y2: float = (y + 1) * t - 6.0 + 3.0 * sin(_t * 1.6 + x * 0.9)
+			draw_line(Vector2(x * t, y2), Vector2((x + 1) * t, y2), Color(1, 1, 1, 0.45), 5.0)
+		var h: int = absi(x * 92821 ^ y * 68917) % 11
+		if h < 2:
+			var k: float = fmod(_t * 0.45 + float(h) * 0.37 + float(x) * 0.13, 1.0)
+			var a: float = sin(k * PI)
+			var p: Vector2 = (Vector2(x, y) + Vector2(0.3 + 0.4 * float(h), 0.5)) * t
+			draw_line(p - Vector2(7, 0) * a, p + Vector2(7, 0) * a, Color(1, 1, 1, 0.7 * a), 3.0)
+			draw_line(p - Vector2(0, 5) * a, p + Vector2(0, 5) * a, Color(1, 1, 1, 0.5 * a), 2.0)
 	for r: Rect2i in rects:
 		draw_rect(Rect2(Vector2(r.position) * t, Vector2(r.size) * t), Color("2e86c1"))
 	for r: Rect2i in rects:

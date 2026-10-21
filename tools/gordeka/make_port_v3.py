@@ -11,11 +11,16 @@ Part de la carte v2 (make_port_v2.py, avec sa passe « tension ») et applique d
   densite     objets le long des murs (barriques qui cachent, pots, casiers, bittes qui ne cachent pas),
               jamais devant une porte, en laissant toujours 2 cases de passage ;
   cachettes   cachettes en plus dans les couloirs (niches de la rue) et dans les grandes salles ;
+  liaisons    boucle du sud : terrasse, lavoir et atelier reliés entre eux ;
+  sorties     abords des sorties dégagés, pas de cachette tout près ;
   entrees     une barrique décalée juste derrière chaque porte : la ligne de vue est coupée à l'entrée ;
   ornements   décor sans effet de jeu (decor.json) : lanternes, bouées, filets, fanions, linge, fumée…
 
-  make_port_v3.py [--passes ruelles,salles,densite,cachettes,ornements] [--id port_v3] [--graine 7]
-                  [--pas 5] [--hauts 0.45]
+  make_port_v3.py [--passes ruelles,salles,cachettes,sorties,entrees,densite,ornements] [--id port_pecheurs]
+                  [--graine 7] [--pas 5] [--hauts 0.45] [--regles exits_open_at:110,gateaux_nombre:6]
+
+Sans option : la carte retenue (essai v3d du 2026-10-21), écrite dans assets/maps/port_pecheurs, carte par
+défaut du jeu. La v2 d'avant reste générée à part par make_port_v2.py (assets/maps/port_v2) pour l'A/B.
 
 Écrit assets/maps/<id>/map.txt, zones.json (« decor » : port_pecheurs, le décor en images est partagé)
 et decor.json (objets imposés et ornements, lus par src/gordeka/gk_decor.gd). Vérifie que tout est
@@ -103,9 +108,32 @@ def cachettes():
     for (x, y) in ((41, 26), (48, 26), (22, 32)):
         if at(x, y) == "#":
             put(x, y, 1, 1, "H")
+            # Niche de deux cases : la cachette garde deux côtés libres (on en ressort par le côté).
+            ouv = [(dx, dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)) if at(x + dx, y + dy) in ".ES"]
+            if len(ouv) == 1:
+                dx, dy = ouv[0]
+                for lx, ly in ((x + dy, y + dx), (x - dy, y - dx)):
+                    if at(lx, ly) == "#" and at(lx + dx, ly + dy) in ".ES":
+                        put(lx, ly, 1, 1, ".")
+                        break
     for (x, y) in ((47, 11), (66, 2), (63, 21), (16, 36)):
         if at(x, y) == ".":
             put(x, y, 1, 1, "H")
+
+
+def sorties():
+    """Sorties visibles et exposées (jeux d'extraction) : rien qui cache à leurs abords, pas de cachette
+    à moins de 8 cases (on n'attend pas l'ouverture caché à côté)."""
+    put(92, 30, 2, 2, ".")                      # escalier : les caisses derrière le mur cachaient l'approche
+    put(92, 8, 1, 1, ".")                       # phare : le coffre à cordages était à 5 cases de l'échelle
+    put(84, 1, 1, 1, "H")                       # … il passe à l'entrée du phare, côté criée
+
+
+def liaisons():
+    """Boucle du sud (Among Us : pas de salle à une seule entrée, une grande boucle et des raccourcis) :
+    terrasse ↔ lavoir ↔ atelier se touchent, les salles du bas deviennent des passages."""
+    put(39, 36, 2, 2, ".")                      # terrasse → lavoir, par le fond du bar
+    put(56, 35, 3, 2, ".")                      # lavoir → atelier
 
 
 # ------------------------------------------------------------------ densité le long des murs
@@ -378,11 +406,16 @@ def largeur_un(avant):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--passes", default="ruelles,salles,densite,cachettes,ornements")
-    ap.add_argument("--id", default="port_v3")
+    # Variante retenue (essai « v3d » du 2026-10-21, docs/GORDEKA_EQUILIBRAGE.md) : carte par défaut du jeu.
+    ap.add_argument("--passes", default="ruelles,salles,cachettes,sorties,entrees,densite,ornements")
+    ap.add_argument("--id", default="port_pecheurs")
     ap.add_argument("--graine", type=int, default=7)
     ap.add_argument("--pas", type=int, default=5)
     ap.add_argument("--hauts", type=float, default=0.45)
+    # Sorties ouvertes à 110 s (essai 5 du 2026-10-21 : plus riche, la carte avantage les chassés) et 6 gâteaux
+    # au lieu de 4 (essai 7 : les chassés bougent autant qu'en v2).
+    ap.add_argument("--regles", default="exits_open_at:110,gateaux_nombre:6",
+                    help="réglages propres à la carte (zones.json → regles), k:v,… (« » : aucun)")
     a = ap.parse_args()
     passes = [p for p in a.passes.split(",") if p]
     v2.build()
@@ -394,6 +427,10 @@ def main():
         salles()
     if "cachettes" in passes:
         cachettes()
+    if "sorties" in passes:
+        sorties()
+    if "liaisons" in passes:
+        liaisons()
     if "entrees" in passes:
         entrees(a.graine)
     if "densite" in passes:
@@ -406,12 +443,17 @@ def main():
         fh.write("\n".join("".join(r) for r in g) + "\n")
     zones = [{"name": n, "rect": [x, y, w, h]} for (n, x, y, w, h) in ZONES]
     exits = [{"zone": ZONES[zone_of(*grp[0])][0], "tiles": [list(t) for t in grp]} for grp in v2.exit_groups()]
+    regles = {kv.split(":")[0]: float(kv.split(":")[1]) for kv in a.regles.split(",") if ":" in kv}
     json.dump({"name": "Port des Pêcheurs", "version": 3, "decor": "port_pecheurs", "passes": passes,
-               "zones": zones, "exits": exits}, open(os.path.join(out, "zones.json"), "w"), ensure_ascii=False, indent=1)
+               "regles": regles, "zones": zones, "exits": exits}, open(os.path.join(out, "zones.json"), "w"), ensure_ascii=False, indent=1)
     json.dump({"_doc": "Placement du décor propre à cette carte (tools/gordeka/make_port_v3.py), lu par "
                        "src/gordeka/gk_decor.gd : objets imposés ou en miroir, ornements sans effet de jeu.",
                **DECOR}, open(os.path.join(out, "decor.json"), "w"), ensure_ascii=False, indent=1)
     ok = v2.check()
+    for y in range(H):
+        for x in range(W):
+            if at(x, y) == "H" and sum(at(x + dx, y + dy) in ".ES" for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))) < 2:
+                print("  cachette avec un seul côté libre :", (x, y))
     for b in formes_caisses():
         print("  groupe de caisses sans image à sa forme :", b)
     un = largeur_un(avant)

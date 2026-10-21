@@ -117,6 +117,7 @@ var _rescues: int = 0                   # délivrances déjà faites ce round
 ## Mesures de tension (`--gk-stats`, docs/GORDEKA_EQUILIBRAGE.md) : état par chassé (id → {…}) pour
 ## les frôlements, les « vu puis perdu », le mouvement et les changements de planque.
 var _tens: Dictionary = {}
+var _heat_t: float = 0.0
 ## Statistiques du dernier round terminé (tests).
 var last_stats: Dictionary = {}
 ## Détection progressive (`idee_detection`) : jauge affichée au-dessus du chasseur (la plus haute des
@@ -173,6 +174,10 @@ var versus: GkVersus
 var podium: GkPodium
 
 
+func _exit_tree() -> void:
+	GkRules.retire_carte()
+
+
 func _ready() -> void:
 	visite = str(config.get("visite", ""))
 	for arg: String in GkRules.args():
@@ -198,6 +203,9 @@ func _ready() -> void:
 			use_3d = true
 		elif arg.begins_with("--gk-level="):
 			config["level"] = arg.trim_prefix("--gk-level=")
+		elif arg.begins_with("--gk-map="):
+			# Variante de carte (assets/maps/<id>/, tools/gordeka/make_port_v3.py) : essais A/B.
+			config["map"] = arg.trim_prefix("--gk-map=")
 		elif arg.begins_with("--gk-players="):
 			config["players"] = int(arg.trim_prefix("--gk-players="))
 		elif arg.begins_with("--gk-hunter-level="):
@@ -231,6 +239,8 @@ func _ready() -> void:
 	map.draw_2d = not use_3d
 	add_child(map)
 	map.load_map(str(config.get("map", "port_pecheurs")))
+	# Réglages propres à la carte (zones.json → « regles »), retirés à la sortie de la partie.
+	GkRules.surcharge_carte(map.regles)
 	if not use_3d:
 		var water: GkWater = GkWater.new()
 		water.map = map
@@ -436,7 +446,12 @@ func _start_round() -> void:
 		"entrees_cachette": 0, "ejections_cachette": 0, "trouves_en_cachette": 0, "sorties": 0,
 		"evasions_de_vue": 0, "t_trouves": [], "lieux_trouves": [], "sorties_round": open_exit_zones.duplicate(),
 		"chatouilles": 0, "delivres": 0, "grincements": 0, "gateaux": 0, "mouettes": 0,
-		"trouves_apres_bruit": 0, "elan_s": 0.0, "fantome_s": 0.0}
+		"trouves_apres_bruit": 0, "elan_s": 0.0, "fantome_s": 0.0,
+		# Carte (tools/gordeka/ab_tension.py chaleur) : présence par case (« x,y » → s, échantillon par
+		# seconde), entrées par cachette, lieux des vu-perdu et des frôlements, sorties prises.
+		"chaleur": {}, "chaleur_chasseur": {}, "cachettes_entrees": {}, "lieux_vu_perdu": [],
+		"lieux_frolements": [], "sorties_lieux": []}
+	_heat_t = 0.0
 	_st.merge(tension_keys())
 	_tens.clear()
 	_revealed_at.clear()
@@ -1099,6 +1114,11 @@ func track_tension(dt: float) -> void:
 	if hunter == null or hunter.frozen:
 		return
 	var t: float = map.tile
+	_heat_t += dt
+	var sample: bool = _heat_t >= 1.0
+	if sample:
+		_heat_t -= 1.0
+		_heat(_st["chaleur_chasseur"], hunter.position)
 	if hunter.chase_left > 0.0:
 		_st["poursuite_s"] += dt
 	for a: GkActor in actors:
@@ -1112,6 +1132,8 @@ func track_tension(dt: float) -> void:
 				"doute": false, "last": a.position, "anchor": a.position, "anchor_t": 0.0,
 				"spot": Vector2.INF, "escaped_at": -100.0}
 		var s: Dictionary = _tens[a.id]
+		if sample:
+			_heat(_st["chaleur"], a.position)
 		# Frôlements : épisode ouvert sous r cases, refermé au-delà de r + TENSION_HYST.
 		var d: float = a.position.distance_to(hunter.position) / t
 		for r: int in [2, 3]:
@@ -1121,6 +1143,8 @@ func track_tension(dt: float) -> void:
 			elif bool(s[k]) and d > float(r) + TENSION_HYST:
 				s[k] = false
 				_st["frolements_%d" % r] += 1
+				if r == 2:
+					_st["lieux_frolements"].append(_tile_list(a.position))
 				if r == 2 and bool(s["near2_in"]):
 					_st["frolements_2_cachette"] += 1
 		s["near2_in"] = bool(s["near2"]) and (bool(s["near2_in"]) or a.hidden_in >= 0)
@@ -1136,6 +1160,7 @@ func track_tension(dt: float) -> void:
 				s["vu"] = false
 				s["escaped_at"] = hunt_elapsed
 				_st["vu_perdu"] += 1
+				_st["lieux_vu_perdu"].append(_tile_list(a.position))
 		# Doutes : la jauge passe le seuil du « ? », puis retombe à zéro sans capture.
 		if not bool(s["doute"]) and a.gauge >= GkRules.f("detection_doute"):
 			s["doute"] = true
@@ -1167,6 +1192,18 @@ func track_tension(dt: float) -> void:
 				if s["spot"] != Vector2.INF:
 					_st["changements_planque"] += 1
 				s["spot"] = anchor
+
+
+## Présence d'un perso sur sa case (statistiques de carte, une seconde par échantillon).
+func _heat(d: Dictionary, p: Vector2) -> void:
+	var tt: Vector2i = map.to_tile(p)
+	var k: String = "%d,%d" % [tt.x, tt.y]
+	d[k] = int(d.get(k, 0)) + 1
+
+
+func _tile_list(p: Vector2) -> Array:
+	var tt: Vector2i = map.to_tile(p)
+	return [tt.x, tt.y]
 
 
 func _found(a: GkActor, via: String = "vue") -> void:
@@ -1243,6 +1280,8 @@ func _enter_cachette(a: GkActor, i: int) -> void:
 	_open_cachette(c, 0.0, dive, GkRules.f("cachette_shake_in"))
 	if _stats and phase == Phase.HUNT:
 		_st["entrees_cachette"] += 1
+		var ck: String = "%d,%d" % [(c["tile"] as Vector2i).x, (c["tile"] as Vector2i).y]
+		_st["cachettes_entrees"][ck] = int(_st["cachettes_entrees"].get(ck, 0)) + 1
 
 
 func _leave_cachette(a: GkActor, forced: bool) -> void:
@@ -1691,6 +1730,8 @@ func _update_exits(dt: float) -> void:
 				a.set_role(GkActor.Role.OUT)
 				if _stats:
 					_st["sorties"] += 1
+					var zi: int = map.zone_of(map.to_tile(a.position))
+					_st["sorties_lieux"].append(str(map.zones[zi]["name"]) if zi >= 0 else "?")
 				_give(a, GkRules.score("hider_extract"))
 				_say("%s s'est échappé !" % a.display_name, Color("6fe08a"), 2.0)
 		else:

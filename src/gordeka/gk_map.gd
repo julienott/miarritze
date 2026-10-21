@@ -23,6 +23,11 @@ const TILE_FLOORS: Dictionary = {":": Color("e6cf98"), "=": Color("b8b2a6")}
 const FLOOR_TINTS: Array[Color] = [Color("d9d2c3"), Color("cfc8b6"), Color("d4cdbf")]
 
 var map_id: String = ""
+## Décor en images de la carte (index.json → carte) : une variante de carte (zones.json → « decor »)
+## reprend celui de la carte dont elle dérive.
+var decor_id: String = ""
+## Réglages propres à la carte (zones.json → « regles »), posés par GkGame (GkRules.surcharge_carte).
+var regles: Dictionary = {}
 var tiles: Array[String] = []
 var width: int = 0
 var height: int = 0
@@ -62,6 +67,8 @@ func load_map(id: String) -> void:
 	height = tiles.size()
 	width = tiles[0].length()
 	var zj: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://assets/maps/%s/zones.json" % id))
+	decor_id = str((zj as Dictionary).get("decor", id))
+	regles = (zj as Dictionary).get("regles", {})
 	zones.clear()
 	for z: Variant in (zj as Dictionary).get("zones", []):
 		var r: Array = (z as Dictionary)["rect"]
@@ -426,7 +433,11 @@ func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
 				"t": _low(ci, p3)
 				"c": _crate(ci, p3)
 				"B": _boat(ci, p3, rr.position.x * 3 + rr.position.y)
-				"#": _wall(ci, p3)
+				"#":
+					if zi < 0 and decor and decor.has_floor("#", -1):
+						_roofs(ci, rr)
+					else:
+						_wall(ci, p3)
 				"R": _block(ci, p3, Color("a07a58"), Color("6e5038"), 10.0)
 				"r": GkDraw.rbox(ci, p3.grow(-2), Color("9a7a5c"), 8.0, 2.0)
 				"v": _block(ci, p3, Color("6f9a55"), Color("4c7038"), 12.0)
@@ -447,6 +458,51 @@ func _wall(ci: CanvasItem, px: Rect2) -> void:
 	var y0: float = top.end.y
 	for x: float in range(int(px.position.x) + 24, int(px.end.x) - 8, 48):
 		ci.draw_line(Vector2(x, y0 + 4), Vector2(x, px.end.y - 4), Color(0, 0, 0, 0.18), 2.0)
+
+
+## Masses bâties entre les zones, vues du dessus : le toit de tuiles (image du décor, déjà posée par
+## GkDecor.draw_floors) cerné d'encre, et sur chaque case dont le sud donne sur le sol, la façade
+## blanche labourdine dessinée par le code (provisoire, en attendant facade_labourdine de pixelforge) :
+## colombages rouges, fenêtres à volets rouges ou verts, parfois une porte ou des géraniums.
+func _roofs(ci: CanvasItem, rr: Rect2i) -> void:
+	var t: float = tile
+	var ink: Color = GkDraw.INK
+	for y: int in range(rr.position.y, rr.end.y):
+		for x: int in range(rr.position.x, rr.end.x):
+			var c: Vector2i = Vector2i(x, y)
+			var o: Vector2 = Vector2(c) * t
+			for d: Vector2i in [Vector2i(0, -1), Vector2i(-1, 0), Vector2i(1, 0)]:
+				if at(c + d) != "#":
+					var a: Vector2 = o + (Vector2(0, 0) if d.x <= 0 else Vector2(t, 0))
+					var b: Vector2 = a + (Vector2(t, 0) if d.y != 0 else Vector2(0, t))
+					ci.draw_line(a, b, ink, 3.0)
+			var below: String = at(c + Vector2i(0, 1))
+			if below == "#" or below == "~" or y + 1 >= height:
+				continue
+			var h: float = t * 0.8
+			var f: Rect2 = Rect2(o + Vector2(0, t - h), Vector2(t, h))
+			ci.draw_rect(f, Color("f4f1ea"))
+			ci.draw_rect(Rect2(f.position, Vector2(t, 7)), Color("9e1b1b"))
+			ci.draw_rect(Rect2(f.position + Vector2(0, 7), Vector2(t, 5)), Color(0, 0, 0, 0.12))
+			var k: int = absi(x * 7 + y * 13) % 7
+			if k == 0:
+				# Porte rouge, linteau de grès.
+				ci.draw_rect(Rect2(f.position + Vector2(t * 0.3, h * 0.32), Vector2(t * 0.4, h * 0.68)), Color("9e1b1b"))
+				ci.draw_rect(Rect2(f.position + Vector2(t * 0.26, h * 0.26), Vector2(t * 0.48, 5)), Color("d9c39a"))
+			elif k != 3:
+				var shut: Color = Color("9e1b1b") if (x + y) % 3 != 0 else Color("2f6b45")
+				var wr: Rect2 = Rect2(f.position + Vector2(t * 0.34, h * 0.34), Vector2(t * 0.32, h * 0.36))
+				ci.draw_rect(wr, Color("33405a"))
+				ci.draw_rect(Rect2(wr.position - Vector2(t * 0.14, 0), Vector2(t * 0.13, wr.size.y)), shut)
+				ci.draw_rect(Rect2(wr.end - Vector2(0, wr.size.y), Vector2(t * 0.13, wr.size.y)), shut)
+				if k == 5:
+					for i: int in 3:
+						ci.draw_circle(wr.position + Vector2(wr.size.x * (0.2 + 0.3 * i), wr.size.y + 4), 4.5, Color("e3526b"))
+			ci.draw_line(f.position + Vector2(0, h), f.position + Vector2(t, h), ink, 3.0)
+			if at(c + Vector2i(-1, 0)) != "#" or at(c + Vector2i(-1, 1)) != "#" and at(c + Vector2i(-1, 1)) != ".":
+				ci.draw_line(f.position, f.position + Vector2(0, h), ink, 3.0)
+			if at(c + Vector2i(1, 0)) != "#":
+				ci.draw_line(f.position + Vector2(t, 0), f.position + Vector2(t, h), ink, 3.0)
 
 
 func _crate(ci: CanvasItem, px: Rect2) -> void:

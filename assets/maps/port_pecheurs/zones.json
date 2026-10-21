@@ -1,6 +1,20 @@
 {
  "name": "Port des Pêcheurs",
- "version": 2,
+ "version": 3,
+ "decor": "port_pecheurs",
+ "passes": [
+  "ruelles",
+  "salles",
+  "cachettes",
+  "sorties",
+  "entrees",
+  "densite",
+  "ornements"
+ ],
+ "regles": {
+  "exits_open_at": 110.0,
+  "gateaux_nombre": 6.0
+ },
  "zones": [
   {
    "name": "Jetée",

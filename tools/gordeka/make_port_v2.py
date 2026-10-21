@@ -5,13 +5,14 @@ Même taille que v1 (96 × 40, taille de The Skeld), mais façon Among Us : sall
 tailles variées reliées par des couloirs, une boucle (objet dont on fait le tour) et un repère
 basque par zone, une cachette par zone, 5 sorties possibles dont 2 tirées au sort par round.
 
-Écrit assets/maps/port_pecheurs/map.txt et zones.json (zones nommées + sorties possibles),
+Écrit assets/maps/port_v2/map.txt et zones.json (zones nommées + sorties possibles ; la carte par défaut,
+port_pecheurs, est la v3 depuis le 2026-10-21 : tools/gordeka/make_port_v3.py),
 vérifie que tout est atteignable et affiche quelques mesures (liaisons, distances aux sorties).
 
 Légende : . sol   # mur/bâtiment   c caisse   B bateau   (pleins, cachent la vue)
           t objet bas (bloque le passage, pas la vue)   ~ eau (idem)
           H cachette   E sortie possible   S départ
-Usage : make_port_v2.py [--sans-tension]
+Usage : make_port_v2.py [--sans-tension] [--id port_v2]
 
 Tension (2026-10-20, docs/GORDEKA_EQUILIBRAGE.md) : caisses qui coupent les longues lignes de vue
 (place, criée, jetée, escalier, atelier), coffres au milieu du quai nord, cachettes déplacées des
@@ -25,7 +26,10 @@ import sys
 from collections import deque
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-OUT = os.path.join(ROOT, "assets", "maps", "port_pecheurs")
+# Depuis la carte v3 (2026-10-21, make_port_v3.py écrit port_pecheurs), la v2 s'écrit à part, pour l'A/B :
+# assets/maps/port_v2 (`--id <carte>` pour un autre dossier ; « decor » : port_pecheurs, même décor).
+_ID = sys.argv[sys.argv.index("--id") + 1] if "--id" in sys.argv else "port_v2"
+OUT = os.path.join(ROOT, "assets", "maps", _ID)
 W, H = 96, 40
 g = [["#"] * W for _ in range(H)]
 TENSION = "--sans-tension" not in sys.argv
@@ -291,7 +295,7 @@ def main():
     zones = [{"name": n, "rect": [x, y, w, h]} for (n, x, y, w, h) in ZONES]
     exits = [{"zone": ZONES[zone_of(*grp[0])][0], "tiles": [list(t) for t in grp]} for grp in exit_groups()]
     with open(os.path.join(OUT, "zones.json"), "w") as fh:
-        json.dump({"name": "Port des Pêcheurs", "version": 2, "zones": zones, "exits": exits}, fh,
+        json.dump({"name": "Port des Pêcheurs", "version": 2, "decor": "port_pecheurs", "zones": zones, "exits": exits}, fh,
                   ensure_ascii=False, indent=1)
     ok = check()
     print(os.path.join(OUT, "map.txt"))

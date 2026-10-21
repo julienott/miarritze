@@ -17,6 +17,13 @@ extends Node2D
 ## - decal (et sorties, où l'on marche) : à plat, sous les persos.
 ## Ce nœud porte les objets debout : il rejoint le calque y-trié des persos (les persos passent
 ## derrière les objets hauts) ; `under` porte les ombres et ce qui est à plat.
+##
+## Placement propre à une carte (assets/maps/<id>/decor.json, écrit par tools/gordeka/make_port_v3.py) :
+## {objets: {"x,y": {id, miroir}}} impose l'élément d'un groupe de cases (clé : son coin haut gauche) et
+## le retourne en miroir (image, ombre, emprise et masque) ; {ornements: [{id, x, y, l, h, miroir}]}
+## pose des éléments sans effet de jeu (fanions, linge, lanternes, fumée…) : pied en (x, y) cases,
+## largeur l et hauteur h en cases. Un élément sans image mais avec « provisoire » (index.json) est
+## dessiné par le code (GkProvisoire) en attendant pixelforge.
 
 const DIR: String = "res://assets/gordeka/decor"
 ## Cases dont le sol « . » de la zone passe dessous (même règle que le dessin procédural).
@@ -70,6 +77,9 @@ var _floors: Dictionary = {}        # "car|zone" → {textures: Array, cases: Ve
 var _zone_grid: PackedInt32Array = PackedInt32Array()
 var _animated: Array = []
 var _t: float = 0.0
+## decor.json de la carte : objets imposés (« x,y » → {id, miroir}) et ornements.
+var _layout_objects: Dictionary = {}
+var _ornaments: Array = []
 
 
 ## Lit l'index et prépare sols et objets. Sans index (ou pour une autre carte), ne fait rien :
@@ -90,18 +100,25 @@ func setup(m: GkMap) -> void:
 			_zone_grid[y * map.width + x] = map.zone_of(Vector2i(x, y))
 	# Décor propre à la carte (assets/maps/<id>/decor/index.json : placeholders d'une nouvelle carte,
 	# images communes citées en res://) ; sinon le décor commun, si son index nomme cette carte.
-	var own: String = "res://assets/maps/%s/decor" % map.map_id
+	var own: String = "res://assets/maps/%s/decor" % map.decor_id
 	if _dir == DIR and FileAccess.file_exists(own.path_join("index.json")):
 		_dir = own
 	var path: String = _dir.path_join("index.json")
 	if not FileAccess.file_exists(path):
 		return
 	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-	if not data is Dictionary or str((data as Dictionary).get("carte", map.map_id)) != map.map_id:
+	if not data is Dictionary or str((data as Dictionary).get("carte", map.decor_id)) != map.decor_id:
 		return
 	elements = (data as Dictionary).get("elements", {})
+	var lp: String = "res://assets/maps/%s/decor.json" % map.map_id
+	if FileAccess.file_exists(lp):
+		var lay: Variant = JSON.parse_string(FileAccess.get_file_as_string(lp))
+		if lay is Dictionary:
+			_layout_objects = (lay as Dictionary).get("objets", {})
+			_ornaments = (lay as Dictionary).get("ornements", [])
 	_build_floors()
 	_build_objects()
+	_build_ornaments()
 	set_process(not _animated.is_empty())
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--gk-export-masques="):
@@ -272,7 +289,13 @@ func _build_objects() -> void:
 			var rect: Rect2i = Rect2i(cells[0], Vector2i.ONE)
 			for c: Vector2i in cells:
 				rect = rect.merge(Rect2i(c, Vector2i.ONE))
-			_place(_best(cands[key], rect.size), cells, rect, zone_at(t))
+			var lay: Dictionary = _layout_objects.get("%d,%d" % [rect.position.x, rect.position.y], {})
+			var id: String = str(lay.get("id", ""))
+			# Élément imposé sans image ni provisoire (variante pas encore livrée) : celui par défaut.
+			if not elements.has(id) or ((elements[id] as Dictionary).get("fichiers", []) as Array).is_empty() \
+					and str((elements[id] as Dictionary).get("provisoire", "")) == "":
+				id = _best(cands[key], rect.size)
+			_place(id, cells, rect, zone_at(t), bool(lay.get("miroir", false)))
 
 
 ## Cases contiguës (4-voisinage) de même caractère dans la même zone.
@@ -304,11 +327,13 @@ func _best(ids: Array, size: Vector2i) -> String:
 	return best
 
 
-func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void:
+func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int, mirror: bool = false) -> void:
 	var el: Dictionary = elements[id]
 	var files: Array = el.get("fichiers", [])
 	var tex: Texture2D = _texture(str(files[0])) if not files.is_empty() else null
 	if tex == null:
+		if str(el.get("provisoire", "")) != "":
+			_place_provisoire(id, el, cells, rect, mirror)
 		return
 	# Objet entouré surtout d'eau : de l'eau dessous (les marges transparentes de l'image ne
 	# doivent pas montrer un carré de sol).
@@ -336,6 +361,7 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void
 	var holder: Node2D = Node2D.new()
 	var sp: Sprite2D = Sprite2D.new()
 	sp.texture = tex
+	sp.flip_h = mirror
 	holder.add_child(sp)
 	var s: float
 	if str(el.get("type", "")) == "decal":
@@ -361,12 +387,16 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void
 		sh.centered = false
 		sh.scale = Vector2(s, s)
 		sh.position = holder.position + sp.position - size * s * 0.5 + Vector2(float(off[0]), float(off[1])) * s
+		if mirror:
+			# Miroir autour de l'axe vertical de l'objet.
+			sh.flip_h = true
+			sh.position.x = 2.0 * holder.position.x - sh.position.x - shadow.get_width() * s
 		under.add_child(sh)
 	var kind: String = ""
 	if str((el.get("animation", {}) as Dictionary).get("methode", "")) == "jeu":
 		kind = "tremble" if cat == "cachette" else "tangage"
 	var inst: Dictionary = {"id": id, "cells": cells, "rect": rect, "zone": zone, "holder": holder, "sprite": sp,
-		"kind": kind, "base": sp.position, "phase": float(_hash(rect.position) % 628) / 100.0}
+		"kind": kind, "base": sp.position, "phase": float(_hash(rect.position) % 628) / 100.0, "miroir": mirror}
 	# Image de l'état ouvert (cachette) : même échelle, calée sur le coin haut gauche de la fermée.
 	var open_tex: Texture2D = _texture(str(el.get("ouvert", "")))
 	if open_tex:
@@ -376,6 +406,9 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int) -> void
 		op.centered = false
 		op.scale = Vector2(s, s)
 		op.position = sp.position - size * s * 0.5 + Vector2(float(off2[0]), float(off2[1])) * s
+		if mirror:
+			op.flip_h = true
+			op.position.x = -op.position.x - open_tex.get_width() * s
 		op.visible = false
 		op.light_mask = sp.light_mask
 		holder.add_child(op)
@@ -411,6 +444,8 @@ func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, d
 		sh = _shape(tex, rel, drawn)
 	if (sh.get("polys", []) as Array).is_empty():
 		return
+	if bool(inst.get("miroir", false)):
+		sh = _mirror_shape(sh, drawn)
 	# La carte décide des objets bas (banc, étal…) : pixelforge peut seulement lever le blocage de vue.
 	blocks = blocks and bool(sh.get("blocks_view", blocks))
 	var holder: Node2D = inst["holder"]
@@ -445,6 +480,91 @@ func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, d
 	inst["shape_info"] = sh.get("info", {"refus_pixelforge": refus} if refus != "" else {})
 	for c: Vector2i in inst["cells"]:
 		shaped[c] = true
+
+
+## Forme retournée en miroir (objet posé en miroir) : emprise et masque autour de l'axe vertical de l'image.
+func _mirror_shape(sh: Dictionary, drawn: Vector2) -> Dictionary:
+	var out: Dictionary = sh.duplicate()
+	var polys: Array[PackedVector2Array] = []
+	for poly: PackedVector2Array in sh["polys"]:
+		var pts: PackedVector2Array = PackedVector2Array()
+		for i: int in range(poly.size() - 1, -1, -1):
+			pts.append(Vector2(drawn.x - poly[i].x, poly[i].y))
+		polys.append(pts)
+	out["polys"] = polys
+	var bm: BitMap = sh["mask"]
+	var sz: Vector2i = bm.get_size()
+	var m2: BitMap = BitMap.new()
+	m2.create(sz)
+	for y: int in sz.y:
+		for x: int in sz.x:
+			if bm.get_bit(x, y):
+				m2.set_bit(sz.x - 1 - x, y, true)
+	out["mask"] = m2
+	return out
+
+
+## Objet de jeu sans image, dessiné par le code (GkProvisoire) : posé au pied de son emprise, trié avec
+## les persos ; sa collision reste le rectangle des cases (GkMap), qui ne le dessine plus.
+func _place_provisoire(id: String, el: Dictionary, cells: Array[Vector2i], rect: Rect2i, mirror: bool) -> void:
+	var t: float = map.tile
+	for c: Vector2i in cells:
+		covered[c] = true
+	var pv: GkProvisoire = GkProvisoire.new()
+	pv.kind = str(el["provisoire"])
+	pv.size = Vector2(rect.size) * t
+	pv.mirror = mirror
+	pv.phase = float(_hash(rect.position) % 628) / 100.0
+	pv.position = Vector2(rect.position.x + rect.size.x * 0.5, rect.end.y) * t
+	pv.light_mask = LIGHT_MASK
+	add_child(pv)
+	instances.append({"id": id, "cells": cells, "rect": rect, "zone": zone_at(rect.position), "holder": pv,
+		"sprite": null, "kind": "", "base": Vector2.ZERO, "phase": pv.phase, "x0": pv.position.x, "provisoire": true})
+
+
+## Ornements de decor.json (sans effet de jeu) : image de l'élément s'il en a une, sinon son provisoire.
+## Couche (index.json → « couche ») : « sol » à plat sous les persos, « haut » au-dessus d'eux (fanions,
+## linge tendus en hauteur), sinon triés avec eux sur leur pied.
+func _build_ornaments() -> void:
+	var t: float = map.tile
+	for o: Variant in _ornaments:
+		var od: Dictionary = o
+		var id: String = str(od.get("id", ""))
+		if not elements.has(id):
+			continue
+		var el: Dictionary = elements[id]
+		var tc: Array = el.get("taille_cases", [1, 1])
+		var l: float = float(od.get("l", tc[0]))
+		var h: float = float(od.get("h", tc[1]))
+		var foot: Vector2 = Vector2(float(od.get("x", 0.0)), float(od.get("y", 0.0))) * t
+		var mirror: bool = bool(od.get("miroir", false))
+		var layer: String = str(el.get("couche", ""))
+		var host: Node2D = under if layer == "sol" else self
+		var files: Array = el.get("fichiers", [])
+		var tex: Texture2D = _texture(str(files[0])) if not files.is_empty() else null
+		var node: Node2D
+		if tex:
+			var sp: Sprite2D = Sprite2D.new()
+			sp.texture = tex
+			sp.flip_h = mirror
+			var sc: float = minf(l * t / tex.get_width(), (h + float(el.get("debord_haut_cases", 0))) * t / tex.get_height())
+			sp.scale = Vector2(sc, sc)
+			sp.position = Vector2(0, -tex.get_height() * sc * 0.5)
+			node = Node2D.new()
+			node.add_child(sp)
+		elif str(el.get("provisoire", "")) != "":
+			var pv: GkProvisoire = GkProvisoire.new()
+			pv.kind = str(el["provisoire"])
+			pv.size = Vector2(l, h) * t
+			pv.mirror = mirror
+			pv.phase = float(_hash(Vector2i(foot)) % 628) / 100.0
+			node = pv
+		else:
+			continue
+		node.position = foot
+		if layer == "haut":
+			node.z_index = 3
+		host.add_child(node)
 
 
 ## Masques de pixelforge (tools/gordeka/masques_pf.py) : <dossier du décor>/masques/<id>/masks.json
