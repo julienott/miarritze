@@ -986,11 +986,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/308_cachette_caisse_glace/0/apercu/cachette_caisse_glace.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/308_cachette_caisse_glace/0/apercu/cachette_caisse_glace.png"
-  ]
+  ],
+  "variante": null
  },
  "310": {
   "titre": "Coffre à cordages du phare : version ouverte",
