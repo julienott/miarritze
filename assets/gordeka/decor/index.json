@@ -569,16 +569,16 @@
    ],
    "sources": [
     {
-     "job": 0,
+     "job": 1,
      "variante": "image_00",
-     "task": "b96c0ef6bcea4984baff17bd993716a1",
-     "date": "2026-10-20"
+     "task": "3c15771de6754645bb76beaf80e362b0",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/mur_soutenement_ombre.png",
    "ombre_decalage": [
     23,
-    118
+    128
    ]
   },
   "caisses_poisson": {

@@ -2505,22 +2505,38 @@
   "titre": "mur_soutenement : taille et masque à revoir",
   "sorte": "image",
   "element": "mur_soutenement",
-  "statut": "en_file",
+  "statut": "a_voir",
   "consigne": "Image 128×512 : mur long nord-sud vu de côté (2×8 cases) ; aujourd'hui 6 rangées vides traversables.",
   "jobs": [
    {
     "tid": "3c15771de6754645bb76beaf80e362b0",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/603_mur_soutenement/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/603_mur_soutenement/0/planche.png"
    }
   ],
   "priorite": "normal",
-  "depose": "2026-10-21 19:01"
+  "depose": "2026-10-21 19:01",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/603_mur_soutenement/0/planche.png"
+  ]
  },
  "604": {
   "titre": "marches_escalier : taille et masque à revoir",
   "sorte": "image",
   "element": "marches_escalier",
-  "statut": "integre"
+  "statut": "en_file",
+  "consigne": "Image paysage 384×64 qui remplit ses 6×1 cases.",
+  "jobs": [
+   {
+    "tid": "fa0f9242123d430bb0bc063ea5314547",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "priorite": "normal",
+  "depose": "2026-10-21 19:11"
  }
 }
