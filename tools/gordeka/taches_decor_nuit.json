@@ -2355,13 +2355,16 @@
    {
     "tid": "8e55eb4c06d0419aa74d871786cd36a5",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-chalutier_quai_chalutier_quai/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-chalutier_quai_chalutier_quai/0/apercu/chalutier_quai.png"
    }
   ],
-  "statut": "en_file",
+  "statut": "a_voir",
   "depose": "2026-10-21 18:49",
   "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-chalutier_quai_chalutier_quai/0/apercu/chalutier_quai.png"
   ],
   "variante": null,
   "consigne": "Masque : emprise = toute la coque (on mord les deux bouts)."
@@ -2502,7 +2505,17 @@
   "titre": "mur_soutenement : taille et masque à revoir",
   "sorte": "image",
   "element": "mur_soutenement",
-  "statut": "integre"
+  "statut": "en_file",
+  "consigne": "Image 128×512 : mur long nord-sud vu de côté (2×8 cases) ; aujourd'hui 6 rangées vides traversables.",
+  "jobs": [
+   {
+    "tid": "3c15771de6754645bb76beaf80e362b0",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "priorite": "normal",
+  "depose": "2026-10-21 19:01"
  },
  "604": {
   "titre": "marches_escalier : taille et masque à revoir",
