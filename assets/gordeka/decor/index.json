@@ -2339,8 +2339,22 @@
      }
     ]
    },
-   "provisoire": "chat",
-   "fichiers": []
+   "fichiers": [
+    "objets/chat_du_port.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "5f10d1febf3948218470e703c0fbcdef",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "ancre_decor": {
    "nom": "Vieille ancre",
