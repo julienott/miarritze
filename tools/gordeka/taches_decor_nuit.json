@@ -1900,7 +1900,7 @@
   "sorte": "masque",
   "element": "chambre_froide",
   "priorite": "normal",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "ba79bc07965b41089f0d203316725b46",
