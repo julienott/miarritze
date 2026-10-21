@@ -191,7 +191,7 @@
   "titre": "Chambre froide de la criée : masque v3",
   "sorte": "masque",
   "element": "chambre_froide",
-  "priorite": "normal",
+  "priorite": "high",
   "statut": "en_file",
   "jobs": [
    {
@@ -316,7 +316,7 @@
   "titre": "Autel de la chapelle des marins : masque v3",
   "sorte": "masque",
   "element": "autel_chapelle",
-  "priorite": "normal",
+  "priorite": "high",
   "statut": "en_file",
   "jobs": [
    {
@@ -353,7 +353,7 @@
   "titre": "Comptoir de la terrasse : masque v3",
   "sorte": "masque",
   "element": "comptoir_bar",
-  "priorite": "normal",
+  "priorite": "high",
   "statut": "en_file",
   "jobs": [
    {
@@ -412,7 +412,7 @@
   "titre": "Pile de caisses de poisson : masque v3",
   "sorte": "masque",
   "element": "caisses_poisson",
-  "priorite": "normal",
+  "priorite": "high",
   "statut": "en_file",
   "jobs": [
    {
@@ -561,7 +561,7 @@
   "titre": "Coque en chantier (atelier) : masque v3",
   "sorte": "masque",
   "element": "coque_chantier",
-  "priorite": "normal",
+  "priorite": "high",
   "statut": "en_file",
   "jobs": [
    {
@@ -731,7 +731,7 @@
   "titre": "Établi de l'atelier : masque v3",
   "sorte": "masque",
   "element": "etabli_atelier",
-  "priorite": "normal",
+  "priorite": "high",
   "statut": "en_file",
   "jobs": [
    {
@@ -762,16 +762,22 @@
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/291_marches_escalier/0/planche.png"
   ],
-  "variante": "image_01",
-  "suites_a_deposer": "normal"
+  "variante": "image_01"
  },
  "292": {
   "titre": "Marches de l'escalier de la ville : masque v3",
   "sorte": "masque",
   "element": "marches_escalier",
-  "priorite": "normal",
-  "statut": "attend",
-  "depend": "291"
+  "priorite": "high",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "35fe28fa03e34ee5b0307456758e18d8",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 10:26"
  },
  "293": {
   "titre": "Table de terrasse : refaire de face",
@@ -793,16 +799,22 @@
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/293_table_terrasse/0/planche.png"
   ],
-  "variante": "image_01",
-  "suites_a_deposer": "normal"
+  "variante": "image_01"
  },
  "294": {
   "titre": "Table de terrasse : masque v3",
   "sorte": "masque",
   "element": "table_terrasse",
-  "priorite": "normal",
-  "statut": "attend",
-  "depend": "293"
+  "priorite": "high",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "4308fb6cc19c408bb65490792c552015",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 10:31"
  },
  "295": {
   "titre": "Tréteaux et planches de la cale : refaire de face",
@@ -824,16 +836,22 @@
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/295_treteaux_cale/0/planche.png"
   ],
-  "variante": "image_00",
-  "suites_a_deposer": "normal"
+  "variante": "image_00"
  },
  "296": {
   "titre": "Tréteaux et planches de la cale : masque v3",
   "sorte": "masque",
   "element": "treteaux_cale",
-  "priorite": "normal",
-  "statut": "attend",
-  "depend": "295"
+  "priorite": "high",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "f6eaa000834e42eb92664d5dd391cbbb",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 10:31"
  },
  "297": {
   "titre": "Bassin du lavoir : refaire de face",
@@ -2090,7 +2108,7 @@
   "titre": "Barque basque au mouillage : masque (d'office, nouvelle image)",
   "sorte": "masque",
   "element": "barque_mouillage",
-  "priorite": "normal",
+  "priorite": "high",
   "jobs": [
    {
     "tid": "ca318b6352a84f2d9e12ec84ffd304bc",
@@ -2105,7 +2123,7 @@
   "titre": "Filets et casiers posés au sol : masque (d'office, nouvelle image)",
   "sorte": "masque",
   "element": "tas_filets",
-  "priorite": "normal",
+  "priorite": "high",
   "jobs": [
    {
     "tid": "b3e5ce448fe9416cb542709367001b75",
