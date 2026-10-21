@@ -2230,40 +2230,100 @@
   ],
   "variante": null
  },
- "m-cachette_tas_filets_cachette": {
-  "titre": "Montagne de filets : masque (d'office, nouvelle image)",
+ "586": {
+  "titre": "Malle à pelotes : masque v3",
+  "sorte": "masque",
+  "element": "cachette_malle_pelotes",
+  "statut": "todo"
+ },
+ "587": {
+  "titre": "Montagne de filets : masque v3",
   "sorte": "masque",
   "element": "cachette_tas_filets_cachette",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "760ac4186efb4f4c8803d2b920c9a682",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
-   }
-  ],
-  "statut": "todo",
-  "depose": "2026-10-21 10:36"
+  "statut": "todo"
  },
- "m-cachette_barque_retournee": {
-  "titre": "Barque retournée : masque (d'office, nouvelle image)",
+ "588": {
+  "titre": "Barque retournée : masque v3",
   "sorte": "masque",
   "element": "cachette_barque_retournee",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "b7ec9f16bd2946798f58a0593bcb2c6f",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
-   }
-  ],
-  "statut": "todo",
-  "depose": "2026-10-21 10:36"
+  "statut": "todo"
  },
- "m-cachette_tonneau_cidre": {
-  "titre": "Tonneau de cidre géant : masque (d'office, nouvelle image)",
+ "589": {
+  "titre": "Tonneau de cidre géant : masque v3",
   "sorte": "masque",
   "element": "cachette_tonneau_cidre",
-  "priorite": "normal"
+  "statut": "todo"
+ },
+ "590": {
+  "titre": "Grand panier à linge : masque v3",
+  "sorte": "masque",
+  "element": "cachette_panier_linge",
+  "statut": "todo"
+ },
+ "591": {
+  "titre": "Caisse à voiles de l'atelier : masque v3",
+  "sorte": "masque",
+  "element": "cachette_caisse_voiles",
+  "statut": "todo"
+ },
+ "592": {
+  "titre": "Cabine de plage rayée : masque v3",
+  "sorte": "masque",
+  "element": "cachette_cabine_plage",
+  "statut": "todo"
+ },
+ "593": {
+  "titre": "Sortie : barque au bout de la jetée : masque v3",
+  "sorte": "masque",
+  "element": "sortie_barque_jetee",
+  "statut": "todo"
+ },
+ "594": {
+  "titre": "Sortie : échelle derrière le phare : masque v3",
+  "sorte": "masque",
+  "element": "sortie_echelle_phare",
+  "statut": "todo"
+ },
+ "595": {
+  "titre": "Sortie : barque de la cale : masque v3",
+  "sorte": "masque",
+  "element": "sortie_barque_cale",
+  "statut": "todo"
+ },
+ "596": {
+  "titre": "Sortie : porte de la ville : masque v3",
+  "sorte": "masque",
+  "element": "sortie_porte_ville",
+  "statut": "todo"
+ },
+ "597": {
+  "titre": "Deux barriques de cidre : masque v3",
+  "sorte": "masque",
+  "element": "barriques_cidre",
+  "statut": "todo"
+ },
+ "598": {
+  "titre": "Pot d'hortensias : masque v3",
+  "sorte": "masque",
+  "element": "pot_hortensias",
+  "statut": "todo"
+ },
+ "599": {
+  "titre": "Casier et bouées : masque v3",
+  "sorte": "masque",
+  "element": "casier_bouees",
+  "statut": "todo"
+ },
+ "600": {
+  "titre": "Platane de la place : masque v3",
+  "sorte": "masque",
+  "element": "platane_place",
+  "statut": "todo"
+ },
+ "601": {
+  "titre": "Crampotte aux volets verts : masque v3",
+  "sorte": "masque",
+  "element": "maison_crampotte_verte",
+  "statut": "todo"
  }
 }
