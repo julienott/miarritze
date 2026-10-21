@@ -6840,6 +6840,1670 @@
      "etat_ouvert": false
     }
    ]
+  },
+  "parc_mazon": {
+   "_doc": "Assets à créer pour le Parc Mazon (tools/gordeka/backlog_parc.py, catalogue de make_parc_mazon.py). Prompts positifs (sans négation), style commun et caméra front34 ; tailles en cases de 64 px, images à 128 px par case. Rien n'est déposé chez pixelforge : Julien priorise sur /producer (carte chapeau « Carte : Parc Mazon »). Repris du port sans nouvelle image : banc_vert, fontaine_place, table_terrasse, cachette_poubelle_ruelle.",
+   "style_commun": "Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches.",
+   "camera_commune": {
+    "pf_hd__prop": "Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+    "pf_hd__ground": "Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+    "decal": "Flat decal lying on the ground, seen straight from above, slightly faded like paint on the floor, thin outline, on a plain transparent background."
+   },
+   "elements": [
+    {
+     "id": "pm_sol_gravier",
+     "nom": "Gravier des allées",
+     "caractere": ".",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Light beige raked gravel of a city park path, tiny round pebbles in warm sand and pale grey tones, a few slightly darker pebbles, calm and even.",
+     "prompt": "Light beige raked gravel of a city park path, tiny round pebbles in warm sand and pale grey tones, a few slightly darker pebbles, calm and even. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_sol_gravier.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_sol_pelouse",
+     "nom": "Pelouse",
+     "caractere": ".",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Soft fresh green lawn of a city park, short grass drawn as small rounded tufts in two close greens, a few tiny white daisies, calm and even.",
+     "prompt": "Soft fresh green lawn of a city park, short grass drawn as small rounded tufts in two close greens, a few tiny white daisies, calm and even. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_sol_pelouse.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_sol_souple",
+     "nom": "Sol souple des aires de jeux",
+     "caractere": ".",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Soft rubber safety flooring of a children's playground, large rounded square tiles in muted terracotta red with thin darker joints, a few tiles in soft teal, calm and even.",
+     "prompt": "Soft rubber safety flooring of a children's playground, large rounded square tiles in muted terracotta red with thin darker joints, a few tiles in soft teal, calm and even. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_sol_souple.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_sol_cancha",
+     "nom": "Ciment du terrain de pelote",
+     "caractere": ".",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Smooth pale grey cement of a Basque pelota court, large square slabs with thin darker expansion joints, a few faint lighter patches, calm and even.",
+     "prompt": "Smooth pale grey cement of a Basque pelota court, large square slabs with thin darker expansion joints, a few faint lighter patches, calm and even. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_sol_cancha.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_sol_terre",
+     "nom": "Terre du potager",
+     "caractere": ".",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Warm brown garden soil path with small flat stepping stones and a few tiny pebbles, calm and even.",
+     "prompt": "Warm brown garden soil path with small flat stepping stones and a few tiny pebbles, calm and even. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_sol_terre.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_sol_terrasse",
+     "nom": "Plancher de la buvette",
+     "caractere": ".",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Warm honey wooden deck planks of a park snack bar terrace, long horizontal boards with thin darker joints and a few round nail heads, calm and even.",
+     "prompt": "Warm honey wooden deck planks of a park snack bar terrace, long horizontal boards with thin darker joints and a few round nail heads, calm and even. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_sol_terrasse.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_sable",
+     "nom": "Sable des bacs et de la tyrolienne",
+     "caractere": ":",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Fine golden play sand, soft little ripples and a few tiny shells and pebbles, calm and even.",
+     "prompt": "Fine golden play sand, soft little ripples and a few tiny shells and pebbles, calm and even. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_sable.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_pont",
+     "nom": "Planches du pont de la mare",
+     "caractere": "=",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Wooden footbridge planks seen from above, boards running across in warm brown, thin darker gaps, round bolts at both ends.",
+     "prompt": "Wooden footbridge planks seen from above, boards running across in warm brown, thin darker gaps, round bolts at both ends. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_pont.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_canopee",
+     "nom": "Massifs d'arbres (vus d'en haut)",
+     "caractere": "v",
+     "categorie": "vegetation",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Dense canopy of park trees seen straight from above: big rounded clusters of leaves in three deep greens overlapping like clouds, small darker gaps between them, a few lighter leaf highlights.",
+     "prompt": "Dense canopy of park trees seen straight from above: big rounded clusters of leaves in three deep greens overlapping like clouds, small darker gaps between them, a few lighter leaf highlights. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "planche : feuillages qui bougent doucement (4 images en boucle)",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_canopee.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_haie",
+     "nom": "Haies taillées du labyrinthe",
+     "caractere": "v",
+     "categorie": "vegetation",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Top of a neatly trimmed boxwood hedge seen straight from above, tight small leaves in two greens forming a soft even carpet, a few tiny lighter leaves.",
+     "prompt": "Top of a neatly trimmed boxwood hedge seen straight from above, tight small leaves in two greens forming a soft even carpet, a few tiny lighter leaves. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_haie.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_cloture",
+     "nom": "Clôture du parc (grille verte et haie)",
+     "caractere": "#",
+     "categorie": "mur",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Edge of a city park seen from above: a dark green iron railing with round finials running along a low pale stone wall, a strip of hedge behind it, stone sidewalk outside.",
+     "prompt": "Edge of a city park seen from above: a dark green iron railing with round finials running along a low pale stone wall, a strip of hedge behind it, stone sidewalk outside. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/sols/pm_cloture.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_portillon",
+     "nom": "Portillon de la clôture (sortie)",
+     "caractere": "E",
+     "categorie": "sortie",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": true
+     },
+     "poses_sur_la_carte": 3,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Small dark green iron park gate standing wide open in a stone gateway, a little enamel sign on the pillar, a doormat of paving stones in front, a glimpse of street beyond.",
+     "prompt": "Small dark green iron park gate standing wide open in a stone gateway, a little enamel sign on the pillar, a doormat of paving stones in front, a glimpse of street beyond. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Flat decal lying on the ground, seen straight from above, slightly faded like paint on the floor, thin outline, on a plain transparent background.",
+     "animation": "jeu : le portillon s'ouvre quand la sortie ouvre",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_portillon.png",
+     "remarques": "Posé sur les cases de la sortie, à plat sous les persos : il doit se lire « on sort par là »."
+    },
+    {
+     "id": "pm_arbre",
+     "nom": "Gros platane",
+     "caractere": "v",
+     "categorie": "vegetation",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 3,
+     "taille_sortie_px": [
+      256,
+      512
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 17,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Big old plane tree of a Biarritz park: thick mottled trunk in cream, olive and grey patches with root flare, huge round leafy crown in fresh greens, a few birds' nest twigs.",
+     "prompt": "Big old plane tree of a Biarritz park: thick mottled trunk in cream, olive and grey patches with root flare, huge round leafy crown in fresh greens, a few birds' nest twigs. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : feuillage qui ondule au vent, boucle lente",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_arbre.png",
+     "remarques": "Emprise au sol : le tronc et ses racines (2 × 1 cases) ; la couronne déborde de 3 cases et masque qui passe derrière."
+    },
+    {
+     "id": "pm_buisson",
+     "nom": "Buisson rond",
+     "caractere": "v",
+     "categorie": "vegetation",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 63,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Round dense park shrub of laurel, glossy leaves in two greens, a few small white flowers.",
+     "prompt": "Round dense park shrub of laurel, glossy leaves in two greens, a few small white flowers. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : feuilles qui frémissent",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_buisson.png",
+     "remarques": "Petit écran : coupe la vue à l'entrée d'une zone."
+    },
+    {
+     "id": "pm_bosquet",
+     "nom": "Bosquet (petit arbre et buissons)",
+     "caractere": "v",
+     "categorie": "vegetation",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 2,
+     "taille_sortie_px": [
+      256,
+      512
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 5,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Cosy clump of a small young tree surrounded by thick shrubs and ferns, rounded leafy masses in several greens, a few pink hydrangea flowers at the base.",
+     "prompt": "Cosy clump of a small young tree surrounded by thick shrubs and ferns, rounded leafy masses in several greens, a few pink hydrangea flowers at the base. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : feuillages qui bougent",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_bosquet.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_massif",
+     "nom": "Haie basse fleurie",
+     "caractere": "v",
+     "categorie": "vegetation",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      384,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Low flowering hedge of a park border, a long rounded row of shrubs with pink and blue Basque hydrangeas.",
+     "prompt": "Low flowering hedge of a park border, a long rounded row of shrubs with pink and blue Basque hydrangeas. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_massif.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_fronton",
+     "nom": "Fronton du parc (mur de pelote)",
+     "caractere": "#",
+     "categorie": "repere",
+     "type": "objet",
+     "taille_cases": [
+      14,
+      1
+     ],
+     "debord_haut_cases": 4,
+     "taille_sortie_px": [
+      1792,
+      640
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Big Basque pelota fronton wall of a city park seen from the front: wide pale pink rendered wall with a curved chapeau top, a bold red line painted across at knee height, a dark green metal strip, a small Basque flag on a short pole on top.",
+     "prompt": "Big Basque pelota fronton wall of a city park seen from the front: wide pale pink rendered wall with a curved chapeau top, a bold red line painted across at knee height, a dark green metal strip, a small Basque flag on a short pole on top. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : petit drapeau basque qui flotte au sommet",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_fronton.png",
+     "remarques": "Repère central. Le mur de 14 cases masque l'allée qui passe derrière (débord de 4 cases)."
+    },
+    {
+     "id": "pm_local_club",
+     "nom": "Local du club de pelote",
+     "caractere": "#",
+     "categorie": "batiment",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      2
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      384,
+      384
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Small whitewashed clubhouse of a pelota club, red wooden door and red shutters, red tile roof, a chistera and a txapela hanging by the door.",
+     "prompt": "Small whitewashed clubhouse of a pelota club, red wooden door and red shutters, red tile roof, a chistera and a txapela hanging by the door. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_local_club.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_gradins",
+     "nom": "Gradins en béton",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      6,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      768,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Three low steps of pale concrete bleachers along a pelota court, rounded edges, a few red painted seat marks.",
+     "prompt": "Three low steps of pale concrete bleachers along a pelota court, rounded edges, a few red painted seat marks. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_gradins.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_maison_gardien",
+     "nom": "Maison du gardien",
+     "caractere": "#",
+     "categorie": "batiment",
+     "type": "objet",
+     "taille_cases": [
+      4,
+      3
+     ],
+     "debord_haut_cases": 2,
+     "taille_sortie_px": [
+      512,
+      640
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Little Labourd style keeper's house at a park entrance: white walls, red half-timbering, red shutters, red tile roof with an uneven two slope shape, a bench and a flower pot by the door.",
+     "prompt": "Little Labourd style keeper's house at a park entrance: white walls, red half-timbering, red shutters, red tile roof with an uneven two slope shape, a bench and a flower pot by the door. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_maison_gardien.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_kiosque",
+     "nom": "Kiosque à musique",
+     "caractere": "c",
+     "categorie": "repere",
+     "type": "objet",
+     "taille_cases": [
+      5,
+      5
+     ],
+     "debord_haut_cases": 2,
+     "taille_sortie_px": [
+      640,
+      896
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Octagonal park bandstand: raised stone base with a few steps, slender dark green iron columns, a pointed red and white zinc roof with a small weather vane, a garland of little Basque red and green pennants.",
+     "prompt": "Octagonal park bandstand: raised stone base with a few steps, slender dark green iron columns, a pointed red and white zinc roof with a small weather vane, a garland of little Basque red and green pennants. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : guirlande de fanions qui flotte",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_kiosque.png",
+     "remarques": "On en fait le tour ; la base cache la vue, le toit masque qui est derrière."
+    },
+    {
+     "id": "pm_kiosque_glaces",
+     "nom": "Buvette (kiosque à glaces)",
+     "caractere": "#",
+     "categorie": "batiment",
+     "type": "objet",
+     "taille_cases": [
+      4,
+      2
+     ],
+     "debord_haut_cases": 2,
+     "taille_sortie_px": [
+      512,
+      512
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Small wooden snack and ice cream kiosk of a park, red and white striped awning, a big painted ice cream cone on the roof, a serving hatch with a counter.",
+     "prompt": "Small wooden snack and ice cream kiosk of a park, red and white striped awning, a big painted ice cream cone on the roof, a serving hatch with a counter. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : store rayé qui ondule",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_kiosque_glaces.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_cabane_outils",
+     "nom": "Cabane à outils du jardinier",
+     "caractere": "#",
+     "categorie": "batiment",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      2
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      384,
+      384
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Green painted wooden garden shed with a sloping roof, a rake and a watering can leaning by the door, a small window with a flower box.",
+     "prompt": "Green painted wooden garden shed with a sloping roof, a rake and a watering can leaning by the door, a small window with a flower box. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_cabane_outils.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_serre",
+     "nom": "Serre du jardinier",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      5,
+      3
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      640,
+      512
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Small glass greenhouse with a white painted frame and a pitched glass roof, green seedlings and red tomato plants visible through the clear panes.",
+     "prompt": "Small glass greenhouse with a white painted frame and a pitched glass roof, green seedlings and red tomato plants visible through the clear panes. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_serre.png",
+     "remarques": "Vitrée : on voit à travers (ne cache pas la vue), on ne passe pas."
+    },
+    {
+     "id": "pm_cabane_chateau",
+     "nom": "Cabane-château",
+     "caractere": "#",
+     "categorie": "jeu",
+     "type": "objet",
+     "taille_cases": [
+      4,
+      3
+     ],
+     "debord_haut_cases": 3,
+     "taille_sortie_px": [
+      512,
+      768
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Big wooden play castle for children: two towers with pointy red roofs and flags, a rope bridge between them, a climbing wall with colourful holds, a small wooden door at the bottom.",
+     "prompt": "Big wooden play castle for children: two towers with pointy red roofs and flags, a rope bridge between them, a climbing wall with colourful holds, a small wooden door at the bottom. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : fanions des tours qui flottent",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_cabane_chateau.png",
+     "remarques": "Repère de l'aire des grands. Cachette « sous la cabane » posée devant (case H)."
+    },
+    {
+     "id": "pm_grand_toboggan",
+     "nom": "Grand toboggan",
+     "caractere": "c",
+     "categorie": "jeu",
+     "type": "objet",
+     "taille_cases": [
+      4,
+      2
+     ],
+     "debord_haut_cases": 2,
+     "taille_sortie_px": [
+      512,
+      512
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Tall playground slide: a wooden tower with a little roof and a ladder on the left, a long bright yellow slide curving down to the right.",
+     "prompt": "Tall playground slide: a wooden tower with a little roof and a ladder on the left, a long bright yellow slide curving down to the right. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_grand_toboggan.png",
+     "remarques": "La tour cache la vue ; cachette « sous le toboggan » posée à côté."
+    },
+    {
+     "id": "pm_toile",
+     "nom": "Toile d'araignée (pyramide de cordes)",
+     "caractere": "t",
+     "categorie": "jeu",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      3
+     ],
+     "debord_haut_cases": 2,
+     "taille_sortie_px": [
+      384,
+      640
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Rope climbing pyramid of a playground: a central steel mast with a red top, a web of thick blue ropes stretched to the ground in a cone.",
+     "prompt": "Rope climbing pyramid of a playground: a central steel mast with a red top, a web of thick blue ropes stretched to the ground in a cone. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_toile.png",
+     "remarques": "On voit à travers les cordes, on ne passe pas."
+    },
+    {
+     "id": "pm_tyrolienne",
+     "nom": "Plateforme de la tyrolienne",
+     "caractere": "c",
+     "categorie": "jeu",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 2,
+     "taille_sortie_px": [
+      256,
+      512
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Wooden starting platform of a playground zip line with a small ladder, a sturdy post holding the steel cable, a round rubber seat hanging from a pulley.",
+     "prompt": "Wooden starting platform of a playground zip line with a small ladder, a sturdy post holding the steel cable, a round rubber seat hanging from a pulley. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "jeu ou planche : la poulie et son siège glissent le long du câble",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_tyrolienne.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_cable_tyrolienne",
+     "nom": "Câble et piste de la tyrolienne",
+     "caractere": ":",
+     "categorie": "jeu",
+     "type": "decal",
+     "taille_cases": [
+      16,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      2048,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Thin steel zip line cable seen from above running straight across sand, with a small pulley and a round seat in the middle.",
+     "prompt": "Thin steel zip line cable seen from above running straight across sand, with a small pulley and a round seat in the middle. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Flat decal lying on the ground, seen straight from above, slightly faded like paint on the floor, thin outline, on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_cable_tyrolienne.png",
+     "remarques": "À plat sur le sable entre les deux plateformes."
+    },
+    {
+     "id": "pm_balancoires",
+     "nom": "Portique de balançoires",
+     "caractere": "t",
+     "categorie": "jeu",
+     "type": "objet",
+     "taille_cases": [
+      4,
+      1
+     ],
+     "debord_haut_cases": 2,
+     "taille_sortie_px": [
+      512,
+      384
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Playground swing set: a sturdy wooden A-frame with two swings on chains, one flat red seat and one blue bucket seat.",
+     "prompt": "Playground swing set: a sturdy wooden A-frame with two swings on chains, one flat red seat and one blue bucket seat. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : les deux balançoires vont et viennent",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_balancoires.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_tourniquet",
+     "nom": "Tourniquet",
+     "caractere": "t",
+     "categorie": "jeu",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Round playground merry-go-round for toddlers, a flat disc in yellow and red slices with a little steering wheel in the middle and curved handle bars.",
+     "prompt": "Round playground merry-go-round for toddlers, a flat disc in yellow and red slices with a little steering wheel in the middle and curved handle bars. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "jeu ou planche : le plateau tourne lentement",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_tourniquet.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_petit_toboggan",
+     "nom": "Petit toboggan",
+     "caractere": "c",
+     "categorie": "jeu",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      384,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Small toddler slide shaped like a friendly elephant, short ladder and a gentle green slide.",
+     "prompt": "Small toddler slide shaped like a friendly elephant, short ladder and a gentle green slide. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_petit_toboggan.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_ressort",
+     "nom": "Jeu à ressort",
+     "caractere": "t",
+     "categorie": "jeu",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Spring rider toy for toddlers shaped like a smiling fishing boat on a big coiled spring.",
+     "prompt": "Spring rider toy for toddlers shaped like a smiling fishing boat on a big coiled spring. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : il se balance d'avant en arrière",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_ressort.png",
+     "remarques": "Trois variantes souhaitées : barque, mouette, petit cheval."
+    },
+    {
+     "id": "pm_table_piquenique",
+     "nom": "Table de pique-nique",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      384,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Wooden picnic table with two attached benches, a red and white Basque checked tablecloth, a basket on top.",
+     "prompt": "Wooden picnic table with two attached benches, a red and white Basque checked tablecloth, a basket on top. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_table_piquenique.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_fleurs",
+     "nom": "Massif d'hortensias",
+     "caractere": "r",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      384,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Low round flower bed edged with stones, full of pink, blue and violet hydrangeas.",
+     "prompt": "Low round flower bed edged with stones, full of pink, blue and violet hydrangeas. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_fleurs.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_carre_potager",
+     "nom": "Carré potager",
+     "caractere": "r",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      384,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Raised wooden vegetable bed with lettuces, carrots tops and a row of red Espelette pepper plants.",
+     "prompt": "Raised wooden vegetable bed with lettuces, carrots tops and a row of red Espelette pepper plants. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_carre_potager.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_souche",
+     "nom": "Souche-tabouret",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Short round tree stump used as a stool, light wood rings on top, a little mushroom at its foot.",
+     "prompt": "Short round tree stump used as a stool, light wood rings on top, a little mushroom at its foot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_souche.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_maisonnette",
+     "nom": "Maisonnette des petits",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Tiny plastic playhouse for toddlers with a round orange door, a red roof, a little window with flowers; clearly a hiding spot with a warm orange accent.",
+     "prompt": "Tiny plastic playhouse for toddlers with a round orange door, a red roof, a little window with flowers; clearly a hiding spot with a warm orange accent. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_maisonnette.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_tunnel",
+     "nom": "Tunnel en tube",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Short crawl tunnel of a playground, a fat orange plastic tube lying on the ground, round opening facing us; clearly a hiding spot.",
+     "prompt": "Short crawl tunnel of a playground, a fat orange plastic tube lying on the ground, round opening facing us; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_tunnel.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_sous_chateau",
+     "nom": "Sous la cabane-château",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Low wooden door at the foot of a play castle, an arched opening with an orange curtain; clearly a hiding spot.",
+     "prompt": "Low wooden door at the foot of a play castle, an arched opening with an orange curtain; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_sous_chateau.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_sous_toboggan",
+     "nom": "Sous le grand toboggan",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Little den under a slide platform, wooden posts with an orange canvas hanging between them; clearly a hiding spot.",
+     "prompt": "Little den under a slide platform, wooden posts with an orange canvas hanging between them; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_sous_toboggan.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_buisson_creux",
+     "nom": "Buisson creux",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 4,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Big round hollow bush with a dark leafy opening at its foot, a few orange berries; clearly a hiding spot.",
+     "prompt": "Big round hollow bush with a dark leafy opening at its foot, a few orange berries; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "jeu : il tremble quand on y entre",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_buisson_creux.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_tronc_creux",
+     "nom": "Tronc creux",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Thick hollow old tree trunk cut at child height, a dark round hole at the bottom big enough to crawl in, an orange mushroom on the side; clearly a hiding spot.",
+     "prompt": "Thick hollow old tree trunk cut at child height, a dark round hole at the bottom big enough to crawl in, an orange mushroom on the side; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_tronc_creux.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_cabane_branches",
+     "nom": "Cabane en branches",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Children's hut made of branches leaning together like a tipi, tied with orange rope, a little entrance; clearly a hiding spot.",
+     "prompt": "Children's hut made of branches leaning together like a tipi, tied with orange rope, a little entrance; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_cabane_branches.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_niche_haie",
+     "nom": "Niche dans la haie",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Thick cube of trimmed hedge with a secret arched hollow inside, an orange garden lantern at the entrance; clearly a hiding spot.",
+     "prompt": "Thick cube of trimmed hedge with a secret arched hollow inside, an orange garden lantern at the entrance; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_niche_haie.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_estrade",
+     "nom": "Sous l'estrade du kiosque",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Small lattice door under the steps of a bandstand, painted dark green with an orange handle; clearly a hiding spot.",
+     "prompt": "Small lattice door under the steps of a bandstand, painted dark green with an orange handle; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_estrade.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_malle_pelotes",
+     "nom": "Malle à pelotes",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Big red wooden chest of a pelota club with a curved lid, a few leather pelotas and a wicker chistera on top, orange metal corners; clearly a hiding spot.",
+     "prompt": "Big red wooden chest of a pelota club with a curved lid, a few leather pelotas and a wicker chistera on top, orange metal corners; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_malle_pelotes.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_roseaux",
+     "nom": "Touffe de roseaux",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Tall clump of pond reeds and cattails with brown velvet tops, an orange dragonfly on one stem; clearly a hiding spot.",
+     "prompt": "Tall clump of pond reeds and cattails with brown velvet tops, an orange dragonfly on one stem; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : roseaux qui ondulent",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_roseaux.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_composteur",
+     "nom": "Composteur",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Wooden slatted compost bin with an orange lid, a few leaves sticking out; clearly a hiding spot.",
+     "prompt": "Wooden slatted compost bin with an orange lid, a few leaves sticking out; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_composteur.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_coffre_glaces",
+     "nom": "Coffre à glaces",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "White chest freezer of an ice cream stand with a big orange lid and a painted ice cream cone; clearly a hiding spot.",
+     "prompt": "White chest freezer of an ice cream stand with a big orange lid and a painted ice cream cone; clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/parc_mazon/decor/objets/pm_coffre_glaces.png",
+     "remarques": ""
+    },
+    {
+     "id": "pm_lisiere",
+     "nom": "Lisière des massifs (troncs au bord des allées)",
+     "caractere": "",
+     "categorie": "vegetation",
+     "type": "bande_facade",
+     "taille_cases": [
+      4,
+      1
+     ],
+     "debord_haut_cases": 2,
+     "taille_sortie_px": [
+      512,
+      384
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Front edge of a dense park grove seen from the path: a row of tree trunks of different sizes, ferns and shrubs at their feet, the low leafy branches above, seamless from left to right.",
+     "prompt": "Front edge of a dense park grove seen from the path: a row of tree trunks of different sizes, ferns and shrubs at their feet, the low leafy branches above, seamless from left to right. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : feuillage qui bouge",
+     "placeholder": "",
+     "remarques": "Posée sur le bord sud des massifs « v » qui donnent sur une allée (comme les façades du port)."
+    },
+    {
+     "id": "pm_cloture_bande",
+     "nom": "Clôture du parc vue de face",
+     "caractere": "",
+     "categorie": "mur",
+     "type": "bande_facade",
+     "taille_cases": [
+      4,
+      1
+     ],
+     "debord_haut_cases": 1,
+     "taille_sortie_px": [
+      512,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Dark green iron park railing with round gilded finials on a low pale stone wall, a strip of hedge behind it, seamless from left to right.",
+     "prompt": "Dark green iron park railing with round gilded finials on a low pale stone wall, a strip of hedge behind it, seamless from left to right. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "",
+     "remarques": ""
+    },
+    {
+     "id": "pm_marquage_cancha",
+     "nom": "Marquage du terrain de pelote",
+     "caractere": "",
+     "categorie": "sol",
+     "type": "decal",
+     "taille_cases": [
+      14,
+      12
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      1792,
+      1536
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Painted lines of a Basque pelota court on pale cement: long straight white side lines, numbered cross lines every few metres in red, the service line in front of the wall.",
+     "prompt": "Painted lines of a Basque pelota court on pale cement: long straight white side lines, numbered cross lines every few metres in red, the service line in front of the wall. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Flat decal lying on the ground, seen straight from above, slightly faded like paint on the floor, thin outline, on a plain transparent background.",
+     "animation": "",
+     "placeholder": "",
+     "remarques": ""
+    },
+    {
+     "id": "pm_canards",
+     "nom": "Canards de la mare (animés)",
+     "caractere": "",
+     "categorie": "animal",
+     "type": "anim",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Two cute white and brown ducks swimming side by side, small ripples around them, seen from above with a slight three-quarter tilt.",
+     "prompt": "Two cute white and brown ducks swimming side by side, small ripples around them, seen from above with a slight three-quarter tilt. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : 2 canards qui nagent en rond, 6 à 8 images en boucle ; envol quand un chassé passe",
+     "placeholder": "",
+     "remarques": "Comme les mouettes du port (idee_mouettes) : ils s'envolent en cancanant quand un chassé passe."
+    },
+    {
+     "id": "pm_pigeons",
+     "nom": "Pigeons du parc (animés)",
+     "caractere": "",
+     "categorie": "animal",
+     "type": "anim",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Small group of three plump grey park pigeons pecking crumbs on the ground, one with a shiny green neck.",
+     "prompt": "Small group of three plump grey park pigeons pecking crumbs on the ground, one with a shiny green neck. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : picorent (4 images) et s'envolent (4 images)",
+     "placeholder": "",
+     "remarques": "Remplacent les mouettes du port sur cette carte (même règle d'envol)."
+    },
+    {
+     "id": "pm_fontaine_jet",
+     "nom": "Fontaine : jet d'eau animé",
+     "caractere": "",
+     "categorie": "repere",
+     "type": "anim",
+     "taille_cases": [
+      4,
+      4
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      512,
+      512
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Water spouting from the top of the stone fountain and falling back in sparkling drops, ripples spreading in the turquoise basin.",
+     "prompt": "Water spouting from the top of the stone fountain and falling back in sparkling drops, ripples spreading in the turquoise basin. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : jet d'eau et rides du bassin, boucle (sur l'image fontaine_place reprise du port)",
+     "placeholder": "",
+     "remarques": "La fontaine est reprise du port (fontaine_place) ; son animation sert aux deux cartes."
+    },
+    {
+     "id": "pm_feuilles",
+     "nom": "Feuilles qui tombent (effet)",
+     "caractere": "",
+     "categorie": "effet",
+     "type": "anim",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Three golden plane tree leaves gently falling and spinning, light and airy.",
+     "prompt": "Three golden plane tree leaves gently falling and spinning, light and airy. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "planche : 3 feuilles de platane qui tombent en tournoyant, boucle",
+     "placeholder": "",
+     "remarques": "Petites particules lâchées de temps en temps sous les gros arbres."
+    }
+   ]
   }
  }
 }
