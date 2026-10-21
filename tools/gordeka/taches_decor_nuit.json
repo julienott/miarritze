@@ -1151,10 +1151,13 @@
    {
     "tid": "056909b4c1244749bd5b877f7aadf226",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0/planche.png"
    }
   ],
-  "statut": "en_file",
+  "statut": "a_voir",
   "depose": "2026-10-21 17:54",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0/planche.png"
@@ -1601,7 +1604,8 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/407_maison_crampotte_verte/0/planche.png"
   ],
   "variante": "image_01",
-  "suites_a_deposer": "normal"
+  "suites_a_deposer": "normal",
+  "masque_refait": 1
  },
  "408": {
   "titre": "Panier de poissons : image",
@@ -1848,7 +1852,17 @@
   "titre": "Crampotte aux volets verts : masque v3",
   "sorte": "masque",
   "element": "maison_crampotte_verte",
-  "statut": "todo"
+  "statut": "en_file",
+  "consigne": "Masque à faire : emprise sous la base seulement, le haut masque un perso derrière.",
+  "jobs": [
+   {
+    "tid": "b000cbed60964f5aa1faa6d696d07791",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "priorite": "normal",
+  "depose": "2026-10-21 18:12"
  },
  "m-rayonnage_filets": {
   "titre": "Rayonnage du hangar à filets : masque v3",
@@ -2393,5 +2407,21 @@
   "element": "cachette_coffre_quai",
   "statut": "integre",
   "masque_refait": 1
+ },
+ "278": {
+  "titre": "Étal de la criée : masque v3",
+  "sorte": "image",
+  "element": "etal_criee",
+  "statut": "en_file",
+  "consigne": "Image paysage 320×64 qui remplit ses 5×1 cases (petit étal carré aujourd'hui).",
+  "jobs": [
+   {
+    "tid": "6e0c3c1e49dd497b90f4c4ceecabd7d0",
+    "quoi": "pf_2d__prop ×2",
+    "style": "pf_2d__prop"
+   }
+  ],
+  "priorite": "normal",
+  "depose": "2026-10-21 18:12"
  }
 }

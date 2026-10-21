@@ -1897,16 +1897,16 @@
    ],
    "sources": [
     {
-     "job": 0,
-     "variante": "image_01",
-     "task": "e8120fd7620a4062b4182fe23523900c",
+     "job": 1,
+     "variante": "image_00",
+     "task": "056909b4c1244749bd5b877f7aadf226",
      "date": "2026-10-21"
     }
    ],
    "ombre": "objets/barriques_cidre_ombre.png",
    "ombre_decalage": [
     9,
-    54
+    51
    ]
   },
   "pot_hortensias": {
