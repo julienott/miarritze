@@ -85,6 +85,15 @@ def lancer(c, prio):
                            cwd=ROOT, check=True, capture_output=True)
         return f"animation(s) relancée(s) : {', '.join(k.split('/')[-1] for k in a_faire)}"
     ent = lire(SUIVI, {}).get(str(c["id"]))
+    # carte d'objet sans entrée de suivi (image validée avant le suivi) : l'élément se lit sur son asset
+    a = c.get("asset") or ""
+    if not ent and a.startswith("gordeka/decor/objets/") and "masque" in consigne.lower():
+        eid = a.rsplit("/", 1)[-1].removesuffix(".png")
+        s = lire(SUIVI, {})
+        s.setdefault(f"m-{eid}", {"titre": f"{eid} : masque", "sorte": "masque", "element": eid, "statut": "todo"})
+        s[str(c["id"])] = {"titre": c["title"], "sorte": "image", "element": eid, "statut": "integre"}
+        json.dump(s, open(SUIVI, "w"), ensure_ascii=False, indent=1)
+        ent = s[str(c["id"])]
     # refus qui porte sur le masque (« le masque doit avoir une forme de trapèze ») : seul le masque est refait
     if ent and "masque" in consigne.lower() and f"m-{ent.get('element')}" in lire(SUIVI, {}):
         if ESSAI:
