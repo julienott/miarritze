@@ -1483,6 +1483,20 @@
    "ombre_decalage": [
     14,
     75
+   ],
+   "ouvert": "objets/cachette_confessionnal_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    1
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "f11e8c683c6340db95debd136d76d918",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/323_cachette_confessionnal/0/image_01.png"
+    }
    ]
   },
   "cachette_barque_retournee": {
