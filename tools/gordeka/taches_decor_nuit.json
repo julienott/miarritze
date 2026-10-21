@@ -463,10 +463,13 @@
    {
     "tid": "8006ed25f8594eba9db4bc09fc0f733d",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0/planche.png"
    }
   ],
-  "statut": "en_file",
+  "statut": "a_voir",
   "depose": "2026-10-21 18:28",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0/planche.png"
@@ -1901,27 +1904,39 @@
    {
     "tid": "dfda79210cb44fcf92469efc95be32a3",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etal_criee_etal_criee/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etal_criee_etal_criee/0/apercu/etal_criee.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 18:28"
+  "statut": "a_voir",
+  "depose": "2026-10-21 18:28",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etal_criee_etal_criee/0/apercu/etal_criee.png"
+  ]
  },
  "m-fontaine_place": {
   "titre": "Fontaine de la place : masque v3",
   "sorte": "masque",
   "element": "fontaine_place",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "a_voir",
   "consigne": "Masque : emprise = tout le rebord du bassin (on marche dans la moitié arrière).",
   "jobs": [
    {
     "tid": "0733ad8cc8d44131870260ff5e47e438",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-fontaine_place_fontaine_place/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-fontaine_place_fontaine_place/0/apercu/fontaine_place.png"
    }
   ],
-  "depose": "2026-10-21 18:28"
+  "depose": "2026-10-21 18:28",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-fontaine_place_fontaine_place/0/apercu/fontaine_place.png"
+  ]
  },
  "m-banc_vert": {
   "titre": "Banc vert du front de mer : masque v3",

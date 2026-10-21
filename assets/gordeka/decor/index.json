@@ -969,16 +969,16 @@
    ],
    "sources": [
     {
-     "job": 1,
-     "variante": "image_01",
-     "task": "b3f18581e3434603bd3f3eb416cfa871",
+     "job": 2,
+     "variante": "image_00",
+     "task": "8006ed25f8594eba9db4bc09fc0f733d",
      "date": "2026-10-21"
     }
    ],
    "ombre": "objets/etabli_atelier_ombre.png",
    "ombre_decalage": [
-    13,
-    74
+    12,
+    73
    ]
   },
   "marches_escalier": {
