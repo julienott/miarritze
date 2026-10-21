@@ -1,0 +1,73 @@
+{
+ "motion": "dance",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "laughing with joy, eyes closed, big open smile",
+ "tenue": "scarf",
+ "drive": {
+  "clip": "dance",
+  "bounce": 0.06
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Happy little dance: both arms stretched forward at shoulder height going up and down in turn, body swaying, head bobbing, small hops on the spot. The tall white chef hat with a small Basque flag on the band: stays on the head, the soft top wobbles slightly, the flag stays on the band. The black frying pan hanging from the belt: hangs from the belt at the hip and swings like a pendulum with each step, never in his hand. The red neck scarf and white apron: the scarf tips and the apron flutter lightly with the motion.",
+ "frame_offsets": [
+  [12.5, -3.0],
+  [12.5, -5.0],
+  [12.5, -3.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 1.0],
+  [12.5, 3.0],
+  [12.5, 4.0],
+  [12.5, 4.0],
+  [12.5, 5.0],
+  [12.5, 6.0],
+  [12.5, 5.0],
+  [12.5, 5.0],
+  [12.5, 5.0],
+  [12.5, 2.0],
+  [12.5, 0.0],
+  [12.5, -1.0],
+  [12.5, -1.0],
+  [12.5, -3.0],
+  [12.5, -1.0],
+  [12.5, 1.0],
+  [12.5, 1.0],
+  [12.5, 3.0],
+  [12.5, 4.0],
+  [12.5, 4.0],
+  [12.5, 5.0],
+  [12.5, 5.0],
+  [12.5, 5.0],
+  [12.5, 5.0],
+  [12.5, 4.0],
+  [12.5, 2.0],
+  [12.5, 0.0]
+ ],
+ "entrees": {
+  "idle": {
+   "i": [21, 21, 30, 28, 28, 28, 28, 28, 28, 28, 29, 29, 29, 31, 21, 21, 21, 21, 30, 28, 28, 28, 28, 28, 28, 28, 29, 29, 29, 31, 21, 21],
+   "e": [16, 16, 13, 18, 18, 19, 20, 19, 19, 18, 16, 18, 18, 18, 17, 16, 16, 16, 14, 20, 20, 20, 19, 18, 18, 18, 17, 18, 19, 18, 17, 17]
+  },
+  "walk": {
+   "i": [21, 21, 24, 21, 21, 21, 24, 24, 24, 21, 24, 24, 21, 21, 21, 21, 21, 21, 24, 21, 21, 21, 24, 21, 21, 21, 24, 21, 24, 21, 21, 21],
+   "e": [29, 31, 30, 26, 26, 26, 26, 27, 27, 27, 27, 26, 26, 25, 31, 29, 29, 29, 30, 25, 25, 25, 27, 27, 27, 26, 26, 25, 25, 27, 32, 29]
+  },
+  "run_scared": {
+   "i": [11, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 22, 11, 11, 11, 28, 28, 29, 29, 28, 28, 28, 28, 28, 28, 28, 28, 22, 11],
+   "e": [34, 33, 29, 27, 27, 28, 28, 28, 28, 27, 26, 27, 27, 28, 34, 33, 33, 33, 29, 28, 28, 29, 28, 27, 27, 27, 26, 27, 27, 28, 34, 33]
+  }
+ }
+}
