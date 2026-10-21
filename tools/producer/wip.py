@@ -58,6 +58,8 @@ def dernier_refus(cid):
     for ev in reversed(cli.call("card", query={"id": cid}).get("events") or []):
         if ev.get("author") == "julien" and ev.get("type") in ("refuse", "commentaire"):
             return ev.get("new", "")                # refus, ou amélioration suggérée en commentaire
+        if ev.get("type") == "commentaire" and ev.get("new", "").startswith("Test de jeu"):
+            return ev["new"].split(") : ", 1)[-1]   # consigne issue d'un test de décor (docs/TEST_DECOR.md)
         if ev.get("type") == "deplacement" and ev.get("new") == "qa":
             break
     return ""
@@ -94,7 +96,7 @@ def lancer(c, prio):
     ent = lire(SUIVI, {}).get(str(c["id"]))
     # carte d'objet sans entrée de suivi (image validée avant le suivi) : l'élément se lit sur son asset
     a = c.get("asset") or ""
-    if not ent and a.startswith("gordeka/decor/objets/") and "masque" in consigne.lower():
+    if not ent and a.startswith("gordeka/decor/objets/") and consigne:
         eid = a.rsplit("/", 1)[-1].removesuffix(".png")
         s = lire(SUIVI, {})
         s.setdefault(f"m-{eid}", {"titre": f"{eid} : masque", "sorte": "masque", "element": eid, "statut": "todo"})
@@ -102,7 +104,9 @@ def lancer(c, prio):
         json.dump(s, open(SUIVI, "w"), ensure_ascii=False, indent=1)
         ent = s[str(c["id"])]
     # refus qui porte sur le masque (« le masque doit avoir une forme de trapèze ») : seul le masque est refait
-    if ent and "masque" in consigne.lower() and f"m-{ent.get('element')}" in lire(SUIVI, {}):
+    bas = consigne.lower()
+    image_aussi = bas.startswith("image") or any(m in bas for m in ("plus haut", "plus large", "plus grand", "paysage"))
+    if ent and "masque" in bas and not image_aussi and f"m-{ent.get('element')}" in lire(SUIVI, {}):
         if ESSAI:
             return f"masque « {consigne[:60]} »"
         subprocess.run([PY, os.path.join(HERE, "decor_matin.py"), "relance", f"m-{ent['element']}", consigne],
