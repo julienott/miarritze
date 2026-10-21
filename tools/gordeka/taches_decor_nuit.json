@@ -441,11 +441,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
-  ]
+  ],
+  "variante": null
  },
  "273": {
   "titre": "Coque sur ber (cale sèche) : refaire de face",
@@ -456,11 +457,17 @@
    {
     "tid": "22b5036a014c46bda7d69487e0f889c5",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0/planche.png"
+  ]
  },
  "274": {
   "titre": "Coque sur ber (cale sèche) : masque v3",
@@ -479,11 +486,17 @@
    {
     "tid": "1e68146d38314c4daf8f17347a869311",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/275_coque_chantier/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/275_coque_chantier/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/275_coque_chantier/0/planche.png"
+  ]
  },
  "276": {
   "titre": "Coque en chantier (atelier) : masque v3",
@@ -509,11 +522,17 @@
    {
     "tid": "d48b9a603dc749d5a9122b953c30a3aa",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0/apercu/bitte_amarrage.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0/apercu/bitte_amarrage.png"
+  ]
  },
  "281": {
   "titre": "Filets et casiers posés au sol : image",
@@ -524,11 +543,17 @@
    {
     "tid": "18863d92006b490a9346e0d621e06f87",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/281_tas_filets/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/281_tas_filets/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/281_tas_filets/0/planche.png"
+  ]
  },
  "283": {
   "titre": "Fontaine de la place : animation",
@@ -539,16 +564,26 @@
    {
     "tid": "6a80a5d14b604cd49778ea3e7cd4a4c8",
     "quoi": "jet d'eau et rides (vidéo)",
-    "style": "pf_2d__loop"
+    "style": "pf_2d__loop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/283_fontaine_place/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/283_fontaine_place/0/planche.png"
    },
    {
     "tid": "93fafdb2623b4804a74f24e29e2dc2e4",
     "quoi": "gouttes du bec (particles drops)",
-    "style": "pf_2d__loop"
+    "style": "pf_2d__loop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/283_fontaine_place/1",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/283_fontaine_place/1/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/283_fontaine_place/0/planche.png",
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/283_fontaine_place/1/planche.png"
+  ]
  },
  "284": {
   "titre": "Fontaine de la place : masque v3",
