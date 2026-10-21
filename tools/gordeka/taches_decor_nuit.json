@@ -1917,11 +1917,13 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/402_ancre_decor/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 00:05",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/402_ancre_decor/0/planche.png"
-  ]
+  ],
+  "variante": "image_00",
+  "suites_a_deposer": "normal"
  },
  "403": {
   "titre": "Cordage enroulé : image",

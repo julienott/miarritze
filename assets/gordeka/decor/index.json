@@ -2407,9 +2407,22 @@
    ],
    "debord_haut_cases": 0,
    "animation": {},
-   "provisoire": "cordage",
-   "fichiers": [],
-   "couche": "sol"
+   "fichiers": [
+    "objets/cordage_enroule.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "de04bdd3af3a4e759ca776995228ec2a",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "lampadaire_port": {
    "nom": "Réverbère du port",
