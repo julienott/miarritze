@@ -17,6 +17,7 @@ tout ce qui est sorti, si ce n'est pas bon renvoie-le, sinon intègre-le », rem
 Les commandes passent par une file (commandes.jsonl) lue par la boucle : pas de course sur l'état.
 Clés : perso/<id>/<anim>, decor/<id>/<n>.
 """
+import glob
 import json
 import os
 import subprocess
@@ -239,7 +240,9 @@ class Routine:
             if tc.traite(a, [b]):
                 log("tenue par la couleur :", a, b)
             base = f"assets/gordeka/persos/{a}/{b}"
-            nuit.commit([base + ".png", base + "_tenue.png", base + ".json", f"tools/gordeka/taches_{a}.json"],
+            # post_anims recalcule les tables d'entrée de tout le perso : tous ses .json partent avec.
+            jsons = [os.path.relpath(j, ROOT) for j in glob.glob(os.path.join(ROOT, "assets/gordeka/persos", a, "*.json"))]
+            nuit.commit([base + ".png", base + "_tenue.png", f"tools/gordeka/taches_{a}.json"] + jsons,
                         f"Gordeka : {a}, animation {b} (recette OK)")
         else:
             src = os.path.join(ed.OUT, a, b)

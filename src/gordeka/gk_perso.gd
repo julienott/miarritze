@@ -314,8 +314,10 @@ func _set_anim(anim: String) -> void:
 		if _f < e.size():
 			ecart = float(e[_f]) / 100.0
 		if _f < ii.size() and bool(d["loop"]) and _regle("anim_entrees", 1.0) > 0.5:
-			var j: int = ii[_f]
-			_t = (d["ends"] as PackedFloat32Array)[j - 1] if j > 0 else 0.0
+			# Table d'une version précédente de l'anim visée : index borné plutôt qu'une erreur.
+			var ends: PackedFloat32Array = d["ends"]
+			var j: int = mini(ii[_f], ends.size())
+			_t = ends[j - 1] if j > 0 else 0.0
 	if not old.is_empty() and visible:
 		_fondu(ecart)
 	if (GkRules.data().get("anims", {}) as Dictionary).get("pouf", []).has(anim):
