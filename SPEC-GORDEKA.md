@@ -361,6 +361,7 @@ style final.
 | Port des Pêcheurs | quais, crampottes, bateaux à sec, rampe | bateaux, filets, casiers, caisses, crampottes | bout de la jetée, barque au pied de la rampe |
 | Grande Plage | sable, promenade, cabines, poste de secours | cabines rayées, parasols, rochers, châteaux de sable | poste du maître-nageur, escalier du casino |
 | Les Halles | allées d'étals, chambre froide, terrasse | étals, caisses, piles de cagettes, comptoirs | porte de la chambre froide, quai de livraison |
+| Parc Mazon (§8.2) | terrain du fronton, aires de jeux des petits et des grands, labyrinthe, mare, kiosque, pelouses | arbres, bosquets, haies, cabanes, toboggans, kiosque, fronton | portillons de la clôture (mare, petits, platanes) |
 
 À venir : Aquarium (bassins, tunnel), Phare (escalier en colimaçon, plusieurs étages), Rocher de la
 Vierge, Fronton.
@@ -452,6 +453,48 @@ id `plage` pour le salon en ligne (elle reprend l'idée de la « Grande Plage »
   communes citées en `res://`, masques du décor commun repris) et imposer l'élément de chaque objet
   (`zones.json` → `objets`) ; `GkMap.info` (zones.json) et `GkMap.dark` (cases sombres).
 - À trancher par Julien : les noms des restaurants (inventés), l'eau peu profonde, les grottes sombres.
+
+### 8.2 Parc Mazon (*demande de Julien du 2026-10-20 ; plan v4 du 2026-10-21, à valider par Julien*)
+« Une carte dans un parc urbain pour enfants : très arboré, clôturé avec des allées, deux espaces de jeux (un pour
+les grands, un pour les petits), un grand terrain central avec un fronton comme au parc Mazon, plein d'opportunités
+de se cacher. » Générée par `tools/gordeka/make_parc_mazon.py` → `assets/maps/parc_mazon/` (96 × 42 cases, comme le
+port), jouable en partie rapide et acceptée par les salons en ligne (`GK_MAPS`).
+
+- **Plan** : 14 salles séparées par des massifs d'arbres (lettre `v`) et reliées par des allées de 2 cases qui
+  traversent les massifs, où l'on se croise. En haut : entrée du gardien, labyrinthe de haies, aire des grands, mare
+  aux canards, potager du jardinier ; au milieu : bosquet, kiosque à musique, **terrain du fronton** (au centre,
+  départ des joueurs, grand et dégagé : la zone chaude), grande pelouse ; en bas : aire des petits, fontaine,
+  buvette, jardin des cabanes, allée des platanes. Une grande boucle de salles autour du terrain ; raccourcis :
+  l'**allée du fronton** derrière le mur (masquée par lui), le **pont de la mare**, le labyrinthe.
+- **Repère par zone** : maison du gardien, haies, cabane-château et grand toboggan, mare et pont, serre, kiosque,
+  fronton, grands platanes, bac à sable et tourniquet, fontaine (reprise du port), buvette au cornet géant, cabanes
+  en branches, rangées de platanes.
+- **Cachettes** (26, toutes avec au moins deux côtés libres) : sous la cabane-château, sous le grand toboggan,
+  tunnel en tube, maisonnette des petits, buissons creux, troncs creux, cabanes en branches, niches dans les haies,
+  sous l'estrade du kiosque, malle à pelotes, roseaux, composteur, coffre à glaces, poubelles (reprises du port).
+  On se cache aussi **derrière les troncs et dans les bosquets** : la couronne d'un arbre masque qui est derrière.
+- **Sorties** (3 portillons de la clôture, 2 ouverts par round) : rive nord de la mare au bout du pont (à
+  découvert), portail des petits (sud-ouest), coin sud-est de l'allée des platanes (dégagé).
+- **Formes** : chaque objet a une emprise au sol (ce qui bloque le passage et la vue : tronc, base, socle) et une
+  partie haute qui masque un perso derrière (couronne, toit, mur), données par des masques au format de pixelforge
+  (`assets/maps/parc_mazon/decor/masques/`) ; les objets bas (bancs, tables, balançoires, tourniquet, toile
+  d'araignée, serre vitrée) bloquent le passage et laissent voir par-dessus.
+- **Placeholders dessinés par le code** (`tools/gordeka/placeholders_parc.py`, contour bleu marine, vue 3/4) en
+  attendant les images ; banc, fontaine, poubelle et table de terrasse sont les images du port. Assets à créer :
+  carte chapeau « Carte : Parc Mazon » (#493) sur /producer, une carte par asset en Backlog avec son prompt
+  (`tools/gordeka/prompts_decor.json` → `cartes` → `parc_mazon`, `tools/gordeka/backlog_parc.py`), dont les
+  animations (feuillages, balançoires, tourniquet, fontaine, drapeau du fronton, canards, pigeons, roseaux…).
+  Rien n'est déposé chez pixelforge : Julien priorise.
+- **Équilibre** (IA contre IA, 120 manches par niveau, chassés « normal », journal dans
+  `docs/GORDEKA_EQUILIBRAGE.md`) : le chasseur gagne 35 / 49 / 63 % (facile / normal / malin), contre
+  59 / 58 / 80 % au port mesuré avec le même code. **L'objectif de 2 rounds sur 3 au niveau normal n'est pas
+  atteint**, ni par le parc ni par le port : personne ne reste caché jusqu'au bout, tout chassé non trouvé finit par
+  sortir. Le levier restant est dans les règles (`exits_open_at`, `extract_hold`), pas dans la carte.
+  Le parc reste plus favorable aux chassés que le port (surtout face au chasseur facile) ; les niveaux sont dans
+  l'ordre, toutes les cachettes servent (39 à 66 entrées chacune sur 360 manches), toutes les zones sont visitées,
+  et les captures comme les « vu puis perdu » ont lieu surtout dans les allées entre les zones.
+- **À trancher par Julien** : garder 26 cachettes (« plein d'opportunités ») ou en retirer ; image du fronton (celui du port est vu de biais et trop petit pour un mur de 14 cases) ; clôture
+  dessinée (aujourd'hui murets gris du prototype).
 
 ## 9. Direction artistique
 

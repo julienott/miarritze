@@ -268,3 +268,37 @@ Plan et contenu : SPEC-GORDEKA §8 (« Plage de la Côte des Basques »). Série
   les 4 sorties servent (par ouverture : escalier 1,4 chassé, rampe 1,1, digue 0,9, ponton 0,8).
 - **Grottes sombres** (`idee_grottes:1`, vue du chasseur à 4 cases dans les grottes et tunnels), 120 rounds au
   normal : le chasseur gagne 52 % au lieu de 56 % (dans le bruit), 3,9 vu-perdu au lieu de 4,4 ; elle ne change pas l'équilibre. Laissée désactivée (à essayer en jouant : c'est surtout un frisson de plus).
+
+## 2026-10-21 : Parc Mazon (nouvelle carte, `tools/gordeka/make_parc_mazon.py --version N`)
+
+`ab_tension.py run … --map <variante>`, 6 joueurs, chassés « normal », chasseur facile / normal / malin, 120 manches
+par niveau (sauf mention) ; instantané du projet pour toutes les mesures. Le port mesuré avec le même code et les
+mêmes règles sert de référence. Erreur type : ±4 à 5 points sur « chasseur gagne ».
+
+| essai | changement | sol (cases) | cachettes | chasseur gagne % | trouvés % | sortis % | vu-perdu | cases/min |
+|---|---|---|---|---|---|---|---|---|
+| port (référence) | — | 2 035 | 16 | 59 / 58 / 80 | 54 / 54 / 70 | 46 / 46 / 30 | 3,0 / 2,9 / 2,3 | 151 / 149 / 144 |
+| v1 | premier plan : 15 zones, massifs fins, sorties au gardien, au potager, aux petits | 2 771 | 26 | 32 / 43 / 58 | 35 / 43 / 52 | 65 / 57 / 48 | 3,0 / 2,9 / 2,4 | 133 / 136 / 132 |
+| v2 | sorties exposées (rive nord de la mare au bout du pont, coin des platanes), labyrinthe aéré | 2 795 | 26 | 32 / 45 (75 manches) / – | 39 / 47 / – | 61 / 52 / – | 3,1 / 3,4 / – | 138 / 131 / – |
+| v3 | abords des sorties dégagés (arbres et cachettes à plus de 6 cases) | 2 796 | 26 | 27 (117 manches) / – / – | 35 | 65 | 3,0 | 135 | 
+| **v4 (retenue)** | chaque zone rend son bord d'une case aux massifs : carte de la taille du port, de vraies allées entre les zones | 2 066 | 26 | **38 / 54 / 58** | 44 / 50 / 56 | 56 / 50 / 44 | 2,8 / 3,1 / 2,0 | 142 / 140 / 139 |
+| v5 | v4 + sortie au bord est de la pelouse (au lieu des platanes), allée du fronton hors zones, 4 cachettes de moins | 2 071 | 22 | 32 / 44 (61 manches) / – | 40 / 45 | 60 / 55 | 2,8 / 2,8 | 137 / 142 |
+| v6 | v4 + sorties poussées aux coins (portail des petits au sud-ouest, mare au nord-est) | 2 065 | 26 | 35 / 18 (17 manches) / – | 42 | 58 | 2,7 | 143 |
+| **final** (v4, deux cachettes coincées par le nouveau bord déplacées) | | 2 066 | 26 | **35 / 49 / 63** | 41 / 51 / 56 | 59 / 49 / 44 | 3,1 / 2,9 / 2,2 | 143 / 140 / 137 |
+
+- **La taille compte le plus** : à 2 800 cases de sol (37 % de plus que le port), le chasseur reste au centre (terrain,
+  kiosque, allée du fronton : 37 % de son temps) et ne voit presque jamais les salles du pourtour (potager 2 %, platanes
+  2 %) où les chassés attendent l'ouverture des sorties. Ramenée à la taille du port (v4), la carte gagne ~10 points.
+- **Personne ne reste caché jusqu'au bout** (0 par manche, au port comme au parc) : tout chassé non trouvé finit par
+  sortir, le chasseur gagne en attrapant sur le chemin des sorties. Une sortie près d'une zone où l'on se cache
+  (labyrinthe, bosquet) laisse filer 1,8 chassé par ouverture ; au bout du pont de la mare, à découvert, 1,1.
+- v3, v5, v6 n'apportent rien (dans le bruit ou en recul) : arrêt après deux essais sans gain, v4 retenue. v3, v5 et
+  v6 ont été arrêtés avant 120 manches par niveau, nettement derrière v4.
+- **Objectif non atteint** : au niveau normal le chasseur gagne 49 % (port : 58 %), loin des 2/3 ; le chasseur facile
+  est bien plus faible qu'au port (35 % contre 59 %). Les niveaux restent dans l'ordre. Leviers hors carte, à essayer
+  sur les deux cartes : `exits_open_at`, `extract_hold`.
+- Usage (essai final, 360 manches) : les 26 cachettes servent toutes (39 à 66 entrées chacune), toutes les zones sont
+  visitées (buvette et potager le moins, 2 à 3 % du temps des chassés), les captures et les « vu puis perdu » ont lieu
+  d'abord dans les allées entre les zones (168 et 169), puis l'aire des grands, le labyrinthe et la grande pelouse.
+- Statistiques : les portillons sont posés sur le bord rendu aux massifs, hors du rectangle de leur zone ; le jeu note
+  donc ces sorties « ? » dans `sorties_lieux` (sans effet sur le jeu).
