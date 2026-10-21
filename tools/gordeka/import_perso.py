@@ -95,10 +95,21 @@ def main() -> None:
     revue = os.path.join(ROOT, "tools", "rd", "out", pid, "gk2d", "pf")
     os.makedirs(dest, exist_ok=True)
     for anim, tid in taches.items():
+        # {"tid": …, "tenue": …} : masque de tenue recalculé à part (pf_2d__tenue) sur la tâche d'animation
+        tenue = None
+        if isinstance(tid, dict):
+            tid, tenue = tid["tid"], tid.get("tenue")
         r = json.loads(urllib.request.urlopen(f"{pf.PF}/v2/inferences/tasks/{tid}", timeout=60).read())
         if r.get("status") != "succeeded":
             print(f"{anim} : tâche {tid} {r.get('status')}, ignorée")
             continue
+        if tenue:
+            rt = json.loads(urllib.request.urlopen(f"{pf.PF}/v2/inferences/tasks/{tenue}", timeout=60).read())
+            for f in rt["result"]["pixelforge"]["files"]:
+                if f["name"] == "tenue_sheet_00.png":
+                    f_t = f
+            r["result"]["pixelforge"]["files"] = [f for f in r["result"]["pixelforge"]["files"]
+                                                  if f["name"] != "tenue_sheet_00.png"] + [f_t]
         got = {}
         for f in r["result"]["pixelforge"]["files"]:
             data = None

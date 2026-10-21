@@ -496,7 +496,27 @@
    "mouvement": {
     "run_scared": {
      "exaggerate": 1.15
+    },
+    "search": {
+     "arms": null,
+     "exaggerate": 1.4,
+     "bounce": 0.05
+    },
+    "detect": {
+     "arms": null,
+     "exaggerate": 1.4,
+     "bounce": 0.05
+    },
+    "victory": {
+     "arms": null,
+     "exaggerate": 1.4,
+     "bounce": 0.08
     }
+   },
+   "actions": {
+    "search": "scuttles sideways and peeks left and right, eyes on stalks turning, pincers snipping at the ground",
+    "detect": "jolts upright and leans forward, eyes on stalks stretching tall toward the right",
+    "victory": "happy little hops on the spot, both pincers raised high and clacking, eyes on stalks bouncing"
    }
   },
   "ramuntxo": {
