@@ -18,40 +18,39 @@
  "expression": "terrified comic face: eyes wide open and round, looking ahead, mouth open in a big round O of fear",
  "tenue": "scarf",
  "drive": {
-  "arms": "wings",
+  "arms": "wings_up",
   "exaggerate": 1.15
  },
- "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Panicked cartoon sprint, running for dear life: very long strides, webbed feet spinning fast, body leaning far forward, both grey wings flapping wildly at his sides, sweat drops flying off the head, a little dust puff at the heels. Hugely exaggerated, comic, never violent. Way of moving: seagull waddle: body rocks side to side, webbed feet slap the ground, head bobs forward and back with each step. The light grey wings used as arms: flap frantically at his sides at shoulder height as if trying to take off, feet still running; he has no hands and no human arms, only his two grey wings. The small grey tail: wags with the waddle. The small neckerchief scarf: stays tied in place, the two short tips flutter with the motion.",
- "stride_px": 183.2,
- "decalage": [4.0, 0.0],
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Runs in panic with both wings raised high and held still, very long strides, webbed feet spinning fast, body leaning forward, sweat drops flying. Way of moving: seagull waddle: body rocks side to side, webbed feet slap the ground, head bobs forward and back with each step. The light grey wings used as arms: flap frantically at his sides at shoulder height as if trying to take off, feet still running; he has no hands and no human arms, only his two grey wings. The small grey tail: wags with the waddle. The small neckerchief scarf: stays tied in place, the two short tips flutter with the motion.",
+ "stride_px": 149.3,
  "entrees": {
   "idle": {
-   "i": [29, 29, 29, 30, 30, 0, 30, 29, 29, 29, 29, 0, 0, 29, 29, 29, 29, 29, 29, 29, 29, 31, 31, 29, 29, 29, 29, 29, 29, 29, 29, 29],
-   "e": [39, 39, 38, 40, 40, 37, 38, 38, 38, 40, 37, 39, 39, 40, 43, 43, 43, 43, 42, 35, 35, 34, 30, 33, 33, 35, 42, 44, 44, 43, 41, 39]
+   "i": [29, 11, 12, 11, 11, 11, 11, 11, 11, 14, 29, 14, 17, 14, 12, 12, 12, 4, 17, 17, 17, 17, 11, 29, 29, 29, 10, 29, 29, 29, 31, 31],
+   "e": [21, 33, 36, 33, 33, 31, 35, 30, 30, 26, 22, 26, 31, 31, 41, 40, 40, 37, 34, 34, 33, 34, 24, 17, 17, 15, 23, 23, 23, 23, 31, 32]
   },
   "walk": {
-   "i": [0, 0, 19, 19, 19, 7, 7, 19, 19, 23, 19, 19, 19, 19, 3, 4, 4, 4, 19, 19, 19, 19, 20, 23, 23, 23, 24, 18, 18, 0, 2, 19],
-   "e": [23, 23, 23, 22, 22, 22, 22, 23, 23, 25, 25, 21, 21, 21, 27, 25, 25, 25, 26, 15, 16, 15, 24, 23, 23, 19, 19, 21, 21, 19, 23, 25]
+   "i": [19, 19, 19, 19, 19, 22, 22, 20, 22, 23, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 22, 22, 23, 19, 2, 2, 2, 19, 19],
+   "e": [31, 30, 31, 29, 29, 29, 31, 30, 30, 30, 28, 30, 30, 30, 34, 33, 33, 33, 32, 31, 31, 30, 27, 24, 25, 30, 34, 35, 35, 35, 33, 32]
   },
   "hide_in": {
-   "e": [39, 39, 38, 40, 40, 37, 38, 38, 38, 40, 37, 39, 38, 40, 43, 43, 44, 44, 42, 34, 35, 34, 30, 33, 33, 35, 42, 44, 44, 43, 40, 39]
+   "e": [23, 34, 37, 34, 34, 33, 36, 32, 32, 27, 23, 27, 32, 32, 42, 41, 41, 38, 35, 35, 35, 35, 25, 19, 19, 16, 22, 23, 23, 25, 32, 32]
   },
   "trap": {
-   "e": [40, 39, 38, 40, 40, 38, 39, 39, 39, 40, 37, 39, 39, 40, 43, 43, 43, 43, 42, 35, 35, 34, 31, 34, 34, 36, 43, 45, 45, 44, 41, 39]
+   "e": [20, 32, 35, 32, 32, 31, 35, 30, 30, 26, 22, 25, 30, 30, 41, 40, 40, 36, 34, 33, 33, 34, 23, 17, 17, 15, 25, 24, 24, 23, 30, 31]
   },
   "found": {
-   "e": [49, 48, 47, 48, 48, 45, 46, 48, 48, 49, 46, 47, 47, 48, 50, 50, 49, 49, 48, 44, 44, 44, 42, 44, 44, 45, 49, 53, 53, 52, 50, 49]
+   "e": [37, 41, 42, 40, 40, 38, 42, 39, 39, 37, 33, 34, 36, 36, 42, 41, 41, 37, 34, 34, 34, 36, 30, 31, 31, 34, 39, 40, 40, 40, 43, 43]
   },
   "extract": {
-   "e": [40, 40, 38, 40, 40, 38, 38, 39, 39, 40, 37, 39, 39, 40, 44, 43, 43, 44, 42, 35, 35, 34, 31, 34, 34, 36, 43, 44, 44, 43, 41, 39]
+   "e": [22, 33, 36, 33, 33, 32, 36, 31, 31, 27, 22, 26, 31, 31, 42, 40, 40, 37, 34, 34, 34, 34, 24, 18, 17, 16, 23, 23, 23, 24, 31, 32]
   },
   "victory": {
-   "i": [0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 26, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-   "e": [30, 30, 32, 31, 31, 31, 34, 36, 36, 37, 33, 33, 33, 34, 40, 42, 42, 38, 33, 34, 34, 33, 30, 31, 32, 30, 38, 39, 40, 36, 37, 36]
+   "i": [0, 29, 29, 29, 29, 10, 10, 29, 29, 11, 22, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 22, 22, 22, 20, 22, 22, 0, 0, 0],
+   "e": [26, 32, 33, 31, 30, 29, 34, 30, 30, 30, 27, 29, 32, 32, 39, 38, 38, 34, 30, 29, 29, 30, 23, 23, 24, 26, 32, 32, 32, 32, 34, 35]
   },
   "sad": {
-   "i": [27, 27, 26, 25, 25, 25, 25, 25, 14, 26, 26, 14, 14, 14, 13, 20, 20, 14, 14, 15, 15, 26, 27, 27, 27, 28, 27, 28, 28, 27, 27, 27],
-   "e": [36, 35, 33, 35, 35, 32, 33, 33, 33, 35, 31, 32, 32, 33, 36, 35, 35, 36, 34, 28, 28, 29, 26, 29, 29, 32, 40, 41, 41, 39, 36, 34]
+   "i": [2, 25, 24, 25, 25, 25, 25, 29, 4, 2, 2, 4, 3, 3, 5, 23, 23, 25, 25, 4, 4, 25, 29, 2, 2, 1, 0, 1, 1, 2, 3, 3],
+   "e": [20, 30, 32, 29, 29, 28, 32, 27, 27, 25, 21, 24, 29, 29, 38, 37, 37, 34, 32, 31, 31, 31, 21, 16, 16, 16, 23, 23, 23, 23, 29, 29]
   }
  }
 }
