@@ -513,19 +513,27 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "274": {
   "titre": "Coque sur ber (cale sèche) : masque v3",
   "sorte": "masque",
   "element": "coque_sur_ber",
-  "priorite": "night",
-  "statut": "attend",
-  "depend": "273"
+  "priorite": "normal",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "72584f7f0c674f81b8035ca0f1404177",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 08:08"
  },
  "275": {
   "titre": "Coque en chantier (atelier) : refaire de face",
