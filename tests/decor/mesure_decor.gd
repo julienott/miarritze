@@ -56,6 +56,9 @@ func _run() -> void:
 			res.append(row)
 			continue
 		row["sort_y"] = snappedf(float(inst["sort_y"]), 0.1)
+		# Hauteur pour la vue (#607), en persos ; objet bas = la vue passe au-dessus (hors couche de vue).
+		row["vue_h_perso"] = snappedf(float(inst.get("view_h", 0.0)) / GkPerso.HEIGHT_PX, 0.01)
+		row["vue_basse"] = d.low_view.has(idx)
 		var bb: Rect2 = Rect2()
 		var first: bool = true
 		var area: float = 0.0

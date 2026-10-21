@@ -947,34 +947,54 @@ func _hiders_left() -> int:
 
 # ---------------------------------------------------------------- vision et capture
 
-## Le chasseur voit-il un corps de rayon `r` en `p` ? Cône (ou petit cercle) puis ligne de vue
-## libre vers le centre ou un des bords du corps (couche 2 : murs, caisses, bateaux, cachettes).
+## Le chasseur voit-il un corps de rayon `r` en `p` ? Au moins un point du corps visible (sight_fraction).
 func sees(h: GkActor, p: Vector2, r: float) -> bool:
 	return sight_fraction(h, p, r, false) > 0.0
 
 
-## Part visible d'un corps de rayon `r` en `p` (0, 1/3, 2/3 ou 1 : centre et deux bords, lignes de vue
-## libres) ; 0 hors du cône et du petit cercle. `all_rays` faux : s'arrête au premier rayon libre.
+## Part visible d'un corps de rayon `r` en `p` (0 à 1) ; 0 hors du cône et du petit cercle. On vise
+## plusieurs points du corps (#607) : trois lignes (centre et deux bords) et, sur chacune, trois hauteurs
+## (vue_pieds, vue_buste, vue_tete, en part de la hauteur d'un perso), depuis l'œil du chasseur
+## (vue_oeil, au moins aussi haut que la tête). Un point est caché par un mur ou un objet plus haut que l'œil (couche 2), par un objet
+## plus bas dont la ligne passe sous le haut (GkDecor.low_blocks), ou, au-delà de masque_vue_portee, par
+## la silhouette d'un objet dessiné devant lui (GkDecor.covered_at). Un objet bas ne cache donc plus
+## qu'une partie d'un perso debout (jauge plus lente, detection_partiel) ; un objet haut le cache.
+## `all_rays` faux : s'arrête au premier point vu.
 func sight_fraction(h: GkActor, p: Vector2, r: float, all_rays: bool = true) -> float:
 	var v: Vector2 = p - h.position
 	var d: float = v.length()
 	if d > sight_range(h, p) + r:
 		return 0.0
-	# Caché derrière un objet haut (son toit, sa face haute le recouvre) : vu de près seulement.
-	if map.decor and d > GkRules.px("masque_vue_portee") + r and map.decor.masking(p, mask_height(r)) >= 0:
-		return 0.0
 	if d > GkRules.px("near_radius") + r:
 		var half: float = deg_to_rad(GkRules.f("cone_deg")) * 0.5 + atan2(r, maxf(d, 1.0))
 		if absf(angle_difference(h.look, v.angle())) > half:
 			return 0.0
+	var eye: float = eye_height()
+	var levels: Array[float] = [GkRules.f("vue_pieds"), GkRules.f("vue_buste"), GkRules.f("vue_tete")]
+	var screen: bool = map.decor != null and d > GkRules.px("masque_vue_portee") + r
+	var hidden_lv: Array[bool] = []
+	for lv: float in levels:
+		hidden_lv.append(screen and map.decor.covered_at(p, lv * GkPerso.HEIGHT_PX))
 	var side: Vector2 = v.orthogonal().normalized() * r * 0.8
 	var n: int = 0
+	var total: int = 0
 	for target: Vector2 in [p, p + side, p - side]:
-		if clear_line(h.position, target):
+		var clear: bool = clear_line(h.position, target)
+		for k: int in levels.size():
+			total += 1
+			if not clear or hidden_lv[k]:
+				continue
+			if map.decor and map.decor.low_blocks(h.position, target, eye, levels[k] * GkPerso.HEIGHT_PX):
+				continue
 			n += 1
 			if not all_rays:
 				return 1.0
-	return float(n) / 3.0
+	return float(n) / float(maxi(total, 1))
+
+
+## Hauteur de l'œil du chasseur (px au-dessus du pied) : vue_oeil × hauteur d'un perso.
+static func eye_height() -> float:
+	return GkRules.f("vue_oeil") * GkPerso.HEIGHT_PX
 
 
 ## Portée du cône du chasseur vers `p` (px) : `grotte_portee` cases au plus dans le noir (`idee_grottes`),

@@ -71,6 +71,9 @@ var shaped: Dictionary = {}
 ## et, si la forme est connue : polys (bases au sol, repère de la carte), blocks_view, mask (BitMap de
 ## la silhouette), mask_rect (zone dessinée, repère de la carte), mask_scale, sort_y, fade.
 var instances: Array = []
+## Instances qui cachent la vue mais plus basses que l'œil du chasseur (GkMap les sort de la couche de
+## vue) : la vue passe au-dessus, sauf vers les points du corps plus bas qu'elles (`low_blocks`).
+var low_view: Array[int] = []
 var _dir: String = DIR
 var _tex: Dictionary = {}           # chemin → Texture2D (ou null si absent)
 var _floors: Dictionary = {}        # "car|zone" → {textures: Array, cases: Vector2i}
@@ -490,12 +493,39 @@ func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, d
 	inst["mask"] = sh["mask"]
 	inst["mask_scale"] = sh["scale"]
 	inst["mask_rect"] = Rect2(top_left, drawn)
+	# Hauteur de l'objet pour la vue (#607) : hauteur de la silhouette dessinée à l'écran (la profondeur
+	# en vue 3/4 compte : on penche vers « ça cache », comme avant).
+	var pbb: Rect2 = Rect2(polys[0][0], Vector2.ZERO)
+	for poly: PackedVector2Array in polys:
+		for p: Vector2 in poly:
+			pbb = pbb.expand(p)
+	inst["poly_bb"] = pbb
+	var sil: Dictionary = _shape(tex, rel, drawn)
+	if sil.has("mask"):
+		inst["view_h"] = _mask_height(sil["mask"]) * (sil["scale"] as Vector2).y
+	else:
+		inst["view_h"] = _mask_height(sh["mask"]) * (sh["scale"] as Vector2).y
 	inst["sort_y"] = holder.position.y
 	inst["fade"] = 1.0
 	inst["shape_source"] = str(sh.get("source", "repli"))
 	inst["shape_info"] = sh.get("info", {"refus_pixelforge": refus} if refus != "" else {})
 	for c: Vector2i in inst["cells"]:
 		shaped[c] = true
+
+
+## Hauteur de la silhouette (en points du masque) : de sa première à sa dernière ligne opaque.
+static func _mask_height(bm: BitMap) -> int:
+	var sz: Vector2i = bm.get_size()
+	var y0: int = -1
+	var y1: int = -1
+	for y: int in sz.y:
+		for x: int in sz.x:
+			if bm.get_bit(x, y):
+				if y0 < 0:
+					y0 = y
+				y1 = y
+				break
+	return 0 if y0 < 0 else y1 - y0 + 1
 
 
 ## Forme retournée en miroir (objet posé en miroir) : emprise et masque autour de l'axe vertical de l'image.
@@ -824,6 +854,36 @@ func masking(p: Vector2, h: float) -> int:
 		if r.has_point(p) and _covers(inst, p) and _covers(inst, p - Vector2(0, h)):
 			return i
 	return -1
+
+
+## Vue du chasseur (#607) : le point du corps à `z` px au-dessus du pied `p` est-il recouvert à l'écran
+## par un objet qui cache la vue, dessiné devant le perso (pied du perso au-dessus de sa ligne de tri) ?
+func covered_at(p: Vector2, z: float) -> bool:
+	var q: Vector2 = p - Vector2(0.0, z)
+	for inst: Dictionary in instances:
+		if inst.get("blocks_view", false) and p.y < float(inst["sort_y"]) and _covers(inst, q):
+			return true
+	return false
+
+
+## Vue du chasseur (#607) : la ligne de l'œil (`eye` px au-dessus de `a`) au point du corps à `z` px
+## au-dessus de `b` passe-t-elle sous le haut d'un objet bas (hors couche de vue, `low_view`) dont elle
+## traverse l'emprise ? Hauteur de la ligne linéaire le long du trajet : on teste l'entrée et la
+## sortie de chaque morceau dans l'emprise.
+func low_blocks(a: Vector2, b: Vector2, eye: float, z: float) -> bool:
+	var seg: Rect2 = Rect2(a, Vector2.ZERO).expand(b)
+	var len: float = maxf(a.distance_to(b), 1.0)
+	for i: int in low_view:
+		var inst: Dictionary = instances[i]
+		var vh: float = float(inst["view_h"])
+		if vh <= minf(eye, z) or not seg.intersects(inst["poly_bb"], true):
+			continue
+		for poly: PackedVector2Array in inst["polys"]:
+			for piece: PackedVector2Array in Geometry2D.intersect_polyline_with_polygon(PackedVector2Array([a, b]), poly):
+				for q: Vector2 in piece:
+					if lerpf(eye, z, a.distance_to(q) / len) < vh:
+						return true
+	return false
 
 
 func _covers(inst: Dictionary, p: Vector2) -> bool:

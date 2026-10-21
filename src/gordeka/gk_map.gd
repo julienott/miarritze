@@ -202,10 +202,18 @@ func _build_bodies() -> void:
 	qa.visible = OS.get_cmdline_user_args().has("--gk-qa-formes")
 	add_child(qa)
 	formes = qa
-	for inst: Dictionary in decor.instances:
+	# Objets qui cachent la vue mais plus bas que l'œil du chasseur (#607) : hors de la couche de vue et
+	# sans ombre de la lampe ; GkGame.sight_fraction teste leur hauteur point du corps par point.
+	var eye: float = GkGame.eye_height()
+	decor.low_view.clear()
+	for i: int in decor.instances.size():
+		var inst: Dictionary = decor.instances[i]
 		if not inst.has("polys"):
 			continue
 		var blocks: bool = bool(inst["blocks_view"])
+		if blocks and float(inst.get("view_h", INF)) < eye:
+			blocks = false
+			decor.low_view.append(i)
 		for poly: PackedVector2Array in inst["polys"]:
 			var cp: CollisionPolygon2D = CollisionPolygon2D.new()
 			cp.polygon = poly

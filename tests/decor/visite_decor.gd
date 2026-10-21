@@ -115,17 +115,19 @@ func _run() -> void:
 			var hpos: Vector2 = Vector2(c.x, bb.end.y + 2.5 * m.tile)
 			game.local.position = hpos
 			game.local.look = -PI * 0.5
-			other.position = poses["derriere"]
+			# Chassé remis à neuf avant chaque pose (une capture le passerait en fantôme pour la suite) ;
+			# part vue = sight_fraction instantanée (0 à 1), indépendante de la jauge.
+			_reset_hider(other, poses["derriere"])
 			other.visible = true
-			await _wait(60)
+			await _wait(20)
 			m.formes.visible = false
 			var v2: Rect2 = view.expand(hpos + Vector2(0, r * 2))
 			_shot(v2, "%s__chasseur_cache_derriere.png" % tag)
-			row["poses"]["chassé derrière vu"] = bool(game._seen.get(other.id, false))
+			row["poses"]["chassé derrière vu"] = snappedf(game.sight_fraction(game.local, other.position, other.radius), 0.01)
 			# Chassé à côté (gauche) : doit être vu.
-			other.position = poses["gauche"]
-			await _wait(40)
-			row["poses"]["chassé à gauche vu"] = bool(game._seen.get(other.id, false))
+			_reset_hider(other, poses["gauche"])
+			await _wait(20)
+			row["poses"]["chassé à gauche vu"] = snappedf(game.sight_fraction(game.local, other.position, other.radius), 0.01)
 			_shot(v2, "%s__chasseur_cote.png" % tag)
 			# Le chasseur lui-même derrière l'objet (tri).
 			other.position = Vector2(-100000, -100000)
@@ -138,6 +140,13 @@ func _run() -> void:
 	f2.store_string(JSON.stringify(log_rows, " "))
 	f2.close()
 	quit()
+
+
+func _reset_hider(a: GkActor, p: Vector2) -> void:
+	a.set_role(GkActor.Role.HIDER)
+	a.gauge = 0.0
+	a.doubted = false
+	a.position = p
 
 
 func _shot(world: Rect2, name: String) -> void:

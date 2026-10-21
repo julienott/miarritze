@@ -25,7 +25,7 @@ func _initialize() -> void:
 
 func _run() -> void:
 	var tests: Array[Callable] = [test_jauge_remplissage, test_jauge_decroissance, test_jauge_sans_detection,
-		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus,
+		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus, test_vue_objet_bas,
 		test_options_partie, test_partie_ia_courte, test_rounds_pour, test_sac, test_versus_saute_en_ia,
 		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo, test_parc_mazon, test_plage, test_port_v3]
 	for t: Callable in tests:
@@ -529,6 +529,25 @@ func test_port_v3() -> void:
 	check(game.round_no >= 3, "deux rounds IA joués sur le port (%d images)" % frames)
 	await free_game(game)
 	check(is_equal_approx(GkRules.f("exits_open_at"), 10.0), "réglage de la carte retiré à la fin de la partie")
+
+
+## Vue du chasseur (#607) : la ligne de l'œil vers les pieds passe sous un objet bas posé juste devant
+## le chassé, celle vers la tête au-dessus ; un objet plus haut que l'œil cache tout.
+func test_vue_objet_bas() -> void:
+	var d: GkDecor = GkDecor.new()
+	var box: PackedVector2Array = PackedVector2Array([Vector2(280, -20), Vector2(320, -20), Vector2(320, 20), Vector2(280, 20)])
+	d.instances = [{"polys": [box], "poly_bb": Rect2(280, -20, 40, 40), "view_h": 0.6 * GkPerso.HEIGHT_PX}]
+	d.low_view = [0]
+	var eye: float = GkGame.eye_height()
+	var a: Vector2 = Vector2.ZERO
+	var b: Vector2 = Vector2(340, 0)
+	check(d.low_blocks(a, b, eye, GkRules.f("vue_pieds") * GkPerso.HEIGHT_PX), "objet bas : pieds cachés")
+	check(not d.low_blocks(a, b, eye, GkRules.f("vue_tete") * GkPerso.HEIGHT_PX), "objet bas : tête vue")
+	check(not d.low_blocks(a, Vector2(0, 300), eye, 0.0), "ligne qui ne traverse pas l'objet : rien de caché")
+	d.instances[0]["view_h"] = eye + 1.0
+	check(d.low_blocks(a, b, eye, GkRules.f("vue_tete") * GkPerso.HEIGHT_PX), "objet plus haut que l'œil : tête cachée")
+	check(GkRules.f("vue_oeil") >= GkRules.f("vue_tete"), "l'œil du chasseur est au moins à hauteur de tête")
+	d.free()
 
 
 # ------------------------------------------------------------------ partie en N rounds

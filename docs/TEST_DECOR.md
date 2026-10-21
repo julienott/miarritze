@@ -21,7 +21,8 @@ Une entrée par objet posé (`decor.json` de la carte), en mode visite chassé :
 | `cols_sans_emprise`, `cols_emprise_sous_base` | colonnes de l'image sans emprise / emprise débordant sous la base | 0 attendu, quelques-unes tolérées aux bords |
 | `sondes` | point où un cercle de perso s'arrête en avançant vers l'objet par les 4 côtés | doit être au contact de l'objet dessiné, jamais au milieu |
 | `masque_derriere` / `masque_devant` | un perso derrière est-il masqué / un perso devant recouvert ? | objet haut : vrai / faux |
-| `blocks_view`, `sight_fraction` | l'objet bloque-t-il la vue du chasseur, part du perso vue derrière lui | objet haut : bloque ; objet bas (banc, étal) : ne bloque pas |
+| `blocks_view`, `vu_derriere`, `vu_cote` | l'objet bloque-t-il la vue du chasseur ; part du perso vue derrière lui / à côté (9 points : 3 lignes × pieds, buste, tête, depuis l'œil du chasseur) | objet haut : 0 derrière ; objet qui cache mais plus bas que l'œil (`vue_basse`) : ≈ 0,33 (tête vue) ; objet bas qui ne cache pas (banc, étal) : 1 |
+| `vue_h_perso`, `vue_basse` | hauteur de la silhouette (persos) ; vrai si plus basse que l'œil (vue_oeil) : hors couche de vue, sans ombre de lampe, la vue passe au-dessus | cachettes basses, caisses : basse ; maisons, platane, cabine : non |
 | `info` | source du masque (pixelforge `masks.json` ou repli local), avertissements, confiance | « repli » ou masque périmé (`size` ≠ image) = à refaire |
 | `provisoire` | objet encore dessiné par le code | 0 attendu une fois les images livrées |
 
@@ -39,7 +40,8 @@ Pour chaque objet (une pose par id, taille et miroir), le perso est posé là o�
 l'objet (devant, derrière, gauche, droite) ; captures recadrées avec et sans les formes (touche F du mode
 visite : emprise bloquante, zone qui cache, ligne de tri ; cases de la grille des IA corrigées par
 l'emprise : bleu = case de l'objet libérée, rouge = case de sol bloquée par un débord). En `chasseur`, le chasseur est devant l'objet et
-regarde vers lui. À vérifier à l'œil :
+regarde vers lui ; le chassé figurant est remis à neuf à chaque pose et `_visite_chasseur.json` note la part
+vue instantanée (0 à 1). À vérifier à l'œil :
 
 1. **échelle** : objet vs perso et vs objets voisins (porte un peu plus haute qu'un enfant, bitte au genou…) ;
 2. **emprise** : on bute sur la base dessinée, ni dans l'air ni à travers l'objet ;
