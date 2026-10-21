@@ -193,6 +193,26 @@ def source_fermee(eid):
     return os.path.join(OUT_DECOR, eid, str(s.get("job", 0)), str(s.get("variante", "image_00")) + ".png")
 
 
+OUVERT_DEFAUT = ("the same object shown wide open: its lid or door is fully opened, swung far away from the body, "
+                 "revealing a big dark empty hollow inside where a child could hide")
+OUVERTS = {
+    "cachette_casier_homards": "the same lobster trap with its front net door swung fully open on its hinge, a big dark empty hollow inside the barrel",
+    "cachette_coffre_quai": "the same chest with its lid flipped fully open and standing upright behind it, the dark empty inside of the chest clearly visible",
+    "cachette_caisse_glace": "the same cooler box with its lid flipped fully open and standing upright behind it, the dark empty inside clearly visible",
+    "cachette_coffre_cordages": "the same chest with its lid flipped fully open and standing upright behind it, the dark empty inside clearly visible",
+    "cachette_poubelle_ruelle": "the same wheelie bin with its lid flipped fully open backwards, the dark empty inside clearly visible",
+    "cachette_bac_poissons": "the same tub with its round lid lifted off and leaning against its side, the dark empty inside clearly visible",
+    "cachette_malle_pelotes": "the same trunk with its lid flipped fully open and standing upright behind it, the dark empty inside clearly visible",
+    "cachette_tas_filets_cachette": "the same heap of fishing nets with a big flap of net lifted up at the front, revealing a dark hollow under the nets",
+    "cachette_confessionnal": "the same wooden booth with its red curtain pulled fully aside, the dark empty inside of the booth clearly visible",
+    "cachette_barque_retournee": "the same overturned boat with one side lifted up and propped on a short stick, a dark hollow visible underneath",
+    "cachette_tonneau_cidre": "the same giant barrel with its round front lid removed and leaning against it, the dark empty inside of the barrel clearly visible",
+    "cachette_panier_linge": "the same laundry basket with its lid lifted off and leaning against it, the dark empty inside clearly visible",
+    "cachette_caisse_voiles": "the same sail chest with its canvas cover thrown back and its lid fully open, the dark empty inside clearly visible",
+    "cachette_cabine_plage": "the same beach cabin with its door swung fully open, the dark empty inside of the cabin clearly visible",
+}
+
+
 def payload_ouvert(eid):
     el = elements()[eid]
     edit = (el.get("edits") or [{}])[0]
@@ -203,7 +223,11 @@ def payload_ouvert(eid):
     fond = Image.new("RGBA", im.size, "white")
     fond.alpha_composite(im)
     w, h = (min(1024, max(128, v)) for v in im.size)
-    prompt = edit.get("prompt") or "same object, same style, but its lid or door slightly open, a dark gap inside"
+    # Julien 2026-10-21 : « la plupart des versions ouvertes ne sont pas ouvertes » : « slightly open » ne
+    # change rien ; on décrit l'ouverture précise de chaque cachette, grande ouverte.
+    prompt = OUVERTS.get(eid) or edit.get("prompt") or OUVERT_DEFAUT
+    if "slightly open" in prompt:
+        prompt = OUVERTS.get(eid, OUVERT_DEFAUT)
     return {"prompt_style": "pf_hd__edit", "input_image": nuit.ex.b64(fond.convert("RGB")),
             "prompt": prompt + ", same camera, same size, same colors, same thick dark navy outline",
             "width": w, "height": h, "num_images": 2, "seed": SEED_NUIT}

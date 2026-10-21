@@ -140,7 +140,7 @@
     "style": "pf_2d__prop"
    }
   ],
-  "statut": "en_file",
+  "statut": "todo",
   "depose": "2026-10-21 10:33",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/250_maison_crampotte/0/planche.png"
@@ -153,7 +153,7 @@
   "sorte": "masque",
   "element": "maison_crampotte",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "todo",
   "jobs": [
    {
     "tid": "47bdfe631db44fc48d997156b7ff145d",
@@ -263,7 +263,7 @@
     "style": "pf_2d__prop"
    }
   ],
-  "statut": "en_file",
+  "statut": "todo",
   "depose": "2026-10-21 10:33",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0/planche.png"
@@ -276,7 +276,7 @@
   "sorte": "masque",
   "element": "fronton",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "todo",
   "jobs": [
    {
     "tid": "99be17ec6e0449d0b38a17ee4020019a",
@@ -534,7 +534,7 @@
     "style": "pf_2d__prop"
    }
   ],
-  "statut": "en_file",
+  "statut": "todo",
   "depose": "2026-10-21 10:34",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0/planche.png"
@@ -547,7 +547,7 @@
   "sorte": "masque",
   "element": "coque_sur_ber",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "todo",
   "jobs": [
    {
     "tid": "72584f7f0c674f81b8035ca0f1404177",
@@ -937,7 +937,7 @@
   "sorte": "anim",
   "element": "lavoir_bassin",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "todo",
   "jobs": [
    {
     "tid": "0b4c328232c9438db7a4a8ab22291bee",
@@ -957,7 +957,7 @@
   "sorte": "masque",
   "element": "lavoir_bassin",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "todo",
   "jobs": [
    {
     "tid": "1675ff00c4d94a7986d1297abb3235ba",
@@ -974,13 +974,13 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "beed8902deae4c409d6f2cc1ae567a77",
+    "tid": "01caa0050c5c4e10929c09aba6566b64",
     "quoi": "pf_hd__edit ×2 (ouverte)",
     "style": "pf_hd__edit"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 07:50",
+  "statut": "todo",
+  "depose": "2026-10-21 10:43",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/301_cachette_casier_homards/0/planche.png"
   ],
@@ -1015,16 +1015,13 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "ea81cb10948049d3bd4d46417a7fc214",
+    "tid": "eff052c9fb7544e897706829abb07af1",
     "quoi": "pf_hd__edit ×2 (ouverte)",
-    "style": "pf_hd__edit",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/304_cachette_coffre_quai/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/304_cachette_coffre_quai/0/planche.png"
+    "style": "pf_hd__edit"
    }
   ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
+  "statut": "todo",
+  "depose": "2026-10-21 10:41",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/304_cachette_coffre_quai/0/planche.png"
   ],
@@ -1059,13 +1056,13 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "0a736eb9d33d4649b89147bb95b1a8b1",
+    "tid": "d8e7b3ab3b524c2480673b06d0301d5c",
     "quoi": "pf_hd__edit ×2 (ouverte)",
     "style": "pf_hd__edit"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 10:35",
+  "statut": "todo",
+  "depose": "2026-10-21 10:47",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/307_cachette_caisse_glace/0/planche.png"
   ],
@@ -1283,15 +1280,15 @@
   "sorte": "ouvert",
   "element": "cachette_tas_filets_cachette",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "todo",
   "jobs": [
    {
-    "tid": "38ea48335d6447d38b63b4e2167e0d69",
+    "tid": "4d4240f257f549dd868d532fc9067638",
     "quoi": "pf_hd__edit ×2 (ouverte)",
     "style": "pf_hd__edit"
    }
   ],
-  "depose": "2026-10-21 10:02"
+  "depose": "2026-10-21 10:51"
  },
  "323": {
   "titre": "Confessionnal en bois : version ouverte",
@@ -1364,7 +1361,7 @@
   "sorte": "ouvert",
   "element": "cachette_barque_retournee",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "todo",
   "jobs": [
    {
     "tid": "35dc2ef6784d4302b63f01206600c75d",
@@ -1402,7 +1399,7 @@
   "sorte": "ouvert",
   "element": "cachette_tonneau_cidre",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "todo",
   "jobs": [
    {
     "tid": "9d5c0b33d8524451a55b6588ef6f3fde",
@@ -2226,11 +2223,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-tas_filets_tas_filets/0/apercu/tas_filets.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 07:34",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-tas_filets_tas_filets/0/apercu/tas_filets.png"
-  ]
+  ],
+  "variante": null
  },
  "m-cachette_tas_filets_cachette": {
   "titre": "Montagne de filets : masque (d'office, nouvelle image)",
@@ -2244,7 +2242,7 @@
     "style": "pf_2d__footprint"
    }
   ],
-  "statut": "en_file",
+  "statut": "todo",
   "depose": "2026-10-21 10:36"
  },
  "m-cachette_barque_retournee": {
@@ -2259,7 +2257,7 @@
     "style": "pf_2d__footprint"
    }
   ],
-  "statut": "en_file",
+  "statut": "todo",
   "depose": "2026-10-21 10:36"
  },
  "m-cachette_tonneau_cidre": {
