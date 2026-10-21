@@ -270,7 +270,8 @@ def deposer(pl, essais=20):
             print("  pixelforge occupé, nouvel essai dans 60 s :", m[:120], flush=True)
         except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
             print("  réseau, nouvel essai dans 60 s :", str(e)[:120], flush=True)
-        time.sleep(60)
+        if i < essais - 1:
+            time.sleep(60)
     raise RuntimeError("pixelforge indisponible")
 
 

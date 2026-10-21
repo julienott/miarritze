@@ -2078,11 +2078,13 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/409_filet_au_sol/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 00:43",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/409_filet_au_sol/0/planche.png"
-  ]
+  ],
+  "variante": "image_00",
+  "suites_a_deposer": "normal"
  },
  "m-barque_mouillage": {
   "titre": "Barque basque au mouillage : masque (d'office, nouvelle image)",

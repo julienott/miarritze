@@ -34,6 +34,7 @@ while true; do
     lus=$n
     echo "$lus" > "$LUS"
   fi
-  .venv/bin/python tools/producer/decor_matin.py releve 2>&1 | grep -E "prêt|À VOIR|reçu|échec|ÉCHEC|Erreur|Traceback" | sed 's/^/DECOR /'
+  .venv/bin/python tools/producer/decor_matin.py suites >/dev/null 2>&1
+  .venv/bin/python tools/producer/decor_matin.py releve 2>&1 | grep -E "prêt|À VOIR|A_VOIR|reçu|échec|ÉCHEC|Erreur|Traceback" | sed 's/^/DECOR /'
   sleep 300
 done

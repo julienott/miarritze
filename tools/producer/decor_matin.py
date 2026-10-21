@@ -280,7 +280,7 @@ def depose_suites(cle, ent, prio):
         print(f"déposé #{k} {e['titre']} : {n} job(s) {prio}")
 
 
-def integre(cle, variante, sans_capture, prio):
+def integre(cle, variante, sans_capture, prio, plus_tard=False):
     s = suivi()
     ent = s.get(cle)
     if not ent or ent.get("statut") not in ("a_voir", "integre"):
@@ -302,10 +302,37 @@ def integre(cle, variante, sans_capture, prio):
                          "en QA après le prochain déploiement.")
     print(f"#{cle} intégré : prêt pour la QA après déploiement")
     if sorte in ("image", "refaire"):
-        if td.a_une_image(ent["element"]):
+        if td.a_une_image(ent["element"]) and plus_tard:
+            # File pixelforge pleine : les suites (masque, animation) partiront avec « suites » (veille).
+            s = suivi()
+            s[cle]["suites_a_deposer"] = prio
+            ecrire(td.SUIVI, s)
+            print("suites différées : décor_matin.py suites les déposera quand la file aura de la place")
+        elif td.a_une_image(ent["element"]):
             depose_suites(cle, ent, prio)
         else:
             print("suites non déposées : l'élément n'a pas d'image dans le jeu (type pas encore géré)")
+
+
+def suites():
+    """Dépose les suites différées (--suites-plus-tard), une entrée à la fois, sans attendre : arrêt dès que
+    pixelforge est plein (on reprendra au passage suivant de la veille)."""
+    for cle, ent in list(suivi().items()):
+        prio = ent.get("suites_a_deposer")
+        if not prio:
+            continue
+        essais = td.deposer.__defaults__
+        td.deposer.__defaults__ = (1,)
+        try:
+            depose_suites(cle, ent, prio)
+        except (RuntimeError, SystemExit) as e:
+            print("suites : pixelforge plein, reprise plus tard", str(e)[:100])
+            return
+        finally:
+            td.deposer.__defaults__ = essais
+        s = suivi()
+        s[cle].pop("suites_a_deposer", None)
+        ecrire(td.SUIVI, s)
 
 
 def relance(cle, consigne):
@@ -341,7 +368,10 @@ if __name__ == "__main__":
         liste("--tout" in a)
     elif a[0] == "integre":
         pos = [x for x in a[1:] if not x.startswith("--")]
-        integre(pos[0], pos[1] if len(pos) > 1 else None, "--sans-capture" in a, "night" if "--nuit" in a else "normal")
+        integre(pos[0], pos[1] if len(pos) > 1 else None, "--sans-capture" in a, "night" if "--nuit" in a else "normal",
+                "--suites-plus-tard" in a)
+    elif a[0] == "suites":
+        suites()
     elif a[0] == "relance":
         relance(a[1], a[2] if len(a) > 2 else None)
     else:
