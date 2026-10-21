@@ -1666,7 +1666,23 @@
    "animation": {
     "methode": "jeu",
     "description": "la barque tangue au bout de la cale"
-   }
+   },
+   "fichiers": [
+    "objets/sortie_barque_cale.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "7ef30a95e4f743b6bce08105ec3b3972",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "sortie_porte_ville": {
    "nom": "Sortie : porte de la ville",
