@@ -1072,11 +1072,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/314_cachette_poubelle_ruelle/0/apercu/cachette_poubelle_ruelle.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/314_cachette_poubelle_ruelle/0/apercu/cachette_poubelle_ruelle.png"
-  ]
+  ],
+  "variante": null
  },
  "316": {
   "titre": "Grand bac à poissons : version ouverte",
