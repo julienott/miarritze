@@ -1222,6 +1222,20 @@
    "ombre_decalage": [
     11,
     61
+   ],
+   "ouvert": "objets/cachette_caisse_glace_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    2
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "935ca38c1fa44788aacdade589e990f4",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/307_cachette_caisse_glace/0/image_01.png"
+    }
    ]
   },
   "cachette_coffre_cordages": {

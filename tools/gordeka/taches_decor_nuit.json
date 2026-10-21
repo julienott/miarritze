@@ -930,11 +930,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/304_cachette_coffre_quai/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/304_cachette_coffre_quai/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "305": {
   "titre": "Coffre de quai : masque v3",
