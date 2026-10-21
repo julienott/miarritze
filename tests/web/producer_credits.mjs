@@ -9,9 +9,11 @@ for (const [name, vp] of [['desktop', { width: 1280, height: 900 }], ['iphone', 
   await page.fill('#login input[type=password]', process.env.PRODUCER_TEST_PASSWORD || '');
   await page.keyboard.press('Enter');
   await page.waitForTimeout(1000);
+  await page.goto(BASE + '#/assets');
+  await page.waitForSelector('#cat-search');
   await page.fill('input[type=search], input[placeholder^=Rechercher]', 'halles');
   await page.waitForTimeout(500);
-  await page.locator('.tile', { hasText: /halles/ }).filter({ has: page.locator('.thumb.audio') }).first().click();
+  await page.locator('.citem.t-audio', { hasText: /halles/ }).first().click();
   await page.waitForTimeout(800);
   await page.screenshot({ path: out + name + '.png', fullPage: true });
   await page.close();

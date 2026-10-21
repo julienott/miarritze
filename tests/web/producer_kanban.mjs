@@ -188,7 +188,7 @@ check('cli set --parent 0 détache', !cli('cards', '--parent', String(hatId)).in
 const ASSET = 'gordeka/persos/louis/animations';
 cli('set', String(kidIds[1]), '--asset', ASSET, '--detail', 'walk');
 cli('move', String(kidIds[1]), 'qa');
-const DECOR = 'gordeka/decor/objets/fronton.png';
+const DECOR = 'gordeka/decor/objets/tour_phare.png';   // objet avec ses masques pixelforge (calque)
 const decorId = Number(/#(\d+)/.exec(cli('add-card', '--type', 'asset', '--title', `${tag} fronton masques`, '--asset', DECOR, '--status', 'qa'))[1]);
 // Trace de chaque image dessinée (case source) : lecture case par case vérifiée sur la tuile.
 await page.addInitScript(() => {

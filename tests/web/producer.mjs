@@ -47,7 +47,7 @@ await shot('02_login_refuse');
 await page.fill('#password', PASSWORD);
 await page.click('#login-form button[type=submit]');
 await page.waitForSelector('#tabs:not([hidden])');
-await page.waitForSelector('.tile');
+await page.waitForSelector('.kpi-tile');
 check('connexion avec le bon mot de passe', true);
 const cookies = await context.cookies();
 const sid = cookies.find((c) => c.name === 'producer_sid');
@@ -55,10 +55,7 @@ check('cookie HttpOnly + SameSite=Strict', sid && sid.httpOnly && sid.sameSite =
 await shot('03_assets_grille');
 
 // ------------------------------------------------------ perso colorisé
-await page.evaluate(() => document.querySelector('.cats li.foldable button[aria-expanded="false"]')?.click());   // Borroka est replié
-await page.click('.cats button:has-text("Combattants")');
-await page.click('.cats li.sub.show button:has(span:text-is("maia"))');
-await page.click('.tile[data-id="fighters/maia/sheet.png"]');
+await page.goto(BASE + '#/assets/' + encodeURIComponent('fighters/maia/sheet.png'));
 await page.waitForSelector('.stage canvas');
 await page.waitForTimeout(600);
 const colored = await page.evaluate(() => {
@@ -77,8 +74,8 @@ await shot('04_maia_punch3');
 
 // --------------------------------------------- commentaire (avec tentative XSS)
 const xss = '<img src=x onerror="window.__xss=1">Bras trop long <script>window.__xss=2</script>';
-await page.fill('.comment-form textarea', xss);
-await page.click('.comment-form button[type=submit]');
+await page.fill('.pilot-form textarea', xss);
+await page.click('.pilot-form button[type=submit]');
 await page.waitForSelector('.asset-comments .comment');
 const xssState = await page.evaluate(() => ({
   flag: window.__xss,
@@ -88,8 +85,8 @@ const xssState = await page.evaluate(() => ({
 check('commentaire enregistré et XSS affiché échappé',
   xssState.flag === undefined && xssState.imgs === 0 && xssState.text.includes('<script>'), JSON.stringify(xssState));
 // Un « validé » sans texte est accepté.
-await page.click('.kind-pick button[data-kind=valide]');
-await page.click('.comment-form button[type=submit]');
+await page.click('.pilot-form .kind-pick button[data-kind=valide]');
+await page.click('.pilot-form button[type=submit]');
 await page.waitForFunction(() => document.querySelectorAll('.asset-comments .comment').length === 2);
 await shot('05_maia_commentaires');
 
@@ -126,6 +123,7 @@ await page.fill('#cf-title', 'Ajouter un costume d\'été à Peio');
 await page.fill('#cf-desc', 'Maillot rayé, lunettes.\n<b>pas du HTML</b>');
 await page.selectOption('#cf-priority', 'normale');
 await page.fill('#cf-asset', 'fighters/peio/sheet.png');
+await page.dispatchEvent('#cf-asset', 'change');   // l'aperçu de l'asset s'affiche avant le clic (pas de saut de mise en page)
 await page.click('#cf-save');
 await page.waitForSelector('.column[data-status=backlog] .card:has-text("costume d\'été")');
 check('carte créée dans « Backlog »', true);
@@ -172,14 +170,14 @@ const mobile = await browser.newContext({
 });
 const mp = await mobile.newPage();
 await mp.goto(BASE + '#/assets');
-await mp.waitForSelector('.tile');
+await mp.waitForSelector('.citem');
 await mp.screenshot({ path: path.join(OUT, '11_mobile_assets.png') });
 await mp.goto(BASE + '#/assets/' + encodeURIComponent('fighters/maia/sheet.png'));
 await mp.waitForSelector('.stage canvas');
 await mp.waitForTimeout(600);
 await mp.screenshot({ path: path.join(OUT, '12_mobile_maia.png'), fullPage: true });
 await mp.goto(BASE + '#/kanban');
-await mp.waitForSelector('.column');
+await mp.waitForSelector('.column.active');
 await mp.screenshot({ path: path.join(OUT, '13_mobile_kanban.png'), fullPage: true });
 const hscroll = await mp.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
 check('mobile : pas de défilement horizontal', !hscroll);

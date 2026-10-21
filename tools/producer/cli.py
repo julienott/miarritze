@@ -20,6 +20,16 @@ Exemples :
   cli.py cards --night
   cli.py events --since 15m    (tout ce qui a bougé ; aussi epoch ou "2026-10-20 14:00")
   cli.py qa 4 "marche ralentie à 8 i/s"   (carte retraitée -> QA, commentaire « retraité : … »)
+  cli.py stats                 (tableau de bord : QA, refus, Doing immobiles, jalons)
+  cli.py cards --type animation --search louis --milestone 2
+  cli.py bulk 4 5 6 --status todo --night on   (même changement sur plusieurs cartes)
+  cli.py milestones            (jalons de la roadmap, avec leur avancement)
+  cli.py add-milestone --title "Contenu v1" --due 2026-12-01
+  cli.py set-milestone 2 --due 2026-12-15 [--closed on]
+  cli.py set 4 --milestone 2 --due 2026-11-30   (0 / aucune pour retirer)
+  cli.py asset-comment gordeka/persos/louis/animations "pieds qui glissent" --detail walk
+                               (commentaire d'asset reporté sur la carte liée, ou nouvelle carte)
+  cli.py routes                (toutes les routes de l'API)
 """
 from __future__ import annotations
 
@@ -50,7 +60,7 @@ EVENT_LABEL = {
     "creation": "création", "deplacement": "déplacement", "titre": "titre", "description": "description",
     "priorite": "priorité", "type": "type", "asset": "asset", "detail": "détail", "parent": "chapeau",
     "commentaire": "commentaire", "suppression": "suppression",
-    "accepte": "ACCEPTÉE", "refuse": "REFUSÉE", "night": "NIGHT",
+    "accepte": "ACCEPTÉE", "refuse": "REFUSÉE", "night": "NIGHT", "jalon": "jalon", "echeance": "échéance",
 }
 
 
@@ -173,6 +183,8 @@ def print_card(c: dict, full: bool, titles: dict | None = None) -> None:
     asset = f" · {c['asset']}" + (f" [{c['detail']}]" if c.get("detail") else "") if c["asset"] else ""
     rework = " [À RETRAITER]" if c.get("rework") else ""
     rework += " [NIGHT]" if c.get("night") else ""
+    rework += f" [⏱ {c['due']}]" if c.get("due") else ""
+    rework += f" [jalon {c['milestone_id']}]" if c.get("milestone_id") else ""
     kids = f" · enfants {c['children_done']}/{c['children']}" if c.get("children") else ""
     parent = ""
     if c.get("parent_id"):
@@ -226,6 +238,11 @@ def cmd_cards(a: argparse.Namespace) -> None:
         q["parent"] = a.parent
     if a.night:
         q["night"] = "1"
+    for key in ("type", "milestone", "asset"):
+        if getattr(a, key, None):
+            q[key] = str(getattr(a, key))
+    if a.search:
+        q["q"] = a.search
     r = call("cards", query=q)
     if a.json:
         print(json.dumps(r["cards"], ensure_ascii=False, indent=1))
@@ -306,6 +323,10 @@ def cmd_add_card(a: argparse.Namespace) -> None:
             "asset": a.asset or "", "detail": a.detail or "", "status": a.status, "night": a.night}
     if a.parent:
         body["parent"] = a.parent
+    if a.milestone:
+        body["milestone"] = a.milestone
+    if a.due:
+        body["due"] = a.due
     r = call("card", body)
     print(f"Carte #{r['id']} créée ({STATUS_LABEL[a.status]})")
 
@@ -323,10 +344,135 @@ def cmd_set(a: argparse.Namespace) -> None:
         body["parent"] = a.parent
     if a.night is not None:
         body["night"] = a.night == "on"
+    if a.milestone is not None:
+        body["milestone"] = a.milestone
+    if a.due is not None:
+        body["due"] = "" if a.due == "aucune" else a.due
     if len(body) == 1:
-        sys.exit("Rien à modifier (--title, --desc, --type, --priority, --parent, --asset, --detail, --night)")
+        sys.exit("Rien à modifier (--title, --desc, --type, --priority, --parent, --asset, --detail, --night, --milestone, --due)")
     r = call("card_update", body)
     print(f"Carte #{a.id} : {r.get('changed', 0)} champ(s) modifié(s)")
+
+
+def cmd_bulk(a: argparse.Namespace) -> None:
+    body: dict = {"ids": a.ids}
+    if a.status:
+        body["status"] = a.status
+    if a.night is not None:
+        body["night"] = a.night == "on"
+    if a.priority is not None:
+        body["priority"] = "" if a.priority == "aucune" else a.priority
+    if a.milestone is not None:
+        body["milestone"] = a.milestone
+    if len(body) == 1:
+        sys.exit("Rien à modifier (--status, --night, --priority, --milestone)")
+    r = call("cards_bulk", body)
+    print(f"{r.get('changed', 0)} carte(s) modifiée(s) sur {len(a.ids)}")
+
+
+def bar(done: int, qa: int, total: int, width: int = 24) -> str:
+    """Barre d'avancement : █ Done, ▓ QA, · le reste."""
+    if not total:
+        return "·" * width
+    d = round(width * done / total)
+    q = round(width * (done + qa) / total) - d
+    return "█" * d + "▓" * q + "·" * (width - d - q)
+
+
+def cmd_milestones(a: argparse.Namespace) -> None:
+    r = call("stats")
+    if a.json:
+        print(json.dumps(r["milestones"], ensure_ascii=False, indent=1))
+        return
+    if not r["milestones"]:
+        print("Aucun jalon (add-milestone --title …).")
+    for m in r["milestones"]:
+        bs = m["by_status"]
+        due = f" · échéance {m['due']}" if m["due"] else ""
+        print(f"#{m['id']} {m['title']}{due}{' [CLOS]' if m['closed'] else ''}")
+        print(f"    {bar(bs['done'], bs['qa'], m['total'])} {bs['done']} faites, {bs['qa']} en QA, {bs['doing']} en cours,"
+              f" {bs['todo']} todo, {bs['backlog']} backlog / {m['total']}" + (f" · {m['rework']} à retraiter" if m["rework"] else ""))
+
+
+def cmd_add_milestone(a: argparse.Namespace) -> None:
+    r = call("milestone", {"title": a.title, "description": a.desc or "", "due": a.due or ""})
+    print(f"Jalon #{r['id']} créé")
+
+
+def cmd_set_milestone(a: argparse.Namespace) -> None:
+    body: dict = {"id": a.id}
+    if a.title is not None:
+        body["title"] = a.title
+    if a.desc is not None:
+        body["description"] = a.desc
+    if a.due is not None:
+        body["due"] = "" if a.due == "aucune" else a.due
+    if a.closed is not None:
+        body["closed"] = a.closed == "on"
+    if a.position is not None:
+        body["position"] = a.position
+    if len(body) == 1:
+        sys.exit("Rien à modifier (--title, --desc, --due, --closed, --position)")
+    call("milestone_update", body)
+    print(f"Jalon #{a.id} modifié")
+
+
+def cmd_stats(a: argparse.Namespace) -> None:
+    q = {"stale_days": str(a.stale_days)} if a.stale_days else {}
+    r = call("stats", query=q)
+    if a.json:
+        print(json.dumps(r, ensure_ascii=False, indent=1))
+        return
+    lv = r["leaves"]
+    print("Cartes sans enfant : " + " · ".join(f"{STATUS_LABEL[k]} {lv[k]}" for k in STATUS_LABEL))
+    print(f"À valider (QA) : {r['qa']} · à retraiter : {len(r['rework'])} · night shift en Todo : {r['night_todo']}"
+          f" · avis d'asset ouverts : {r['comments_open']} · événements 24 h : {r['events_24h']}")
+    for title, key in (("Refusées, à retraiter", "rework"), (f"Doing immobiles depuis {r['stale_days']} j", "stale"),
+                       ("Échéances dépassées", "overdue")):
+        if r[key]:
+            print(f"{title} :")
+            for c in r[key]:
+                extra = f" depuis {when(c['since'])}" if key == "stale" else f" (échéance {c['due']})" if key == "overdue" else ""
+                print(f"    #{c['id']} [{STATUS_LABEL[c['status']]}] {c['title']}{extra}")
+    if r["milestones"]:
+        print("Jalons :")
+        for m in r["milestones"]:
+            bs = m["by_status"]
+            print(f"    #{m['id']} {short(m['title'], 40):<40} {bar(bs['done'], bs['qa'], m['total'], 16)} "
+                  f"{bs['done'] + bs['qa']}/{m['total']}" + (f" · échéance {m['due']}" if m["due"] else ""))
+
+
+def cmd_asset_comment(a: argparse.Namespace) -> None:
+    body: dict = {"asset": a.asset, "body": a.text, "kind": "valide" if a.valide else "amelioration"}
+    if a.detail:
+        body["detail"] = a.detail
+    if a.card:
+        body["card"] = a.card
+    if a.title:
+        body["title"] = a.title
+    if a.parent:
+        body["parent"] = a.parent
+    r = call("asset_comment", body)
+    if r.get("created"):
+        print(f"Carte #{r['card']} créée dans le Backlog (commentaire d'asset #{r.get('comment')})")
+    elif r.get("card"):
+        print(f"Reporté sur la carte #{r['card']} (commentaire d'asset #{r.get('comment')})")
+    else:
+        print(f"Commentaire d'asset #{r.get('comment')} enregistré (aucune carte)")
+
+
+def cmd_routes(a: argparse.Namespace) -> None:
+    r = call("routes")
+    if a.json:
+        print(json.dumps(r, ensure_ascii=False, indent=1))
+        return
+    group = ""
+    for x in r["routes"]:
+        if x["group"] != group:
+            group = x["group"]
+            print(f"{group}")
+        print(f"  {x['method']:<4} {x['route']:<17} {x['params']}")
+        print(f"       {x['effect']}" + (f"  [cli : {x['cli']}]" if x["cli"] else ""))
 
 
 def main() -> None:
@@ -354,6 +500,10 @@ def main() -> None:
     s.add_argument("--status", type=status_arg, help="backlog | todo | doing | qa | done")
     s.add_argument("--parent", type=int, help="seulement les enfants de cette carte chapeau")
     s.add_argument("--night", action="store_true", help="seulement les cartes night shift")
+    s.add_argument("--type", choices=CARD_TYPES)
+    s.add_argument("--milestone", help="id du jalon, ou none (sans jalon)")
+    s.add_argument("--asset", help="id exact de l'asset lié")
+    s.add_argument("--search", help="texte cherché dans le titre et la description")
     s.add_argument("--full", action="store_true", help="description et commentaires")
     s.add_argument("--json", action="store_true")
     s.set_defaults(fn=cmd_cards)
@@ -389,6 +539,8 @@ def main() -> None:
     s.add_argument("--detail", help="précise l'asset : nom de l'animation (ex. walk)")
     s.add_argument("--parent", type=int, help="carte chapeau")
     s.add_argument("--night", action="store_true", help="night shift : à traiter la nuit (1 h – 8 h Paris)")
+    s.add_argument("--milestone", type=int, help="id du jalon")
+    s.add_argument("--due", help="échéance AAAA-MM-JJ")
     s.add_argument("--status", type=status_arg, default="backlog")
     s.set_defaults(fn=cmd_add_card)
 
@@ -402,7 +554,56 @@ def main() -> None:
     s.add_argument("--asset")
     s.add_argument("--detail", help="nom de l'animation de l'asset (vide pour effacer)")
     s.add_argument("--night", choices=["on", "off"], help="night shift : traitée la nuit (1 h – 8 h Paris)")
+    s.add_argument("--milestone", type=int, help="id du jalon (0 pour retirer)")
+    s.add_argument("--due", help="échéance AAAA-MM-JJ (aucune pour retirer)")
     s.set_defaults(fn=cmd_set)
+
+    s = sub.add_parser("bulk", help="même changement sur plusieurs cartes")
+    s.add_argument("ids", type=int, nargs="+")
+    s.add_argument("--status", type=status_arg)
+    s.add_argument("--night", choices=["on", "off"])
+    s.add_argument("--priority", choices=["basse", "normale", "haute", "aucune"])
+    s.add_argument("--milestone", type=int, help="id du jalon (0 pour retirer)")
+    s.set_defaults(fn=cmd_bulk)
+
+    s = sub.add_parser("stats", help="tableau de bord du kanban")
+    s.add_argument("--stale-days", type=int, help="seuil « Doing immobile » en jours (défaut 3)")
+    s.add_argument("--json", action="store_true")
+    s.set_defaults(fn=cmd_stats)
+
+    s = sub.add_parser("milestones", help="jalons de la roadmap et leur avancement")
+    s.add_argument("--json", action="store_true")
+    s.set_defaults(fn=cmd_milestones)
+
+    s = sub.add_parser("add-milestone", help="créer un jalon")
+    s.add_argument("--title", required=True)
+    s.add_argument("--desc")
+    s.add_argument("--due", help="échéance AAAA-MM-JJ")
+    s.set_defaults(fn=cmd_add_milestone)
+
+    s = sub.add_parser("set-milestone", help="modifier un jalon")
+    s.add_argument("id", type=int)
+    s.add_argument("--title")
+    s.add_argument("--desc")
+    s.add_argument("--due", help="AAAA-MM-JJ, ou aucune")
+    s.add_argument("--closed", choices=["on", "off"])
+    s.add_argument("--position", type=int)
+    s.set_defaults(fn=cmd_set_milestone)
+
+    s = sub.add_parser("asset-comment", help="commenter un asset ; reporté sur sa carte (ou nouvelle carte)")
+    s.add_argument("asset", help="id de l'asset (ex. gordeka/persos/louis/animations, jeu/regles/partie)")
+    s.add_argument("text")
+    s.add_argument("--detail", help="animation visée (ex. walk)")
+    s.add_argument("--card", type=int, help="carte où reporter le commentaire (sinon : choisie par le serveur)")
+    s.add_argument("--title", help="titre de la carte créée s'il n'y en a pas")
+    s.add_argument("--parent", type=int, help="chapeau de la carte créée")
+    s.add_argument("--valide", action="store_true", help="« Validé » au lieu d'« Amélioration »")
+    s.set_defaults(fn=cmd_asset_comment)
+
+    s = sub.add_parser("routes", help="routes de l'API")
+    s.add_argument("--json", action="store_true")
+    s.set_defaults(fn=cmd_routes)
+
 
     s = sub.add_parser("qa", help="repasser en QA une carte retraitée, avec ce qui a été corrigé")
     s.add_argument("id", type=int)
