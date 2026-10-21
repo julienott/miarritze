@@ -1768,7 +1768,9 @@
    ],
    "animation": {
     "methode": "planche",
-    "description": "jet d'eau et rides du bassin, boucle"
+    "description": "jet d'eau et rides du bassin, boucle",
+    "planche": "anims/fontaine_place.png",
+    "planche_json": "anims/fontaine_place.json"
    }
   },
   {
