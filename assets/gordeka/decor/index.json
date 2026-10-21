@@ -1031,15 +1031,15 @@
    ],
    "sources": [
     {
-     "job": 0,
-     "variante": "image_00",
-     "task": "62c9f54a53e046169b7984d612cce8c7",
-     "date": "2026-10-20"
+     "job": 1,
+     "variante": "image_01",
+     "task": "7370943e7da8405eb56f28937202baf7",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/table_terrasse_ombre.png",
    "ombre_decalage": [
-    13,
+    17,
     73
    ]
   },
