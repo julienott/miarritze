@@ -346,16 +346,16 @@
    ],
    "sources": [
     {
-     "job": 0,
+     "job": 4,
      "variante": "image_01",
-     "task": "56a1ec302d1b41bdba879a6509a6a645",
-     "date": "2026-10-20"
+     "task": "0fe79a02b2fb4af38e0ab4cce0c5fcf0",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/maison_crampotte_ombre.png",
    "ombre_decalage": [
     53,
-    258
+    266
    ]
   },
   "chambre_froide": {

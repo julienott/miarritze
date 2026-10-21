@@ -838,22 +838,20 @@
   "titre": "Casier à homards géant : version ouverte",
   "sorte": "ouvert",
   "element": "cachette_casier_homards",
-  "priorite": "night",
+  "priorite": "normal",
   "jobs": [
    {
-    "tid": "2bf576c43bfa4ec9b880190b8cd6681e",
+    "tid": "beed8902deae4c409d6f2cc1ae567a77",
     "quoi": "pf_hd__edit ×2 (ouverte)",
-    "style": "pf_hd__edit",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/301_cachette_casier_homards/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/301_cachette_casier_homards/0/planche.png"
+    "style": "pf_hd__edit"
    }
   ],
-  "statut": "a_voir",
-  "depose": "2026-10-20 21:35",
+  "statut": "en_file",
+  "depose": "2026-10-21 07:50",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/301_cachette_casier_homards/0/planche.png"
-  ]
+  ],
+  "consigne": "the front net door swings wide open on its hinge, showing a dark empty hollow inside the barrel, big enough for a child to hide in"
  },
  "302": {
   "titre": "Casier à homards géant : masque v3",
@@ -870,11 +868,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0/apercu/cachette_casier_homards.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0/apercu/cachette_casier_homards.png"
-  ]
+  ],
+  "variante": null
  },
  "304": {
   "titre": "Coffre de quai : version ouverte",
