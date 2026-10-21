@@ -1291,11 +1291,17 @@
    {
     "tid": "af3ac18b2eee4474bbcf36040d7b66b2",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/329_cachette_panier_linge/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/329_cachette_panier_linge/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/329_cachette_panier_linge/0/planche.png"
+  ]
  },
  "330": {
   "titre": "Grand panier à linge : version ouverte",
@@ -1314,11 +1320,17 @@
    {
     "tid": "79094137d43142baaaf9c39d53af9cec",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/331_cachette_caisse_voiles/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/331_cachette_caisse_voiles/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/331_cachette_caisse_voiles/0/planche.png"
+  ]
  },
  "332": {
   "titre": "Caisse à voiles de l'atelier : version ouverte",
@@ -1337,11 +1349,17 @@
    {
     "tid": "271f328bc9e24a0592a98a6ff9fb4079",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/333_cachette_cabine_plage/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/333_cachette_cabine_plage/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/333_cachette_cabine_plage/0/planche.png"
+  ]
  },
  "334": {
   "titre": "Cabine de plage rayée : version ouverte",
@@ -1360,11 +1378,17 @@
    {
     "tid": "2c2537bab5a14e7eb18ecdd2fd88ed5b",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/335_sortie_barque_jetee/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/335_sortie_barque_jetee/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/335_sortie_barque_jetee/0/planche.png"
+  ]
  },
  "336": {
   "titre": "Sortie : échelle derrière le phare : image",
@@ -1375,11 +1399,17 @@
    {
     "tid": "6b87d856e6e948bea0390a56ef722669",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/336_sortie_echelle_phare/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/336_sortie_echelle_phare/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/336_sortie_echelle_phare/0/planche.png"
+  ]
  },
  "337": {
   "titre": "Sortie : barque de la cale : image",
@@ -1390,11 +1420,17 @@
    {
     "tid": "7ef30a95e4f743b6bce08105ec3b3972",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/337_sortie_barque_cale/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/337_sortie_barque_cale/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/337_sortie_barque_cale/0/planche.png"
+  ]
  },
  "338": {
   "titre": "Sortie : porte de la ville : image",
@@ -1405,11 +1441,17 @@
    {
     "tid": "15fb6f4fa9734197886c016474a4cad7",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/338_sortie_porte_ville/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/338_sortie_porte_ville/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/338_sortie_porte_ville/0/planche.png"
+  ]
  },
  "339": {
   "titre": "Marque de départ : image",
@@ -1420,11 +1462,17 @@
    {
     "tid": "0822fca5e9484e2aa98ea7cd6179e25d",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/339_depart_lauburu/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/339_depart_lauburu/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/339_depart_lauburu/0/planche.png"
+  ]
  },
  "340": {
   "titre": "Piège générique (flaque collante) : image",
@@ -1435,11 +1483,17 @@
    {
     "tid": "78432456f7944e69986f5669b87b6dbf",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/340_piege_generique/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/340_piege_generique/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/340_piege_generique/0/planche.png"
+  ]
  },
  "341": {
   "titre": "Piège générique (flaque collante) : animation",
@@ -1465,11 +1519,17 @@
    {
     "tid": "d9f0608b3e5847f6938724316ef2b3f2",
     "quoi": "pf_2d__ground ×2",
-    "style": "pf_2d__ground"
+    "style": "pf_2d__ground",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/343_toit_tuiles/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/343_toit_tuiles/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/343_toit_tuiles/0/planche.png"
+  ]
  },
  "382": {
   "titre": "Deux barriques de cidre : image",
@@ -1480,11 +1540,17 @@
    {
     "tid": "e8120fd7620a4062b4182fe23523900c",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0/planche.png"
+  ]
  },
  "383": {
   "titre": "Pot d'hortensias : image",
@@ -1495,11 +1561,17 @@
    {
     "tid": "aecd288a6ab84f4abd96b661433408f2",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/383_pot_hortensias/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/383_pot_hortensias/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/383_pot_hortensias/0/planche.png"
+  ]
  },
  "384": {
   "titre": "Casier et bouées : image",
@@ -1510,11 +1582,17 @@
    {
     "tid": "56d84adcfec747afb641dc9d9d0b042a",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/384_casier_bouees/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/384_casier_bouees/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/384_casier_bouees/0/planche.png"
+  ]
  },
  "385": {
   "titre": "Platane de la place : image",
@@ -1525,11 +1603,17 @@
    {
     "tid": "bd1a971d092c497f88bd2817085eced4",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/385_platane_place/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/385_platane_place/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/385_platane_place/0/planche.png"
+  ]
  },
  "386": {
   "titre": "Platane de la place : animation",
@@ -1548,11 +1632,17 @@
    {
     "tid": "4ec9367264e14505babf75ba6052ac21",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/387_fanions_basques/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/387_fanions_basques/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/387_fanions_basques/0/planche.png"
+  ]
  },
  "388": {
   "titre": "Guirlande de fanions basques : animation",
@@ -1571,11 +1661,17 @@
    {
     "tid": "bb7d7e094e0b46b4a17a2f57ecfb01c0",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/389_linge_seche/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/389_linge_seche/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/389_linge_seche/0/planche.png"
+  ]
  },
  "390": {
   "titre": "Linge qui sèche : animation",
@@ -1594,11 +1690,17 @@
    {
     "tid": "8dc2aa0320d640d08a14da5908ba803e",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/391_lanterne_murale/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/391_lanterne_murale/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/391_lanterne_murale/0/planche.png"
+  ]
  },
  "392": {
   "titre": "Lanterne de façade : animation",
@@ -1617,11 +1719,17 @@
    {
     "tid": "79dae5563e164329808a726e675d11dc",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/393_fumee_cheminee/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/393_fumee_cheminee/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/393_fumee_cheminee/0/planche.png"
+  ]
  },
  "394": {
   "titre": "Cheminée qui fume : animation",
@@ -1640,11 +1748,17 @@
    {
     "tid": "c08971a9bfd34fb6b6783c3b6b448f0d",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/395_bouee_murale/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/395_bouee_murale/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/395_bouee_murale/0/planche.png"
+  ]
  },
  "396": {
   "titre": "Filet suspendu au mur : image",
@@ -1655,11 +1769,17 @@
    {
     "tid": "32ef30075fb54e47ba329e769450931b",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/396_filet_suspendu/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/396_filet_suspendu/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/396_filet_suspendu/0/planche.png"
+  ]
  },
  "397": {
   "titre": "Filet suspendu au mur : animation",
@@ -1678,11 +1798,17 @@
    {
     "tid": "13f7ee10f31c4e7dbd56bfb6c97757a4",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/398_mouette_posee/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/398_mouette_posee/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/398_mouette_posee/0/planche.png"
+  ]
  },
  "399": {
   "titre": "Mouette posée : animation",
@@ -1701,11 +1827,17 @@
    {
     "tid": "5f10d1febf3948218470e703c0fbcdef",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/400_chat_du_port/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/400_chat_du_port/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:04"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:04",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/400_chat_du_port/0/planche.png"
+  ]
  },
  "401": {
   "titre": "Chat du port endormi : animation",
@@ -1724,11 +1856,17 @@
    {
     "tid": "e30ca0686ebb437e912f58d28cd02e9c",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/402_ancre_decor/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/402_ancre_decor/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:05"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:05",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/402_ancre_decor/0/planche.png"
+  ]
  },
  "403": {
   "titre": "Cordage enroulé : image",
@@ -1739,11 +1877,17 @@
    {
     "tid": "de04bdd3af3a4e759ca776995228ec2a",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/403_cordage_enroule/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/403_cordage_enroule/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:05"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:05",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/403_cordage_enroule/0/planche.png"
+  ]
  },
  "404": {
   "titre": "Réverbère du port : image",
@@ -1754,11 +1898,17 @@
    {
     "tid": "860af064d99a4a1b8be90049e78d51d2",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/404_lampadaire_port/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/404_lampadaire_port/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:05"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:05",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/404_lampadaire_port/0/planche.png"
+  ]
  },
  "405": {
   "titre": "Drapeau sur un mât : image",
@@ -1769,11 +1919,17 @@
    {
     "tid": "987951dd17474f7da88b412a38fba552",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/405_drapeau_mat/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/405_drapeau_mat/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:05"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:05",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/405_drapeau_mat/0/planche.png"
+  ]
  },
  "406": {
   "titre": "Drapeau sur un mât : animation",

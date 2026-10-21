@@ -1363,7 +1363,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_tas_filets_cachette.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "36dc398daf6c4c25bd00db36c0bc886d",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_tas_filets_cachette_ombre.png",
+   "ombre_decalage": [
+    16,
+    67
+   ]
   },
   "cachette_confessionnal": {
    "nom": "Confessionnal en bois",
