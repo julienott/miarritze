@@ -1062,11 +1062,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/313_cachette_poubelle_ruelle/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/313_cachette_poubelle_ruelle/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "314": {
   "titre": "Grande poubelle de ruelle : masque v3",

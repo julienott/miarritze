@@ -1367,6 +1367,20 @@
    "ombre_decalage": [
     11,
     62
+   ],
+   "ouvert": "objets/cachette_bac_poissons_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    1
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "a891f8e12ec047948234e2a73f654f18",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/316_cachette_bac_poissons/0/image_00.png"
+    }
    ]
   },
   "cachette_malle_pelotes": {
