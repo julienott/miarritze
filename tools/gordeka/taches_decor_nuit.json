@@ -190,7 +190,7 @@
   "sorte": "masque",
   "element": "chambre_froide",
   "priorite": "high",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "c10e71197c64472db25aabdea772b3e2",
@@ -204,7 +204,8 @@
   "depose": "2026-10-21 07:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/253_chambre_froide/0/apercu/chambre_froide.png"
-  ]
+  ],
+  "variante": null
  },
  "255": {
   "titre": "Tour du phare (feu du port) : animation",
