@@ -761,7 +761,7 @@
   "sorte": "masque",
   "element": "etabli_atelier",
   "priorite": "high",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "fa2164f938c1401eaccf8ec79da5ad4d",
@@ -775,7 +775,8 @@
   "depose": "2026-10-21 08:12",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0/apercu/etabli_atelier.png"
-  ]
+  ],
+  "variante": null
  },
  "291": {
   "titre": "Marches de l'escalier de la ville : refaire de face",
