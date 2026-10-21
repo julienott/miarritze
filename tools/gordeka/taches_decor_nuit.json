@@ -30,13 +30,14 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/2/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/0/planche.png",
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/1/planche.png",
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/2/planche.png"
-  ]
+  ],
+  "variante": "0"
  },
  "245": {
   "titre": "Bord de quai sur l'eau : image",
@@ -274,11 +275,17 @@
    {
     "tid": "738f112ece1c489ead35e479b48d93a2",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/261_autel_chapelle/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/261_autel_chapelle/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/261_autel_chapelle/0/planche.png"
+  ]
  },
  "262": {
   "titre": "Autel de la chapelle des marins : masque v3",
@@ -297,11 +304,17 @@
    {
     "tid": "54988b9579784e4ba7a051d9163b7498",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/263_comptoir_bar/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/263_comptoir_bar/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/263_comptoir_bar/0/planche.png"
+  ]
  },
  "264": {
   "titre": "Comptoir de la terrasse : masque v3",
@@ -320,11 +333,17 @@
    {
     "tid": "8d7c99fdc3bb49b797c14ea6be62cc53",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0/apercu/mur_soutenement.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0/apercu/mur_soutenement.png"
+  ]
  },
  "267": {
   "titre": "Pile de caisses de poisson : refaire de face",
@@ -335,11 +354,17 @@
    {
     "tid": "5df4cb503ede43d2958702da4c16256f",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/267_caisses_poisson/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/267_caisses_poisson/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/267_caisses_poisson/0/planche.png"
+  ]
  },
  "268": {
   "titre": "Pile de caisses de poisson : masque v3",
