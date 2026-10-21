@@ -1153,7 +1153,8 @@ final class App
         $this->json(['ok' => true, 'accepted' => $accepted]);
     }
 
-    /** QA : refus avec commentaire obligatoire -> Doing, « à retraiter » (événement « refuse »). */
+    /** QA : refus avec commentaire obligatoire -> sommet du Backlog, « à retraiter » (événement « refuse ») ;
+     *  Julien repriorise lui-même (21/10). */
     private function refuseCard(): void
     {
         $b = $this->body();
@@ -1168,7 +1169,7 @@ final class App
             $now = time();
             $db->prepare("INSERT INTO card_notes (card_id, author, body, kind, created_at) VALUES (?, ?, ?, 'refus', ?)")
                 ->execute([$id, $this->actor, $text, $now]);
-            $this->placeCard($id, 'doing');
+            $this->placeCard($id, 'backlog', 0);
             $db->prepare('UPDATE cards SET rework = 1 WHERE id = ?')->execute([$id]);
             $this->event($id, 'refuse', 'qa', $text, $now);
             $db->commit();

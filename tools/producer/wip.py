@@ -85,6 +85,14 @@ def lancer(c, prio):
                            cwd=ROOT, check=True, capture_output=True)
         return f"animation(s) relancée(s) : {', '.join(k.split('/')[-1] for k in a_faire)}"
     ent = lire(SUIVI, {}).get(str(c["id"]))
+    # refus qui porte sur le masque (« le masque doit avoir une forme de trapèze ») : seul le masque est refait
+    if ent and "masque" in consigne.lower() and f"m-{ent.get('element')}" in lire(SUIVI, {}):
+        if ESSAI:
+            return f"masque « {consigne[:60]} »"
+        subprocess.run([PY, os.path.join(HERE, "decor_matin.py"), "relance", f"m-{ent['element']}", consigne],
+                       cwd=ROOT, check=True, capture_output=True, timeout=900)
+        s = lire(SUIVI, {}); s[str(c["id"])]["masque_refait"] = 1; json.dump(s, open(SUIVI, "w"), ensure_ascii=False, indent=1)
+        return "masque refait"
     if ent and ent.get("statut") in ("todo", "attend", "integre", "a_voir", None):
         if ESSAI:
             return f"décor {ent.get('sorte')} « {consigne[:60]} »"
@@ -161,9 +169,13 @@ def prete(c):
     if cles:
         etat = lire(ETAT, {"items": {}})["items"]
         return all(etat.get(k, {}).get("statut") == "ok" for k in cles)
-    e = lire(SUIVI, {}).get(str(c["id"]))
+    suivi = lire(SUIVI, {})
+    e = suivi.get(str(c["id"]))
     if not e or e.get("statut") != "integre":
         return False
+    if any(x.get("element") == e.get("element") and x.get("statut") in ("en_file", "a_voir", "attend")
+           for x in suivi.values()):
+        return False                                   # masque (ou autre suite) de l'objet pas encore prêt
     import masques_manquants as mm
     el = json.load(open(os.path.join(mm.DECOR, "index.json")))["elements"].get(e.get("element"), {})
     return el.get("type") != "objet" or not el.get("fichiers") or mm.a_besoin(e["element"], el) is None

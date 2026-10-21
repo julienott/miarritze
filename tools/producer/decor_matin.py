@@ -347,6 +347,8 @@ def relance(cle, consigne):
         for _, pl in pls:
             if consigne and "prompt" in pl:
                 pl["prompt"] = pl["prompt"].rstrip() + " " + consigne
+            elif consigne and "hint" in pl:                 # masque pf_2d__footprint
+                pl["hint"] = (pl["hint"].rstrip() + ". " + consigne)[:300]
             if "seed" in pl:
                 pl["seed"] += 100
         return pls

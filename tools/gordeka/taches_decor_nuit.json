@@ -148,21 +148,6 @@
   "variante": "image_01",
   "consigne": "seen straight from the front, the facade parallel to the image, gable roof symmetric, consistent perspective"
  },
- "251": {
-  "titre": "Crampotte (cabane de pêcheur) : masque v3",
-  "sorte": "masque",
-  "element": "maison_crampotte",
-  "priorite": "normal",
-  "statut": "todo",
-  "jobs": [
-   {
-    "tid": "47bdfe631db44fc48d997156b7ff145d",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
-   }
-  ],
-  "depose": "2026-10-21 08:01"
- },
  "252": {
   "titre": "Chambre froide de la criée : refaire de face",
   "sorte": "refaire",
@@ -184,28 +169,6 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/252_chambre_froide/0/planche.png"
   ],
   "variante": "image_01"
- },
- "253": {
-  "titre": "Chambre froide de la criée : masque v3",
-  "sorte": "masque",
-  "element": "chambre_froide",
-  "priorite": "high",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "c10e71197c64472db25aabdea772b3e2",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/253_chambre_froide/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/253_chambre_froide/0/apercu/chambre_froide.png"
-   }
-  ],
-  "depose": "2026-10-21 07:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/253_chambre_froide/0/apercu/chambre_froide.png"
-  ],
-  "variante": null
  },
  "255": {
   "titre": "Tour du phare (feu du port) : animation",
@@ -229,28 +192,6 @@
   ],
   "variante": "0"
  },
- "256": {
-  "titre": "Tour du phare (feu du port) : masque v3",
-  "sorte": "masque",
-  "element": "tour_phare",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "1760c90aa7e54237ba2b3c444cef4358",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0/apercu/tour_phare.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0/apercu/tour_phare.png"
-  ],
-  "variante": null
- },
  "257": {
   "titre": "Fronton de pelote basque : refaire de face",
   "sorte": "refaire",
@@ -270,28 +211,6 @@
   ],
   "variante": "image_00",
   "consigne": "a huge Basque pelota fronton wall: a very tall and very wide plastered wall with a rounded top, much taller than a house, red base stripe, seen straight from the front"
- },
- "258": {
-  "titre": "Fronton de pelote basque : masque v3",
-  "sorte": "masque",
-  "element": "fronton",
-  "priorite": "normal",
-  "statut": "todo",
-  "jobs": [
-   {
-    "tid": "99be17ec6e0449d0b38a17ee4020019a",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
-   }
-  ],
-  "depose": "2026-10-21 08:05"
- },
- "260": {
-  "titre": "Rayonnage du hangar à filets : masque v3",
-  "sorte": "masque",
-  "element": "rayonnage_filets",
-  "priorite": "normal",
-  "statut": "deja_fait"
  },
  "261": {
   "titre": "Autel de la chapelle des marins : refaire de face",
@@ -315,28 +234,6 @@
   ],
   "variante": "image_00"
  },
- "262": {
-  "titre": "Autel de la chapelle des marins : masque v3",
-  "sorte": "masque",
-  "element": "autel_chapelle",
-  "priorite": "high",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "a0463b614daf464ca267978053d783d2",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/262_autel_chapelle/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/262_autel_chapelle/0/apercu/autel_chapelle.png"
-   }
-  ],
-  "depose": "2026-10-21 07:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/262_autel_chapelle/0/apercu/autel_chapelle.png"
-  ],
-  "variante": null
- },
  "263": {
   "titre": "Comptoir de la terrasse : refaire de face",
   "sorte": "refaire",
@@ -359,50 +256,6 @@
   ],
   "variante": "image_00"
  },
- "264": {
-  "titre": "Comptoir de la terrasse : masque v3",
-  "sorte": "masque",
-  "element": "comptoir_bar",
-  "priorite": "high",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "087eb9e3c6714597940283d292a0d14e",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/264_comptoir_bar/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/264_comptoir_bar/0/apercu/comptoir_bar.png"
-   }
-  ],
-  "depose": "2026-10-21 07:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/264_comptoir_bar/0/apercu/comptoir_bar.png"
-  ],
-  "variante": null
- },
- "266": {
-  "titre": "Mur de soutènement de l'escalier : masque v3",
-  "sorte": "masque",
-  "element": "mur_soutenement",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "8d7c99fdc3bb49b797c14ea6be62cc53",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0/apercu/mur_soutenement.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0/apercu/mur_soutenement.png"
-  ],
-  "variante": null
- },
  "267": {
   "titre": "Pile de caisses de poisson : refaire de face",
   "sorte": "refaire",
@@ -424,28 +277,6 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/267_caisses_poisson/0/planche.png"
   ],
   "variante": "image_01"
- },
- "268": {
-  "titre": "Pile de caisses de poisson : masque v3",
-  "sorte": "masque",
-  "element": "caisses_poisson",
-  "priorite": "high",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "df49bd50c9e04bc09408db24894e2fbd",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/268_caisses_poisson/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/268_caisses_poisson/0/apercu/caisses_poisson.png"
-   }
-  ],
-  "depose": "2026-10-21 07:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/268_caisses_poisson/0/apercu/caisses_poisson.png"
-  ],
-  "variante": null
  },
  "269": {
   "titre": "Barque basque au mouillage : image",
@@ -500,28 +331,6 @@
   ],
   "variante": "0"
  },
- "272": {
-  "titre": "Chalutier à quai : masque v3",
-  "sorte": "masque",
-  "element": "chalutier_quai",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "f4889f4e45da4372b545e1e0bbe976c5",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
-  ],
-  "variante": null
- },
  "273": {
   "titre": "Coque sur ber (cale sèche) : refaire de face",
   "sorte": "refaire",
@@ -541,21 +350,6 @@
   ],
   "variante": "image_00",
   "consigne": "seen exactly from the side, the hull long side parallel to the image, keel horizontal, resting on its wooden cradle"
- },
- "274": {
-  "titre": "Coque sur ber (cale sèche) : masque v3",
-  "sorte": "masque",
-  "element": "coque_sur_ber",
-  "priorite": "normal",
-  "statut": "todo",
-  "jobs": [
-   {
-    "tid": "72584f7f0c674f81b8035ca0f1404177",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
-   }
-  ],
-  "depose": "2026-10-21 08:08"
  },
  "275": {
   "titre": "Coque en chantier (atelier) : refaire de face",
@@ -578,57 +372,6 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/275_coque_chantier/0/planche.png"
   ],
   "variante": "image_00"
- },
- "276": {
-  "titre": "Coque en chantier (atelier) : masque v3",
-  "sorte": "masque",
-  "element": "coque_chantier",
-  "priorite": "high",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "2f2dfc1ed9974b6fb53103dfb9308b58",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/276_coque_chantier/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/276_coque_chantier/0/apercu/coque_chantier.png"
-   }
-  ],
-  "depose": "2026-10-21 07:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/276_coque_chantier/0/apercu/coque_chantier.png"
-  ],
-  "variante": null
- },
- "278": {
-  "titre": "Étal de la criée : masque v3",
-  "sorte": "masque",
-  "element": "etal_criee",
-  "priorite": "normal",
-  "statut": "deja_fait"
- },
- "280": {
-  "titre": "Bitte d'amarrage : masque v3",
-  "sorte": "masque",
-  "element": "bitte_amarrage",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "d48b9a603dc749d5a9122b953c30a3aa",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0/apercu/bitte_amarrage.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0/apercu/bitte_amarrage.png"
-  ],
-  "variante": null
  },
  "281": {
   "titre": "Filets et casiers posés au sol : image",
@@ -683,20 +426,6 @@
   ],
   "variante": "1"
  },
- "284": {
-  "titre": "Fontaine de la place : masque v3",
-  "sorte": "masque",
-  "element": "fontaine_place",
-  "priorite": "normal",
-  "statut": "deja_fait"
- },
- "286": {
-  "titre": "Banc vert du front de mer : masque v3",
-  "sorte": "masque",
-  "element": "banc_vert",
-  "priorite": "normal",
-  "statut": "deja_fait"
- },
  "287": {
   "titre": "Banc de la chapelle : refaire de face",
   "sorte": "refaire",
@@ -718,28 +447,6 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/287_banc_chapelle/0/planche.png"
   ],
   "variante": "image_00"
- },
- "288": {
-  "titre": "Banc de la chapelle : masque v3",
-  "sorte": "masque",
-  "element": "banc_chapelle",
-  "priorite": "normal",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "218db26ba06b47dbafca70341633579b",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/288_banc_chapelle/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/288_banc_chapelle/0/apercu/banc_chapelle.png"
-   }
-  ],
-  "depose": "2026-10-21 07:36",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/288_banc_chapelle/0/apercu/banc_chapelle.png"
-  ],
-  "variante": null
  },
  "289": {
   "titre": "Établi de l'atelier : refaire de face",
@@ -763,28 +470,6 @@
   ],
   "variante": "image_01"
  },
- "290": {
-  "titre": "Établi de l'atelier : masque v3",
-  "sorte": "masque",
-  "element": "etabli_atelier",
-  "priorite": "high",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "fa2164f938c1401eaccf8ec79da5ad4d",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0/apercu/etabli_atelier.png"
-   }
-  ],
-  "depose": "2026-10-21 08:12",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0/apercu/etabli_atelier.png"
-  ],
-  "variante": null
- },
  "291": {
   "titre": "Marches de l'escalier de la ville : refaire de face",
   "sorte": "refaire",
@@ -806,28 +491,6 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/291_marches_escalier/0/planche.png"
   ],
   "variante": "image_01"
- },
- "292": {
-  "titre": "Marches de l'escalier de la ville : masque v3",
-  "sorte": "masque",
-  "element": "marches_escalier",
-  "priorite": "high",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "35fe28fa03e34ee5b0307456758e18d8",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/292_marches_escalier/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/292_marches_escalier/0/apercu/marches_escalier.png"
-   }
-  ],
-  "depose": "2026-10-21 10:26",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/292_marches_escalier/0/apercu/marches_escalier.png"
-  ],
-  "variante": null
  },
  "293": {
   "titre": "Table de terrasse : refaire de face",
@@ -851,28 +514,6 @@
   ],
   "variante": "image_01"
  },
- "294": {
-  "titre": "Table de terrasse : masque v3",
-  "sorte": "masque",
-  "element": "table_terrasse",
-  "priorite": "high",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "4308fb6cc19c408bb65490792c552015",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/294_table_terrasse/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/294_table_terrasse/0/apercu/table_terrasse.png"
-   }
-  ],
-  "depose": "2026-10-21 10:31",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/294_table_terrasse/0/apercu/table_terrasse.png"
-  ],
-  "variante": null
- },
  "295": {
   "titre": "Tréteaux et planches de la cale : refaire de face",
   "sorte": "refaire",
@@ -894,28 +535,6 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/295_treteaux_cale/0/planche.png"
   ],
   "variante": "image_00"
- },
- "296": {
-  "titre": "Tréteaux et planches de la cale : masque v3",
-  "sorte": "masque",
-  "element": "treteaux_cale",
-  "priorite": "high",
-  "statut": "integre",
-  "jobs": [
-   {
-    "tid": "f6eaa000834e42eb92664d5dd391cbbb",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/296_treteaux_cale/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/296_treteaux_cale/0/apercu/treteaux_cale.png"
-   }
-  ],
-  "depose": "2026-10-21 10:31",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/296_treteaux_cale/0/apercu/treteaux_cale.png"
-  ],
-  "variante": null
  },
  "297": {
   "titre": "Bassin du lavoir : refaire de face",
@@ -959,21 +578,6 @@
   ],
   "depose": "2026-10-21 10:36"
  },
- "299": {
-  "titre": "Bassin du lavoir : masque v3",
-  "sorte": "masque",
-  "element": "lavoir_bassin",
-  "priorite": "normal",
-  "statut": "todo",
-  "jobs": [
-   {
-    "tid": "1675ff00c4d94a7986d1297abb3235ba",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
-   }
-  ],
-  "depose": "2026-10-21 10:36"
- },
  "301": {
   "titre": "Casier à homards géant : version ouverte",
   "sorte": "ouvert",
@@ -992,28 +596,6 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/301_cachette_casier_homards/0/planche.png"
   ],
   "consigne": "the front net door swings wide open on its hinge, showing a dark empty hollow inside the barrel, big enough for a child to hide in"
- },
- "302": {
-  "titre": "Casier à homards géant : masque v3",
-  "sorte": "masque",
-  "element": "cachette_casier_homards",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "33eea6023b2a48a4a84111ba09735428",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0/apercu/cachette_casier_homards.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0/apercu/cachette_casier_homards.png"
-  ],
-  "variante": null
  },
  "304": {
   "titre": "Coffre de quai : version ouverte",
@@ -1034,28 +616,6 @@
   ],
   "variante": "image_00"
  },
- "305": {
-  "titre": "Coffre de quai : masque v3",
-  "sorte": "masque",
-  "element": "cachette_coffre_quai",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "cbcdf8201de843c0863ee83a10f36ffa",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/305_cachette_coffre_quai/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/305_cachette_coffre_quai/0/apercu/cachette_coffre_quai.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/305_cachette_coffre_quai/0/apercu/cachette_coffre_quai.png"
-  ],
-  "variante": null
- },
  "307": {
   "titre": "Caisse à glace : version ouverte",
   "sorte": "ouvert",
@@ -1075,28 +635,6 @@
   ],
   "variante": "image_01",
   "consigne": "the hinged lid is flipped wide open and stands upright behind the box, the dark empty inside of the cooler is clearly visible, big enough for a child to hide in"
- },
- "308": {
-  "titre": "Caisse à glace : masque v3",
-  "sorte": "masque",
-  "element": "cachette_caisse_glace",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "3c6226ddd1e54adbbc0cbefeb9be052a",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/308_cachette_caisse_glace/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/308_cachette_caisse_glace/0/apercu/cachette_caisse_glace.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/308_cachette_caisse_glace/0/apercu/cachette_caisse_glace.png"
-  ],
-  "variante": null
  },
  "310": {
   "titre": "Coffre à cordages du phare : version ouverte",
@@ -1120,28 +658,6 @@
   ],
   "variante": "image_00"
  },
- "311": {
-  "titre": "Coffre à cordages du phare : masque v3",
-  "sorte": "masque",
-  "element": "cachette_coffre_cordages",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "98a2b22a58864debb6745f6e56aeb0c3",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/311_cachette_coffre_cordages/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/311_cachette_coffre_cordages/0/apercu/cachette_coffre_cordages.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/311_cachette_coffre_cordages/0/apercu/cachette_coffre_cordages.png"
-  ],
-  "variante": null
- },
  "313": {
   "titre": "Grande poubelle de ruelle : version ouverte",
   "sorte": "ouvert",
@@ -1164,28 +680,6 @@
   ],
   "variante": "image_00"
  },
- "314": {
-  "titre": "Grande poubelle de ruelle : masque v3",
-  "sorte": "masque",
-  "element": "cachette_poubelle_ruelle",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "897cd3041dab44dc925434f1dfe9aa50",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/314_cachette_poubelle_ruelle/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/314_cachette_poubelle_ruelle/0/apercu/cachette_poubelle_ruelle.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/314_cachette_poubelle_ruelle/0/apercu/cachette_poubelle_ruelle.png"
-  ],
-  "variante": null
- },
  "316": {
   "titre": "Grand bac à poissons : version ouverte",
   "sorte": "ouvert",
@@ -1207,28 +701,6 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/316_cachette_bac_poissons/0/planche.png"
   ],
   "variante": "image_00"
- },
- "317": {
-  "titre": "Grand bac à poissons : masque v3",
-  "sorte": "masque",
-  "element": "cachette_bac_poissons",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "13c7ceca66c24c9ab693105d6b19a717",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/317_cachette_bac_poissons/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/317_cachette_bac_poissons/0/apercu/cachette_bac_poissons.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/317_cachette_bac_poissons/0/apercu/cachette_bac_poissons.png"
-  ],
-  "variante": null
  },
  "318": {
   "titre": "Malle à pelotes : image",
@@ -1318,28 +790,6 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/323_cachette_confessionnal/0/planche.png"
   ],
   "variante": "image_01"
- },
- "324": {
-  "titre": "Confessionnal en bois : masque v3",
-  "sorte": "masque",
-  "element": "cachette_confessionnal",
-  "priorite": "normal",
-  "jobs": [
-   {
-    "tid": "3b5533e1268e43a6a094c4c1a3ae1749",
-    "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0/apercu/cachette_confessionnal.png"
-   }
-  ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0/apercu/cachette_confessionnal.png"
-  ],
-  "variante": null
  },
  "325": {
   "titre": "Barque retournée : image",
@@ -2237,100 +1687,650 @@
   ],
   "variante": null
  },
- "586": {
+ "m-cachette_coffre_quai": {
+  "titre": "Coffre de quai : masque v3",
+  "sorte": "masque",
+  "element": "cachette_coffre_quai",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "cbcdf8201de843c0863ee83a10f36ffa",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/305_cachette_coffre_quai/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/305_cachette_coffre_quai/0/apercu/cachette_coffre_quai.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/305_cachette_coffre_quai/0/apercu/cachette_coffre_quai.png"
+  ],
+  "variante": null
+ },
+ "m-lavoir_bassin": {
+  "titre": "Bassin du lavoir : masque v3",
+  "sorte": "masque",
+  "element": "lavoir_bassin",
+  "priorite": "normal",
+  "statut": "todo",
+  "jobs": [
+   {
+    "tid": "1675ff00c4d94a7986d1297abb3235ba",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 10:36"
+ },
+ "m-cachette_malle_pelotes": {
   "titre": "Malle à pelotes : masque v3",
   "sorte": "masque",
   "element": "cachette_malle_pelotes",
   "statut": "todo"
  },
- "587": {
+ "m-cachette_tas_filets_cachette": {
   "titre": "Montagne de filets : masque v3",
   "sorte": "masque",
   "element": "cachette_tas_filets_cachette",
   "statut": "todo"
  },
- "588": {
+ "m-cachette_barque_retournee": {
   "titre": "Barque retournée : masque v3",
   "sorte": "masque",
   "element": "cachette_barque_retournee",
   "statut": "todo"
  },
- "589": {
+ "m-cachette_tonneau_cidre": {
   "titre": "Tonneau de cidre géant : masque v3",
   "sorte": "masque",
   "element": "cachette_tonneau_cidre",
   "statut": "todo"
  },
- "590": {
+ "m-cachette_panier_linge": {
   "titre": "Grand panier à linge : masque v3",
   "sorte": "masque",
   "element": "cachette_panier_linge",
   "statut": "todo"
  },
- "591": {
+ "m-cachette_caisse_voiles": {
   "titre": "Caisse à voiles de l'atelier : masque v3",
   "sorte": "masque",
   "element": "cachette_caisse_voiles",
   "statut": "todo"
  },
- "592": {
+ "m-cachette_cabine_plage": {
   "titre": "Cabine de plage rayée : masque v3",
   "sorte": "masque",
   "element": "cachette_cabine_plage",
   "statut": "todo"
  },
- "593": {
+ "m-sortie_barque_jetee": {
   "titre": "Sortie : barque au bout de la jetée : masque v3",
   "sorte": "masque",
   "element": "sortie_barque_jetee",
   "statut": "todo"
  },
- "594": {
+ "m-sortie_echelle_phare": {
   "titre": "Sortie : échelle derrière le phare : masque v3",
   "sorte": "masque",
   "element": "sortie_echelle_phare",
   "statut": "todo"
  },
- "595": {
+ "m-sortie_barque_cale": {
   "titre": "Sortie : barque de la cale : masque v3",
   "sorte": "masque",
   "element": "sortie_barque_cale",
   "statut": "todo"
  },
- "596": {
+ "m-sortie_porte_ville": {
   "titre": "Sortie : porte de la ville : masque v3",
   "sorte": "masque",
   "element": "sortie_porte_ville",
   "statut": "todo"
  },
- "597": {
+ "m-barriques_cidre": {
   "titre": "Deux barriques de cidre : masque v3",
   "sorte": "masque",
   "element": "barriques_cidre",
   "statut": "todo"
  },
- "598": {
+ "m-pot_hortensias": {
   "titre": "Pot d'hortensias : masque v3",
   "sorte": "masque",
   "element": "pot_hortensias",
   "statut": "todo"
  },
- "599": {
+ "m-casier_bouees": {
   "titre": "Casier et bouées : masque v3",
   "sorte": "masque",
   "element": "casier_bouees",
   "statut": "todo"
  },
- "600": {
+ "m-platane_place": {
   "titre": "Platane de la place : masque v3",
   "sorte": "masque",
   "element": "platane_place",
   "statut": "todo"
  },
- "601": {
+ "m-maison_crampotte_verte": {
   "titre": "Crampotte aux volets verts : masque v3",
   "sorte": "masque",
   "element": "maison_crampotte_verte",
   "statut": "todo"
+ },
+ "m-rayonnage_filets": {
+  "titre": "Rayonnage du hangar à filets : masque v3",
+  "sorte": "masque",
+  "element": "rayonnage_filets",
+  "priorite": "normal",
+  "statut": "deja_fait"
+ },
+ "m-etal_criee": {
+  "titre": "Étal de la criée : masque v3",
+  "sorte": "masque",
+  "element": "etal_criee",
+  "priorite": "normal",
+  "statut": "deja_fait"
+ },
+ "m-fontaine_place": {
+  "titre": "Fontaine de la place : masque v3",
+  "sorte": "masque",
+  "element": "fontaine_place",
+  "priorite": "normal",
+  "statut": "deja_fait"
+ },
+ "m-banc_vert": {
+  "titre": "Banc vert du front de mer : masque v3",
+  "sorte": "masque",
+  "element": "banc_vert",
+  "priorite": "normal",
+  "statut": "deja_fait"
+ },
+ "m-maison_crampotte": {
+  "titre": "Crampotte (cabane de pêcheur) : masque v3",
+  "sorte": "masque",
+  "element": "maison_crampotte",
+  "priorite": "normal",
+  "statut": "todo",
+  "jobs": [
+   {
+    "tid": "47bdfe631db44fc48d997156b7ff145d",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 08:01"
+ },
+ "m-fronton": {
+  "titre": "Fronton de pelote basque : masque v3",
+  "sorte": "masque",
+  "element": "fronton",
+  "priorite": "normal",
+  "statut": "todo",
+  "jobs": [
+   {
+    "tid": "99be17ec6e0449d0b38a17ee4020019a",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 08:05"
+ },
+ "m-coque_sur_ber": {
+  "titre": "Coque sur ber (cale sèche) : masque v3",
+  "sorte": "masque",
+  "element": "coque_sur_ber",
+  "priorite": "normal",
+  "statut": "todo",
+  "jobs": [
+   {
+    "tid": "72584f7f0c674f81b8035ca0f1404177",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 08:08"
+ },
+ "m-chambre_froide": {
+  "titre": "Chambre froide de la criée : masque v3",
+  "sorte": "masque",
+  "element": "chambre_froide",
+  "priorite": "high",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "c10e71197c64472db25aabdea772b3e2",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/253_chambre_froide/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/253_chambre_froide/0/apercu/chambre_froide.png"
+   }
+  ],
+  "depose": "2026-10-21 07:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/253_chambre_froide/0/apercu/chambre_froide.png"
+  ],
+  "variante": null
+ },
+ "m-autel_chapelle": {
+  "titre": "Autel de la chapelle des marins : masque v3",
+  "sorte": "masque",
+  "element": "autel_chapelle",
+  "priorite": "high",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "a0463b614daf464ca267978053d783d2",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/262_autel_chapelle/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/262_autel_chapelle/0/apercu/autel_chapelle.png"
+   }
+  ],
+  "depose": "2026-10-21 07:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/262_autel_chapelle/0/apercu/autel_chapelle.png"
+  ],
+  "variante": null
+ },
+ "m-comptoir_bar": {
+  "titre": "Comptoir de la terrasse : masque v3",
+  "sorte": "masque",
+  "element": "comptoir_bar",
+  "priorite": "high",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "087eb9e3c6714597940283d292a0d14e",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/264_comptoir_bar/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/264_comptoir_bar/0/apercu/comptoir_bar.png"
+   }
+  ],
+  "depose": "2026-10-21 07:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/264_comptoir_bar/0/apercu/comptoir_bar.png"
+  ],
+  "variante": null
+ },
+ "m-caisses_poisson": {
+  "titre": "Pile de caisses de poisson : masque v3",
+  "sorte": "masque",
+  "element": "caisses_poisson",
+  "priorite": "high",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "df49bd50c9e04bc09408db24894e2fbd",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/268_caisses_poisson/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/268_caisses_poisson/0/apercu/caisses_poisson.png"
+   }
+  ],
+  "depose": "2026-10-21 07:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/268_caisses_poisson/0/apercu/caisses_poisson.png"
+  ],
+  "variante": null
+ },
+ "m-etabli_atelier": {
+  "titre": "Établi de l'atelier : masque v3",
+  "sorte": "masque",
+  "element": "etabli_atelier",
+  "priorite": "high",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "fa2164f938c1401eaccf8ec79da5ad4d",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0/apercu/etabli_atelier.png"
+   }
+  ],
+  "depose": "2026-10-21 08:12",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0/apercu/etabli_atelier.png"
+  ],
+  "variante": null
+ },
+ "m-treteaux_cale": {
+  "titre": "Tréteaux et planches de la cale : masque v3",
+  "sorte": "masque",
+  "element": "treteaux_cale",
+  "priorite": "high",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "f6eaa000834e42eb92664d5dd391cbbb",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/296_treteaux_cale/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/296_treteaux_cale/0/apercu/treteaux_cale.png"
+   }
+  ],
+  "depose": "2026-10-21 10:31",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/296_treteaux_cale/0/apercu/treteaux_cale.png"
+  ],
+  "variante": null
+ },
+ "m-banc_chapelle": {
+  "titre": "Banc de la chapelle : masque v3",
+  "sorte": "masque",
+  "element": "banc_chapelle",
+  "priorite": "normal",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "218db26ba06b47dbafca70341633579b",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/288_banc_chapelle/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/288_banc_chapelle/0/apercu/banc_chapelle.png"
+   }
+  ],
+  "depose": "2026-10-21 07:36",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/288_banc_chapelle/0/apercu/banc_chapelle.png"
+  ],
+  "variante": null
+ },
+ "m-cachette_casier_homards": {
+  "titre": "Casier à homards géant : masque v3",
+  "sorte": "masque",
+  "element": "cachette_casier_homards",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "33eea6023b2a48a4a84111ba09735428",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0/apercu/cachette_casier_homards.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0/apercu/cachette_casier_homards.png"
+  ],
+  "variante": null
+ },
+ "m-cachette_caisse_glace": {
+  "titre": "Caisse à glace : masque v3",
+  "sorte": "masque",
+  "element": "cachette_caisse_glace",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "3c6226ddd1e54adbbc0cbefeb9be052a",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/308_cachette_caisse_glace/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/308_cachette_caisse_glace/0/apercu/cachette_caisse_glace.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/308_cachette_caisse_glace/0/apercu/cachette_caisse_glace.png"
+  ],
+  "variante": null
+ },
+ "m-cachette_coffre_cordages": {
+  "titre": "Coffre à cordages du phare : masque v3",
+  "sorte": "masque",
+  "element": "cachette_coffre_cordages",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "98a2b22a58864debb6745f6e56aeb0c3",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/311_cachette_coffre_cordages/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/311_cachette_coffre_cordages/0/apercu/cachette_coffre_cordages.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/311_cachette_coffre_cordages/0/apercu/cachette_coffre_cordages.png"
+  ],
+  "variante": null
+ },
+ "m-cachette_poubelle_ruelle": {
+  "titre": "Grande poubelle de ruelle : masque v3",
+  "sorte": "masque",
+  "element": "cachette_poubelle_ruelle",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "897cd3041dab44dc925434f1dfe9aa50",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/314_cachette_poubelle_ruelle/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/314_cachette_poubelle_ruelle/0/apercu/cachette_poubelle_ruelle.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/314_cachette_poubelle_ruelle/0/apercu/cachette_poubelle_ruelle.png"
+  ],
+  "variante": null
+ },
+ "m-cachette_bac_poissons": {
+  "titre": "Grand bac à poissons : masque v3",
+  "sorte": "masque",
+  "element": "cachette_bac_poissons",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "13c7ceca66c24c9ab693105d6b19a717",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/317_cachette_bac_poissons/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/317_cachette_bac_poissons/0/apercu/cachette_bac_poissons.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/317_cachette_bac_poissons/0/apercu/cachette_bac_poissons.png"
+  ],
+  "variante": null
+ },
+ "m-cachette_confessionnal": {
+  "titre": "Confessionnal en bois : masque v3",
+  "sorte": "masque",
+  "element": "cachette_confessionnal",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "3b5533e1268e43a6a094c4c1a3ae1749",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0/apercu/cachette_confessionnal.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0/apercu/cachette_confessionnal.png"
+  ],
+  "variante": null
+ },
+ "m-tour_phare": {
+  "titre": "Tour du phare (feu du port) : masque v3",
+  "sorte": "masque",
+  "element": "tour_phare",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "1760c90aa7e54237ba2b3c444cef4358",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0/apercu/tour_phare.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0/apercu/tour_phare.png"
+  ],
+  "variante": null
+ },
+ "m-mur_soutenement": {
+  "titre": "Mur de soutènement de l'escalier : masque v3",
+  "sorte": "masque",
+  "element": "mur_soutenement",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "8d7c99fdc3bb49b797c14ea6be62cc53",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0/apercu/mur_soutenement.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0/apercu/mur_soutenement.png"
+  ],
+  "variante": null
+ },
+ "m-chalutier_quai": {
+  "titre": "Chalutier à quai : masque v3",
+  "sorte": "masque",
+  "element": "chalutier_quai",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "f4889f4e45da4372b545e1e0bbe976c5",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
+  ],
+  "variante": null
+ },
+ "m-bitte_amarrage": {
+  "titre": "Bitte d'amarrage : masque v3",
+  "sorte": "masque",
+  "element": "bitte_amarrage",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "d48b9a603dc749d5a9122b953c30a3aa",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0/apercu/bitte_amarrage.png"
+   }
+  ],
+  "statut": "integre",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0/apercu/bitte_amarrage.png"
+  ],
+  "variante": null
+ },
+ "m-coque_chantier": {
+  "titre": "Coque en chantier (atelier) : masque v3",
+  "sorte": "masque",
+  "element": "coque_chantier",
+  "priorite": "high",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "2f2dfc1ed9974b6fb53103dfb9308b58",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/276_coque_chantier/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/276_coque_chantier/0/apercu/coque_chantier.png"
+   }
+  ],
+  "depose": "2026-10-21 07:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/276_coque_chantier/0/apercu/coque_chantier.png"
+  ],
+  "variante": null
+ },
+ "m-marches_escalier": {
+  "titre": "Marches de l'escalier de la ville : masque v3",
+  "sorte": "masque",
+  "element": "marches_escalier",
+  "priorite": "high",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "35fe28fa03e34ee5b0307456758e18d8",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/292_marches_escalier/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/292_marches_escalier/0/apercu/marches_escalier.png"
+   }
+  ],
+  "depose": "2026-10-21 10:26",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/292_marches_escalier/0/apercu/marches_escalier.png"
+  ],
+  "variante": null
+ },
+ "m-table_terrasse": {
+  "titre": "Table de terrasse : masque v3",
+  "sorte": "masque",
+  "element": "table_terrasse",
+  "priorite": "high",
+  "statut": "integre",
+  "jobs": [
+   {
+    "tid": "4308fb6cc19c408bb65490792c552015",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/294_table_terrasse/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/294_table_terrasse/0/apercu/table_terrasse.png"
+   }
+  ],
+  "depose": "2026-10-21 10:31",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/294_table_terrasse/0/apercu/table_terrasse.png"
+  ],
+  "variante": null
  }
 }

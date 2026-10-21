@@ -273,8 +273,8 @@ check('refus sans commentaire bloqué', (await page.textContent('#rf-error')).le
 await page.fill('#rf-body', 'La marche glisse encore, pieds à recaler.');
 await shot(page, '04d_refus', false);
 await page.click('#rf-send');
-await page.waitForSelector(`.column[data-status=doing] .card[data-id="${kidIds[1]}"] .rework`);
-check('refus : retour en Doing, badge « à retraiter »', true);
+await page.waitForSelector(`.column[data-status=backlog] .card[data-id="${kidIds[1]}"] .rework`);
+check('refus : sommet du Backlog, badge « à retraiter »', true);
 const refused = cli('show', String(kidIds[1]));
 check('cli show : refus visible', refused.includes('[À RETRAITER]') && refused.includes('REFUSÉE') && refused.includes('pieds à recaler'));
 cli('qa', String(kidIds[1]), 'pieds recalés sur feet_anchor');

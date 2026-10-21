@@ -2242,7 +2242,7 @@ async function sendRefuse(ev) {
   }
   $('refuse-dialog').close();
   if ($('card-dialog').open) $('card-dialog').close();
-  toast('Refusée → Doing, à retraiter');
+  toast('Refusée → sommet du Backlog, à retraiter');
   renderBoard();
 }
 
