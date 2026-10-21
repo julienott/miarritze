@@ -528,11 +528,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0/apercu/bitte_amarrage.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/280_bitte_amarrage/0/apercu/bitte_amarrage.png"
-  ]
+  ],
+  "variante": null
  },
  "281": {
   "titre": "Filets et casiers posés au sol : image",

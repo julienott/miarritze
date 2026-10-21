@@ -235,18 +235,14 @@
  "perso/itsaso/trapped": {
   "priority": "night"
  },
- "perso/itsaso/search": {
-  "priority": "night"
- },
+ "perso/itsaso/search": "a big readable search: she leans forward from the waist, peers left and right with one hand shading her eyes, then crouches and sweeps the ground with both hands",
  "perso/itsaso/detect": {
   "priority": "night"
  },
  "perso/itsaso/extract": {
   "priority": "night"
  },
- "perso/itsaso/victory": {
-  "priority": "night"
- },
+ "perso/itsaso/victory": "a big joyful victory: she hops on the spot with both arms raised high, her hair and dress bouncing, then spins a little twirl, big happy smile",
  "perso/itsaso/sad": {
   "priority": "night"
  },
@@ -256,21 +252,15 @@
  "perso/itsaso/emote_salut": {
   "priority": "night"
  },
- "perso/itsaso/emote_rire": {
-  "priority": "night"
- },
+ "perso/itsaso/emote_rire": "a big readable laugh with the whole body",
  "perso/itsaso/emote_danse": {
   "priority": "night"
  },
- "perso/itsaso/emote_pouce": {
-  "priority": "night"
- },
+ "perso/itsaso/emote_pouce": "the thumbs up at arm's length is clearly visible",
  "perso/itsaso/emote_chut": {
   "priority": "night"
  },
- "perso/itsaso/emote_langue": {
-  "priority": "night"
- },
+ "perso/itsaso/emote_langue": "the long pink tongue is clearly visible",
  "perso/peio/idle": {
   "priority": "night"
  },
@@ -283,42 +273,28 @@
  "perso/peio/hide_in": {
   "priority": "night"
  },
- "perso/peio/hide_out": {
-  "priority": "night"
- },
- "perso/peio/found": {
-  "priority": "night"
- },
+ "perso/peio/hide_out": "the rugby ball stays tucked under his arm in every frame",
+ "perso/peio/found": "the rugby ball stays tucked under his arm in every frame, clean empty background around him, a clear startled jump",
  "perso/peio/trap": {
   "priority": "night"
  },
  "perso/peio/trapped": {
   "priority": "night"
  },
- "perso/peio/search": {
-  "priority": "night"
- },
+ "perso/peio/search": "a big readable search: he leans forward from the waist, peers left and right with his free hand shading his eyes, then crouches and pats the ground, the rugby ball stays under his arm",
  "perso/peio/detect": {
   "priority": "night"
  },
  "perso/peio/extract": {
   "priority": "night"
  },
- "perso/peio/victory": {
-  "priority": "night"
- },
- "perso/peio/sad": {
-  "priority": "night"
- },
- "perso/peio/hunter_reveal": {
-  "priority": "night"
- },
+ "perso/peio/victory": "a big joyful victory: he jumps on the spot and raises the rugby ball high above his head with both hands like a trophy, big proud smile",
+ "perso/peio/sad": "clearly sad: shoulders slump, head drops low, the ball hangs loosely from one hand",
+ "perso/peio/hunter_reveal": "only the small lens of the flashlight glows, the rugby ball stays tucked under his other arm",
  "perso/peio/emote_salut": {
   "priority": "night"
  },
- "perso/peio/emote_rire": {
-  "priority": "night"
- },
+ "perso/peio/emote_rire": "a big readable laugh with the whole body, the rugby ball stays under his arm",
  "perso/peio/emote_danse": {
   "priority": "night"
  },
@@ -328,7 +304,5 @@
  "perso/peio/emote_chut": {
   "priority": "night"
  },
- "perso/peio/emote_langue": {
-  "priority": "night"
- }
+ "perso/peio/emote_langue": "the long pink tongue is clearly visible during most of the animation"
 }
