@@ -718,6 +718,7 @@
     3
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 4.1,
    "taille_jeu_px": [
     256,
     256
@@ -2654,6 +2655,7 @@
     1
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 1.8,
    "taille_jeu_px": [
     64,
     128
@@ -2963,6 +2965,7 @@
     1
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 1.95,
    "taille_jeu_px": [
     64,
     128
@@ -3384,6 +3387,7 @@
     1
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 1.4,
    "taille_jeu_px": [
     64,
     128
@@ -3557,6 +3561,7 @@
     1
    ],
    "debord_haut_cases": 2,
+   "hauteur_cases": 3.6,
    "taille_jeu_px": [
     64,
     192
@@ -4498,6 +4503,7 @@
     3
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 3.7,
    "taille_jeu_px": [
     256,
     256

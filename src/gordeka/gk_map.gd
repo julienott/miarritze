@@ -281,6 +281,7 @@ func _fit_grid_to_decor() -> void:
 		return
 	var m: float = clampf(GkRules.f("decor_grille_marge"), 0.0, 0.45) * tile
 	var freed: Array[Vector2i] = []
+	var over: Dictionary = {}
 	for inst: Dictionary in decor.instances:
 		if not inst.has("polys"):
 			continue
@@ -307,8 +308,12 @@ func _fit_grid_to_decor() -> void:
 					if not hit and at(c) != "H" and not _walk_fix.has(c):
 						_walk_fix[c] = true
 						freed.append(c)
-				elif hit and WALK.contains(at(c)):
-					_walk_fix[c] = false
+				elif hit:
+					over[c] = true
+	# Débords (après coup : une case libérée d'un objet peut être couverte par le débord d'un voisin).
+	for c: Vector2i in over:
+		if WALK.contains(at(c)) or bool(_walk_fix.get(c, false)):
+			_walk_fix[c] = false
 	# Cases libérées reliées au sol de la carte (départs des joueurs), sinon rendues à l'objet.
 	var seen: Dictionary = {}
 	var todo: Array[Vector2i] = []

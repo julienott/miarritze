@@ -8,7 +8,7 @@ extends Node2D
 ## passe devant les persos qui sont derrière (tri par profondeur sur le pied de l'objet).
 ##
 ## index.json (assets/gordeka/decor/) : {carte, elements: {id: {type, categorie, caractere, zones,
-## taille_cases, debord_haut_cases, animation, fichiers: [chemins relatifs], ombre, ombre_decalage,
+## taille_cases, debord_haut_cases, hauteur_cases, animation, fichiers: [chemins relatifs], ombre, ombre_decalage,
 ## ouvert, ouvert_decalage}}}.
 ## - tuile_sol : texture répétée sur les cases du caractère dans ses zones (taille_cases cases par
 ##   tuile ; plusieurs fichiers = variantes mélangées de façon déterministe) ;
@@ -369,9 +369,9 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int, mirror:
 		s = minf(foot.size.x / size.x, foot.size.y / size.y)
 		holder.position = foot.get_center()
 	else:
-		# Debout : largeur de l'emprise, bas aligné, débord vers le haut permis.
-		var hmax: float = foot.size.y + float(el.get("debord_haut_cases", 0)) * t
-		s = minf(foot.size.x / size.x, hmax / size.y)
+		# Debout : largeur de l'emprise, bas aligné, débord vers le haut permis ; ou, avec hauteur_cases,
+		# hauteur dessinée imposée (la largeur suit, centrée : débord latéral si l'image est plus large).
+		s = _standing_scale(el, foot.size, size, t)
 		holder.position = Vector2(foot.get_center().x, foot.end.y)
 		sp.position = Vector2(0, -size.y * s * 0.5)
 	sp.scale = Vector2(s, s)
@@ -421,12 +421,24 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int, mirror:
 		_animated.append(inst)
 
 
+## Échelle d'un objet debout dessiné sur une emprise de `foot` px (image de `size` px, case de `t` px) :
+## - hauteur_cases (index.json, décimales) : hauteur dessinée imposée, quelle que soit l'emprise (une maison
+##   reste une maison sur 3 ou 4 cases) ; l'image, centrée sur ses cases, peut en déborder sur les côtés
+##   (débord latéral : emprise bloquante et masque suivent, GkMap bloque les cases de sol couvertes) ;
+## - sinon largeur des cases, débord vers le haut de debord_haut_cases au plus (règle d'origine).
+static func _standing_scale(el: Dictionary, foot: Vector2, size: Vector2, t: float) -> float:
+	var h: float = float(el.get("hauteur_cases", 0.0))
+	if h > 0.0:
+		return h * t / size.y
+	return minf(foot.x / size.x, (foot.y + float(el.get("debord_haut_cases", 0)) * t) / size.y)
+
+
 # ---------------------------------------------------------------- forme des objets
 
 ## Forme de l'objet posé : masques de pixelforge s'il y en a pour cet objet (`_pf_shape`), sinon le
 ## calcul local sur la silhouette (`_shape`, repli ; `decor_masques_pf` = 0 l'impose partout). Elle
-## est ramenée dans le repère de la carte et l'empreinte est coupée aux cases de l'objet (la grille A*
-## des IA reste juste). Vue bloquée : `blocks_view` de pixelforge, sinon « bloque_vue » de l'index,
+## est ramenée dans le repère de la carte et l'empreinte est coupée aux cases de l'objet, élargies au
+## débord latéral de l'image (GkMap aligne la grille A* des IA sur cette emprise). Vue bloquée : `blocks_view` de pixelforge, sinon « bloque_vue » de l'index,
 ## sinon les caractères de GkMap.OCCLUDE ; les autres objets bloquent le passage seulement.
 ## Pixelforge donne aussi la ligne de tri (baseline_y : un perso dont les pieds sont au-dessus est
 ## derrière l'objet) : le porteur, que trie le calque des persos, y est descendu ou remonté.
@@ -452,6 +464,10 @@ func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, d
 	var sp: Sprite2D = inst["sprite"]
 	var top_left: Vector2 = holder.position + sp.position - drawn * 0.5
 	var r: Rect2 = Rect2(Vector2((inst["rect"] as Rect2i).position) * map.tile, Vector2((inst["rect"] as Rect2i).size) * map.tile)
+	# Image plus large que ses cases (hauteur_cases) : l'emprise peut déborder sur les côtés, jusqu'au
+	# bord de l'image.
+	var lat: float = maxf(0.0, (drawn.x - r.size.x) * 0.5)
+	r = r.grow_individual(lat, 0.0, lat, 0.0)
 	var box: PackedVector2Array = PackedVector2Array([r.position, Vector2(r.end.x, r.position.y), r.end,
 		Vector2(r.position.x, r.end.y)])
 	var polys: Array[PackedVector2Array] = []
@@ -547,7 +563,7 @@ func _build_ornaments() -> void:
 			var sp: Sprite2D = Sprite2D.new()
 			sp.texture = tex
 			sp.flip_h = mirror
-			var sc: float = minf(l * t / tex.get_width(), (h + float(el.get("debord_haut_cases", 0))) * t / tex.get_height())
+			var sc: float = _standing_scale(el, Vector2(l, h) * t, tex.get_size(), t)
 			sp.scale = Vector2(sc, sc)
 			sp.position = Vector2(0, -tex.get_height() * sc * 0.5)
 			node = Node2D.new()

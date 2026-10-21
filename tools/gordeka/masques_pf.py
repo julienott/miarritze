@@ -43,9 +43,12 @@ MARGE = 16                 # px transparents ajoutés autour (nos images sont re
 
 
 def largeur_jeu(el, img):
-    """Largeur affichée dans le jeu, comme GkDecor : s = min(largeur emprise / l, hauteur permise / h)."""
+    """Largeur affichée dans le jeu, comme GkDecor._standing_scale : hauteur imposée (hauteur_cases) ou
+    s = min(largeur emprise / l, hauteur permise / h)."""
     cw, ch = el["taille_cases"]
     s = min(cw * 64 / img.width, (ch + el.get("debord_haut_cases", 0)) * 64 / img.height)
+    if float(el.get("hauteur_cases", 0)) > 0:
+        s = float(el["hauteur_cases"]) * 64 / img.height
     return round(img.width * s)
 
 

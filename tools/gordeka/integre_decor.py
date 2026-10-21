@@ -54,7 +54,8 @@ PX_CASE = 128          # px par case dans les images intégrées (2× la case de
 SEUIL_ALPHA = 8        # en dessous : transparent (recadrage)
 SEUIL_RACCORD = 2.5    # écart au raccord / écart moyen entre colonnes voisines au-delà duquel on prévient
 CHAMPS_OUVERT = ("ouvert", "ouvert_decalage", "sources_ouvert")
-CHAMPS = ("nom", "type", "categorie", "caractere", "zones", "taille_cases", "debord_haut_cases", "animation")
+CHAMPS = ("nom", "type", "categorie", "caractere", "zones", "taille_cases", "debord_haut_cases", "hauteur_cases",
+          "animation")
 
 
 def erreur(msg):
@@ -248,6 +249,9 @@ def main():
         bw, bh = crop.size
         hmax = (ch + (debord if typ == "objet" else 0)) * PX_CASE
         s = min(cw * PX_CASE / bw, hmax / bh)
+        if typ == "objet" and float(el.get("hauteur_cases", 0)) > 0:
+            # Hauteur imposée (GkDecor._standing_scale) : la largeur suit, débord latéral permis.
+            s = float(el["hauteur_cases"]) * PX_CASE / bh
         taille = (max(1, round(bw * s)), max(1, round(bh * s)))
         crop.resize(taille, Image.LANCZOS).save(os.path.join(dest, "objets", f"{o.id}.png"), optimize=True)
         print(f"  recadré {bb} → {taille[0]}×{taille[1]} px (emprise {cw}×{ch} cases, débord {debord})")

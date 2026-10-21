@@ -14,7 +14,7 @@ Une entrée par objet posé (`decor.json` de la carte), en mode visite chassé :
 
 | champ | sens | repère |
 |---|---|---|
-| `h_perso` | hauteur dessinée / hauteur d'un perso (88 px) | bitte ≈ 0,4 ; porte ≈ 1,1 ; maison ≥ 2 ; fronton ≥ 3,5 |
+| `h_perso` | hauteur dessinée / hauteur d'un perso (88 px) | bitte ≈ 0,4 ; barriques ≥ 1 ; porte ≈ 1,1 ; confessionnal ≈ 1,3 ; cabine ≈ 1,4 ; maison ≥ 2,5 (porte ≈ 1,1) ; platane ≥ 2,5 ; fronton ≥ 3,5 |
 | `fill_w` | largeur de l'image / largeur de ses cases | < 0,8 : cases vides (marchables pour tous depuis #606, voir ci-dessous) ; > 1 : débord latéral |
 | `cases_vide_bloque` / `cases_plein_marchable` | cases de l'objet (et voisines) bloquées pour l'A* sans emprise dedans / marchables avec l'emprise dedans | 0 attendu (restent : îlots sans accès, barques sur l'eau) |
 | `ecart_base_min/med/max` | écart (px) entre le bas de l'emprise et la base dessinée, colonne par colonne | \|med\| ≤ 6 ; min/max très négatifs = on bute dans le vide |
@@ -51,7 +51,9 @@ regarde vers lui. À vérifier à l'œil :
 ## 3. Corriger
 
 - **Données** (sans régénérer) : `taille_cases`, `debord_haut_cases` (décimales permises, négatif pour un
-  objet plus bas que ses cases) dans `assets/gordeka/decor/index.json` et `tools/gordeka/prompts_decor.json` ;
+  objet plus bas que ses cases), `hauteur_cases` (hauteur dessinée imposée, en cases : h_perso × 1,375 ;
+  la largeur suit et peut déborder des cases sur les côtés, emprise et masque compris, les cases de sol
+  couvertes sont bloquées pour l'IA ; c'est le réglage des objets plus larges que leurs cases) dans `assets/gordeka/decor/index.json` et `tools/gordeka/prompts_decor.json` ;
   placement dans `assets/maps/<carte>/decor.json` ; seuil `decor_masques_pf_part_max` de `rules.json`
   (part maximale de la silhouette qu'un masque pixelforge peut couvrir avant d'être écarté). Remesurer et
   recapturer après chaque correction.
