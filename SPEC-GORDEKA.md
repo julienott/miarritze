@@ -208,7 +208,7 @@ Demande de Julien : « plus tendu, beaucoup de near miss, beaucoup de mouvements
   loin du chasseur. Les chassés IA profitent d'une fouille proche pour filer (et sortent de leur
   cachette), contournent le chasseur qui vient de passer près d'eux et changent plus souvent de planque.
   Effet : 1,5 fois plus de cases parcourues, la moitié du temps en mouvement au lieu d'un tiers.
-- **Carte** (`tools/gordeka/make_port_v2.py`, retenue) : caisses qui coupent les longues lignes de vue
+- **Carte** (`tools/gordeka/make_port_v2.py`, retenue, reprise dans la v3 du §8.3) : caisses qui coupent les longues lignes de vue
   (place, criée, terre-plein de la jetée, escalier, atelier), deux coffres de plus sur le quai nord,
   cachettes déplacées des recoins vers les passages, avec plusieurs côtés libres (`--sans-tension` :
   carte d'avant).
@@ -358,7 +358,7 @@ style final.
 
 | Carte (v1) | Zones | Objets qui cachent | Sorties |
 |---|---|---|---|
-| Port des Pêcheurs | quais, crampottes, bateaux à sec, rampe | bateaux, filets, casiers, caisses, crampottes | bout de la jetée, barque au pied de la rampe |
+| Port des Pêcheurs (v3 : §8.3) | quais, crampottes, bateaux à sec, rampe | bateaux, filets, casiers, caisses, crampottes | bout de la jetée, barque au pied de la rampe |
 | Grande Plage | sable, promenade, cabines, poste de secours | cabines rayées, parasols, rochers, châteaux de sable | poste du maître-nageur, escalier du casino |
 | Les Halles | allées d'étals, chambre froide, terrasse | étals, caisses, piles de cagettes, comptoirs | porte de la chambre froide, quai de livraison |
 | Parc Mazon (§8.2) | terrain du fronton, aires de jeux des petits et des grands, labyrinthe, mare, kiosque, pelouses | arbres, bosquets, haies, cabanes, toboggans, kiosque, fronton | portillons de la clôture (mare, petits, platanes) |
@@ -495,6 +495,44 @@ port), jouable en partie rapide et acceptée par les salons en ligne (`GK_MAPS`)
   et les captures comme les « vu puis perdu » ont lieu surtout dans les allées entre les zones.
 - **À trancher par Julien** : garder 26 cachettes (« plein d'opportunités ») ou en retirer ; image du fronton (celui du port est vu de biais et trop petit pour un mur de 14 cases) ; clôture
   dessinée (aujourd'hui murets gris du prototype).
+
+### 8.3 Port des Pêcheurs v3 (*revue de carte du 2026-10-21, à valider par Julien*)
+Demande de Julien : « beaucoup de zones un peu vides de décorations […] segmenter les zones mieux avec des
+couloirs, […] une déco un peu plus riche […] riche, vivant et bien balancé ». Carte par défaut depuis le
+2026-10-21 : `tools/gordeka/make_port_v3.py` → `assets/maps/port_pecheurs/` (map.txt, zones.json, decor.json) ;
+l'ancienne reste générable à part (`make_port_v2.py` → `assets/maps/port_v2/`, A/B). Mêmes 14 zones, même
+taille, mêmes 4 sorties possibles. Mesures et journal des essais : `docs/GORDEKA_EQUILIBRAGE.md`.
+- **Couloirs en baïonnette** : la rue des pêcheurs et le quai nord ne sont plus des lignes droites (avancées de
+  maisons, chicanes, piles de caisses) ; trois niches dans les murs de la rue servent de cachettes (comme les
+  bouches d'aération d'Among Us), toujours avec deux côtés libres. Un raccourci crampottes → cale.
+- **Salles coupées** : une crampotte sur le terre-plein de la jetée, quatre platanes en quinconce sur la place
+  (ils cachent), barriques dans la criée, pile de bois dans la cale ; derrière chaque porte de salle, une
+  barrique décalée coupe la ligne de vue de qui entre.
+- **Décor plus dense** : objets le long des murs, jamais devant une porte et toujours avec 2 cases de passage
+  (barriques qui cachent, pots d'hortensias, casiers et bouées, bittes qui ne cachent pas), une sur deux en
+  miroir ; crampottes variées (volets verts, miroir) ; 23 cachettes au lieu de 16.
+- **Sorties exposées** : rien qui cache à 7 cases d'une sortie, pas de cachette à 8 cases (le coffre du phare
+  passe à l'entrée du phare) ; elles s'**ouvrent à 110 s** sur cette carte au lieu de 90, et il y a **6 gâteaux
+  basques** au lieu de 4 (récompense au risque). Ce sont des **réglages propres à la carte** : zones.json →
+  `regles`, posés par `GkRules.surcharge_carte` pour la partie et retirés à la fin ; une valeur passée en
+  `--gk-rules` garde la priorité. Sans eux, la carte plus riche donnait trop l'avantage aux chassés (chasseur
+  facile à 33 %) et les faisait moins bouger.
+- **Ornements sans effet de jeu** (decor.json, `GkDecor._build_ornaments`) : lanternes, bouées et filets sur
+  les façades, réverbères, fanions basques au-dessus des rues et de la place, linge qui sèche, fumée des
+  cheminées, mouettes sur les toits, chat endormi, ancres, cordages, paniers de poissons, filets étendus.
+- **Masses bâties** : toits de tuiles cernés d'encre et façades labourdines dessinées par le code (colombages,
+  volets rouges ou verts, portes, géraniums) au lieu des blocs gris ; écume au pied des quais et reflets qui
+  scintillent sur la mer en image.
+- **Provisoires dessinés par le code** (`src/gordeka/gk_provisoire.gd`, index.json → `provisoire`) pour tout
+  élément nouveau en attendant son image : animés quand l'objet doit vivre (fanions et linge au vent, lanterne
+  qui vacille, fumée, filet qui se balance, feuillage, mouette, chat, drapeau). Images déposées chez
+  pixelforge la nuit du 2026-10-21 (cartes #382 à #409 sous « Décor du port »), animations en attente de
+  l'image retenue (decor_matin.py).
+- Résultat (120 rounds par niveau, chasseur facile / normal / malin) : le chasseur gagne 51 / 71 / 77 %
+  (v2 : 52 / 62 / 78) ; vu-perdu 3,6 / 3,4 / 2,6 par round (v2 : 3,1 / 2,9 / 2,3) ; frôlements à moins de
+  2 cases 0,60 / 0,47 / 0,40 (v2 : 0,37 / 0,30 / 0,33) ; les chassés changent 20 à 40 % plus souvent de planque
+  et parcourent presque autant de cases (148-150 par minute contre 150-155). Aucune zone morte, toutes les
+  cachettes et les 4 sorties servent ; les couloirs sont devenus les lieux de rencontre (29 % des frôlements).
 
 ## 9. Direction artistique
 

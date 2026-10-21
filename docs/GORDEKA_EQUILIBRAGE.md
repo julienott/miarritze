@@ -302,3 +302,111 @@ mêmes règles sert de référence. Erreur type : ±4 à 5 points sur « chasseu
   d'abord dans les allées entre les zones (168 et 169), puis l'aire des grands, le labyrinthe et la grande pelouse.
 - Statistiques : les portillons sont posés sur le bord rendu aux massifs, hors du rectangle de leur zone ; le jeu note
   donc ces sorties « ? » dans `sorties_lieux` (sans effet sur le jeu).
+
+## 2026-10-21 : carte v3 du Port des Pêcheurs (demande de Julien : « une meilleure map »)
+
+Demande : zones moins vides, mieux segmentées par des couloirs, déco plus riche et vivante, le tout bien
+balancé ; itérer jusqu'à ce que deux essais de suite n'apportent plus rien de net. Grille de lecture : Among Us
+(salles reliées par des couloirs étroits, pas de cul-de-sac, lignes de vue coupées aux entrées, une boucle et des
+raccourcis, un repère et une raison d'y aller par salle) et jeux d'extraction (sorties visibles mais exposées,
+plusieurs approches, zones calmes et chaudes, tension qui monte avec le temps, récompense au risque).
+
+Outils :
+- `tools/gordeka/analyse_carte.py <carte> [--ab <variantes>] [--png <dossier>]` : vides (aucun objet à 2 ou
+  3 cases), lignes de vue (rayon moyen sur 16 directions, part des cases d'où un rayon file à 15 cases, part
+  visible du disque de 7 cases), cachettes et objets hauts par zone, graphe des zones (liaisons, boucles,
+  culs-de-sac, ponts), largeur des couloirs, sorties (distance, approches, exposition) ; avec `--ab`, où se
+  jouent les rounds (temps des chassés et du chasseur, captures, vu-perdu, frôlements par zone), entrées par
+  cachette, sorties prises, zones mortes, et cartes de chaleur en PNG.
+- `--gk-stats` journalise aussi la carte : présence par case (une fois par seconde), entrées par cachette,
+  lieux des vu-perdu, des frôlements et des sorties.
+- `tools/gordeka/make_port_v3.py` : la v2 (avec sa tension) plus des passes au choix (ruelles, salles,
+  cachettes, sorties, liaisons, entrées, densité, ornements) ; `ab_tension.py run … --map <carte>`.
+- Mesures : 120 rounds par niveau du chasseur (chassés normaux), 6 joueurs, comme plus haut. La machine était
+  très chargée cette nuit-là (jusqu'à 60 Godot en parallèle avec les essais du Parc et de la Plage) : ça ne
+  change pas les chiffres (pas de temps fixe), seulement la durée.
+- **Bruit** : sur 120 rounds, l'erreur type sur « chasseur gagne » est de ±4 à 5 points. La même carte v2,
+  mesurée deux fois à deux heures d'écart, a donné 71 puis 62 % au normal ; seuls les écarts de 10 points ou
+  plus comptent. La référence de ce tableau est la seconde mesure (`carte_v2_bis`, même instantané du code que
+  les variantes).
+
+### Diagnostic de la v2 (`analyse_carte.py port_v2 --ab carte_v2_bis`)
+
+- **Vide** : 25 % du sol sans aucun objet à 2 cases, 11 % à 3 cases. Les vides sont surtout le long des murs
+  (les masses entre zones étaient des blocs gris nus) et dans les couloirs (78 % de leurs cases sans rien autour).
+- **Lignes de vue longues** : rayon moyen 5,3 cases, et d'une case sur deux (53 %) un rayon file à 15 cases :
+  jetée 92 %, bassin 94 %, place 78 %, criée 66 %, atelier 61 %. Les crampottes, à l'inverse, ferment tout
+  (rayon 2,5).
+- **Chemins** : 14 zones, 25 liaisons, 12 boucles indépendantes, aucun cul-de-sac ni pont ; couloirs larges de 3
+  cases (2 à 6), en lignes droites.
+- **Où se jouent les rounds** : les couloirs font 11 % du sol mais 34 % des captures et 27 % du temps du
+  chasseur (la rue des pêcheurs et le quai nord sont des autoroutes nues) ; le quai nord fait 30 % des
+  frôlements. Zones calmes : cale, terrasse, lavoir, escalier, jetée (chasseur 1,5 à 4 % du temps, 1 à 3 % des
+  captures). Pas de zone morte ; les 16 cachettes servent (0,2 à 0,3 entrée par round chacune) ; les 4 sorties
+  aussi (0,4 à 0,7 chassé par round).
+
+### Journal des essais
+
+| essai | ce qui change | chasseur gagne % (facile / normal / malin) | vu-perdu (normal) | cases/min | verdict |
+|---|---|---|---|---|---|
+| v2 (référence) | — | 52 / 62 / 78 | 2,9 | 155 | — |
+| 1a « déco » | objets le long des murs (barriques, pots, casiers), ornements, toits et façades | 48 / 56 / – (162 rounds au normal) | 3,0 | 151 | joli, chasseur un peu affaibli |
+| 1b « structure » | ruelles en baïonnette, salles coupées (crampotte sur la jetée, platanes, cloison de la criée…), 8 cachettes de plus, raccourcis | 38 / 46 / – (81) | 3,6 | 147 | **trop favorable aux chassés** (sortis 52 %) |
+| 1c tout | 1a + 1b | 42 / 53 / – (53) | 3,5 | 149 | idem |
+| 2 v3b | tout, + barriques derrière chaque porte, − raccourci chapelle → escalier (il menait tout droit à une sortie) | 37 / 40 / – (112 / 25) | 2,8 | 146 | toujours trop favorable aux chassés |
+| 3 **v3d** | v3b + **abords des sorties dégagés** (pas d'objet à 7 cases, pas de cachette à 8 cases) | 33 / 60 / 71 | 3,2 | 143 | normal et malin revenus ; le chasseur facile s'effondre (33 %) |
+| 4a v3e | v3d plus légère : pas de cachettes en plus, peu d'objets hauts | – / 51 / – (104) | 3,2 | 144 | rien de mieux |
+| 4b v3f | v3d + boucle du sud (terrasse ↔ lavoir ↔ atelier) | – / 41 / – (77) | 3,8 | 141 | plus de tension, mais chassés trop forts : écartée |
+| 5 v3d + sorties à 110 s | réglage propre à la carte : `exits_open_at` 90 → 110 (zones.json → regles) | 64 / 69 / 74 | 3,4 | 144 | équilibre retrouvé, plus de tension ; mouvement −7 % |
+| 6 v3g | 5 avec moins d'objets hauts (20 % au lieu de 45 %) | 62 (52) / 66 / – | 3,6 | 144 | mouvement inchangé : rien de net |
+| 7 **v3d + sorties à 110 s + 6 gâteaux** | 5 + `gateaux_nombre` 4 → 6 sur cette carte (récompense au risque) | **51 / 71 / 77** | **3,4** | **150** | **retenue** : l'écart entre niveaux de la v2, mouvement presque rattrapé |
+
+### Tableau final (120 rounds par niveau ; chassés normaux, chasseur facile / normal / malin)
+
+| | v2 | v3d, sorties à 110 s (essai 5) | **v3 retenue** (essai 7 : + 6 gâteaux) |
+|---|---|---|---|
+| chasseur gagne % | 52 / 62 / 78 | 64 / 69 / 74 | **51 / 71 / 77** |
+| chassés trouvés % | 52 / 56 / 64 | 56 / 62 / 65 | 49 / 62 / 63 |
+| chassés sortis % | 48 / 44 / 36 | 44 / 37 / 34 | 50 / 38 / 36 |
+| vu-perdu par round | 3,1 / 2,9 / 2,3 | 3,4 / 3,4 / 2,8 | **3,6 / 3,4 / 2,6** |
+| frôlements < 2 cases | 0,37 / 0,30 / 0,33 | 0,49 / 0,53 / 0,28 | **0,60 / 0,47 / 0,40** |
+| frôlements < 3 cases | 0,65 / 0,63 / 0,55 | 1,10 / 1,07 / 0,76 | 1,14 / 0,89 / 0,87 |
+| « ? » qui retombent | 1,2 / 1,0 / 0,8 | 1,5 / 1,3 / 0,8 | 1,5 / 1,1 / 0,9 |
+| cases/min (chassés) | 154 / 155 / 150 | 141 / 144 / 142 | 148 / 150 / 148 |
+| en mouvement % | 54 / 54 / 52 | 49 / 50 / 49 | 51 / 52 / 51 |
+| changements de planque | 9,4 / 8,9 / 8,1 | 12,7 / 11,3 / 10,7 | **13,4 / 10,6 / 10,9** |
+| entrées en cachette | 4,1 / 3,8 / 3,7 | 5,0 / 5,1 / 4,9 | 6,2 / 5,0 / 5,0 |
+| gâteaux mangés | 4,5 | 4,5 | 7,4 à 8,9 |
+| captures en pleine course | 3,4 / 3,6 / 3,9 | 3,6 / 3,8 / 3,9 | 3,3 / 3,8 / 3,8 |
+| durée du round (s) | 121 / 120 / 117 | 135 / 136 / 132 | 142 / 135 / 136 |
+
+Carte (`analyse_carte.py port_pecheurs`) : vide à 2 cases 25 → 13 %, à 3 cases 11 → 3 % ; rayon moyen 5,3 →
+4,9 cases, rayons à 15 cases 53 → 42 % (bassin 94 → 87 %, place 78 → 55 %, criée 66 → 52 %) ; objets hauts
+33 → 56, objets bas 27 → 48, cachettes 16 → 23 ; captures dans les couloirs 34 → 33 %, place 9 → 6 % (rounds de la v3 retenue). Toujours
+aucune zone morte, toutes les cachettes servent (0,19 à 0,29 entrée par round), les 4 sorties aussi (0,47 à
+0,58 chassé par round, mieux réparties qu'en v2 où le phare dominait) ; les couloirs font 29 % des frôlements
+(7 % en v2) : ce sont devenus les lieux de rencontre.
+
+Constats :
+- **Toute couverture ajoutée profite aux chassés**, surtout par les sorties : avec plus d'abris, ils tiennent
+  jusqu'à leur ouverture puis filent. Le chasseur facile, qui fouille peu et ne garde pas les sorties, en
+  souffre le plus (52 → 33 %).
+- **Le levier qui marche est la sortie**, pas le décor : abords des sorties dégagés (essai 3), puis ouverture à
+  110 s sur cette carte (essai 5). Les chassés qui tiennent plus longtemps rendent les rounds plus tendus
+  (+15 % de vu-perdu, +60 % de frôlements au normal) et ils durent 15 s de plus.
+- **Mouvement** : les essais 1 à 6 perdent tous 5 à 8 % de cases parcourues (plus d'obstacles, plus de bonnes
+  planques) ; moins d'objets hauts (essai 6) n'y change rien. **Six gâteaux au lieu de quatre** (essai 7,
+  récompense au risque des jeux d'extraction) le rattrapent presque (148-150 cases/min contre 150-155), font
+  manger deux fois plus de gâteaux, et ramènent le chasseur facile à son niveau de la v2 (51 %).
+- **Arrêt** : après l'essai 7, l'écart restant avec la v2 (mouvement −3 %) est dans le bruit ; les leviers qui
+  resteraient sont dans l'IA (`mouvement_relocate`), pas dans la carte.
+- Zones calmes : terrasse et lavoir (moins de 1 % des captures) ; ce sont des poches au bout de la rue, voulues
+  calmes (la boucle du sud, essai 4b, les rendait chaudes mais déséquilibrait).
+
+Principes appliqués : couloirs étroits en baïonnette avec niches (rencontres et frôlements, Among Us), lignes de
+vue coupées aux entrées des salles (barrique décalée derrière chaque porte), un repère par salle gardé et des
+raisons d'y aller (cachettes dans chaque salle et dans les niches de la rue, gâteaux, mouettes), aucun
+cul-de-sac (13 boucles indépendantes), sorties visibles et exposées sans abri ni cachette à leurs abords,
+plusieurs approches (2 à 5 zones voisines), zones calmes et chaudes, tension qui monte (ouverture plus tardive),
+récompense au risque (plus de gâteaux, que le chasseur voit aussi).
+Écartés : raccourcis qui mènent droit à une sortie, boucle du sud.
