@@ -1904,11 +1904,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-fronton_fronton/0/apercu/fronton.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 17:33",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-fronton_fronton/0/apercu/fronton.png"
-  ]
+  ],
+  "variante": null
  },
  "m-coque_sur_ber": {
   "titre": "Coque sur ber (cale sèche) : masque v3",
