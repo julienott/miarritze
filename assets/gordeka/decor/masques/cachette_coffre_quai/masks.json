@@ -2,29 +2,29 @@
  "polygons": [
   [
    [
-    22,
+    28,
     91
    ],
    [
-    84,
+    78,
     91
    ],
    [
-    84,
+    82,
     106
    ],
    [
-    22,
+    24,
     106
    ]
   ],
   [
    [
-    14,
+    23,
     117
    ],
    [
-    105,
+    96,
     117
    ],
    [
@@ -40,29 +40,29 @@
  "convex_polygons": [
   [
    [
-    38,
+    44,
     107
    ],
    [
-    100,
+    94,
     107
    ],
    [
-    100,
+    98,
     122
    ],
    [
-    38,
+    40,
     122
    ]
   ],
   [
    [
-    30,
+    39,
     133
    ],
    [
-    121,
+    112,
     133
    ],
    [
@@ -92,14 +92,14 @@
  "scale": 2.0,
  "depth_px": 40.0,
  "shapes": [
-  "pos\u00e9 (face du dessus)",
-  "pos\u00e9"
+  "pos\u00e9 (face du dessus) trap\u00e8ze",
+  "pos\u00e9 trap\u00e8ze"
  ],
  "confidence": 0.75,
  "warnings": [
   "socle de sol d\u00e9tect\u00e9 (42% de l'objet) : traversable, hors occluder",
   "profondeur estim\u00e9e (pos\u00e9, 74 px de large) : 26 px, faute de face du dessus lisible",
-  "rapport largeur/profondeur 11.4 hors de [1.5 ; 6] (pos\u00e9 (face du dessus), x 30-120)",
+  "rapport largeur/profondeur 11.4 hors de [1.5 ; 6] (pos\u00e9 (face du dessus) trap\u00e8ze, x 30-120)",
   "2 morceaux d'emprise"
  ],
  "size": [

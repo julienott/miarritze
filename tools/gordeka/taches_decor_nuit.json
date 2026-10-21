@@ -1697,13 +1697,16 @@
    {
     "tid": "f02c23cb17794fbf94e6f7c5ea762551",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-cachette_coffre_quai_cachette_coffre_quai/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-cachette_coffre_quai_cachette_coffre_quai/0/apercu/cachette_coffre_quai.png"
    }
   ],
-  "statut": "en_file",
+  "statut": "a_voir",
   "depose": "2026-10-21 15:45",
   "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/305_cachette_coffre_quai/0/apercu/cachette_coffre_quai.png"
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-cachette_coffre_quai_cachette_coffre_quai/0/apercu/cachette_coffre_quai.png"
   ],
   "variante": null,
   "consigne": "toujours pas bon, le masque doit être un trapèze"
@@ -1897,17 +1900,20 @@
   "sorte": "masque",
   "element": "chambre_froide",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "a_voir",
   "jobs": [
    {
     "tid": "ba79bc07965b41089f0d203316725b46",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-chambre_froide_chambre_froide/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-chambre_froide_chambre_froide/0/apercu/chambre_froide.png"
    }
   ],
   "depose": "2026-10-21 15:45",
   "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/253_chambre_froide/0/apercu/chambre_froide.png"
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-chambre_froide_chambre_froide/0/apercu/chambre_froide.png"
   ],
   "variante": null,
   "consigne": "le masque doit avoir une forme de trapèze"
