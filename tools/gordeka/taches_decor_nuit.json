@@ -724,15 +724,21 @@
   "sorte": "masque",
   "element": "banc_chapelle",
   "priorite": "normal",
-  "statut": "en_file",
+  "statut": "a_voir",
   "jobs": [
    {
     "tid": "218db26ba06b47dbafca70341633579b",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/288_banc_chapelle/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/288_banc_chapelle/0/apercu/banc_chapelle.png"
    }
   ],
-  "depose": "2026-10-21 07:36"
+  "depose": "2026-10-21 07:36",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/288_banc_chapelle/0/apercu/banc_chapelle.png"
+  ]
  },
  "289": {
   "titre": "Établi de l'atelier : refaire de face",
