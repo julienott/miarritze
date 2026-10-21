@@ -1567,7 +1567,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_cabine_plage.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "271f328bc9e24a0592a98a6ff9fb4079",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_cabine_plage_ombre.png",
+   "ombre_decalage": [
+    20,
+    101
+   ]
   },
   "sortie_barque_jetee": {
    "nom": "Sortie : barque au bout de la jetée",
