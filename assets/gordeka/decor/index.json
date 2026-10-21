@@ -1632,7 +1632,23 @@
     3
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/sortie_echelle_phare.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "6b87d856e6e948bea0390a56ef722669",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "sortie_barque_cale": {
    "nom": "Sortie : barque de la cale",
