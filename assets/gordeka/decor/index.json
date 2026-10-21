@@ -714,16 +714,16 @@
    ],
    "sources": [
     {
-     "job": 0,
+     "job": 1,
      "variante": "image_00",
-     "task": "d10205a82e57492b89e516e0c64df751",
-     "date": "2026-10-20"
+     "task": "22b5036a014c46bda7d69487e0f889c5",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/coque_sur_ber_ombre.png",
    "ombre_decalage": [
-    60,
-    294
+    69,
+    292
    ]
   },
   "coque_chantier": {

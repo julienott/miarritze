@@ -261,19 +261,27 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "258": {
   "titre": "Fronton de pelote basque : masque v3",
   "sorte": "masque",
   "element": "fronton",
-  "priorite": "night",
-  "statut": "attend",
-  "depend": "257"
+  "priorite": "normal",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "99be17ec6e0449d0b38a17ee4020019a",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 08:05"
  },
  "260": {
   "titre": "Rayonnage du hangar à filets : masque v3",
