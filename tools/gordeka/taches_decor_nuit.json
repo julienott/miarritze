@@ -1149,21 +1149,19 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "e8120fd7620a4062b4182fe23523900c",
+    "tid": "056909b4c1244749bd5b877f7aadf226",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "integre",
-  "depose": "2026-10-21 00:04",
+  "statut": "en_file",
+  "depose": "2026-10-21 17:54",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0/planche.png"
   ],
   "variante": "image_01",
-  "suites_a_deposer": "normal"
+  "suites_a_deposer": "normal",
+  "consigne": "Plus hautes (au moins 1 perso) : elles doivent cacher."
  },
  "383": {
   "titre": "Pot d'hortensias : image",
@@ -1727,11 +1725,17 @@
    {
     "tid": "30df251e92d340119c7f6443a1a8f6ca",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-lavoir_bassin_lavoir_bassin/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-lavoir_bassin_lavoir_bassin/0/apercu/lavoir_bassin.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 17:38"
+  "statut": "a_voir",
+  "depose": "2026-10-21 17:38",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-lavoir_bassin_lavoir_bassin/0/apercu/lavoir_bassin.png"
+  ]
  },
  "m-cachette_malle_pelotes": {
   "titre": "Malle à pelotes : masque v3",
@@ -1754,11 +1758,17 @@
    {
     "tid": "791632ddae5e46369bef5ba8f76ad1ab",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-cachette_barque_retournee_cachette_barque_retournee/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-cachette_barque_retournee_cachette_barque_retournee/0/apercu/cachette_barque_retournee.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 17:43"
+  "statut": "a_voir",
+  "depose": "2026-10-21 17:43",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-cachette_barque_retournee_cachette_barque_retournee/0/apercu/cachette_barque_retournee.png"
+  ]
  },
  "m-cachette_tonneau_cidre": {
   "titre": "Tonneau de cidre géant : masque v3",
