@@ -2145,8 +2145,22 @@
      }
     ]
    },
-   "provisoire": "fumee",
-   "fichiers": []
+   "fichiers": [
+    "objets/fumee_cheminee.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "79dae5563e164329808a726e675d11dc",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "bouee_murale": {
    "nom": "Bouée accrochée au mur",

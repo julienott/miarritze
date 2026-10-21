@@ -1739,11 +1739,13 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/391_lanterne_murale/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 00:04",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/391_lanterne_murale/0/planche.png"
-  ]
+  ],
+  "variante": "image_01",
+  "suites_a_deposer": "normal"
  },
  "392": {
   "titre": "Lanterne de façade : animation",
