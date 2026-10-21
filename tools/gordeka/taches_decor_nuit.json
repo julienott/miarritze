@@ -2119,11 +2119,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etabli_atelier_etabli_atelier/0/apercu/etabli_atelier.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 18:38",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etabli_atelier_etabli_atelier/0/apercu/etabli_atelier.png"
-  ]
+  ],
+  "variante": null
  },
  "m-treteaux_cale": {
   "titre": "Tréteaux et planches de la cale : masque v3",
