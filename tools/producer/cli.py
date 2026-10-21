@@ -309,6 +309,17 @@ def cmd_qa(a: argparse.Namespace) -> None:
     if ver:
         text += f" ({ver})"     # Julien sait qu'il voit la bonne version
     call("card_comment", {"id": a.id, "body": text})
+    # Une carte qui arrive en QA n'est plus « à générer » ni de nuit (Julien 2026-10-21).
+    c = call("card", query={"id": a.id})["card"]
+    maj = {"id": a.id}
+    if c.get("night"):
+        maj["night"] = False
+    d = c.get("description") or ""
+    if any(k in d for k in ("À générer", "pas encore d'image", "à refaire en v3", "Pas de masque pixelforge",
+                            "jobs annulés", "Image ouverte (pf_hd__edit)", "En pause")):
+        maj["description"] = "En ligne : à valider en QA. (Avant : " + d[:160] + ")"
+    if len(maj) > 1:
+        call("card_update", maj)
     call("card_move", {"id": a.id, "status": "qa"})
     print(f"Carte #{a.id} -> QA (« {short(text)} »)")
 
