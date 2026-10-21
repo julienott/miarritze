@@ -123,7 +123,7 @@
    }
   },
   "hunter_reveal": {
-   "action": "Becomes the hunter: takes a small flashlight from his belt, clicks it on, then holds it steady with his arm stretched forward; a clean straight cone of soft yellow light shines forward from the lamp. The arm stays still and steady once the lamp is on.",
+   "action": "Becomes the hunter: takes a small flashlight from his belt, clicks it on, then holds it steady with his arm stretched forward; only the small round lens of the lamp glows, a tiny bright dot at the tip of the lamp. The arm stays still and steady once the lamp is on.",
    "expression": "playful determined grin, one eyebrow raised",
    "boucle": false,
    "mouvement": {
