@@ -1096,16 +1096,16 @@
    ],
    "sources": [
     {
-     "job": 1,
-     "variante": "image_01",
-     "task": "c36b03f412954f37879f22de7e816d88",
+     "job": 2,
+     "variante": "image_00",
+     "task": "cc94bff32ddd4d17bdffa3c6fd149e90",
      "date": "2026-10-21"
     }
    ],
    "ombre": "objets/lavoir_bassin_ombre.png",
    "ombre_decalage": [
-    37,
-    220
+    38,
+    219
    ]
   },
   "cachette_casier_homards": {

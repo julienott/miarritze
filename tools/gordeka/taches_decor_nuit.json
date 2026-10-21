@@ -551,10 +551,13 @@
    {
     "tid": "cc94bff32ddd4d17bdffa3c6fd149e90",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0/planche.png"
    }
   ],
-  "statut": "en_file",
+  "statut": "a_voir",
   "depose": "2026-10-21 17:22",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0/planche.png"
@@ -1894,7 +1897,7 @@
   "sorte": "masque",
   "element": "coque_sur_ber",
   "priorite": "normal",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "24929fe0abb34a269a015322e829e911",
@@ -1909,7 +1912,8 @@
   "consigne": "Masque périmé : ligne de tri trop basse, le perso devant passe derrière la coque.",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-coque_sur_ber_coque_sur_ber/0/apercu/coque_sur_ber.png"
-  ]
+  ],
+  "variante": null
  },
  "m-chambre_froide": {
   "titre": "Chambre froide de la criée : masque v3",
