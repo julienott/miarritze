@@ -7,14 +7,23 @@
 <title>Miarritze Producer</title>
 <link rel="stylesheet" href="static/app.css">
 <script src="static/app.js" defer></script>
+<script src="static/pilotage.js" defer></script>
+<script src="static/catalogue.js" defer></script>
+<script src="static/jeu.js" defer></script>
+<script src="static/roadmap.js" defer></script>
+<script src="static/bord.js" defer></script>
 </head>
 <body>
 <header class="top">
   <h1 class="brand">PRODUCER</h1>
-  <nav class="tabs" id="tabs" hidden>
-    <a href="#/assets" data-tab="assets">Assets</a>
-    <a href="#/kanban" data-tab="kanban">Kanban</a>
-    <a href="#/comments" data-tab="comments">Commentaires</a>
+  <nav class="tabs" id="tabs" aria-label="Sections" hidden>
+    <a href="#/bord" data-tab="bord"><span class="ti" aria-hidden="true">◉</span><span class="tl">Bord</span></a>
+    <a href="#/kanban" data-tab="kanban"><span class="ti" aria-hidden="true">▥</span><span class="tl">Kanban</span><span class="tn" id="nav-qa"></span></a>
+    <a href="#/assets" data-tab="assets"><span class="ti" aria-hidden="true">▦</span><span class="tl">Catalogue</span></a>
+    <a href="#/jeu" data-tab="jeu"><span class="ti" aria-hidden="true">♟</span><span class="tl">Jeu</span></a>
+    <a href="#/roadmap" data-tab="roadmap"><span class="ti" aria-hidden="true">⚑</span><span class="tl">Roadmap</span></a>
+    <a href="#/comments" data-tab="comments"><span class="ti" aria-hidden="true">✎</span><span class="tl">Avis</span><span class="tn" id="nav-comments"></span></a>
+    <a href="#/aide" data-tab="aide"><span class="ti" aria-hidden="true">?</span><span class="tl">Aide</span></a>
   </nav>
   <div class="top-actions">
     <button type="button" id="theme" class="ghost" title="Fond clair / sombre">◐</button>
@@ -34,11 +43,12 @@
     </form>
   </section>
 
+  <section id="view-bord" class="view" hidden>
+    <div id="bord" class="bord"></div>
+  </section>
+
   <section id="view-assets" class="view" hidden>
-    <aside class="sidebar">
-      <input type="search" id="search" placeholder="Rechercher (maia, idle, fronton…)" aria-label="Rechercher">
-      <ul id="cats" class="cats"></ul>
-    </aside>
+    <div id="cat-bar" class="cat-bar"></div>
     <div class="assets-main">
       <div id="grid" class="grid"></div>
       <div id="detail" class="detail" hidden></div>
@@ -48,13 +58,34 @@
   <section id="view-kanban" class="view" hidden>
     <div class="kanban-bar">
       <button type="button" id="new-card" class="primary">+ Nouvelle carte</button>
+      <input type="search" id="kb-search" placeholder="Rechercher (titre, #id)…" aria-label="Rechercher une carte">
+      <select id="kb-type" aria-label="Filtrer par type"></select>
+      <select id="kb-perso" aria-label="Filtrer par perso"></select>
+      <select id="kb-map" aria-label="Filtrer par carte de jeu"></select>
+      <select id="kb-ms" aria-label="Filtrer par jalon"></select>
       <label class="inline">Chapeau <select id="kb-hat" aria-label="Filtrer par chapeau"></select></label>
       <label class="inline"><input type="checkbox" id="kb-hats-only"> Chapeaux seulement</label>
       <label class="inline"><input type="checkbox" id="kb-no-hats"> Masquer les chapeaux</label>
       <label class="inline"><input type="checkbox" id="kb-night-only"> 🌙 Night shift seulement</label>
+      <button type="button" id="kb-select" class="small" aria-pressed="false">☑ Sélection</button>
+      <button type="button" id="kb-reset" class="small ghost">Effacer les filtres</button>
     </div>
+    <div id="kb-bulk" class="kb-bulk" hidden></div>
     <nav id="kb-tabs" class="kb-tabs" aria-label="Colonnes du kanban" hidden></nav>
     <div id="board" class="board"></div>
+  </section>
+
+  <section id="view-jeu" class="view" hidden>
+    <nav id="jeu-tabs" class="subtabs" aria-label="Gameplay"></nav>
+    <div id="jeu" class="jeu"></div>
+  </section>
+
+  <section id="view-roadmap" class="view" hidden>
+    <div id="roadmap" class="roadmap"></div>
+  </section>
+
+  <section id="view-aide" class="view" hidden>
+    <div id="aide" class="aide"></div>
   </section>
 
   <section id="view-comments" class="view" hidden>
@@ -99,6 +130,10 @@
     <label>Titre <input id="cf-title" maxlength="200" required></label>
     <label>Description <textarea id="cf-desc" rows="4" maxlength="8000"></textarea></label>
     <label>Chapeau (carte parent, optionnel) <select id="cf-parent"></select></label>
+    <div class="row">
+      <label>Jalon <select id="cf-milestone"></select></label>
+      <label>Échéance <input type="date" id="cf-due"></label>
+    </div>
     <label>Asset lié (optionnel) <input id="cf-asset" list="asset-ids" placeholder="gordeka/persos/amaia/animations"></label>
     <datalist id="asset-ids"></datalist>
     <label id="cf-detail-label" hidden>Détail : animation visée (optionnel)

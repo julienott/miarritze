@@ -1327,6 +1327,7 @@ final class App
         $title = (string) (self::text($b, 'title', MAX_TITLE) ?? '');
         $type = (string) (self::oneOf($b, 'type', CARD_TYPES) ?? '');
         $cardArg = $b['card'] ?? null;
+        $forceNew = $cardArg === 'new';      // « nouvelle carte » demandée explicitement
         $cardId = is_int($cardArg) || (is_string($cardArg) && ctype_digit($cardArg)) ? (int) $cardArg : 0;
         $parentArg = (int) self::parentArg($b);
         if ($kind === 'amelioration' && $text === '') {
@@ -1343,7 +1344,14 @@ final class App
             $created = false;
             if ($cardId > 0) {
                 $this->card($cardId);
-            } elseif ($asset !== null) {
+            } elseif ($asset !== null && $forceNew && !$parentArg) {
+                // Nouvelle carte : sous le chapeau le plus fréquent des cartes de l'asset.
+                $st = $db->prepare('SELECT parent_id FROM cards WHERE asset = ? AND parent_id IS NOT NULL');
+                $st->execute([$assetId]);
+                $parents = array_count_values(array_map('intval', $st->fetchAll(PDO::FETCH_COLUMN)));
+                arsort($parents);
+                $parentArg = (int) (array_key_first($parents) ?? 0);
+            } elseif ($asset !== null && !$forceNew) {
                 $st = $db->prepare('SELECT * FROM cards WHERE asset = ? ORDER BY updated_at DESC, id DESC');
                 $st->execute([$assetId]);
                 $linked = $st->fetchAll();

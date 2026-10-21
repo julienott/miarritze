@@ -25,7 +25,8 @@ return [
         . 'seul (sans carte).', ''],
     ['POST', 'asset_comment', 'Commentaires', '{asset?, detail?, body, kind?, card?, title?, type?, parent?, context?}',
         'Commentaire depuis un asset : enregistré sur l\'asset (version servie) et reporté sur la carte liée '
-        . '(card, sinon la carte non terminée liée à l\'asset, sinon nouvelle carte en Backlog). Renvoie {comment, card, created}.',
+        . '(card = id ; card = "new" : nouvelle carte ; sans card : la carte non terminée liée à l\'asset, sinon nouvelle '
+        . 'carte en Backlog). Renvoie {comment, card, created}.',
         'asset-comment ASSET "texte" [--detail walk] [--card N]'],
     ['POST', 'comment_update', 'Commentaires', '{id, status?, reply?}', 'Répond à un commentaire ou change son statut.',
         'reply ID "texte" [--done] · close ID [--reopen]'],
