@@ -30,7 +30,7 @@ while true; do
   pgrep -f "recette.py boucle" >/dev/null || { nohup .venv/bin/python tools/gordeka/recette.py boucle >> tools/rd/out/recette/stdout 2>&1 & echo "routine recette relancée"; }
   n=$(wc -l < "$JOURNAL" 2>/dev/null || echo 0)
   if [ "$n" -gt "$lus" ]; then
-    tail -n $((n - lus)) "$JOURNAL" | grep -E "À VOIR|ÉCHEC|ALERTE|Traceback" | sed 's/^/PERSO /'
+    tail -n $((n - lus)) "$JOURNAL" | grep -E "À VOIR|POUR QA|ÉCHEC|ALERTE|Traceback" | sed 's/^/PERSO /'
     lus=$n
     echo "$lus" > "$LUS"
   fi

@@ -1217,11 +1217,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0/apercu/cachette_confessionnal.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0/apercu/cachette_confessionnal.png"
-  ]
+  ],
+  "variante": null
  },
  "325": {
   "titre": "Barque retournée : image",
@@ -1290,17 +1291,11 @@
    {
     "tid": "af3ac18b2eee4474bbcf36040d7b66b2",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/329_cachette_panier_linge/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/329_cachette_panier_linge/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "a_voir",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/329_cachette_panier_linge/0/planche.png"
-  ]
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
  },
  "330": {
   "titre": "Grand panier à linge : version ouverte",
@@ -1319,17 +1314,11 @@
    {
     "tid": "79094137d43142baaaf9c39d53af9cec",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/331_cachette_caisse_voiles/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/331_cachette_caisse_voiles/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "a_voir",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/331_cachette_caisse_voiles/0/planche.png"
-  ]
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
  },
  "332": {
   "titre": "Caisse à voiles de l'atelier : version ouverte",

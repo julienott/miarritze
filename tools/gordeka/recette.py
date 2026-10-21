@@ -49,6 +49,7 @@ MAX_DECOR = 10
 OMBRE_MIN_PX = 1500     # en dessous : reflets gris des chaussures, pas une ombre
 MAX_PERSO_VOL = 400     # file « night » comptée à part chez pixelforge (2000)
 MAX_ESSAIS = 4
+QA_DIRECTE = os.path.join(HERE, ".qa_directe")   # présent : anims intégrées sans recette (décision en QA)
 FINI = nuit.FINI
 
 
@@ -177,6 +178,15 @@ class Routine:
                 pr.decor(d, os.path.join(d, "planche.png"))
             it["planche"] = os.path.join(d, "planche.png")
             it["statut"] = "a_voir"
+            # Julien 2026-10-21 : « tu me laisses décider en QA » : les anims de perso sortent tout droit
+            # dans le jeu (puis en QA au prochain lot), sans recette ni renvoi de Claude.
+            if cle.startswith("perso/") and os.path.exists(QA_DIRECTE):
+                try:
+                    self.integre(cle, None)
+                    log("POUR QA", cle)
+                except Exception as ex:  # noqa: BLE001 — reste « à voir » si l'import échoue
+                    log("À VOIR", cle, it["planche"], "intégration refusée :", repr(ex)[:200])
+                continue
             log("À VOIR", cle, it["planche"])
 
     def relance(self, cle, consigne):
