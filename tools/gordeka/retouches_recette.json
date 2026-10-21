@@ -31,18 +31,18 @@
   "priority": "normal"
  },
  "perso/kaio/hunter_reveal": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/kaio/victory": {
   "action": "Clear joyful celebration: he hops up and down on his webbed feet several times, both grey wings spread wide open and flapping at each hop, beak wide open in a happy squawk.",
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/kaio/search": "the white neck scarf stays white in every frame, same as frame 1",
  "perso/maia/hunter_reveal": {
   "priority": "normal"
  },
  "perso/ramuntxo/walk": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/louis/run_scared": {
   "action": "His eyes stay wide open and visible in every frame, his hands never cover his face.",
@@ -142,33 +142,33 @@
   "priority": "normal"
  },
  "perso/karramarro/idle": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/karramarro/walk": "strict side view in every frame like the reference: his face, big eyes and smile stay visible on the right side, the body keeps the same orientation, only the legs move",
  "perso/karramarro/run_scared": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/karramarro/hide_in": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/karramarro/hide_out": "a small hop: the whole crab with both claws and eye stalks stays inside the frame in every frame, the jump peaks at half his body height",
  "perso/karramarro/found": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/karramarro/trap": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/karramarro/trapped": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/karramarro/search": "a big readable body motion",
  "perso/karramarro/detect": "a big readable body motion",
  "perso/karramarro/extract": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/karramarro/victory": "a big readable joyful body motion",
  "perso/karramarro/sad": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/karramarro/hunter_reveal": "the flashlight stays in his right pincer in every frame, a big readable body motion",
  "perso/karramarro/emote_salut": "a big readable motion of both pincers and body",
@@ -178,129 +178,129 @@
  "perso/karramarro/emote_chut": "a big readable motion of both pincers and body",
  "perso/karramarro/emote_langue": "a big readable motion of both pincers and body",
  "perso/ramuntxo/run_scared": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/ramuntxo/hide_in": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/ramuntxo/hide_out": "he springs up and forward facing right the whole time, his face and moustache stay visible in every frame, the frying pan stays in his hand",
  "perso/ramuntxo/found": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/ramuntxo/trap": "his free hand sets a small wooden trap on the ground in front of his feet, the trap stays visible on the ground until the end, clean frames",
  "perso/ramuntxo/trapped": "his front foot is stuck to the ground: he leans back and tugs his leg with both arms flailing for balance, surprised face, the frying pan stays in his hand",
  "perso/ramuntxo/search": "a big readable search: he leans forward from the waist and peers left and right, his free hand shading his eyes, then he lifts the frying pan to peek under it",
  "perso/ramuntxo/detect": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/ramuntxo/extract": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/ramuntxo/victory": "a big joyful victory: he hops on the spot and raises the frying pan high above his head like a trophy, the other fist pumping, big proud smile",
  "perso/ramuntxo/sad": "clearly sad: his shoulders slump, his head drops low, his chef hat droops, he lets out a big sigh and kicks the ground gently, then slowly straightens up",
  "perso/ramuntxo/hunter_reveal": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/ramuntxo/emote_salut": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/ramuntxo/emote_rire": "a big belly laugh: he throws his head back with a wide open laughing mouth, his shoulders shake, his free hand pats his belly, his moustache bounces",
  "perso/ramuntxo/emote_danse": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/ramuntxo/emote_pouce": "he thrusts his free arm straight forward with a big thumbs up at arm's length, a proud wink and a little nod",
  "perso/ramuntxo/emote_chut": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/ramuntxo/emote_langue": "a cheeky face: he turns his head toward the viewer for a moment and sticks out a big pink tongue, eyes squeezed, then wiggles his moustache",
  "perso/itsaso/idle": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/walk": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/run_scared": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/hide_in": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/hide_out": "she springs up and forward facing right the whole time, her face stays visible in profile in every frame",
  "perso/itsaso/found": "every frame is a crisp solid drawing like the reference, a clear startled jump with her face in profile",
  "perso/itsaso/trap": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/trapped": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/search": "a big readable search: she leans forward from the waist, peers left and right with one hand shading her eyes, then crouches and sweeps the ground with both hands",
  "perso/itsaso/detect": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/extract": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/victory": "a big joyful victory: she hops on the spot with both arms raised high, her hair and dress bouncing, then spins a little twirl, big happy smile",
  "perso/itsaso/sad": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/hunter_reveal": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/emote_salut": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/emote_rire": "a big readable laugh with the whole body",
  "perso/itsaso/emote_danse": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/emote_pouce": "the thumbs up at arm's length is clearly visible",
  "perso/itsaso/emote_chut": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/itsaso/emote_langue": "the long pink tongue is clearly visible",
  "perso/peio/idle": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/walk": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/run_scared": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/hide_in": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/hide_out": "the rugby ball stays tucked under his arm in every frame",
  "perso/peio/found": "the rugby ball stays tucked under his arm in every frame, clean empty background around him, a clear startled jump",
  "perso/peio/trap": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/trapped": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/search": "a big readable search: he leans forward from the waist, peers left and right with his free hand shading his eyes, then crouches and pats the ground, the rugby ball stays under his arm",
  "perso/peio/detect": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/extract": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/victory": "a big joyful victory: he jumps on the spot and raises the rugby ball high above his head with both hands like a trophy, big proud smile",
  "perso/peio/sad": "clearly sad: shoulders slump, head drops low, the ball hangs loosely from one hand",
  "perso/peio/hunter_reveal": "only the small lens of the flashlight glows, the rugby ball stays tucked under his other arm",
  "perso/peio/emote_salut": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/emote_rire": "a big readable laugh with the whole body, the rugby ball stays under his arm",
  "perso/peio/emote_danse": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/emote_pouce": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/emote_chut": {
-  "priority": "night"
+  "priority": "normal"
  },
  "perso/peio/emote_langue": "the long pink tongue is clearly visible during most of the animation"
 }
