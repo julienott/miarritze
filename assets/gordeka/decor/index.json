@@ -2100,8 +2100,22 @@
      }
     ]
    },
-   "provisoire": "lanterne",
-   "fichiers": []
+   "fichiers": [
+    "objets/lanterne_murale.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "8dc2aa0320d640d08a14da5908ba803e",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "fumee_cheminee": {
    "nom": "Cheminée qui fume",
