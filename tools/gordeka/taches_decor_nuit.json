@@ -557,12 +557,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 17:22",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0/planche.png"
   ],
-  "variante": "image_01",
+  "variante": "image_00",
   "consigne": "Image 384×192, bassin peu profond qui remplit ses 6×3 cases ; masque = tout le rebord (on entre dans le bassin aujourd'hui)."
  },
  "298": {
@@ -807,10 +807,13 @@
    {
     "tid": "4f3913f692f94f41aaa906cfdcbf8d22",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0/planche.png"
    }
   ],
-  "statut": "en_file",
+  "statut": "a_voir",
   "depose": "2026-10-21 17:22",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0/planche.png"
@@ -1716,19 +1719,19 @@
   "consigne": "toujours pas bon, le masque doit être un trapèze"
  },
  "m-lavoir_bassin": {
-  "titre": "Bassin du lavoir : masque v3",
+  "titre": "Bassin du lavoir : masque (d'office, nouvelle image)",
   "sorte": "masque",
   "element": "lavoir_bassin",
   "priorite": "normal",
-  "statut": "todo",
   "jobs": [
    {
-    "tid": "1675ff00c4d94a7986d1297abb3235ba",
+    "tid": "30df251e92d340119c7f6443a1a8f6ca",
     "quoi": "pf_2d__footprint",
     "style": "pf_2d__footprint"
    }
   ],
-  "depose": "2026-10-21 10:36"
+  "statut": "en_file",
+  "depose": "2026-10-21 17:38"
  },
  "m-cachette_malle_pelotes": {
   "titre": "Malle à pelotes : masque v3",
@@ -1886,11 +1889,17 @@
    {
     "tid": "edf6586d699d4829a7e348e04bbc5c3b",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-fronton_fronton/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-fronton_fronton/0/apercu/fronton.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 17:33"
+  "statut": "a_voir",
+  "depose": "2026-10-21 17:33",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-fronton_fronton/0/apercu/fronton.png"
+  ]
  },
  "m-coque_sur_ber": {
   "titre": "Coque sur ber (cale sèche) : masque v3",

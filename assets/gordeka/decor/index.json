@@ -1521,16 +1521,16 @@
    ],
    "sources": [
     {
-     "job": 1,
+     "job": 2,
      "variante": "image_00",
-     "task": "f7bdd2c3b5bd49efbe541ea13ab06104",
+     "task": "4f3913f692f94f41aaa906cfdcbf8d22",
      "date": "2026-10-21"
     }
    ],
    "ombre": "objets/cachette_barque_retournee_ombre.png",
    "ombre_decalage": [
-    8,
-    42
+    5,
+    25
    ]
   },
   "cachette_tonneau_cidre": {
