@@ -1499,7 +1499,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_panier_linge.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "af3ac18b2eee4474bbcf36040d7b66b2",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_panier_linge_ombre.png",
+   "ombre_decalage": [
+    13,
+    72
+   ]
   },
   "cachette_caisse_voiles": {
    "nom": "Caisse à voiles de l'atelier",
