@@ -5,8 +5,7 @@ refais passer dans la Todo avec la bonne priorité ».
 
   wip.py [--essai]          appelé par tools/gordeka/veille_nuit.sh toutes les 5 min
 
-1. Une carte refusée en QA (rework, revenue en Doing) repart en Todo, priorité haute, si elle n'a pas de
-   tâche pixelforge en cours.
+1. Une carte refusée en QA (rework, revenue en Doing) repart au sommet du Backlog (Julien repriorise).
 2. Julien passe les cartes de Backlog en Todo (21/10) ; la Todo entre en Doing par priorité, 5 cartes actives
    au plus (hors night shift) : animation de perso → recette.py ko (texte du dernier refus en consigne),
    décor du suivi → decor_matin.py relance ; carte qu'on ne sait pas lancer : « BESOIN » (réveille Claude).
@@ -110,13 +109,12 @@ def decor_auto():
 
 def main():
     doing = cli.call("cards", query={"status": "doing"})["cards"]
-    # 1. refus de QA revenus en Doing → Todo, priorité haute (ils repartent par la Todo)
+    # 1. refus de QA revenus en Doing → sommet du Backlog (Julien 21/10 : il repriorise lui-même)
     for c in doing:
         if c.get("rework") and not en_cours(c["id"], c["title"]):
-            print(f"#{c['id']} refusé en QA → Todo (haute)")
+            print(f"#{c['id']} refusé en QA → sommet du Backlog")
             if not ESSAI:
-                cli.call("card_move", {"id": c["id"], "status": "todo"})
-                cli.call("card_update", {"id": c["id"], "priority": "haute"})
+                cli.call("card_move", {"id": c["id"], "status": "backlog", "index": 0})
     # 2. Julien choisit Backlog → Todo ; la Todo entre en Doing par priorité, 5 cartes actives au plus.
     besoins = lire(BESOINS, [])
     doing = cli.call("cards", query={"status": "doing"})["cards"]
