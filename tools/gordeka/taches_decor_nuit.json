@@ -943,11 +943,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/305_cachette_coffre_quai/0/apercu/cachette_coffre_quai.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/305_cachette_coffre_quai/0/apercu/cachette_coffre_quai.png"
-  ]
+  ],
+  "variante": null
  },
  "307": {
   "titre": "Caisse à glace : version ouverte",
