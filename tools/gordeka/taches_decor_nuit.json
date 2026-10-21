@@ -1893,11 +1893,19 @@
   "statut": "deja_fait"
  },
  "m-etal_criee": {
-  "titre": "Étal de la criée : masque v3",
+  "titre": "Étal de la criée : masque (d'office, nouvelle image)",
   "sorte": "masque",
   "element": "etal_criee",
   "priorite": "normal",
-  "statut": "deja_fait"
+  "jobs": [
+   {
+    "tid": "dfda79210cb44fcf92469efc95be32a3",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-21 18:28"
  },
  "m-fontaine_place": {
   "titre": "Fontaine de la place : masque v3",
@@ -2442,7 +2450,7 @@
   "titre": "Étal de la criée : masque v3",
   "sorte": "image",
   "element": "etal_criee",
-  "statut": "a_voir",
+  "statut": "integre",
   "consigne": "Image paysage 320×64 qui remplit ses 5×1 cases (petit étal carré aujourd'hui).",
   "jobs": [
    {
@@ -2458,7 +2466,8 @@
   "depose": "2026-10-21 18:12",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/278_etal_criee/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "284": {
   "titre": "Fontaine de la place : masque v3",
