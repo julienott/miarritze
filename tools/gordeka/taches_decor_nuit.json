@@ -1856,7 +1856,7 @@
   "sorte": "masque",
   "element": "maison_crampotte",
   "priorite": "normal",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "d3ed022023e84029aa02a0dda72b715c",
@@ -1871,7 +1871,8 @@
   "consigne": "Masque périmé (image refaite de face) : emprise trapèze sous la base seulement, le haut doit masquer un perso derrière.",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-maison_crampotte_maison_crampotte/0/apercu/maison_crampotte.png"
-  ]
+  ],
+  "variante": null
  },
  "m-fronton": {
   "titre": "Fronton de pelote basque : masque (d'office, nouvelle image)",
