@@ -261,6 +261,14 @@ await page.click('#cf-asset-view .anim-cell');
 await page.waitForSelector('.fs canvas');
 check('détail : clic sur l\'animation = plein écran', (await page.textContent('.fs-title')) === 'louis · walk');
 await page.click('.fs-close');
+// Une amélioration de Julien sur une carte en QA la sort de QA (sommet du Backlog, « à retraiter », 21/10).
+{
+  const [, sc] = await apiTok('card&id=' + kidIds[1]);
+  check('amélioration sur une carte en QA : sommet du Backlog', sc.card.status === 'backlog' && sc.card.rework, sc.card.status);
+  cli('move', String(kidIds[1]), 'qa');
+  await page.reload();
+  await page.waitForSelector(`.card[data-id="${kidIds[1]}"] button.refuse`);
+}
 
 // ----------------------------------------------------- QA : refuser, retraiter, accepter
 const qaCard = page.locator(`.card[data-id="${kidIds[1]}"]`);

@@ -1326,7 +1326,9 @@ function boardIdle() {
 }
 
 async function kanbanTick(n) {
-  if (!state.index || !location.hash.startsWith('#/kanban') || document.hidden) return;
+  // Julien 21/10 : toute vue ouverte (Bord, Kanban, Catalogue, fiche, Jeu, Roadmap) suit en direct les nouvelles
+  // versions d'assets et les changements de statut des cartes.
+  if (!state.index || document.hidden) return;
   // 1. Nouvelle version des assets ?
   const r = await api('index_version');
   let assetsChanged = false;
@@ -1334,17 +1336,31 @@ async function kanbanTick(n) {
     assetsChanged = await reloadIndex();
   }
   if (r && r.v) state.indexV = r.v;
-  // 2. Cartes : détail ouvert = à chaque tour, sinon toutes les 30 s.
+  // 2. Cartes : à chaque tour (10 s).
+  const before = JSON.stringify(state.cards);
+  await reloadCards();
+  const cardsChanged = JSON.stringify(state.cards) !== before;
+  if (!cardsChanged && !assetsChanged) return;
+  renderNavBadges();
   const open = $('card-dialog').open;
-  let cardsChanged = false;
-  if (open || n % KANBAN_CARDS_EVERY === 0 || assetsChanged) {
-    const before = JSON.stringify(state.cards);
-    await reloadCards();
-    cardsChanged = JSON.stringify(state.cards) !== before;
-  }
-  if ((cardsChanged || assetsChanged) && boardIdle()) renderBoard();
   if (open) refreshOpenCard(assetsChanged);
   if (assetsChanged && state.fs && state.fs.reload) state.fs.reload();
+  if (location.hash.startsWith('#/kanban') || !location.hash) {
+    if (location.hash.startsWith('#/kanban') && boardIdle()) renderBoard();
+    else if (!location.hash) rerenderView();
+  } else {
+    rerenderView();
+  }
+}
+
+/** Redessine la vue courante sans perdre la place (rien si on est en train de saisir ou si un lecteur est ouvert). */
+function rerenderView() {
+  const a = document.activeElement;
+  if (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)) return;
+  if (state.fs || document.querySelector('dialog[open]')) return;
+  const y = window.scrollY;
+  route();
+  window.scrollTo(0, y);
 }
 
 /**

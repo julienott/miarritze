@@ -1201,6 +1201,21 @@ final class App
     }
 
     /** Commentaire sur une carte (route card_comment, alias historique card_note). */
+    /**
+     * Julien 21/10 : « si je fais une suggestion d'amélioration, la carte en QA ne doit pas rester en QA avant
+     * d'avoir traité l'amélioration ». Un commentaire d'une personne (pas Claude) sur une carte en QA la renvoie
+     * au sommet du Backlog, « à retraiter », comme un refus (le texte sert de consigne).
+     */
+    private function sortirDeQa(int $id, string $text, int $now): void
+    {
+        if ($this->actor === 'claude' || (string) $this->card($id)['status'] !== 'qa') {
+            return;
+        }
+        $this->placeCard($id, 'backlog', 0);
+        $this->db()->prepare('UPDATE cards SET rework = 1 WHERE id = ?')->execute([$id]);
+        $this->event($id, 'refuse', 'qa', $text, $now);
+    }
+
     private function addNote(): void
     {
         $b = $this->body();
@@ -1216,6 +1231,7 @@ final class App
             $nid = (int) $db->lastInsertId();
             $db->prepare('UPDATE cards SET updated_at = ? WHERE id = ?')->execute([$now, $id]);
             $this->event($id, 'commentaire', '', $text, $now);
+            $this->sortirDeQa($id, $text, $now);
             $db->commit();
         } catch (Throwable $e) {
             $db->rollBack();
@@ -1427,6 +1443,9 @@ final class App
                     ->execute([$cardId, $this->actor, $note, $now]);
                 $db->prepare('UPDATE cards SET updated_at = ? WHERE id = ?')->execute([$now, $cardId]);
                 $this->event($cardId, 'commentaire', '', $note, $now);
+                if ($kind === 'amelioration') {
+                    $this->sortirDeQa($cardId, $text, $now);
+                }
             }
             $db->commit();
         } catch (Throwable $e) {
