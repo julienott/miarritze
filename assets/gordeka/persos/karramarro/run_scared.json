@@ -23,19 +23,24 @@
  },
  "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Panicked cartoon sprint, running for dear life: very long strides, legs spinning fast, body leaning far forward, both pincers flailing wildly forward and back at shoulder height, pincers never in front of the face, sweat drops flying off the head, a little dust puff at the heels. Hugely exaggerated, comic, never violent. Way of moving: fast scuttling with all legs rippling, little hops. The two big pincers: waving wildly above the head. The eyes on stalks: wobble with the motion, slightly delayed. The thin legs: all legs scuttle in a fast ripple, the crab keeps facing right. The small neckerchief scarf: stays tied in place, the two short tips flutter with the motion.",
  "stride_px": 115.0,
+ "decalage": [2.0, 0.0],
  "entrees": {
+  "idle": {
+   "i": [27, 27, 11, 11, 11, 12, 11, 11, 11, 11, 11, 11, 11, 11, 11, 31, 31, 31, 11, 11, 11, 31, 11, 11, 11, 11, 16, 11, 11, 11, 11, 11],
+   "e": [11, 10, 15, 21, 21, 20, 27, 32, 32, 32, 32, 32, 33, 33, 38, 40, 37, 34, 30, 27, 30, 31, 30, 30, 32, 33, 41, 45, 45, 45, 47, 44]
+  },
   "hide_in": {
-   "e": [8, 7, 12, 19, 19, 19, 25, 32, 32, 32, 31, 31, 32, 32, 38, 40, 37, 35, 30, 27, 28, 30, 29, 29, 31, 33, 41, 44, 44, 45, 46, 43]
+   "e": [9, 8, 12, 19, 19, 18, 25, 31, 31, 31, 31, 31, 32, 32, 38, 40, 37, 34, 30, 26, 28, 30, 29, 29, 31, 32, 40, 44, 44, 45, 46, 43]
   },
   "found": {
-   "e": [18, 19, 18, 20, 20, 17, 22, 30, 30, 30, 33, 35, 36, 36, 37, 37, 36, 35, 33, 30, 28, 28, 27, 27, 30, 34, 43, 45, 44, 43, 42, 40]
+   "e": [15, 14, 16, 22, 22, 21, 27, 33, 33, 33, 33, 33, 34, 34, 39, 41, 38, 35, 31, 29, 31, 32, 32, 31, 33, 34, 42, 46, 45, 46, 48, 46]
   },
   "extract": {
-   "e": [5, 4, 13, 20, 20, 20, 26, 32, 32, 32, 31, 31, 33, 33, 37, 39, 36, 34, 30, 28, 28, 31, 30, 30, 32, 34, 42, 45, 45, 45, 46, 43]
+   "e": [7, 6, 13, 20, 20, 19, 26, 32, 32, 32, 32, 32, 33, 33, 36, 39, 36, 34, 30, 27, 29, 30, 29, 29, 31, 33, 41, 44, 44, 45, 46, 43]
   },
   "sad": {
-   "i": [30, 31, 31, 11, 11, 11, 11, 11, 11, 11, 31, 31, 30, 30, 8, 8, 22, 22, 2, 31, 31, 11, 11, 11, 31, 22, 31, 31, 31, 31, 12, 27],
-   "e": [11, 10, 15, 21, 21, 21, 26, 32, 32, 32, 32, 32, 33, 33, 38, 40, 37, 34, 30, 28, 30, 31, 30, 30, 32, 34, 42, 45, 45, 46, 47, 44]
+   "i": [30, 30, 31, 11, 12, 11, 11, 11, 11, 11, 30, 30, 30, 30, 9, 9, 9, 1, 31, 30, 11, 11, 11, 17, 27, 31, 31, 31, 31, 31, 28, 28],
+   "e": [12, 11, 15, 21, 21, 20, 25, 32, 32, 31, 33, 32, 33, 33, 37, 39, 37, 34, 30, 28, 30, 31, 30, 30, 32, 33, 42, 45, 45, 46, 46, 44]
   }
  }
 }
