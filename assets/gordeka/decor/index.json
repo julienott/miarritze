@@ -2499,8 +2499,22 @@
      }
     ]
    },
-   "provisoire": "drapeau",
-   "fichiers": []
+   "fichiers": [
+    "objets/drapeau_mat.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "987951dd17474f7da88b412a38fba552",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "maison_crampotte_verte": {
    "type": "objet",
