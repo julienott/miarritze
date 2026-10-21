@@ -142,7 +142,7 @@
  "perso/karramarro/idle": {
   "priority": "normal"
  },
- "perso/karramarro/walk": "a seamless loop: the last frame leads back exactly into the first frame, same pose at start and end",
+ "perso/karramarro/walk": "l'animation n'a pas l'air de boucler correctement (end frame = first frame)",
  "perso/karramarro/run_scared": {
   "priority": "normal"
  },
