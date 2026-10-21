@@ -320,7 +320,7 @@
   "sorte": "masque",
   "element": "autel_chapelle",
   "priorite": "high",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "a0463b614daf464ca267978053d783d2",
@@ -334,7 +334,8 @@
   "depose": "2026-10-21 07:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/262_autel_chapelle/0/apercu/autel_chapelle.png"
-  ]
+  ],
+  "variante": null
  },
  "263": {
   "titre": "Comptoir de la terrasse : refaire de face",
