@@ -2204,11 +2204,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-barque_mouillage_barque_mouillage/0/apercu/barque_mouillage.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 07:34",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-barque_mouillage_barque_mouillage/0/apercu/barque_mouillage.png"
-  ]
+  ],
+  "variante": null
  },
  "m-tas_filets": {
   "titre": "Filets et casiers posés au sol : masque (d'office, nouvelle image)",
