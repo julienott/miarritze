@@ -289,19 +289,27 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/261_autel_chapelle/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/261_autel_chapelle/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "262": {
   "titre": "Autel de la chapelle des marins : masque v3",
   "sorte": "masque",
   "element": "autel_chapelle",
-  "priorite": "night",
-  "statut": "attend",
-  "depend": "261"
+  "priorite": "normal",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "a0463b614daf464ca267978053d783d2",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 07:35"
  },
  "263": {
   "titre": "Comptoir de la terrasse : refaire de face",
