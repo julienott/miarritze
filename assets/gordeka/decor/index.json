@@ -1329,7 +1329,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_malle_pelotes.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_01",
+     "task": "a49325237da7409794b131c844ac578b",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_malle_pelotes_ombre.png",
+   "ombre_decalage": [
+    11,
+    62
+   ]
   },
   "cachette_tas_filets_cachette": {
    "nom": "Montagne de filets",

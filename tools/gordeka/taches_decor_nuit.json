@@ -1115,11 +1115,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/317_cachette_bac_poissons/0/apercu/cachette_bac_poissons.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/317_cachette_bac_poissons/0/apercu/cachette_bac_poissons.png"
-  ]
+  ],
+  "variante": null
  },
  "318": {
   "titre": "Malle à pelotes : image",
