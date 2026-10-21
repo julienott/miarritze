@@ -172,19 +172,27 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/252_chambre_froide/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/252_chambre_froide/0/planche.png"
-  ]
+  ],
+  "variante": "image_01"
  },
  "253": {
   "titre": "Chambre froide de la criée : masque v3",
   "sorte": "masque",
   "element": "chambre_froide",
-  "priorite": "night",
-  "statut": "attend",
-  "depend": "252"
+  "priorite": "normal",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "c10e71197c64472db25aabdea772b3e2",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 07:35"
  },
  "255": {
   "titre": "Tour du phare (feu du port) : animation",
