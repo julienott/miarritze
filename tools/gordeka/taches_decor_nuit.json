@@ -469,12 +469,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 18:28",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0/planche.png"
   ],
-  "variante": "image_01",
+  "variante": "image_00",
   "consigne": "Image paysage 320×64 qui remplit ses 5×1 cases."
  },
  "291": {
@@ -2103,26 +2103,19 @@
   "variante": null
  },
  "m-etabli_atelier": {
-  "titre": "Établi de l'atelier : masque v3",
+  "titre": "Établi de l'atelier : masque (d'office, nouvelle image)",
   "sorte": "masque",
   "element": "etabli_atelier",
-  "priorite": "high",
-  "statut": "integre",
+  "priorite": "normal",
   "jobs": [
    {
-    "tid": "fa2164f938c1401eaccf8ec79da5ad4d",
+    "tid": "d1ad53d9e0c743e7a04e220c667fef39",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0/apercu/etabli_atelier.png"
+    "style": "pf_2d__footprint"
    }
   ],
-  "depose": "2026-10-21 08:12",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/290_etabli_atelier/0/apercu/etabli_atelier.png"
-  ],
-  "variante": null
+  "statut": "en_file",
+  "depose": "2026-10-21 18:38"
  },
  "m-treteaux_cale": {
   "titre": "Tréteaux et planches de la cale : masque v3",
