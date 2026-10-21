@@ -1808,8 +1808,22 @@
    ],
    "debord_haut_cases": 1,
    "animation": {},
-   "provisoire": "barriques",
-   "fichiers": []
+   "fichiers": [
+    "objets/barriques_cidre.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "e8120fd7620a4062b4182fe23523900c",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/barriques_cidre_ombre.png",
+   "ombre_decalage": [
+    9,
+    54
+   ]
   },
   "pot_hortensias": {
    "nom": "Pot d'hortensias",

@@ -1518,11 +1518,13 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/340_piege_generique/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/340_piege_generique/0/planche.png"
-  ]
+  ],
+  "variante": "image_01",
+  "suites_a_deposer": "normal"
  },
  "341": {
   "titre": "Piège générique (flaque collante) : animation",
