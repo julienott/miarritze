@@ -19,6 +19,7 @@
 > godot --headless --path . -- --scene=gk_game --gk-bots-only --gk-log --speed=8   # rounds IA contre IA
 > node tests/web/smoke.mjs chromium "#scene=gk_game" 28                          # web
 godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd         # tests Gordeka
+godot --headless --path . --script res://tests/decor/mesure_decor.gd -- --map=port_pecheurs --out=/abs/m.json  # test du décor (docs/TEST_DECOR.md)
 > ```
 
 Résumé opérationnel pour Claude Code. **La source de vérité est `SPEC-BORROKA.md`** ; en cas de doute, elle prime. Le *quoi/pourquoi* est résumé dans `DESIGN.md`. État d'avancement : `docs/STATUS.md`. Choix tranchés : `docs/DECISIONS.md`. Revues visuelles : `docs/REVIEWS.md`.
