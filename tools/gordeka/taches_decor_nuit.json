@@ -1218,11 +1218,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/323_cachette_confessionnal/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/323_cachette_confessionnal/0/planche.png"
-  ]
+  ],
+  "variante": "image_01"
  },
  "324": {
   "titre": "Confessionnal en bois : masque v3",

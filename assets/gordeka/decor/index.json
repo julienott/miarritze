@@ -2601,6 +2601,7 @@
    ]
   },
   "maison_crampotte_verte": {
+   "nom": "Crampotte aux volets verts",
    "type": "objet",
    "categorie": "batiment",
    "caractere": "#",
@@ -2613,9 +2614,23 @@
     3
    ],
    "debord_haut_cases": 1,
-   "nom": "Crampotte aux volets verts",
    "animation": {},
-   "fichiers": []
+   "fichiers": [
+    "objets/maison_crampotte_verte.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "21d24c89282d407cbbbf8351c7f01665",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/maison_crampotte_verte_ombre.png",
+   "ombre_decalage": [
+    51,
+    278
+   ]
   },
   "panier_poissons": {
    "nom": "Panier de poissons",
