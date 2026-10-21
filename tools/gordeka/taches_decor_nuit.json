@@ -2032,11 +2032,13 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/407_maison_crampotte_verte/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 00:05",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/407_maison_crampotte_verte/0/planche.png"
-  ]
+  ],
+  "variante": "image_01",
+  "suites_a_deposer": "normal"
  },
  "408": {
   "titre": "Panier de poissons : image",

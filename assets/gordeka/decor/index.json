@@ -2649,8 +2649,22 @@
    ],
    "debord_haut_cases": 0,
    "animation": {},
-   "provisoire": "panier",
-   "fichiers": []
+   "fichiers": [
+    "objets/panier_poissons.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "6fcab9bc0115438ab16f7f8dbe0a1470",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "filet_au_sol": {
    "nom": "Filet étendu au sol",
