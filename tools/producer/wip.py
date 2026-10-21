@@ -55,8 +55,10 @@ def cles_perso(titre):
 def dernier_refus(cid):
     """Texte du dernier refus de Julien sur la carte (sert de consigne), ou ""."""
     for ev in reversed(cli.call("card", query={"id": cid}).get("events") or []):
-        if ev.get("author") == "julien" and ev.get("type") == "refuse":
-            return ev.get("new", "")
+        if ev.get("author") == "julien" and ev.get("type") in ("refuse", "commentaire"):
+            return ev.get("new", "")                # refus, ou amélioration suggérée en commentaire
+        if ev.get("type") == "deplacement" and ev.get("new") == "qa":
+            break
     return ""
 
 
