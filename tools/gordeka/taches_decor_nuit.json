@@ -2113,11 +2113,17 @@
    {
     "tid": "d1ad53d9e0c743e7a04e220c667fef39",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etabli_atelier_etabli_atelier/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etabli_atelier_etabli_atelier/0/apercu/etabli_atelier.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 18:38"
+  "statut": "a_voir",
+  "depose": "2026-10-21 18:38",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etabli_atelier_etabli_atelier/0/apercu/etabli_atelier.png"
+  ]
  },
  "m-treteaux_cale": {
   "titre": "Tréteaux et planches de la cale : masque v3",
@@ -2346,20 +2352,18 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "f4889f4e45da4372b545e1e0bbe976c5",
+    "tid": "8e55eb4c06d0419aa74d871786cd36a5",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
+    "style": "pf_2d__footprint"
    }
   ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
+  "statut": "en_file",
+  "depose": "2026-10-21 18:49",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
   ],
-  "variante": null
+  "variante": null,
+  "consigne": "Masque : emprise = toute la coque (on mord les deux bouts)."
  },
  "m-bitte_amarrage": {
   "titre": "Bitte d'amarrage : masque v3",
@@ -2485,5 +2489,24 @@
   "element": "fontaine_place",
   "statut": "integre",
   "masque_refait": 1
+ },
+ "602": {
+  "titre": "chalutier_quai : taille et masque à revoir",
+  "sorte": "image",
+  "element": "chalutier_quai",
+  "statut": "integre",
+  "masque_refait": 1
+ },
+ "603": {
+  "titre": "mur_soutenement : taille et masque à revoir",
+  "sorte": "image",
+  "element": "mur_soutenement",
+  "statut": "integre"
+ },
+ "604": {
+  "titre": "marches_escalier : taille et masque à revoir",
+  "sorte": "image",
+  "element": "marches_escalier",
+  "statut": "integre"
  }
 }
