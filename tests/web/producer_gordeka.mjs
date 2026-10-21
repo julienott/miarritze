@@ -1,6 +1,6 @@
-// /producer : Gordeka d'abord (persos, récapitulatif des animations, animations
-// manquantes, lecteur plein écran, décor avec ou sans masques, filtre « sans masque »,
-// sols répétés 2×2), Borroka replié mais accessible.
+// /producer, catalogue de Gordeka : animations des persos (groupées par perso, récapitulatif,
+// manquantes, vignettes au survol), lecteur plein écran, décor avec ou sans masques, filtre
+// « sans masque », sols répétés 2×2, Borroka masqué mais accessible.
 // Ordinateur (Chromium) + iPhone portrait et paysage (WebKit si installé, sinon Chromium).
 // Env : PRODUCER_URL (défaut http://127.0.0.1:8099/producer/), PRODUCER_TEST_PASSWORD,
 //       PRODUCER_SHOTS (dossier des captures, défaut tests/out/producer).
@@ -39,6 +39,18 @@ const animated = (page, sel) => page.evaluate(async (s) => {
   return { total: cs.length, drawn, moving };
 }, sel);
 
+// Catalogue groupé par perso, animations seulement, récapitulatif affiché (ex-page « Persos »).
+const persosView = async (page) => {
+  await page.evaluate(() => {
+    Object.assign(cat, { group: 'perso', type: 'anim', map: '', recap: true, q: '' });
+    cat.filters = new Set();
+    cat.more.clear();
+    if (location.hash !== '#/assets') location.hash = '#/assets'; else renderCatalogue();
+  });
+  await page.waitForSelector('.cgroup[data-perso] .citem');
+};
+const cell = (pid, name) => `.citem[data-key="gordeka/persos/${pid}/animations#${name}"]`;
+
 let wk = null;
 try { wk = await webkit.launch(); } catch (e) { console.log('     (WebKit indisponible : iPhone émulé dans Chromium)'); }
 const cr = await chromium.launch();
@@ -61,36 +73,32 @@ for (const [label, browser, opts] of runs) {
   await page.waitForSelector('#login:not([hidden])');
   await page.fill('#password', PASSWORD);
   await page.click('#login-form button[type=submit]');
-  await page.waitForSelector('.gk-perso');
+  await page.waitForSelector('#view-bord:not([hidden])');
+  await persosView(page);
   await page.waitForTimeout(1500);
 
-  // Ouverture : persos de Gordeka, récapitulatif, une section par perso dans l'ordre du casting.
-  const active = await page.$eval('.cats button.active span', (s) => s.textContent);
-  check(`${label} : ouverture sur les persos`, active === 'Persos', active);
-  const persos = await page.$$eval('.gk-perso', (l) => l.map((x) => x.dataset.perso));
+  // Catalogue groupé par perso (animations seulement) : récapitulatif, une section par perso dans l'ordre du casting.
+  const persos = await page.$$eval('.cgroup[data-perso]', (l) => l.map((x) => x.dataset.perso));
   check(`${label} : 12 persos dans l'ordre`, persos.length === 12 && persos[0] === 'louis' && persos[11] === 'peio', persos.join(','));
   const recap = await page.$$eval('.recap-table tbody tr', (r) => r.length);
   const cols = await page.$$eval('.recap-table thead th.v', (r) => r.length);
   check(`${label} : récapitulatif perso × animation`, recap === 12 && cols === 23, `${recap} lignes, ${cols} colonnes`);
-  const louis = await page.$eval('.gk-perso[data-perso="louis"]', (s) => ({
-    present: s.querySelectorAll('.gk-anim:not(.missing)').length,
-    missing: [...s.querySelectorAll('.gk-anim.missing')].map((x) => x.dataset.anim),
-    band: s.querySelector('.missing-band').textContent,
-    profil: !!s.querySelector('.gk-profil .tile'),
+  const louis = await page.$eval('.cgroup[data-perso="louis"]', (s) => ({
+    present: s.querySelectorAll('.citem:not(.missing)').length,
+    missing: [...s.querySelectorAll('.citem.missing')].map((x) => x.dataset.key.split('#')[1]),
   }));
-  check(`${label} : Louis, profil et animations`, louis.profil && louis.present >= 15, JSON.stringify(louis.present));
+  check(`${label} : Louis, animations`, louis.present >= 15, JSON.stringify(louis.present));
   // Manquantes : celles que l'index ne contient pas (les données bougent chaque jour).
   const attendu = await page.evaluate(() => Object.fromEntries(['louis', 'amaia'].map((p) => [p, gkSlots(p).filter((x) => !x.anim).map((x) => x.name)])));
-  check(`${label} : Louis, manquantes affichées`, louis.missing.join(',') === attendu.louis.join(',')
-    && (louis.missing.length ? louis.band.includes('manquante') : louis.band.includes('Toutes')), louis.missing.join(','));
-  const amaia = await page.$eval('.gk-perso[data-perso="amaia"]', (s) => s.querySelectorAll('.gk-anim.missing').length);
+  check(`${label} : Louis, manquantes affichées`, louis.missing.join(',') === attendu.louis.join(','), louis.missing.join(','));
+  const amaia = await page.$eval('.cgroup[data-perso="amaia"]', (s) => s.querySelectorAll('.citem.missing').length);
   check(`${label} : Amaia, manquantes affichées`, amaia === attendu.amaia.length, String(amaia));
   // Vignettes au repos : image fixe chargée paresseusement, aucune planche, aucun canvas ni minuteur.
   await page.mouse.move(1, 1);   // la souris ne doit survoler aucune vignette pendant le défilement
-  await page.evaluate(() => document.querySelector('.gk-perso[data-perso="louis"] .gk-anims').scrollIntoView());
+  await page.evaluate(() => document.querySelector('.cgroup[data-perso="louis"] .citems').scrollIntoView());
   await page.waitForTimeout(800);
   const still = await page.evaluate(() => {
-    const imgs = [...document.querySelectorAll('.gk-perso .gk-anim img.mini')];
+    const imgs = [...document.querySelectorAll('.cgroup .citem img.mini')];
     const sheets = performance.getEntriesByType('resource').filter((r) => /%2Fanims%2F[^_]/.test(r.name)).length;
     return { imgs: imgs.length, lazy: imgs.every((i) => i.loading === 'lazy'), poster: imgs.every((i) => /_poster/.test(i.src)),
       canvases: document.querySelectorAll('#grid canvas').length, sheets,
@@ -98,7 +106,7 @@ for (const [label, browser, opts] of runs) {
   });
   check(`${label} : vignettes fixes (image du milieu, chargement paresseux)`, still.imgs >= 100 && still.lazy && still.poster && still.loaded >= 1 && still.loaded < still.imgs, JSON.stringify(still));
   check(`${label} : au repos, ni canvas ni planche chargée`, still.canvases === 0 && still.sheets === 0, JSON.stringify(still));
-  const walkCell = '.gk-perso[data-perso="louis"] .gk-anim[data-anim="walk"]';
+  const walkCell = cell('louis', 'walk');
   if (opts.hasTouch) {
     await page.locator(walkCell).tap();      // premier toucher : anime sans ouvrir
   } else {
@@ -107,10 +115,10 @@ for (const [label, browser, opts] of runs) {
   await page.waitForSelector(`${walkCell} canvas.mini`);
   await page.waitForTimeout(300);
   const vign = await animated(page, `${walkCell} canvas`);
-  check(`${label} : ${opts.hasTouch ? 'toucher' : 'survol'} = la vignette s'anime`, vign.total === 1 && vign.moving === 1 && !(await page.$('.fs')), JSON.stringify(vign));
+  check(`${label} : ${opts.hasTouch ? 'toucher' : 'survol'} = la vignette s'anime`, vign.total === 1 && vign.moving === 1 && page.url().endsWith('#/assets'), JSON.stringify(vign));
   await shot('01b_vignette_animee');
   if (opts.hasTouch) {
-    await page.locator('.gk-perso[data-perso="louis"] .gk-anim[data-anim="idle"]').tap();
+    await page.locator(cell('louis', 'idle')).tap();
     await page.waitForTimeout(300);
     const n = await page.$$eval('#grid canvas', (c) => c.length);
     check(`${label} : une seule vignette animée à la fois`, n === 1, String(n));
@@ -121,23 +129,21 @@ for (const [label, browser, opts] of runs) {
       (await page.$$('#grid canvas')).length === 0 && !!(await page.$(`${walkCell} img.mini`)));
   }
   await shot('01_persos');
-  await page.evaluate(() => document.querySelector('.gk-perso[data-perso="louis"]').scrollIntoView());
-  await page.waitForTimeout(400);
-  await shot('02_louis');
-  await page.evaluate(() => document.querySelector('.gk-perso[data-perso="mattin"]').scrollIntoView());
+  await page.evaluate(() => document.querySelector('.cgroup[data-perso="mattin"]').scrollIntoView());
   await page.waitForTimeout(600);
   await shot('03_mattin_manquantes');
 
-  // Lecteur plein écran : walk de Louis.
+  // Lecteur plein écran : walk de Louis, depuis sa fiche (toucher suivant ou clic = la fiche).
   await page.evaluate(() => window.scrollTo(0, 0));
-  // Toucher suivant (ou clic) : ouvre le plein écran, qui joue tout seul.
   if (opts.hasTouch) {
-    await page.locator(walkCell).tap();            // anime walk (run était actif)…
+    await page.locator(walkCell).tap();
     await page.waitForTimeout(300);
-    if (!(await page.$('.fs'))) await page.locator(walkCell).tap();   // …puis ouvre
+    if (page.url().endsWith('#/assets')) await page.locator(walkCell).tap();
   } else {
     await page.click(walkCell);
   }
+  await page.waitForSelector('#detail button:has-text("Plein écran")');
+  await page.click('#detail button:has-text("Plein écran")');
   await page.waitForSelector('.fs canvas');
   await page.waitForTimeout(800);
   const fsBox = await page.$eval('.fs', (f) => { const r = f.getBoundingClientRect(); return [r.width, r.height, innerWidth, innerHeight]; });
@@ -190,28 +196,33 @@ for (const [label, browser, opts] of runs) {
   check(`${label} : fermeture du plein écran`, (await page.$('.fs')) === null);
 
   // Récapitulatif : un ✓ ouvre le lecteur.
+  await persosView(page);
   await page.click('.recap-table tr[data-perso="maia"] td.yes button');
   await page.waitForSelector('.fs canvas');
   check(`${label} : ✓ du récapitulatif ouvre le lecteur`, (await page.textContent('.fs-title')).startsWith('maia · '));
   await page.click('.fs-close');
 
-  // Page des animations (commentaires) : bouton plein écran et bandeau des manquantes.
+  // Fiche des animations : bouton plein écran et bandeau des manquantes.
   await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/persos/louis/animations'));
   await page.waitForSelector('.anim-gallery .anim-cell');
-  check(`${label} : page des animations, bandeau des manquantes`, !!(await page.$('#detail .missing-band')));
-  check(`${label} : page des animations, bouton plein écran`, !!(await page.$('#detail button:has-text("Plein écran")')));
+  check(`${label} : fiche des animations, bandeau des manquantes`, !!(await page.$('#detail .missing-band')));
+  check(`${label} : fiche des animations, bouton plein écran`, !!(await page.$('#detail button:has-text("Plein écran")')));
 
-  // Décor : avec masques (défaut), sans masques, filtre « sans masque », sols.
-  await page.goto(BASE + '#/assets');
-  await page.click('.cats button:has(span:text-is("Décor"))');
-  await page.waitForSelector('.dcard');
-  await page.click('.decor-bar .seg button:has-text("Avec masques")');
+  // Décor du port : objets avec masques visibles, alignés ; filtre « sans masque » ; sols.
+  await page.evaluate(() => {
+    Object.assign(cat, { group: 'type', type: 'objet', map: 'port_pecheurs', masks: true, recap: false, q: '' });
+    cat.filters = new Set();
+    location.hash = '#/assets';
+    renderCatalogue();
+  });
+  await page.waitForSelector('.citem.t-objet');
   await page.waitForTimeout(1500);
-  const objets = await page.$$eval('.dgrid:not(.sols) .dcard', (l) => l.length);
-  const calques = await page.$$eval('.dgrid:not(.sols) .dcard img.calque', (l) => l.filter((i) => i.complete && i.naturalWidth > 0).length);
-  check(`${label} : objets du décor avec calques`, objets >= 25 && calques >= objets - 1, `${objets} objets, ${calques} calques`);
+  const objets = await page.$$eval('.citem.t-objet .dthumb', (l) => l.length);
+  const calques = await page.$$eval('.citem.t-objet img.calque', (l) => l.filter((i) => i.complete && i.naturalWidth > 0).length);
+  const attendus = await page.evaluate(() => catalogueItems().items.filter((i) => i.type === 'objet' && i.cartes.includes('port_pecheurs') && i.asset && i.asset.decor.calque).length);
+  check(`${label} : objets du décor avec calques`, objets >= 20 && calques >= attendus - 1, `${objets} objets, ${calques}/${attendus} calques`);
   // Alignement : calque et image occupent exactement la même boîte.
-  const align = await page.$$eval('.dgrid .dlayers', (l) => l.every((d) => {
+  const align = await page.$$eval('.citem .dthumb', (l) => l.every((d) => {
     const [a, b] = d.querySelectorAll('img');
     if (!b) return true;
     const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
@@ -219,53 +230,48 @@ for (const [label, browser, opts] of runs) {
   }));
   check(`${label} : calques alignés sur les images`, align);
   await shot('06_decor_masques');
-  // Bascule d'un objet.
-  const first = '.dgrid:not(.sols) .dcard:first-child';
-  await page.click(`${first} .row button`);
-  check(`${label} : bascule par objet (sans masques)`, (await page.$(`${first} img.calque`)) === null);
-  await page.click('.decor-bar .seg button:has-text("Sans masques")');
-  await page.waitForTimeout(800);
-  check(`${label} : tout sans masques`, (await page.$$('.dgrid img.calque')).length === 0);
+  await page.click('.chip-btn:has-text("Masques visibles")');
+  await page.waitForTimeout(500);
+  check(`${label} : masques cachés au repos`, await page.$$eval('.citem .dthumb', (l) => l.every((d) => !d.classList.contains('masks'))));
   await shot('07_decor_sans_masques');
-  await page.check('#decor-sans-masque');
+  await page.click('.chip-btn[data-filter="sans_masque"]');
   await page.waitForTimeout(300);
-  const sans = await page.$$eval('.dcard', (l) => l.map((x) => x.dataset.id.split('/').pop()));
+  const sans = await page.$$eval('.citem', (l) => l.map((x) => x.dataset.key.split('/').pop()));
   check(`${label} : filtre « sans masque »`, sans.length < objets, sans.join(','));
-  await page.click('.decor-bar .seg button:has-text("Contrôle du jeu")');
+  await shot('08_decor_sans_masque');
+  await page.click('.chip-btn[data-filter="sans_masque"]');
+  await page.selectOption('#cat-type', 'sol');
   await page.waitForTimeout(800);
-  await shot('08_decor_sans_masque_controle');
-  await page.uncheck('#decor-sans-masque');
-  await page.click('.decor-bar .seg button:has-text("Avec masques")');
-  await page.evaluate(() => document.querySelector('.dgrid.sols').scrollIntoView());
-  await page.waitForTimeout(800);
-  const sols = await page.$$eval('.dgrid.sols .soltile', (l) => l.map((t) => getComputedStyle(t).backgroundSize));
+  const sols = await page.$$eval('.citem.t-sol .soltile', (l) => l.map((t) => getComputedStyle(t).backgroundSize));
   check(`${label} : sols répétés 2×2`, sols.length >= 9 && sols.every((s) => s === '50% 50%'), `${sols.length} sols`);
   await shot('09_decor_sols');
+  await page.evaluate(() => { cat.map = ''; cat.type = ''; saveCatalogue(); });
 
-  // Détail d'un objet (repli).
+  // Fiche d'un objet (repli).
   await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/decor/objets/mur_soutenement.png'));
   await page.waitForSelector('.stage .dlayers');
   await page.click('#detail .seg button:has-text("Avec masques")');
   await page.waitForTimeout(800);
   const src = await page.evaluate(() => state.assetsById.get('gordeka/decor/objets/mur_soutenement.png').decor.source);
   const lib = { pixelforge: 'pixelforge', repli: 'repli', aucun: 'sans masque' }[src] || src;
-  check(`${label} : détail, source des masques affichée`, (await page.textContent('#detail .credits')).includes(lib), src);
+  check(`${label} : fiche, source des masques affichée`, (await page.textContent('#detail .credits')).includes(lib), src);
   await shot('10_detail_objet');
-  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/decor/objets/fronton.png'));
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/decor/objets/tour_phare.png'));
   await page.waitForSelector('.stage .dlayers');
   await page.click('#detail .seg button:has-text("Avec masques")');
   await page.waitForTimeout(800);
-  await shot('11_detail_fronton');
+  await shot('11_detail_phare');
 
-  // Borroka : replié, toujours accessible.
+  // Borroka : hors du catalogue par défaut, accessible par le type « Borroka (archive) ».
   await page.goto(BASE + '#/assets');
-  await page.waitForSelector('.cats li.section');
-  const folded = (await page.$$('.cats button:has(span:text-is("Combattants"))')).length === 0;
-  check(`${label} : Borroka replié`, folded);
-  await page.click('.cats li.section.foldable button');
-  await page.click('.cats button:has(span:text-is("Combattants"))');
-  await page.waitForSelector('.tile[data-id="fighters/maia/sheet.png"]');
+  await page.waitForSelector('.cgroup');
+  check(`${label} : Borroka masqué par défaut`, !(await page.$('.citem[data-key="fighters/maia/sheet.png"]')));
+  await page.selectOption('#cat-type', 'borroka');
+  await page.fill('#cat-search', 'maia');
+  await page.waitForSelector('.citem[data-key="fighters/maia/sheet.png"]');
+  await page.fill('#cat-search', '');
   check(`${label} : combattants de Borroka accessibles`, true);
+  await page.selectOption('#cat-type', '');
   await page.click('#tabs a[data-tab="kanban"]');
   await page.waitForSelector('#board .column.active, #board:not(.mobile) .column');
   check(`${label} : kanban`, true);
@@ -280,8 +286,9 @@ for (const [label, browser, opts] of runs) {
   await page.waitForSelector('#login:not([hidden])');
   await page.fill('#password', PASSWORD);
   await page.click('#login-form button[type=submit]');
-  await page.waitForSelector('.gk-perso');
-  await page.click('.gk-perso[data-perso="louis"] .gk-anim[data-anim="walk"]');
+  await page.waitForSelector('#view-bord:not([hidden])');
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/persos/louis/animations') + '/walk');
+  await page.click('#detail button:has-text("Plein écran")');
   await page.waitForSelector('.fs canvas');
   const swipe = (x0, y0, x1, y1) => page.evaluate(([x0, y0, x1, y1]) => {
     const s = document.querySelector('.fs-stage');
@@ -320,26 +327,31 @@ for (const [label, browser, opts] of runs) {
   await page.waitForSelector('#login:not([hidden])');
   await page.fill('#password', PASSWORD);
   await page.click('#login-form button[type=submit]');
-  await page.waitForSelector('.gk-perso');
+  await page.waitForSelector('#view-bord:not([hidden])');
+  await persosView(page);
   const CAS = [['txomin', 'ghost'], ['mattin', 'ghost'], ['amaia', 'hunter_reveal'], ['amaia', 'walk'], ['louis', 'walk']];
   const present = await page.evaluate((cas) => cas.filter(([p, n]) => gkAnims(p).some((x) => x.name === n)), CAS);
-  const verifie = async (lieu, frames) => {
-    const d = await page.evaluate(() => { const d = window.__draws; window.__draws = []; return d; });
+  // `nom` : seules les images de cette planche comptent (la souris peut frôler une autre vignette en chemin).
+  const verifie = async (lieu, frames, nom) => {
+    let d = await page.evaluate(() => { const d = window.__draws; window.__draws = []; return d; });
+    if (nom) d = d.filter((x) => x.src.includes('%2F' + nom + '.png'));
     const faux = d.filter((x) => x.sw * frames !== x.iw || x.sx % x.sw !== 0);
     const sauts = new Set(d.map((x) => x.sx / x.sw)).size;
-    check(`case par case : ${lieu}`, d.length >= 3 && faux.length === 0 && sauts >= 2, `${d.length} images, ${faux.length} fausses, ${sauts} cases`);
+    check(`case par case : ${lieu}`, d.length >= 3 && faux.length === 0 && sauts >= 2, `${d.length} images, ${faux.length} fausses, ${sauts} cases` + (faux.length ? ' ' + JSON.stringify(faux[0]).slice(0, 300) : ''));
     return d;
   };
   for (const [pid, name] of present) {
     const frames = await page.evaluate(([p, n]) => gkAnims(p).find((x) => x.name === n).frames, [pid, name]);
-    const cell = `.gk-perso[data-perso="${pid}"] .gk-anim[data-anim="${name}"]`;
-    await page.locator(cell).scrollIntoViewIfNeeded();
+    const vign = cell(pid, name);
+    await persosView(page);
+    await page.locator(vign).scrollIntoViewIfNeeded();
     await page.evaluate(() => { window.__draws = []; });
-    await page.hover(cell);
+    await page.hover(vign);
     await page.waitForTimeout(500);
-    const d = await verifie(`${pid}/${name}, vignette`, frames);
+    const d = await verifie(`${pid}/${name}, vignette`, frames, name);
     check(`${pid}/${name} : planche en URL versionnée (&v=)`, d.every((x) => /[?&]v=[0-9a-f]{10}/.test(x.src)));
-    await page.click(cell);
+    await page.click(vign);
+    await page.click('#detail button:has-text("Plein écran")');
     await page.waitForSelector('.fs canvas');
     await page.waitForTimeout(500);
     await verifie(`${pid}/${name}, plein écran`, frames);
@@ -378,10 +390,9 @@ for (const [label, browser, opts] of runs) {
   await page.waitForTimeout(600);
   await verifie('amaia/walk, page des animations', await page.evaluate(() => gkAnims('amaia').find((x) => x.name === 'walk').frames));
   // Index périmé : largeurs de case fausses dans l'index, la planche fait foi.
-  await page.goto(BASE + '#/assets');
-  await page.waitForSelector('.gk-perso');
+  await persosView(page);
   await page.evaluate(() => { for (const x of gkAnims('amaia')) x.w += 22; window.__draws = []; });
-  const c2 = '.gk-perso[data-perso="amaia"] .gk-anim[data-anim="walk"]';
+  const c2 = cell('amaia', 'walk');
   await page.locator(c2).scrollIntoViewIfNeeded();
   await page.hover(c2);
   await page.waitForTimeout(500);

@@ -38,6 +38,10 @@ const state = {
   decorMode: store('producer-decor-mode') || 'masques',   // image | masques | controle
   decorSansMasque: false,  // filtre « sans masque » du décor
   fs: null,          // lecteur plein écran ouvert
+  milestones: [],    // jalons de la roadmap
+  kb: { q: '', type: '', perso: '', map: '', ms: '' },   // filtres du kanban (retenus)
+  selecting: false,  // kanban : mode sélection (actions groupées)
+  selected: new Set(),
 };
 
 // ------------------------------------------------------------------ utilitaires
@@ -47,7 +51,9 @@ const state = {
 // Un asset plus grand que la scène (HD de Gordeka) est réduit, sans arrondi.
 function autoZoom(stage, w, h, max) {
   const fitW = (Math.min(stage.clientWidth, 900) - 24) / w;
-  const fitH = Math.max(160, window.innerHeight * 0.55) / h;
+  // Fiche sur téléphone : visionneuse plus basse, le pilotage reste à portée de pouce.
+  const part = stage.closest('.fiche') && window.innerWidth < 900 ? 0.36 : 0.55;
+  const fitH = Math.max(160, window.innerHeight * part) / h;
   const fit = Math.min(fitW, fitH);
   return fit < 1 ? Math.max(0.1, fit) : Math.min(max, Math.floor(fit));
 }
@@ -194,6 +200,8 @@ async function boot() {
   initAssetsView();
   initKanban();
   initCommentsView();
+  initCatalogue();
+  initJeu();
   window.addEventListener('hashchange', route);
   const s = await guarded(() => api('session'));
   if (!s) return;
@@ -228,18 +236,13 @@ async function enter() {
   $('login').hidden = true;
   $('tabs').hidden = false;
   $('logout').hidden = false;
-  const [index, iv] = await Promise.all([api('index'), api('index_version'), reloadComments(), reloadCards()]);
+  const [index, iv] = await Promise.all([api('index'), api('index_version'), reloadComments(), reloadCards(),
+    reloadMilestones()]);
   state.indexV = iv.v;
   state.index = index;
   state.assetsById = new Map(index.assets.map((a) => [a.id, a]));
-  // Première ouverture : la première catégorie non vide (les persos de Gordeka),
-  // une section par perso.
-  if (!state.cat && !state.group) {
-    state.cat = index.categories.find((c) => index.assets.some((a) => a.cat === c)) || '';
-  }
   const dl = $('asset-ids');
   dl.replaceChildren(...index.assets.map((a) => el('option', { value: a.id })));
-  renderCats();
   route();
 }
 
@@ -255,36 +258,52 @@ async function reloadCards() {
 
 // ---------------------------------------------------------------- routage
 
+const TABS = ['bord', 'kanban', 'assets', 'jeu', 'roadmap', 'comments', 'aide'];
+
 function route() {
   if (!state.index) return;
-  const hash = location.hash || '#/assets';
+  const hash = location.hash || '#/bord';
   const [, tab, ...rest] = hash.split('/');
-  const current = ['assets', 'kanban', 'comments'].includes(tab) ? tab : 'assets';
+  const current = TABS.includes(tab) ? tab : 'bord';
   for (const a of document.querySelectorAll('#tabs a')) {
     a.classList.toggle('active', a.dataset.tab === current);
   }
   for (const v of document.querySelectorAll('.view')) v.hidden = v.id !== 'view-' + current;
   stopPlayer();
   if (state.fs) closePlayer(false);
+  renderNavBadges();
   if (current === 'assets') {
-    const id = rest.length ? decodeURIComponent(rest.join('/')) : '';
-    if (id && state.assetsById.has(id)) showDetail(state.assetsById.get(id));
-    else showGrid();
+    // #/assets/<id encodé>[/<détail encodé>] : fiche d'un élément (asset, animation d'un perso…).
+    const parts = rest.map((x) => { try { return decodeURIComponent(x); } catch (e) { return x; } });
+    if (parts[0]) showFiche(parts[0], parts[1] || '');
+    else renderCatalogue();
   } else if (current === 'kanban') {
     renderBoard();
+  } else if (current === 'jeu') {
+    renderJeu(rest[0] || '');
+  } else if (current === 'roadmap') {
+    renderRoadmap();
+  } else if (current === 'bord') {
+    renderBord();
+  } else if (current === 'aide') {
+    renderAide();
   } else {
     renderCommentList();
   }
 }
 
+/** Pastilles de la navigation : cartes à valider (QA), commentaires d'asset ouverts. */
+function renderNavBadges() {
+  const qa = state.cards.filter((c) => c.status === 'qa' && !c.children).length;
+  const open = state.comments.filter((c) => c.status === 'open').length;
+  $('nav-qa').textContent = qa ? String(qa) : '';
+  $('nav-qa').title = qa ? `${qa} carte(s) à valider` : '';
+  $('nav-comments').textContent = open ? String(open) : '';
+}
+
 // ================================================================== ASSETS
 
 function initAssetsView() {
-  $('search').addEventListener('input', (e) => {
-    state.search = e.target.value.trim().toLowerCase();
-    if (location.hash.startsWith('#/assets/')) location.hash = '#/assets';
-    else showGrid();
-  });
   applyStageBg();
 }
 
@@ -296,56 +315,6 @@ function openCount(assetId) {
   return state.comments.filter((c) => c.asset === assetId && c.status === 'open').length;
 }
 
-function renderCats() {
-  const ul = $('cats');
-  const assets = state.index.assets;
-  const items = [];
-  const mk = (label, cat, group, count, sub) => {
-    const active = state.cat === cat && state.group === group;
-    const li = el('li', { class: sub ? 'sub' + (state.cat === cat ? ' show' : '') : '' },
-      el('button', {
-        type: 'button', class: active ? 'active' : '',
-        onclick: () => {
-          state.cat = cat; state.group = group;
-          renderCats();
-          if (location.hash.startsWith('#/assets/')) location.hash = '#/assets';
-          else showGrid();
-        },
-      }, el('span', { text: label }), el('span', { class: 'muted', text: String(count) })));
-    items.push(li);
-  };
-  mk('Tout', '', '', assets.length, false);
-  // Sections (Gordeka, Borroka, Audio) ; un index ancien n'a que les catégories.
-  const sections = state.index.sections || [{ name: '', categories: state.index.categories }];
-  for (const section of sections) {
-    if (!assets.some((a) => section.categories.includes(a.cat))) continue;
-    // Section repliable (Borroka, l'ancien jeu) : repliée par défaut, sauf si on y est.
-    const key = 'producer-open-' + section.name;
-    const open = !section.collapsed || store(key) === '1' || section.categories.includes(state.cat);
-    if (section.name) {
-      items.push(el('li', { class: 'section' + (section.collapsed ? ' foldable' : '') },
-        section.collapsed
-          ? el('button', {
-            type: 'button', 'aria-expanded': String(open),
-            onclick: () => { store(key, open ? '0' : '1'); renderCats(); },
-          }, (open ? '▾ ' : '▸ ') + section.name)
-          : section.name));
-    }
-    if (open) for (const cat of section.categories) mkCat(cat);
-  }
-  ul.replaceChildren(...items);
-
-  function mkCat(cat) {
-    const inCat = assets.filter((a) => a.cat === cat);
-    if (!inCat.length) return;
-    mk(cat, cat, '', inCat.length, false);
-    const groups = [...new Set(inCat.map((a) => a.group))];
-    if (groups.length > 1) {
-      for (const g of groups) mk(g, cat, g, inCat.filter((a) => a.group === g).length, true);
-    }
-  }
-}
-
 // Catégories rangées par famille, une section par perso.
 const BY_KIND = ['Combattants', 'Persos'];
 
@@ -355,57 +324,6 @@ function faceOf(cat, group) {
   if (cat !== 'Persos') return null;
   const mine = state.index.assets.filter((x) => x.cat === cat && x.group === group);
   return mine.find((x) => x.kind === 'modele') || mine.find((x) => x.kind === 'anim') || mine.find((x) => x.kind === 'candidat');
-}
-
-function filteredAssets() {
-  const q = state.search;
-  return state.index.assets.filter((a) =>
-    (!state.cat || a.cat === state.cat) &&
-    (!state.group || a.group === state.group) &&
-    (!q || a.id.toLowerCase().includes(q) || a.name.toLowerCase().includes(q) ||
-      (a.anims || []).some((x) => x.name.includes(q))));
-}
-
-function showGrid() {
-  stopPlayer();
-  $('detail').hidden = true;
-  const grid = $('grid');
-  grid.hidden = false;
-  grid.classList.remove('grouped');
-  // Vues dédiées de Gordeka (hors recherche) : persos et décor.
-  if (!state.search && state.cat === 'Persos' && state.index.gordeka) { renderPersos(grid); return; }
-  if (!state.search && state.cat === 'Décor') { renderDecor(grid); return; }
-  const list = filteredAssets();
-  if (!list.length) {
-    grid.replaceChildren(el('p', { class: 'empty', text: 'Aucun asset ne correspond.' }));
-    return;
-  }
-  // Sans sous-groupe choisi : une section par combattant (ou par catégorie
-  // pour « Tout »), pour voir tous les assets d'un perso d'un coup d'œil.
-  const key = state.group ? null : state.cat ? (a) => a.group : (a) => a.cat;
-  const keys = key ? [...new Set(list.map(key))] : [];
-  const byKind = BY_KIND.includes(state.cat);
-  if (keys.length < 2) {
-    if (byKind) { grid.classList.add('grouped'); grid.replaceChildren(...kindBlocks(list)); }
-    else grid.replaceChildren(...list.map(tile));
-    return;
-  }
-  grid.classList.add('grouped');
-  grid.replaceChildren(...keys.map((k) => {
-    const items = list.filter((a) => key(a) === k);
-    const fighter = byKind;
-    const face = fighter && faceOf(state.cat, k);
-    const open = () => {
-      if (fighter || state.cat) { state.group = k; } else { state.cat = k; state.group = ''; }
-      renderCats(); showGrid(); window.scrollTo(0, 0);
-    };
-    return el('section', { class: 'group' },
-      el('button', { type: 'button', class: 'group-head', onclick: open, title: 'Voir seulement ' + k },
-        face ? el('img', { src: fileUrl(face.preview), alt: '', class: face.smooth ? 'smooth' : null }) : null,
-        el('span', { class: 'group-name', text: k }),
-        el('span', { class: 'muted', text: items.length + ' asset' + (items.length > 1 ? 's' : '') })),
-      byKind ? kindBlocks(items) : el('div', { class: 'group-tiles' }, items.map(tile)));
-  }));
 }
 
 // Familles d'assets d'un combattant, dans l'ordre de la review.
@@ -450,57 +368,6 @@ function gkSlots(pid) {
   const slots = exp.map((e) => ({ ...e, anim: have.get(e.name) || null }));
   for (const [n, x] of have) if (!exp.some((e) => e.name === n)) slots.push({ name: n, loop: x.loop, a_venir: false, anim: x });
   return slots;
-}
-
-function renderPersos(grid) {
-  grid.classList.add('grouped');
-  const all = state.index.gordeka.persos;
-  const persos = state.group ? all.filter((p) => p === state.group) : all;
-  const blocks = [];
-  if (!state.group) blocks.push(recapTable(all));
-  for (const pid of persos) {
-    const mine = state.index.assets.filter((x) => x.cat === 'Persos' && x.group === pid);
-    const slots = gkSlots(pid);
-    const present = slots.filter((s) => s.anim).length;
-    const missing = slots.filter((s) => !s.anim);
-    const face = faceOf('Persos', pid);
-    const modele = mine.find((x) => x.kind === 'modele');
-    const animsAsset = state.assetsById.get(`gordeka/persos/${pid}/animations`);
-    const open = () => { state.group = pid; renderCats(); showGrid(); window.scrollTo(0, 0); };
-    const cells = slots.map((s) => (s.anim
-      ? hoverAnimCell(s.anim, 0, el('button', {
-        type: 'button', class: 'gk-anim', title: `${s.name} · ${s.anim.frames} images à ${s.anim.fps} i/s`,
-        'data-anim': s.name, onclick: () => openPlayer(pid, s.name),
-      }), (mini) => [el('div', { class: 'anim-box' }, mini),
-        el('span', { class: 'gk-anim-name', text: s.name }),
-        el('span', { class: 'muted', text: `${s.anim.frames} im. · ${s.anim.fps} i/s${s.anim.loop ? ' · boucle' : ''}` }),
-        glisseNote(s.anim)].filter(Boolean))
-      : el('div', { class: 'gk-anim missing', 'data-anim': s.name, title: s.a_venir ? 'clip sur mesure à venir' : 'pas encore générée' },
-        el('div', { class: 'anim-box' }, el('span', { text: s.a_venir ? 'à venir' : 'manquante' })),
-        el('span', { class: 'gk-anim-name', text: s.name }),
-        el('span', { class: 'muted', text: s.a_venir ? 'clip sur mesure' : 'manquante' }))));
-    const others = mine.filter((x) => ['masque', 'candidat', 'src'].includes(kindOf(x)));
-    blocks.push(el('section', { class: 'group gk-perso', id: 'perso-' + pid, 'data-perso': pid },
-      el('button', { type: 'button', class: 'group-head', onclick: open, title: 'Voir seulement ' + pid },
-        face ? el('img', { src: fileUrl(face.preview), alt: '', class: 'smooth' }) : null,
-        el('span', { class: 'group-name', text: pid }),
-        el('span', { class: 'muted', text: `${present}/${slots.length} animations` })),
-      el('div', { class: 'gk-perso-body' },
-        el('div', { class: 'gk-profil' },
-          modele ? tile(modele) : el('div', { class: 'gk-noprofil muted', text: 'pas de profil validé' })),
-        el('div', { class: 'gk-perso-anims' },
-          missing.length
-            ? el('p', { class: 'missing-band' },
-              el('strong', { text: `${missing.length} manquante${missing.length > 1 ? 's' : ''} : ` }),
-              missing.map((m) => m.name).join(', '))
-            : el('p', { class: 'missing-band ok', text: 'Toutes les animations sont là.' }),
-          el('div', { class: 'controls' },
-            present ? el('button', { type: 'button', class: 'small primary', onclick: () => openPlayer(pid, slots.find((s) => s.anim).name) }, '⛶ Plein écran') : null,
-            animsAsset ? el('a', { href: '#/assets/' + encodeURIComponent(animsAsset.id) }, 'Commenter les animations') : null),
-          el('div', { class: 'gk-anims' }, cells))),
-      others.length ? kindBlocks(others) : null));
-  }
-  grid.replaceChildren(...blocks);
 }
 
 // Récapitulatif global perso × animation.
@@ -834,46 +701,6 @@ function solCard(a) {
   el('span', { class: 'muted did', text: 'tuile de sol : pas de masque (collision par case)' }));
 }
 
-function renderDecor(grid) {
-  grid.classList.add('grouped');
-  const all = state.index.assets.filter((a) => a.cat === 'Décor');
-  const objets = all.filter((a) => a.kind === 'objet');
-  const sols = all.filter((a) => a.kind === 'sol');
-  // Les tuiles de sol (et de bord) n'ont pas de masque par conception (collision par case) :
-  // jamais dans « sans masque », seuls les objets qui devraient en avoir un y figurent.
-  const isTuile = (a) => a.kind === 'sol' || /^tuile/.test((a.decor && a.decor.type) || '');
-  const sans = objets.filter((a) => !isTuile(a) && a.decor.sans_masque);
-  const shown = state.decorSansMasque ? sans : objets;
-  const aVenir = (state.index.gordeka && state.index.gordeka.decor_a_venir) || [];
-  const modeBtns = DECOR_MODES.map(([v, label]) => el('button', {
-    type: 'button', class: 'small' + (state.decorMode === v ? ' primary' : ''),
-    onclick: () => { state.decorMode = v; store('producer-decor-mode', v); renderDecor(grid); },
-  }, label));
-  const filter = el('label', { class: 'inline' },
-    el('input', { type: 'checkbox', id: 'decor-sans-masque', checked: state.decorSansMasque || null,
-      onchange: (ev) => { state.decorSansMasque = ev.target.checked; renderDecor(grid); } }),
-    `Sans masque seulement (${sans.length})`);
-  const blocks = [el('div', { class: 'decor-bar' }, el('div', { class: 'seg' }, modeBtns), filter), decorLegend()];
-  if (!state.group || state.group === 'objets') {
-    blocks.push(el('section', { class: 'group' },
-      el('h4', { class: 'kind', text: `Objets (${shown.length}${state.decorSansMasque ? ' sans masque' : ''})` }),
-      shown.length ? el('div', { class: 'dgrid' }, shown.map(decorCard))
-        : el('p', { class: 'empty', text: 'Tous les objets ont leurs masques pixelforge.' })));
-  }
-  if (!state.decorSansMasque && (!state.group || state.group === 'sols')) {
-    blocks.push(el('section', { class: 'group' },
-      el('h4', { class: 'kind', text: `Sols (${sols.length})` }),
-      el('div', { class: 'dgrid sols' }, sols.map(solCard))));
-  }
-  if (!state.decorSansMasque && !state.group && aVenir.length) {
-    blocks.push(el('section', { class: 'group' },
-      el('h4', { class: 'kind', text: `Pas encore d'image (${aVenir.length})` }),
-      el('div', { class: 'avenir' }, aVenir.map((e) => el('span', { class: 'chip', title: (e.zones || []).join(', ') },
-        el('strong', { text: e.nom }), ' ', el('span', { class: 'muted', text: e.categorie }))))));
-  }
-  grid.replaceChildren(...blocks);
-}
-
 function tile(a) {
   const n = openCount(a.id);
   const idle = a.type === 'sprite' && (a.anims.find((x) => x.name === 'idle') || a.anims[0]);
@@ -1016,9 +843,15 @@ function hoverMini(host, mini, tapHost = host) {
   return host;
 }
 
-function showDetail(a) {
+/**
+ * Fiche d'un asset : visionneuse (planche, image, décor avec masques, audio, données, gameplay)
+ * et, à côté, `opts.side` (bloc de pilotage du catalogue). `opts.detail` : animation affichée ;
+ * `opts.onAnim(nom)` : clic dans la galerie des animations (sinon, lecture dans la visionneuse).
+ */
+function showDetail(a, opts = {}) {
   stopPlayer();
   $('grid').hidden = true;
+  $('cat-bar').hidden = true;
   const d = $('detail');
   d.hidden = false;
   const smooth = a.smooth ? ' smooth' : '';
@@ -1070,7 +903,7 @@ function showDetail(a) {
   } else if (a.type === 'sprite') {
     const animSel = el('select', { 'aria-label': 'Animation' },
       a.anims.map((x) => el('option', { value: x.name, text: `${x.name} (${x.frames})` })));
-    const def = a.anims.find((x) => x.name === 'idle') || a.anims[0];
+    const def = a.anims.find((x) => x.name === opts.detail) || a.anims.find((x) => x.name === 'idle') || a.anims[0];
     animSel.value = def.name;
     const canvas = el('canvas');
     const ctx = canvas.getContext('2d');
@@ -1120,7 +953,10 @@ function showDetail(a) {
     gallery = el('div', { class: 'anim-gallery' }, a.anims.map((x) =>
       hoverAnimCell(x, 88, el('button', {
         type: 'button', class: 'anim-cell', title: `${x.name} (${x.frames} images)`,
-        onclick: () => { animSel.value = x.name; load(x); stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); },
+        onclick: () => {
+          if (opts.onAnim) { opts.onAnim(x.name); return; }
+          animSel.value = x.name; load(x); stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        },
       }), (mini) => [el('div', { class: 'anim-box' }, mini), el('span', { text: x.name })])));
     playBtn.addEventListener('click', () => {
       p.playing = !p.playing;
@@ -1198,6 +1034,10 @@ function showDetail(a) {
         el('dt', { text: 'Zones' }), el('dd', { text: (d.zones || []).join(', ') || '—' }),
         el('dt', { text: 'Avertissements' }), el('dd', {}, warn.length ? el('ul', { class: 'warns' }, warn.map((w) => el('li', { text: w }))) : '—')));
     context = () => 'vue : ' + mode;
+  } else if (a.type === 'jeu') {
+    // Règles, option de partie, écran de menu : rendus par jeu.js.
+    stage.classList.add('data-stage', 'jeu-stage');
+    stage.append(jeuView(a));
   } else {
     const img = el('img', { src: fileUrl(a.file), alt: a.name, width: a.w, height: a.h });
     stage.append(img);
@@ -1210,7 +1050,7 @@ function showDetail(a) {
   }
   zoomSel.addEventListener('change', () => { state.zoom = Number(zoomSel.value); applyZoom(); });
 
-  const toolbar = el('div', { class: 'controls' }, bgButtons,
+  const toolbar = a.type === 'jeu' ? null : el('div', { class: 'controls' }, bgButtons,
     a.type !== 'audio' && a.type !== 'data' ? zoomSel : null);
 
   const commentsBox = el('div', { class: 'asset-comments' });
@@ -1221,12 +1061,9 @@ function showDetail(a) {
   };
   renderAssetComments();
 
+  if (opts.contextRef) { opts.contextRef.get = context; opts.contextRef.comments = renderAssetComments; }
   // replaceChildren écrirait « null » : les blocs absents sont retirés.
-  d.replaceChildren(...[
-    el('div', { class: 'detail-head' },
-      el('button', { type: 'button', class: 'small', onclick: () => { location.hash = '#/assets'; } }, '← Retour'),
-      el('h2', { text: a.name }),
-      el('button', { type: 'button', class: 'small', onclick: () => openCardDialog(null, a.id) }, '+ Carte liée')),
+  const main = el('div', { class: 'fiche-main' }, ...[
     toolbar,
     stage,
     controls,
@@ -1235,14 +1072,22 @@ function showDetail(a) {
     el('p', { class: 'meta' },
       `${a.id} · version ${a.version} · build ${state.index.commit}` +
       (a.w ? ` · ${a.w}×${a.h}` : '') + (a.note ? ' · ' + a.note : '')),
-    el('h3', { text: 'Ton avis' }),
-    commentForm(a, context, renderAssetComments),
-    el('h3', { text: 'Historique' }),
+    opts.side ? null : el('h3', { text: 'Ton avis' }),
+    opts.side ? null : commentForm(a, context, renderAssetComments),
+    el('h3', { text: 'Commentaires de l\'asset (toutes versions)' }),
     commentsBox,
+  ].filter(Boolean));
+  d.replaceChildren(...[
+    el('div', { class: 'detail-head' },
+      el('button', { type: 'button', class: 'small', onclick: () => { location.hash = opts.back || '#/assets'; } }, '← Catalogue'),
+      el('h2', { text: opts.title || a.name }),
+      opts.pill || null,
+      el('button', { type: 'button', class: 'small', onclick: () => openCardDialog(null, a.id) }, '+ Carte liée')),
+    opts.side ? el('div', { class: 'fiche' }, main, opts.side) : main,
   ].filter(Boolean));
 }
 
-function commentForm(a, context, after) {
+function commentForm(a, context, after, cardId) {
   let kind = 'amelioration';
   const text = el('textarea', { rows: 3, maxlength: 8000, placeholder: 'Ce qu\'il faudrait changer, ou pourquoi c\'est bon…', 'aria-label': 'Commentaire' });
   const kinds = ['amelioration', 'valide'].map((k) => el('button', {
@@ -1256,8 +1101,14 @@ function commentForm(a, context, after) {
     ev.preventDefault();
     send.disabled = true;
     const ok = await guarded(async () => {
-      await api('comment', { method: 'POST', body: { asset: a.id, kind, body: text.value, context: context() } });
-      await reloadComments();
+      if (cardId) {
+        // Depuis une carte : le commentaire d'asset est aussi reporté sur cette carte.
+        await api('asset_comment', { method: 'POST', body: { asset: a.id, kind, body: text.value, context: context(), card: cardId } });
+        await Promise.all([reloadComments(), reloadCards()]);
+      } else {
+        await api('comment', { method: 'POST', body: { asset: a.id, kind, body: text.value, context: context() } });
+        await reloadComments();
+      }
       return true;
     });
     send.disabled = false;
@@ -1277,6 +1128,8 @@ function commentEl(c, withAsset, after) {
     el('span', { class: 'badge ' + (c.status === 'done' ? 'done' : ''), text: c.status === 'done' ? 'Traité' : 'Ouvert' }),
     c.outdated ? el('span', { class: 'badge old', text: 'version précédente' }) : null,
     withAsset ? el('a', { href: '#/assets/' + encodeURIComponent(c.asset), text: asset ? asset.name : c.asset }) : null,
+    c.card_id ? el('a', { href: '#/kanban', class: 'small', text: '→ carte #' + c.card_id,
+      onclick: (ev) => { ev.preventDefault(); const k = cardById(c.card_id); if (k) openCardDialog(k, ''); else toast('Carte introuvable'); } }) : null,
     el('span', { class: 'muted', text: `#${c.id} · v ${c.version} · ${fmtDate(c.created_at)}` + (c.context ? ' · ' + c.context : '') }));
   const toggle = el('button', {
     type: 'button', class: 'small',
@@ -1411,6 +1264,8 @@ function initKanban() {
   $('cf-type').addEventListener('change', () => saveNow('type', $('cf-type'), () => $('cf-type').value));
   $('cf-priority').addEventListener('change', () => saveNow('priority', $('cf-priority'), () => $('cf-priority').value));
   $('cf-parent').addEventListener('change', () => saveNow('parent', $('cf-parent'), () => Number($('cf-parent').value) || 0));
+  $('cf-milestone').addEventListener('change', () => saveNow('milestone', $('cf-milestone'), () => Number($('cf-milestone').value) || 0));
+  $('cf-due').addEventListener('change', () => saveNow('due', $('cf-due'), () => $('cf-due').value));
   // Champs texte : enregistrés avec « Enregistrer » ; on le signale tant que ce n'est pas fait.
   for (const id of ['cf-title', 'cf-desc', 'cf-asset', 'cf-detail']) {
     $(id).addEventListener('input', () => setDirty(!!state.editing));
@@ -1452,6 +1307,7 @@ function initKanban() {
     renderBoard();
   });
   $('cf-night-children').addEventListener('click', nightToChildren);
+  initKbFilters();
   $('kb-hat').addEventListener('change', () => {
     state.hat = Number($('kb-hat').value) || 0;
     store('producer-kb-hat', String(state.hat));
@@ -1534,6 +1390,8 @@ function refreshOpenCard(assetsChanged) {
   if (free('cf-type')) $('cf-type').value = c.type;
   if (free('cf-priority')) $('cf-priority').value = c.priority;
   if (free('cf-parent')) parentOptions($('cf-parent'), c.parent_id, familyIds(c.id));
+  if (free('cf-milestone')) milestoneOptions($('cf-milestone'), c.milestone_id);
+  if (free('cf-due')) $('cf-due').value = c.due || '';
   const assetMoved = c.asset !== cur.asset || c.detail !== cur.detail;
   if (!state.dirty) {
     for (const [id, v] of [['cf-title', c.title], ['cf-desc', c.description], ['cf-asset', c.asset], ['cf-detail', c.detail]]) {
@@ -1570,8 +1428,144 @@ function renderHatFilter() {
   sel.value = state.hat ? String(state.hat) : '';
 }
 
+// ---------------------------------------------------- filtres, recherche, sélection
+
+const KB_FILTERS = ['q', 'type', 'perso', 'map', 'ms'];
+
+function initKbFilters() {
+  try { Object.assign(state.kb, JSON.parse(store('producer-kb-filters') || '{}')); } catch (e) { /* filtres illisibles */ }
+  const save = () => store('producer-kb-filters', JSON.stringify(state.kb));
+  $('kb-search').value = state.kb.q || '';
+  let t = 0;
+  $('kb-search').addEventListener('input', () => {
+    clearTimeout(t);
+    t = setTimeout(() => { state.kb.q = $('kb-search').value.trim(); save(); renderBoard(); }, 150);
+  });
+  for (const [id, key] of [['kb-type', 'type'], ['kb-perso', 'perso'], ['kb-map', 'map'], ['kb-ms', 'ms']]) {
+    $(id).addEventListener('change', () => { state.kb[key] = $(id).value; save(); renderBoard(); });
+  }
+  $('kb-reset').addEventListener('click', () => {
+    state.kb = { q: '', type: '', perso: '', map: '', ms: '' };
+    $('kb-search').value = '';
+    state.hat = 0; store('producer-kb-hat', '0');
+    state.nightOnly = false; $('kb-night-only').checked = false; store('producer-kb-night-only', '0');
+    save();
+    renderBoard();
+  });
+  $('kb-select').addEventListener('click', () => setSelecting(!state.selecting));
+}
+
+/** Remplit les listes de filtres (types, persos, cartes de jeu, jalons) en gardant le choix. */
+function renderKbFilters() {
+  const fill = (id, first, opts, value) => {
+    const sel = $(id);
+    sel.replaceChildren(el('option', { value: '', text: first }), ...opts.map(([v, t]) => el('option', { value: v, text: t })));
+    sel.value = opts.some(([v]) => v === value) ? value : '';
+    sel.classList.toggle('on', !!sel.value);
+  };
+  const g = state.index.gordeka || {};
+  fill('kb-type', 'Tous les types', Object.entries(TYPE_LABEL), state.kb.type);
+  fill('kb-perso', 'Tous les persos', (g.persos || []).map((p) => [p, persoName(p)]), state.kb.perso);
+  fill('kb-map', 'Toutes les cartes de jeu', (g.cartes || []).filter((c) => c.jouable).map((c) => [c.id, c.nom]), state.kb.map);
+  fill('kb-ms', 'Tous les jalons', [['none', 'Sans jalon'], ...state.milestones.map((m) => [String(m.id), m.title])], state.kb.ms);
+  const n = KB_FILTERS.filter((k) => state.kb[k]).length + (state.hat ? 1 : 0) + (state.nightOnly ? 1 : 0);
+  $('kb-reset').hidden = !n;
+}
+
+/** La carte, ou un de ses chapeaux, vérifie `test` ? */
+function selfOrAncestor(c, test) {
+  for (let cur = c, g = 0; cur && g < 10; g++) {
+    if (test(cur)) return true;
+    cur = cur.parent_id ? cardById(cur.parent_id) : null;
+  }
+  return false;
+}
+
+function cardMatchesPerso(c, pid) {
+  const nom = norm(persoName(pid));
+  return selfOrAncestor(c, (x) => (x.asset || '').includes(`/persos/${pid}/`) || new RegExp(`(^|[^a-z])${nom}([^a-z]|$)`).test(norm(x.title)));
+}
+
+function cardMatchesMap(c, mid) {
+  const carte = ((state.index.gordeka || {}).cartes || []).find((m) => m.id === mid);
+  const nom = carte ? norm(carte.nom) : mid;
+  return selfOrAncestor(c, (x) => {
+    if (carte && carte.chapeau === x.id) return true;
+    const a = x.asset ? state.assetsById.get(x.asset) : null;
+    if (a && a.decor && (a.decor.cartes || [a.decor.carte]).includes(mid)) return true;
+    if ((x.asset || '').startsWith(`maps/${mid}/`)) return true;
+    return !!nom && norm(x.title).includes(nom);
+  });
+}
+
+function kbFiltered(cards) {
+  const { q, type, perso, map, ms } = state.kb;
+  if (type) cards = cards.filter((c) => c.type === type);
+  if (perso) cards = cards.filter((c) => cardMatchesPerso(c, perso));
+  if (map) cards = cards.filter((c) => cardMatchesMap(c, map));
+  if (ms) cards = cards.filter((c) => (ms === 'none' ? milestoneOf(c) === null : milestoneOf(c) === Number(ms)));
+  if (q) {
+    const n = norm(q);
+    const id = /^#?(\d+)$/.exec(q);
+    cards = cards.filter((c) => (id && c.id === Number(id[1])) || norm(c.title + ' ' + c.description).includes(n));
+  }
+  return cards;
+}
+
+function setSelecting(on) {
+  state.selecting = on;
+  if (!on) state.selected.clear();
+  $('kb-select').classList.toggle('primary', on);
+  $('kb-select').setAttribute('aria-pressed', on ? 'true' : 'false');
+  renderBoard();
+}
+
+function toggleSelected(id, on) {
+  if (on) state.selected.add(id); else state.selected.delete(id);
+  renderBulkBar();
+  const node = document.querySelector(`#board .card[data-id="${id}"]`);
+  if (node) node.classList.toggle('selected', on);
+}
+
+/** Barre des actions groupées : déplacer, night shift, priorité, jalon. */
+function renderBulkBar() {
+  const bar = $('kb-bulk');
+  bar.hidden = !state.selecting;
+  if (!state.selecting) return;
+  const ids = [...state.selected].filter((id) => cardById(id));
+  const run = async (body, label) => {
+    if (!ids.length) { toast('Aucune carte sélectionnée'); return; }
+    const r = await guarded(async () => {
+      const res = await api('cards_bulk', { method: 'POST', body: { ids, ...body } });
+      await reloadCards();
+      return res;
+    });
+    if (!r) return;
+    toast(`${label} : ${r.changed} carte${r.changed > 1 ? 's' : ''} modifiée${r.changed > 1 ? 's' : ''}`);
+    renderBoard();
+  };
+  const sel = (label, opts, apply) => {
+    const s = el('select', { 'aria-label': label },
+      el('option', { value: '', text: label }), opts.map(([v, t]) => el('option', { value: v, text: t })));
+    s.addEventListener('change', () => { if (s.value !== '') apply(s.value); s.value = ''; });
+    return s;
+  };
+  const visible = [...document.querySelectorAll('#board .card[data-id]')].map((n) => Number(n.dataset.id));
+  bar.replaceChildren(
+    el('strong', { text: `${ids.length} sélectionnée${ids.length > 1 ? 's' : ''}` }),
+    el('button', { type: 'button', class: 'small', onclick: () => { for (const id of visible) state.selected.add(id); renderBoard(); } }, 'Tout ce qui est affiché'),
+    el('button', { type: 'button', class: 'small ghost', onclick: () => { state.selected.clear(); renderBoard(); } }, 'Aucune'),
+    sel('Déplacer vers…', STATUSES, (v) => run({ status: v }, 'Déplacées')),
+    sel('🌙 Night shift…', [['1', 'Activer'], ['0', 'Désactiver']], (v) => run({ night: v === '1' }, 'Night shift')),
+    sel('Priorité…', [['haute', 'Haute'], ['normale', 'Normale'], ['basse', 'Basse'], ['-', 'Aucune']],
+      (v) => run({ priority: v === '-' ? '' : v }, 'Priorité')),
+    sel('Jalon…', [...state.milestones.map((m) => [String(m.id), m.title]), ['0', 'Aucun jalon']],
+      (v) => run({ milestone: Number(v) }, 'Jalon')),
+    el('button', { type: 'button', class: 'small', onclick: () => setSelecting(false) }, 'Terminer'));
+}
+
 function visibleCards() {
-  let cards = state.cards;
+  let cards = kbFiltered(state.cards);
   if (state.nightOnly) cards = cards.filter((c) => c.night);
   if (state.hat) {
     const fam = familyIds(state.hat);
@@ -1651,7 +1645,7 @@ function renderKbTabs(cards) {
   }, el('span', { text: label }), el('span', { class: 'n', text: String(cards.filter((c) => c.status === status).length) }))),
   el('button', {
     type: 'button', class: 'kb-tab kb-filters' + ($('view-kanban').classList.contains('filters-open') ? ' active' : '')
-      + (state.hat || state.hatsOnly || state.noHats || state.nightOnly ? ' on' : ''),
+      + (state.hat || state.hatsOnly || state.noHats || state.nightOnly || KB_FILTERS.some((k) => state.kb[k]) ? ' on' : ''),
     'aria-label': 'Filtres et nouvelle carte', title: 'Filtres et nouvelle carte',
     onclick: () => { $('view-kanban').classList.toggle('filters-open'); renderBoard(); },
   }, '☰'));
@@ -1676,9 +1670,10 @@ function cardCompact(c) {
     act = [sel];
   }
   const card = el('div', {
-    class: 'card compact t-' + c.type, 'data-id': c.id, tabindex: '0',
-    onclick: () => openCardDialog(c, ''),
+    class: 'card compact t-' + c.type + (state.selected.has(c.id) ? ' selected' : ''), 'data-id': c.id, tabindex: '0',
+    onclick: () => (state.selecting ? toggleSelected(c.id, !state.selected.has(c.id)) : openCardDialog(c, '')),
   },
+  state.selecting ? selectBox(c) : null,
   el('span', { class: 'card-thumb none' }),
   el('div', { class: 'cbody' },
     el('div', { class: 'title', text: c.title }),
@@ -1688,6 +1683,7 @@ function cardCompact(c) {
       c.rework ? el('span', { class: 'rework', text: '↺ à retraiter' }) : null,
       isFresh(c.asset) ? el('span', { class: 'fresh', text: '↻' }) : null,
       c.night ? el('span', { class: 'badge night', title: 'Night shift', text: '🌙' }) : null,
+      dueBadge(c.due, c.status === 'done'),
       c.children > 0 ? el('span', { class: 'muted', text: `▤ ${c.children_done}/${c.children}` }) : null,
       el('span', { class: 'muted', text: '#' + c.id }))),
   el('div', { class: 'cact' }, act));
@@ -1698,6 +1694,9 @@ function cardCompact(c) {
 
 function renderBoard() {
   renderHatFilter();
+  renderKbFilters();
+  renderBulkBar();
+  renderNavBadges();
   const board = $('board');
   const cards = visibleCards();
   const mobile = isKbMobile();
@@ -1732,6 +1731,13 @@ function renderBoard() {
     });
     return column;
   }));
+}
+
+/** Case à cocher d'une tuile en mode sélection. */
+function selectBox(c) {
+  const box = el('input', { type: 'checkbox', class: 'kb-check', 'aria-label': 'Sélectionner #' + c.id, checked: state.selected.has(c.id) || null });
+  box.addEventListener('click', (ev) => { ev.stopPropagation(); toggleSelected(c.id, box.checked); });
+  return box;
 }
 
 function typeBadge(type) {
@@ -1776,16 +1782,21 @@ function cardEl(c, col) {
   const qa = c.status === 'qa' ? el('div', { class: 'qa-actions' },
     el('button', { type: 'button', class: 'accept', onclick: (ev) => { ev.stopPropagation(); acceptCard(c); } }, '✓ Accepter'),
     el('button', { type: 'button', class: 'refuse', onclick: (ev) => { ev.stopPropagation(); openRefuse(c); } }, '✗ Refuser')) : null;
+  const ms = c.milestone_id ? milestoneById(c.milestone_id) : null;
   const card = el('div', {
-    class: 'card t-' + c.type + (c.children > 0 ? ' is-hat' : ''), draggable: 'true', 'data-id': c.id, tabindex: '0',
-    onclick: () => openCardDialog(c, ''),
+    class: 'card t-' + c.type + (c.children > 0 ? ' is-hat' : '') + (state.selected.has(c.id) ? ' selected' : ''),
+    draggable: 'true', 'data-id': c.id, tabindex: '0',
+    onclick: () => (state.selecting ? toggleSelected(c.id, !state.selected.has(c.id)) : openCardDialog(c, '')),
     onkeydown: (ev) => { if (ev.key === 'Enter' && ev.target === ev.currentTarget) openCardDialog(c, ''); },
   },
+  state.selecting ? selectBox(c) : null,
   el('span', { class: 'thumb-slot' }),   // asset en pleine largeur, en haut (s'il y en a un)
   el('div', { class: 'foot' },
     typeBadge(c.type),
     c.priority ? el('span', { class: 'badge ' + c.priority, text: PRIO_LABEL[c.priority] }) : null,
     c.night ? el('span', { class: 'badge night', title: 'Night shift : traitée la nuit (1 h – 8 h)', text: '🌙' }) : null,
+    dueBadge(c.due, c.status === 'done'),
+    ms ? el('span', { class: 'badge ms', title: 'Jalon', text: '⚑ ' + ms.title }) : null,
     el('span', { class: 'muted', text: '#' + c.id }),
     el('span', { class: 'spacer' }),
     el('span', { class: 'origin', title: 'Créée par ' + (AUTHOR_LABEL[c.origin] || c.origin), text: AUTHOR_LABEL[c.origin] || c.origin })),
@@ -1854,6 +1865,11 @@ function eventText(e) {
     case 'detail': return `a changé le détail de l'asset : ${e.new || 'aucun'}`;
     case 'accepte': return 'a accepté la carte : QA → Done';
     case 'night': return e.new === 'on' ? 'a activé le night shift 🌙' : 'a désactivé le night shift';
+    case 'jalon': {
+      const m = (id) => (id ? (milestoneById(Number(id)) || { title: '#' + id }).title : 'aucun');
+      return `a changé le jalon : ${m(e.old)} → ${m(e.new)}`;
+    }
+    case 'echeance': return `a changé l'échéance : ${e.old ? fmtDue(e.old) : 'aucune'} → ${e.new ? fmtDue(e.new) : 'aucune'}`;
     default: return e.type;
   }
 }
@@ -1900,6 +1916,8 @@ function openCardDialog(card, assetId, parentId) {
   $('cf-asset').value = card ? card.asset : assetId;
   $('cf-detail').value = card ? card.detail : '';
   $('cf-night').checked = card ? !!card.night : false;
+  milestoneOptions($('cf-milestone'), card ? card.milestone_id : 0);
+  $('cf-due').value = card ? card.due || '' : '';
   setDirty(false);
   setSaveState('');
   $('cf-night-children').hidden = !card || !card.children;
@@ -1928,7 +1946,15 @@ function cardBody() {
     description: $('cf-desc').value, asset: $('cf-asset').value.trim(), detail: $('cf-detail').value.trim(),
     night: $('cf-night').checked,
     parent: Number($('cf-parent').value) || 0,
+    milestone: Number($('cf-milestone').value) || 0,
+    due: $('cf-due').value,
   };
+}
+
+function milestoneOptions(select, current) {
+  select.replaceChildren(el('option', { value: '', text: '— aucun —' }),
+    ...state.milestones.map((m) => el('option', { value: m.id, text: m.title + (m.closed ? ' (clos)' : '') })));
+  select.value = current ? String(current) : '';
 }
 
 /** Ferme le détail ; demande confirmation s'il reste des champs texte non enregistrés. */
@@ -1960,7 +1986,8 @@ function setSaveState(st, msg) {
 async function saveNow(field, input, value) {
   const card = state.editing;
   if (!card) return;   // nouvelle carte : tout part à la création
-  const old = field === 'parent' ? (card.parent_id || 0) : field === 'night' ? !!card.night : card[field];
+  const old = field === 'parent' ? (card.parent_id || 0) : field === 'night' ? !!card.night
+    : field === 'milestone' ? (card.milestone_id || 0) : card[field];
   const v = value();
   if (v === old) return;
   input.disabled = true;
@@ -1978,6 +2005,7 @@ async function saveNow(field, input, value) {
   setSaveState('ok');
   state.editing = cardById(card.id) || card;
   if (field === 'parent') parentOptions($('cf-parent'), state.editing.parent_id, familyIds(card.id));
+  if (location.hash.startsWith('#/roadmap')) renderRoadmap();
   loadFeed(card.id);
   if (location.hash.startsWith('#/kanban')) renderBoard();
 }
@@ -2144,7 +2172,8 @@ function renderCardAsset() {
     view || el('p', { class: 'muted', text: a.id }),
     el('p', { class: 'meta', text: `${a.id} · version ${a.version}` }),
     anim ? glisseNote(anim) : null,
-    commentForm(a, () => (anim ? 'anim : ' + anim.name : ''), renderList),
+    commentForm(a, () => (anim ? 'anim : ' + anim.name : ''), () => { renderList(); if (state.editing) loadFeed(state.editing.id); },
+      state.editing ? state.editing.id : 0),
     list].filter(Boolean));
 }
 

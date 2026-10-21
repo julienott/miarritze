@@ -48,44 +48,45 @@ for (const [label, opts] of [['ordi', { viewport: { width: 1280, height: 900 } }
   await page.waitForSelector('#login:not([hidden])');
   await page.fill('#password', PASSWORD);
   await page.click('#login-form button[type=submit]');
-  await page.waitForSelector('.tile');
-  // Vue d'ensemble : une section par combattant, tuiles rangées par famille
-  // (la page s'ouvre sur Gordeka : on passe sur les combattants de Borroka).
-  await page.evaluate(() => document.querySelector('.cats li.foldable button[aria-expanded="false"]')?.click());   // Borroka est replié
-  await page.click('.cats button:has-text("Combattants")');
-  await page.waitForSelector('.group .group-head');
-  const heads = await page.$$eval('.group .group-name', (h) => h.map((x) => x.textContent));
-  check(`${label} : une section par combattant`, heads.length >= 13 && heads.includes(FID), heads.join(','));
-  const kinds = await page.$eval(`.group:has(.group-name:text-is("${FID}"))`, (g) => [...g.querySelectorAll('.kind')].map((k) => k.textContent));
-  check(`${label} : familles dans l'ordre de la review`,
-    kinds[0] === 'Animations' && kinds[1] === 'Portraits' && kinds.includes('Effets des spéciaux'), kinds.join(','));
-  await page.screenshot({ path: path.join(OUT, `anims_${label}_combattants.png`) });
-  await page.evaluate(() => document.querySelector('.cats li.foldable button[aria-expanded="false"]')?.click());   // Borroka est replié
-  await page.click('.cats button:has-text("Combattants")');
-  await page.click(`.cats li.sub.show button:has(span:text-is("${FID}"))`);
+  await page.waitForSelector('#view-bord:not([hidden])');
+  // Catalogue : Borroka (archive) est hors de la vue par défaut, accessible par son type ; les assets
+  // d'un combattant (animations, portraits, fin, effets) se retrouvent par la recherche.
+  await page.goto(BASE + '#/assets');
+  await page.waitForSelector('#cat-type');
+  await page.selectOption('#cat-type', 'borroka');
+  await page.fill('#cat-search', FID);
+  await page.waitForTimeout(600);
+  const ids = await page.$$eval('.citem', (ts) => ts.map((t) => t.dataset.key));
+  check(`${label} : assets du combattant dans le catalogue`, ids.includes(`fighters/${FID}/sheet.png`)
+    && ids.some((i) => i.includes('portrait')) && ids.some((i) => i.includes('ending')) && ids.some((i) => i.startsWith(`vfx/${FID}/`)),
+    `${ids.length} éléments`);
+  const tileSel = `.citem[data-key="fighters/${FID}/sheet.png"]`;
+  if (opts.hasTouch) await page.locator(tileSel).tap(); else await page.hover(tileSel);
   await page.waitForTimeout(800);
-  const ids = await page.$$eval('.tile', (ts) => ts.map((t) => t.dataset.id));
-  check(`${label} : la page du perso commence par ses animations`, ids[0] === `fighters/${FID}/sheet.png`, ids[0]);
-  check(`${label} : portraits, fin et effets sur la page du perso`,
-    ids.some((i) => i.includes('portrait')) && ids.some((i) => i.includes('ending')) && ids.some((i) => i.startsWith(`vfx/${FID}/`)),
-    `${ids.length} tuiles`);
-  const thumb = await animatedShare(page, '.tile .thumb canvas');
+  const thumb = await animatedShare(page, `${tileSel} canvas`);
   check(`${label} : vignette du perso animée`, thumb.total === 1 && thumb.moving === 1, JSON.stringify(thumb));
   await page.screenshot({ path: path.join(OUT, `anims_${FID}_${label}_page.png`) });
-  await page.click(`.tile[data-id="fighters/${FID}/sheet.png"]`);
+  await page.selectOption('#cat-type', '');
+  await page.fill('#cat-search', '');
+  await page.goto(BASE + '#/assets/' + encodeURIComponent(`fighters/${FID}/sheet.png`));
   await page.waitForSelector('.anim-gallery .anim-cell');
   await page.waitForTimeout(800);
+  // Galerie : une image fixe par animation au repos ; celle qu'on survole (ou touche) s'anime.
+  const posters = await page.$$eval('.anim-gallery .anim-cell', (l) => l.filter((c) => c.querySelector('img.mini, canvas')).length);
+  check(`${label} : galerie, toutes les animations présentes`, posters >= 30, String(posters));
+  const cell = '.anim-gallery .anim-cell >> nth=2';
+  if (opts.hasTouch) await page.locator(cell).tap(); else await page.hover(cell);
+  await page.waitForTimeout(800);
   const g = await animatedShare(page, '.anim-gallery canvas');
-  check(`${label} : galerie, toutes les animations dessinées`, g.total >= 30 && g.drawn === g.total, JSON.stringify(g));
-  check(`${label} : galerie, les animations bougent`, g.moving >= g.total - 2, JSON.stringify(g));
+  check(`${label} : galerie, l'animation survolée bouge`, g.total === 1 && g.moving === 1, JSON.stringify(g));
   await page.click('.anim-cell:has(span:text-is("punch_1"))');
   await page.waitForTimeout(300);
   check(`${label} : un clic ouvre l'animation dans le lecteur`,
     (await page.$eval('.controls select[aria-label="Animation"]', (s) => s.value)) === 'punch_1');
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: path.join(OUT, `anims_${FID}_${label}_detail.png`), fullPage: true });
-  await page.click('.detail-head button:has-text("Retour")');
-  await page.waitForSelector('.tile');
+  await page.click('.detail-head button:has-text("Catalogue")');
+  await page.waitForSelector('.citem');
   check(`${label} : aucune erreur JavaScript`, errors.length === 0, errors.join(' | '));
   await context.close();
 }
