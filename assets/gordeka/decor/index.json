@@ -1319,6 +1319,20 @@
    "ombre_decalage": [
     14,
     72
+   ],
+   "ouvert": "objets/cachette_poubelle_ruelle_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    1
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "4df14a29b8da4beeb843ed6ab102e6c8",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/313_cachette_poubelle_ruelle/0/image_00.png"
+    }
    ]
   },
   "cachette_bac_poissons": {
