@@ -1270,6 +1270,20 @@
    "ombre_decalage": [
     14,
     72
+   ],
+   "ouvert": "objets/cachette_coffre_cordages_ouvert.png",
+   "ouvert_decalage": [
+    1,
+    -1
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "96e956cd81644f55a30e46e5c30dfc79",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/310_cachette_coffre_cordages/0/image_00.png"
+    }
    ]
   },
   "cachette_poubelle_ruelle": {
