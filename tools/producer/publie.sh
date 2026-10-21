@@ -13,7 +13,7 @@ BRANCHE=producer-build
 TMP="$(mktemp -d)"
 trap 'git -C "$ROOT" worktree remove --force "$TMP/wt" >/dev/null 2>&1 || true; rm -rf "$TMP"' EXIT
 
-"$PY" "$ROOT/tools/gordeka/sync_candidats.py" >/dev/null
+# (reboot 21/10 : plus de candidats flat cartoon publiés)
 "$ROOT/tools/producer/build.sh" "$TMP/producer" "$PY"
 rm -f "$TMP/producer/config.php"          # jamais de config (hachages) dans le dépôt
 rm -rf "$TMP/producer/data"

@@ -841,11 +841,14 @@ class Builder:
             shutil.rmtree(self.out)
         self.out.mkdir(parents=True)
         self.gordeka()
-        self.fighters()
-        self.images("vfx", CAT_VFX, True)
-        self.images("stages", CAT_STAGES, True)
-        self.images("sprites", CAT_SPRITES, False)
-        self.images("ui", CAT_UI, False)
+        # Reboot du 21/10/2026 (Julien : « /producer a encore des items de l'ancien projet ») : les assets de
+        # Borroka (combattants, effets, stages, sprites, interface) ne sont plus publiés ; l'audio reste.
+        if os.environ.get("PRODUCER_BORROKA"):
+            self.fighters()
+            self.images("vfx", CAT_VFX, True)
+            self.images("stages", CAT_STAGES, True)
+            self.images("sprites", CAT_SPRITES, False)
+            self.images("ui", CAT_UI, False)
         self.audio("music", CAT_MUSIC)
         self.audio("sfx", CAT_SFX)
         self.audio("voice", CAT_VOICE)
