@@ -160,7 +160,7 @@
   "priority": "normal"
  },
  "perso/karramarro/search": "a big readable body motion",
- "perso/karramarro/detect": "a big readable body motion",
+ "perso/karramarro/detect": "il pointe d'une main qui n'existe pas, il doit poiter avec sa pince",
  "perso/karramarro/extract": {
   "priority": "normal"
  },
@@ -168,7 +168,7 @@
  "perso/karramarro/sad": {
   "priority": "normal"
  },
- "perso/karramarro/hunter_reveal": "the flashlight stays in his right pincer in every frame, a big readable body motion",
+ "perso/karramarro/hunter_reveal": "il se passe ni'mporte quoi avec ses pinces",
  "perso/karramarro/emote_salut": "a big readable motion of both pincers and body",
  "perso/karramarro/emote_rire": "a big readable motion of both pincers and body",
  "perso/karramarro/emote_danse": "a big readable motion of both pincers and body",
