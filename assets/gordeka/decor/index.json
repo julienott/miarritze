@@ -658,7 +658,9 @@
    "debord_haut_cases": 1,
    "animation": {
     "methode": "planche",
-    "description": "petit drapeau vert qui flotte au mât ; coque immobile (sur ses tins)"
+    "description": "petit drapeau vert qui flotte au mât ; coque immobile (sur ses tins)",
+    "planche": "anims/chalutier_quai.png",
+    "planche_json": "anims/chalutier_quai.json"
    },
    "fichiers": [
     "objets/chalutier_quai.png"

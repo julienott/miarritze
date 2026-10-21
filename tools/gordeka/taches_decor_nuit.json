@@ -609,11 +609,17 @@
    {
     "tid": "0e954b948e5e490b88c69ac80aa60cfa",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/287_banc_chapelle/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/287_banc_chapelle/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/287_banc_chapelle/0/planche.png"
+  ]
  },
  "288": {
   "titre": "Banc de la chapelle : masque v3",
@@ -632,11 +638,17 @@
    {
     "tid": "b3f18581e3434603bd3f3eb416cfa871",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0/planche.png"
+  ]
  },
  "290": {
   "titre": "Établi de l'atelier : masque v3",

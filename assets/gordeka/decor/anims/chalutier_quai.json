@@ -1,0 +1,16 @@
+{
+ "mode": "warp",
+ "kind": "flag",
+ "frames": 12,
+ "fps": 10.0,
+ "loop": true,
+ "duration_s": 1.2,
+ "cell": [
+  598,
+  640
+ ],
+ "layout": "row",
+ "loop_jump": 0.97,
+ "source_task": "d6dd511ea01346909e1215fe0393838f",
+ "piste": "drapeau (warp flag, zone du drapeau)"
+}
