@@ -2683,9 +2683,22 @@
    ],
    "debord_haut_cases": 0,
    "animation": {},
-   "provisoire": "filet_sol",
-   "fichiers": [],
-   "couche": "sol"
+   "fichiers": [
+    "objets/filet_au_sol.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "a22d6c95831b473989b4d5ac2a54f079",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   }
  }
 }

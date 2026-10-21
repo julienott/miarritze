@@ -2055,11 +2055,13 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/408_panier_poissons/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 00:43",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/408_panier_poissons/0/planche.png"
-  ]
+  ],
+  "variante": "image_00",
+  "suites_a_deposer": "normal"
  },
  "409": {
   "titre": "Filet étendu au sol : image",
