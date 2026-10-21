@@ -1465,7 +1465,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
-   }
+   },
+   "fichiers": [
+    "objets/cachette_tonneau_cidre.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "ee7d379cc35244c1b231857ab7f19b73",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_tonneau_cidre_ombre.png",
+   "ombre_decalage": [
+    12,
+    70
+   ]
   },
   "cachette_panier_linge": {
    "nom": "Grand panier à linge",
