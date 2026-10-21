@@ -40,7 +40,7 @@
    }
   },
   "hide_out": {
-   "action": "Pops out of a hiding spot: springs up from below the frame with a big stretch, arms up, lands with a little squash, then stands up straight and shakes off.",
+   "action": "Pops out of a hiding spot: from a low crouch, springs up and forward toward the right in a short hop, arms spread wide at shoulder height, the face stays visible in profile in every frame, lands with a little squash, then stands up straight and shakes off.",
    "expression": "cheeky grin",
    "boucle": false,
    "mouvement": {
