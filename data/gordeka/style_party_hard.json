@@ -347,7 +347,7 @@
    "height": 48,
    "colors": 12,
    "num_images": 2,
-   "action": "floating in side view facing right as a pale translucent ghost of the same character, small white angel wings flapping, the body bobbing two pixels up and down, feet dangling above the ground",
+   "action": "floating in side view facing right as a pale translucent ghost of the same character, the body bobbing two pixels up and down, feet dangling above the ground",
    "expression": "gentle smile",
    "motion": "Swim_Idle_Loop"
   }

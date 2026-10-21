@@ -16,7 +16,7 @@ retirés. **Toute demande d'animation nomme explicitement un préréglage ou un 
 | hide_in | Sitting_Enter | | victory | Dance_Loop |
 | hide_out | Sitting_Exit | | sad | Idle_No_Loop |
 | found | Hit_Chest | | jump | Jump_Start |
-| trap | Farm_PlantSeed | | ghost | Swim_Idle_Loop |
+| trap | Farm_PlantSeed | | ghost | Swim_Idle_Loop (sans ailes : battements d'ailes retirés de la spec, Julien 21/10) |
 | | | | ghost_move | Walk_Formal_Loop |
 
 `pf_px__character_set` (pixel art) utilise **Sprint_Loop** pour la course et **Jump_Start** pour le saut vers la cachette.
@@ -43,4 +43,4 @@ Les clips en `_RM` avancent dans la vidéo : préférer les versions sans `_RM`.
 5. `arms: "side"` fige les clips portés par les bras (search, detect) : donner le mouvement par le corps.
 
 ## Post-traitements
-`pf_2d__tenue` (masque de tenue), `pf_2d__flap` (ailes qui battent), `pf_px__character_set` puis `pf_px__reduce` (pixel art 128 px puis 32 px, voir docs/STYLE_PARTY_HARD.md).
+`pf_2d__tenue` (masque de tenue), `pf_px__character_set` puis `pf_px__reduce` (pixel art 128 px puis 32 px, voir docs/STYLE_PARTY_HARD.md).

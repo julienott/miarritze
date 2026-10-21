@@ -71,7 +71,7 @@ parcourue par cycle.
 
 ### 2.5 Fantôme (4 images, 6 i/s)
 ```text
-{description}, floating in side view facing right as a pale translucent ghost of the same character, small white angel wings flapping, the body bobbing two pixels up and down, feet dangling above the ground, gentle smile.
+{description}, floating in side view facing right as a pale translucent ghost of the same character, the body bobbing two pixels up and down, feet dangling above the ground, gentle smile.
 ```
 Le jeu applique la transparence (environ 50 %) : le sprite reste opaque.
 
