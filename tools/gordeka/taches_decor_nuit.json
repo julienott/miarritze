@@ -1910,11 +1910,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etal_criee_etal_criee/0/apercu/etal_criee.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 18:28",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-etal_criee_etal_criee/0/apercu/etal_criee.png"
-  ]
+  ],
+  "variante": null
  },
  "m-fontaine_place": {
   "titre": "Fontaine de la place : masque v3",
