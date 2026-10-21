@@ -1601,7 +1601,23 @@
    "animation": {
     "methode": "jeu",
     "description": "la barque tangue ; lanterne qui scintille"
-   }
+   },
+   "fichiers": [
+    "objets/sortie_barque_jetee.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "2c2537bab5a14e7eb18ecdd2fd88ed5b",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "sortie_echelle_phare": {
    "nom": "Sortie : échelle derrière le phare",
