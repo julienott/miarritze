@@ -2373,8 +2373,22 @@
    ],
    "debord_haut_cases": 0,
    "animation": {},
-   "provisoire": "ancre",
-   "fichiers": []
+   "fichiers": [
+    "objets/ancre_decor.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "e30ca0686ebb437e912f58d28cd02e9c",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "cordage_enroule": {
    "nom": "Cordage enroulé",
