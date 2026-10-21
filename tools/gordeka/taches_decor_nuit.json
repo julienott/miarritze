@@ -364,7 +364,7 @@
   "sorte": "masque",
   "element": "comptoir_bar",
   "priorite": "high",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "087eb9e3c6714597940283d292a0d14e",
@@ -378,7 +378,8 @@
   "depose": "2026-10-21 07:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/264_comptoir_bar/0/apercu/comptoir_bar.png"
-  ]
+  ],
+  "variante": null
  },
  "266": {
   "titre": "Mur de soutènement de l'escalier : masque v3",
