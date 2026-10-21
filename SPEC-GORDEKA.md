@@ -408,6 +408,51 @@ Vierge, Fronton.
     quelqu'un dedans, il est trouvé. Une fouille vide ne coûte que cette seconde, sans cooldown. Ailleurs, le bouton reste la détection.
   - L'objet tremble légèrement quand quelqu'un y entre. C'est un indice si le chasseur regarde.
 
+### 8.1 Plage de la Côte des Basques (*carte du 2026-10-21, à valider par Julien*)
+
+Demande de Julien : « une autre [carte] sur une plage avec des rochers, des cavernes sous la falaise, des
+tunnels, des cabanes de plage, des restaurants ». Générée par `tools/gordeka/make_plage.py` (images
+provisoires : `plage_decor.py`) → `assets/maps/plage/` ; jouable en partie rapide (« Côte des Basques »),
+id `plage` pour le salon en ligne (elle reprend l'idée de la « Grande Plage » du tableau ci-dessus). Même taille que le port (96 × 40 cases), 16 zones.
+
+- **La falaise** (en haut) : grès ocre, creusé de trois grottes (des contrebandiers, aux sirènes, de la
+  marée) reliées par des **tunnels** en baïonnette, sans ligne de vue d'un bout à l'autre : ce sont les
+  raccourcis, parallèles à la plage. Une faille descend au poste de secours ; la grotte des contrebandiers
+  s'ouvre sur les cabines ; les deux autres donnent sur la cuisine d'un restaurant.
+- **Deux restaurants** adossés à la falaise, Itsasoa (rouge) et le Txiringito (vert) : terrasse en planches
+  (tables, parasols, jardinières), façade avec deux portes et le comptoir, **cuisine creusée dans la roche**
+  (fourneau, plan de travail, grand frigo-cachette) qui s'ouvre au fond sur une grotte.
+- **Les montées vers les sorties du haut** : l'escalier de la falaise en lacets (à gauche) et la rampe du
+  Port-Vieux (à droite), entre des **talus d'herbes et de rochers bas** : on ne passe pas, mais on voit d'en
+  bas ceux qui montent. Un tunnel arrive au palier du milieu de chacune ; la fin de la montée reste à découvert.
+- **Le sable**, structuré pour ne pas être un champ de tir : cabines rayées en rangées décalées, poste de
+  secours sur pilotis (repère), grande plage (kiosque à glaces et club de plage en repères, château de sable,
+  paravents, râteliers de planches, pile de transats, parasols et transats), rochers du Basta (chaos de
+  rochers, flaques de marée), bateaux tirés au sec, Port-Vieux (cabines blanches, rochers, banc, douche).
+- **En bas** : une bande de sable mouillé, puis la mer (on n'y entre pas ; l'eau peu profonde qui ralentit
+  n'est pas faite : à demander si elle sert). La digue s'avance dans la mer.
+- **Sorties** (4 possibles, 2 par round, comme au port) : haut de l'escalier, haut de la rampe, bout de la
+  digue, ponton des sauveteurs (le canot au bout d'un ponton dans les vagues). Toutes au bout d'une montée ou
+  d'une avancée à découvert, avec deux approches au moins.
+- **Cachettes** (18, toutes utilisées) : cabine rayée (2), coffre des contrebandiers, creux de rocher
+  (grottes, rochers, Port-Vieux), frigo des deux cuisines, dessous de la terrasse, glacière, coffre du
+  sauveteur, tente de plage, coffre à jouets, petite barque retournée (2), casier à homards.
+- **Grottes sombres** (`idee_grottes`, **désactivée**) : dans une grotte ou un tunnel (`zones.json` →
+  `sombre`, `sombres`), la vue du chasseur ne porte qu'à `grotte_portee` (4) cases, cône éclairé raccourci.
+  Mesure : 120 rounds au normal, le chasseur gagne 52 % au lieu de 56 % (dans le bruit), un peu moins de « vu puis perdu » ; à essayer en jouant.
+- **Équilibre** (IA contre IA, `docs/GORDEKA_EQUILIBRAGE.md`) : chasseur gagnant 40 % (facile), 56 % (normal), 78 % (malin), 120 rounds par niveau : les niveaux sont ordonnés, mais **le normal reste sous l'objectif de 2 sur 3** (port : 71 %) ; 4,4 « vu puis perdu » par round (port : 3,0), aucune zone morte, toutes les cachettes et les sorties servent. Point faible : quand les deux sorties du haut sont ouvertes ensemble, les chassés s'échappent plus (chasseur à 51 %). Pistes : une sortie du haut de moins, ou des sorties qui s'ouvrent plus tard sur cette carte.
+- **Décor** : provisoire, dessiné par `plage_decor.py` (aplats, contour marine, base au sol qui bloque et haut
+  qui passe devant un perso caché derrière) ; images du port reprises (caisses, comptoir, tables, banc,
+  bitte, glacière, coffres, poubelle, casier, planches, carrelage, dalles). Images à créer : carte chapeau
+  kanban **#410 « Carte : Plage de la Côte des Basques »** (82 cartes en Backlog : objets, cachettes et leur
+  état ouvert, sols, falaise, sorties, et les animés : vagues et écume, mer, drapeaux du poste, mouettes,
+  fumée des cuisines, enseignes, parasols au vent, gouttes de la grotte) ; prompts dans
+  `tools/gordeka/prompts_decor.json` → `cartes` → `plage`. Rien n'est déposé chez pixelforge.
+- **Moteur** (générique) : une carte peut avoir son propre décor (`assets/maps/<id>/decor/index.json`, images
+  communes citées en `res://`, masques du décor commun repris) et imposer l'élément de chaque objet
+  (`zones.json` → `objets`) ; `GkMap.info` (zones.json) et `GkMap.dark` (cases sombres).
+- À trancher par Julien : les noms des restaurants (inventés), l'eau peu profonde, les grottes sombres.
+
 ## 9. Direction artistique
 
 - **Cartoon propre** : formes rondes, gros contours, aplats de couleur avec une ombre douce,

@@ -24,6 +24,12 @@ Légende (GkMap) : .  sol (sable, planches, carrelage selon la zone)
                   H  cachette             E  sortie possible       S  départ
 Usage : .venv/bin/python make_plage.py [--variante=<nom>] [--sans-images]
 Variantes (essais A/B, écrites dans assets/maps/plage_<nom>/ avec le décor de « plage ») : voir VARIANTES.
+
+Essais retenus (tools/gordeka/ab_tension.py, docs/GORDEKA_EQUILIBRAGE.md, 2026-10-21) : tunnels qui arrivent
+au palier du milieu de l'escalier et de la rampe, canot des sauveteurs au bout d'un ponton ; talus entre les
+volées (la montée se voit d'en bas) ; plus de zone « Bord de l'eau » (bande de sable mouillé rattachée aux
+plages) ; moins de cabines et de gros rochers (moins de planques derrière). Écartés : plus d'abris sur le sable,
+moins de cachettes, sans tunnel vers les sorties du haut, rochers plus bas.
 """
 import json
 import math
@@ -514,7 +520,25 @@ def v_sans_tunnel_escalier():
         dark_rects.remove(r)
 
 
-VARIANTES = {"sans_tunnel_escalier": v_sans_tunnel_escalier}
+def v_rochers():
+    """Rochers du Basta et Port-Vieux moins sûrs : deux gros rochers du Basta et le grand rocher du Port-Vieux
+    deviennent des rochers bas (on voit par-dessus)."""
+    for (x, y) in ((14, 23), (22, 27)):
+        unobj(x, y)
+        obj("rocher_bas_large", x, y)
+    unobj(91, 18)
+    obj("rocher_bas_large", 91, 18)
+
+
+def v_rochers_pv():
+    """v_rochers, et les rochers du Port-Vieux bas aussi (sauf le creux-cachette)."""
+    v_rochers()
+    for (x, y, el) in ((87, 21, "rocher_bas_large"), (89, 26, "rocher_bas_large"), (76, 23, "rocher_bas")):
+        unobj(x, y)
+        obj(el, x, y)
+
+
+VARIANTES = {"sans_tunnel_escalier": v_sans_tunnel_escalier, "rochers": v_rochers, "rochers_pv": v_rochers_pv}
 
 
 def faces():

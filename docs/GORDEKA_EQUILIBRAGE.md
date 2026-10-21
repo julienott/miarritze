@@ -206,3 +206,65 @@ Erreur type : ±4 à 5 points sur « chasseur gagne », ±0,2 sur vu-perdu et su
 - Verdict : **pas de gain de tension mesurable, à ne pas activer en l'état.** Pour qu'une poursuite existe vraiment, il
   faudrait la déclencher plus tôt (`poursuite_seuil` bas) avec une capture plus lente (`detection_temps_loin`), à
   essayer en jouant : l'IA ne rend pas le plaisir d'une course.
+
+## 2026-10-21 : carte Plage de la Côte des Basques (`tools/gordeka/make_plage.py`, SPEC-GORDEKA §8)
+
+Outil : `ab_tension.py run <essai> --map plage[_<variante>]` (variantes : `make_plage.py --variante=<nom>`), chassés
+« normal », 6 joueurs, règles retenues du port (détection progressive, frisson, mouvement, gâteaux, mouettes,
+chatouille, délivrance). Diagnostic des zones : `analyse_carte.py plage --ab <essai>`. Les essais d'écrémage ont 64
+rounds (erreur type ±6 points sur « chasseur gagne ») ; les essais complets 120 rounds par niveau (±4 à 5).
+
+**Attention** : `ab_tension.py` arrête tout au bout de `--timeout` (3600 s par défaut). Avec la machine chargée
+(plusieurs cartes mesurées en même temps), v2 et la première série de la carte retenue ont été coupées avant la fin
+du niveau malin : il faut passer `--timeout 30000` pour les séries complètes.
+
+| essai | rounds (F / N / M) | chasseur gagne % (erreur type) | trouvés % | sortis % | vu-perdu | frôlements < 2 | cases/min | en mouvement % | entrées en cachette |
+|---|---|---|---|---|---|---|---|---|---|
+| v1 : premier jet (écrémage) | 30 / – / – | 37 / – / – (±9 / – / –) | 37 / – / – | 63 / – / – | 4.1 / – / – | 0.3 / – / – | 140 / – / – | 49 / – / – | 5.0 / – / – |
+| v2 : tunnels au palier du milieu de l'escalier et de la rampe, canot au bout d'un ponton | 120 / 120 / 33 | 40 / 51 / 55 (±4 / ±5 / ±9) | 44 / 50 / 50 | 56 / 50 / 50 | 4.0 / 4.2 / 3.1 | 0.4 / 0.4 / 0.5 | 133 / 131 / 133 | 46 / 46 / 46 | 4.7 / 4.7 / 4.5 |
+| v2 + abris sur le sable et 2 cachettes | 57 / – / – | 19 / – / – (±5 / – / –) | 30 / – / – | 70 / – / – | 4.5 / – / – | 0.4 / – / – | 136 / – / – | 47 / – / – | 5.4 / – / – |
+| v2 sans tunnel vers l'escalier, Basta plus bas | 64 / – / – | 22 / – / – (±5 / – / –) | 34 / – / – | 66 / – / – | 4.8 / – / – | 0.4 / – / – | 137 / – / – | 47 / – / – | 5.1 / – / – |
+| idem + rampe sans tunnel | 64 / – / – | 36 / – / – (±6 / – / –) | 43 / – / – | 56 / – / – | 4.4 / – / – | 0.3 / – / – | 140 / – / – | 49 / – / – | 4.7 / – / – |
+| v2 avec 14 cachettes | 64 / – / – | 25 / – / – (±5 / – / –) | 35 / – / – | 65 / – / – | 3.8 / – / – | 0.4 / – / – | 136 / – / – | 47 / – / – | 5.2 / – / – |
+| v2 avec 12 cachettes | 64 / – / – | 30 / – / – (±6 / – / –) | 36 / – / – | 64 / – / – | 3.9 / – / – | 0.2 / – / – | 131 / – / – | 45 / – / – | 5.6 / – / – |
+| v2 + talus (les montées se voient d'en bas) | 64 / 64 / – | 36 / 47 / – (±6 / ±6 / –) | 38 / 45 / – | 62 / 55 / – | 3.5 / 4.4 / – | 0.3 / 0.3 / – | 133 / 132 / – | 46 / 46 / – | 4.9 / 5.0 / – |
+| talus + bande du bord de l'eau rattachée aux plages | 64 / 64 / – | 47 / 62 / – (±6 / ±6 / –) | 47 / 56 / – | 53 / 44 / – | 3.9 / 4.2 / – | 0.3 / 0.4 / – | 131 / 135 / – | 46 / 47 / – | 4.6 / 3.9 / – |
+| zones + moins de cabines et de gros rochers | 32 / 64 / – | 53 / 66 / – (±9 / ±6 / –) | 52 / 57 / – | 48 / 43 / – | 4.5 / 4.4 / – | 0.4 / 0.3 / – | 137 / 135 / – | 48 / 47 / – | 4.0 / 4.1 / – |
+| idem, première série complète (coupée) | 54 / 42 / – | 54 / 74 / – (±7 / ±7 / –) | 48 / 64 / – | 52 / 36 / – | 4.3 / 4.3 / – | 0.4 / 0.4 / – | 129 / 133 / – | 45 / 46 / – | 4.5 / 3.5 / – |
+| **retenue** (idem + correctifs de zones et du ponton) | 120 / 120 / 120 | **40 / 56 / 78** (±4 / ±5 / ±4) | 45 / 52 / 68 | 55 / 48 / 32 | 4.3 / 4.4 / 3.2 | 0.4 / 0.3 / 0.4 | 134 / 131 / 129 | 46 / 45 / 45 | 4.7 / 4.5 / 3.8 |
+| forte (avant correctifs) sans tunnel vers l'escalier | – / 64 / – | – / 62 / – (– / ±6 / –) | – / 58 / – | – / 42 / – | – / 4.4 / – | – / 0.4 / – | – / 132 / – | – / 46 / – | – / 4.5 / – |
+| retenue + gros rochers du Basta bas | 120 / 38 / – | 43 / 61 / – (±5 / ±8 / –) | 46 / 60 / – | 54 / 40 / – | 4.4 / 4.2 / – | 0.5 / 0.3 / – | 132 / 129 / – | 46 / 45 / – | 4.7 / 3.8 / – |
+| idem + rochers du Port-Vieux bas | – / 64 / – | – / 59 / – (– / ±6 / –) | – / 52 / – | – / 48 / – | – / 4.0 / – | – / 0.3 / – | – / 132 / – | – / 46 / – | – / 4.6 / – |
+| pour comparer : Port des Pêcheurs v2 (série « carte_v2 ») | 120 / 120 / 120 | 52 / 71 / 76 (±5 / ±4 / ±4) | 51 / 62 / 65 | 49 / 38 / 35 | 2.6 / 3.0 / 2.3 | 0.4 / 0.4 / 0.3 | 150 / 153 / 146 | 52 / 53 / 51 | 3.9 / 3.8 / 3.5 |
+| retenue avec grottes sombres (`idee_grottes:1`) | – / 120 / – | – / 52 / – (– / ±5 / –) | – / 53 / – | – / 46 / – | – / 3.9 / – | – / 0.3 / – | – / 133 / – | – / 46 / – | – / 4.6 / – |
+
+Ce que disent les essais :
+- **Les sorties décident du round** : comme au port, presque tous les chassés encore libres à 90 s s'échappent ; le
+  chasseur gagne s'il en a trouvé trois avant. Au premier jet, un chassé sur deux à deux sur trois s'échappait par les
+  sorties du haut (escalier, rampe), que les tunnels rendaient sûres.
+- **Plus d'abris ou moins de cachettes, c'est pire pour le chasseur** : sans cachette, les chassés ne restent pas
+  enfermés 20 s loin des sorties, ils filent ; plus d'abris sur le sable, ils s'échappent de la vue plus souvent.
+- **Ce qui a aidé le chasseur** : rattacher la bande de sable mouillé aux plages (il n'y a plus une zone « Bord de
+  l'eau » de 79 cases sans abri que la ronde du chasseur IA allait inspecter), moins de cabines et de gros rochers
+  (le haut d'un objet masque un chassé caché derrière : moins de planques à 2 cases près).
+- **Les écrémages à 64 rounds trompent** : les meilleurs (forte 66 %, rochers 70 % au normal) retombent sur 120 rounds
+  (56 %, 61 %). Seuls les écarts de plus de ~12 points s'y lisent.
+- **Le reste est dans le bruit** : talus (visibilité des montées), sans tunnel vers l'escalier, rochers bas au Basta ou
+  au Port-Vieux. Trois itérations sans gain de suite : arrêt, carte « retenue » fixée.
+
+### Carte retenue (à valider par Julien)
+
+Plan et contenu : SPEC-GORDEKA §8 (« Plage de la Côte des Basques »). Séries complètes : 120 rounds par niveau (le malin dans une série à part, la première ayant été coupée à 78 rounds : 67 %).
+
+- **Ordre des niveaux** respecté : le chasseur gagne 40 % des rounds en facile, 56 % en normal, 78 % en malin (port : 52 / 71 / 76).
+- **Le chasseur reste en dessous de l'objectif** (2 rounds sur 3 au normal) : 56 % contre 71 % au port. Le
+  sable laisse filer plus de chassés vers les sorties ; quand les deux sorties du haut (escalier et rampe) sont
+  ouvertes ensemble, le chasseur ne gagne que 51 % des rounds (tous niveaux), contre 55 à 64 % avec une sortie du bas.
+  Pistes si Julien veut un chasseur plus fort ici : une sortie du haut de moins (la rampe sans sortie, une
+  autre en bas), ou des réglages par carte (ouverture des sorties plus tard sur la plage), à mesurer.
+- **Presque trouvés** : 4,4 vu-perdu par round au normal (3,0 au port), 0,3 frôlement à moins de 2 cases ; les
+  chassés bougent un peu moins qu'au port (131 cases/min, 45 % du temps en mouvement, contre 153 et 53 %).
+- **Aucune zone morte** (`analyse_carte.py`) ; les 18 cachettes servent toutes (0,2 à 0,3 entrée par round chacune) ;
+  les 4 sorties servent (par ouverture : escalier 1,4 chassé, rampe 1,1, digue 0,9, ponton 0,8).
+- **Grottes sombres** (`idee_grottes:1`, vue du chasseur à 4 cases dans les grottes et tunnels), 120 rounds au
+  normal : le chasseur gagne 52 % au lieu de 56 % (dans le bruit), 3,9 vu-perdu au lieu de 4,4 ; elle ne change pas l'équilibre. Laissée désactivée (à essayer en jouant : c'est surtout un frisson de plus).
