@@ -58,7 +58,7 @@
    }
   },
   "trap": {
-   "action": "Sets a trap: looks left and right sneakily, bends forward at the waist with both legs straight, places a small wooden trap on the ground in front of him, then straightens up rubbing his hands with glee.",
+   "action": "Sets a trap: looks left and right sneakily, bends forward at the waist with both legs straight, one open hand presses down on the ground in front of the feet, then straightens up rubbing both hands with glee.",
    "expression": "sneaky mischievous grin",
    "boucle": false,
    "mouvement": {
