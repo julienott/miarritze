@@ -1564,11 +1564,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/343_toit_tuiles/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/343_toit_tuiles/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "382": {
   "titre": "Deux barriques de cidre : image",

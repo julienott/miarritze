@@ -1174,6 +1174,20 @@
    "ombre_decalage": [
     12,
     72
+   ],
+   "ouvert": "objets/cachette_coffre_quai_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    10
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "7f5255ad62814296ab80f3a06763db1a",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/304_cachette_coffre_quai/0/image_00.png"
+    }
    ]
   },
   "cachette_caisse_glace": {
