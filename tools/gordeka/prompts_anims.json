@@ -199,11 +199,12 @@
    "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
   "emote_langue": {
-   "action": "Teases: sticks out the tongue playfully, thumbs on the temples wiggling fingers, a little bounce.",
+   "action": "Teases playfully: sticks a long bright pink tongue far out past the lips, clearly visible in profile, both thumbs at the temples with the fingers wiggling, head wobbling side to side.",
    "expression": "cheeky face with a big pink tongue sticking far out of the mouth, clearly visible in profile",
    "boucle": false,
    "mouvement": {
-    "motion": "tongue"
+    "motion": "tongue",
+    "exaggerate": 1.3
    },
    "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   }
