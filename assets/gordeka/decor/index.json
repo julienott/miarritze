@@ -2190,8 +2190,22 @@
    ],
    "debord_haut_cases": 0,
    "animation": {},
-   "provisoire": "bouee",
-   "fichiers": []
+   "fichiers": [
+    "objets/bouee_murale.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "c08971a9bfd34fb6b6783c3b6b448f0d",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "filet_suspendu": {
    "nom": "Filet suspendu au mur",
