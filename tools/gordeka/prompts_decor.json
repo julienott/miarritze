@@ -903,7 +903,9 @@
    ],
    "animation": {
     "methode": "planche",
-    "description": "faisceau de la lanterne qui tourne ; le halo lumineux peut être ajouté par le jeu"
+    "description": "faisceau de la lanterne qui tourne ; le halo lumineux peut être ajouté par le jeu",
+    "planche": "anims/tour_phare.png",
+    "planche_json": "anims/tour_phare.json"
    }
   },
   {

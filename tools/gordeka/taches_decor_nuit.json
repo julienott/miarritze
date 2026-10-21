@@ -203,11 +203,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0/apercu/tour_phare.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0/apercu/tour_phare.png"
-  ]
+  ],
+  "variante": null
  },
  "257": {
   "titre": "Fronton de pelote basque : refaire de face",
