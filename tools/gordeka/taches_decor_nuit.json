@@ -461,20 +461,18 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "b3f18581e3434603bd3f3eb416cfa871",
+    "tid": "8006ed25f8594eba9db4bc09fc0f733d",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
+  "statut": "en_file",
+  "depose": "2026-10-21 18:28",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/289_etabli_atelier/0/planche.png"
   ],
-  "variante": "image_01"
+  "variante": "image_01",
+  "consigne": "Image paysage 320×64 qui remplit ses 5×1 cases."
  },
  "291": {
   "titre": "Marches de l'escalier de la ville : refaire de face",
@@ -1833,11 +1831,17 @@
    {
     "tid": "49d38f4d73134facb6fd98627d3e916d",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-barriques_cidre_barriques_cidre/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-barriques_cidre_barriques_cidre/0/apercu/barriques_cidre.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 18:12"
+  "statut": "a_voir",
+  "depose": "2026-10-21 18:12",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-barriques_cidre_barriques_cidre/0/apercu/barriques_cidre.png"
+  ]
  },
  "m-pot_hortensias": {
   "titre": "Pot d'hortensias : masque v3",
@@ -1861,17 +1865,23 @@
   "titre": "Crampotte aux volets verts : masque v3",
   "sorte": "masque",
   "element": "maison_crampotte_verte",
-  "statut": "en_file",
+  "statut": "a_voir",
   "consigne": "Masque à faire : emprise sous la base seulement, le haut masque un perso derrière.",
   "jobs": [
    {
     "tid": "b000cbed60964f5aa1faa6d696d07791",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-maison_crampotte_verte_maison_crampotte_verte/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-maison_crampotte_verte_maison_crampotte_verte/0/apercu/maison_crampotte_verte.png"
    }
   ],
   "priorite": "normal",
-  "depose": "2026-10-21 18:12"
+  "depose": "2026-10-21 18:12",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-maison_crampotte_verte_maison_crampotte_verte/0/apercu/maison_crampotte_verte.png"
+  ]
  },
  "m-rayonnage_filets": {
   "titre": "Rayonnage du hangar à filets : masque v3",
@@ -1892,7 +1902,16 @@
   "sorte": "masque",
   "element": "fontaine_place",
   "priorite": "normal",
-  "statut": "deja_fait"
+  "statut": "en_file",
+  "consigne": "Masque : emprise = tout le rebord du bassin (on marche dans la moitié arrière).",
+  "jobs": [
+   {
+    "tid": "0733ad8cc8d44131870260ff5e47e438",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 18:28"
  },
  "m-banc_vert": {
   "titre": "Banc vert du front de mer : masque v3",
@@ -2421,16 +2440,29 @@
   "titre": "Étal de la criée : masque v3",
   "sorte": "image",
   "element": "etal_criee",
-  "statut": "en_file",
+  "statut": "a_voir",
   "consigne": "Image paysage 320×64 qui remplit ses 5×1 cases (petit étal carré aujourd'hui).",
   "jobs": [
    {
     "tid": "6e0c3c1e49dd497b90f4c4ceecabd7d0",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/278_etal_criee/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/278_etal_criee/0/planche.png"
    }
   ],
   "priorite": "normal",
-  "depose": "2026-10-21 18:12"
+  "depose": "2026-10-21 18:12",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/278_etal_criee/0/planche.png"
+  ]
+ },
+ "284": {
+  "titre": "Fontaine de la place : masque v3",
+  "sorte": "image",
+  "element": "fontaine_place",
+  "statut": "integre",
+  "masque_refait": 1
  }
 }
