@@ -1167,19 +1167,28 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/320_cachette_tas_filets_cachette/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/320_cachette_tas_filets_cachette/0/planche.png"
-  ]
+  ],
+  "variante": "image_00",
+  "suites_a_deposer": "normal"
  },
  "321": {
   "titre": "Montagne de filets : version ouverte",
   "sorte": "ouvert",
   "element": "cachette_tas_filets_cachette",
   "priorite": "normal",
-  "statut": "attend",
-  "depend": "320"
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "38ea48335d6447d38b63b4e2167e0d69",
+    "quoi": "pf_hd__edit ×2 (ouverte)",
+    "style": "pf_hd__edit"
+   }
+  ],
+  "depose": "2026-10-21 10:02"
  },
  "323": {
   "titre": "Confessionnal en bois : version ouverte",
@@ -1948,11 +1957,17 @@
    {
     "tid": "21d24c89282d407cbbbf8351c7f01665",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/407_maison_crampotte_verte/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/407_maison_crampotte_verte/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:05"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:05",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/407_maison_crampotte_verte/0/planche.png"
+  ]
  },
  "408": {
   "titre": "Panier de poissons : image",
@@ -1963,11 +1978,17 @@
    {
     "tid": "6fcab9bc0115438ab16f7f8dbe0a1470",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/408_panier_poissons/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/408_panier_poissons/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:43"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:43",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/408_panier_poissons/0/planche.png"
+  ]
  },
  "409": {
   "titre": "Filet étendu au sol : image",
@@ -1978,11 +1999,17 @@
    {
     "tid": "a22d6c95831b473989b4d5ac2a54f079",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/409_filet_au_sol/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/409_filet_au_sol/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 00:43"
+  "statut": "a_voir",
+  "depose": "2026-10-21 00:43",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/409_filet_au_sol/0/planche.png"
+  ]
  },
  "m-barque_mouillage": {
   "titre": "Barque basque au mouillage : masque (d'office, nouvelle image)",
@@ -2013,5 +2040,11 @@
   ],
   "statut": "en_file",
   "depose": "2026-10-21 07:34"
+ },
+ "m-cachette_tas_filets_cachette": {
+  "titre": "Montagne de filets : masque (d'office, nouvelle image)",
+  "sorte": "masque",
+  "element": "cachette_tas_filets_cachette",
+  "priorite": "normal"
  }
 }
