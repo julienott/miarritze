@@ -340,6 +340,7 @@
     3
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 4.1,
    "animation": {},
    "fichiers": [
     "objets/maison_crampotte.png"
@@ -1464,6 +1465,7 @@
     1
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 1.8,
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
@@ -1648,6 +1650,7 @@
     1
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 1.95,
    "animation": {
     "methode": "jeu",
     "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
@@ -1891,6 +1894,7 @@
     1
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 1.4,
    "animation": {},
    "fichiers": [
     "objets/barriques_cidre.png"
@@ -1995,6 +1999,7 @@
     1
    ],
    "debord_haut_cases": 2,
+   "hauteur_cases": 3.6,
    "animation": {
     "methode": "planche",
     "description": "feuillage qui frémit au vent, boucle lente",
@@ -2614,6 +2619,7 @@
     3
    ],
    "debord_haut_cases": 1,
+   "hauteur_cases": 3.7,
    "animation": {},
    "fichiers": [
     "objets/maison_crampotte_verte.png"
