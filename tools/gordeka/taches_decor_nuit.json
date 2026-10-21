@@ -1029,11 +1029,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/311_cachette_coffre_cordages/0/apercu/cachette_coffre_cordages.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/311_cachette_coffre_cordages/0/apercu/cachette_coffre_cordages.png"
-  ]
+  ],
+  "variante": null
  },
  "313": {
   "titre": "Grande poubelle de ruelle : version ouverte",
