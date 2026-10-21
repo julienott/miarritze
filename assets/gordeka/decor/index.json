@@ -2250,8 +2250,22 @@
      }
     ]
    },
-   "provisoire": "filet_suspendu",
-   "fichiers": []
+   "fichiers": [
+    "objets/filet_suspendu.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "32ef30075fb54e47ba329e769450931b",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "mouette_posee": {
    "nom": "Mouette posée",
