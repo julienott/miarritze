@@ -1765,11 +1765,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-cachette_barque_retournee_cachette_barque_retournee/0/apercu/cachette_barque_retournee.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 17:43",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-cachette_barque_retournee_cachette_barque_retournee/0/apercu/cachette_barque_retournee.png"
-  ]
+  ],
+  "variante": null
  },
  "m-cachette_tonneau_cidre": {
   "titre": "Tonneau de cidre géant : masque v3",
