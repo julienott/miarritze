@@ -1994,9 +1994,22 @@
      }
     ]
    },
-   "provisoire": "fanions",
-   "fichiers": [],
-   "couche": "haut"
+   "fichiers": [
+    "objets/fanions_basques.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "4ec9367264e14505babf75ba6052ac21",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "linge_seche": {
    "nom": "Linge qui sèche",
