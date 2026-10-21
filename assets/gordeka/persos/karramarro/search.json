@@ -1,0 +1,73 @@
+{
+ "motion": "search",
+ "quaternius": "Idle_Torch_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "focused determined squint, tongue sticking out a little",
+ "tenue": "scarf",
+ "drive": {
+  "exaggerate": 1.4,
+  "bounce": 0.05
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. scuttles sideways and peeks left and right, eyes on stalks turning, pincers snipping at the ground The two big pincers: dig and snip quickly. The eyes on stalks: wobble with the motion, slightly delayed. The thin legs: all legs scuttle in a fast ripple, the crab keeps facing right. The small neckerchief scarf: stays tied in place, the two short tips flutter with the motion. a big readable body motion",
+ "frame_offsets": [
+  [0.5, -4.0],
+  [0.5, -4.0],
+  [0.5, -2.0],
+  [1.0, 0.0],
+  [0.5, 0.0],
+  [0.5, 1.0],
+  [0.0, 3.0],
+  [0.0, 4.0],
+  [0.0, 4.0],
+  [0.5, 4.0],
+  [0.5, 5.0],
+  [1.0, 4.0],
+  [1.0, 4.0],
+  [1.0, 3.0],
+  [1.0, 1.0],
+  [1.0, 0.0],
+  [1.0, -1.0],
+  [0.5, -2.0],
+  [0.5, -3.0],
+  [0.5, -1.0],
+  [0.5, 0.0],
+  [0.5, 1.0],
+  [0.0, 3.0],
+  [0.5, 4.0],
+  [0.5, 5.0],
+  [1.0, 5.0],
+  [0.5, 5.0],
+  [0.5, 4.0],
+  [0.5, 4.0],
+  [1.0, 3.0],
+  [1.0, 1.0],
+  [1.0, 0.0]
+ ],
+ "entrees": {
+  "idle": {
+   "i": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 16, 16, 16, 3, 16, 16, 16, 16, 16, 16, 30, 30, 30],
+   "e": [10, 12, 10, 10, 10, 11, 11, 11, 12, 11, 9, 10, 9, 10, 11, 11, 11, 10, 11, 11, 10, 11, 11, 11, 10, 10, 10, 11, 10, 11, 10, 10]
+  },
+  "walk": {
+   "i": [22, 22, 22, 22, 22, 22, 24, 24, 24, 24, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22],
+   "e": [40, 41, 40, 40, 41, 41, 41, 41, 41, 41, 41, 41, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 39, 39]
+  },
+  "trapped": {
+   "i": [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
+   "e": [54, 54, 54, 53, 54, 54, 55, 55, 55, 55, 54, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 54, 54, 53, 53, 53, 53, 53, 52, 52, 52]
+  }
+ }
+}
