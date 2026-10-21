@@ -7,11 +7,12 @@ refais passer dans la Todo avec la bonne priorité ».
 
 1. Une carte refusée en QA (rework, revenue en Doing) repart en Todo, priorité haute, si elle n'a pas de
    tâche pixelforge en cours.
-2. Julien gère le flux Todo → Doing (21/10). Une carte qu'il passe en Doing est lancée ici une fois
-   (animation de perso → recette.py ko avec le texte du dernier refus ; décor du suivi → decor_matin.py
-   relance) ; si on ne sait pas la lancer seul : ligne « BESOIN » (réveille Claude).
-3. Les cartes de Doing dont les animations sont intégrées sont mises en ligne et passées en QA
-   (tools/producer/pousse_qa.sh), sans Claude.
+2. Julien passe les cartes de Backlog en Todo (21/10) ; la Todo entre en Doing par priorité, 5 cartes actives
+   au plus (hors night shift) : animation de perso → recette.py ko (texte du dernier refus en consigne),
+   décor du suivi → decor_matin.py relance ; carte qu'on ne sait pas lancer : « BESOIN » (réveille Claude).
+3. Décor sorti de la file : intégré tel quel (variante 00), Julien tranche en QA.
+4. Cartes de Doing terminées (anims intégrées ; décor intégré, objet avec masque) → en ligne et en QA
+   (tools/producer/pousse_qa.sh).
 """
 import json
 import os
@@ -32,6 +33,7 @@ SUIVI = os.path.join(ROOT, "tools", "gordeka", "taches_decor_nuit.json")
 RANG = {"haute": 0, "normale": 1, "basse": 2, "": 3}
 LANCEES = os.path.join(ROOT, "tools", "rd", "out", "recette", "wip_lancees.json")
 POUSSE = os.path.join(HERE, "pousse_qa.sh")
+BESOINS = os.path.join(ROOT, "tools", "rd", "out", "recette", "wip_besoins.json")
 
 
 def lire(p, d):
@@ -93,52 +95,80 @@ def lancer(c, prio):
     return None
 
 
+def decor_auto():
+    """Décor sorti de la file : intégré tel quel (variante 00, piste 0 ; Julien tranche en QA, 21/10)."""
+    for k, e in list(lire(SUIVI, {}).items()):
+        if e.get("statut") != "a_voir":
+            continue
+        v = {"image": "image_00", "refaire": "image_00", "toit": "image_00", "ouvert": "image_00", "anim": "0"}.get(e.get("sorte"))
+        if ESSAI:
+            print(f"décor #{k} à intégrer ({e.get('sorte')}, {v})"); continue
+        r = subprocess.run([PY, os.path.join(HERE, "decor_matin.py"), "integre", k] + ([v] if v else []) + ["--sans-capture"],
+                           cwd=ROOT, capture_output=True, text=True, timeout=1800)
+        print(f"décor #{k} : " + (r.stdout + r.stderr).strip().splitlines()[-1][:120] if (r.stdout + r.stderr).strip() else "")
+
+
 def main():
     doing = cli.call("cards", query={"status": "doing"})["cards"]
-    # 1. refus de QA revenus en Doing → Todo, priorité haute
+    # 1. refus de QA revenus en Doing → Todo, priorité haute (ils repartent par la Todo)
     for c in doing:
         if c.get("rework") and not en_cours(c["id"], c["title"]):
             print(f"#{c['id']} refusé en QA → Todo (haute)")
             if not ESSAI:
                 cli.call("card_move", {"id": c["id"], "status": "todo"})
                 cli.call("card_update", {"id": c["id"], "priority": "haute"})
-    # 2. Julien gère le flux (21/10 : « laisse-moi gérer le passage de Todo en Doing ») : une carte qu'il
-    # a passée en Doing est lancée ici (une seule fois), sans réveiller Claude ; sinon BESOIN.
-    lancees = lire(LANCEES, {})
-    for c in cli.call("cards", query={"status": "doing"})["cards"]:
-        if c.get("children") or str(c["id"]) in lancees or en_cours(c["id"], c["title"]):
+    # 2. Julien choisit Backlog → Todo ; la Todo entre en Doing par priorité, 5 cartes actives au plus.
+    besoins = lire(BESOINS, [])
+    doing = cli.call("cards", query={"status": "doing"})["cards"]
+    place = LIMITE - len([c for c in doing if not c.get("night") and not c.get("children")])
+    todo = sorted(cli.call("cards", query={"status": "todo"})["cards"],
+                  key=lambda c: (not c.get("night"), RANG.get(c.get("priority") or "", 3), c["id"]))
+    for c in todo:
+        if c.get("children") or c["id"] in besoins:
             continue
-        if not entree_doing_par_julien(c["id"]):
-            continue
-        quoi = None if ESSAI else lancer(c, "night" if c.get("night") else "normal")
+        night = bool(c.get("night"))
+        if not night and place <= 0:
+            break
+        quoi = lancer(c, "night" if night else "normal")
         if quoi is None:
-            print(f"BESOIN #{c['id']} {c['title']} : passée en Doing, à lancer par Claude")
-        else:
-            print(f"#{c['id']} {c['title']} : {quoi}")
-            cli.call("card_comment", {"id": c["id"], "body": f"Lancé : {quoi}."})
-        lancees[str(c["id"])] = c.get("status_at")
+            print(f"BESOIN #{c['id']} {c['title']} : en Todo, à lancer par Claude")
+            besoins.append(c["id"])
+            continue
+        print(f"#{c['id']} {c['title']} → Doing : {quoi}")
         if not ESSAI:
-            json.dump(lancees, open(LANCEES, "w"))
-    # 3. Cartes de Doing terminées (anims intégrées) : mises en ligne et passées en QA sans Claude.
+            cli.call("card_move", {"id": c["id"], "status": "doing"})
+            cli.call("card_comment", {"id": c["id"], "body": f"Pris : {quoi}."})
+            lancees = lire(LANCEES, {}); lancees[str(c["id"])] = 1; json.dump(lancees, open(LANCEES, "w"))
+        if not night:
+            place -= 1
+    if not ESSAI:
+        json.dump(besoins, open(BESOINS, "w"))
+    # 3. décor sorti : intégré tel quel
+    decor_auto()
+    # 4. cartes de Doing terminées → en ligne et en QA
     pretes = [c["id"] for c in cli.call("cards", query={"status": "doing"})["cards"] if prete(c)]
     if pretes and not ESSAI:
-        r = subprocess.run(["bash", POUSSE, "animations sorties de la file", *map(str, pretes)], cwd=ROOT,
+        r = subprocess.run(["bash", POUSSE, "sorties de la file", *map(str, pretes)], cwd=ROOT,
                            capture_output=True, text=True, timeout=3000)
         print(("QA " if "→ QA" in r.stdout else "ALERTE mise en ligne : ") + (r.stdout + r.stderr).strip()[-300:])
-
-
-def entree_doing_par_julien(cid):
-    evs = [e for e in cli.call("card", query={"id": cid}).get("events") or [] if e.get("type") == "deplacement"]
-    return bool(evs) and evs[-1].get("new") == "doing" and evs[-1].get("author") == "julien"
+    elif pretes:
+        print("prêtes pour la QA :", pretes)
 
 
 def prete(c):
-    """Animation(s) de perso de la carte toutes intégrées depuis l'entrée en Doing."""
-    cles = cles_perso(c["title"])
-    if not cles:
+    """Travail de la carte terminé : animations intégrées, ou décor intégré (avec son masque pour un objet)."""
+    if str(c["id"]) not in lire(LANCEES, {}):
         return False
-    etat = lire(ETAT, {"items": {}})["items"]
-    return all(etat.get(k, {}).get("statut") == "ok" for k in cles) and str(c["id"]) in lire(LANCEES, {})
+    cles = cles_perso(c["title"])
+    if cles:
+        etat = lire(ETAT, {"items": {}})["items"]
+        return all(etat.get(k, {}).get("statut") == "ok" for k in cles)
+    e = lire(SUIVI, {}).get(str(c["id"]))
+    if not e or e.get("statut") != "integre":
+        return False
+    import masques_manquants as mm
+    el = json.load(open(os.path.join(mm.DECOR, "index.json")))["elements"].get(e.get("element"), {})
+    return el.get("type") != "objet" or not el.get("fichiers") or mm.a_besoin(e["element"], el) is None
 
 if __name__ == "__main__":
     main()
