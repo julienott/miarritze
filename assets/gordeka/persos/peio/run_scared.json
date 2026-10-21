@@ -1,0 +1,37 @@
+{
+ "motion": "run_scared",
+ "quaternius": "Sprint_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "terrified comic face: eyes wide open and round, looking ahead, mouth open in a big round O of fear",
+ "tenue": "jersey",
+ "drive": {
+  "arms": "swing",
+  "exaggerate": 1.3
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Panicked cartoon sprint, running for dear life: very long strides, legs spinning fast, body leaning far forward, both arms flailing wildly forward and back at shoulder height, hands never in front of the face, sweat drops flying off the head, a little dust puff at the heels. Hugely exaggerated, comic, never violent. Way of moving: powerful rugby run, head forward, knees high. The brown oval rugby ball under the near arm: clutched tight to his chest with both arms like a try run.",
+ "stride_px": 187.4,
+ "decalage": [-12.0, 0.0],
+ "entrees": {
+  "idle": {
+   "i": [31, 31, 31, 31, 31, 31, 31, 31, 30, 30, 30, 31, 31, 14, 14, 31, 31, 31, 31, 31, 31, 31, 2, 2, 2, 31, 31, 14, 14, 31, 14, 31],
+   "e": [43, 43, 42, 37, 37, 36, 44, 45, 43, 43, 41, 43, 43, 44, 45, 42, 42, 42, 40, 39, 36, 36, 44, 44, 46, 40, 37, 44, 44, 44, 44, 43]
+  },
+  "walk": {
+   "i": [3, 3, 3, 3, 3, 5, 19, 24, 5, 5, 5, 3, 3, 3, 3, 3, 3, 3, 18, 3, 20, 20, 6, 6, 23, 24, 24, 2, 2, 2, 2, 3],
+   "e": [26, 26, 25, 22, 22, 26, 33, 31, 28, 28, 29, 27, 27, 30, 32, 27, 27, 26, 24, 24, 21, 21, 38, 38, 38, 27, 22, 25, 25, 25, 27, 26]
+  }
+ }
+}
