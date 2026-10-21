@@ -326,19 +326,27 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/263_comptoir_bar/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/263_comptoir_bar/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "264": {
   "titre": "Comptoir de la terrasse : masque v3",
   "sorte": "masque",
   "element": "comptoir_bar",
-  "priorite": "night",
-  "statut": "attend",
-  "depend": "263"
+  "priorite": "normal",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "087eb9e3c6714597940283d292a0d14e",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 07:35"
  },
  "266": {
   "titre": "Mur de soutènement de l'escalier : masque v3",
@@ -687,11 +695,17 @@
    {
     "tid": "c6d493c7788f41f4bd1fd55017e871a7",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/291_marches_escalier/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/291_marches_escalier/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/291_marches_escalier/0/planche.png"
+  ]
  },
  "292": {
   "titre": "Marches de l'escalier de la ville : masque v3",

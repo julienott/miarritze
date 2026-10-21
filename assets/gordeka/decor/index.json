@@ -613,16 +613,16 @@
    ],
    "sources": [
     {
-     "job": 0,
-     "variante": "image_00",
-     "task": "e183f1081ec148ffbfc47d15b0886a89",
-     "date": "2026-10-20"
+     "job": 3,
+     "variante": "image_01",
+     "task": "5df4cb503ede43d2958702da4c16256f",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/caisses_poisson_ombre.png",
    "ombre_decalage": [
-    30,
-    158
+    26,
+    140
    ]
   },
   "barque_mouillage": {
