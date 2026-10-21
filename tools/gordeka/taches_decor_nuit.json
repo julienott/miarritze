@@ -339,11 +339,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0/apercu/mur_soutenement.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/266_mur_soutenement/0/apercu/mur_soutenement.png"
-  ]
+  ],
+  "variante": null
  },
  "267": {
   "titre": "Pile de caisses de poisson : refaire de face",
@@ -383,11 +384,17 @@
    {
     "tid": "c06456d5df0648df9c7852fd4a3753a4",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/269_barque_mouillage/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/269_barque_mouillage/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/269_barque_mouillage/0/planche.png"
+  ]
  },
  "271": {
   "titre": "Chalutier à quai : animation",
@@ -398,16 +405,26 @@
    {
     "tid": "d6dd511ea01346909e1215fe0393838f",
     "quoi": "drapeau (warp flag, zone du drapeau)",
-    "style": "pf_2d__loop"
+    "style": "pf_2d__loop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/271_chalutier_quai/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/271_chalutier_quai/0/planche.png"
    },
    {
     "tid": "9dc752da49034cacbb6ea6e79bfbe0ed",
     "quoi": "drapeau (vidéo)",
-    "style": "pf_2d__loop"
+    "style": "pf_2d__loop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/271_chalutier_quai/1",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/271_chalutier_quai/1/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/271_chalutier_quai/0/planche.png",
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/271_chalutier_quai/1/planche.png"
+  ]
  },
  "272": {
   "titre": "Chalutier à quai : masque v3",
@@ -418,11 +435,17 @@
    {
     "tid": "f4889f4e45da4372b545e1e0bbe976c5",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/272_chalutier_quai/0/apercu/chalutier_quai.png"
+  ]
  },
  "273": {
   "titre": "Coque sur ber (cale sèche) : refaire de face",
