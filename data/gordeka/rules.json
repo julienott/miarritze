@@ -26,7 +26,7 @@
 	"decor_formes": 1,
 	"decor_masques_pf": 1,
 	"decor_masques_pf_confiance_min": 0.5,
-	"decor_masques_pf_part_max": 0.7,
+	"decor_masques_pf_part_max": 0.9,
 	"decor_profondeur_min": 0.4,
 	"decor_finesse_px": 10,
 	"masque_vue_portee": 2.0,
