@@ -1728,7 +1728,23 @@
     1
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/depart_lauburu.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "0822fca5e9484e2aa98ea7cd6179e25d",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "piege_generique": {
    "nom": "Piège générique (flaque collante)",
