@@ -1922,7 +1922,7 @@
   "sorte": "masque",
   "element": "fontaine_place",
   "priorite": "normal",
-  "statut": "a_voir",
+  "statut": "integre",
   "consigne": "Masque : emprise = tout le rebord du bassin (on marche dans la moitié arrière).",
   "jobs": [
    {
@@ -1937,7 +1937,8 @@
   "depose": "2026-10-21 18:28",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-fontaine_place_fontaine_place/0/apercu/fontaine_place.png"
-  ]
+  ],
+  "variante": null
  },
  "m-banc_vert": {
   "titre": "Banc vert du front de mer : masque v3",
