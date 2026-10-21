@@ -2428,11 +2428,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-marches_escalier_marches_escalier/0/apercu/marches_escalier.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 19:21",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-marches_escalier_marches_escalier/0/apercu/marches_escalier.png"
-  ]
+  ],
+  "variante": null
  },
  "m-table_terrasse": {
   "titre": "Table de terrasse : masque v3",
