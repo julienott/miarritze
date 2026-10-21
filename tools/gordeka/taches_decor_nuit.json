@@ -526,19 +526,27 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/275_coque_chantier/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/275_coque_chantier/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "276": {
   "titre": "Coque en chantier (atelier) : masque v3",
   "sorte": "masque",
   "element": "coque_chantier",
-  "priorite": "night",
-  "statut": "attend",
-  "depend": "275"
+  "priorite": "normal",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "2f2dfc1ed9974b6fb53103dfb9308b58",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 07:35"
  },
  "278": {
   "titre": "Étal de la criée : masque v3",
