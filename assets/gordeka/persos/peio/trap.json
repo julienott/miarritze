@@ -1,0 +1,78 @@
+{
+ "motion": "trap",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "sneaky mischievous grin",
+ "tenue": "jersey",
+ "drive": {
+  "clip": "trap_bend",
+  "exaggerate": 1.2,
+  "hold": {
+   "left_arm": "tucked"
+  }
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Sets a trap: looks left and right sneakily, bends forward at the waist with both legs straight, places a small wooden trap on the ground in front of him, then straightens up rubbing his hands with glee. The brown oval rugby ball under the near arm: kept under the arm, he places the trap with his free hand.",
+ "frame_offsets": [
+  [5.0, 0.0],
+  [5.0, 0.0],
+  [5.5, 0.0],
+  [6.5, 0.0],
+  [8.0, 0.0],
+  [11.5, 0.0],
+  [17.5, 0.0],
+  [22.5, 0.0],
+  [26.0, 0.0],
+  [28.5, 0.0],
+  [31.5, 0.0],
+  [33.0, 0.0],
+  [34.0, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [34.0, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [33.5, 0.0],
+  [32.0, 0.0],
+  [31.0, 0.0],
+  [28.5, 0.0],
+  [24.0, 0.0],
+  [17.0, 0.0],
+  [10.5, 0.0],
+  [8.0, 0.0]
+ ],
+ "debut": 1,
+ "entrees": {
+  "idle": {
+   "i": [4, 4, 3, 16, 14, 14, 13, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13, 12, 12, 12, 14, 14, 14],
+   "e": [9, 9, 9, 9, 9, 16, 41, 50, 52, 56, 60, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 61, 59, 57, 53, 36, 16, 11]
+  },
+  "walk": {
+   "i": [21, 21, 21, 21, 21, 21, 21, 21, 4, 4, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 4, 21, 21, 4, 21, 21],
+   "e": [28, 28, 28, 25, 25, 25, 43, 51, 56, 59, 62, 64, 65, 64, 64, 65, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 63, 62, 59, 53, 39, 24, 23]
+  },
+  "run_scared": {
+   "i": [5, 5, 3, 3, 3, 4, 12, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 30, 4, 3],
+   "e": [37, 37, 38, 35, 36, 33, 41, 49, 53, 57, 62, 64, 65, 65, 65, 65, 65, 65, 64, 64, 64, 64, 64, 64, 64, 64, 63, 61, 59, 53, 38, 32, 34]
+  }
+ }
+}
