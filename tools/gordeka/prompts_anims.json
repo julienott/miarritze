@@ -160,11 +160,13 @@
    "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
   "emote_rire": {
-   "action": "Laughs out loud: leans back, hand on the belly, shoulders shaking, little hops.",
+   "action": "Laughs out loud: throws the head far back, then doubles over forward clutching the belly with both hands, shoulders shaking hard, little hops on the spot.",
    "expression": "eyes closed, mouth wide open laughing",
    "boucle": false,
    "mouvement": {
-    "motion": "laugh"
+    "motion": "laugh",
+    "exaggerate": 1.4,
+    "bounce": 0.06
    },
    "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
