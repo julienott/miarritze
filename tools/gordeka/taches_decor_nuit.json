@@ -1137,11 +1137,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/318_cachette_malle_pelotes/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/318_cachette_malle_pelotes/0/planche.png"
-  ]
+  ],
+  "variante": "image_01"
  },
  "319": {
   "titre": "Malle à pelotes : version ouverte",
@@ -1160,11 +1161,17 @@
    {
     "tid": "36dc398daf6c4c25bd00db36c0bc886d",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/320_cachette_tas_filets_cachette/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/320_cachette_tas_filets_cachette/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/320_cachette_tas_filets_cachette/0/planche.png"
+  ]
  },
  "321": {
   "titre": "Montagne de filets : version ouverte",
@@ -1183,11 +1190,17 @@
    {
     "tid": "df07f9839a4840949db2003e3dc85ede",
     "quoi": "pf_hd__edit ×2 (ouverte)",
-    "style": "pf_hd__edit"
+    "style": "pf_hd__edit",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/323_cachette_confessionnal/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/323_cachette_confessionnal/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/323_cachette_confessionnal/0/planche.png"
+  ]
  },
  "324": {
   "titre": "Confessionnal en bois : masque v3",
@@ -1198,11 +1211,17 @@
    {
     "tid": "3b5533e1268e43a6a094c4c1a3ae1749",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0/apercu/cachette_confessionnal.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/324_cachette_confessionnal/0/apercu/cachette_confessionnal.png"
+  ]
  },
  "325": {
   "titre": "Barque retournée : image",
@@ -1213,11 +1232,17 @@
    {
     "tid": "f7bdd2c3b5bd49efbe541ea13ab06104",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0/planche.png"
+  ]
  },
  "326": {
   "titre": "Barque retournée : version ouverte",
@@ -1236,11 +1261,17 @@
    {
     "tid": "ee7d379cc35244c1b231857ab7f19b73",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/327_cachette_tonneau_cidre/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/327_cachette_tonneau_cidre/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/327_cachette_tonneau_cidre/0/planche.png"
+  ]
  },
  "328": {
   "titre": "Tonneau de cidre géant : version ouverte",
@@ -1259,11 +1290,17 @@
    {
     "tid": "af3ac18b2eee4474bbcf36040d7b66b2",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/329_cachette_panier_linge/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/329_cachette_panier_linge/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/329_cachette_panier_linge/0/planche.png"
+  ]
  },
  "330": {
   "titre": "Grand panier à linge : version ouverte",
@@ -1282,11 +1319,17 @@
    {
     "tid": "79094137d43142baaaf9c39d53af9cec",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/331_cachette_caisse_voiles/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/331_cachette_caisse_voiles/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/331_cachette_caisse_voiles/0/planche.png"
+  ]
  },
  "332": {
   "titre": "Caisse à voiles de l'atelier : version ouverte",
