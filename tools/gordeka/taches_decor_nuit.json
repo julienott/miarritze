@@ -146,7 +146,8 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/250_maison_crampotte/0/planche.png"
   ],
   "variante": "image_01",
-  "consigne": "seen straight from the front, the facade parallel to the image, gable roof symmetric, consistent perspective"
+  "consigne": "seen straight from the front, the facade parallel to the image, gable roof symmetric, consistent perspective",
+  "masque_refait": 1
  },
  "252": {
   "titre": "Chambre froide de la criée : refaire de face",
@@ -200,18 +201,21 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "a8bd692444be4184a25a63c95c6966b5",
+    "tid": "d8939717a0f14200aab2a240074379b5",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0/planche.png"
    }
   ],
-  "statut": "todo",
-  "depose": "2026-10-21 10:33",
+  "statut": "a_voir",
+  "depose": "2026-10-21 17:22",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0/planche.png"
   ],
   "variante": "image_00",
-  "consigne": "a huge Basque pelota fronton wall: a very tall and very wide plastered wall with a rounded top, much taller than a house, red base stripe, seen straight from the front"
+  "consigne": "Image paysage ~640×192 : mur de fronton très large vu de face (10 cases), puis masque trapèze sous toute sa base."
  },
  "261": {
   "titre": "Autel de la chapelle des marins : refaire de face",
@@ -350,7 +354,8 @@
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0/planche.png"
   ],
   "variante": "image_00",
-  "consigne": "seen exactly from the side, the hull long side parallel to the image, keel horizontal, resting on its wooden cradle"
+  "consigne": "seen exactly from the side, the hull long side parallel to the image, keel horizontal, resting on its wooden cradle",
+  "masque_refait": 1
  },
  "275": {
   "titre": "Coque en chantier (atelier) : refaire de face",
@@ -544,20 +549,18 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "c36b03f412954f37879f22de7e816d88",
+    "tid": "cc94bff32ddd4d17bdffa3c6fd149e90",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
+  "statut": "en_file",
+  "depose": "2026-10-21 17:22",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0/planche.png"
   ],
-  "variante": "image_01"
+  "variante": "image_01",
+  "consigne": "Image 384×192, bassin peu profond qui remplit ses 6×3 cases ; masque = tout le rebord (on entre dans le bassin aujourd'hui)."
  },
  "298": {
   "titre": "Bassin du lavoir : animation",
@@ -799,20 +802,18 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "f7bdd2c3b5bd49efbe541ea13ab06104",
+    "tid": "4f3913f692f94f41aaa906cfdcbf8d22",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
+  "statut": "en_file",
+  "depose": "2026-10-21 17:22",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0/planche.png"
   ],
-  "variante": "image_00"
+  "variante": "image_00",
+  "consigne": "Plus haute et masque à faire : trop basse (0,4 perso) pour cacher."
  },
  "326": {
   "titre": "Barque retournée : version ouverte",
@@ -1855,15 +1856,22 @@
   "sorte": "masque",
   "element": "maison_crampotte",
   "priorite": "normal",
-  "statut": "todo",
+  "statut": "a_voir",
   "jobs": [
    {
-    "tid": "47bdfe631db44fc48d997156b7ff145d",
+    "tid": "d3ed022023e84029aa02a0dda72b715c",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-maison_crampotte_maison_crampotte/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-maison_crampotte_maison_crampotte/0/apercu/maison_crampotte.png"
    }
   ],
-  "depose": "2026-10-21 08:01"
+  "depose": "2026-10-21 17:22",
+  "consigne": "Masque périmé (image refaite de face) : emprise trapèze sous la base seulement, le haut doit masquer un perso derrière.",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-maison_crampotte_maison_crampotte/0/apercu/maison_crampotte.png"
+  ]
  },
  "m-fronton": {
   "titre": "Fronton de pelote basque : masque v3",
@@ -1885,15 +1893,22 @@
   "sorte": "masque",
   "element": "coque_sur_ber",
   "priorite": "normal",
-  "statut": "todo",
+  "statut": "a_voir",
   "jobs": [
    {
-    "tid": "72584f7f0c674f81b8035ca0f1404177",
+    "tid": "24929fe0abb34a269a015322e829e911",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-coque_sur_ber_coque_sur_ber/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-coque_sur_ber_coque_sur_ber/0/apercu/coque_sur_ber.png"
    }
   ],
-  "depose": "2026-10-21 08:08"
+  "depose": "2026-10-21 17:22",
+  "consigne": "Masque périmé : ligne de tri trop basse, le perso devant passe derrière la coque.",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-coque_sur_ber_coque_sur_ber/0/apercu/coque_sur_ber.png"
+  ]
  },
  "m-chambre_froide": {
   "titre": "Chambre froide de la criée : masque v3",

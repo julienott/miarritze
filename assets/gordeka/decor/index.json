@@ -444,16 +444,16 @@
    ],
    "sources": [
     {
-     "job": 1,
+     "job": 2,
      "variante": "image_00",
-     "task": "e4aa92511be14bc4a8c685b75f8fce24",
+     "task": "d8939717a0f14200aab2a240074379b5",
      "date": "2026-10-21"
     }
    ],
    "ombre": "objets/fronton_ombre.png",
    "ombre_decalage": [
-    46,
-    217
+    70,
+    359
    ]
   },
   "rayonnage_filets": {
