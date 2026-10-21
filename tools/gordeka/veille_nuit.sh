@@ -10,7 +10,9 @@
 cd "$(dirname "$0")/../.." || exit 1
 PF=https://stellar.tailbeda4d.ts.net
 JOURNAL=tools/rd/out/recette/journal.log
-lus=$(wc -l < "$JOURNAL" 2>/dev/null || echo 0)
+# Reprend où la veille précédente s'était arrêtée (une relance ne perd aucune ligne du journal).
+LUS=tools/rd/out/recette/.veille_lus
+lus=$(cat "$LUS" 2>/dev/null || wc -l < "$JOURNAL" 2>/dev/null || echo 0)
 ko=0; dernier_fini=""
 while true; do
   q=$(curl -s -m 20 "$PF/v2/queue")
@@ -30,6 +32,7 @@ while true; do
   if [ "$n" -gt "$lus" ]; then
     tail -n $((n - lus)) "$JOURNAL" | grep -E "À VOIR|ÉCHEC|ALERTE|Traceback" | sed 's/^/PERSO /'
     lus=$n
+    echo "$lus" > "$LUS"
   fi
   .venv/bin/python tools/producer/decor_matin.py releve 2>&1 | grep -E "prêt|À VOIR|reçu|échec|ÉCHEC|Erreur|Traceback" | sed 's/^/DECOR /'
   sleep 300
