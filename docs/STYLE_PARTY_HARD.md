@@ -356,3 +356,9 @@ Fichiers dans le scratchpad (`partyhard_refs/video/`), jamais commités.
 
 **Bandes-son** : fiches Steam des apps 554790, 964370 et 733080 ;
 gamegrin.com/directory/game/party-hard/music.
+
+## Décisions de Julien (21/10/2026)
+
+- Persos de **32 px** de haut (fidèle à Party Hard), pas 36–40.
+- La **caméra suit le joueur** (nos cartes font ~5 écrans de large ; Party Hard 1 a une caméra fixe).
+- Persos réduits à 5 éléments : profil, idle, course, saut vers la cachette (sortie = à l envers), fantôme ; aucune personnalisation.
