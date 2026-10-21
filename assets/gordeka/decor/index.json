@@ -1762,7 +1762,23 @@
    "animation": {
     "methode": "planche",
     "description": "bulles qui gonflent et éclatent, boucle"
-   }
+   },
+   "fichiers": [
+    "objets/piege_generique.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "78432456f7944e69986f5669b87b6dbf",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "barriques_cidre": {
    "nom": "Deux barriques de cidre",
