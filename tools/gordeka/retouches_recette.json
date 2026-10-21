@@ -30,9 +30,7 @@
  "perso/kaio/walk": {
   "priority": "normal"
  },
- "perso/kaio/hunter_reveal": {
-  "priority": "normal"
- },
+ "perso/kaio/hunter_reveal": "only the small lens of the flashlight glows, the flashlight is held in the feathered tip of his wing",
  "perso/kaio/victory": {
   "action": "Clear joyful celebration: he hops up and down on his webbed feet several times, both grey wings spread wide open and flapping at each hop, beak wide open in a happy squawk.",
   "priority": "normal"
