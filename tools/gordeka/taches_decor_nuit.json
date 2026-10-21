@@ -849,7 +849,7 @@
   "sorte": "masque",
   "element": "table_terrasse",
   "priorite": "high",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "4308fb6cc19c408bb65490792c552015",
@@ -863,7 +863,8 @@
   "depose": "2026-10-21 10:31",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/294_table_terrasse/0/apercu/table_terrasse.png"
-  ]
+  ],
+  "variante": null
  },
  "295": {
   "titre": "Tréteaux et planches de la cale : refaire de face",
