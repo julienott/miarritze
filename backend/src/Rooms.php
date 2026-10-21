@@ -30,7 +30,7 @@ const GK_MAX_GAME_BYTES = 4096;
 /** Miroir de data/gordeka/rules.json « characters » (le backend est déployé sans data/). */
 const GK_CHARACTERS = ['louis', 'maia', 'patxi', 'xabi', 'mattin', 'amaia', 'txomin', 'kaio',
     'karramarro', 'ramuntxo', 'itsaso', 'peio'];
-const GK_MAPS = ['port_pecheurs'];
+const GK_MAPS = ['port_pecheurs', 'parc_mazon'];
 
 /**
  * Horloge des salons. Les tests peuvent l'avancer (purge 10 min, coupure 60 s)
