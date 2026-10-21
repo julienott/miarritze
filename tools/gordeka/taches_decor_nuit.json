@@ -2414,26 +2414,19 @@
   "variante": null
  },
  "m-marches_escalier": {
-  "titre": "Marches de l'escalier de la ville : masque v3",
+  "titre": "Marches de l'escalier de la ville : masque (d'office, nouvelle image)",
   "sorte": "masque",
   "element": "marches_escalier",
-  "priorite": "high",
-  "statut": "integre",
+  "priorite": "normal",
   "jobs": [
    {
-    "tid": "35fe28fa03e34ee5b0307456758e18d8",
+    "tid": "0f24416867a04ab3828cac38f47d2802",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/292_marches_escalier/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/292_marches_escalier/0/apercu/marches_escalier.png"
+    "style": "pf_2d__footprint"
    }
   ],
-  "depose": "2026-10-21 10:26",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/292_marches_escalier/0/apercu/marches_escalier.png"
-  ],
-  "variante": null
+  "statut": "en_file",
+  "depose": "2026-10-21 19:21"
  },
  "m-table_terrasse": {
   "titre": "Table de terrasse : masque v3",
@@ -2528,7 +2521,7 @@
   "titre": "marches_escalier : taille et masque à revoir",
   "sorte": "image",
   "element": "marches_escalier",
-  "statut": "a_voir",
+  "statut": "integre",
   "consigne": "Image paysage 384×64 qui remplit ses 6×1 cases.",
   "jobs": [
    {
@@ -2544,6 +2537,7 @@
   "depose": "2026-10-21 19:11",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/604_marches_escalier/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  }
 }
