@@ -2293,8 +2293,22 @@
      }
     ]
    },
-   "provisoire": "mouette",
-   "fichiers": []
+   "fichiers": [
+    "objets/mouette_posee.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "13f7ee10f31c4e7dbd56bfb6c97757a4",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "chat_du_port": {
    "nom": "Chat du port endormi",
