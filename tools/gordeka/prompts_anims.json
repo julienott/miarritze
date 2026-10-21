@@ -180,11 +180,12 @@
    "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
   "emote_pouce": {
-   "action": "Gives a big thumbs up toward the viewer with a little nod and a wink.",
+   "action": "Thumbs up: thrusts one arm straight forward at full length with a big raised thumb at the end, a proud wink and a confident little nod, then a second thumbs up with a small hop.",
    "expression": "confident smile with a wink",
    "boucle": false,
    "mouvement": {
-    "motion": "thumbs_up"
+    "motion": "thumbs_up",
+    "exaggerate": 1.3
    },
    "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
   },
