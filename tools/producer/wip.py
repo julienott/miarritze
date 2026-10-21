@@ -62,7 +62,8 @@ def dernier_refus(cid):
             return ev["new"].split(") : ", 1)[-1]   # consigne issue d'un test de décor (docs/TEST_DECOR.md)
         if ev.get("type") == "deplacement" and ev.get("new") == "qa":
             break
-    return ""
+    d = cli.call("card", query={"id": cid})["card"].get("description") or ""
+    return d.split(") : ", 1)[-1] if d.startswith("Test de jeu") else ""   # carte créée par un test de décor
 
 
 def en_cours(cid, titre):
