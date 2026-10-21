@@ -1,0 +1,669 @@
+{
+  "_doc": "Blocs de prompts réutilisables du style « façon Party Hard » de Miarritze Gordeka (proposition du 2026-10-21, à valider par Julien). Explications et exemples : docs/STYLE_PARTY_HARD.md et docs/style/*.md. Assemblage : prompt = gabarit (emplacements {…} remplis) + ' ' + style_commun.base + ' ' + style_commun.par_type[type]. Tous les prompts sont en anglais, décrivent seulement le résultat voulu (aucune négation : les modèles ajoutent ce qu'on nomme) et ne citent aucun jeu existant. Paramètres pixelforge : prompt_style, width, height, colors, num_images, seed.",
+  "version": 1,
+  "date": "2026-10-21",
+  "echelle": {
+    "_doc": "Résolution native du monde et correspondance avec le jeu (rules.json tile_px = 64 en 1280×720).",
+    "resolution_native": [
+      640,
+      360
+    ],
+    "facteur_affichage": 2,
+    "case_native_px": 32,
+    "case_jeu_px": 64,
+    "grille_motifs_px": 8,
+    "perso_adulte_px": 32,
+    "perso_enfant_px": 28,
+    "toile_perso_px": 48,
+    "arete_mur_px": 6,
+    "face_mur_fond_px": [
+      20,
+      26
+    ],
+    "porte_px": [
+      24,
+      32
+    ],
+    "ecran_en_cases": [
+      20,
+      11.25
+    ],
+    "zone_type_px": [
+      384,
+      216
+    ]
+  },
+  "palette": {
+    "_doc": "Teintes de base relevées sur les captures (docs/STYLE_PARTY_HARD.md §2), transposées au soir de fête basque. Les grandes surfaces restent sombres et peu contrastées ; la couleur franche est réservée aux persos, aux lumières et aux cachettes.",
+    "fond_nuit": [
+      "#141718",
+      "#1b1e1f",
+      "#252831",
+      "#2c3245",
+      "#2b2541"
+    ],
+    "sols_chauds": [
+      "#2a2d29",
+      "#4c322a",
+      "#5f4840",
+      "#a09a86"
+    ],
+    "mer_soir": [
+      "#082235",
+      "#113145",
+      "#375e6d",
+      "#83a1a8"
+    ],
+    "vegetation_soir": [
+      "#181c12",
+      "#223217",
+      "#2b3e1e",
+      "#385146"
+    ],
+    "lumieres": [
+      "#ffd25a",
+      "#ff9a3c",
+      "#ff4fa3",
+      "#3fe0ff",
+      "#a020f0"
+    ],
+    "basque": [
+      "#c8102e",
+      "#00843d",
+      "#f4efe6",
+      "#1d2230"
+    ],
+    "accent_cachette": "#ff8a1c"
+  },
+  "style_commun": {
+    "base": "Pixel art game asset with crisp hard square pixels and a small limited palette. Top-down three-quarter cutaway view like a dollhouse with the roof lifted off: the ground seen from above, walls and objects showing their top and their front face, orthographic straight grid, every object square to the viewer. Setting: a summer evening festival in Biarritz in the French Basque Country at dusk, dark muted blue-violet base colors with saturated accents of Basque red, green and white, warm glowing lanterns and string lights. Each shape is edged with a darker shade of its own color, flat shading with one shadow tone and one highlight tone, light from above, cheerful and friendly mood for children.",
+    "par_type": {
+      "perso": "Single full-body character centered on a plain solid white background, feet on the bottom third line, readable silhouette at tiny size.",
+      "anim": "Same character, same colors and same proportions in every frame, feet on the same ground line, evenly spaced frames on a plain solid white background.",
+      "prop": "Single isolated object centered on a plain solid white background, the whole object inside the frame.",
+      "sol": "Seamless tileable floor texture seen straight from above, filling the whole square edge to edge, low contrast, subtle pattern on an 8 pixel grid.",
+      "mur": "Modular wall piece on a plain solid white background: a dark wall top strip seen from above and the wall front face below it.",
+      "carte": "Whole area visible at once, seen from above with the roof lifted off, rooms outlined by thick dark wall tops, each room with its own floor pattern, dense furniture along the walls, open walkways two tiles wide."
+    }
+  },
+  "gabarits": {
+    "perso": {
+      "prompt_style": "pf_pro__character",
+      "repli": "pf__character",
+      "width": 48,
+      "height": 48,
+      "colors": 12,
+      "num_images": 3,
+      "seed": 1,
+      "prompt": "Tiny party game character, {gabarit_corps}, strict side view facing right, standing relaxed, {description}. Signature detail drawn large and bright: {signature}. Hair as a simple block, face as a few skin pixels with one dark eye dot, bright shoes."
+    },
+    "gabarits_corps": {
+      "enfant": "child proportions about four heads tall, 28 pixels tall, one-pixel arms and legs, slightly bigger head",
+      "adulte": "slim proportions about five heads tall, 32 pixels tall, one-pixel arms and legs",
+      "costaud": "broad sturdy proportions about five heads tall, 33 pixels tall, thick arms two pixels wide",
+      "creature": "chunky round mascot proportions, 28 pixels tall, big head and big expressive eyes"
+    },
+    "anim": {
+      "_doc": "Une anim = le perso décrit + l'action de animations[id] ; référence : l'image retenue du profil.",
+      "prompt": "{description}, {action}, {expression}."
+    },
+    "prop": {
+      "prompt_style": "pf__topdown_asset",
+      "colors": 20,
+      "num_images": 3,
+      "seed": 1,
+      "prompt": "{objet}, {taille_lisible}, seen from above at a three-quarter angle showing the top and the front face, aligned straight to the grid, muted evening colors with one warm light accent."
+    },
+    "cachette": {
+      "prompt_style": "pf__topdown_asset",
+      "colors": 20,
+      "num_images": 3,
+      "seed": 1,
+      "prompt": "{objet}, a hiding spot big enough for a child to curl up inside, slightly bigger than the props around it, a bright orange #ff8a1c detail as its marker ({repere_orange}), seen from above at a three-quarter angle showing the top and the front face, aligned straight to the grid."
+    },
+    "sol": {
+      "prompt_style": "pf_tile__texture",
+      "width": 32,
+      "height": 32,
+      "colors": 8,
+      "num_images": 2,
+      "seed": 1,
+      "prompt": "{sol}, dark evening tones."
+    },
+    "mur": {
+      "prompt_style": "pf__topdown_asset",
+      "width": 64,
+      "height": 64,
+      "colors": 12,
+      "num_images": 2,
+      "seed": 1,
+      "prompt": "{mur}, the top strip 6 pixels thick in near black #1b1e1f, the front face 24 pixels tall with {detail_facade}."
+    },
+    "anime": {
+      "_doc": "Objet animé du décor : générer l'image fixe avec prop, puis 4 images de boucle (pf_anim__keyframes ou retouche image par image).",
+      "frames": 4,
+      "fps": 6,
+      "prompt": "{objet}, {mouvement}, {frames} frame loop, gentle and readable."
+    },
+    "carte_zone": {
+      "_doc": "Maquette d'ambiance d'UNE zone (≈ 12 × 7 cases = 384 × 216 px natifs, taille max de pixelforge). Sert de référence de couleurs et de densité ; la carte jouable reste assemblée par le code à partir des sols, murs et objets.",
+      "prompt_style": "pf__topdown_map",
+      "width": 384,
+      "height": 216,
+      "colors": 40,
+      "num_images": 3,
+      "seed": 1,
+      "prompt": "Top-down cutaway map of {zone} in {carte} at a summer evening festival, {contenu}, {lumieres}, a few small festival-goers for scale."
+    },
+    "sortie": {
+      "prompt_style": "pf__topdown_asset",
+      "width": 64,
+      "height": 64,
+      "colors": 16,
+      "num_images": 3,
+      "seed": 1,
+      "prompt": "{objet}, an exit marker glowing with a soft green lantern light, seen from above at a three-quarter angle showing the top and the front face."
+    }
+  },
+  "persos": {
+    "_doc": "Fiches pixel (lecture à 28–33 px) tirées de tools/gordeka/prompts_anims.json et de tools/rd/prompts/fighters.yaml (Itsasargi). signature = ce qui doit se lire de loin. Aucune personnalisation (décision de Julien, 2026-10-21).",
+    "louis": {
+      "corps": "enfant",
+      "signature": "a red Basque beret on blond hair",
+      "description": "a little Basque boy with blond hair, a red beret, a white short-sleeved shirt, a red belt and navy rolled-up trousers"
+    },
+    "txomin": {
+      "corps": "enfant",
+      "signature": "black sunglasses and blue swim fins hanging at the hip",
+      "description": "a Basque lifeguard boy with dark brown skin and short black curly hair, black sunglasses, a yellow tank top, red swim shorts, blue swim fins hanging from his belt, barefoot"
+    },
+    "patxi": {
+      "corps": "adulte",
+      "signature": "a fishing rod sticking up diagonally from his back",
+      "description": "a bearded Basque fisherman with a blue beanie, a yellow raincoat, navy trousers, black boots and a fishing rod strapped diagonally on his back"
+    },
+    "maia": {
+      "corps": "enfant",
+      "signature": "a small yellow surfboard upright on her back",
+      "description": "a young Basque surfer girl with a brown ponytail, a turquoise wetsuit with a navy panel, a small yellow surfboard strapped upright on her back, barefoot"
+    },
+    "xabi": {
+      "corps": "enfant",
+      "signature": "a long curved wicker chistera on his right hand",
+      "description": "a little Basque jai alai player with short dark brown hair, a white polo shirt, white trousers, a red sash, red espadrilles and a long curved wicker chistera on his right hand"
+    },
+    "mattin": {
+      "corps": "costaud",
+      "signature": "red and white horizontal stripes and big arms",
+      "description": "a strong Basque stone lifter with a black beard, a red beret, a red and white horizontally striped shirt, navy trousers, brown shoes and big muscular arms"
+    },
+    "amaia": {
+      "corps": "enfant",
+      "signature": "a red headscarf and a red skirt",
+      "description": "a Basque folk dancer girl with a red headscarf, a green vest over a white blouse, a red skirt, white espadrilles and a wooden makila stick on her back"
+    },
+    "kaio": {
+      "corps": "creature",
+      "signature": "a big yellow beak and orange webbed feet",
+      "description": "a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot, orange webbed feet and a small neckerchief"
+    },
+    "karramarro": {
+      "corps": "creature",
+      "signature": "two big raised orange pincers and eyes on stalks",
+      "description": "a cheerful orange cartoon crab with thin legs, two big raised pincers, eyes on stalks, a yellow belly, a big happy open mouth and a small neckerchief"
+    },
+    "ramuntxo": {
+      "corps": "costaud",
+      "signature": "a tall white chef hat",
+      "description": "a jolly Basque chef with a small brown mustache, a tall white chef hat, a white chef jacket, a red neck scarf, red and white checkered trousers and a black frying pan at his belt"
+    },
+    "itsaso": {
+      "corps": "enfant",
+      "signature": "long flowing aqua hair and a foamy wave hem",
+      "description": "a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with white foam, barefoot"
+    },
+    "peio": {
+      "corps": "costaud",
+      "signature": "a brown oval rugby ball under his arm",
+      "description": "a sturdy young Basque rugby player with medium brown skin and short black hair, a red and white hooped jersey, black shorts, white socks, black boots and an oval rugby ball under his arm"
+    },
+    "itsasargi": {
+      "corps": "adulte",
+      "signature": "a glowing yellow lantern held forward",
+      "description": "an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a glowing brass lantern held forward"
+    }
+  },
+  "pnj_fete": {
+    "_doc": "Foule de décor (ornements animés, sans effet de jeu), clichés de fête basque lisibles à 32 px.",
+    "liste": [
+      "a festival-goer dressed all in white with a red sash and a red neckerchief",
+      "a txistu flute player in white with a red beret",
+      "a grandmother in a black dress waving a red fan",
+      "a fisherman in a striped blue and white sailor shirt and yellow boots",
+      "a surfer with bleached hair carrying a longboard",
+      "a waiter in a white shirt with a tray of cider glasses",
+      "a giant-head festival mascot of a smiling sardine",
+      "a giant-head festival mascot of a Basque king with a crown",
+      "a kid with a red balloon",
+      "a bandas trumpet player in white and red",
+      "an ice cream seller with a striped apron",
+      "a pelota fan in a green polo shirt"
+    ]
+  },
+  "animations": {
+    "_doc": "Décision de Julien (2026-10-21) : on fait simple. Chaque perso = 1) profil (sprite de référence), 2) idle, 3) course, 4) saut vers la cachette (la sortie = la même animation jouée à l'envers), 5) fantôme. Aucune personnalisation : ni masque de tenue ni couleur de joueur. Tout est de profil tourné vers la droite ; la gauche est le miroir. Cadence d'après les vidéos de Party Hard (mesures_video) : poses tenues 100 ms (10 i/s), marche en 4 poses, rebond de 1 px. Prompt d'une anim = '{description}, ' + action + ', ' + expression + '.' + style_commun.base + par_type.anim.",
+    "mesures_video": {
+      "source": "Steam app 356570 : « Lets Play by Mike Rose » (720p30, ×2 exact, caméra fixe) et « Launch Trailer » (1080p60, zoom ×4,7 à ×5) ; docs/STYLE_PARTY_HARD.md §10",
+      "cadence_poses_fps": 10,
+      "marche_poses_par_cycle": 4,
+      "marche_duree_cycle_s": 0.4,
+      "marche_vitesse_px_s": 27,
+      "danse_poses_par_boucle": 5,
+      "dj_poses_par_boucle": 3,
+      "rebond_px": 1,
+      "bulle_alerte_apparition_s": 0.17
+    },
+    "profil": {
+      "role": "sprite de référence de toutes les animations",
+      "dirs": [
+        "profil"
+      ],
+      "frames": 1,
+      "fps": 0,
+      "boucle": false,
+      "style": "pf_pro__character",
+      "repli": "pf__character",
+      "width": 48,
+      "height": 48,
+      "colors": 12,
+      "num_images": 3,
+      "seed": 1,
+      "action": "full body in a strict side view facing right, standing relaxed, arms along the body, feet flat on the ground line",
+      "expression": "friendly small smile"
+    },
+    "idle": {
+      "dirs": [
+        "profil"
+      ],
+      "frames": 2,
+      "fps": 3,
+      "boucle": true,
+      "style": "pf_anim__keyframes",
+      "repli": "pf_anim__guided",
+      "width": 48,
+      "height": 48,
+      "colors": 12,
+      "num_images": 2,
+      "action": "standing still in side view facing right, gentle breathing: the body rises one pixel in the second frame",
+      "expression": "calm small smile"
+    },
+    "run": {
+      "dirs": [
+        "profil"
+      ],
+      "frames": 4,
+      "fps": 12,
+      "boucle": true,
+      "style": "pf_anim__walking",
+      "repli": "pf_anim__four_angle_walking",
+      "width": 48,
+      "height": 48,
+      "colors": 12,
+      "num_images": 2,
+      "action": "bouncy cartoon run in side view facing right, four poses: long stride, passing pose with the body one pixel higher, long stride with the other leg, passing pose; arms swinging wide",
+      "expression": "excited determined grin",
+      "note": "PH : 4 poses à 10 i/s pour la marche ; 12 i/s pour une course"
+    },
+    "hide_jump": {
+      "dirs": [
+        "profil"
+      ],
+      "frames": 5,
+      "fps": 12,
+      "boucle": false,
+      "inverse_pour": "sortie de cachette (images jouées à l'envers)",
+      "style": "pf_anim__keyframes",
+      "repli": "pf_anim__guided",
+      "width": 48,
+      "height": 48,
+      "colors": 12,
+      "num_images": 2,
+      "action": "jump into a hiding spot in side view facing right, five poses: crouch with a squash, spring up with a stretch, top of the jump tucked in a ball, dive forward and down, only the feet still visible at the bottom",
+      "expression": "excited grin with eyes shut while diving"
+    },
+    "ghost": {
+      "dirs": [
+        "profil"
+      ],
+      "frames": 4,
+      "fps": 6,
+      "boucle": true,
+      "style": "pf_anim__keyframes",
+      "repli": "pf_anim__guided",
+      "width": 48,
+      "height": 48,
+      "colors": 12,
+      "num_images": 2,
+      "action": "floating in side view facing right as a pale translucent ghost of the same character, small white angel wings flapping, the body bobbing two pixels up and down, feet dangling above the ground",
+      "expression": "gentle smile"
+    }
+  },
+  "cartes": {
+    "_doc": "Recettes par carte (zones de assets/maps/<id>/zones.json, SPEC-GORDEKA §8). Une carte fait 96 × 40 à 42 cases = 3072 × 1280 px natifs, environ 4,8 × 3,6 écrans : la caméra suit le joueur.",
+    "port_pecheurs": {
+      "carte": "the old fishermen's port of Biarritz",
+      "lumieres": "lantern strings across the streets, warm windows, a lighthouse beam, reflections on the dark harbour water",
+      "sols": [
+        "warm sandstone quay slabs in staggered rows",
+        "grey-blue harbour cobblestones",
+        "weathered teak planks five pixels wide",
+        "red and white Basque checkered tiles of a cider house"
+      ],
+      "zones": {
+        "Jetée": "a stone jetty with bollards, coiled ropes and an exit at the far end",
+        "Bassin": "the harbour basin with moored blue and red Basque boats",
+        "Criée": "the fish market hall with stalls, ice boxes and cider barrels",
+        "Phare": "the foot of a small white and red lighthouse with rope chests",
+        "Crampottes": "a row of tiny whitewashed fishermen's huts with red and green shutters",
+        "Quai des chalutiers": "a quay with a big trawler, fish crates and nets",
+        "Place du fronton": "a festival square with a pelota wall, plane trees, a bandstand and Basque bunting",
+        "Hangar à filets": "a net shed with heaps of green nets and orange floats",
+        "Chapelle des marins": "a small sailors' chapel with pews, candles and a model boat",
+        "Cale sèche": "a slipway with boats on blocks, a wood pile and a rowboat at the bottom",
+        "Terrasse": "a café terrace with red chairs, small tables and string lights",
+        "Lavoir": "a stone washhouse with a basin and Basque linen drying on lines",
+        "Atelier": "a boat workshop with sails, tools and paint pots",
+        "Escalier de la ville": "stone steps climbing to the town with hydrangea pots"
+      }
+    },
+    "parc_mazon": {
+      "carte": "Mazon park, a leafy children's park in Biarritz",
+      "lumieres": "paper lanterns in the trees, a lit bandstand, glowing park lamps",
+      "sols": [
+        "pale gravel paths",
+        "short dark green lawn",
+        "brown bark mulch of a playground",
+        "red clay court of a pelota wall"
+      ],
+      "zones": {
+        "Entrée du gardien": "the keeper's cottage at the park gate",
+        "Labyrinthe de haies": "a maze of trimmed hedges",
+        "Aire des grands": "a playground with a play castle and a big slide",
+        "Mare aux canards": "a duck pond with reeds and a little wooden bridge",
+        "Potager du jardinier": "a vegetable garden with a glass greenhouse and a compost bin",
+        "Allée du fronton": "a narrow walkway behind the pelota wall",
+        "Bosquet": "a grove of thick trees and hollow bushes",
+        "Kiosque à musique": "a round green bandstand with a lattice base",
+        "Terrain du fronton": "a wide open pelota court in front of a tall pelota wall with a Basque flag",
+        "Grande pelouse": "a big lawn with picnic blankets",
+        "Aire des petits": "a toddler playground with a sandbox, a merry-go-round and a playhouse",
+        "Fontaine": "a stone fountain with benches",
+        "Buvette": "a snack kiosk with a giant ice cream cone sign",
+        "Jardin des cabanes": "children's huts made of branches",
+        "Allée des platanes": "an alley of tall plane trees"
+      }
+    },
+    "plage": {
+      "carte": "the Côte des Basques beach in Biarritz under an ochre sandstone cliff",
+      "lumieres": "a pink and orange sunset over the ocean, lantern strings on the restaurant terraces, glowing cave lamps",
+      "sols": [
+        "golden sand with faint ripples",
+        "darker wet sand",
+        "weathered wooden terrace boards",
+        "rough ochre sandstone cave floor"
+      ],
+      "zones": {
+        "Escalier de la falaise": "zigzag stairs carved in the cliff between grassy rocky banks",
+        "Grotte des contrebandiers": "a smugglers' cave with old chests and a lamp",
+        "Grotte aux sirènes": "a cave with tide pools and shells",
+        "Grotte de la marée": "a damp cave with dripping water and seaweed",
+        "Rampe du Port-Vieux": "a sloping stone ramp up to the old port",
+        "Cuisine de l'Itsasoa": "a red restaurant kitchen dug into the rock with a stove and a big fridge",
+        "Cuisine du Txiringito": "a green beach bar kitchen dug into the rock",
+        "Cabines rayées": "staggered rows of blue and white striped beach cabins",
+        "Restaurant Itsasoa": "a red restaurant terrace with tables and parasols",
+        "Poste de secours": "a lifeguard tower on stilts with flags",
+        "Restaurant Txiringito": "a green beach bar terrace with planters",
+        "Port-Vieux": "a small cove with white cabins, rocks, a bench and a shower",
+        "Rochers du Basta": "a jumble of rocks with tide pools",
+        "Grande plage": "an open beach with an ice cream kiosk, a sandcastle, windbreaks, surfboard racks, parasols and deckchairs",
+        "Bateaux au sec": "small boats pulled up on the sand",
+        "Digue": "a stone breakwater reaching into the waves"
+      }
+    }
+  },
+  "musique": {
+    "_doc": "Prompts de style musical (ex. Suno) : descriptifs, en anglais, sans nom d'artiste ni de jeu. Assemblage : base + ' ' + morceaux[id]. Analyse : docs/STYLE_PARTY_HARD.md §11 ; mode d'emploi : docs/style/06_musique.md. Mesures sur les bandes-annonces Steam : PH1 120 BPM, grosse caisse sur chaque temps, ~50 % de l'énergie sous 150 Hz ; PH2 120 BPM, motifs en croches plus funk.",
+    "base": "Upbeat retro electronic dance music for a cheerful children's party game, analog synth bass, bright arpeggiated synths, punchy drum machine, catchy hook, instrumental, playful and fun, family friendly, light Basque folk color.",
+    "touches_basques": [
+      "txalaparta wooden plank percussion playing interlocking rhythms",
+      "trikitixa diatonic button accordion riff",
+      "pandero frame drum with jingles",
+      "txistu three-hole flute melody",
+      "irrintzi-like joyful high call as a short sample"
+    ],
+    "morceaux": {
+      "menu": {
+        "bpm": 110,
+        "duree_s": 120,
+        "prompt": "Warm synthwave groove at 110 BPM, mellow analog pads, gentle arpeggio, a trikitixa accordion melody answering the lead synth, relaxed sunset mood by the ocean, loopable."
+      },
+      "cache_toi": {
+        "bpm": 120,
+        "duree_s": 30,
+        "prompt": "Sneaky playful electro at 120 BPM, plucky staccato bass, tiptoe pizzicato synth, soft txalaparta clicks on the offbeats, a countdown feel, loopable."
+      },
+      "chasse": {
+        "bpm": 124,
+        "duree_s": 180,
+        "prompt": "Bouncy French-house style party track at 124 BPM, four-on-the-floor kick, offbeat open hi-hats, filtered disco chords, funky slap synth bass, pandero jingles, a trikitixa accordion hook in the chorus, builds every 16 bars, loopable."
+      },
+      "chasse_fin": {
+        "bpm": 132,
+        "duree_s": 20,
+        "prompt": "Urgent but fun electro finale at 132 BPM, rising synth riser, rapid txalaparta rolls, driving octave bass, cheerful tension, ends on a bright accent."
+      },
+      "victoire_chasses": {
+        "bpm": 120,
+        "duree_s": 8,
+        "prompt": "Short triumphant festive jingle, bright brass synth stab, trikitixa flourish, pandero shake, happy ending chord."
+      },
+      "victoire_chasseur": {
+        "bpm": 120,
+        "duree_s": 8,
+        "prompt": "Short cheeky victory jingle, bouncy synth bass, playful whistle-like txistu run, cartoon sparkle, happy ending chord."
+      },
+      "trouve": {
+        "bpm": 0,
+        "duree_s": 1.5,
+        "prompt": "Funny short surprise sting, cartoon boing, synth pluck going up, a quick pandero shake."
+      }
+    },
+    "sons": {
+      "_doc": "Effets sonores dans l'esprit du jeu : courts, synthétiques, lisibles par-dessus la musique.",
+      "alerte": "short bright two-note synth blip rising, playful",
+      "cachette_entree": "soft wooden thump with a muffled cloth swish",
+      "piege": "sticky cartoon squelch",
+      "pas": "soft tiny footstep tap"
+    }
+  },
+  "decor_categories": {
+    "_doc": "Taille de chaque catégorie en cases (1 case = 32 px natifs = 1 perso adulte de haut) et en px natifs pour la toile pixelforge. Exemples repris de tools/gordeka/prompts_decor.json.",
+    "sol": {
+      "cases": [
+        1,
+        1
+      ],
+      "toile_px": [
+        32,
+        32
+      ],
+      "colors": 8,
+      "gabarit": "sol"
+    },
+    "mur": {
+      "cases": [
+        2,
+        1
+      ],
+      "toile_px": [
+        64,
+        64
+      ],
+      "colors": 12,
+      "gabarit": "mur"
+    },
+    "objet_bas": {
+      "cases": [
+        1,
+        1
+      ],
+      "toile_px": [
+        32,
+        32
+      ],
+      "colors": 12,
+      "gabarit": "prop",
+      "exemples": [
+        "a mooring bollard with a coiled rope",
+        "a green seafront bench",
+        "a pot of blue hydrangeas"
+      ]
+    },
+    "mobilier": {
+      "cases": [
+        2,
+        1
+      ],
+      "toile_px": [
+        64,
+        48
+      ],
+      "colors": 16,
+      "gabarit": "prop",
+      "exemples": [
+        "a café table with two red chairs under a striped parasol",
+        "a fish market stall with Bayonne hams and Espelette peppers",
+        "a bar counter with cider barrels"
+      ]
+    },
+    "cachette": {
+      "cases": [
+        1,
+        1
+      ],
+      "toile_px": [
+        48,
+        48
+      ],
+      "colors": 20,
+      "gabarit": "cachette",
+      "exemples": [
+        {
+          "objet": "a big round wooden and rope lobster pot lying on its side with a net flap as a door",
+          "repere_orange": "orange floats tied to it"
+        },
+        {
+          "objet": "a huge Basque cider barrel lying on a cradle with a round lid",
+          "repere_orange": "an orange tap on the lid"
+        },
+        {
+          "objet": "a small Biarritz beach cabin with blue and white vertical stripes and a triangular roof",
+          "repere_orange": "a bright orange door"
+        },
+        {
+          "objet": "a thick hollow tree trunk with a dark round hole at the bottom",
+          "repere_orange": "an orange mushroom on the side"
+        }
+      ]
+    },
+    "batiment": {
+      "cases": [
+        3,
+        3
+      ],
+      "toile_px": [
+        96,
+        128
+      ],
+      "colors": 24,
+      "gabarit": "prop",
+      "exemples": [
+        "a tiny whitewashed fishermen's hut with red shutters and a red tile roof",
+        "a white and red lighthouse base"
+      ]
+    },
+    "bateau": {
+      "cases": [
+        3,
+        2
+      ],
+      "toile_px": [
+        96,
+        64
+      ],
+      "colors": 16,
+      "gabarit": "prop",
+      "exemples": [
+        "a blue and white Basque rowboat on the quay",
+        "a red trawler hull"
+      ]
+    },
+    "vegetation": {
+      "cases": [
+        2,
+        2
+      ],
+      "toile_px": [
+        64,
+        80
+      ],
+      "colors": 12,
+      "gabarit": "prop",
+      "exemples": [
+        "a round plane tree crown seen from above with a soft dark shadow toward the lower left"
+      ]
+    },
+    "sortie": {
+      "cases": [
+        2,
+        2
+      ],
+      "toile_px": [
+        64,
+        64
+      ],
+      "colors": 16,
+      "gabarit": "prop",
+      "exemples": [
+        "a small rowboat waiting at the foot of a slipway with a glowing green lantern"
+      ]
+    },
+    "anime": {
+      "cases": [
+        1,
+        1
+      ],
+      "toile_px": [
+        32,
+        32
+      ],
+      "colors": 12,
+      "gabarit": "anime",
+      "exemples": [
+        {
+          "objet": "a string of colored festival lanterns",
+          "mouvement": "the bulbs twinkle in turn"
+        },
+        {
+          "objet": "Basque bunting in red, green and white",
+          "mouvement": "flapping in the breeze"
+        },
+        {
+          "objet": "a seagull standing on a bollard",
+          "mouvement": "turning its head and ruffling its wings"
+        }
+      ]
+    }
+  }
+}
