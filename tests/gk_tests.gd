@@ -399,7 +399,7 @@ func test_parc_mazon() -> void:
 	var shaped: int = 0
 	for inst: Dictionary in m.decor.instances:
 		shaped += int(inst.has("polys"))
-	check(m.decor.instances.size() > 100 and shaped > 60, "décor posé avec ses formes (%d objets, %d formes)" % [m.decor.instances.size(), shaped])
+	if decor_livre(): check(m.decor.instances.size() > 100 and shaped > 60, "décor posé avec ses formes (%d objets, %d formes)" % [m.decor.instances.size(), shaped])
 	var frames: int = 0
 	while game.round_no < 3 and frames < 60 * 90:
 		await physics_frame
@@ -444,14 +444,14 @@ func test_plage() -> void:
 		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 			free += int(m.walkable(c + d))
 		check(free >= 2, "cachette %s : au moins deux côtés libres" % c)
-		check(m.decor.has_image_at(c), "cachette %s : dessinée" % c)
+		if decor_livre(): check(m.decor.has_image_at(c), "cachette %s : dessinée" % c)
 	check(m.exit_groups.size() == 4, "quatre sorties possibles (%d)" % m.exit_groups.size())
 	var objets: Array = m.info.get("objets", [])
 	var shaped: int = 0
 	for inst: Dictionary in m.decor.instances:
 		shaped += int(inst.has("polys"))
-	check(m.decor.instances.size() == objets.size(), "chaque objet posé a son image (%d / %d)" % [m.decor.instances.size(), objets.size()])
-	check(shaped > 60, "formes des objets calculées (%d)" % shaped)
+	if decor_livre(): check(m.decor.instances.size() == objets.size(), "chaque objet posé a son image (%d / %d)" % [m.decor.instances.size(), objets.size()])
+	if decor_livre(): check(shaped > 60, "formes des objets calculées (%d)" % shaped)
 	# Grottes : cases sombres, vue réduite seulement avec idee_grottes.
 	var cave: Vector2i = Vector2i(20, 4)
 	check(m.dark.has(cave) and not m.dark.has(start), "grotte sombre, plage claire")
@@ -517,10 +517,10 @@ func test_port_v3() -> void:
 		prov += int(inst.get("provisoire", false))
 		with_img += int(inst.get("sprite") != null)
 		shaped += int(inst.has("polys"))
-	check(with_img + prov == m.decor.instances.size() and with_img >= 120,
+	if decor_livre(): check(with_img + prov == m.decor.instances.size() and with_img >= 120,
 		"objets posés avec leur image (%d images, %d provisoires)" % [with_img, prov])
-	check(shaped >= 100, "formes des objets (%d)" % shaped)
-	check(m.decor._ornaments.size() >= 50, "ornements de decor.json (%d)" % m.decor._ornaments.size())
+	if decor_livre(): check(shaped >= 100, "formes des objets (%d)" % shaped)
+	if decor_livre(): check(m.decor._ornaments.size() >= 50, "ornements de decor.json (%d)" % m.decor._ornaments.size())
 	check(is_equal_approx(GkRules.f("exits_open_at"), 110.0), "réglage propre à la carte : sorties à 110 s")
 	var frames: int = 0
 	while game.round_no < 3 and frames < 60 * 90:
@@ -747,3 +747,9 @@ func test_pseudo() -> void:
 	check(GkProfil.gros_mot("PuT4in") and GkProfil.gros_mot("Mérde"), "gros mots repérés (leet, accents)")
 	check(not GkProfil.gros_mot("Louis") and not GkProfil.gros_mot("Itsaso"), "pseudos normaux acceptés")
 	check(GkProfil.erreur_pseudo("fuck_12") != "", "gros mot refusé")
+
+
+## Reboot visuel du 21/10/2026 (style Party Hard) : l'ancien décor est dans archive/2026-10-21-flat-cartoon ;
+## les vérifications d'images ne valent que lorsque le nouveau décor est livré.
+func decor_livre() -> bool:
+	return FileAccess.file_exists("res://assets/gordeka/decor/index.json")
