@@ -2,274 +2,159 @@
  "polygons": [
   [
    [
-    3,
-    82
+    21,
+    73
    ],
    [
-    7,
-    82
-   ],
-   [
-    11,
-    82
-   ],
-   [
-    15,
-    82
-   ],
-   [
-    19,
-    82
-   ],
-   [
-    23,
-    82
-   ],
-   [
-    27,
-    82
-   ],
-   [
-    31,
-    82
-   ],
-   [
-    35,
-    82
-   ],
-   [
-    39,
-    82
-   ],
-   [
-    43,
-    82
-   ],
-   [
-    47,
-    82
-   ],
-   [
-    51,
-    82
-   ],
-   [
-    55,
-    82
-   ],
-   [
-    59,
-    82
-   ],
-   [
-    63,
-    82
-   ],
-   [
-    67,
-    82
-   ],
-   [
-    71,
-    82
-   ],
-   [
-    75,
-    82
-   ],
-   [
-    79,
-    82
-   ],
-   [
-    83,
-    82
-   ],
-   [
-    87,
-    82
-   ],
-   [
-    91,
-    82
-   ],
-   [
-    95,
-    82
-   ],
-   [
-    99,
-    82
-   ],
-   [
-    103,
-    82
-   ],
-   [
-    107,
-    82
-   ],
-   [
-    111,
-    82
-   ],
-   [
-    115,
-    82
-   ],
-   [
-    119,
-    82
-   ],
-   [
-    118,
-    124
-   ],
-   [
-    114,
-    124
-   ],
-   [
-    110,
-    124
-   ],
-   [
-    106,
-    124
-   ],
-   [
-    102,
-    124
-   ],
-   [
-    98,
-    124
-   ],
-   [
-    94,
-    124
-   ],
-   [
-    90,
-    124
-   ],
-   [
-    86,
-    124
-   ],
-   [
-    82,
-    124
-   ],
-   [
-    78,
-    124
-   ],
-   [
-    74,
-    124
-   ],
-   [
-    70,
-    124
-   ],
-   [
-    66,
-    124
-   ],
-   [
-    62,
-    124
-   ],
-   [
-    58,
-    124
+    40,
+    63
    ],
    [
     54,
-    124
+    56
    ],
    [
-    50,
-    124
+    105,
+    56
    ],
    [
-    46,
-    124
+    107,
+    57
    ],
    [
-    42,
-    124
+    125,
+    71
    ],
    [
-    38,
-    124
+    127,
+    73
    ],
    [
-    34,
-    124
+    127,
+    74
    ],
    [
-    30,
-    124
+    91,
+    93
    ],
    [
-    26,
-    124
+    72,
+    103
    ],
    [
-    22,
-    124
+    64,
+    107
    ],
    [
-    18,
-    124
+    63,
+    107
    ],
    [
-    14,
-    124
+    60,
+    105
    ],
    [
-    10,
-    124
+    23,
+    76
    ],
    [
-    6,
-    124
-   ],
-   [
-    3,
-    124
+    21,
+    74
    ]
   ]
  ],
+ "convex_polygons": [
+  [
+   [
+    37,
+    89
+   ],
+   [
+    56,
+    79
+   ],
+   [
+    70,
+    72
+   ],
+   [
+    121,
+    72
+   ],
+   [
+    123,
+    73
+   ],
+   [
+    141,
+    87
+   ],
+   [
+    143,
+    89
+   ],
+   [
+    143,
+    90
+   ],
+   [
+    107,
+    109
+   ],
+   [
+    88,
+    119
+   ],
+   [
+    80,
+    123
+   ],
+   [
+    79,
+    123
+   ],
+   [
+    76,
+    121
+   ],
+   [
+    39,
+    92
+   ],
+   [
+    37,
+    90
+   ]
+  ]
+ ],
+ "inset_px": 3.0,
  "bbox": [
+  1,
   0,
-  0,
-  167,
+  153,
   144
  ],
- "front_y": 123,
- "back_y": 82,
- "baseline_y": 102,
- "height_px": 123,
+ "front_y": 127,
+ "back_y": 50,
+ "baseline_y": 88,
+ "height_px": 127,
  "blocks_view": false,
- "camera": "front34",
- "scale": 1.9891,
- "depth_px": 41.0,
- "shapes": [
-  "sur pieds (pieds arri\u00e8re)"
- ],
+ "sort_y": 66,
+ "camera": "corner",
+ "scale": 2.0119,
+ "depth_px": 77.0,
+ "shapes": [],
  "confidence": 0.65,
  "warnings": [
-  "socle de sol d\u00e9tect\u00e9 (29% de l'objet) : traversable, hors occluder",
+  "socle de sol d\u00e9tect\u00e9 (21% de l'objet) : traversable, hors occluder",
   "vue en coin d\u00e9tect\u00e9e sur l'image : emprise calcul\u00e9e en camera corner",
-  "cam\u00e9ra en coin : emprise approch\u00e9e (losange sur le bord bas)",
-  "losange d\u00e9g\u00e9n\u00e9r\u00e9 : emprise calcul\u00e9e sur la forme de la base"
+  "losange plafonn\u00e9 en profondeur",
+  "cam\u00e9ra en coin : emprise approch\u00e9e (losange sur le bord bas)"
  ],
  "size": [
-  151,
+  137,
   128
  ],
+ "ground_y_encoding": "PNG gris 16 bits : Y \u00e9cran (px de l'image) du point au sol sous le pixel, + 1 ; 0 hors occluder",
  "marge_retiree": 16
 }
