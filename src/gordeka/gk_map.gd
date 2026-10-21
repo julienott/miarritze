@@ -35,6 +35,11 @@ var exits: Array[Vector2i] = []
 ## tire quelques-unes à chaque round.
 var exit_groups: Array = []
 var spawns: Array[Vector2i] = []
+## Contenu de zones.json (zones, sorties, « objets » posés par GkDecor…).
+var info: Dictionary = {}
+## Cases sombres (grottes, tunnels) : zones.json → zones[].sombre et « sombres » [[x, y, w, h]…] ;
+## la vue du chasseur y porte moins loin si `idee_grottes` est active (GkGame.sight_range).
+var dark: Dictionary = {}
 ## Abri de chaque case de sol : nombre de voisins (8) qui cachent la vue.
 var cover: Dictionary = {}
 ## Dessin à plat (prototype gris) ; faux en 3D, où GkView3D dessine la carte.
@@ -61,6 +66,16 @@ func load_map(id: String) -> void:
 	for z: Variant in (zj as Dictionary).get("zones", []):
 		var r: Array = (z as Dictionary)["rect"]
 		zones.append({"name": str(z["name"]), "rect": Rect2i(int(r[0]), int(r[1]), int(r[2]), int(r[3]))})
+	info = zj as Dictionary
+	dark.clear()
+	var dark_rects: Array = (info.get("sombres", []) as Array).duplicate()
+	for z: Variant in info.get("zones", []):
+		if bool((z as Dictionary).get("sombre", false)):
+			dark_rects.append((z as Dictionary)["rect"])
+	for r: Variant in dark_rects:
+		for y: int in range(int(r[1]), int(r[1]) + int(r[3])):
+			for x: int in range(int(r[0]), int(r[0]) + int(r[2])):
+				dark[Vector2i(x, y)] = true
 	for y: int in height:
 		for x: int in width:
 			match at(Vector2i(x, y)):

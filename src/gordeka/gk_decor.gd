@@ -88,6 +88,11 @@ func setup(m: GkMap) -> void:
 	for y: int in map.height:
 		for x: int in map.width:
 			_zone_grid[y * map.width + x] = map.zone_of(Vector2i(x, y))
+	# Décor propre à la carte (assets/maps/<id>/decor/index.json : placeholders d'une nouvelle carte,
+	# images communes citées en res://) ; sinon le décor commun, si son index nomme cette carte.
+	var own: String = "res://assets/maps/%s/decor" % map.map_id
+	if _dir == DIR and FileAccess.file_exists(own.path_join("index.json")):
+		_dir = own
 	var path: String = _dir.path_join("index.json")
 	if not FileAccess.file_exists(path):
 		return
@@ -237,6 +242,25 @@ func _build_objects() -> void:
 				cands[key] = []
 			(cands[key] as Array).append(id)
 	var seen: Dictionary = {}
+	# Poses imposées par la carte (zones.json → « objets » : [{element, rect: [x, y, w, h]}]) : l'élément
+	# sur les cases du rect qui portent son caractère (deux cabines côte à côte restent deux images).
+	for o: Variant in map.info.get("objets", []):
+		var od: Dictionary = o
+		var oid: String = str(od.get("element", ""))
+		var r: Array = od.get("rect", [])
+		if not elements.has(oid) or r.size() != 4:
+			continue
+		var och: String = str((elements[oid] as Dictionary).get("caractere", ""))
+		var orect: Rect2i = Rect2i(int(r[0]), int(r[1]), int(r[2]), int(r[3]))
+		var ocells: Array[Vector2i] = []
+		for yy: int in range(orect.position.y, orect.end.y):
+			for xx: int in range(orect.position.x, orect.end.x):
+				var ot: Vector2i = Vector2i(xx, yy)
+				if map.at(ot) == och and not seen.has(ot):
+					seen[ot] = true
+					ocells.append(ot)
+		if not ocells.is_empty():
+			_place(oid, ocells, orect, zone_at(ocells[0]))
 	for y: int in map.height:
 		for x: int in map.width:
 			var t: Vector2i = Vector2i(x, y)
@@ -438,6 +462,9 @@ func _pf_shape(id: String, tex: Texture2D, rel: String, drawn: Vector2) -> Dicti
 	var out: Dictionary = {}
 	_pf_cache[ck] = out
 	var dir: String = _dir.path_join("masques").path_join(id)
+	if not FileAccess.file_exists(dir.path_join("masks.json")):
+		# Image commune reprise par le décor d'une autre carte : ses masques restent au décor commun.
+		dir = DIR.path_join("masques").path_join(id)
 	if not FileAccess.file_exists(dir.path_join("masks.json")):
 		return out
 	var m: Variant = JSON.parse_string(FileAccess.get_file_as_string(dir.path_join("masks.json")))
@@ -807,7 +834,7 @@ func _zones_of(el: Dictionary) -> Array[int]:
 func _texture(rel: String) -> Texture2D:
 	if rel == "":
 		return null
-	var p: String = _dir.path_join(rel)
+	var p: String = rel if rel.begins_with("res://") else _dir.path_join(rel)
 	if _tex.has(p):
 		return _tex[p]
 	var tex: Texture2D = null

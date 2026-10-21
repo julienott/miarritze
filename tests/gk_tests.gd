@@ -27,7 +27,7 @@ func _run() -> void:
 	var tests: Array[Callable] = [test_jauge_remplissage, test_jauge_decroissance, test_jauge_sans_detection,
 		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus,
 		test_options_partie, test_partie_ia_courte, test_rounds_pour, test_sac, test_versus_saute_en_ia,
-		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo]
+		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo, test_plage]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
 			continue
@@ -357,6 +357,70 @@ func test_partie_ia_courte() -> void:
 	for k: String in keys:
 		check(game.last_stats.has(k), "mesure présente : " + k)
 	check(float(game.last_stats.get("chasse_s", 0.0)) > 0.0, "temps de chasse mesuré")
+	await free_game(game)
+
+
+## Plage de la Côte des Basques (tools/gordeka/make_plage.py) : sélectionnable, tout le sol atteignable,
+## cachettes accessibles, 4 sorties, chaque objet posé avec son image (provisoires et images du port) et
+## une forme, grottes et tunnels sombres (vue réduite seulement avec idee_grottes) ; deux rounds IA.
+func test_plage() -> void:
+	var ids: Array = load("res://src/gordeka/menus/gk_partie_rapide.gd").CARTES.map(func(c: Array) -> String: return str(c[0]))
+	check(ids.has("plage"), "Plage dans le sélecteur de la partie rapide")
+	GkRules._data["phase_draw"] = 0.5
+	GkRules._data["phase_hide"] = 3.0
+	GkRules._data["phase_hunt"] = 25.0
+	GkRules._data["phase_end"] = 0.5
+	GkRules._data["exits_open_at"] = 10.0
+	GkGame.config["players"] = 6
+	GkGame.config["map"] = "plage"
+	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	game._bots_only = true
+	game._stats = true
+	root.add_child(game)
+	await physics_frame
+	var m: GkMap = game.map
+	check(m.map_id == "plage" and m.zones.size() >= 14, "carte et zones chargées")
+	var start: Vector2i = m.spawns[0]
+	var n_walk: int = 0
+	var reach: int = 0
+	for y: int in m.height:
+		for x: int in m.width:
+			if m.walkable(Vector2i(x, y)):
+				n_walk += 1
+				if not m.path(m.center(start), m.center(Vector2i(x, y))).is_empty():
+					reach += 1
+	check(n_walk > 0 and reach == n_walk, "tout le sol atteignable (%d / %d)" % [reach, n_walk])
+	check(m.cachettes.size() >= 16, "au moins 16 cachettes (%d)" % m.cachettes.size())
+	for c: Vector2i in m.cachettes:
+		var free: int = 0
+		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			free += int(m.walkable(c + d))
+		check(free >= 2, "cachette %s : au moins deux côtés libres" % c)
+		check(m.decor.has_image_at(c), "cachette %s : dessinée" % c)
+	check(m.exit_groups.size() == 4, "quatre sorties possibles (%d)" % m.exit_groups.size())
+	var objets: Array = m.info.get("objets", [])
+	var shaped: int = 0
+	for inst: Dictionary in m.decor.instances:
+		shaped += int(inst.has("polys"))
+	check(m.decor.instances.size() == objets.size(), "chaque objet posé a son image (%d / %d)" % [m.decor.instances.size(), objets.size()])
+	check(shaped > 60, "formes des objets calculées (%d)" % shaped)
+	# Grottes : cases sombres, vue réduite seulement avec idee_grottes.
+	var cave: Vector2i = Vector2i(20, 4)
+	check(m.dark.has(cave) and not m.dark.has(start), "grotte sombre, plage claire")
+	var h: GkActor = game.actors[0]
+	h.position = m.center(cave)
+	var full: float = GkRules.px("cone_range")
+	check(is_equal_approx(game.sight_range(h, m.center(cave + Vector2i(2, 0))), full), "sans idee_grottes : vue entière")
+	GkRules._data["idee_grottes"] = 1.0
+	check(game.sight_range(h, m.center(cave + Vector2i(2, 0))) < full, "idee_grottes : vue réduite dans la grotte")
+	h.position = m.center(start)
+	check(is_equal_approx(game.sight_range(h, m.center(start + Vector2i(3, 0))), full), "idee_grottes : vue entière au soleil")
+	GkRules._data["idee_grottes"] = 0.0
+	var frames: int = 0
+	while game.round_no < 3 and frames < 60 * 90:
+		await physics_frame
+		frames += 1
+	check(game.round_no >= 3, "deux rounds IA joués sur la plage (%d images)" % frames)
 	await free_game(game)
 
 

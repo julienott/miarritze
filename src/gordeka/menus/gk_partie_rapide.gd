@@ -8,8 +8,8 @@ extends Control
 
 const NIVEAUX: PackedStringArray = ["facile", "normal", "malin"]
 const NOMS_NIVEAUX: PackedStringArray = ["Facile", "Normal", "Malin"]
-## Cartes jouables : [id, nom]. Une seule aujourd'hui ; le sélecteur est prêt pour les suivantes.
-const CARTES: Array = [["port_pecheurs", "Port des Pêcheurs"]]
+## Cartes jouables : [id, nom] (assets/maps/<id>/).
+const CARTES: Array = [["port_pecheurs", "Port des Pêcheurs"], ["plage", "Côte des Basques"]]
 
 ## Réglages de la session : players, level, map, rounds, rounds_touche, options {clé: valeur}.
 static var choix: Dictionary = {}

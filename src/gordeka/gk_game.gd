@@ -943,7 +943,7 @@ func sees(h: GkActor, p: Vector2, r: float) -> bool:
 func sight_fraction(h: GkActor, p: Vector2, r: float, all_rays: bool = true) -> float:
 	var v: Vector2 = p - h.position
 	var d: float = v.length()
-	if d > GkRules.px("cone_range") + r:
+	if d > sight_range(h, p) + r:
 		return 0.0
 	# Caché derrière un objet haut (son toit, sa face haute le recouvre) : vu de près seulement.
 	if map.decor and d > GkRules.px("masque_vue_portee") + r and map.decor.masking(p, mask_height(r)) >= 0:
@@ -960,6 +960,17 @@ func sight_fraction(h: GkActor, p: Vector2, r: float, all_rays: bool = true) -> 
 			if not all_rays:
 				return 1.0
 	return float(n) / 3.0
+
+
+## Portée du cône du chasseur vers `p` (px) : `grotte_portee` cases au plus dans le noir (`idee_grottes`),
+## quand le chasseur ou ce qu'il regarde est sur une case sombre de la carte (grottes, tunnels).
+func sight_range(h: GkActor, p: Vector2) -> float:
+	var full: float = GkRules.px("cone_range")
+	if not GkRules.on("idee_grottes") or map.dark.is_empty():
+		return full
+	if map.dark.has(map.to_tile(p)) or map.dark.has(map.to_tile(h.position)):
+		return minf(full, GkRules.px("grotte_portee"))
+	return full
 
 
 ## Détection progressive (`idee_detection`) : vitesse de remplissage de la jauge (par seconde) d'un
@@ -1702,6 +1713,11 @@ func _update_view() -> void:
 		if as_hunter:
 			l.position = hunter.position
 			l.rotation = hunter.look
+	# Dans le noir (`idee_grottes`), le cône éclairé raccourcit comme la vue.
+	if as_hunter:
+		var k: float = sight_range(hunter, hunter.position) / GkRules.px("cone_range")
+		for l2: PointLight2D in [_cone_light, _cone_light_decor]:
+			l2.texture_scale = GkRules.px("cone_range") * 2.0 * k / float(l2.texture.get_width())
 	# Un chassé masqué par le haut d'un objet : ses coéquipiers (jamais le chasseur) voient l'objet
 	# en transparence.
 	if map.decor:
@@ -1749,7 +1765,7 @@ func screen_pos(p: Vector2, height: float = 0.0) -> Vector2:
 func cone_polygon(h: GkActor) -> PackedVector2Array:
 	var pts: PackedVector2Array = [h.position]
 	var half: float = deg_to_rad(GkRules.f("cone_deg")) * 0.5
-	var rng: float = GkRules.px("cone_range")
+	var rng: float = sight_range(h, h.position)
 	var n: int = 40
 	for i: int in n + 1:
 		var a: float = h.look - half + 2.0 * half * float(i) / float(n)

@@ -4659,5 +4659,2187 @@
   "pf_hd__ground": "Camera: straight top-down orthographic view of the ground, flat, no perspective, no vanishing point. Light from the upper left. Art style: clean flat 2D cartoon, thin slightly darker joint lines instead of thick outlines, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art.",
   "pf_hd__texture": "Camera: front face only, square to the viewer, orthographic, the front face of a wall in a three-quarter top-down map. Light from the upper left. Art style: clean flat 2D cartoon, thick uniform dark navy #1d2230 outline, flat colors with one darker hard cel-shadow tone, tiny white highlights, chunky rounded friendly shapes, no gradient, no texture, no pixel art."
  },
- "revue_carte_v3": "2026-10-20 : éléments ajoutés pour la carte v3 (make_port_v3.py), avec leur provisoire dessiné par le code (src/gordeka/gk_provisoire.gd) ; ornements = décor sans effet de jeu posé par assets/maps/<id>/decor.json."
+ "revue_carte_v3": "2026-10-20 : éléments ajoutés pour la carte v3 (make_port_v3.py), avec leur provisoire dessiné par le code (src/gordeka/gk_provisoire.gd) ; ornements = décor sans effet de jeu posé par assets/maps/<id>/decor.json.",
+ "cartes": {
+  "plage": {
+   "_doc": "Assets à créer pour la Plage de la Côte des Basques (tools/gordeka/backlog_plage.py, catalogue de make_plage.py). Prompts positifs (sans négation), style commun et caméra front34 ; tailles en cases de 64 px, images à 128 px par case. Les cachettes demandent aussi une image « ouverte » (pf_hd__edit). Rien n'est déposé chez pixelforge : Julien priorise sur /producer (carte chapeau « Carte : Plage de la Côte des Basques »). Repris du port sans nouvelle image : banc_vert, bitte_amarrage, cachette_caisse_glace, cachette_casier_homards, cachette_coffre_cordages, cachette_coffre_quai, cachette_poubelle_ruelle, caisses_poisson, comptoir_bar, sol_carrelage_criee, sol_dalles_quai, sol_planches_terrasse, table_terrasse.",
+   "style_commun": "Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches.",
+   "camera_commune": {
+    "pf_hd__prop": "Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+    "pf_hd__ground": "Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+    "pf_hd__texture": "Camera front34: the front face of a cliff in a three-quarter top-down map, square to the viewer, orthographic, seamless from left to right. Light from the upper left.",
+    "decal": "Flat decal lying on the ground, seen straight from above, slightly faded like paint on the floor, thin outline, on a plain transparent background.",
+    "anim": "Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop."
+   },
+   "elements": [
+    {
+     "id": "cabine_rayee",
+     "nom": "Cabine de plage rayée",
+     "caractere": "c",
+     "categorie": "batiment",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.3,
+     "taille_sortie_px": [
+      128,
+      294
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 7,
+     "zones": [
+      "Cabines rayées"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A small wooden Biarritz beach changing cabin with bold blue and white vertical stripes, a narrow closed door, a little triangular roof with a white ridge, standing on the sand.",
+     "prompt": "A small wooden Biarritz beach changing cabin with bold blue and white vertical stripes, a narrow closed door, a little triangular roof with a white ridge, standing on the sand. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cabine_rayee.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "cabine_rayee_rouge",
+     "nom": "Cabine de plage rayée rouge",
+     "caractere": "c",
+     "categorie": "batiment",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.3,
+     "taille_sortie_px": [
+      128,
+      294
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 7,
+     "zones": [
+      "Cabines rayées"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A small wooden Biarritz beach changing cabin with bold red and white vertical stripes, a narrow closed door, a little triangular roof with a white ridge, standing on the sand.",
+     "prompt": "A small wooden Biarritz beach changing cabin with bold red and white vertical stripes, a narrow closed door, a little triangular roof with a white ridge, standing on the sand. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cabine_rayee_rouge.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "cachette_cabine",
+     "nom": "Cabine de plage (cachette)",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.3,
+     "taille_sortie_px": [
+      128,
+      294
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Cabines rayées"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A small wooden Biarritz beach changing cabin with blue and white vertical stripes and a bright orange door, a little triangular roof, clearly a hiding spot, slightly bigger than the cabins around it.",
+     "prompt": "A small wooden Biarritz beach changing cabin with blue and white vertical stripes and a bright orange door, a little triangular roof, clearly a hiding spot, slightly bigger than the cabins around it. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cachette_cabine.png",
+     "etat_ouvert": true
+    },
+    {
+     "id": "parasol",
+     "nom": "Parasol rayé",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.1,
+     "taille_sortie_px": [
+      128,
+      269
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 5,
+     "zones": [
+      "Grande plage",
+      "Restaurant Itsasoa"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A round beach umbrella with wide red and white stripes on a thin wooden pole planted in the sand, seen from above at a slight angle, the canopy round and generous.",
+     "prompt": "A round beach umbrella with wide red and white stripes on a thin wooden pole planted in the sand, seen from above at a slight angle, the canopy round and generous. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "parasol qui ondule au vent (boucle)",
+     "placeholder": "assets/maps/plage/decor/provisoires/parasol.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "parasol_bleu",
+     "nom": "Parasol rayé bleu",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.1,
+     "taille_sortie_px": [
+      128,
+      269
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 6,
+     "zones": [
+      "Grande plage",
+      "Restaurant Txiringito"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A round beach umbrella with wide turquoise and white stripes on a thin wooden pole planted in the sand, seen from above at a slight angle, the canopy round and generous.",
+     "prompt": "A round beach umbrella with wide turquoise and white stripes on a thin wooden pole planted in the sand, seen from above at a slight angle, the canopy round and generous. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "parasol qui ondule au vent (boucle)",
+     "placeholder": "assets/maps/plage/decor/provisoires/parasol_bleu.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "transat",
+     "nom": "Transat en toile",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0.2,
+     "taille_sortie_px": [
+      256,
+      154
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 5,
+     "zones": [
+      "Grande plage"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A wooden folding deck chair with a striped green and white canvas, lying long and low on the sand, a folded beach towel on it.",
+     "prompt": "A wooden folding deck chair with a striped green and white canvas, lying long and low on the sand, a folded beach towel on it. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/transat.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "douche",
+     "nom": "Douche de plage",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.2,
+     "taille_sortie_px": [
+      128,
+      282
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "zones": [
+      "Cabines rayées",
+      "Escalier de la falaise",
+      "Port-Vieux"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A simple outdoor beach shower: a tall blue metal post with a round shower head and a small wooden duckboard at its foot, drops of water.",
+     "prompt": "A simple outdoor beach shower: a tall blue metal post with a round shower head and a small wooden duckboard at its foot, drops of water. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/douche.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "paravent",
+     "nom": "Paravent de plage (brise-vent)",
+     "caractere": "c",
+     "categorie": "objet",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0.5,
+     "taille_sortie_px": [
+      256,
+      192
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 4,
+     "zones": [
+      "Grande plage"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A colorful striped beach windbreak made of canvas stretched between wooden poles, planted in the sand in a straight line, yellow, orange and blue stripes.",
+     "prompt": "A colorful striped beach windbreak made of canvas stretched between wooden poles, planted in the sand in a straight line, yellow, orange and blue stripes. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "toile qui se gonfle au vent",
+     "placeholder": "assets/maps/plage/decor/provisoires/paravent.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "planches_surf",
+     "nom": "Râtelier de planches de surf",
+     "caractere": "c",
+     "categorie": "objet",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.0,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Grande plage"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A wooden rack standing on the sand holding four upright surfboards in bright colors (yellow, turquoise, coral, white), rounded noses on top.",
+     "prompt": "A wooden rack standing on the sand holding four upright surfboards in bright colors (yellow, turquoise, coral, white), rounded noses on top. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/planches_surf.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "kiosque_glaces",
+     "nom": "Kiosque à glaces",
+     "caractere": "c",
+     "categorie": "repere",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 1.4,
+     "taille_sortie_px": [
+      256,
+      435
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Grande plage"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A small round beach ice cream kiosk with a pink and white striped awning, a counter window, and a giant ice cream cone sculpture on its roof, a landmark visible from far away.",
+     "prompt": "A small round beach ice cream kiosk with a pink and white striped awning, a counter window, and a giant ice cream cone sculpture on its roof, a landmark visible from far away. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/kiosque_glaces.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "chateau_sable",
+     "nom": "Château de sable géant",
+     "caractere": "t",
+     "categorie": "repere",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0.6,
+     "taille_sortie_px": [
+      256,
+      333
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Grande plage"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A big sand castle with four round towers, little walls and a moat, a small Basque flag on the top tower, golden sand with darker wet sand details.",
+     "prompt": "A big sand castle with four round towers, little walls and a moat, a small Basque flag on the top tower, golden sand with darker wet sand details. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/chateau_sable.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "cachette_tente",
+     "nom": "Tente de plage (cachette)",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.6,
+     "taille_sortie_px": [
+      128,
+      205
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Grande plage"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A small dome beach sun tent in orange and turquoise fabric with a round open entrance, pegged in the sand, clearly a hiding spot.",
+     "prompt": "A small dome beach sun tent in orange and turquoise fabric with a round open entrance, pegged in the sand, clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cachette_tente.png",
+     "etat_ouvert": true
+    },
+    {
+     "id": "bouee_poteau",
+     "nom": "Poteau à bouée",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.0,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Grande plage",
+      "Poste de secours"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A short wooden post planted in the sand holding a red and white ring buoy, a coiled rope at its foot.",
+     "prompt": "A short wooden post planted in the sand holding a red and white ring buoy, a coiled rope at its foot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/bouee_poteau.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "rocher",
+     "nom": "Rocher",
+     "caractere": "c",
+     "categorie": "rocher",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.4,
+     "taille_sortie_px": [
+      128,
+      179
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 7,
+     "zones": [
+      "Bateaux au sec",
+      "Escalier de la falaise",
+      "Grande plage",
+      "Port-Vieux",
+      "Rochers du Basta"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A rounded golden-grey coastal rock of the Basque coast, smooth chunky shape with a flat lighter top and a darker front, a little green seaweed at its foot.",
+     "prompt": "A rounded golden-grey coastal rock of the Basque coast, smooth chunky shape with a flat lighter top and a darker front, a little green seaweed at its foot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/rocher.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "rocher_large",
+     "nom": "Gros rocher",
+     "caractere": "c",
+     "categorie": "rocher",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0.6,
+     "taille_sortie_px": [
+      256,
+      205
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 7,
+     "zones": [
+      "Cabines rayées",
+      "Port-Vieux",
+      "Rochers du Basta"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A wide rounded golden-grey coastal rock, smooth chunky shape with a flat lighter top and a darker front, a few barnacles and a little green seaweed at its foot.",
+     "prompt": "A wide rounded golden-grey coastal rock, smooth chunky shape with a flat lighter top and a darker front, a few barnacles and a little green seaweed at its foot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/rocher_large.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "grand_rocher",
+     "nom": "Grand rocher",
+     "caractere": "c",
+     "categorie": "rocher",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0.9,
+     "taille_sortie_px": [
+      256,
+      371
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Port-Vieux"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A big tall golden-grey coastal rock of Biarritz with layered strata, a flat top with a tuft of grass, a darker front face, seaweed and small shells at its foot.",
+     "prompt": "A big tall golden-grey coastal rock of Biarritz with layered strata, a flat top with a tuft of grass, a darker front face, seaweed and small shells at its foot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/grand_rocher.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "rocher_geant",
+     "nom": "Rocher géant (repère)",
+     "caractere": "c",
+     "categorie": "repere",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      2
+     ],
+     "debord_haut_cases": 1.3,
+     "taille_sortie_px": [
+      384,
+      422
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Rochers du Basta"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A huge golden-grey sea rock shaped like an arch with layered strata, a small natural tunnel through its middle, a tuft of grass on top, a landmark of the Basque coast.",
+     "prompt": "A huge golden-grey sea rock shaped like an arch with layered strata, a small natural tunnel through its middle, a tuft of grass on top, a landmark of the Basque coast. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/rocher_geant.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "rocher_bas",
+     "nom": "Rochers bas",
+     "caractere": "r",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Rochers du Basta"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A cluster of low flat rocks covered with green seaweed and small mussels, barely above the sand.",
+     "prompt": "A cluster of low flat rocks covered with green seaweed and small mussels, barely above the sand. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/rocher_bas.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "rocher_bas_large",
+     "nom": "Banc de rochers bas",
+     "caractere": "r",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0.0,
+     "taille_sortie_px": [
+      256,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 4,
+     "zones": [
+      "Bateaux au sec",
+      "Rochers du Basta"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A wide low shelf of flat rocks covered with green seaweed and small mussels, barely above the sand.",
+     "prompt": "A wide low shelf of flat rocks covered with green seaweed and small mussels, barely above the sand. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/rocher_bas_large.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "flaque",
+     "nom": "Flaque de marée",
+     "caractere": "~",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0.0,
+     "taille_sortie_px": [
+      256,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Grotte de la marée",
+      "Rochers du Basta"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A small tide pool in a ring of low rocks, clear turquoise water, a starfish and a little crab inside, seen from above.",
+     "prompt": "A small tide pool in a ring of low rocks, clear turquoise water, a starfish and a little crab inside, seen from above. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "reflets qui scintillent",
+     "placeholder": "assets/maps/plage/decor/provisoires/flaque.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "flaque_grande",
+     "nom": "Grande flaque de marée",
+     "caractere": "~",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      2
+     ],
+     "debord_haut_cases": 0.0,
+     "taille_sortie_px": [
+      384,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Grotte aux sirènes",
+      "Rochers du Basta"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A big tide pool in a ring of low rocks, clear turquoise water, starfish, sea anemones and a little crab inside, seen from above.",
+     "prompt": "A big tide pool in a ring of low rocks, clear turquoise water, starfish, sea anemones and a little crab inside, seen from above. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "reflets qui scintillent",
+     "placeholder": "assets/maps/plage/decor/provisoires/flaque_grande.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "cachette_creux_rocher",
+     "nom": "Creux de rocher (cachette)",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.6,
+     "taille_sortie_px": [
+      128,
+      205
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 5,
+     "zones": [
+      "Grotte aux sirènes",
+      "Grotte de la marée",
+      "Port-Vieux",
+      "Rochers du Basta"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A chunky golden-grey rock with a dark round hollow at its front big enough for a child, an orange starfish stuck on it as a marker, clearly a hiding spot.",
+     "prompt": "A chunky golden-grey rock with a dark round hollow at its front big enough for a child, an orange starfish stuck on it as a marker, clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cachette_creux_rocher.png",
+     "etat_ouvert": true
+    },
+    {
+     "id": "rocher_grotte",
+     "nom": "Rocher de grotte",
+     "caractere": "c",
+     "categorie": "rocher",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.6,
+     "taille_sortie_px": [
+      128,
+      205
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 5,
+     "zones": [
+      "Grotte aux sirènes",
+      "Grotte de la marée",
+      "Grotte des contrebandiers"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A dark blue-grey cave rock pillar, rounded and chunky, wet shiny highlights, a few glowing turquoise drops of water.",
+     "prompt": "A dark blue-grey cave rock pillar, rounded and chunky, wet shiny highlights, a few glowing turquoise drops of water. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/rocher_grotte.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "rocher_grotte_large",
+     "nom": "Bloc de grotte",
+     "caractere": "c",
+     "categorie": "rocher",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0.7,
+     "taille_sortie_px": [
+      256,
+      218
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "zones": [
+      "Grotte aux sirènes",
+      "Grotte de la marée",
+      "Grotte des contrebandiers"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A wide dark blue-grey cave boulder, rounded and chunky, wet shiny highlights, small pale stalagmites on top.",
+     "prompt": "A wide dark blue-grey cave boulder, rounded and chunky, wet shiny highlights, small pale stalagmites on top. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/rocher_grotte_large.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "tonneau",
+     "nom": "Tonneau des contrebandiers",
+     "caractere": "c",
+     "categorie": "objet",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.4,
+     "taille_sortie_px": [
+      128,
+      179
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "zones": [
+      "Grotte des contrebandiers"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A sturdy old wooden barrel with dark iron hoops standing upright, a coiled rope around its foot, a smugglers cave feeling, cute and friendly.",
+     "prompt": "A sturdy old wooden barrel with dark iron hoops standing upright, a coiled rope around its foot, a smugglers cave feeling, cute and friendly. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/tonneau.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "lanterne_grotte",
+     "nom": "Lanterne posée",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.5,
+     "taille_sortie_px": [
+      128,
+      192
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 3,
+     "zones": [
+      "Grotte aux sirènes",
+      "Grotte de la marée",
+      "Grotte des contrebandiers"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "An old brass lantern standing on a flat rock, a warm yellow flame inside, a small circle of warm light on the ground.",
+     "prompt": "An old brass lantern standing on a flat rock, a warm yellow flame inside, a small circle of warm light on the ground. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "flamme qui vacille",
+     "placeholder": "assets/maps/plage/decor/provisoires/lanterne_grotte.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "facade_resto_rouge",
+     "nom": "Façade du restaurant Itsasoa",
+     "caractere": "c",
+     "categorie": "batiment",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 1.6,
+     "taille_sortie_px": [
+      384,
+      333
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Restaurant Itsasoa"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "The front wall of a small Basque beach restaurant built against a cliff, white walls with dark red timber beams, a wide window with red shutters and a striped red and white awning above it.",
+     "prompt": "The front wall of a small Basque beach restaurant built against a cliff, white walls with dark red timber beams, a wide window with red shutters and a striped red and white awning above it. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/facade_resto_rouge.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "facade_resto_vert",
+     "nom": "Façade du Txiringito",
+     "caractere": "c",
+     "categorie": "batiment",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 1.6,
+     "taille_sortie_px": [
+      384,
+      333
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Restaurant Txiringito"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "The front wall of a small wooden beach bar shack built against a cliff, pale wood planks, dark green shutters, a striped green and white awning and a few hanging shell garlands.",
+     "prompt": "The front wall of a small wooden beach bar shack built against a cliff, pale wood planks, dark green shutters, a striped green and white awning and a few hanging shell garlands. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/facade_resto_vert.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "jardiniere",
+     "nom": "Jardinière d'hortensias",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 0.4,
+     "taille_sortie_px": [
+      384,
+      179
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 4,
+     "zones": [
+      "Restaurant Itsasoa",
+      "Restaurant Txiringito"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A long low white wooden planter box full of blue and pink hydrangeas, edging a restaurant terrace.",
+     "prompt": "A long low white wooden planter box full of blue and pink hydrangeas, edging a restaurant terrace. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/jardiniere.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "cachette_sous_terrasse",
+     "nom": "Dessous de la terrasse (cachette)",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Restaurant Itsasoa"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "The front edge of a raised wooden terrace deck with a lattice skirt and a dark opening under it with a little orange curtain, big enough for a child to crawl under, clearly a hiding spot.",
+     "prompt": "The front edge of a raised wooden terrace deck with a lattice skirt and a dark opening under it with a little orange curtain, big enough for a child to crawl under, clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cachette_sous_terrasse.png",
+     "etat_ouvert": true
+    },
+    {
+     "id": "fourneau",
+     "nom": "Fourneau de cuisine",
+     "caractere": "c",
+     "categorie": "objet",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0.7,
+     "taille_sortie_px": [
+      256,
+      218
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Cuisine de l'Itsasoa",
+      "Cuisine du Txiringito"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A big restaurant kitchen stove in dark iron with copper pots and a pan of grilled sardines, little puffs of steam.",
+     "prompt": "A big restaurant kitchen stove in dark iron with copper pots and a pan of grilled sardines, little puffs of steam. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "fumée et vapeur des casseroles",
+     "placeholder": "assets/maps/plage/decor/provisoires/fourneau.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "plan_travail",
+     "nom": "Plan de travail",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 0.2,
+     "taille_sortie_px": [
+      384,
+      154
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Cuisine de l'Itsasoa",
+      "Cuisine du Txiringito"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A long stainless steel kitchen worktable with a wooden chopping board, a bowl of piperade peppers, a basket of bread and a ladle.",
+     "prompt": "A long stainless steel kitchen worktable with a wooden chopping board, a bowl of piperade peppers, a basket of bread and a ladle. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/plan_travail.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "cachette_frigo",
+     "nom": "Grand frigo de la cuisine (cachette)",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.1,
+     "taille_sortie_px": [
+      128,
+      269
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Cuisine de l'Itsasoa",
+      "Cuisine du Txiringito"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A tall rounded retro restaurant fridge in pale turquoise with a big chrome handle and an orange magnet on the door, clearly a hiding spot.",
+     "prompt": "A tall rounded retro restaurant fridge in pale turquoise with a big chrome handle and an orange magnet on the door, clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cachette_frigo.png",
+     "etat_ouvert": true
+    },
+    {
+     "id": "poste_secours",
+     "nom": "Poste de secours",
+     "caractere": "c",
+     "categorie": "repere",
+     "type": "objet",
+     "taille_cases": [
+      4,
+      2
+     ],
+     "debord_haut_cases": 2.2,
+     "taille_sortie_px": [
+      512,
+      538
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Poste de secours"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A small white lifeguard station on wooden stilts with a red roof, a lookout balcony, a red cross sign shape, a tall flag pole with a green flag, landmark of the beach.",
+     "prompt": "A small white lifeguard station on wooden stilts with a red roof, a lookout balcony, a red cross sign shape, a tall flag pole with a green flag, landmark of the beach. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "drapeaux qui claquent au vent (vert, jaune, rouge)",
+     "placeholder": "assets/maps/plage/decor/provisoires/poste_secours.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "chaise_surveillance",
+     "nom": "Chaise haute du maître-nageur",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.6,
+     "taille_sortie_px": [
+      128,
+      333
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Poste de secours"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A tall white wooden lifeguard chair with a ladder and a small red parasol on top, standing on the sand.",
+     "prompt": "A tall white wooden lifeguard chair with a ladder and a small red parasol on top, standing on the sand. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/chaise_surveillance.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "rack_sauvetage",
+     "nom": "Planches de sauvetage",
+     "caractere": "c",
+     "categorie": "objet",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0.6,
+     "taille_sortie_px": [
+      256,
+      205
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Poste de secours"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A wooden rack holding two long yellow rescue boards and a red rescue tube, standing on the sand.",
+     "prompt": "A wooden rack holding two long yellow rescue boards and a red rescue tube, standing on the sand. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/rack_sauvetage.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "cachette_coffre_sauveteur",
+     "nom": "Coffre du sauveteur (cachette)",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.2,
+     "taille_sortie_px": [
+      128,
+      154
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Poste de secours"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A big red wooden lifeguard chest with a white cross shape on its lid and a coiled rope on top, clearly a hiding spot with an orange latch.",
+     "prompt": "A big red wooden lifeguard chest with a white cross shape on its lid and a coiled rope on top, clearly a hiding spot with an orange latch. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cachette_coffre_sauveteur.png",
+     "etat_ouvert": true
+    },
+    {
+     "id": "barque_retournee",
+     "nom": "Barque retournée",
+     "caractere": "B",
+     "categorie": "bateau",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      2
+     ],
+     "debord_haut_cases": 0.4,
+     "taille_sortie_px": [
+      384,
+      307
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Bateaux au sec"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A wooden rowing boat lying upside down on the sand, its curved hull painted Basque red and white, two oars resting against it.",
+     "prompt": "A wooden rowing boat lying upside down on the sand, its curved hull painted Basque red and white, two oars resting against it. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/barque_retournee.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "barque_retournee_verte",
+     "nom": "Barque retournée verte",
+     "caractere": "B",
+     "categorie": "bateau",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      2
+     ],
+     "debord_haut_cases": 0.4,
+     "taille_sortie_px": [
+      384,
+      307
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Bateaux au sec"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A wooden rowing boat lying upside down on the sand, its curved hull painted dark Basque green and white, a fishing net draped over it.",
+     "prompt": "A wooden rowing boat lying upside down on the sand, its curved hull painted dark Basque green and white, a fishing net draped over it. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/barque_retournee_verte.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "bateau_remorque",
+     "nom": "Bateau de pêche sur sa remorque",
+     "caractere": "B",
+     "categorie": "bateau",
+     "type": "objet",
+     "taille_cases": [
+      4,
+      2
+     ],
+     "debord_haut_cases": 1.0,
+     "taille_sortie_px": [
+      512,
+      384
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Bateaux au sec"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A small Basque fishing boat (txalupa) resting upright on a wooden beach trailer, red and white hull with a green stripe, a little cabin at the back.",
+     "prompt": "A small Basque fishing boat (txalupa) resting upright on a wooden beach trailer, red and white hull with a green stripe, a little cabin at the back. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/bateau_remorque.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "canoe",
+     "nom": "Canoës empilés",
+     "caractere": "B",
+     "categorie": "bateau",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 0.3,
+     "taille_sortie_px": [
+      384,
+      166
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Bateaux au sec"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "Two bright yellow and orange sea kayaks stacked on the sand with their paddles.",
+     "prompt": "Two bright yellow and orange sea kayaks stacked on the sand with their paddles. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/canoe.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "cachette_annexe",
+     "nom": "Petite barque retournée (cachette)",
+     "caractere": "H",
+     "categorie": "cachette",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.2,
+     "taille_sortie_px": [
+      128,
+      154
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": true,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Bateaux au sec"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A tiny wooden dinghy turned upside down on the sand, propped up on one side by a stone so a child can crawl under, an orange stripe on its hull, clearly a hiding spot.",
+     "prompt": "A tiny wooden dinghy turned upside down on the sand, propped up on one side by a stone so a child can crawl under, an orange stripe on its hull, clearly a hiding spot. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cachette_annexe.png",
+     "etat_ouvert": true
+    },
+    {
+     "id": "cabine_blanche",
+     "nom": "Cabine du Port-Vieux",
+     "caractere": "c",
+     "categorie": "batiment",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.3,
+     "taille_sortie_px": [
+      128,
+      294
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 4,
+     "zones": [
+      "Port-Vieux"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A small white wooden bathing cabin of the old port of Biarritz with a turquoise door and a flat little roof, a towel hanging on a hook.",
+     "prompt": "A small white wooden bathing cabin of the old port of Biarritz with a turquoise door and a flat little roof, a towel hanging on a hook. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/cabine_blanche.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "longue_vue",
+     "nom": "Longue-vue du belvédère",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0.8,
+     "taille_sortie_px": [
+      128,
+      230
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Escalier de la falaise"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A coin-operated seaside telescope on a short green cast iron post, pointing toward the sea, a landmark of the cliff walk of Biarritz.",
+     "prompt": "A coin-operated seaside telescope on a short green cast iron post, pointing toward the sea, a landmark of the cliff walk of Biarritz. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/longue_vue.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "club_plage",
+     "nom": "Club de plage des enfants",
+     "caractere": "c",
+     "categorie": "repere",
+     "type": "objet",
+     "taille_cases": [
+      3,
+      2
+     ],
+     "debord_haut_cases": 1.4,
+     "taille_sortie_px": [
+      384,
+      435
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Grande plage"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A big square beach club tent for children in blue and yellow stripes with a scalloped edge, a rope of colorful pennants on top, a little slide next to it, a landmark of the beach.",
+     "prompt": "A big square beach club tent for children in blue and yellow stripes with a scalloped edge, a rope of colorful pennants on top, a little slide next to it, a landmark of the beach. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "fanions qui flottent au vent",
+     "placeholder": "assets/maps/plage/decor/provisoires/club_plage.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "pile_transats",
+     "nom": "Pile de transats",
+     "caractere": "c",
+     "categorie": "objet",
+     "type": "objet",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0.6,
+     "taille_sortie_px": [
+      256,
+      205
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Grande plage"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "A neat stack of six folded wooden deck chairs with striped canvas leaning together on the sand, tied with a rope.",
+     "prompt": "A neat stack of six folded wooden deck chairs with striped canvas leaning together on the sand, tied with a rope. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/pile_transats.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "lampadaire",
+     "nom": "Lampadaire de la digue",
+     "caractere": "t",
+     "categorie": "objet_bas",
+     "type": "objet",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 1.6,
+     "taille_sortie_px": [
+      128,
+      333
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 2,
+     "zones": [
+      "Rampe du Port-Vieux"
+     ],
+     "style_pixelforge_suggere": "pf_hd__prop",
+     "prompt_specifique": "An old cast iron seaside street lamp painted dark green with a round white globe, on a stone pier.",
+     "prompt": "An old cast iron seaside street lamp painted dark green with a round white globe, on a stone pier. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, the top face and the front face both visible, the front face square to the viewer, orthographic. Light from the upper left. One single object centred on a plain transparent background.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/lampadaire.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "sortie_escalier",
+     "nom": "Sortie : haut de l'escalier de la falaise",
+     "caractere": "E",
+     "categorie": "sortie",
+     "type": "decal",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": true
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Escalier de la falaise"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "The top landing of a stone staircase climbing a cliff, a little wooden gate open toward the town, seen from above, flat on the ground.",
+     "prompt": "The top landing of a stone staircase climbing a cliff, a little wooden gate open toward the town, seen from above, flat on the ground. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Flat decal lying on the ground, seen straight from above, slightly faded like paint on the floor, thin outline, on a plain transparent background.",
+     "animation": "petit fanion vert qui flotte quand la sortie est ouverte",
+     "placeholder": "assets/maps/plage/decor/provisoires/sortie_escalier.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "sortie_rampe",
+     "nom": "Sortie : haut de la rampe du Port-Vieux",
+     "caractere": "E",
+     "categorie": "sortie",
+     "type": "decal",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": true
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Rampe du Port-Vieux"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "The top of a paved ramp along a cliff with a little white railing and a lamp post, the road toward the town, seen from above, flat on the ground.",
+     "prompt": "The top of a paved ramp along a cliff with a little white railing and a lamp post, the road toward the town, seen from above, flat on the ground. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Flat decal lying on the ground, seen straight from above, slightly faded like paint on the floor, thin outline, on a plain transparent background.",
+     "animation": "petit fanion vert qui flotte quand la sortie est ouverte",
+     "placeholder": "assets/maps/plage/decor/provisoires/sortie_rampe.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "sortie_digue",
+     "nom": "Sortie : bout de la digue",
+     "caractere": "E",
+     "categorie": "sortie",
+     "type": "decal",
+     "taille_cases": [
+      3,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      384,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": true
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Digue"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "The round end of a stone pier with a small iron ladder going down to a red and white rowboat waiting on the water, seen from above.",
+     "prompt": "The round end of a stone pier with a small iron ladder going down to a red and white rowboat waiting on the water, seen from above. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Flat decal lying on the ground, seen straight from above, slightly faded like paint on the floor, thin outline, on a plain transparent background.",
+     "animation": "la barque qui attend tangue sur l'eau",
+     "placeholder": "assets/maps/plage/decor/provisoires/sortie_digue.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "sortie_canot",
+     "nom": "Sortie : canot des sauveteurs",
+     "caractere": "E",
+     "categorie": "sortie",
+     "type": "decal",
+     "taille_cases": [
+      3,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      384,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": true
+     },
+     "poses_sur_la_carte": 1,
+     "zones": [
+      "Grande plage"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "An orange inflatable rescue boat waiting on the wet sand at the edge of the waves, a rope and a paddle, seen from above.",
+     "prompt": "An orange inflatable rescue boat waiting on the wet sand at the edge of the waves, a rope and a paddle, seen from above. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Flat decal lying on the ground, seen straight from above, slightly faded like paint on the floor, thin outline, on a plain transparent background.",
+     "animation": "le canot tangue dans l'écume",
+     "placeholder": "assets/maps/plage/decor/provisoires/sortie_canot.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "sable",
+     "nom": "Sable doré",
+     "caractere": ".",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [
+      "Cabines rayées",
+      "Grande plage",
+      "Bateaux au sec",
+      "Port-Vieux",
+      "Poste de secours",
+      "Rochers du Basta"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Soft golden beach sand seen straight from above, gentle ripples drawn by the wind, a few tiny shells and pebbles, warm light beige.",
+     "prompt": "Soft golden beach sand seen straight from above, gentle ripples drawn by the wind, a few tiny shells and pebbles, warm light beige. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/sable.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "sable_mouille",
+     "nom": "Sable mouillé (bord de l'eau)",
+     "caractere": ":",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [
+      "Rochers du Basta",
+      "Grande plage",
+      "Bateaux au sec",
+      "Port-Vieux",
+      "Digue"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Wet shiny beach sand at the edge of the sea seen straight from above, slightly darker golden brown, little foam lines and reflections of the sky.",
+     "prompt": "Wet shiny beach sand at the edge of the sea seen straight from above, slightly darker golden brown, little foam lines and reflections of the sky. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "l'écume qui monte et descend sur le sable",
+     "placeholder": "assets/maps/plage/decor/provisoires/sable_mouille.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "sol_grotte",
+     "nom": "Sol de la grotte",
+     "caractere": ".",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [
+      "Grotte des contrebandiers",
+      "Grotte aux sirènes",
+      "Grotte de la marée",
+      "tunnels (hors zones)"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "The floor of a sea cave seen straight from above, dark blue-grey wet rock with smooth worn shapes, small shallow puddles reflecting turquoise light, a few pebbles.",
+     "prompt": "The floor of a sea cave seen straight from above, dark blue-grey wet rock with smooth worn shapes, small shallow puddles reflecting turquoise light, a few pebbles. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "gouttes qui tombent et ronds dans les flaques",
+     "placeholder": "assets/maps/plage/decor/provisoires/sol_grotte.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "marches",
+     "nom": "Marches de pierre",
+     "caractere": ".",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [
+      "Escalier de la falaise",
+      "Rampe du Port-Vieux"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "Wide old sandstone stair steps seen straight from above, horizontal steps with a slightly darker edge on each step, warm golden stone.",
+     "prompt": "Wide old sandstone stair steps seen straight from above, horizontal steps with a slightly darker edge on each step, warm golden stone. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/marches.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "talus",
+     "nom": "Talus de la falaise (herbes et rochers bas)",
+     "caractere": "r",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": false,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [
+      "Escalier de la falaise",
+      "Rampe du Port-Vieux"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "A steep grassy slope at the foot of a sandstone cliff seen from above: tufts of sea grass, tamarisk bushes, small pink flowers and low golden rocks, calm colours.",
+     "prompt": "A steep grassy slope at the foot of a sandstone cliff seen from above: tufts of sea grass, tamarisk bushes, small pink flowers and low golden rocks, calm colours. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/talus.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "falaise",
+     "nom": "Falaise (dessus)",
+     "caractere": "R",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [
+      "*"
+     ],
+     "style_pixelforge_suggere": "pf_hd__ground",
+     "prompt_specifique": "The top of an ochre and golden sandstone sea cliff seen straight from above, layered rock with soft cracks, tufts of green grass and little pink flowers on top.",
+     "prompt": "The top of an ochre and golden sandstone sea cliff seen straight from above, layered rock with soft cracks, tufts of green grass and little pink flowers on top. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Seamless tileable ground texture seen straight from above, filling the square edge to edge, calm low-contrast flat colours with thin slightly darker joint lines so that characters stand out. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/falaise.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "falaise_face",
+     "nom": "Pied de falaise (face rocheuse)",
+     "caractere": "v",
+     "categorie": "sol",
+     "type": "tuile_sol",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": true,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [
+      "*"
+     ],
+     "style_pixelforge_suggere": "pf_hd__texture",
+     "prompt_specifique": "The front face of an ochre sandstone sea cliff, horizontal layered strata, darker at the bottom where it meets the sand, a few tufts of grass in the cracks.",
+     "prompt": "The front face of an ochre sandstone sea cliff, horizontal layered strata, darker at the bottom where it meets the sand, a few tufts of grass in the cracks. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: the front face of a cliff in a three-quarter top-down map, square to the viewer, orthographic, seamless from left to right. Light from the upper left.",
+     "animation": "",
+     "placeholder": "assets/maps/plage/decor/provisoires/falaise_face.png",
+     "etat_ouvert": false
+    },
+    {
+     "id": "vagues_ecume",
+     "nom": "Vagues et écume du bord de mer",
+     "caractere": "",
+     "categorie": "anime",
+     "type": "anim",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [],
+     "style_pixelforge_suggere": "pf_2d__loop",
+     "prompt_specifique": "Gentle rolling sea waves breaking on a golden beach, white foam lines, turquoise and navy water, seen from above with a slight tilt, horizontally seamless strip, loop of 6 frames.",
+     "prompt": "Gentle rolling sea waves breaking on a golden beach, white foam lines, turquoise and navy water, seen from above with a slight tilt, horizontally seamless strip, loop of 6 frames. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop.",
+     "animation": "boucle (planche d'images)",
+     "placeholder": "",
+     "etat_ouvert": false
+    },
+    {
+     "id": "eau_mer_plage",
+     "nom": "Mer de la Côte des Basques (tuile animée)",
+     "caractere": "",
+     "categorie": "anime",
+     "type": "anim",
+     "taille_cases": [
+      2,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [],
+     "style_pixelforge_suggere": "pf_2d__loop",
+     "prompt_specifique": "Open sea seen from above, turquoise near the beach turning navy, soft wave crests, seamless tileable texture, loop of 6 frames.",
+     "prompt": "Open sea seen from above, turquoise near the beach turning navy, soft wave crests, seamless tileable texture, loop of 6 frames. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop.",
+     "animation": "boucle (planche d'images)",
+     "placeholder": "",
+     "etat_ouvert": false
+    },
+    {
+     "id": "drapeaux_poste",
+     "nom": "Drapeaux de baignade du poste de secours",
+     "caractere": "",
+     "categorie": "anime",
+     "type": "anim",
+     "taille_cases": [
+      1,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [],
+     "style_pixelforge_suggere": "pf_2d__loop",
+     "prompt_specifique": "A tall white flag pole with a green bathing flag flapping in the wind, loop of 6 frames; variants with a yellow flag and a red flag.",
+     "prompt": "A tall white flag pole with a green bathing flag flapping in the wind, loop of 6 frames; variants with a yellow flag and a red flag. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop.",
+     "animation": "boucle (planche d'images)",
+     "placeholder": "",
+     "etat_ouvert": false
+    },
+    {
+     "id": "mouettes",
+     "nom": "Mouettes de la plage",
+     "caractere": "",
+     "categorie": "anime",
+     "type": "anim",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [],
+     "style_pixelforge_suggere": "pf_2d__loop",
+     "prompt_specifique": "A cute white and grey seagull standing on the sand, then flapping its wings and taking off, loop of 8 frames.",
+     "prompt": "A cute white and grey seagull standing on the sand, then flapping its wings and taking off, loop of 8 frames. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop.",
+     "animation": "boucle (planche d'images)",
+     "placeholder": "",
+     "etat_ouvert": false
+    },
+    {
+     "id": "fumee_cuisine",
+     "nom": "Fumée de la cuisine",
+     "caractere": "",
+     "categorie": "anime",
+     "type": "anim",
+     "taille_cases": [
+      1,
+      2
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      256
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [],
+     "style_pixelforge_suggere": "pf_2d__loop",
+     "prompt_specifique": "Soft white puffs of cooking smoke rising and curling from a small chimney pipe, loop of 8 frames, transparent background.",
+     "prompt": "Soft white puffs of cooking smoke rising and curling from a small chimney pipe, loop of 8 frames, transparent background. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop.",
+     "animation": "boucle (planche d'images)",
+     "placeholder": "",
+     "etat_ouvert": false
+    },
+    {
+     "id": "enseigne_itsasoa",
+     "nom": "Enseigne du restaurant Itsasoa",
+     "caractere": "",
+     "categorie": "anime",
+     "type": "anim",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [],
+     "style_pixelforge_suggere": "pf_2d__loop",
+     "prompt_specifique": "A hanging wooden restaurant sign shaped like a fish, painted red and white, swinging gently in the wind, loop of 6 frames.",
+     "prompt": "A hanging wooden restaurant sign shaped like a fish, painted red and white, swinging gently in the wind, loop of 6 frames. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop.",
+     "animation": "boucle (planche d'images)",
+     "placeholder": "",
+     "etat_ouvert": false
+    },
+    {
+     "id": "enseigne_txiringito",
+     "nom": "Enseigne du Txiringito",
+     "caractere": "",
+     "categorie": "anime",
+     "type": "anim",
+     "taille_cases": [
+      2,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      256,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [],
+     "style_pixelforge_suggere": "pf_2d__loop",
+     "prompt_specifique": "A wooden beach bar sign shaped like a surfboard, painted green and yellow, with shell garlands swinging gently in the wind, loop of 6 frames.",
+     "prompt": "A wooden beach bar sign shaped like a surfboard, painted green and yellow, with shell garlands swinging gently in the wind, loop of 6 frames. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop.",
+     "animation": "boucle (planche d'images)",
+     "placeholder": "",
+     "etat_ouvert": false
+    },
+    {
+     "id": "parasols_vent",
+     "nom": "Parasols au vent",
+     "caractere": "",
+     "categorie": "anime",
+     "type": "anim",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [],
+     "style_pixelforge_suggere": "pf_2d__loop",
+     "prompt_specifique": "A red and white striped beach umbrella whose canopy ripples in the wind, loop of 6 frames.",
+     "prompt": "A red and white striped beach umbrella whose canopy ripples in the wind, loop of 6 frames. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop.",
+     "animation": "boucle (planche d'images)",
+     "placeholder": "",
+     "etat_ouvert": false
+    },
+    {
+     "id": "goutte_grotte",
+     "nom": "Gouttes dans la grotte",
+     "caractere": "",
+     "categorie": "anime",
+     "type": "anim",
+     "taille_cases": [
+      1,
+      1
+     ],
+     "debord_haut_cases": 0,
+     "taille_sortie_px": [
+      128,
+      128
+     ],
+     "gameplay": {
+      "bloque_vue": true,
+      "bloque_passage": false,
+      "cachette": false,
+      "sortie": false
+     },
+     "poses_sur_la_carte": 0,
+     "zones": [],
+     "style_pixelforge_suggere": "pf_2d__loop",
+     "prompt_specifique": "A drop of water falling from the cave ceiling into a small puddle, turquoise ripples spreading, loop of 8 frames.",
+     "prompt": "A drop of water falling from the cave ceiling into a small puddle, turquoise ripples spreading, loop of 8 frames. Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy #1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy sea, with Basque red #9e1b1b and dark green #1f6b3a touches. Camera front34: three-quarter top-down view from the front, about 40 degrees above the ground, orthographic. Light from the upper left. Animation frames side by side on a plain transparent background, same size and position in every frame, seamless loop.",
+     "animation": "boucle (planche d'images)",
+     "placeholder": "",
+     "etat_ouvert": false
+    }
+   ]
+  }
+ }
 }
