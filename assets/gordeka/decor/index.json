@@ -834,7 +834,23 @@
     1
    ],
    "debord_haut_cases": 0,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/tas_filets.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "18863d92006b490a9346e0d621e06f87",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/tas_filets_ombre.png",
+   "ombre_decalage": [
+    14,
+    73
+   ]
   },
   "fontaine_place": {
    "nom": "Fontaine de la place",
