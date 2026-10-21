@@ -1697,7 +1697,23 @@
     2
    ],
    "debord_haut_cases": 1,
-   "animation": {}
+   "animation": {},
+   "fichiers": [
+    "objets/sortie_porte_ville.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "15fb6f4fa9734197886c016474a4cad7",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "depart_lauburu": {
    "nom": "Marque de départ",
