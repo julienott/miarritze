@@ -27,7 +27,7 @@ func _run() -> void:
 	var tests: Array[Callable] = [test_jauge_remplissage, test_jauge_decroissance, test_jauge_sans_detection,
 		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus,
 		test_options_partie, test_partie_ia_courte, test_rounds_pour, test_sac, test_versus_saute_en_ia,
-		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo, test_parc_mazon, test_plage]
+		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo, test_parc_mazon, test_plage, test_port_v3]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
 			continue
@@ -323,7 +323,7 @@ func test_poursuite_tous_vus() -> void:
 		h2.position = game.hunter.position + Vector2(-6.0 * game.map.tile, 0)    # dans son dos
 		tick(game, 0.35)
 		check(h1.chase_left > 0.0 and h2.chase_left == 0.0, "seul le chassé vu part en poursuite")
-		h2.position = tile_pos(game, 41, 16)                                      # entre dans le champ
+		h2.position = tile_pos(game, 43, 17)                                      # entre dans le champ
 		tick(game, DT)
 		if tous > 0.5:
 			check(h2.chase_left > 0.0, "tous_vus : le chassé qui entre dans le champ en profite aussi")
@@ -422,6 +422,57 @@ func test_plage() -> void:
 		frames += 1
 	check(game.round_no >= 3, "deux rounds IA joués sur la plage (%d images)" % frames)
 	await free_game(game)
+
+
+## Port des Pêcheurs v3 (tools/gordeka/make_port_v3.py, carte par défaut) : tout le sol atteignable,
+## cachettes à deux côtés libres au moins, 4 sorties possibles, décor imposé et provisoires posés
+## (barriques, pots, platanes dessinés par le code), ornements de decor.json ; deux rounds IA.
+func test_port_v3() -> void:
+	GkRules._data["phase_draw"] = 0.5
+	GkRules._data["phase_hide"] = 3.0
+	GkRules._data["phase_hunt"] = 25.0
+	GkRules._data["phase_end"] = 0.5
+	GkRules._data["exits_open_at"] = 10.0
+	GkGame.config["players"] = 6
+	GkGame.config["map"] = "port_pecheurs"
+	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	game._bots_only = true
+	game._stats = true
+	root.add_child(game)
+	await physics_frame
+	var m: GkMap = game.map
+	check(m.map_id == "port_pecheurs" and m.zones.size() == 14 and int(m.info.get("version", 0)) == 3,
+		"carte v3 et ses 14 zones")
+	var start: Vector2i = m.spawns[0]
+	var n_walk: int = 0
+	var reach: int = 0
+	for y: int in m.height:
+		for x: int in m.width:
+			if m.walkable(Vector2i(x, y)):
+				n_walk += 1
+				if not m.path(m.center(start), m.center(Vector2i(x, y))).is_empty():
+					reach += 1
+	check(n_walk > 0 and reach == n_walk, "tout le sol atteignable (%d / %d)" % [reach, n_walk])
+	check(m.cachettes.size() >= 16, "au moins 16 cachettes (%d)" % m.cachettes.size())
+	for c: Vector2i in m.cachettes:
+		var free: int = 0
+		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			free += int(m.walkable(c + d))
+		check(free >= 2, "cachette %s : au moins deux côtés libres" % c)
+	check(m.exit_groups.size() == 4, "quatre sorties possibles (%d)" % m.exit_groups.size())
+	var prov: int = 0
+	for inst: Dictionary in m.decor.instances:
+		prov += int(inst.get("provisoire", false))
+	check(prov >= 20, "objets provisoires posés (%d)" % prov)
+	check(m.decor._ornaments.size() >= 50, "ornements de decor.json (%d)" % m.decor._ornaments.size())
+	check(is_equal_approx(GkRules.f("exits_open_at"), 110.0), "réglage propre à la carte : sorties à 110 s")
+	var frames: int = 0
+	while game.round_no < 3 and frames < 60 * 90:
+		await physics_frame
+		frames += 1
+	check(game.round_no >= 3, "deux rounds IA joués sur le port (%d images)" % frames)
+	await free_game(game)
+	check(is_equal_approx(GkRules.f("exits_open_at"), 10.0), "réglage de la carte retiré à la fin de la partie")
 
 
 ## Parc Mazon (tools/gordeka/make_parc_mazon.py) : sélectionnable, tout le sol atteignable, cachettes
