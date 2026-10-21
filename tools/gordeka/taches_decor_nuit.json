@@ -2339,11 +2339,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-mur_soutenement_mur_soutenement/0/apercu/mur_soutenement.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 19:11",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-mur_soutenement_mur_soutenement/0/apercu/mur_soutenement.png"
-  ]
+  ],
+  "variante": null
  },
  "m-chalutier_quai": {
   "titre": "Chalutier à quai : masque v3",

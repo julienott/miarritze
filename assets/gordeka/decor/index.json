@@ -1001,15 +1001,15 @@
    ],
    "sources": [
     {
-     "job": 1,
-     "variante": "image_01",
-     "task": "c6d493c7788f41f4bd1fd55017e871a7",
+     "job": 2,
+     "variante": "image_00",
+     "task": "fa0f9242123d430bb0bc063ea5314547",
      "date": "2026-10-21"
     }
    ],
    "ombre": "objets/marches_escalier_ombre.png",
    "ombre_decalage": [
-    14,
+    13,
     73
    ]
   },
