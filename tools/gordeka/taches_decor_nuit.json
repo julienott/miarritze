@@ -1940,11 +1940,13 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/403_cordage_enroule/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 00:05",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/403_cordage_enroule/0/planche.png"
-  ]
+  ],
+  "variante": "image_00",
+  "suites_a_deposer": "normal"
  },
  "404": {
   "titre": "Réverbère du port : image",

@@ -2452,8 +2452,22 @@
    ],
    "debord_haut_cases": 1,
    "animation": {},
-   "provisoire": "lampadaire",
-   "fichiers": []
+   "fichiers": [
+    "objets/lampadaire_port.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "860af064d99a4a1b8be90049e78d51d2",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "drapeau_mat": {
    "nom": "Drapeau sur un mât",
