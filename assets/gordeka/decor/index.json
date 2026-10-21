@@ -641,7 +641,23 @@
    "animation": {
     "methode": "jeu",
     "description": "tangage lent et flottement vertical"
-   }
+   },
+   "fichiers": [
+    "objets/barque_mouillage.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "c06456d5df0648df9c7852fd4a3753a4",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/barque_mouillage_ombre.png",
+   "ombre_decalage": [
+    29,
+    146
+   ]
   },
   "chalutier_quai": {
    "nom": "Chalutier à quai",

@@ -580,12 +580,13 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/283_fontaine_place/1/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/283_fontaine_place/0/planche.png",
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/283_fontaine_place/1/planche.png"
-  ]
+  ],
+  "variante": "1"
  },
  "284": {
   "titre": "Fontaine de la place : masque v3",
