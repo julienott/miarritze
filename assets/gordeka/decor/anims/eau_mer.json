@@ -1,0 +1,16 @@
+{
+ "mode": "warp",
+ "kind": "water",
+ "frames": 16,
+ "fps": 8.0,
+ "loop": true,
+ "duration_s": 2.0,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "loop_jump": 0.98,
+ "source_task": "04dec2b2761c4cccaeb7a88ea07185f6",
+ "piste": "houle (warp water fort)"
+}

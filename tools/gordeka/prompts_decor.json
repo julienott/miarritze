@@ -485,7 +485,9 @@
    ],
    "animation": {
     "methode": "planche",
-    "description": "vagues qui ondulent en boucle (4 à 8 images) ; repli : défilement lent des UV par shader"
+    "description": "vagues qui ondulent en boucle (4 à 8 images) ; repli : défilement lent des UV par shader",
+    "planche": "anims/eau_mer.png",
+    "planche_json": "anims/eau_mer.json"
    }
   },
   {
