@@ -377,16 +377,16 @@
    ],
    "sources": [
     {
-     "job": 0,
-     "variante": "image_00",
-     "task": "d639d58847ae4a1e9217e470bac176e1",
-     "date": "2026-10-20"
+     "job": 1,
+     "variante": "image_01",
+     "task": "1e363b78f7d64b2a906a96acb456386e",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/chambre_froide_ombre.png",
    "ombre_decalage": [
-    64,
-    287
+    57,
+    326
    ]
   },
   "tour_phare": {

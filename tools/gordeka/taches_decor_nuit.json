@@ -552,11 +552,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/281_tas_filets/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/281_tas_filets/0/planche.png"
-  ]
+  ],
+  "variante": "image_00"
  },
  "283": {
   "titre": "Fontaine de la place : animation",
@@ -1617,6 +1618,21 @@
   "jobs": [
    {
     "tid": "ca318b6352a84f2d9e12ec84ffd304bc",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-21 07:34"
+ },
+ "m-tas_filets": {
+  "titre": "Filets et casiers posés au sol : masque (d'office, nouvelle image)",
+  "sorte": "masque",
+  "element": "tas_filets",
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "b3e5ce448fe9416cb542709367001b75",
     "quoi": "pf_2d__footprint",
     "style": "pf_2d__footprint"
    }
