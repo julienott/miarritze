@@ -1846,8 +1846,22 @@
    ],
    "debord_haut_cases": 0,
    "animation": {},
-   "provisoire": "pot_hortensias",
-   "fichiers": []
+   "fichiers": [
+    "objets/pot_hortensias.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "aecd288a6ab84f4abd96b661433408f2",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/pot_hortensias_ombre.png",
+   "ombre_decalage": [
+    17,
+    74
+   ]
   },
   "casier_bouees": {
    "nom": "Casier et bouées",
