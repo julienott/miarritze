@@ -2043,8 +2043,22 @@
      }
     ]
    },
-   "provisoire": "linge",
-   "fichiers": []
+   "fichiers": [
+    "objets/linge_seche.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "bb7d7e094e0b46b4a17a2f57ecfb01c0",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
   },
   "lanterne_murale": {
    "nom": "Lanterne de façade",
