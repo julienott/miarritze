@@ -776,15 +776,15 @@
    ],
    "sources": [
     {
-     "job": 0,
+     "job": 1,
      "variante": "image_00",
-     "task": "73e539ee5baa4058a5ce19b5bfe8af81",
-     "date": "2026-10-20"
+     "task": "6e0c3c1e49dd497b90f4c4ceecabd7d0",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/etal_criee_ombre.png",
    "ombre_decalage": [
-    14,
+    13,
     73
    ]
   },

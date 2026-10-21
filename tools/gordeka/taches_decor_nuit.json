@@ -1866,7 +1866,7 @@
   "titre": "Crampotte aux volets verts : masque v3",
   "sorte": "masque",
   "element": "maison_crampotte_verte",
-  "statut": "a_voir",
+  "statut": "integre",
   "consigne": "Masque à faire : emprise sous la base seulement, le haut masque un perso derrière.",
   "jobs": [
    {
@@ -1882,7 +1882,8 @@
   "depose": "2026-10-21 18:12",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-maison_crampotte_verte_maison_crampotte_verte/0/apercu/maison_crampotte_verte.png"
-  ]
+  ],
+  "variante": null
  },
  "m-rayonnage_filets": {
   "titre": "Rayonnage du hangar à filets : masque v3",
