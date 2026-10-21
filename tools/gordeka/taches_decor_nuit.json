@@ -1731,11 +1731,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-lavoir_bassin_lavoir_bassin/0/apercu/lavoir_bassin.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 17:38",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-lavoir_bassin_lavoir_bassin/0/apercu/lavoir_bassin.png"
-  ]
+  ],
+  "variante": null
  },
  "m-cachette_malle_pelotes": {
   "titre": "Malle à pelotes : masque v3",
