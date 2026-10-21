@@ -135,20 +135,18 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "0fe79a02b2fb4af38e0ab4cce0c5fcf0",
+    "tid": "ebf78f5db23941cc906a073e60f548e7",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/250_maison_crampotte/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/250_maison_crampotte/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
+  "statut": "en_file",
+  "depose": "2026-10-21 10:33",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/250_maison_crampotte/0/planche.png"
   ],
-  "variante": "image_01"
+  "variante": "image_01",
+  "consigne": "seen straight from the front, the facade parallel to the image, gable roof symmetric, consistent perspective"
  },
  "251": {
   "titre": "Crampotte (cabane de pêcheur) : masque v3",
@@ -253,20 +251,18 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "e4aa92511be14bc4a8c685b75f8fce24",
+    "tid": "a8bd692444be4184a25a63c95c6966b5",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
+  "statut": "en_file",
+  "depose": "2026-10-21 10:33",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0/planche.png"
   ],
-  "variante": "image_00"
+  "variante": "image_00",
+  "consigne": "a huge Basque pelota fronton wall: a very tall and very wide plastered wall with a rounded top, much taller than a house, red base stripe, seen straight from the front"
  },
  "258": {
   "titre": "Fronton de pelote basque : masque v3",
@@ -505,20 +501,18 @@
   "priorite": "normal",
   "jobs": [
    {
-    "tid": "22b5036a014c46bda7d69487e0f889c5",
+    "tid": "f64b4ebd5e0945f8a9d4e4ba863b7da8",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "integre",
-  "depose": "2026-10-20 21:35",
+  "statut": "en_file",
+  "depose": "2026-10-21 10:34",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0/planche.png"
   ],
-  "variante": "image_00"
+  "variante": "image_00",
+  "consigne": "seen exactly from the side, the hull long side parallel to the image, keel horizontal, resting on its wooden cradle"
  },
  "274": {
   "titre": "Coque sur ber (cale sèche) : masque v3",
