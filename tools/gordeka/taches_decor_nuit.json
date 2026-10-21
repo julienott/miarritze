@@ -385,19 +385,27 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/267_caisses_poisson/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/267_caisses_poisson/0/planche.png"
-  ]
+  ],
+  "variante": "image_01"
  },
  "268": {
   "titre": "Pile de caisses de poisson : masque v3",
   "sorte": "masque",
   "element": "caisses_poisson",
-  "priorite": "night",
-  "statut": "attend",
-  "depend": "267"
+  "priorite": "normal",
+  "statut": "en_file",
+  "jobs": [
+   {
+    "tid": "df49bd50c9e04bc09408db24894e2fbd",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "depose": "2026-10-21 07:35"
  },
  "269": {
   "titre": "Barque basque au mouillage : image",
@@ -695,17 +703,11 @@
    {
     "tid": "c6d493c7788f41f4bd1fd55017e871a7",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop",
-    "statut": "succeeded",
-    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/291_marches_escalier/0",
-    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/291_marches_escalier/0/planche.png"
+    "style": "pf_2d__prop"
    }
   ],
-  "statut": "a_voir",
-  "depose": "2026-10-20 21:35",
-  "planches": [
-   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/291_marches_escalier/0/planche.png"
-  ]
+  "statut": "en_file",
+  "depose": "2026-10-20 21:35"
  },
  "292": {
   "titre": "Marches de l'escalier de la ville : masque v3",

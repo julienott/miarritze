@@ -745,16 +745,16 @@
    ],
    "sources": [
     {
-     "job": 0,
+     "job": 1,
      "variante": "image_00",
-     "task": "f10243bdc50b4faa92b79c120a1d8a9e",
-     "date": "2026-10-20"
+     "task": "1e68146d38314c4daf8f17347a869311",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/coque_chantier_ombre.png",
    "ombre_decalage": [
-    61,
-    312
+    24,
+    121
    ]
   },
   "etal_criee": {
