@@ -32,6 +32,7 @@ SUIVI = os.path.join(ROOT, "tools", "gordeka", "taches_decor_nuit.json")
 RANG = {"haute": 0, "normale": 1, "basse": 2, "": 3}
 LANCEES = os.path.join(ROOT, "tools", "rd", "out", "recette", "wip_lancees.json")
 POUSSE = os.path.join(HERE, "pousse_qa.sh")
+ENV = lambda prio: {**os.environ, "PRIO_KANBAN": prio}
 BESOINS = os.path.join(ROOT, "tools", "rd", "out", "recette", "wip_besoins.json")
 
 
@@ -82,9 +83,13 @@ def lancer(c, prio):
         a_faire = [k for k in cles if etat["items"].get(k, {}).get("statut") != "ok" or len(cles) == 1]
         if ESSAI:
             return f"anim {a_faire} « {consigne[:60]} »"
+        etat = lire(ETAT, {"items": {}})
+        for k in a_faire:
+            etat["items"].setdefault(k, {})["essais"] = 0
+        json.dump(etat, open(ETAT, "w"), ensure_ascii=False, indent=1)
         for k in a_faire:
             subprocess.run([PY, os.path.join(ROOT, "tools", "gordeka", "recette.py"), "ko", k] + ([consigne] if consigne else []),
-                           cwd=ROOT, check=True, capture_output=True)
+                           cwd=ROOT, check=True, capture_output=True, env=ENV(prio))
         return f"animation(s) relancée(s) : {', '.join(k.split('/')[-1] for k in a_faire)}"
     ent = lire(SUIVI, {}).get(str(c["id"]))
     # carte d'objet sans entrée de suivi (image validée avant le suivi) : l'élément se lit sur son asset
@@ -101,14 +106,14 @@ def lancer(c, prio):
         if ESSAI:
             return f"masque « {consigne[:60]} »"
         subprocess.run([PY, os.path.join(HERE, "decor_matin.py"), "relance", f"m-{ent['element']}", consigne],
-                       cwd=ROOT, check=True, capture_output=True, timeout=900)
+                       cwd=ROOT, check=True, capture_output=True, timeout=900, env=ENV(prio))
         s = lire(SUIVI, {}); s[str(c["id"])]["masque_refait"] = 1; json.dump(s, open(SUIVI, "w"), ensure_ascii=False, indent=1)
         return "masque refait"
     if ent and ent.get("statut") in ("todo", "attend", "integre", "a_voir", None):
         if ESSAI:
             return f"décor {ent.get('sorte')} « {consigne[:60]} »"
         subprocess.run([PY, os.path.join(HERE, "decor_matin.py"), "relance", str(c["id"])] + ([consigne] if consigne else []),
-                       cwd=ROOT, check=True, capture_output=True, timeout=900)
+                       cwd=ROOT, check=True, capture_output=True, timeout=900, env=ENV(prio))
         return f"décor ({ent.get('sorte')}) relancé"
     return None
 
@@ -127,16 +132,22 @@ def decor_auto():
 
 
 def main():
-    doing = cli.call("cards", query={"status": "doing"})["cards"]
-    # 1. refus de QA revenus en Doing → sommet du Backlog (Julien 21/10 : il repriorise lui-même)
-    for c in doing:
-        if c.get("rework") and not en_cours(c["id"], c["title"]):
-            print(f"#{c['id']} refusé en QA → sommet du Backlog")
-            if not ESSAI:
-                cli.call("card_move", {"id": c["id"], "status": "backlog", "index": 0})
     # 2. Julien choisit Backlog → Todo ; la Todo entre en Doing par priorité, 5 cartes actives au plus.
-    besoins = lire(BESOINS, [])
     doing = cli.call("cards", query={"status": "doing"})["cards"]
+    todo_ids = {c["id"] for c in cli.call("cards", query={"status": "todo"})["cards"]}
+    besoins = [i for i in lire(BESOINS, []) if i in todo_ids]
+    # Carte que Julien a passée lui-même en Doing (sans passer par la Todo) : lancée ici, une fois.
+    lancees = lire(LANCEES, {})
+    for c in doing:
+        if c.get("children") or str(c["id"]) in lancees or en_cours(c["id"], c["title"]):
+            continue
+        quoi = None if ESSAI else lancer(c, "night" if c.get("night") else "normal")
+        print((f"#{c['id']} {c['title']} (mise en Doing à la main) : {quoi}") if quoi else f"BESOIN #{c['id']} {c['title']} : en Doing, à lancer par Claude")
+        if quoi:
+            cli.call("card_comment", {"id": c["id"], "body": f"Pris : {quoi}."})
+        lancees[str(c["id"])] = 1
+    if not ESSAI:
+        json.dump(lancees, open(LANCEES, "w"))
     place = LIMITE - len([c for c in doing if not c.get("night") and not c.get("children")])
     todo = sorted(cli.call("cards", query={"status": "todo"})["cards"],
                   key=lambda c: (not c.get("night"), RANG.get(c.get("priority") or "", 3), c["id"]))

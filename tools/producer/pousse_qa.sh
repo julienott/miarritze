@@ -2,6 +2,10 @@
 # Mise en ligne puis passage en QA des cartes données (règle de Julien : carte retraitée → en ligne → QA).
 # Usage : pousse_qa.sh "<message>" <carte> [<carte>…]
 cd /Users/julien/Dev/miarritze
+# Une seule mise en ligne à la fois (wip.py et Claude peuvent pousser en même temps).
+VERROU=tools/rd/out/recette/.pousse_qa.lock
+for i in $(seq 1 180); do mkdir "$VERROU" 2>/dev/null && break; sleep 10; done
+trap 'rmdir "$VERROU" 2>/dev/null' EXIT
 MSG="$1"; shift
 godot --headless --path . --import >/dev/null 2>&1
 godot --headless --path . --script res://tests/run_tests.gd 2>&1 | tail -1 | grep -q " 0 échecs" || { echo "TESTS EN ÉCHEC"; exit 1; }

@@ -193,7 +193,15 @@ class Routine:
         it = self.e["items"].setdefault(cle, {"essais": 0, "statut": "nouveau"})
         if consigne:
             ret = lire(RETOUCHES, {})
-            ret[cle] = consigne
+            v = ret.get(cle) if isinstance(ret.get(cle), dict) else ({"action": ret[cle]} if ret.get(cle) else {})
+            v["action"] = consigne                 # la dernière consigne remplace la précédente, réglages gardés
+            ret[cle] = v
+            ecrire(RETOUCHES, ret)
+        if os.environ.get("PRIO_KANBAN"):          # priorité choisie par wip.py (night shift de la carte)
+            ret = lire(RETOUCHES, {})
+            v = ret.get(cle) if isinstance(ret.get(cle), dict) else ({"action": ret[cle]} if ret.get(cle) else {})
+            v["priority"] = os.environ["PRIO_KANBAN"]
+            ret[cle] = v
             ecrire(RETOUCHES, ret)
         it["essais"] += 1
         if it["essais"] > MAX_ESSAIS:

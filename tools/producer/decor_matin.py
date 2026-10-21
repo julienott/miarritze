@@ -263,7 +263,10 @@ def depose_suites(cle, ent, prio):
     """Ce qui attendait l'image de cette carte : déposé maintenant, cartes passées en Doing."""
     s = suivi()
     eid = ent["element"]
-    a_deposer = [(k, e) for k, e in s.items() if e.get("statut") == "attend" and e.get("element") == eid]
+    # Julien 21/10 : il gère le flux (Backlog → Todo) ; les cartes qui attendaient cette image (animation,
+    # version ouverte) restent où elles sont. Seul le masque, qui fait partie de la carte de l'objet, part.
+    a_deposer = [(k, e) for k, e in s.items() if e.get("statut") == "attend" and e.get("element") == eid
+                 and e.get("sorte") == "masque" and not k.isdigit()]
     est_objet = td.elements()[eid]["type"] == "objet"
     if est_objet and not any(e.get("sorte") == "masque" and e.get("element") == eid for e in s.values()
                              if e.get("statut") in ("attend", "en_file", "a_voir")):
@@ -353,7 +356,7 @@ def relance(cle, consigne):
                 pl["seed"] += 100
         return pls
     td.payloads = avec_consigne
-    n = td.depose_entree(cle, ent, "normal")
+    n = td.depose_entree(cle, ent, os.environ.get("PRIO_KANBAN", "normal"))
     ecrire(td.SUIVI, s)
     td.commente(cle, f"Relancé ({n} job(s), priorité normale)" + (f" avec la consigne : {consigne}" if consigne else ""))
     print(f"#{cle} relancé : {n} job(s)")
