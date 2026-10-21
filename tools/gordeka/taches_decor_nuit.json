@@ -2422,11 +2422,17 @@
    {
     "tid": "0f24416867a04ab3828cac38f47d2802",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-marches_escalier_marches_escalier/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-marches_escalier_marches_escalier/0/apercu/marches_escalier.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-21 19:21"
+  "statut": "a_voir",
+  "depose": "2026-10-21 19:21",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-marches_escalier_marches_escalier/0/apercu/marches_escalier.png"
+  ]
  },
  "m-table_terrasse": {
   "titre": "Table de terrasse : masque v3",
