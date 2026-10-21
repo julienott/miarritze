@@ -444,15 +444,15 @@
    ],
    "sources": [
     {
-     "job": 0,
+     "job": 1,
      "variante": "image_00",
-     "task": "d5ed2664c2624ef8835e099b81de8147",
-     "date": "2026-10-20"
+     "task": "e4aa92511be14bc4a8c685b75f8fce24",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/fronton_ombre.png",
    "ombre_decalage": [
-    42,
+    46,
     217
    ]
   },
