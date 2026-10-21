@@ -69,6 +69,30 @@ func _run() -> void:
 					bb = bb.expand(p)
 		row["poly_bb"] = [snappedf(bb.position.x, 0.1), snappedf(bb.position.y, 0.1), snappedf(bb.size.x, 0.1), snappedf(bb.size.y, 0.1)]
 		row["poly_area_cases"] = snappedf(area / (m.tile * m.tile), 0.01)
+		# Grille des IA vs emprise (#606) : cases de l'objet (et voisines) bloquées pour l'A* sans emprise
+		# dedans (« vide bloqué » : l'IA contourne du vide), ou marchables avec l'emprise dedans (« plein
+		# marchable » : l'IA fonce dans l'objet). Case rétrécie de 0,1 case par bord.
+		var vide_bloque: int = 0
+		var plein_marchable: int = 0
+		var ir: Rect2i = (inst["rect"] as Rect2i).grow(1)
+		for cy: int in range(ir.position.y, ir.end.y):
+			for cx: int in range(ir.position.x, ir.end.x):
+				var cc: Vector2i = Vector2i(cx, cy)
+				var inner: Rect2 = Rect2(Vector2(cc) * m.tile, Vector2(m.tile, m.tile)).grow(-0.1 * m.tile)
+				var box: PackedVector2Array = PackedVector2Array([inner.position, Vector2(inner.end.x, inner.position.y),
+					inner.end, Vector2(inner.position.x, inner.end.y)])
+				var hit: bool = false
+				for poly: PackedVector2Array in inst["polys"]:
+					if not Geometry2D.intersect_polygons(poly, box).is_empty():
+						hit = true
+						break
+				var own: bool = (inst["cells"] as Array).has(cc)
+				if own and not hit and not m.walkable(cc) and m.at(cc) != "H":
+					vide_bloque += 1
+				elif hit and m.walkable(cc):
+					plein_marchable += 1
+		row["cases_vide_bloque"] = vide_bloque
+		row["cases_plein_marchable"] = plein_marchable
 		# Base dessinée : pour chaque colonne (pas de 4 px), le pixel opaque le plus bas de l'image,
 		# comparé au bas de l'emprise dans cette colonne.
 		var img: Image = GkDecor._read_image(sp.texture.resource_path)

@@ -29,6 +29,8 @@
 	"decor_masques_pf_part_max": 0.9,
 	"decor_profondeur_min": 0.4,
 	"decor_finesse_px": 10,
+	"_doc_decor_grille": "Grille A* des IA alignée sur l'emprise réelle des objets en image (gk_map.gd, _fit_grid_to_decor) : une case est bloquée si l'emprise entre dans la case rétrécie de decor_grille_marge cases sur chaque bord, libre sinon (cases vides d'un objet plus étroit que ses cases, sol couvert par un objet qui déborde).",
+	"decor_grille_marge": 0.1,
 	"masque_vue_portee": 2.0,
 	"masque_fondu": 0.45,
 	"body_radius": 0.4,

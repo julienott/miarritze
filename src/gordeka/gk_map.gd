@@ -47,6 +47,10 @@ var info: Dictionary = {}
 var dark: Dictionary = {}
 ## Abri de chaque case de sol : nombre de voisins (8) qui cachent la vue.
 var cover: Dictionary = {}
+## Cases dont la grille A* suit l'emprise réelle d'un objet en image plutôt que sa lettre (vrai :
+## marchable, case de l'objet que l'emprise ne couvre pas ; faux : bloquée, case de sol couverte par
+## l'emprise d'un objet qui déborde de ses cases). Voir `_fit_grid_to_decor`.
+var _walk_fix: Dictionary = {}
 ## Dessin à plat (prototype gris) ; faux en 3D, où GkView3D dessine la carte.
 var draw_2d: bool = true
 ## Décor en images (assets/gordeka/decor/, au fil des livraisons de pixelforge) ; tout ce qui n'a
@@ -101,6 +105,7 @@ func load_map(id: String) -> void:
 		decor = GkDecor.new()
 		decor.setup(self)
 	_build_bodies()
+	_fit_grid_to_decor()
 	_build_astar()
 	_build_cover()
 	if draw_2d:
@@ -117,6 +122,8 @@ func at(t: Vector2i) -> String:
 
 
 func walkable(t: Vector2i) -> bool:
+	if _walk_fix.has(t):
+		return bool(_walk_fix[t])
 	return WALK.contains(at(t))
 
 
@@ -255,9 +262,80 @@ func _build_cover() -> void:
 			var n: int = 0
 			for dy: int in range(-1, 2):
 				for dx: int in range(-1, 2):
-					if OCCLUDE.contains(at(t + Vector2i(dx, dy))):
+					var nb: Vector2i = t + Vector2i(dx, dy)
+					if OCCLUDE.contains(at(nb)) and not bool(_walk_fix.get(nb, false)):
 						n += 1
 			cover[t] = n
+
+
+## Grille des IA alignée sur la physique (carte #606) : les objets en image ne bloquent que par leur
+## emprise au sol (`GkDecor` → polys), pas par leurs cases. Une case est bloquée si l'emprise entre dans
+## la case rétrécie de decor_grille_marge cases sur chaque bord (un perso au centre ou qui la traverse
+## la toucherait), libre sinon : les cases vides d'un objet plus étroit que ses cases deviennent
+## marchables, les cases de sol couvertes par un objet qui déborde (débord latéral) bloquées. Les
+## cachettes gardent leur case (on y entre par l'action). Une case libérée que rien ne relie au reste
+## du sol (îlot entre l'eau et l'objet) reste bloquée.
+func _fit_grid_to_decor() -> void:
+	_walk_fix.clear()
+	if decor == null:
+		return
+	var m: float = clampf(GkRules.f("decor_grille_marge"), 0.0, 0.45) * tile
+	var freed: Array[Vector2i] = []
+	for inst: Dictionary in decor.instances:
+		if not inst.has("polys"):
+			continue
+		var polys: Array = inst["polys"]
+		var bb: Rect2 = Rect2(polys[0][0], Vector2.ZERO)
+		for poly: PackedVector2Array in polys:
+			for p: Vector2 in poly:
+				bb = bb.expand(p)
+		var own: Array = inst["cells"]
+		var area: Rect2i = (inst["rect"] as Rect2i).merge(Rect2i(to_tile(bb.position), Vector2i.ONE)) \
+			.merge(Rect2i(to_tile(bb.end), Vector2i.ONE))
+		for y: int in range(area.position.y, area.end.y):
+			for x: int in range(area.position.x, area.end.x):
+				var c: Vector2i = Vector2i(x, y)
+				var inner: Rect2 = Rect2(Vector2(c) * tile, Vector2(tile, tile)).grow(-m)
+				var box: PackedVector2Array = PackedVector2Array([inner.position, Vector2(inner.end.x, inner.position.y),
+					inner.end, Vector2(inner.position.x, inner.end.y)])
+				var hit: bool = false
+				for poly: PackedVector2Array in polys:
+					if not Geometry2D.intersect_polygons(poly, box).is_empty():
+						hit = true
+						break
+				if own.has(c):
+					if not hit and at(c) != "H" and not _walk_fix.has(c):
+						_walk_fix[c] = true
+						freed.append(c)
+				elif hit and WALK.contains(at(c)):
+					_walk_fix[c] = false
+	# Cases libérées reliées au sol de la carte (départs des joueurs), sinon rendues à l'objet.
+	var seen: Dictionary = {}
+	var todo: Array[Vector2i] = []
+	for s: Vector2i in spawns:
+		if walkable(s):
+			seen[s] = true
+			todo.append(s)
+	while not todo.is_empty():
+		var c: Vector2i = todo.pop_back()
+		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var nb: Vector2i = c + d
+			if not seen.has(nb) and nb.x >= 0 and nb.y >= 0 and nb.x < width and nb.y < height and walkable(nb):
+				seen[nb] = true
+				todo.append(nb)
+	for c: Vector2i in freed:
+		if not seen.has(c) and bool(_walk_fix.get(c, false)):
+			_walk_fix.erase(c)
+	# QA (formes) : cases libérées en bleu, cases de sol bloquées par un débord en rouge.
+	if formes:
+		for c: Vector2i in _walk_fix:
+			var line: Line2D = Line2D.new()
+			var r: Rect2 = Rect2(Vector2(c) * tile, Vector2(tile, tile)).grow(-6.0)
+			line.points = PackedVector2Array([r.position, Vector2(r.end.x, r.position.y), r.end, Vector2(r.position.x, r.end.y)])
+			line.closed = true
+			line.width = 2.0
+			line.default_color = Color("3aa0ff") if bool(_walk_fix[c]) else Color("ff4040")
+			formes.add_child(line)
 
 
 ## Chemin (centres de cases) de a vers b, en pixels.

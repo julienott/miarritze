@@ -15,7 +15,8 @@ Une entrée par objet posé (`decor.json` de la carte), en mode visite chassé :
 | champ | sens | repère |
 |---|---|---|
 | `h_perso` | hauteur dessinée / hauteur d'un perso (88 px) | bitte ≈ 0,4 ; porte ≈ 1,1 ; maison ≥ 2 ; fronton ≥ 3,5 |
-| `fill_w` | largeur de l'image / largeur de ses cases | < 0,8 : cases vides traversables pour le joueur, bloquées pour l'IA (A*) |
+| `fill_w` | largeur de l'image / largeur de ses cases | < 0,8 : cases vides (marchables pour tous depuis #606, voir ci-dessous) ; > 1 : débord latéral |
+| `cases_vide_bloque` / `cases_plein_marchable` | cases de l'objet (et voisines) bloquées pour l'A* sans emprise dedans / marchables avec l'emprise dedans | 0 attendu (restent : îlots sans accès, barques sur l'eau) |
 | `ecart_base_min/med/max` | écart (px) entre le bas de l'emprise et la base dessinée, colonne par colonne | \|med\| ≤ 6 ; min/max très négatifs = on bute dans le vide |
 | `cols_sans_emprise`, `cols_emprise_sous_base` | colonnes de l'image sans emprise / emprise débordant sous la base | 0 attendu, quelques-unes tolérées aux bords |
 | `sondes` | point où un cercle de perso s'arrête en avançant vers l'objet par les 4 côtés | doit être au contact de l'objet dessiné, jamais au milieu |
@@ -36,7 +37,8 @@ godot --path . --script res://tests/decor/visite_decor.gd -- --role=chasseur --o
 
 Pour chaque objet (une pose par id, taille et miroir), le perso est posé là où il s'arrête en marchant vers
 l'objet (devant, derrière, gauche, droite) ; captures recadrées avec et sans les formes (touche F du mode
-visite : emprise bloquante, zone qui cache, ligne de tri). En `chasseur`, le chasseur est devant l'objet et
+visite : emprise bloquante, zone qui cache, ligne de tri ; cases de la grille des IA corrigées par
+l'emprise : bleu = case de l'objet libérée, rouge = case de sol bloquée par un débord). En `chasseur`, le chasseur est devant l'objet et
 regarde vers lui. À vérifier à l'œil :
 
 1. **échelle** : objet vs perso et vs objets voisins (porte un peu plus haute qu'un enfant, bitte au genou…) ;
