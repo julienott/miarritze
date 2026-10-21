@@ -1,0 +1,68 @@
+{
+ "motion": "trapped",
+ "quaternius": "Push_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "annoyed frustrated pout, cheeks puffed",
+ "tenue": "dress",
+ "drive": {
+  "exaggerate": 1.4
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The dress made of deep blue waves edged with white foam: the hem ripples continuously like rolling sea waves, foam curling at the edges, even when she stands still. The long wavy aqua hair: floats and flows as if underwater, slow and graceful.",
+ "frame_offsets": [
+  [25.5, 0.0],
+  [26.0, 0.0],
+  [26.5, 0.0],
+  [27.5, 0.0],
+  [28.0, 0.0],
+  [28.0, 0.0],
+  [28.5, 0.0],
+  [29.0, 0.0],
+  [29.0, 0.0],
+  [29.0, 0.0],
+  [29.0, 0.0],
+  [30.0, 0.0],
+  [30.0, 0.0],
+  [29.5, 0.0],
+  [29.5, 0.0],
+  [28.0, 0.0],
+  [26.0, 0.0],
+  [20.5, 0.0],
+  [16.5, 0.0],
+  [13.5, 0.0],
+  [13.0, 0.0],
+  [13.5, 0.0],
+  [14.5, 0.0],
+  [15.5, 0.0],
+  [16.0, 0.0],
+  [16.0, 0.0],
+  [21.5, 0.0],
+  [28.0, 0.0],
+  [33.5, 0.0],
+  [35.0, 0.0],
+  [32.0, 0.0],
+  [29.5, 0.0]
+ ],
+ "entrees": {
+  "idle": {
+   "i": [12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12],
+   "e": [52, 53, 53, 55, 56, 56, 62, 64, 66, 66, 69, 76, 77, 77, 72, 62, 59, 52, 49, 45, 44, 48, 52, 58, 61, 61, 67, 56, 64, 66, 61, 58]
+  },
+  "walk": {
+   "i": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 3, 8, 8, 8, 3, 3, 3, 3, 3, 5, 3, 3, 3, 3],
+   "e": [55, 56, 56, 58, 59, 59, 64, 67, 68, 68, 70, 76, 77, 77, 73, 64, 62, 55, 51, 46, 45, 48, 52, 58, 60, 60, 66, 59, 65, 66, 62, 60]
+  }
+ }
+}
