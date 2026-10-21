@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 /**
- * Service /producer : explorateur d'assets, commentaires versionnés, kanban.
+ * Service /producer : pilotage du projet (catalogue d'assets, commentaires versionnés, kanban,
+ * jalons de la roadmap, tableau de bord). Les routes sont décrites dans routes.php (GET routes).
  *
  * Deux façons de s'authentifier :
  * - Julien : mot de passe -> session PHP (cookie HttpOnly, Secure, SameSite=Strict),
@@ -17,7 +18,7 @@ const AUTH_WINDOW = 900;            // 15 min
 const SESSION_LIFETIME = 2592000;   // 30 jours
 const MAX_TITLE = 200;
 const MAX_TEXT = 8000;
-const SCHEMA_VERSION = 4;
+const SCHEMA_VERSION = 5;
 // Colonnes du kanban, dans l'ordre. « review » (ancienne colonne) = « qa ».
 const CARD_STATUSES = ['backlog', 'todo', 'doing', 'qa', 'done'];
 const STATUS_ALIASES = ['review' => 'qa'];
@@ -27,6 +28,11 @@ const MAX_EVENTS = 1000;
 const PRIORITIES = ['', 'basse', 'normale', 'haute'];
 const COMMENT_KINDS = ['amelioration', 'valide'];
 const COMMENT_STATUSES = ['open', 'done'];
+const DUE_RE = '/^\d{4}-\d{2}-\d{2}$/';
+const MAX_BULK = 500;               // cartes par action groupée
+const STALE_DAYS = 3;               // « Doing depuis longtemps » : jours sans changer de colonne
+// Ordre de reprise d'une carte liée à un asset (commentaire d'amélioration) : la plus avancée d'abord.
+const ATTACH_ORDER = ['qa' => 0, 'doing' => 1, 'todo' => 2, 'backlog' => 3];
 const MIME = [
     'png' => 'image/png',
     'gif' => 'image/gif',
@@ -112,6 +118,16 @@ final class App
             'POST card_delete' => $this->deleteCard(),
             'POST card_accept' => $this->acceptCard(),
             'POST card_refuse' => $this->refuseCard(),
+            'POST cards_bulk' => $this->bulkCards(),
+            'POST asset_comment' => $this->assetComment(),
+            'GET milestones' => $this->listMilestones(),
+            'POST milestone' => $this->addMilestone(),
+            'POST milestone_update' => $this->updateMilestone(),
+            'POST milestone_delete' => $this->deleteMilestone(),
+            'GET stats' => $this->stats(),
+            'GET routes' => $this->json(['routes' => array_map(static fn (array $r): array => array_combine(
+                ['method', 'route', 'group', 'params', 'effect', 'cli'], $r), require __DIR__ . '/routes.php'),
+                'schema' => SCHEMA_VERSION, 'statuses' => CARD_STATUSES, 'types' => CARD_TYPES]),
             default => throw new HttpError('Route inconnue', 404),
         };
     }
@@ -167,6 +183,8 @@ final class App
      * historique card_events amorcé (création + commentaires existants).
      * v2 -> v3 : colonnes cards.detail, cards.rework, card_notes.kind.
      * v3 -> v4 : colonne cards.night (night shift), à 0 pour les cartes existantes.
+     * v4 -> v5 : table milestones (créée par schema.sql), colonnes cards.milestone_id, cards.due
+     * et comments.card_id ; rien n'est réécrit dans les lignes existantes.
      */
     private function migrate(PDO $pdo): void
     {
@@ -220,7 +238,11 @@ final class App
                 // v2 -> v3 : détail de l'asset, « à retraiter », type de commentaire.
                 foreach ([['cards', 'detail', "TEXT NOT NULL DEFAULT ''"], ['cards', 'rework', 'INTEGER NOT NULL DEFAULT 0'],
                     ['card_notes', 'kind', "TEXT NOT NULL DEFAULT ''"],
-                    ['cards', 'night', 'INTEGER NOT NULL DEFAULT 0']] as [$table, $col, $def]) {   // v3 -> v4 : night shift
+                    ['cards', 'night', 'INTEGER NOT NULL DEFAULT 0'],      // v3 -> v4 : night shift
+                    // v4 -> v5 : jalon, échéance, carte d'un commentaire d'asset.
+                    ['cards', 'milestone_id', 'INTEGER REFERENCES milestones (id) ON DELETE SET NULL'],
+                    ['cards', 'due', "TEXT NOT NULL DEFAULT ''"],
+                    ['comments', 'card_id', 'INTEGER']] as [$table, $col, $def]) {
                     $cols = array_column($pdo->query("PRAGMA table_info($table)")->fetchAll(), 'name');
                     if (!in_array($col, $cols, true)) {
                         $pdo->exec("ALTER TABLE $table ADD COLUMN $col $def");   // noms fixes ci-dessus
@@ -772,7 +794,46 @@ final class App
         $c['updated_at'] = (int) $c['updated_at'];
         $c['rework'] = (bool) (int) $c['rework'];
         $c['night'] = (bool) (int) $c['night'];
+        $c['milestone_id'] = ($c['milestone_id'] ?? null) === null ? null : (int) $c['milestone_id'];
+        $c['due'] = (string) ($c['due'] ?? '');
         return $c;
+    }
+
+    /** Jalon lu dans le corps : absent -> null, 0/''/null -> 0 (aucun), sinon id existant. */
+    private function milestoneArg(array $b): ?int
+    {
+        if (!array_key_exists('milestone', $b)) {
+            return null;
+        }
+        $m = $b['milestone'];
+        if ($m === null || $m === '' || $m === 0 || $m === '0') {
+            return 0;
+        }
+        if (is_string($m) && ctype_digit($m)) {
+            $m = (int) $m;
+        }
+        if (!is_int($m) || $m < 0) {
+            throw new HttpError('Jalon invalide', 400);
+        }
+        $st = $this->db()->prepare('SELECT 1 FROM milestones WHERE id = ?');
+        $st->execute([$m]);
+        if ($st->fetchColumn() === false) {
+            throw new HttpError('Jalon introuvable', 400);
+        }
+        return $m;
+    }
+
+    /** Échéance lue dans le corps : absent -> null, '' (aucune) ou AAAA-MM-JJ valide. */
+    private static function dueArg(array $b): ?string
+    {
+        $v = self::text($b, 'due', 10);
+        if ($v === null || $v === '') {
+            return $v;
+        }
+        if (!preg_match(DUE_RE, $v) || !checkdate((int) substr($v, 5, 2), (int) substr($v, 8, 2), (int) substr($v, 0, 4))) {
+            throw new HttpError('Échéance invalide (AAAA-MM-JJ)', 400);
+        }
+        return $v;
     }
 
     /**
@@ -788,7 +849,15 @@ final class App
             $c['notes'] = [];
             $c['children'] = 0;
             $c['children_done'] = 0;
+            $c['status_at'] = $c['created_at'];
             $cards[$c['id']] = $c;
+        }
+        // Depuis quand la carte est dans sa colonne (dernier changement de colonne).
+        foreach ($db->query("SELECT card_id, MAX(at) AS at FROM card_events WHERE type IN"
+            . " ('creation', 'deplacement', 'accepte', 'refuse') GROUP BY card_id")->fetchAll() as $r) {
+            if (isset($cards[(int) $r['card_id']])) {
+                $cards[(int) $r['card_id']]['status_at'] = (int) $r['at'];
+            }
         }
         foreach ($db->query('SELECT * FROM card_notes ORDER BY id')->fetchAll() as $n) {
             $cid = (int) $n['card_id'];
@@ -820,9 +889,20 @@ final class App
         }
         $parent = isset($_GET['parent']) && is_string($_GET['parent']) && ctype_digit($_GET['parent']) ? (int) $_GET['parent'] : 0;
         $night = ($_GET['night'] ?? '') === '1';
+        // Filtres ajoutés en v5 (tous facultatifs) : type, jalon (id, ou « none »), asset exact, texte.
+        $get = static fn (string $k): string => isset($_GET[$k]) && is_string($_GET[$k]) ? trim($_GET[$k]) : '';
+        $type = $get('type');
+        $ms = $get('milestone');
+        $asset = $get('asset');
+        $q = function_exists('mb_strtolower') ? mb_strtolower($get('q')) : strtolower($get('q'));
+        $low = static fn (string $t): string => function_exists('mb_strtolower') ? mb_strtolower($t) : strtolower($t);
         $cards = array_values(array_filter($this->allCards(), static fn (array $c): bool =>
             ($status === '' || $c['status'] === $status) && ($parent === 0 || $c['parent_id'] === $parent)
-            && (!$night || $c['night'])));
+            && (!$night || $c['night'])
+            && ($type === '' || $c['type'] === $type)
+            && ($ms === '' || ($ms === 'none' ? $c['milestone_id'] === null : $c['milestone_id'] === (int) $ms))
+            && ($asset === '' || $c['asset'] === $asset)
+            && ($q === '' || str_contains($low($c['title'] . "\n" . $c['description']), $q))));
         $this->json(['cards' => $cards]);
     }
 
@@ -887,6 +967,8 @@ final class App
         $night = (bool) self::flag($b, 'night');
         $status = (string) (self::status($b) ?? 'backlog');
         $parent = (int) self::parentArg($b);
+        $milestone = (int) $this->milestoneArg($b);
+        $due = (string) (self::dueArg($b) ?? '');
         $this->checkParent(0, $parent);
         $db = $this->db();
         $db->beginTransaction();
@@ -896,13 +978,19 @@ final class App
             $pos = (int) $stmt->fetchColumn();
             $now = time();
             $db->prepare('INSERT INTO cards (type, title, description, priority, asset, detail, status, position, parent_id, origin,'
-                . ' night, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+                . ' night, milestone_id, due, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
                 ->execute([$type, $title, $desc, $prio, $asset, $detail, $status, $pos, $parent ?: null, $this->actor,
-                    $night ? 1 : 0, $now, $now]);
+                    $night ? 1 : 0, $milestone ?: null, $due, $now, $now]);
             $id = (int) $db->lastInsertId();
             $this->event($id, 'creation', '', $status, $now);
             if ($night) {
                 $this->event($id, 'night', 'off', 'on', $now);
+            }
+            if ($milestone) {
+                $this->event($id, 'jalon', '', (string) $milestone, $now);
+            }
+            if ($due !== '') {
+                $this->event($id, 'echeance', '', $due, $now);
             }
             $db->commit();
         } catch (Throwable $e) {
@@ -926,6 +1014,8 @@ final class App
         ];
         $parent = self::parentArg($b);
         $night = self::flag($b, 'night');
+        $milestone = $this->milestoneArg($b);
+        $fields['due'] = self::dueArg($b);
         if ($fields['title'] === '') {
             throw new HttpError('Titre vide', 400);
         }
@@ -935,7 +1025,7 @@ final class App
         if (($fields['asset'] ?? '') !== '' && $this->asset((string) $fields['asset']) === null) {
             throw new HttpError('Asset inconnu', 400);
         }
-        if ($parent === null && $night === null && !array_filter($fields, static fn ($v) => $v !== null)) {
+        if ($parent === null && $night === null && $milestone === null && !array_filter($fields, static fn ($v) => $v !== null)) {
             throw new HttpError('Rien à modifier', 400);
         }
         $db = $this->db();
@@ -944,7 +1034,7 @@ final class App
             $cur = $this->card($id);
             // Nom de l'événement par colonne (« $col » vient de cette liste fixe).
             $names = ['type' => 'type', 'title' => 'titre', 'description' => 'description', 'priority' => 'priorite',
-                'asset' => 'asset', 'detail' => 'detail'];
+                'asset' => 'asset', 'detail' => 'detail', 'due' => 'echeance'];
             $sets = [];
             $args = [];
             foreach ($fields as $col => $v) {
@@ -958,6 +1048,12 @@ final class App
                 $sets[] = 'night = ?';
                 $args[] = $night ? 1 : 0;
                 $this->event($id, 'night', $night ? 'off' : 'on', $night ? 'on' : 'off');
+            }
+            $oldMs = (int) ($cur['milestone_id'] ?? 0);
+            if ($milestone !== null && $milestone !== $oldMs) {
+                $sets[] = 'milestone_id = ?';
+                $args[] = $milestone ?: null;
+                $this->event($id, 'jalon', $oldMs ? (string) $oldMs : '', $milestone ? (string) $milestone : '');
             }
             $oldParent = (int) ($cur['parent_id'] ?? 0);
             if ($parent !== null && $parent !== $oldParent) {
@@ -1145,6 +1241,376 @@ final class App
         $this->json(['ok' => true]);
     }
 
+    // ========================================================= actions groupées
+
+    /**
+     * Même changement sur plusieurs cartes, dans une transaction : colonne (fin de colonne),
+     * night shift, priorité, jalon. Chaque vrai changement est historisé comme à l'unité.
+     */
+    private function bulkCards(): void
+    {
+        $b = $this->body();
+        $ids = $b['ids'] ?? null;
+        if (!is_array($ids) || !$ids || count($ids) > MAX_BULK) {
+            throw new HttpError('ids : liste de 1 à ' . MAX_BULK . ' cartes attendue', 400);
+        }
+        $ids = array_values(array_unique(array_map(static fn ($v): int => self::id(['id' => $v]), $ids)));
+        $status = self::status($b);
+        $night = self::flag($b, 'night');
+        $prio = self::oneOf($b, 'priority', PRIORITIES);
+        $milestone = $this->milestoneArg($b);
+        if ($status === null && $night === null && $prio === null && $milestone === null) {
+            throw new HttpError('Rien à modifier (status, night, priority, milestone)', 400);
+        }
+        $db = $this->db();
+        $db->beginTransaction();
+        $changed = 0;
+        try {
+            foreach ($ids as $id) {
+                $cur = $this->card($id);
+                $sets = [];
+                $args = [];
+                if ($night !== null && $night !== (bool) (int) $cur['night']) {
+                    $sets[] = 'night = ?';
+                    $args[] = $night ? 1 : 0;
+                    $this->event($id, 'night', $night ? 'off' : 'on', $night ? 'on' : 'off');
+                }
+                if ($prio !== null && $prio !== (string) $cur['priority']) {
+                    $sets[] = 'priority = ?';
+                    $args[] = $prio;
+                    $this->event($id, 'priorite', (string) $cur['priority'], $prio);
+                }
+                $oldMs = (int) ($cur['milestone_id'] ?? 0);
+                if ($milestone !== null && $milestone !== $oldMs) {
+                    $sets[] = 'milestone_id = ?';
+                    $args[] = $milestone ?: null;
+                    $this->event($id, 'jalon', $oldMs ? (string) $oldMs : '', $milestone ? (string) $milestone : '');
+                }
+                if ($sets) {
+                    $args[] = time();
+                    $args[] = $id;
+                    $db->prepare('UPDATE cards SET ' . implode(', ', $sets) . ', updated_at = ? WHERE id = ?')->execute($args);
+                }
+                if ($status !== null && $status !== (string) $cur['status']) {
+                    $this->placeCard($id, $status);
+                    $this->event($id, 'deplacement', (string) $cur['status'], $status);
+                    $sets[] = 'status';
+                }
+                $changed += $sets ? 1 : 0;
+            }
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
+        $this->json(['ok' => true, 'changed' => $changed]);
+    }
+
+    // ============================================== commentaire depuis un asset
+
+    /**
+     * Commentaire posé depuis la fiche d'un asset (catalogue, gameplay) : enregistré comme
+     * commentaire d'asset (version servie) ET reporté sur la carte liée. Carte visée : `card`
+     * si fourni (> 0) ; sinon la carte non terminée liée à l'asset (même `detail` d'abord), la
+     * plus avancée ; sinon, pour une amélioration, une nouvelle carte en Backlog (sous le chapeau
+     * de la dernière carte liée, ou `parent`). Sans asset connu, il faut `card` ou `title`
+     * (élément sans image : le commentaire va seulement sur la carte).
+     */
+    private function assetComment(): void
+    {
+        $b = $this->body();
+        $assetId = (string) (self::text($b, 'asset', 300) ?? '');
+        $detail = (string) (self::text($b, 'detail', 100) ?? '');
+        $kind = (string) (self::oneOf($b, 'kind', COMMENT_KINDS) ?: 'amelioration');
+        $text = (string) (self::text($b, 'body', MAX_TEXT) ?? '');
+        $context = (string) (self::text($b, 'context', 100) ?? '');
+        $title = (string) (self::text($b, 'title', MAX_TITLE) ?? '');
+        $type = (string) (self::oneOf($b, 'type', CARD_TYPES) ?? '');
+        $cardArg = $b['card'] ?? null;
+        $cardId = is_int($cardArg) || (is_string($cardArg) && ctype_digit($cardArg)) ? (int) $cardArg : 0;
+        $parentArg = (int) self::parentArg($b);
+        if ($kind === 'amelioration' && $text === '') {
+            throw new HttpError('Décris l\'amélioration souhaitée', 400);
+        }
+        $asset = $assetId !== '' ? $this->asset($assetId) : null;
+        if ($asset === null && $cardId === 0 && $title === '') {
+            throw new HttpError($assetId !== '' ? 'Asset inconnu' : 'asset, card ou title requis', 400);
+        }
+        $db = $this->db();
+        $db->beginTransaction();
+        try {
+            $now = time();
+            $created = false;
+            if ($cardId > 0) {
+                $this->card($cardId);
+            } elseif ($asset !== null) {
+                $st = $db->prepare('SELECT * FROM cards WHERE asset = ? ORDER BY updated_at DESC, id DESC');
+                $st->execute([$assetId]);
+                $linked = $st->fetchAll();
+                $open = array_values(array_filter($linked, static fn (array $c): bool => $c['status'] !== 'done'));
+                // Même détail ; à défaut (cartes d'animation sans détail), titre « … · <libellé> ».
+                $same = array_values(array_filter($open, static fn (array $c): bool => (string) $c['detail'] === $detail));
+                if (!$same && $detail !== '') {
+                    $labels = [$detail];
+                    foreach (($this->index()['gordeka']['anims'] ?? []) as $an) {
+                        if (($an['name'] ?? '') === $detail && ($an['libelle'] ?? '') !== '') {
+                            $labels[] = (string) $an['libelle'];
+                        }
+                    }
+                    $low = static fn (string $t): string => function_exists('mb_strtolower') ? mb_strtolower($t) : strtolower($t);
+                    $same = array_values(array_filter($open, static function (array $c) use ($labels, $low): bool {
+                        foreach ($labels as $l) {
+                            if ((string) $c['detail'] === '' && str_ends_with($low((string) $c['title']), ' · ' . $low($l))) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }));
+                }
+                usort($same, static fn (array $x, array $y): int =>
+                    (ATTACH_ORDER[$x['status']] ?? 9) <=> (ATTACH_ORDER[$y['status']] ?? 9));
+                $cardId = $same ? (int) $same[0]['id'] : 0;
+                if ($cardId === 0 && !$parentArg && $linked) {
+                    // Chapeau le plus fréquent parmi les cartes liées (celui des animations d'un perso, pas
+                    // celui de la carte « Perso : X » qui porte aussi l'asset).
+                    $parents = array_count_values(array_map('intval', array_filter(array_column($linked, 'parent_id'))));
+                    arsort($parents);
+                    $parentArg = (int) (array_key_first($parents) ?? 0);
+                }
+            }
+            if ($cardId === 0 && $kind === 'amelioration') {
+                // Nouvelle carte en Backlog, liée à l'asset.
+                $name = $asset !== null ? (string) ($asset['name'] ?? $assetId) : $title;
+                $title = $title !== '' ? $title : $name . ($detail !== '' ? ' · ' . $detail : '') . ' : amélioration';
+                if ((function_exists('mb_strlen') ? mb_strlen($title) : strlen($title)) > MAX_TITLE) {
+                    $title = function_exists('mb_substr') ? mb_substr($title, 0, MAX_TITLE) : substr($title, 0, MAX_TITLE);
+                }
+                $type = $type ?: ($detail !== '' ? 'animation' : (str_starts_with($assetId, 'jeu/') ? 'gameplay'
+                    : ($asset !== null ? 'asset' : 'feature')));
+                if ($parentArg) {
+                    $this->checkParent(0, $parentArg);
+                }
+                $st = $db->prepare("SELECT COALESCE(MAX(position), -1) + 1 FROM cards WHERE status = 'backlog'");
+                $st->execute();
+                $db->prepare('INSERT INTO cards (type, title, description, priority, asset, detail, status, position, parent_id,'
+                    . " origin, night, created_at, updated_at) VALUES (?, ?, ?, '', ?, ?, 'backlog', ?, ?, ?, 0, ?, ?)")
+                    ->execute([$type, $title, $text, $asset !== null ? $assetId : '', $asset !== null ? $detail : '',
+                        (int) $st->fetchColumn(), $parentArg ?: null, $this->actor, $now, $now]);
+                $cardId = (int) $db->lastInsertId();
+                $created = true;
+                $this->event($cardId, 'creation', '', 'backlog', $now);
+            }
+            $commentId = null;
+            if ($asset !== null) {
+                $db->prepare('INSERT INTO comments (asset, version, build, context, kind, body, card_id, created_at, updated_at)'
+                    . ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+                    ->execute([$assetId, (string) $asset['version'], (string) ($this->index()['commit'] ?? ''),
+                        $context !== '' ? $context : ($detail !== '' ? 'anim : ' . $detail : ''), $kind, $text,
+                        $cardId ?: null, $now, $now]);
+                $commentId = (int) $db->lastInsertId();
+            }
+            if ($cardId > 0 && !$created) {
+                $what = $kind === 'valide' ? 'Validé' : 'Amélioration';
+                $on = $asset !== null ? ' sur ' . ($asset['name'] ?? $assetId) . ($detail !== '' ? ' · ' . $detail : '')
+                    . ' (version ' . $asset['version'] . ')' : '';
+                $note = $what . $on . ($text !== '' ? ' : ' . $text : '');
+                $db->prepare('INSERT INTO card_notes (card_id, author, body, created_at) VALUES (?, ?, ?, ?)')
+                    ->execute([$cardId, $this->actor, $note, $now]);
+                $db->prepare('UPDATE cards SET updated_at = ? WHERE id = ?')->execute([$now, $cardId]);
+                $this->event($cardId, 'commentaire', '', $note, $now);
+            }
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
+        $this->json(['comment' => $commentId, 'card' => $cardId ?: null, 'created' => $created], 201);
+    }
+
+    // ================================================================== jalons
+
+    private static function castMilestone(array $m): array
+    {
+        foreach (['id', 'position', 'created_at', 'updated_at'] as $k) {
+            $m[$k] = (int) $m[$k];
+        }
+        $m['closed'] = (bool) (int) $m['closed'];
+        return $m;
+    }
+
+    /** Jalons, dans l'ordre de la roadmap (ouverts d'abord, puis position, échéance). */
+    private function milestones(): array
+    {
+        return array_map([self::class, 'castMilestone'], $this->db()->query('SELECT * FROM milestones'
+            . " ORDER BY closed, position, CASE due WHEN '' THEN 1 ELSE 0 END, due, id")->fetchAll());
+    }
+
+    private function listMilestones(): void
+    {
+        $this->json(['milestones' => $this->milestones()]);
+    }
+
+    private function addMilestone(): void
+    {
+        $b = $this->body();
+        $title = (string) self::text($b, 'title', MAX_TITLE, true);
+        $desc = (string) (self::text($b, 'description', MAX_TEXT) ?? '');
+        $due = (string) (self::dueArg($b) ?? '');
+        $db = $this->db();
+        $pos = (int) $db->query('SELECT COALESCE(MAX(position), -1) + 1 FROM milestones')->fetchColumn();
+        $now = time();
+        $db->prepare('INSERT INTO milestones (title, description, due, position, closed, created_at, updated_at)'
+            . ' VALUES (?, ?, ?, ?, 0, ?, ?)')->execute([$title, $desc, $due, $pos, $now, $now]);
+        $this->json(['id' => (int) $db->lastInsertId()], 201);
+    }
+
+    private function updateMilestone(): void
+    {
+        $b = $this->body();
+        $id = self::id($b);
+        $fields = [
+            'title' => self::text($b, 'title', MAX_TITLE),
+            'description' => self::text($b, 'description', MAX_TEXT),
+            'due' => self::dueArg($b),
+        ];
+        if ($fields['title'] === '') {
+            throw new HttpError('Titre vide', 400);
+        }
+        $closed = self::flag($b, 'closed');
+        $pos = $b['position'] ?? null;
+        $sets = [];
+        $args = [];
+        foreach ($fields as $col => $v) {
+            if ($v !== null) {
+                $sets[] = "$col = ?";       // noms fixes ci-dessus
+                $args[] = $v;
+            }
+        }
+        if ($closed !== null) {
+            $sets[] = 'closed = ?';
+            $args[] = $closed ? 1 : 0;
+        }
+        if (is_int($pos)) {
+            $sets[] = 'position = ?';
+            $args[] = $pos;
+        }
+        if (!$sets) {
+            throw new HttpError('Rien à modifier', 400);
+        }
+        $args[] = time();
+        $args[] = $id;
+        $st = $this->db()->prepare('UPDATE milestones SET ' . implode(', ', $sets) . ', updated_at = ? WHERE id = ?');
+        $st->execute($args);
+        if ($st->rowCount() === 0) {
+            throw new HttpError('Jalon introuvable', 404);
+        }
+        $this->json(['ok' => true]);
+    }
+
+    /** Supprime un jalon ; ses cartes restent, sans jalon (événement « jalon » sur chacune). */
+    private function deleteMilestone(): void
+    {
+        $id = self::id($this->body());
+        $db = $this->db();
+        $db->beginTransaction();
+        try {
+            $st = $db->prepare('SELECT id FROM cards WHERE milestone_id = ?');
+            $st->execute([$id]);
+            foreach (array_column($st->fetchAll(), 'id') as $cid) {
+                $this->event((int) $cid, 'jalon', (string) $id, '');
+            }
+            $db->prepare('UPDATE cards SET milestone_id = NULL WHERE milestone_id = ?')->execute([$id]);
+            $del = $db->prepare('DELETE FROM milestones WHERE id = ?');
+            $del->execute([$id]);
+            if ($del->rowCount() === 0) {
+                throw new HttpError('Jalon introuvable', 404);
+            }
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
+        $this->json(['ok' => true]);
+    }
+
+    // ========================================================== tableau de bord
+
+    /**
+     * Chiffres du pilotage : cartes par colonne (`leaves` : cartes sans enfant), à retraiter,
+     * night shift en Todo, Doing qui ne bouge plus depuis `stale_days` jours (3 par défaut),
+     * échéances dépassées, avancement des jalons (cartes du jalon et descendants des chapeaux du
+     * jalon, feuilles seulement), commentaires d'asset ouverts, événements des dernières 24 h.
+     */
+    private function stats(): void
+    {
+        $days = isset($_GET['stale_days']) && is_string($_GET['stale_days']) && ctype_digit($_GET['stale_days'])
+            ? max(1, (int) $_GET['stale_days']) : STALE_DAYS;
+        $now = time();
+        $today = date('Y-m-d', $now);
+        $cards = [];
+        foreach ($this->allCards() as $c) {
+            $cards[$c['id']] = $c;
+        }
+        $leaf = static fn (array $c): bool => $c['children'] === 0;
+        $cols = array_fill_keys(CARD_STATUSES, 0);
+        $leaves = array_fill_keys(CARD_STATUSES, 0);
+        $types = [];
+        $brief = static fn (array $c): array => ['id' => $c['id'], 'title' => $c['title'], 'status' => $c['status'],
+            'type' => $c['type'], 'since' => $c['status_at'], 'due' => $c['due'], 'rework' => $c['rework'], 'night' => $c['night']];
+        $stale = $overdue = $rework = [];
+        $nightTodo = 0;
+        foreach ($cards as $c) {
+            $cols[$c['status']]++;
+            if ($leaf($c)) {
+                $leaves[$c['status']]++;
+                $types[$c['type']][$c['status']] = ($types[$c['type']][$c['status']] ?? 0) + 1;
+            }
+            if ($c['rework']) {
+                $rework[] = $brief($c);
+            }
+            if ($c['status'] === 'doing' && !$c['rework'] && $now - $c['status_at'] >= $days * 86400) {
+                $stale[] = $brief($c);
+            }
+            if ($c['due'] !== '' && $c['due'] < $today && $c['status'] !== 'done') {
+                $overdue[] = $brief($c);
+            }
+            if ($c['night'] && $c['status'] === 'todo') {
+                $nightTodo++;
+            }
+        }
+        usort($stale, static fn (array $a, array $b): int => $a['since'] <=> $b['since']);
+        $ms = [];
+        foreach ($this->milestones() as $m) {
+            $ms[$m['id']] = $m + ['total' => 0, 'by_status' => array_fill_keys(CARD_STATUSES, 0), 'rework' => 0, 'cards' => 0];
+        }
+        foreach ($cards as $c) {
+            // Jalon de la carte, ou du plus proche ancêtre qui en a un.
+            $m = $c['milestone_id'];
+            for ($p = $c['parent_id'], $g = 0; $m === null && $p !== null && isset($cards[$p]) && $g < 10; $g++) {
+                $m = $cards[$p]['milestone_id'];
+                $p = $cards[$p]['parent_id'];
+            }
+            if ($m === null || !isset($ms[$m])) {
+                continue;
+            }
+            $ms[$m]['cards']++;
+            if ($leaf($c)) {
+                $ms[$m]['total']++;
+                $ms[$m]['by_status'][$c['status']]++;
+                $ms[$m]['rework'] += $c['rework'] ? 1 : 0;
+            }
+        }
+        $st = $this->db()->prepare('SELECT COUNT(*) FROM card_events WHERE at >= ?');
+        $st->execute([$now - 86400]);
+        $events24 = (int) $st->fetchColumn();
+        $open = (int) $this->db()->query("SELECT COUNT(*) FROM comments WHERE status = 'open'")->fetchColumn();
+        $this->json([
+            'now' => $now, 'stale_days' => $days, 'columns' => $cols, 'leaves' => $leaves, 'types' => $types,
+            'qa' => $leaves['qa'], 'rework' => $rework, 'night_todo' => $nightTodo, 'stale' => $stale,
+            'overdue' => $overdue, 'milestones' => array_values($ms), 'comments_open' => $open, 'events_24h' => $events24,
+        ]);
+    }
+
     // =================================================================== page
 
     private function page(): void
@@ -1155,7 +1621,7 @@ final class App
         // leur date de modification (?v=) : un déploiement n'est jamais masqué par un vieux cache.
         $html = (string) file_get_contents(__DIR__ . '/page.html');
         $static = dirname(__DIR__) . '/static/';
-        foreach (['app.css', 'app.js'] as $f) {
+        foreach (array_map('basename', array_merge(glob($static . '*.css') ?: [], glob($static . '*.js') ?: [])) as $f) {
             $html = str_replace('static/' . $f . '"', 'static/' . $f . '?v=' . (int) @filemtime($static . $f) . '"', $html);
         }
         echo $html;
