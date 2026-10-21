@@ -180,7 +180,7 @@ def main():
         erreur(f"image absente : {src}")
     dest = os.path.abspath(o.dest)
     cw, ch = (int(v) for v in el["taille_cases"])
-    debord = int(el.get("debord_haut_cases", 0))
+    debord = float(el.get("debord_haut_cases", 0))   # négatif permis : objet plus bas qu'une case (bitte)
     img = Image.open(src)
     print(f"{o.id} ({typ}) ← {src} {img.size[0]}×{img.size[1]}")
     if typ == "objet":

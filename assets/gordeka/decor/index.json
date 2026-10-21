@@ -801,7 +801,7 @@
     1,
     1
    ],
-   "debord_haut_cases": 0,
+   "debord_haut_cases": -0.4,
    "animation": {},
    "fichiers": [
     "objets/bitte_amarrage.png"
