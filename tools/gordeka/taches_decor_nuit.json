@@ -430,7 +430,7 @@
   "sorte": "masque",
   "element": "caisses_poisson",
   "priorite": "high",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "df49bd50c9e04bc09408db24894e2fbd",
@@ -444,7 +444,8 @@
   "depose": "2026-10-21 07:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/268_caisses_poisson/0/apercu/caisses_poisson.png"
-  ]
+  ],
+  "variante": null
  },
  "269": {
   "titre": "Barque basque au mouillage : image",
