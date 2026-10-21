@@ -1837,11 +1837,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-barriques_cidre_barriques_cidre/0/apercu/barriques_cidre.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 18:12",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/m-barriques_cidre_barriques_cidre/0/apercu/barriques_cidre.png"
-  ]
+  ],
+  "variante": null
  },
  "m-pot_hortensias": {
   "titre": "Pot d'hortensias : masque v3",
