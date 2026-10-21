@@ -777,11 +777,17 @@
    {
     "tid": "6e223d68d5ca4429ac5e8e074ab226f3",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/295_treteaux_cale/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/295_treteaux_cale/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/295_treteaux_cale/0/planche.png"
+  ]
  },
  "296": {
   "titre": "Tréteaux et planches de la cale : masque v3",
@@ -800,11 +806,17 @@
    {
     "tid": "c36b03f412954f37879f22de7e816d88",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/297_lavoir_bassin/0/planche.png"
+  ]
  },
  "298": {
   "titre": "Bassin du lavoir : animation",
@@ -831,11 +843,17 @@
    {
     "tid": "2bf576c43bfa4ec9b880190b8cd6681e",
     "quoi": "pf_hd__edit ×2 (ouverte)",
-    "style": "pf_hd__edit"
+    "style": "pf_hd__edit",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/301_cachette_casier_homards/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/301_cachette_casier_homards/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/301_cachette_casier_homards/0/planche.png"
+  ]
  },
  "302": {
   "titre": "Casier à homards géant : masque v3",
@@ -846,11 +864,17 @@
    {
     "tid": "33eea6023b2a48a4a84111ba09735428",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0/apercu/cachette_casier_homards.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/302_cachette_casier_homards/0/apercu/cachette_casier_homards.png"
+  ]
  },
  "304": {
   "titre": "Coffre de quai : version ouverte",
