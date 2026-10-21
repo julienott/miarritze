@@ -140,7 +140,7 @@
     "style": "pf_2d__prop"
    }
   ],
-  "statut": "todo",
+  "statut": "integre",
   "depose": "2026-10-21 10:33",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/250_maison_crampotte/0/planche.png"
@@ -348,7 +348,7 @@
     "style": "pf_2d__prop"
    }
   ],
-  "statut": "todo",
+  "statut": "integre",
   "depose": "2026-10-21 10:34",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/273_coque_sur_ber/0/planche.png"
@@ -1157,12 +1157,12 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 17:54",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/382_barriques_cidre/0/planche.png"
   ],
-  "variante": "image_01",
+  "variante": "image_00",
   "suites_a_deposer": "normal",
   "consigne": "Plus hautes (au moins 1 perso) : elles doivent cacher."
  },
@@ -1825,10 +1825,19 @@
   "statut": "todo"
  },
  "m-barriques_cidre": {
-  "titre": "Deux barriques de cidre : masque v3",
+  "titre": "Deux barriques de cidre : masque (d'office, nouvelle image)",
   "sorte": "masque",
   "element": "barriques_cidre",
-  "statut": "todo"
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "49d38f4d73134facb6fd98627d3e916d",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-21 18:12"
  },
  "m-pot_hortensias": {
   "titre": "Pot d'hortensias : masque v3",

@@ -111,7 +111,7 @@ def lancer(c, prio):
             return f"masque « {consigne[:60]} »"
         subprocess.run([PY, os.path.join(HERE, "decor_matin.py"), "relance", f"m-{ent['element']}", consigne],
                        cwd=ROOT, check=True, capture_output=True, timeout=900, env=ENV(prio))
-        s = lire(SUIVI, {}); s[str(c["id"])]["masque_refait"] = 1; json.dump(s, open(SUIVI, "w"), ensure_ascii=False, indent=1)
+        s = lire(SUIVI, {}); s[str(c["id"])].update(masque_refait=1, statut="integre"); json.dump(s, open(SUIVI, "w"), ensure_ascii=False, indent=1)
         return "masque refait"
     if ent and ent.get("statut") in ("todo", "attend", "integre", "a_voir", None):
         if ESSAI:
