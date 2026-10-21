@@ -677,10 +677,12 @@
   "elements_perso": [
    "profil",
    "idle",
+   "idle_long",
    "run",
    "hide_jump",
    "ghost"
   ],
-  "personnalisation": false
+  "personnalisation": false,
+  "idle_long": "pose quand le perso reste longtemps inactif, créative et propre à chaque perso, clip Quaternius (Julien 21/10) ; choix par perso dans tools/gordeka/taches_partyhard_v1.json"
  }
 }

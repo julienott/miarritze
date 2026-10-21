@@ -1,0 +1,80 @@
+{
+ "louis": {
+  "A": "16d7566d4b504b479f37b7c93b5a1968",
+  "B": "53c51a4e0f6a4f8db3835b071695b557",
+  "idle_long": "Idle_FoldArms_Loop",
+  "geste": "folds his arms and taps his foot impatiently, glancing around"
+ },
+ "txomin": {
+  "A": "eba5bd79d15246499d0dcc8386b2965e",
+  "B": "084d985064d24598a6441709b873e9c9",
+  "idle_long": "Idle_TalkingPhone_Loop",
+  "geste": "chats into his lifeguard walkie-talkie"
+ },
+ "patxi": {
+  "A": "82bc6fbc0dfc4e4d808cc071b4ebad86",
+  "B": "a37d7554e08c42a497892ca2261941a1",
+  "idle_long": "Idle_Rail_Loop",
+  "geste": "leans on a rail and gazes out at the sea"
+ },
+ "maia": {
+  "A": "5fd800b88c174cdab81217c8d177494d",
+  "B": "1e34b6db53de4e6885bd14fb9fcad996",
+  "idle_long": "Swim_Fwd_Loop",
+  "geste": "mimes paddling on her surfboard"
+ },
+ "xabi": {
+  "A": "748f50196cf149b8b69da3cc138b87b2",
+  "B": "9bd177ca0c7242ed84e1bb7237ecc0bb",
+  "idle_long": "OverhandThrow",
+  "geste": "practises a throw with his long wicker chistera"
+ },
+ "mattin": {
+  "A": "59c7ec9105094512a2516c55343e09f5",
+  "B": "7875a13a9c97487598b65d0fdb225896",
+  "idle_long": "PickUp_Table",
+  "geste": "lifts a heavy round stone to show off his strength"
+ },
+ "amaia": {
+  "A": "6871b346a50244789605a392d634a284",
+  "B": "93b8168a27344dbdb47ffbcb12623b03",
+  "idle_long": "Dance_Loop",
+  "geste": "dances a little Basque folk step on the spot"
+ },
+ "kaio": {
+  "A": "b74b5b00bbee4f9aa0ca6232412c9196",
+  "B": "8abd22ba22fe4782a3e59fdb5035e0b0",
+  "idle_long": "Idle_Rail_Call",
+  "geste": "squawks loudly with his beak wide open"
+ },
+ "karramarro": {
+  "A": "723a551b9fdf408989b2e37b9d1e4e33",
+  "B": "dfae44902c8b4ab9a7678c8d541ffc79",
+  "idle_long": "Zombie_Scratch",
+  "geste": "scratches his head with a pincer"
+ },
+ "ramuntxo": {
+  "A": "39ef388c8601417b91b70c02c8a74d52",
+  "B": "8bb21351ab914863a8fb17c7f1729b86",
+  "idle_long": "Consume",
+  "geste": "tastes a sauce from a big wooden spoon"
+ },
+ "itsaso": {
+  "A": "dc19e1cabc2a46b99bf3a6855b1a4ac0",
+  "B": "ddff0082663f4ebea2883d6929daf3fb",
+  "idle_long": "Spell_Simple_Idle_Loop",
+  "geste": "swirls a little wave of sea water between her hands"
+ },
+ "peio": {
+  "A": "4d2b712456744d1a849e170fa3d96a7a",
+  "B": "c241943eaa6842f59b207155fb5ab884",
+  "idle_long": "Interact",
+  "geste": "spins his rugby ball in his hands"
+ },
+ "itsasargi": {
+  "A": "075d59c6a79747e487823e03aa3f1930",
+  "B": "e2ca4c7640744e388548c42dd606f59b",
+  "idle_long": "Idle_Lantern_Loop",
+  "geste": "raises his glowing lantern and peers into the dark"
+ }
+}
