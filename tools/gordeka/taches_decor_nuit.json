@@ -8,21 +8,35 @@
    {
     "tid": "04dec2b2761c4cccaeb7a88ea07185f6",
     "quoi": "houle (warp water fort)",
-    "style": "pf_2d__loop"
+    "style": "pf_2d__loop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/0/planche.png"
    },
    {
     "tid": "b98e99e4ece2414d97e94881757a7754",
     "quoi": "grande houle lente (warp water ample)",
-    "style": "pf_2d__loop"
+    "style": "pf_2d__loop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/1",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/1/planche.png"
    },
    {
     "tid": "b28bbd5ab6124a70a6957b50eab0b160",
     "quoi": "océan vivant (vidéo)",
-    "style": "pf_2d__loop"
+    "style": "pf_2d__loop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/2",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/2/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/0/planche.png",
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/1/planche.png",
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/244_eau_mer/2/planche.png"
+  ]
  },
  "245": {
   "titre": "Bord de quai sur l'eau : image",
@@ -33,11 +47,17 @@
    {
     "tid": "b978f761e6534251a7fcee8b40a20e22",
     "quoi": "pf_2d__ground ×2",
-    "style": "pf_2d__ground"
+    "style": "pf_2d__ground",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/245_bord_quai_eau/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/245_bord_quai_eau/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/245_bord_quai_eau/0/planche.png"
+  ]
  },
  "246": {
   "titre": "Bord de quai sur l'eau : animation",
@@ -56,11 +76,17 @@
    {
     "tid": "2d0a3baabab148f8b1ba783168513ea6",
     "quoi": "pf_2d__ground ×2",
-    "style": "pf_2d__ground"
+    "style": "pf_2d__ground",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/247_mur_pierre/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/247_mur_pierre/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/247_mur_pierre/0/planche.png"
+  ]
  },
  "249": {
   "titre": "Façade blanche à colombages : image",
@@ -71,11 +97,17 @@
    {
     "tid": "8ccd3e8c988243648f5c0efa3edd41cb",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/249_facade_labourdine/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/249_facade_labourdine/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/249_facade_labourdine/0/planche.png"
+  ]
  },
  "250": {
   "titre": "Crampotte (cabane de pêcheur) : refaire de face",
@@ -86,11 +118,17 @@
    {
     "tid": "0fe79a02b2fb4af38e0ab4cce0c5fcf0",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/250_maison_crampotte/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/250_maison_crampotte/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/250_maison_crampotte/0/planche.png"
+  ]
  },
  "251": {
   "titre": "Crampotte (cabane de pêcheur) : masque v3",
@@ -109,11 +147,17 @@
    {
     "tid": "1e363b78f7d64b2a906a96acb456386e",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/252_chambre_froide/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/252_chambre_froide/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/252_chambre_froide/0/planche.png"
+  ]
  },
  "253": {
   "titre": "Chambre froide de la criée : masque v3",
@@ -132,11 +176,17 @@
    {
     "tid": "afa1f8abd03c46538a16ac0ff7dd5cd0",
     "quoi": "faisceau qui tourne (vidéo)",
-    "style": "pf_2d__loop"
+    "style": "pf_2d__loop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/255_tour_phare/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/255_tour_phare/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/255_tour_phare/0/planche.png"
+  ]
  },
  "256": {
   "titre": "Tour du phare (feu du port) : masque v3",
@@ -147,11 +197,17 @@
    {
     "tid": "1760c90aa7e54237ba2b3c444cef4358",
     "quoi": "pf_2d__footprint",
-    "style": "pf_2d__footprint"
+    "style": "pf_2d__footprint",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0/apercu/tour_phare.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/256_tour_phare/0/apercu/tour_phare.png"
+  ]
  },
  "257": {
   "titre": "Fronton de pelote basque : refaire de face",
@@ -162,11 +218,17 @@
    {
     "tid": "e4aa92511be14bc4a8c685b75f8fce24",
     "quoi": "pf_2d__prop ×2",
-    "style": "pf_2d__prop"
+    "style": "pf_2d__prop",
+    "statut": "succeeded",
+    "dossier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0",
+    "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0/planche.png"
    }
   ],
-  "statut": "en_file",
-  "depose": "2026-10-20 21:35"
+  "statut": "a_voir",
+  "depose": "2026-10-20 21:35",
+  "planches": [
+   "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/257_fronton/0/planche.png"
+  ]
  },
  "258": {
   "titre": "Fronton de pelote basque : masque v3",
