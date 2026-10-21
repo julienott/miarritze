@@ -813,7 +813,7 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-21 17:22",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/325_cachette_barque_retournee/0/planche.png"
@@ -1746,10 +1746,19 @@
   "statut": "todo"
  },
  "m-cachette_barque_retournee": {
-  "titre": "Barque retournée : masque v3",
+  "titre": "Barque retournée : masque (d'office, nouvelle image)",
   "sorte": "masque",
   "element": "cachette_barque_retournee",
-  "statut": "todo"
+  "priorite": "normal",
+  "jobs": [
+   {
+    "tid": "791632ddae5e46369bef5ba8f76ad1ab",
+    "quoi": "pf_2d__footprint",
+    "style": "pf_2d__footprint"
+   }
+  ],
+  "statut": "en_file",
+  "depose": "2026-10-21 17:43"
  },
  "m-cachette_tonneau_cidre": {
   "titre": "Tonneau de cidre géant : masque v3",
