@@ -1062,16 +1062,16 @@
    ],
    "sources": [
     {
-     "job": 0,
+     "job": 1,
      "variante": "image_00",
-     "task": "c8f1ec8af99540b39578117b46e52785",
-     "date": "2026-10-20"
+     "task": "6e223d68d5ca4429ac5e8e074ab226f3",
+     "date": "2026-10-21"
     }
    ],
    "ombre": "objets/treteaux_cale_ombre.png",
    "ombre_decalage": [
-    13,
-    73
+    15,
+    72
    ]
   },
   "lavoir_bassin": {

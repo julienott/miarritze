@@ -788,11 +788,13 @@
     "planche": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/293_table_terrasse/0/planche.png"
    }
   ],
-  "statut": "a_voir",
+  "statut": "integre",
   "depose": "2026-10-20 21:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/293_table_terrasse/0/planche.png"
-  ]
+  ],
+  "variante": "image_01",
+  "suites_a_deposer": "normal"
  },
  "294": {
   "titre": "Table de terrasse : masque v3",
