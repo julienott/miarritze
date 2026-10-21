@@ -584,7 +584,7 @@
   "sorte": "masque",
   "element": "coque_chantier",
   "priorite": "high",
-  "statut": "a_voir",
+  "statut": "integre",
   "jobs": [
    {
     "tid": "2f2dfc1ed9974b6fb53103dfb9308b58",
@@ -598,7 +598,8 @@
   "depose": "2026-10-21 07:35",
   "planches": [
    "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/276_coque_chantier/0/apercu/coque_chantier.png"
-  ]
+  ],
+  "variante": null
  },
  "278": {
   "titre": "Étal de la criée : masque v3",
