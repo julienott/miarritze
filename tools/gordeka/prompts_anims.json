@@ -115,11 +115,11 @@
   },
   "sad": {
    "action": "Disappointed: shoulders drop, head hangs low, a slow big sigh (shoulders lift then sink), kicks a pebble lightly with one foot.",
-   "expression": "sad pout, eyes looking down, not crying",
+   "expression": "sad pout with a small frown, eyebrows raised in the middle, eyes looking down at the feet",
    "boucle": true,
    "mouvement": {
     "motion": "sad",
-    "exaggerate": 1.2
+    "exaggerate": 1.4
    }
   },
   "hunter_reveal": {
