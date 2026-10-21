@@ -251,7 +251,7 @@
   ]
  },
  "animations": {
-  "_doc": "Décision de Julien (2026-10-21) : on fait simple. Chaque perso = 1) profil (sprite de référence), 2) idle, 3) course, 4) saut vers la cachette (la sortie = la même animation jouée à l'envers), 5) fantôme. Aucune personnalisation : ni masque de tenue ni couleur de joueur. Tout est de profil tourné vers la droite ; la gauche est le miroir. Cadence d'après les vidéos de Party Hard (mesures_video) : poses tenues 100 ms (10 i/s), marche en 4 poses, rebond de 1 px. Prompt d'une anim = '{description}, ' + action + ', ' + expression + '.' + style_commun.base + par_type.anim.",
+  "_doc": "Décision de Julien (2026-10-21) : on fait simple. Chaque perso = 1) profil (sprite de référence), 2) idle, 3) course, 4) saut vers la cachette (la sortie = la même animation jouée à l'envers), 5) fantôme. Aucune personnalisation : ni masque de tenue ni couleur de joueur. Tout est de profil tourné vers la droite ; la gauche est le miroir. Cadence d'après les vidéos de Party Hard (mesures_video) : poses tenues 100 ms (10 i/s), marche en 4 poses, rebond de 1 px. Prompt d'une anim = '{description}, ' + action + ', ' + expression + '.' + style_commun.base + par_type.anim. Décision de Julien (21/10) : uniquement des clips Quaternius, nommés explicitement dans « motion » (docs/PIXELFORGE_ANIMATIONS.md) ; pf_px__character_set utilise Sprint_Loop (course) et Jump_Start (saut vers la cachette).",
   "mesures_video": {
    "source": "Steam app 356570 : « Lets Play by Mike Rose » (720p30, ×2 exact, caméra fixe) et « Launch Trailer » (1080p60, zoom ×4,7 à ×5) ; docs/STYLE_PARTY_HARD.md §10",
    "cadence_poses_fps": 10,
@@ -295,7 +295,8 @@
    "colors": 12,
    "num_images": 2,
    "action": "standing still in side view facing right, gentle breathing: the body rises one pixel in the second frame",
-   "expression": "calm small smile"
+   "expression": "calm small smile",
+   "motion": "Idle_Loop"
   },
   "run": {
    "dirs": [
@@ -312,7 +313,8 @@
    "num_images": 2,
    "action": "bouncy cartoon run in side view facing right, four poses: long stride, passing pose with the body one pixel higher, long stride with the other leg, passing pose; arms swinging wide",
    "expression": "excited determined grin",
-   "note": "PH : 4 poses à 10 i/s pour la marche ; 12 i/s pour une course"
+   "note": "PH : 4 poses à 10 i/s pour la marche ; 12 i/s pour une course",
+   "motion": "Sprint_Loop"
   },
   "hide_jump": {
    "dirs": [
@@ -329,7 +331,8 @@
    "colors": 12,
    "num_images": 2,
    "action": "jump into a hiding spot in side view facing right, five poses: crouch with a squash, spring up with a stretch, top of the jump tucked in a ball, dive forward and down, only the feet still visible at the bottom",
-   "expression": "excited grin with eyes shut while diving"
+   "expression": "excited grin with eyes shut while diving",
+   "motion": "Jump_Start"
   },
   "ghost": {
    "dirs": [
@@ -345,7 +348,8 @@
    "colors": 12,
    "num_images": 2,
    "action": "floating in side view facing right as a pale translucent ghost of the same character, small white angel wings flapping, the body bobbing two pixels up and down, feet dangling above the ground",
-   "expression": "gentle smile"
+   "expression": "gentle smile",
+   "motion": "Swim_Idle_Loop"
   }
  },
  "cartes": {

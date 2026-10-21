@@ -1,52 +1,46 @@
-# Banque d'animations pixelforge (pf_2d__animate) — référence au 21/10/2026
+# Animations pixelforge : uniquement Quaternius (au 21/10/2026)
 
-Fournie par pixelforge à la demande de Julien. Liste à jour : `GET /v2/motions`.
+Décision de Julien (21/10) : **uniquement les animations Quaternius**. Les clips sur mesure (wave, thumbs_up,
+shush, laugh, tongue, dance, hunter_reveal, dive_hide, versions sur mesure de found, trap, hide_out, ghost) sont
+retirés. **Toute demande d'animation nomme explicitement un préréglage ou un clip Quaternius exact dans
+`motion`.** Liste à jour : `GET /v2/motions`.
 
-## Règles générales
-1. Le squelette décide du mouvement ; `action` précise le geste sans pouvoir le contredire. Autre geste = un clip (le demander à pixelforge).
-2. Le visage vient de l'IMAGE DE RÉFÉRENCE, pas de `expression` : pour une émotion lisible, retoucher d'abord le profil (`pf_2d__character`, `edit: true`, « change only the facial expression: … ») puis animer depuis la retouche.
-3. Jambes et accessoires viennent aussi de la référence (fantôme en vol : retoucher le profil en pose de vol).
-4. Bras : pas au-dessus de la tête (la main revient contre le visage) ; bras tendus devant à hauteur d'épaule = lisible.
-5. Prompts sans négation : décrire seulement ce qu'on veut.
-6. Réglages au premier niveau du JSON : `motion`, `action`, `expression`, `tenue`, `arms`, `hold`, `exaggerate` (0,5–2), `bounce` (0–0,2), `frames`, `fps`.
+## Préréglages (motion → clip Quaternius)
 
-## Préréglages (motion · boucle/une fois · notes)
+| motion | clip | | motion | clip |
+|---|---|---|---|---|
+| idle | Idle_Loop | | trapped | Push_Loop |
+| walk | Jog_Fwd_Loop | | search | Idle_Torch_Loop |
+| sneak | Crouch_Fwd_Loop | | detect | Interact |
+| run_scared | Sprint_Loop (bras levés) | | extract | Chest_Open |
+| hide_in | Sitting_Enter | | victory | Dance_Loop |
+| hide_out | Sitting_Exit | | sad | Idle_No_Loop |
+| found | Hit_Chest | | jump | Jump_Start |
+| trap | Farm_PlantSeed | | ghost | Swim_Idle_Loop |
+| | | | ghost_move | Walk_Formal_Loop |
 
-| Famille | motion | Lecture | Notes |
-|---|---|---|---|
-| Déplacements | idle | boucle | respiration, clignement |
-| | walk | boucle | trot sautillant (exaggerate 1,3, bounce 0,05 inclus) |
-| | sneak | boucle | accroupi qui avance |
-| | run_scared | boucle | fuite bras levés ; visage via une référence « peur » |
-| | jump | une fois | départ de saut |
-| Cache-cache | hide_in | une fois | s'assoit / se cache (peu lisible de profil) |
-| | hide_out | une fois | CLIP : jaillit, bond bras en étoile, se redresse |
-| | dive_hide | une fois | CLIP : appel, envol, sommet, plongée, tassé (utilisé par pf_px) |
-| | found | une fois | CLIP : grand sursaut, puis rire penaud ; référence « surprise » |
-| | trap | une fois | CLIP : penché, jambes tendues, pose l'objet (préciser l'objet dans `action`) |
-| | trapped | boucle | se débat |
-| | search | boucle | torche et balayage, porté par les BRAS |
-| | detect | une fois | repère et tend la main, porté par les BRAS |
-| | extract | une fois | ouvre un coffre |
-| | hunter_reveal | une fois | CLIP : sort la lampe, la tient bras tendu (cône dessiné par le jeu) |
-| Émotions | victory | boucle | peu ample |
-| | sad | boucle | secoue la tête |
-| | dance | boucle | CLIP, préférable à victory |
-| | wave | une fois | CLIP : bras tendu devant, main qui s'agite |
-| | thumbs_up | une fois | CLIP : poing devant la poitrine, pouce dressé |
-| | shush | une fois | CLIP : main devant la bouche |
-| | laugh | une fois | CLIP : mains sur le ventre, sautille |
-| | tongue | une fois | CLIP : penché, langue rose sortie |
-| Fantômes | ghost, ghost_move | boucle | CLIP « vol », depuis une référence en pose de vol ; ailes avec pf_2d__flap |
+`pf_px__character_set` (pixel art) utilise **Sprint_Loop** pour la course et **Jump_Start** pour le saut vers la cachette.
 
-Les 87 clips Quaternius bruts restent appelables par leur nom (ex. `"motion": "Dance_Loop"`).
+## Les 87 clips, utilisables en `"motion": "<nom>"`
+- **Marcher, courir** : Walk_Loop, Walk_Formal_Loop, Walk_Carry_Loop, Jog_Fwd_Loop, Sprint_Loop, Crouch_Fwd_Loop, Crouch_Idle_Loop, Zombie_Walk_Fwd_Loop, Swim_Fwd_Loop, Swim_Idle_Loop
+- **Repos, attitudes** : Idle_Loop, Idle_FoldArms_Loop, Idle_Talking_Loop, Idle_TalkingPhone_Loop, Idle_Lantern_Loop, Idle_Torch_Loop, Idle_Rail_Loop, Idle_Rail_Call, Idle_No_Loop, Yes, Zombie_Idle_Loop, Zombie_Scratch, Sitting_Enter, Sitting_Idle_Loop, Sitting_Talking_Loop, Sitting_Exit, LayToIdle
+- **Sauts, acrobaties** : Jump_Start, Jump_Loop, Jump_Land, NinjaJump_Start, NinjaJump_Idle_Loop, NinjaJump_Land, Roll, Roll_RM, Slide_Start, Slide_Loop, Slide_Exit, ClimbUp_1m_RM
+- **Interactions** : Interact, PickUp_Table, Chest_Open, Consume, Push_Loop, Fixing_Kneeling, Farm_PlantSeed, Farm_Harvest, Farm_Watering, TreeChopping_Loop, Driving_Loop, OverhandThrow
+- **Danse, réactions** : Dance_Loop, Hit_Chest, Hit_Head, Hit_Knockback, Hit_Knockback_RM, Death01
+- **Combat** (hors sujet pour un jeu d'enfants, listé pour mémoire) : Punch_*, Melee_*, Sword_*, Shield_*, Idle_Shield_*, Pistol_*, Spell_Simple_*
 
-## Persos non humains (`arms`)
-- `wings` : ailes qui battent le long du corps ; `wings_up` : ailes levées (panique, un peu floues).
-- `side` : bras collés au corps — search/detect deviennent presque immobiles : donner le mouvement par le corps (exaggerate 1,4, bounce 0,05).
-- `pincers` : inefficace sur Karramarro (pinces gardées telles que dessinées).
-- `hold` : `{"left_arm"|"right_arm": "down"|"forward"|"tucked"|"up"|"back"}` pour tenir un objet ; pas de hold sur right_arm avec un clip.
+Les clips en `_RM` avancent dans la vidéo : préférer les versions sans `_RM`.
 
-## Post-traitements (sur une tâche finie)
-- `pf_2d__tenue` : recalcule le masque de tenue ; `pf_2d__flap` : fait battre des ailes figées.
-- `pf_px__character_set` puis `pf_px__reduce` : pixel art 128 px puis 32 px (reboot Party Hard, voir docs/STYLE_PARTY_HARD.md).
+## Réglages possibles par-dessus un clip (sans changer l'animation)
+`exaggerate` (0,5–2), `bounce` (0–0,2), `arms` (up / wings / wings_up / side / pincers), `hold`
+(`{"left_arm"|"right_arm": "down"|"forward"|"tucked"|"up"|"back"}`), `action`, `expression`.
+
+## Règles
+1. Le squelette (le clip) décide du mouvement ; `action` précise sans contredire.
+2. Visage et accessoires viennent de l'IMAGE DE RÉFÉRENCE : pour une émotion, retoucher d'abord le profil (`pf_2d__character`, `edit: true`).
+3. Bras au-dessus de la tête peu lisibles ; bras devant à hauteur d'épaule = lisible.
+4. Prompts sans négation.
+5. `arms: "side"` fige les clips portés par les bras (search, detect) : donner le mouvement par le corps.
+
+## Post-traitements
+`pf_2d__tenue` (masque de tenue), `pf_2d__flap` (ailes qui battent), `pf_px__character_set` puis `pf_px__reduce` (pixel art 128 px puis 32 px, voir docs/STYLE_PARTY_HARD.md).
