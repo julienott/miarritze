@@ -1927,8 +1927,22 @@
      }
     ]
    },
-   "provisoire": "platane",
-   "fichiers": []
+   "fichiers": [
+    "objets/platane_place.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "bd1a971d092c497f88bd2817085eced4",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/platane_place_ombre.png",
+   "ombre_decalage": [
+    22,
+    117
+   ]
   },
   "fanions_basques": {
    "nom": "Guirlande de fanions basques",
