@@ -1,9 +1,9 @@
 {
  "basajaun": {
-  "A": "ae16142261fa4cd0814ae1bc7e81b75f",
+  "A": "5aca85a34a0e4103bd04a66cb69cfb51",
   "chaine": [
    {
-    "task_id": "2e7caf8ac29140cda3c0a3d9ec7cda99",
+    "task_id": "b935976c78de4f3796a9dc7cc64a49fc",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
@@ -13,7 +13,7 @@
    "size": "boss",
    "seed": 7,
    "colors": 20,
-   "priority": "night",
+   "priority": "low",
    "tag": "miarritze/boss_essai",
    "prompt": "a giant friendly-scary forest lord covered in thick shaggy brown fur, a long beard of green moss, big root-like hands, leaning on a carved tree trunk staff. Signature detail drawn large and bright: a carved tree trunk staff and a mossy green beard.",
    "skip": [
@@ -68,10 +68,10 @@
   }
  },
  "tartalo": {
-  "A": "23546043021e4f45ae3a7b8864376e3d",
+  "A": "d7b31c9640f34c30aa249923cf45f838",
   "chaine": [
    {
-    "task_id": "e8a2b6673ad34eccb31992644e61e439",
+    "task_id": "9a9847a77786456caed6244ee3572d0c",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
@@ -81,7 +81,7 @@
    "size": "boss",
    "seed": 7,
    "colors": 20,
-   "priority": "night",
+   "priority": "low",
    "tag": "miarritze/boss_essai",
    "prompt": "a big clumsy one-eyed ogre giant with a single large round eye in the middle of his forehead, tanned skin, a brown fur tunic and a big wooden club. Signature detail drawn large and bright: a single big round eye and a wooden club.",
    "skip": [
@@ -136,10 +136,10 @@
   }
  },
  "intxixu_1": {
-  "A": "a11003de541449518db5a2c6191a03c8",
+  "A": "71b2de30004f4afea655e514ce6ce804",
   "chaine": [
    {
-    "task_id": "273876c16d644336b837a1c142affba0",
+    "task_id": "3c0286dae550487f9f063c82f3fbe04d",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
@@ -149,7 +149,7 @@
    "size": "normal",
    "seed": 7,
    "colors": 20,
-   "priority": "night",
+   "priority": "low",
    "tag": "miarritze/boss_essai",
    "prompt": "a small hunched cave goblin with grey stone-like skin, animal fur clothes, a green moss tuft on his head, glowing yellow eyes and a pebble sling. Signature detail drawn large and bright: glowing yellow eyes and a green moss tuft.",
    "skip": [
@@ -205,10 +205,10 @@
   }
  },
  "intxixu_2": {
-  "A": "6f2d94fe4e2544e79bf3d06e48a0e437",
+  "A": "f38f3ca9661e4c488c5698873f05bfb7",
   "chaine": [
    {
-    "task_id": "5331e0f7d5f4479dbcfdabba10a9bd31",
+    "task_id": "531afd6e98e14a9fa4d2a092b986cc5a",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
@@ -218,7 +218,7 @@
    "size": "normal",
    "seed": 7,
    "colors": 20,
-   "priority": "night",
+   "priority": "low",
    "tag": "miarritze/boss_essai",
    "prompt": "a small hunched cave goblin with grey stone-like skin, animal fur clothes, an orange moss tuft on his head, glowing yellow eyes and a small bag of pebbles. Signature detail drawn large and bright: glowing yellow eyes and an orange moss tuft.",
    "skip": [
@@ -274,10 +274,10 @@
   }
  },
  "intxixu_3": {
-  "A": "4bd08ee2ded54c59b140708bf39929a1",
+  "A": "1f55b983f1d54809aa58676ed31a80a0",
   "chaine": [
    {
-    "task_id": "52d1a095b7ae4f199ee651303c1ec969",
+    "task_id": "015db2a8f7a941e6a4897bb7bf192bb9",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
@@ -287,7 +287,7 @@
    "size": "normal",
    "seed": 7,
    "colors": 20,
-   "priority": "night",
+   "priority": "low",
    "tag": "miarritze/boss_essai",
    "prompt": "a small hunched cave goblin with grey stone-like skin, animal fur clothes, a purple moss tuft on his head, glowing yellow eyes and a bone necklace. Signature detail drawn large and bright: glowing yellow eyes and a purple moss tuft.",
    "skip": [
@@ -343,10 +343,10 @@
   }
  },
  "zezengorri": {
-  "A": "f6d8ee7b1e504a1ebf3ac6b112f90899",
+  "A": "5e0bf56df4c74abd860080e290c5fb26",
   "chaine": [
    {
-    "task_id": "302a29215aa044998f063fb3be5813b4",
+    "task_id": "3e34b715881e479cbf275f7a87518367",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
@@ -358,7 +358,7 @@
    "height": 40,
    "seed": 7,
    "colors": 20,
-   "priority": "night",
+   "priority": "low",
    "tag": "miarritze/boss_essai",
    "prompt": "a massive bright scarlet red bull with glowing eyes, magical flames around its horns and smoke puffing from its nostrils",
    "skip": [
@@ -375,10 +375,10 @@
   }
  },
  "herensuge": {
-  "A": "3802859a6f5443f29f4ad735de78dad9",
+  "A": "24d4bf49585442c09bcf49b4ad8895b3",
   "chaine": [
    {
-    "task_id": "c1bbf92ecd6743559e92f504b890cb93",
+    "task_id": "3ee7d41c1f05402283cf1ab09fff98fc",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
@@ -389,7 +389,7 @@
    "size": "boss",
    "seed": 7,
    "colors": 20,
-   "priority": "night",
+   "priority": "low",
    "tag": "miarritze/boss_essai",
    "prompt": "a long winged dragon-serpent with three reptile heads, scales the colour of antique bronze and sulphur yellow",
    "then": [
