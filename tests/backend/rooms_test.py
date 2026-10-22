@@ -267,9 +267,9 @@ def run():
     st, bad = post("/room/presence", lea, room_id=a["room"]["room_id"])
     check(st == 410, "créer un 2e salon fait quitter le 1er (fermé sans humain)")
 
-    # --- Borroka intact : groupes et /signal des matchs
-    st, g = call("POST", "/group", {})
-    check(st == 200 and len(g["code"]) == 6, "Borroka : création de groupe toujours OK")
+    # --- Réseau : serveurs STUN/TURN pour la connexion WebRTC des salons
+    st, net = call("GET", "/net/config")
+    check(st == 200 and len(net["ice_servers"]) >= 1, "/net/config donne au moins un serveur STUN")
 
 
 if __name__ == "__main__":

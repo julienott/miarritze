@@ -151,7 +151,7 @@ Corps : `{auth, "room_id"}` → `{"ok": true}`. Si l'admin part, le plus ancien 
   (client → client).
 - `GET /room/signal?player_id&secret&room_id&after=<dernier id>` → `{"messages": [{"id", "from", "payload"}]}`
   (100 au plus, croissants). Le client garde le dernier `id` et repart de là.
-- Messages effacés après 10 min, et à la fermeture du salon. Le `/signal` des matchs de Borroka est inchangé.
+- Messages effacés après 10 min, et à la fermeture du salon.
 - Limites : 600/min par joueur, 3000/min par IP.
 
 ## Codes `reason`
@@ -178,5 +178,6 @@ Corps : `{auth, "room_id"}` → `{"ok": true}`. Si l'admin part, le plus ancien 
 ## Déploiement
 
 Migration **additive** : tables `gk_players`, `rooms`, `room_members`, `room_bans`, `room_signals` créées
-par `CREATE TABLE IF NOT EXISTS` à la première requête. Aucune action manuelle sur le serveur, rien de
-Borroka modifié. `MIARRITZE_CLOCK_FILE` (horloge des tests) n'est jamais posée en prod.
+par `CREATE TABLE IF NOT EXISTS` à la première requête. Aucune action manuelle sur le serveur. Les routes
+et tables de l'ancien jeu de combat ont été retirées du code (tag `avant-suppression-borroka`) ; les tables
+d'une base existante restent, inutilisées. `MIARRITZE_CLOCK_FILE` (horloge des tests) n'est jamais posée en prod.

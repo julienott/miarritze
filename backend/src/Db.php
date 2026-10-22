@@ -29,12 +29,6 @@ final class Db
         if ($schema !== false) {
             $pdo->exec($schema);
         }
-        // Migrations additives (colonnes ajoutées après la création de la table).
-        try {
-            $pdo->exec('ALTER TABLE matches ADD COLUMN rematch_of INTEGER');
-        } catch (PDOException $e) {
-            // colonne déjà présente
-        }
         self::$pdo = $pdo;
         return $pdo;
     }
