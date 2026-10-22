@@ -1,8 +1,0 @@
-{
- "style": "pf_hd__edit",
- "entree": "tools/rd/out/peio/gk2d/profil/image_02_white.png",
- "prompt": "Keep this exact rugby player: same face, same medium brown skin tone exactly as in the image (do not make it more orange), same jersey, shorts, socks, boots, pose and cartoon style. Add a small brown oval rugby ball tucked under his near arm (the arm facing the viewer): the ball rests horizontally against his ribs at waist height, his elbow bent over it and his hand cupping the front tip of the ball, the ball pointing forward, the jersey stripes still visible above it. Plain white background.",
- "seed": 1,
- "num_images": 3,
- "task": "ae15937499e24ddba2e500a4e7eec38e"
-}

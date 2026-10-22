@@ -1,8 +1,0 @@
-{
- "style": "pf_hd__edit",
- "entree": "tools/rd/out/xabi/gk2d/profil_v3/image_02_white.png",
- "prompt": "Keep this exact boy, pose, colors and cartoon style. Only change his right hand: remove the separate brown leather glove; his hand slides directly into the open end of the long curved wicker chistera basket, the wicker sheath wraps around his hand and wrist as one single piece with the basket, tied at the wrist with a thin red cord. Plain white background.",
- "seed": 1,
- "num_images": 2,
- "task": "c03cb85d38b14a3692c15b373e6b9072"
-}

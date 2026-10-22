@@ -1,8 +1,0 @@
-{
- "style": "pf_hd__edit",
- "entree": "tools/rd/out/ramuntxo/gk2d/profil/image_00_white.png",
- "prompt": "Keep this exact chef: same big open smile, same face, apron, frying pan, pose, colors and cartoon style; the apron stays plain white with nothing printed on it. Add only: (1) a small thin dark brown mustache just above his smiling mouth, the smile still visible; (2) on the horizontal band at the bottom of his tall white chef hat, a tiny Basque flag patch: red rectangle with a green diagonal X cross and a white upright plus cross on top. Nothing else changes. Plain white background.",
- "seed": 1,
- "num_images": 3,
- "task": "5c50f386be284f99be3fe87f1467b52c"
-}

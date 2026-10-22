@@ -1,8 +1,0 @@
-{
- "style": "pf_hd__edit",
- "entree": "/private/tmp/claude-501/-Users-julien-Dev-miarritze/ba3ec345-539a-4abb-bd2c-27fc3795cb5a/scratchpad/karra_sans_noeud.png",
- "prompt": "Keep this exact crab with its white bandana, same pose, colors and cartoon style. Only clean up the bottom right corner of the white bandana: one smooth continuous thick dark navy outline forming a neat pointed tip, no bump, no knot, no gap. Nothing else changes. Plain white background.",
- "seed": 1,
- "num_images": 2,
- "task": "9d563c2001a94c04b7a389da40bf6c5c"
-}

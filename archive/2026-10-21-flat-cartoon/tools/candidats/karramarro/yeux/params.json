@@ -1,8 +1,0 @@
-{
- "style": "pf_hd__edit",
- "entree": "tools/rd/out/karramarro/gk2d/profil/image_01_white.png",
- "prompt": "Keep this exact crab character, pose, colors and cartoon style. Only fix the eyes: both eyes on the stalks are plain white eyeballs with round black pupils and a tiny white highlight, no orange spot inside the eyes. Plain white background.",
- "seed": 1,
- "num_images": 2,
- "task": "24663d9d743a4d0e915cab1e10f84d33"
-}
