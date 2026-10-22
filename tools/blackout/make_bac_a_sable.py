@@ -8,7 +8,7 @@ Plage à l'est (sol meuble, rochers bas, cabines, barque, hangar). Tout est en p
 dessine des aplats et des formes simples (BkMap).
 
 Écrit assets/maps/bac_a_sable/map.txt (une lettre par case) et zones.json (zones et teinte de leur
-sol, 2 sorties, secteurs, lampadaires, disjoncteurs, places des gâteaux et des mouettes, réglages
+sol, 2 sorties, secteurs, sources de lumière, disjoncteurs, places des gâteaux et des mouettes, réglages
 propres à la carte), puis vérifie : tout le sol atteignable depuis le départ, chaque cachette avec
 deux côtés libres, chaque type de case présent.
 
@@ -178,18 +178,23 @@ SECTEURS = [
     {"id": "B", "nom": "Place", "rect": [21, 0, 18, 24]},
     {"id": "C", "nom": "Plage", "rect": [39, 0, 21, 24]},
 ]
-LAMPADAIRES = [
-    # Dans la maison : plafonniers ; dehors : lampadaires (rayon de lumière en cases).
-    {"pos": [5, 3], "rayon": 3.0, "secteur": "A"},
-    {"pos": [15, 10], "rayon": 2.5, "secteur": "A"},
-    {"pos": [5, 17], "rayon": 3.0, "secteur": "A"},
-    {"pos": [24, 5], "rayon": 3.5, "secteur": "B"},
-    {"pos": [35, 10], "rayon": 3.5, "secteur": "B"},
-    {"pos": [26, 20], "rayon": 3.5, "secteur": "B"},
-    {"pos": [36, 21], "rayon": 3.0, "secteur": "B"},
-    {"pos": [45, 3], "rayon": 3.0, "secteur": "C"},
-    {"pos": [45, 11], "rayon": 3.5, "secteur": "C"},
-    {"pos": [53, 17], "rayon": 3.5, "secteur": "C"},
+LUMIERES = [
+    # Sources de lumière fixes (GDD §3.2, §9) : case de la source, rayon de la zone éclairée (cases),
+    # secteur (le disjoncteur du secteur les éteint), type (dessin et couleur par défaut : BkLumieres),
+    # couleur facultative. Dans la maison : plafonniers ; dehors : lampadaires ; deux néons pour
+    # l'ambiance (rose sur la façade de la maison, cyan sur le hangar), posés contre le mur `mur`.
+    {"pos": [5, 3], "rayon": 3.0, "secteur": "A", "type": "plafonnier"},
+    {"pos": [15, 10], "rayon": 2.5, "secteur": "A", "type": "plafonnier"},
+    {"pos": [5, 17], "rayon": 3.0, "secteur": "A", "type": "plafonnier"},
+    {"pos": [24, 5], "rayon": 3.5, "secteur": "B", "type": "lampadaire"},
+    {"pos": [35, 10], "rayon": 3.5, "secteur": "B", "type": "lampadaire"},
+    {"pos": [26, 20], "rayon": 3.5, "secteur": "B", "type": "lampadaire"},
+    {"pos": [36, 21], "rayon": 3.0, "secteur": "B", "type": "lampadaire"},
+    {"pos": [21, 14], "rayon": 2.5, "secteur": "B", "type": "neon", "couleur": "#ff4fb8", "mur": [-1, 0]},
+    {"pos": [45, 3], "rayon": 3.0, "secteur": "C", "type": "plafonnier"},
+    {"pos": [45, 11], "rayon": 3.5, "secteur": "C", "type": "lampadaire"},
+    {"pos": [53, 17], "rayon": 3.5, "secteur": "C", "type": "lampadaire"},
+    {"pos": [51, 2], "rayon": 2.5, "secteur": "C", "type": "neon", "couleur": "#3fe0ff", "mur": [-1, 0]},
 ]
 DISJONCTEURS = [
     # Case où l'on se tient, et côté du mur qui porte le boîtier.
@@ -227,11 +232,11 @@ def check():
                 assert free >= 2, "cachette (%d, %d) : %d côté(s) libre(s)" % (x, y, free)
     for ch in ".:ES#cBH|-tmbgfr":
         assert any(ch in r for r in rows), "case absente : %r" % ch
-    for g in GATEAUX + MOUETTES + [l["pos"] for l in LAMPADAIRES] + [d["pos"] for d in DISJONCTEURS]:
+    for g in GATEAUX + MOUETTES + [l["pos"] for l in LUMIERES] + [d["pos"] for d in DISJONCTEURS]:
         assert rows[g[1]][g[0]] in WALK, "point sur une case pleine : %s (%r)" % (g, rows[g[1]][g[0]])
-    for d in DISJONCTEURS:
+    for d in DISJONCTEURS + [l for l in LUMIERES if "mur" in l]:
         wx, wy = d["pos"][0] + d["mur"][0], d["pos"][1] + d["mur"][1]
-        assert rows[wy][wx] == "#", "disjoncteur %s sans mur" % d
+        assert rows[wy][wx] == "#", "boîtier ou néon %s sans mur" % d
     for e in EXITS:
         for t in e["tiles"]:
             assert rows[t[1]][t[0]] == "E", "sortie %s" % t
@@ -246,13 +251,13 @@ def main():
     info = {
         "name": "Bac à sable",
         "version": 1,
-        "_doc": "Écrit par tools/blackout/make_bac_a_sable.py (GDD-BLACKOUT.md §10.1). Lampadaires et "
-                "disjoncteurs : données et marqueurs seulement (la lumière vient ensuite).",
+        "_doc": "Écrit par tools/blackout/make_bac_a_sable.py (GDD-BLACKOUT.md §10.1). Sources de lumière "
+                "fixes (« lumieres », BkLumieres) et disjoncteurs, un par secteur (GDD §3.2).",
         "regles": {"exits_min_gap": 10.0},
         "zones": [{"name": z[0], "rect": z[1], "sol": "#" + z[2]} for z in ZONES],
         "exits": EXITS,
         "secteurs": SECTEURS,
-        "lampadaires": LAMPADAIRES,
+        "lumieres": LUMIERES,
         "disjoncteurs": DISJONCTEURS,
         "gateaux": GATEAUX,
         "mouettes": MOUETTES,
