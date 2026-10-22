@@ -4,8 +4,10 @@ extends RefCounted
 ## un chassé voit toute la carte (et le chasseur) ; le chasseur ne sait que ce qu'il voit, ce que lui
 ## donne son coup spécial (piste de Cache-Cache !), les cachettes qui tremblent et les secteurs plongés
 ## dans le noir (disjoncteurs, GDD §3.2, §11). Coups spéciaux (GDD §4, BkCoups.essaie_ia) : un chassé
-## lance le sien quand il est en danger, le chasseur quand il a une cible probable (avec la probabilité
-## « coup » de son niveau, à chaque décision) ; la famille du coup juge s'il sert à quelque chose.
+## lance le sien quand il est en danger (et, en réflexe, quand sa jauge passe jauge_urgence), le
+## chasseur quand il voit une cible ou en a une probable (avec la probabilité « coup » de son niveau, à
+## chaque décision) ; la famille du coup juge s'il sert à quelque chose. Un chassé révélé (effet
+## « revele » : pelote, piment, geyser, faisceau…) devient un indice pour le chasseur.
 
 var g: BkGame
 var me: BkActor
@@ -41,6 +43,10 @@ var slip_pending: bool = false
 ## Disjoncteur visé (index de BkGame.boitiers), -1 sinon : un chassé va couper la lumière, le chasseur
 ## va la rallumer.
 var plan_switch: int = -1
+## Réflexe d'un chassé : jauge à l'image d'avant (passage de jauge_urgence).
+var _jauge_avant: float = 0.0
+## Jauge qui déclenche le réflexe d'urgence (feinte de Peio, endurance de Mattin, plongeon de Maïa…).
+const JAUGE_URGENCE: float = 0.7
 
 
 func _init(p_game: BkGame, p_me: BkActor, p_level: String) -> void:
@@ -85,6 +91,14 @@ func update(dt: float) -> Dictionary:
 		return {}
 	if me.role == BkActor.Role.OUT:
 		return {}
+	# Enfoui (Karramarro) : il ne bouge plus tant que son coup le garde caché.
+	if g.coups.garde_immobile(me):
+		return {}
+	# Réflexe : la jauge passe le seuil d'urgence, le coup part tout de suite (si la famille veut).
+	if me.role == BkActor.Role.HIDER and g.phase == BkGame.Phase.HUNT:
+		if _jauge_avant < JAUGE_URGENCE and me.gauge >= JAUGE_URGENCE and rng.randf() < float(cfg.get("coup", 0.5)):
+			g.coups.essaie_ia(me, {"menace": true, "urgence": true})
+		_jauge_avant = me.gauge
 	think_t -= dt
 	if think_t <= 0.0:
 		think_t = float(cfg.get("think", 0.5))
@@ -169,6 +183,9 @@ func _think_hider() -> void:
 	if hunting and (me.gauge > 0.0 or _threatened()) and rng.randf() < float(cfg.get("coup", 0.5)) \
 			and g.coups.essaie_ia(me, {"menace": true}):
 		path = PackedVector2Array()
+		return
+	# Coup d'entraide (bouée de Txomin : un coéquipier en détresse), hors danger.
+	if hunting and rng.randf() < float(cfg.get("coup", 0.5)) * 0.5 and g.coups.essaie_ia(me, {"menace": false}):
 		return
 	# Détection progressive : il se sait repéré (sa jauge monte) : il file vers l'abri le plus proche.
 	if hunting and BkRules.on("idee_detection") and me.gauge > 0.0:
@@ -464,6 +481,9 @@ func _think_hunter() -> void:
 		clue_t = 4.0 * float(cfg.get("clue_memory", 1.0))
 		if clock < react_until:
 			return                           # surpris : il met un instant à réagir
+		# Coup spécial sur la cible vue (pelote, ligne, pierre, faisceau, glissade, take-off, sifflet…).
+		if rng.randf() < float(cfg.get("coup", 0.5)):
+			g.coups.essaie_ia(me, {"cible_probable": true, "cible": target, "vers": target.position})
 		if g.clear_line(me.position, target.position):
 			path = PackedVector2Array([me.position, target.position])
 			path_i = 1
@@ -477,8 +497,18 @@ func _think_hunter() -> void:
 	# ou personne vu depuis longtemps. Piste de Cache-Cache ! : le dernier pas devient l'indice.
 	var probable: bool = (lost_pos != Vector2.INF and clock - lost_t < 8.0) or (clue_t > 0.0 and clue != Vector2.INF) \
 		or clock - seen_t > 20.0
-	if probable and rng.randf() < float(cfg.get("coup", 0.5)) and g.coups.essaie_ia(me, {"cible_probable": true}):
+	var vers: Vector2 = lost_pos if lost_pos != Vector2.INF and clock - lost_t < 8.0 else (clue if clue_t > 0.0 else Vector2.INF)
+	if probable and rng.randf() < float(cfg.get("coup", 0.5)) \
+			and g.coups.essaie_ia(me, {"cible_probable": true, "vers": vers}):
 		seen_t = clock
+	# Un chassé révélé (à travers les murs) : on y va.
+	var rv: BkActor = _revele_proche()
+	if rv != null:
+		clue = rv.position
+		clue_t = 2.0 * float(cfg.get("clue_memory", 1.0))
+		if path.is_empty() or _arrived() or path[path.size() - 1].distance_to(clue) > 1.5 * _tiles():
+			_go(clue)
+		return
 	var piste: Vector2 = g.coups.piste_de(me)
 	if piste != Vector2.INF:
 		var t: Vector2i = g.map.to_tile(piste)
@@ -529,6 +559,16 @@ func _think_hunter() -> void:
 			visited[z] = clock
 		scan_t = 1.4 * float(cfg.get("hunter_scan", 0.7))
 		_patrol()
+
+
+## Chasseur : le chassé révélé (effet « revele ») le plus proche, hors cachette, null sinon.
+func _revele_proche() -> BkActor:
+	var best: BkActor = null
+	for a: BkActor in g.actors:
+		if a.role == BkActor.Role.HIDER and a.hidden_in < 0 and BkEffets.actif(a, "revele") \
+				and (best == null or a.position.distance_to(me.position) < best.position.distance_to(me.position)):
+			best = a
+	return best
 
 
 ## Chasseur : le boîtier d'un secteur coupé le plus proche ; il y va et l'actionne. Vrai s'il s'en occupe.

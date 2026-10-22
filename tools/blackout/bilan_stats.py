@@ -5,7 +5,8 @@
 
 Regroupe par (niveau des chassés, niveau du chasseur) et affiche les moyennes utiles à
 l'équilibrage : part des chassés trouvés, comment (vue, fouille), coups spéciaux, cachettes,
-sorties, durée.
+sorties, durée. Puis, tous niveaux confondus : taux de trouvés par perso du chasseur, et lancers et
+effets qui ont pris par coup (coups jamais lancés signalés).
 """
 import json
 import sys
@@ -14,11 +15,13 @@ from collections import defaultdict
 
 def main() -> None:
     groupes = defaultdict(list)
+    tous = []
     for chemin in sys.argv[1:]:
         for ligne in open(chemin, encoding="utf-8"):
             if ligne.startswith("[bk-stats] "):
                 r = json.loads(ligne[len("[bk-stats] "):])
                 groupes[(r["niveau"], r["niveau_chasseur"])].append(r)
+                tous.append(r)
     for (niv, nivc), rs in sorted(groupes.items()):
         n = len(rs)
         tot = lambda k: sum(r.get(k, 0) for r in rs)
@@ -63,6 +66,39 @@ def main() -> None:
         if idees:
             print("  idées : " + ", ".join(f"{k} {v} ({v / n:.1f}/round)" for k, v in idees)
                   + (f", vent dans le dos {tot('elan_s') / n:.0f} s/round" if tot('elan_s') else ""))
+        if tot("captures_annulees"):
+            print(f"  captures annulées (Endurance) {tot('captures_annulees')}")
+    par_perso_et_coup(tous)
+
+
+def par_perso_et_coup(rs: list) -> None:
+    """Taux de trouvés par perso chasseur ; lancers et effets qui ont pris par coup."""
+    persos = defaultdict(lambda: [0, 0, 0])
+    lancers = defaultdict(int)
+    touches = defaultdict(int)
+    for r in rs:
+        p = persos[r.get("chasseur_perso", "?")]
+        p[0] += 1
+        p[1] += r["trouves"]
+        p[2] += r["chasses"]
+        for k, v in r.get("coups_par", {}).items():
+            lancers[k] += v
+        for k, v in r.get("touches_par", {}).items():
+            touches[k] += v
+    n = max(len(rs), 1)
+    print(f"\n== par perso chasseur ({len(rs)} rounds) ==")
+    for nom, (k, t, c) in sorted(persos.items(), key=lambda x: -x[1][1] / max(x[1][2], 1)):
+        print(f"  {nom:<11} {k:>3} rounds  trouvés {t:>3}/{c:<3} ({100 * t / max(c, 1):3.0f} %)")
+    try:
+        d = json.load(open("data/blackout/coups.json", encoding="utf-8"))
+        ids = [(c["id"], role) for p in d["persos"].values() for role, c in p.items()]
+    except OSError:
+        ids = [(k, "?") for k in lancers]
+    print("\n== par coup (lancers, effets qui ont pris ; /round joué par ce rôle) ==")
+    for cid, role in sorted(ids, key=lambda x: -lancers.get(x[0], 0)):
+        print(f"  {cid:<20} {role:<8} lancés {lancers.get(cid, 0):>4}  pris {touches.get(cid, 0):>4}"
+              + ("   ← jamais lancé" if not lancers.get(cid) else ""))
+    print(f"  total : {sum(lancers.values())} lancers ({sum(lancers.values()) / n:.1f}/round)")
 
 
 if __name__ == "__main__":
