@@ -20,6 +20,7 @@ const FAMILLES: Dictionary = {
 	"lance": preload("res://src/blackout/coups/familles/bk_coup_lance.gd"),
 	"zone": preload("res://src/blackout/coups/familles/bk_coup_zone.gd"),
 	"pose": preload("res://src/blackout/coups/familles/bk_coup_pose.gd"),
+	"reflexe": preload("res://src/blackout/coups/familles/bk_coup_reflexe.gd"),
 }
 ## Éclair de lancement (placeholder §4.6) : durée (s) et rayon (px).
 const ECLAIR_S: float = 0.3

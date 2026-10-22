@@ -60,7 +60,7 @@
 				"params": {"projectile": "pelote", "ricochets": 3, "vitesse": 16.0, "rayon_touche": 0.5, "couleur": "#ffffff"}}
 		},
 		"mattin": {
-			"chasse": {"id": "endurance", "nom": "Endurance", "famille": "reflexe", "pret": false,
+			"chasse": {"id": "endurance", "nom": "Endurance", "famille": "reflexe", "pret": true,
 				"recharge": 25.0, "portee": 0.0, "duree": 4.0,
 				"effets": [{"type": "insensible", "duree": 4.0, "params": {}}],
 				"params": {"annule_capture": true, "repousse": 1.0, "par_round": 1, "bulle": "Harri !", "bulle_annule": "Même pas trouvé !"}},
@@ -119,7 +119,7 @@
 					"bulle": "Laminak !", "bulle_cible": "plouf !", "couleur": "#6ff0ff"}}
 		},
 		"peio": {
-			"chasse": {"id": "feinte_passe", "nom": "Feinte de passe", "famille": "reflexe", "pret": false,
+			"chasse": {"id": "feinte_passe", "nom": "Feinte de passe", "famille": "reflexe", "pret": true,
 				"recharge": 25.0, "portee": 2.0, "duree": 0.0,
 				"effets": [{"type": "rapide", "duree": 2.0, "params": {"k": 0.3, "si_jauge": 0.7}}],
 				"params": {"pas_de_cote": 2.0, "jauge_seuil": 0.7, "jauge_a_zero": true, "bulle": "Feinte !"}},
