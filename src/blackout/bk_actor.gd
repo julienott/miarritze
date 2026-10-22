@@ -20,8 +20,18 @@ var role: Role = Role.HIDER
 ## Angle du regard (radians) : suit la marche, tourne à vitesse limitée.
 var look: float = 0.0
 var frozen: bool = false
-var slow_left: float = 0.0
-var power_cd: float = 0.0
+## Coup spécial (GDD §4, BkCoups) : recharge restante et durée de la dernière recharge (s) ; coup en
+## cours qui prend les commandes (saut, glissade : l'acteur ne se déplace plus lui-même), hauteur de
+## saut dessinée (px).
+var coup_cd: float = 0.0
+var coup_cd_max: float = 0.0
+var en_coup: bool = false
+var saut_px: float = 0.0
+## Effets communs subis (GDD §4.5, BkEffets) : type → {left, duree, params} ; protection restante après
+## une gêne (s) ; fenêtre de gêne restante (s, plafond de effet_max_genant_s).
+var effets: Dictionary = {}
+var protection: float = 0.0
+var gene_reste: float = 0.0
 var hidden_in: int = -1              # index de cachette, -1 = dehors
 var hidden_t: float = 0.0
 ## Plongée dans la cachette : encore visible dehors tant que > 0 (s), même si `hidden_in` est posé.
@@ -58,10 +68,8 @@ var perso: BkPerso
 var scared: bool = false
 ## Multiplicateur de vitesse du chasseur IA selon son niveau (difficulté) ; 1 pour un humain.
 var speed_mult: float = 1.0
-## Idées de gameplay (rules.json, `idee_*`) : sprint d'un gâteau basque (chassé), vent dans le dos du
-## chasseur bredouille (multiplicateur), et délivrance (progression 0 → 1 du fantôme qu'un chassé
-## délivre ; une seule fois par round).
-var sprint_left: float = 0.0
+## Idées de gameplay (rules.json, `idee_*`) : vent dans le dos du chasseur bredouille (multiplicateur),
+## et délivrance (progression 0 → 1 du fantôme qu'un chassé délivre ; une seule fois par round).
 ## Poursuite (idee_poursuite) : secondes de vitesse de poursuite restantes (chasseur et chassé repéré).
 var chase_left: float = 0.0
 var chase_used: bool = false          # poursuite déjà lancée pour ce repérage (jusqu'à jauge vide)
@@ -141,11 +149,7 @@ func is_hider() -> bool:
 
 func speed() -> float:
 	var key: String = {Role.HIDER: "speed_hider", Role.HUNTER: "speed_hunter"}.get(role, "speed_ghost")
-	var s: float = BkRules.px(key)
-	if slow_left > 0.0:
-		s *= BkRules.f("trap_slow")
-	if sprint_left > 0.0 and role == Role.HIDER:
-		s *= BkRules.f("gateau_sprint")
+	var s: float = BkRules.px(key) * BkEffets.vitesse_k(self)
 	if chase_left > 0.0:
 		s *= BkGame.chase_mult(role == Role.HUNTER)
 	if role == Role.HUNTER:
@@ -153,22 +157,36 @@ func speed() -> float:
 	return s
 
 
-## Avance d'un pas : `move` de longueur ≤ 1, `look_dir` optionnel pour regarder sans bouger.
+## Avance d'un pas : `move` de longueur ≤ 1, `look_dir` optionnel pour regarder sans bouger. Effets
+## (BkEffets) : bloqué (figé, renversé, collé), tracté (glisse vers le point visé), commandes inversées.
 func step(move: Vector2, look_dir: Vector2, dt: float) -> void:
-	if frozen or hidden_in >= 0 or search_left > 0.0 or use_left > 0.0:
+	coup_cd = maxf(0.0, coup_cd - dt)
+	if en_coup:
+		queue_redraw()
+		return                               # le coup en cours déplace l'acteur (BkCoupActif)
+	if BkEffets.actif(self, "inverse"):
+		move = -move
+	var tire: Vector2 = BkEffets.traction(self)
+	if frozen or hidden_in >= 0:
+		velocity = Vector2.ZERO
+	elif tire != Vector2.ZERO:
+		velocity = tire
+		move_and_slide()
+		move = Vector2.ZERO
+	elif BkEffets.bloque(self):
+		velocity = Vector2.ZERO
+		move = Vector2.ZERO
+	elif search_left > 0.0 or use_left > 0.0:
 		velocity = Vector2.ZERO
 	else:
 		velocity = move.limit_length(1.0) * speed()
 		move_and_slide()
 		walk_phase = fmod(walk_phase + velocity.length() * dt * 0.06, TAU) if velocity.length() > 5.0 else 0.0
 	var want: Vector2 = move if move.length() > 0.2 else look_dir
-	if want.length() > 0.1 and hidden_in < 0:
+	if want.length() > 0.1 and hidden_in < 0 and not BkEffets.bloque(self):
 		var turn: float = deg_to_rad(BkRules.f("turn_speed_deg")) * dt
 		look = rotate_toward(look, want.angle(), turn)
-	slow_left = maxf(0.0, slow_left - dt)
-	sprint_left = maxf(0.0, sprint_left - dt)
 	chase_left = maxf(0.0, chase_left - dt)
-	power_cd = maxf(0.0, power_cd - dt)
 	queue_redraw()
 
 
@@ -193,12 +211,10 @@ func _draw() -> void:
 	var top: float = name_y()
 	if not silhouette:
 		BkDraw.texte(self, Vector2(0, top), display_name, NOM_TAILLE, Color(1, 1, 1, 0.55 if ghost else 1.0), 2)
-	if slow_left > 0.0:
-		for k2: int in 3:
-			var p: Vector2 = Vector2(0, top + 4) + Vector2.from_angle(float(k2) * TAU / 3.0 + slow_left * 4.0) * t * 0.22
-			draw_rect(Rect2(p.round(), Vector2(2, 2)), Color("f2c12e"))
-	# Vent dans le dos (chasseur bredouille), sprint du gâteau ou poursuite : traits de vitesse derrière.
-	if (elan_mult > 1.0 and role == Role.HUNTER) or (sprint_left > 0.0 and role == Role.HIDER) \
+	# Effets communs subis (GDD §4.5) : dessinés par BkEffetsRendu.
+	BkEffetsRendu.dessine(self)
+	# Vent dans le dos (chasseur bredouille) ou poursuite : traits de vitesse derrière.
+	if (elan_mult > 1.0 and role == Role.HUNTER) \
 			or (chase_left > 0.0 and (role == Role.HUNTER or role == Role.HIDER)):
 		var back: float = -face
 		var col: Color = Color("9fd8ef") if role == Role.HUNTER else Color("ffd34a")

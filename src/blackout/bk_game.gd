@@ -2,8 +2,8 @@ class_name BkGame
 extends Node2D
 ## Partie de Blackout contre l'IA (prototype gris, GDD-BLACKOUT.md, jalon 1).
 ## La partie tourne entièrement ici (rôle d'hôte) : rounds, vision du chasseur, lumière et ombre,
-## disjoncteurs, capture, cachettes, pièges, détections, sorties et points. Les joueurs n'envoient que
-## move/look/action.
+## disjoncteurs, capture, cachettes, coups spéciaux (moteur BkCoups, effets BkEffets), sorties et
+## points. Les joueurs n'envoient que move/look/action.
 
 ## VERSUS (écran de suspense entre le tirage et la cachette) est ajouté en dernier : les valeurs des
 ## autres phases ne bougent pas.
@@ -64,11 +64,12 @@ var hunter: BkActor
 ## fin de fouille),
 ## squash_t (écrasement en cours), shiver / shiver_wait (frémissement quand quelqu'un est dedans).
 var cachettes: Array = []
-var traps: Array = []                # [{pos, owner}]
+## Coups spéciaux (GDD §4, cartes #627 et #630) : moteur, effets communs et calque des révélés.
+var coups: BkCoups
+var _calque_effets: BkEffetsRendu
 ## Sorties tirées au sort pour ce round (parmi les sorties possibles de la carte).
 var open_exits: Array[Vector2i] = []
 var open_exit_zones: Array[String] = []
-var reveals: Array = []              # [{pos, left, id}] (détection du chasseur)
 var messages: Array = []             # [{text, left, color}]
 var _sac: Array[int] = []
 var _last_hunter: int = -1
@@ -97,8 +98,7 @@ var _hunter_level: String = ""
 var _rounds_max: int = 0
 var _stats: bool = false
 var _st: Dictionary = {}
-var _revealed_at: Dictionary = {}     # id du chassé → instant de la dernière onde qui l'a montré
-var _trap_hit_at: float = -100.0
+var _coup_chasseur_at: float = -100.0  # dernier coup du chasseur (statistiques)
 ## Idées de gameplay (drapeaux `idee_*` de rules.json) : gâteaux basques au sol [{pos}],
 ## mouettes posées [{pos, away (s avant leur retour), fly (s d'envol à dessiner)}], instant de la
 ## dernière capture (chasseur bredouille), derniers bruits entendus (statistiques).
@@ -180,6 +180,12 @@ var sans_chrono: bool = false
 ## `--bk-qa-lumiere` montre les zones de lumière dès le départ (comme la touche L).
 var _qa_panne: String = ""
 var _qa_lumiere: bool = false
+## QA des coups : `--bk-qa-effet=<acteur>:<type>` (répétable) maintient un effet commun sur un acteur
+## pendant toute la chasse (planche des effets ; jusqu'à 13 joueurs, tous immobiles sauf le joueur local,
+## chasseur = dernier acteur) ; `--bk-qa-etiquettes` nomme les effets sous les pieds et montre révélés et
+## invisibles à tous ; `--bk-qa-coup=<s>` lance le coup du joueur local à s secondes de chasse.
+var _qa_effets: Array = []
+var _qa_coup_t: float = -1.0
 
 
 func _exit_tree() -> void:
@@ -261,6 +267,12 @@ func _ready() -> void:
 			_qa_panne = arg.trim_prefix("--bk-qa-panne=")
 		elif arg == "--bk-qa-lumiere":
 			_qa_lumiere = true
+		elif arg.begins_with("--bk-qa-effet="):
+			_qa_effets.append(arg.trim_prefix("--bk-qa-effet=").split(":"))
+		elif arg == "--bk-qa-etiquettes":
+			BkEffetsRendu.qa = true
+		elif arg.begins_with("--bk-qa-coup="):
+			_qa_coup_t = float(arg.trim_prefix("--bk-qa-coup="))
 	# Rendu pixel art en 640×360 (GDD §9) ; les menus repassent en 1280×720 (BkEchelle).
 	BkEchelle.jeu()
 	map = BkMap.new()
@@ -290,6 +302,9 @@ func _ready() -> void:
 	people.y_sort_enabled = true
 	add_child(people)
 	_make_actors(people)
+	coups = BkCoups.new()
+	coups.game = self
+	add_child(coups)
 	_make_view()
 	frisson = BkFrisson.new()
 	frisson.game = self
@@ -317,7 +332,7 @@ func _ready() -> void:
 
 
 func _make_actors(parent: Node2D) -> void:
-	var n: int = clampi(int(config.get("players", 6)), 2, 8)
+	var n: int = clampi(int(config.get("players", 6)), 2, 13 if not _qa_effets.is_empty() else 8)
 	if visite != "":
 		_force_role = "hunter" if visite == "chasseur" else "hider"
 		if not _figurants:
@@ -379,7 +394,7 @@ func _make_view() -> void:
 	_near_light = _make_light(_cone_texture(360.0), BkRules.px("near_radius") + 10.0)
 	_cone_light_decor = _make_light(_cone_light.texture, BkRules.px("cone_range"), true)
 	_near_light_decor = _make_light(_near_light.texture, BkRules.px("near_radius") + 10.0, true)
-	# Calque « dans le monde » non assombri : cône rouge vu des chassés, sorties, cachettes, pièges.
+	# Calque « dans le monde » non assombri : cône rouge vu des chassés, sorties, cachettes, coups.
 	var layer: CanvasLayer = CanvasLayer.new()
 	layer.follow_viewport_enabled = true
 	layer.layer = 1
@@ -387,6 +402,10 @@ func _make_view() -> void:
 	_overlay = Node2D.new()
 	layer.add_child(_overlay)
 	_overlay.draw.connect(func() -> void: _draw_overlay(_overlay))
+	# Révélés (effet commun) : par-dessus les murs et la nuit, vus du chasseur.
+	_calque_effets = BkEffetsRendu.new()
+	_calque_effets.game = self
+	layer.add_child(_calque_effets)
 
 
 ## Lumière du chasseur. Sol et persos (calque 1) : ombrés par les murs et la base des objets ;
@@ -471,16 +490,16 @@ func _start_round() -> void:
 	phase = Phase.DRAW
 	phase_t = BkRules.f("phase_draw")
 	hunt_elapsed = 0.0
-	traps.clear()
-	reveals.clear()
 	_search_target.clear()
 	_reset_cachettes()
 	hunter = _draw_hunter()
 	_pick_exits()
 	_round_hiders = actors.size() - 1
 	_round_found = 0
-	_st = {"vue": 0, "fouille_ok": 0, "fouille_vide": 0, "ondes": 0, "ondes_utiles": 0, "montres": 0,
-		"trouves_apres_onde": 0, "pieges_poses": 0, "pieges_pris": 0, "trouves_apres_piege": 0,
+	_st = {"vue": 0, "fouille_ok": 0, "fouille_vide": 0,
+		# Coups spéciaux (#627) : lancés par les chassés et par le chasseur, effets subis par le chasseur
+		# à cause d'un chassé, captures moins de 10 s après un coup du chasseur.
+		"coups_chasse": 0, "coups_chasseur": 0, "coups_touche": 0, "trouves_apres_coup": 0,
 		"entrees_cachette": 0, "ejections_cachette": 0, "trouves_en_cachette": 0, "sorties": 0,
 		"evasions_de_vue": 0, "t_trouves": [], "lieux_trouves": [], "sorties_round": open_exit_zones.duplicate(),
 		"delivres": 0, "grincements": 0, "gateaux": 0, "mouettes": 0,
@@ -495,8 +514,7 @@ func _start_round() -> void:
 	_heat_t = 0.0
 	_st.merge(tension_keys())
 	_tens.clear()
-	_revealed_at.clear()
-	_trap_hit_at = -100.0
+	_coup_chasseur_at = -100.0
 	_last_find_t = 0.0
 	_noise_at = -100.0
 	_rescues = 0
@@ -511,7 +529,6 @@ func _start_round() -> void:
 		a2.doubted = false
 		a2.ouf_t = 0.0
 		a2.speed_mult = 1.0
-		a2.sprint_left = 0.0
 		a2.chase_left = 0.0
 		a2.chase_used = false
 		a2.elan_mult = 1.0
@@ -542,13 +559,12 @@ func _start_round() -> void:
 		a.vanish_left = 0.0
 		a.pop_left = 0.0
 		a.search_left = 0.0
-		a.slow_left = 0.0
-		a.power_cd = 0.0
 		a.frozen = true
 		a.look = PI * 0.5
 		a.position = map.center(spots[0] if a == hunter else spots[mini(k, spots.size() - 1)])
 		if a != hunter:
 			k += 1
+	coups.reset()
 	for b: BkAi in brains.values():
 		b.reset()
 	if round_no == 1:
@@ -649,6 +665,10 @@ func _debug_key(touche: String) -> void:
 
 ## Tirage « en sac » : chacun est chasseur une fois avant qu'on recommence, jamais deux fois de suite.
 func _draw_hunter() -> BkActor:
+	# QA de la planche des effets : le chasseur est le dernier acteur (posé à l'écart).
+	if not _qa_effets.is_empty():
+		_last_hunter = actors.size() - 1
+		return actors[_last_hunter]
 	# Debug : rôle imposé à chaque round ; en chassé, les IA chassent tour à tour.
 	if debug and debug_role == "hunter":
 		_last_hunter = local.id
@@ -853,7 +873,8 @@ func _physics_process(dt: float) -> void:
 	if phase == Phase.HUNT:
 		_update_searches(dt)
 		_update_boitiers(dt)
-		_update_traps()
+		_qa_coups()
+		coups.maj(dt)
 		if visite != "chasse":
 			_update_capture(dt)
 		if _stats:
@@ -871,9 +892,6 @@ func _physics_process(dt: float) -> void:
 	alert_lost = maxf(0.0, alert_lost - dt)
 	for a3: BkActor in actors:
 		a3.ouf_t = maxf(0.0, a3.ouf_t - dt)
-	for r: Dictionary in reveals:
-		r["left"] = float(r["left"]) - dt
-	reveals = reveals.filter(func(r: Dictionary) -> bool: return float(r["left"]) > 0.0)
 	for m: Dictionary in messages:
 		m["left"] = float(m["left"]) - dt
 	messages = messages.filter(func(m: Dictionary) -> bool: return float(m["left"]) > 0.0)
@@ -922,8 +940,8 @@ func act_for(a: BkActor) -> void:
 				_enter_cachette(a, c)
 			elif b >= 0:
 				_start_boitier(a, b)
-			elif a.power_cd <= 0.0:
-				_place_trap(a)
+			else:
+				_lance_coup(a)
 		BkActor.Role.HUNTER:
 			if phase != Phase.HUNT or a.search_left > 0.0:
 				return
@@ -938,11 +956,45 @@ func act_for(a: BkActor) -> void:
 				var sh: float = BkRules.f("cachette_shake_search")
 				cachettes[c2]["jiggle"] = sh
 				_open_cachette(cachettes[c2], sh, a.search_left - sh, BkRules.f("cachette_shake_found"))
-			elif a.power_cd <= 0.0:
-				_detect(a)
+			else:
+				_lance_coup(a)
 
 
-## Libellé du bouton d'action pour un joueur (HUD).
+## Le bouton a lancé le coup du rôle (BkCoups) : message au joueur local s'il ne part pas.
+func _lance_coup(a: BkActor) -> void:
+	var r: String = coups.lance(a)
+	if r == "" or a != local or a.is_bot:
+		return
+	match r:
+		"bientot":
+			_say("%s : bientôt !" % str(coups.coup(a).get("nom", "")), Color("c8ccd4"), 1.5)
+		"aucun", "attente", "impossible":
+			pass
+		_:
+			_say(r, Color("c8ccd4"), 1.2)
+
+
+## Un coup est parti (BkCoups) : statistiques.
+func coup_lance(a: BkActor, _c: Dictionary) -> void:
+	if a == hunter:
+		_coup_chasseur_at = hunt_elapsed
+	if _stats:
+		_st["coups_chasseur" if a == hunter else "coups_chasse"] += 1
+
+
+## Un effet commun a pris sur `cible` (BkCoups.applique_effet) : un coup de chassé qui gêne le chasseur
+## rapporte hider_coup_touche points (GDD §2.3) ; vibration courte pour le joueur local (GDD §6).
+func effet_subi(cible: BkActor, type: String, source: BkActor) -> void:
+	if source != null and source.role == BkActor.Role.HIDER and cible == hunter and BkEffets.est_genant(type):
+		_give(source, BkRules.score("hider_coup_touche"))
+		if _stats:
+			_st["coups_touche"] += 1
+	if cible == local and not cible.is_bot and frisson != null:
+		frisson.vibre(1.0)
+
+
+## Libellé du bouton d'action pour un joueur (HUD) : cachette, fouille, disjoncteur, sinon le nom du
+## coup du rôle (GDD §4.1, §6).
 func action_label(a: BkActor) -> String:
 	match a.role:
 		BkActor.Role.HIDER:
@@ -952,23 +1004,23 @@ func action_label(a: BkActor) -> String:
 				return "Entrer"
 			if boitier_pour(a) >= 0:
 				return "Actionner"
-			return "Piège"
 		BkActor.Role.HUNTER:
 			if near_cachette(a, false) >= 0:
 				return "Fouiller"
 			if boitier_pour(a) >= 0:
 				return "Actionner"
-			return "Onde"
-	return ""
+	return str(coups.coup(a).get("nom", ""))
 
 
+## Le bouton montre-t-il le coup spécial (et pas une action de cachette ou de disjoncteur) ?
+func action_est_coup(a: BkActor) -> bool:
+	var c: Dictionary = coups.coup(a)
+	return not c.is_empty() and action_label(a) == str(c.get("nom", ""))
+
+
+## Recharge du bouton (1 → 0) quand il montre le coup.
 func action_cooldown(a: BkActor) -> float:
-	var label: String = action_label(a)
-	if label == "Piège":
-		return a.power_cd / BkRules.f("trap_cooldown")
-	if label == "Onde":
-		return a.power_cd / BkRules.f("detect_cooldown")
-	return 0.0
+	return coups.fraction(a) if action_est_coup(a) else 0.0
 
 
 func _hiders_left() -> int:
@@ -1195,7 +1247,10 @@ func _update_capture(dt: float) -> void:
 			a.doubted = false
 			a.chase_used = false
 			continue
-		var vis: float = sight_fraction(hunter, a.position, a.radius, progressive)
+		# Chasseur aveuglé ou chassé invisible (effets communs, GDD §4.5) : pas vu.
+		var vis: float = 0.0
+		if not BkEffets.actif(hunter, "aveugle") and not BkEffets.actif(a, "invisible"):
+			vis = sight_fraction(hunter, a.position, a.radius, progressive)
 		_seen[a.id] = vis > 0.0
 		a.lit = eclaire(pieds(a))
 		var before: float = a.gauge
@@ -1373,10 +1428,8 @@ func _found(a: BkActor, via: String = "vue") -> void:
 		(_st["t_trouves"] as Array).append(snappedf(hunt_elapsed, 0.1))
 		var tt: Vector2i = map.to_tile(a.position)
 		(_st["lieux_trouves"] as Array).append([tt.x, tt.y])
-		if hunt_elapsed - float(_revealed_at.get(a.id, -100.0)) < 12.0:
-			_st["trouves_apres_onde"] += 1
-		if hunt_elapsed - _trap_hit_at < 8.0:
-			_st["trouves_apres_piege"] += 1
+		if hunt_elapsed - _coup_chasseur_at < 10.0:
+			_st["trouves_apres_coup"] += 1
 		if hunt_elapsed - _noise_at < 10.0:
 			_st["trouves_apres_bruit"] += 1
 		# Captures « au dernier moment » : en pleine course, juste après une évasion, ou en fin de round.
@@ -1398,6 +1451,7 @@ func _found(a: BkActor, via: String = "vue") -> void:
 	hunter.elan_mult = 1.0
 	a.rescue_k = 0.0
 	a.use_left = 0.0
+	BkEffets.efface(a)
 	if a.hidden_in >= 0:
 		_leave_cachette(a, false)
 	a.play_once("found")
@@ -1611,67 +1665,26 @@ func _update_searches(dt: float) -> void:
 					_say("Personne…", Color.WHITE, 1.2)
 
 
-# ---------------------------------------------------------------- pouvoirs
+# ---------------------------------------------------------------- QA des coups
 
-func _place_trap(a: BkActor) -> void:
-	traps.append({"pos": a.position, "owner": a.id})
-	var mine: Array = traps.filter(func(t: Dictionary) -> bool: return int(t["owner"]) == a.id)
-	if mine.size() > int(BkRules.f("trap_max")):
-		traps.erase(mine[0])
-	a.power_cd = BkRules.f("trap_cooldown")
-	a.play_once("trap")
-	if _stats:
-		_st["pieges_poses"] += 1
-
-
-func _update_traps() -> void:
-	if hunter.frozen:
-		return
-	for t: Dictionary in traps.duplicate():
-		if hunter.position.distance_to(t["pos"]) < hunter.radius + map.tile * 0.3:
-			traps.erase(t)
-			hunter.slow_left = BkRules.f("trap_duration")
-			if _stats:
-				_st["pieges_pris"] += 1
-				_trap_hit_at = hunt_elapsed
-			var owner: BkActor = actors[int(t["owner"])]
-			_give(owner, BkRules.score("hider_trap_hit"))
-			_say("Piège de %s !" % owner.display_name, Color("f2c12e"), 1.6)
-			for b: BkAi in brains.values():
-				b.on_trap(t["pos"])
-
-
-func _detect(h: BkActor) -> void:
-	h.power_cd = BkRules.f("detect_cooldown")
-	h.play_once("detect")
-	var found: Array[Vector2] = []
-	for a: BkActor in actors:
-		if a.role == BkActor.Role.HIDER and a.position.distance_to(h.position) <= BkRules.px("detect_radius"):
-			reveals.append({"pos": a.position, "left": BkRules.f("detect_duration"), "id": a.id})
-			found.append(a.position)
-			_revealed_at[a.id] = hunt_elapsed
-	reveals.append({"pos": h.position, "left": 0.6, "id": -1})     # l'onde elle-même
-	# Personne dans le rayon : une flèche vers le chassé libre le plus proche (l'onde donne
-	# toujours un indice, sans révéler où il est exactement).
-	var hint: Vector2 = Vector2.ZERO
-	if found.is_empty():
-		var best: BkActor = null
+## QA : effets maintenus (`--bk-qa-effet`, tout le monde immobile sauf le joueur local) et coup du joueur
+## local lancé à heure fixe (`--bk-qa-coup`).
+func _qa_coups() -> void:
+	for spec: PackedStringArray in _qa_effets:
+		var i: int = int(spec[0])
+		if i < 0 or i >= actors.size() or spec.size() < 2:
+			continue
+		var params: Dictionary = {}
+		if spec[1] == "tracte":
+			params["vers"] = actors[i].position + Vector2(3.0 * map.tile, -map.tile)
+		if not BkEffets.actif(actors[i], spec[1]):
+			BkEffets.force(actors[i], spec[1], params)
+	if not _qa_effets.is_empty():
 		for a: BkActor in actors:
-			if a.role == BkActor.Role.HIDER and (best == null
-					or a.position.distance_to(h.position) < best.position.distance_to(h.position)):
-				best = a
-		if best != null:
-			hint = (best.position - h.position).normalized()
-			reveals.append({"pos": h.position, "dir": hint, "left": BkRules.f("detect_hint_duration"), "id": -2})
-	if _stats:
-		_st["ondes"] += 1
-		_st["montres"] += found.size()
-		if not found.is_empty():
-			_st["ondes_utiles"] += 1
-	if brains.has(h.id):
-		(brains[h.id] as BkAi).on_detect(found, hint)
-	if h != local:
-		_say("Le chasseur lance une onde !", Color("9fd8ef"), 1.4)
+			a.frozen = a != local
+	if _qa_coup_t >= 0.0 and hunt_elapsed >= _qa_coup_t:
+		_qa_coup_t = -1.0
+		print("[bk-qa] coup de %s : « %s »" % [local.display_name, coups.lance(local)])
 
 
 # ---------------------------------------------------------------- idées de gameplay (A/B)
@@ -1780,18 +1793,17 @@ func _update_ideas(dt: float) -> void:
 			gh.rescue_k += dt / BkRules.f("delivrance_temps")
 			if gh.rescue_k >= 1.0:
 				_rescue(gh, helper)
-	# Gâteaux basques : un chassé qui en ramasse un marque un point et file un moment.
+	# Gâteaux basques (GDD §3.5) : chassé ou chasseur, celui qui en ramasse un recharge son coup spécial
+	# tout de suite ; un coup déjà prêt ne le mange pas (le gâteau reste au sol).
 	for g2: Dictionary in gateaux.duplicate():
 		for a: BkActor in actors:
-			if a.role == BkActor.Role.HIDER and a.hidden_in < 0 \
-					and a.position.distance_to(g2["pos"]) < BkRules.px("gateau_portee"):
+			if (a.role == BkActor.Role.HIDER or a.role == BkActor.Role.HUNTER) and a.hidden_in < 0 \
+					and a.position.distance_to(g2["pos"]) < BkRules.px("gateau_portee") and coups.recharge_immediate(a):
 				gateaux.erase(g2)
 				if BkRules.on("idee_mouvement"):
 					_cake_respawn.append(hunt_elapsed + BkRules.f("gateaux_reapparition"))
-				a.sprint_left = BkRules.f("gateau_duree")
-				_give(a, BkRules.score("hider_cake"))
 				if a == local:
-					_say("Gâteau basque : ça file !", Color("ffd34a"), 1.6)
+					_say("Gâteau basque : coup rechargé !", Color("ffd34a"), 1.6)
 				if _stats:
 					_st["gateaux"] += 1
 				break
@@ -1835,6 +1847,7 @@ func _rescue(gh: BkActor, helper: BkActor) -> void:
 	for a: BkActor in actors:
 		a.rescue_k = 0.0
 	gh.set_role(BkActor.Role.HIDER)
+	BkEffets.efface(gh)
 	gh.position = helper.position          # un fantôme traverse les murs : il revient à côté de son sauveur
 	gh.gauge = 0.0
 	gh.play_once("hide_out")
@@ -1962,6 +1975,9 @@ func _update_view() -> void:
 			show = a == local
 		elif as_hunter and a != hunter:
 			show = a.role == BkActor.Role.HIDER and bool(_seen.get(a.id, false))
+		# Invisible (effet commun) : rien pour les autres ; il se voit à 30 % (BkEffetsRendu).
+		if BkEffets.actif(a, "invisible") and a != local and not BkEffetsRendu.qa:
+			show = false
 		if a.shown != show:
 			a.shown = show
 			a.queue_redraw()
@@ -2058,15 +2074,6 @@ func _draw_overlay(ci: CanvasItem) -> void:
 				ci.draw_polyline(PackedVector2Array([bp2 + Vector2(-3, -1), bp2, bp2 + Vector2(3, -1)]),
 					Color(1, 1, 1, fly / 1.5), 1.0)
 			_draw_noise_bubble(ci, mp + Vector2(0, -t * 0.9 - up * 0.5), "kaio !", fly / 1.5)
-	# Pièges : visibles des chassés ; le chasseur ne les voit que tout près, dans sa vue.
-	for tr: Dictionary in traps:
-		var p: Vector2 = (tr["pos"] as Vector2).round()
-		if as_hunter and (p.distance_to(hunter.position) > BkRules.px("trap_seen_range") or not sees(hunter, p, 3.0)):
-			continue
-		ci.draw_circle(p, t * 0.28, Color(0.95, 0.75, 0.2, 0.55))
-		for k: int in 4:
-			var ang: float = float(k) * PI / 4.0
-			ci.draw_line(p - Vector2.from_angle(ang) * t * 0.28, p + Vector2.from_angle(ang) * t * 0.28, Color("5a3410"), 1.0)
 	# Cône rouge du chasseur, vu des chassés et des fantômes.
 	if not as_hunter and hunter and (phase == Phase.HUNT or phase == Phase.HIDE):
 		var poly: PackedVector2Array = cone_polygon(hunter)
@@ -2083,18 +2090,8 @@ func _draw_overlay(ci: CanvasItem) -> void:
 				var k4: float = a4.ouf_t / OUF_S
 				_draw_noise_bubble(ci, a4.position + Vector2(0, a4.name_y() - 10.0 - 12.0 * (1.0 - k4)), "ouf !",
 					k4, Color("6fe08a"))
-	# Onde de détection et silhouettes révélées.
-	for r2: Dictionary in reveals:
-		var left: float = float(r2["left"])
-		if int(r2["id"]) == -2:
-			if as_hunter or not local.is_hider():
-				_draw_hint_arrow(ci, hunter.position, r2["dir"], left)
-		elif int(r2["id"]) < 0:
-			var k2: float = 1.0 - left / 0.6
-			ci.draw_arc(r2["pos"], BkRules.px("detect_radius") * k2, 0, TAU, 64, Color(0.6, 0.85, 1.0, 1.0 - k2), 2.0)
-		elif as_hunter or not local.is_hider():
-			ci.draw_circle(r2["pos"], t * 0.4, Color(0.6, 0.85, 1.0, 0.5))
-			ci.draw_arc(r2["pos"], t * 0.46, 0, TAU, 24, Color(0.6, 0.85, 1.0), 1.0)
+	# Coups spéciaux : pistes, annonces, bulles (BkCoups).
+	coups.dessine(ci, as_hunter)
 	# Progression de la sortie.
 	for a: BkActor in actors:
 		if a.extract_t > 0.0 and a.role == BkActor.Role.HIDER and (not as_hunter or bool(_seen.get(a.id, false))):
@@ -2187,14 +2184,3 @@ func _draw_alert(ci: CanvasItem) -> void:
 	elif alert_lost > 0.0:
 		var k2: float = alert_lost / ALERT_LOST_S
 		_draw_noise_bubble(ci, head + Vector2(0, roundf(4.0 * (1.0 - k2))), "?", k2, Color("c8ccd4"), 8)
-
-
-## Flèche d'indice de l'onde : part du chasseur dans la direction du chassé le plus proche.
-func _draw_hint_arrow(ci: CanvasItem, from: Vector2, dir: Vector2, left: float) -> void:
-	var a: float = clampf(left, 0.0, 1.0)
-	var c: Color = Color(0.6, 0.85, 1.0, a)
-	var p0: Vector2 = from + dir * map.tile * 1.4
-	var p1: Vector2 = from + dir * map.tile * 3.2
-	ci.draw_line(p0, p1, c, 2.0)
-	var side: Vector2 = dir.orthogonal() * map.tile * 0.45
-	ci.draw_colored_polygon(PackedVector2Array([p1 + dir * map.tile * 0.7, p1 + side, p1 - side]), c)

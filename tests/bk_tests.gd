@@ -4,8 +4,9 @@ extends SceneTree
 ## (tirage en sac, versus, podium), la partie rapide (réglages → règles), le profil (persistance),
 ## la carte bac à sable (cases de vue et de passage), les persos en pixel art (planches et repli),
 ## la lumière et l'ombre (éclairé derrière un mur, jauge 3 fois plus lente, silhouette), les
-## disjoncteurs (coupure de 15 s, recharge, rallumage par le chasseur, priorité du bouton) et le menu
-## debug.
+## disjoncteurs (coupure de 15 s, recharge, rallumage par le chasseur, priorité du bouton), le menu
+## debug et les coups spéciaux (données, recharge et gâteaux, plafond des effets et protection, aimant de
+## visée, Passe-Muraille, Cache-Cache !, pièges et onde retirés).
 ## godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd [-- --only=nom]
 
 const GAME: String = "res://src/blackout/bk_game.tscn"
@@ -34,7 +35,8 @@ func _run() -> void:
 		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo, test_roster,
 		test_persos_px32, test_cases_vue_passage, test_bac_a_sable, test_regles_carte,
 		test_eclaire_mur, test_ombre_facteur, test_ombre_capture_silhouette, test_disjoncteur,
-		test_disjoncteur_priorite, test_disjoncteur_ia, test_menu_debug]
+		test_disjoncteur_priorite, test_disjoncteur_ia, test_menu_debug, test_coups_donnees, test_recharge,
+		test_plafond_protection, test_aimant, test_passe_muraille, test_cache_cache, test_pieges_retires]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
 			continue
@@ -206,6 +208,7 @@ func make_game(pleine_lumiere: bool = true) -> BkGame:
 	game.hunter = game.actors[0]
 	for a: BkActor in game.actors:
 		a.set_role(BkActor.Role.HUNTER if a == game.hunter else BkActor.Role.HIDER)
+		a.character = "louis"                  # coups codés à l'étape 3 : ceux de Louis
 		a.frozen = false
 		a.gauge = 0.0
 		a.position = Vector2(-5000, -5000)
@@ -914,7 +917,7 @@ func test_disjoncteur() -> void:
 	avance_boitiers(game, BkRules.f("disjoncteur_temps") + 2.0 * DT)
 	check(game.pannes.is_empty() and game.eclaire(sous_lampe), "le chasseur a rallumé")
 	check(int(game._st["rallumages"]) == 1, "rallumage compté")
-	check(game.action_label(c) == "Onde", "secteur allumé : le chasseur n'a rien à actionner")
+	check(game.action_label(c) == "Cache-Cache !", "secteur allumé : le chasseur n'a rien à actionner, son coup")
 	await free_game(game)
 
 
@@ -931,7 +934,17 @@ func test_disjoncteur_priorite() -> void:
 	check(game.action_label(h) == "Entrer", "cachette à portée : Entrer d'abord (%s)" % game.action_label(h))
 	game.cachettes.pop_back()
 	h.position = game.map.center(Vector2i(24, 18))
-	check(game.action_label(h) == "Piège", "loin de tout : le pouvoir")
+	check(game.action_label(h) == "Passe-Muraille" and game.action_est_coup(h), "loin de tout : le coup spécial")
+	# Chasseur : la fouille passe avant le coup ; loin de tout, le bouton lance le coup.
+	var c: BkActor = game.hunter
+	c.position = game.map.center(Vector2i(24, 18))
+	check(game.action_label(c) == "Cache-Cache !", "chasseur loin de tout : son coup")
+	game.cachettes.append({"tile": Vector2i(25, 18), "pos": game.map.center(Vector2i(25, 18))})
+	game._reset_cachettes()
+	check(game.action_label(c) == "Fouiller" and not game.action_est_coup(c), "cachette à portée : Fouiller d'abord")
+	game.cachettes.pop_back()
+	game.act_for(c)
+	check(c.coup_cd > 0.0 and game.coups.actifs.size() == 1, "le bouton lance le coup (recharge %.0f s)" % c.coup_cd)
 	game.phase = BkGame.Phase.HIDE
 	h.position = game.map.center(b["pos"])
 	check(game.action_label(h) != "Actionner", "pendant la cachette : pas de disjoncteur")
@@ -1006,3 +1019,299 @@ func test_menu_debug() -> void:
 	scr.reinitialiser()
 	ecran.queue_free()
 	await process_frame
+
+
+# ------------------------------------------------------------------ coups spéciaux (#627, #630)
+
+## Fait vivre les coups et les effets `secs` s (comme pendant la chasse).
+func avance_coups(game: BkGame, secs: float) -> void:
+	for i: int in int(round(secs / DT)):
+		game.coups.maj(DT)
+
+
+## Données (GDD §4.4) : 13 persos × 2 coups, champs communs, familles connues, recharges ≈25 s (chassé)
+## et ≈20 s (chasseur) ; seuls ceux de Louis sont codés à l'étape 3, les autres sont « bientôt ».
+func test_coups_donnees() -> void:
+	var d: Dictionary = BkCoups.donnees()
+	var persos: Dictionary = d.get("persos", {})
+	var familles: Dictionary = d.get("familles", {})
+	check(persos.size() == 13, "13 persos (%d)" % persos.size())
+	check(familles.size() == 6 and near(float(d.get("aimant_deg", 0.0)), 20.0, 1e-6), "6 familles, aimant de 20°")
+	var ids: Dictionary = {}
+	for ch: Variant in BkRules.data()["characters"]:
+		check(persos.has(ch), "coups de %s" % ch)
+		for role: String in ["chasse", "chasseur"]:
+			var c: Dictionary = BkCoups.coup_de(str(ch), role == "chasseur")
+			for k: String in ["id", "nom", "famille", "recharge", "portee", "duree"]:
+				check(c.has(k), "%s/%s : champ %s" % [ch, role, k])
+			check(familles.has(str(c.get("famille", ""))), "%s/%s : famille connue (%s)" % [ch, role, c.get("famille")])
+			check(near(float(c.get("recharge", 0.0)), 25.0 if role == "chasse" else 20.0, 5.0),
+				"%s/%s : recharge %.0f s" % [ch, role, float(c.get("recharge", 0.0))])
+			check(BkCoups.code(c) == (str(ch) == "louis"), "%s/%s : codé seulement pour Louis" % [ch, role])
+			check(not ids.has(c.get("id")), "id unique : %s" % c.get("id"))
+			ids[c.get("id")] = true
+	check(str(BkCoups.coup_de("louis", false)["nom"]) == "Passe-Muraille" and str(BkCoups.coup_de("louis", true)["nom"]) == "Cache-Cache !",
+		"coups de Louis")
+
+
+## Recharge (GDD §4.1) : le coup part, la recharge du coup démarre (bouton plein → vide), un second appui
+## ne fait rien ; un gâteau basque recharge tout de suite (chassé ou chasseur), sans point ni sprint ; un
+## coup prêt ne mange pas le gâteau ; un coup pas encore codé est « bientôt » et ne consomme rien.
+func test_recharge() -> void:
+	var game: BkGame = await make_game()
+	var h: BkActor = game.hunter
+	game.local = h
+	check(game.action_label(h) == "Cache-Cache !" and near(game.action_cooldown(h), 0.0, 1e-6), "coup prêt")
+	check(game.coups.lance(h) == "", "le coup part")
+	var rc: float = float(BkCoups.coup_de("louis", true)["recharge"])
+	check(near(h.coup_cd, rc, 1e-6) and near(game.action_cooldown(h), 1.0, 1e-6), "recharge de %.0f s" % rc)
+	check(game.coups.lance(h) == "attente" and game.coups.actifs.size() == 1, "en recharge : rien ne part")
+	for i: int in 60 * 5:
+		h.step(Vector2.ZERO, Vector2.ZERO, DT)
+	check(near(h.coup_cd, rc - 5.0, 0.05) and near(game.action_cooldown(h), (rc - 5.0) / rc, 0.01),
+		"la recharge s'écoule (%.2f s)" % h.coup_cd)
+	# Gâteau : recharge immédiate du chasseur.
+	var s0: int = h.score
+	game.gateaux = [{"pos": h.position}]
+	game._update_ideas(DT)
+	check(h.coup_cd <= 0.0 and game.gateaux.is_empty(), "gâteau mangé : coup rechargé")
+	check(h.score == s0 and near(h.speed(), BkRules.px("speed_hunter") * h.speed_mult, 1e-3), "ni point ni sprint")
+	game.gateaux = [{"pos": h.position}]
+	game._update_ideas(DT)
+	check(game.gateaux.size() == 1, "coup déjà prêt : le gâteau reste au sol")
+	# Chassé.
+	var c: BkActor = game.actors[1]
+	c.position = tile_pos(game, 28, 12)
+	c.coup_cd = 10.0
+	c.coup_cd_max = 25.0
+	var sc: int = c.score
+	game.gateaux = [{"pos": c.position}]
+	game._update_ideas(DT)
+	check(c.coup_cd <= 0.0 and c.score == sc, "chassé : gâteau = recharge, pas de point")
+	# Coup pas encore codé : « bientôt ».
+	c.character = "txomin"
+	check(game.action_label(c) == "Fil d'Ariane" and game.coups.lance(c) == "bientot" and c.coup_cd <= 0.0,
+		"coup d'un autre perso : « bientôt », rien de consommé")
+	await free_game(game)
+
+
+## Garde-fous (GDD §4.3) : effet gênant ≤ 3 s, fenêtre de gêne partagée, puis 2 s de protection ;
+## commandes inversées ≤ 2 s ; révélé non plafonné et accepté pendant la protection ; insensible refuse ;
+## figé bloque, inversé retourne, ralenti ralentit ; un coup de chassé qui gêne le chasseur rapporte 2
+## points ; chasseur aveuglé : la jauge ne monte plus.
+func test_plafond_protection() -> void:
+	var game: BkGame = await make_game()
+	var co: BkCoups = game.coups
+	var a: BkActor = game.actors[1]
+	a.position = devant(game, 3)
+	var cap: float = BkRules.f("effet_max_genant_s")
+	check(near(cap, 3.0, 1e-6) and near(BkRules.f("effet_protection_s"), 2.0, 1e-6) and near(BkRules.f("effet_inverse_max_s"), 2.0, 1e-6),
+		"réglages : 3 s, 2 s de protection, inversé 2 s")
+	check(co.applique_effet(a, "fige", 10.0), "figé posé")
+	check(near(float(a.effets["fige"]["left"]), cap, 1e-6), "plafonné à %.0f s (%.2f)" % [cap, float(a.effets["fige"]["left"])])
+	avance_coups(game, 1.0)
+	check(co.applique_effet(a, "colle", 5.0), "collé par-dessus")
+	check(near(float(a.effets["colle"]["left"]), cap - 1.0, 0.05), "fenêtre de gêne partagée : %.2f s" % float(a.effets["colle"]["left"]))
+	avance_coups(game, cap - 1.0 + 2.0 * DT)
+	check(not BkEffets.gene_en_cours(a) and near(a.protection, BkRules.f("effet_protection_s"), 0.05),
+		"gêne finie au bout de 3 s, protection %.2f s" % a.protection)
+	check(not co.applique_effet(a, "ralenti", 1.0) and not co.applique_effet(a, "fige", 1.0), "protection : aucun nouvel effet gênant")
+	check(co.applique_effet(a, "revele", 10.0) and near(float(a.effets["revele"]["left"]), 10.0, 1e-6), "révélé : non plafonné, passe la protection")
+	avance_coups(game, BkRules.f("effet_protection_s") + 2.0 * DT)
+	check(a.protection <= 0.0, "protection finie")
+	check(co.applique_effet(a, "inverse", 5.0) and near(float(a.effets["inverse"]["left"]), 2.0, 1e-6), "inversé : 2 s au plus")
+	var x0: float = a.position.x
+	a.step(Vector2.RIGHT, Vector2.ZERO, 0.1)
+	check(a.position.x < x0 - 1.0, "inversé : on part à l'opposé")
+	BkEffets.efface(a)
+	check(co.applique_effet(a, "fige", 1.0), "figé")
+	var p0: Vector2 = a.position
+	a.step(Vector2.RIGHT, Vector2.ZERO, 0.1)
+	check(a.position == p0, "figé : immobile")
+	BkEffets.efface(a)
+	var v0: float = a.speed()
+	co.applique_effet(a, "ralenti", 2.0)
+	check(near(a.speed() / v0, 1.0 - BkRules.f("effet_ralenti_k"), 1e-4), "ralenti : vitesse × 0,7")
+	BkEffets.efface(a)
+	co.applique_effet(a, "insensible", 4.0)
+	check(not co.applique_effet(a, "fige", 1.0) and near(float(a.effets["insensible"]["left"]), 4.0, 1e-6), "insensible : refuse, et dure 4 s")
+	# Coup de chassé qui gêne le chasseur : +2 (GDD §2.3) ; chasseur aveuglé : la jauge ne monte plus.
+	var h: BkActor = game.hunter
+	var s0: int = a.score
+	check(co.applique_effet(h, "aveugle", 5.0, {}, a) and a.score == s0 + BkRules.score("hider_coup_touche"),
+		"chassé qui touche le chasseur : +%d" % BkRules.score("hider_coup_touche"))
+	check(near(float(h.effets["aveugle"]["left"]), cap, 1e-6), "aveuglé plafonné à 3 s")
+	BkEffets.efface(a)
+	a.gauge = 0.0
+	tick(game, 0.2)
+	check(a.gauge <= 0.0, "chasseur aveuglé : la jauge ne monte pas")
+	await free_game(game)
+
+
+## Visée (GDD §4.2) : droit devant, aimant de ±20° vers la cible visible la mieux alignée, à portée ;
+## rien au-delà de 20°, derrière un mur, hors de portée ou invisible.
+func test_aimant() -> void:
+	var game: BkGame = await make_game()
+	var co: BkCoups = game.coups
+	var h: BkActor = game.hunter
+	var t: float = game.map.tile
+	var a: BkActor = game.actors[1]
+	var b: BkActor = game.actors[2]
+	var cibles: Array[BkActor] = [a]
+	a.position = h.position + Vector2.from_angle(deg_to_rad(15.0)) * 4.0 * t
+	var r: Dictionary = co.vise(h, Vector2.RIGHT, 8.0 * t, cibles)
+	check(r["cible"] == a and absf(angle_difference((r["dir"] as Vector2).angle(), deg_to_rad(15.0))) < 0.02, "15° : aimanté vers la cible")
+	a.position = h.position + Vector2.from_angle(deg_to_rad(30.0)) * 4.0 * t
+	r = co.vise(h, Vector2.RIGHT, 8.0 * t, cibles)
+	check(r["cible"] == null and (r["dir"] as Vector2).is_equal_approx(Vector2.RIGHT), "30° : droit devant")
+	a.position = h.position + Vector2.from_angle(deg_to_rad(10.0)) * 9.0 * t
+	r = co.vise(h, Vector2.RIGHT, 8.0 * t, cibles)
+	check(r["cible"] == null, "hors de portée : rien")
+	a.position = h.position + Vector2.from_angle(deg_to_rad(15.0)) * 4.0 * t
+	b.position = h.position + Vector2.from_angle(deg_to_rad(-5.0)) * 5.0 * t
+	cibles.append(b)
+	r = co.vise(h, Vector2.RIGHT, 8.0 * t, cibles)
+	check(r["cible"] == b, "deux cibles : la mieux alignée")
+	BkEffets.force(b, "invisible")
+	r = co.vise(h, Vector2.RIGHT, 8.0 * t, cibles)
+	check(r["cible"] == a, "cible invisible ignorée")
+	# Derrière un mur plein : (12, 10) regarde (12, 8) par-dessus le mur (12, 9).
+	h.position = tile_pos(game, 12, 10)
+	a.position = tile_pos(game, 12, 8)
+	var seul: Array[BkActor] = [a]
+	r = co.vise(h, Vector2.UP, 8.0 * t, seul)
+	check(r["cible"] == null, "derrière un mur : rien")
+	# Le chasseur vise les chassés hors cachette ; un chassé vise le chasseur.
+	a.hidden_in = 0
+	check(not co.adversaires(h, {}).has(a) and co.adversaires(h, {"touche_cachette": true}).has(a), "cachette : pas touché sauf drapeau")
+	a.hidden_in = -1
+	var vs: Array[BkActor] = co.adversaires(a, {})
+	check(vs.size() == 1 and vs[0] == h, "un chassé vise le chasseur")
+	await free_game(game)
+
+
+## Passe-Muraille (Louis chassé) : par-dessus un muret (en vol, sans collision, au-dessus de la case),
+## posé derrière ; rien contre un mur plein (recharge non consommée) ; à travers une cloison fine ; l'IA
+## en danger saute l'obstacle qui l'éloigne du chasseur.
+func test_passe_muraille() -> void:
+	var game: BkGame = await make_game()
+	var m: BkMap = game.map
+	var l: BkActor = game.actors[1]
+	check(m.at(Vector2i(24, 16)) == "m" and m.walkable(Vector2i(24, 15)) and m.walkable(Vector2i(24, 17)), "précondition : muret en (24, 16)")
+	l.position = m.center(Vector2i(24, 17))
+	l.look = -PI * 0.5
+	check(game.action_label(l) == "Passe-Muraille", "bouton : Passe-Muraille")
+	check(game.coups.lance(l) == "", "le saut part")
+	check(l.en_coup and near(l.coup_cd, 25.0, 1e-6), "en coup, recharge de 25 s")
+	avance_coups(game, 0.25)
+	check(l.saut_px > 10.0 and m.to_tile(l.position) == Vector2i(24, 16) and l.collision_mask == 0,
+		"en vol au-dessus du muret (%.0f px, case %s)" % [l.saut_px, m.to_tile(l.position)])
+	var p_vol: Vector2 = l.position
+	l.step(Vector2.DOWN, Vector2.ZERO, 0.1)
+	check(l.position == p_vol, "en vol : les commandes ne bougent pas le perso")
+	avance_coups(game, 0.4)
+	check(not l.en_coup and m.to_tile(l.position) == Vector2i(24, 15) and l.collision_mask == BkMap.LAYER_MOVE and l.saut_px == 0.0,
+		"posé derrière le muret (%s)" % m.to_tile(l.position))
+	# Mur plein : rien, recharge non consommée.
+	l.coup_cd = 0.0
+	l.position = m.center(Vector2i(12, 10))
+	l.look = -PI * 0.5
+	check(m.at(Vector2i(12, 9)) == "#" and m.walkable(Vector2i(12, 8)), "précondition : mur plein en (12, 9)")
+	check(game.coups.lance(l) == "Rien à franchir devant" and l.coup_cd <= 0.0 and not l.en_coup, "mur plein : rien, recharge non consommée")
+	# Rien devant (sol libre) : rien non plus.
+	l.position = m.center(Vector2i(25, 12))
+	l.look = 0.0
+	check(game.coups.lance(l) != "" and l.coup_cd <= 0.0, "sol libre devant : rien")
+	# Cloison fine.
+	l.position = m.center(Vector2i(9, 13))
+	l.look = 0.0
+	check(m.at(Vector2i(10, 13)) == "|", "précondition : cloison fine en (10, 13)")
+	check(game.coups.lance(l) == "", "cloison fine : le saut part")
+	avance_coups(game, 0.7)
+	check(m.to_tile(l.position) == Vector2i(11, 13), "de l'autre côté de la cloison (%s)" % m.to_tile(l.position))
+	# Regard en biais (surtout vers le bas, un peu à gauche) : l'axe dominant, puis l'autre.
+	var dirs: Array[Vector2i] = BkCoupDeplacement.directions(Vector2(-0.5, 1.0))
+	check(dirs.size() == 2 and dirs[0] == Vector2i(0, 1) and dirs[1] == Vector2i(-1, 0), "biais : axe dominant puis l'autre (%s)" % str(dirs))
+	# IA : chassé menacé contre le muret, chasseur en dessous : il saute vers le haut.
+	l.coup_cd = 0.0
+	l.position = m.center(Vector2i(24, 17))
+	l.look = PI * 0.5
+	l.gauge = 0.4
+	game.hunter.position = m.center(Vector2i(24, 21))
+	check(not game.coups.essaie_ia(l, {"menace": false}), "IA sans danger : rien")
+	check(game.coups.essaie_ia(l, {"menace": true}) and l.en_coup, "IA en danger : elle saute")
+	avance_coups(game, 0.7)
+	check(m.to_tile(l.position) == Vector2i(24, 15), "IA : par-dessus le muret, loin du chasseur (%s)" % m.to_tile(l.position))
+	await free_game(game)
+
+
+## Cache-Cache ! (Louis chasseur) : bulle « 1, 2, 3… j'arrive ! » et annonce vues de tous ; pendant 5 s,
+## le chassé libre le plus proche laisse une piste de pas qui s'estompe ; pas dans une cachette ; l'IA du
+## chasseur suit le dernier pas.
+func test_cache_cache() -> void:
+	var game: BkGame = await make_game()
+	var h: BkActor = game.hunter
+	var t: float = game.map.tile
+	game.local = h
+	var a1: BkActor = game.actors[1]
+	var a2: BkActor = game.actors[2]
+	a1.position = tile_pos(game, 28, 12)
+	a2.position = tile_pos(game, 33, 12)
+	check(game.coups.lance(h) == "", "Cache-Cache ! part")
+	var inst: BkCoupRevele = game.coups.actifs[0] as BkCoupRevele
+	check(inst != null and inst.cible == a1, "cible : le chassé le plus proche")
+	check(game.coups.bulles.size() == 1 and str(game.coups.bulles[0]["texte"]).contains("j'arrive"), "bulle « 1, 2, 3… j'arrive ! »")
+	check(game.coups.annonces.size() == 1 and str(game.coups.annonces[0]["nom"]) == "Cache-Cache !", "annonce au-dessus du chasseur")
+	for i: int in 60:
+		a1.position += Vector2(0, 3.0 * t / 60.0)
+		a2.position += Vector2(0, 3.0 * t / 60.0)
+		game.coups.maj(DT)
+	var params: Dictionary = BkCoups.coup_de("louis", true)["params"]
+	check(inst.pas.size() >= int(3.0 / float(params["pas_ecart"])), "pas posés en marchant (%d)" % inst.pas.size())
+	check(inst.pas.all(func(p: Dictionary) -> bool: return absf((p["pos"] as Vector2).x - a1.position.x) < 1.0), "seulement les pas du plus proche")
+	check(game.coups.piste_de(h).distance_to(a1.position) < t, "dernier pas : là où il est")
+	var hai: BkAi = BkAi.new(game, h, "normal")
+	hai._think_hunter()
+	check(hai.clue != Vector2.INF and hai.clue.distance_to(a1.position) < 1.5 * t, "IA du chasseur : le dernier pas devient l'indice")
+	# Après 5 s : plus de nouveaux pas ; la piste s'estompe puis le coup se termine.
+	avance_coups(game, 4.2)
+	for i2: int in 30:
+		a1.position += Vector2(0, -2.0 * t / 30.0)
+		game.coups.maj(DT)
+	check(inst.pas.all(func(p: Dictionary) -> bool: return float(p["age"]) > 0.4), "après 5 s : plus de nouveaux pas")
+	avance_coups(game, float(params["pas_vie"]))
+	check(game.coups.actifs.is_empty(), "la piste s'est estompée, coup fini")
+	# Un chassé dans une cachette n'est pas pisté : le suivant le plus proche l'est.
+	a1.hidden_in = 0
+	h.coup_cd = 0.0
+	check(game.coups.lance(h) == "" and (game.coups.actifs[0] as BkCoupRevele).cible == a2, "chassé en cachette ignoré")
+	a1.hidden_in = -1
+	await free_game(game)
+
+
+## Pièges et onde de détection retirés (GDD §4, 22/10) : plus de réglages, de points ni d'IA ; le
+## bouton ne propose plus « Piège » ni « Onde » ; les points « coup qui touche le chasseur » les remplacent.
+func test_pieges_retires() -> void:
+	for k: String in ["trap_cooldown", "trap_max", "trap_slow", "trap_duration", "trap_seen_range", "detect_cooldown",
+			"detect_radius", "detect_duration", "detect_hint_duration", "gateau_sprint", "gateau_duree"]:
+		check(not BkRules.data().has(k), "réglage retiré : " + k)
+	var sc: Dictionary = BkRules.data()["score"]
+	check(not sc.has("hider_trap_hit") and not sc.has("hider_cake") and int(sc.get("hider_coup_touche", 0)) == 2,
+		"points : coup qui touche le chasseur +2")
+	for lv: Variant in BkRules.data()["ai"]:
+		var cfg: Dictionary = BkRules.ai(str(lv))
+		check(not cfg.has("trap_ambush") and not cfg.has("trap_chase") and not cfg.has("smart_wave") and cfg.has("coup"),
+			"IA %s : plus de piège ni d'onde, un réglage de coup" % lv)
+	for o: Dictionary in BkRules.options_partie():
+		for r: Dictionary in o.get("reglages", []):
+			check(str(r.get("cle", "")) != "gateau_duree", "option du sprint de gâteau retirée")
+	var game: BkGame = await make_game()
+	check(not ("traps" in game) and not ("reveals" in game), "plus de pièges ni d'ondes dans la partie")
+	check(not game.has_method("_place_trap") and not game.has_method("_detect") and not game.has_method("_update_traps"),
+		"plus de pose ni de déclenchement")
+	var ai: BkAi = BkAi.new(game, game.actors[1], "normal")
+	check(not ai.has_method("on_trap") and not ai.has_method("on_detect") and not ("ambush" in ai), "IA : plus de piège ni d'onde")
+	for a: BkActor in game.actors:
+		a.position = tile_pos(game, 24, 18)
+		check(not (game.action_label(a) in ["Piège", "Onde"]), "bouton sans Piège ni Onde (%s)" % game.action_label(a))
+	await free_game(game)

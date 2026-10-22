@@ -1,10 +1,10 @@
 class_name BkVersus
 extends Control
-## Écran Versus (GDD-BLACKOUT.md), entre le tirage et la cachette : à gauche le chasseur en grand
-## (avatar animé, pseudo, icône de détection), à droite les chassés (avatar, pseudo, icône de
-## piège), grand « VS » au centre qui arrive avec une secousse, compte à rebours
-## 5 → 1 et son de tension généré ici (grondement qui monte, un coup de tambour par seconde).
-## En attendant les icônes par perso (§4.2), une onde (détection) et une mâchoire (piège) génériques.
+## Écran Versus (GDD-BLACKOUT.md §2.2), entre le tirage et la cachette : à gauche le chasseur en grand
+## (avatar animé, pseudo, icône et nom de son coup de chasseur), à droite les chassés (avatar, pseudo,
+## icône et nom de leur coup de chassé), grand « VS » au centre qui arrive avec une secousse, compte à
+## rebours 5 → 1 et son de tension généré ici (grondement qui monte, un coup de tambour par seconde).
+## En attendant les icônes par coup, une icône par famille de coup (BkEffetsRendu.icone).
 
 const ROUGE: Color = Color("e8392c")
 ## Largeur d'une case de chassé (px) : 4 colonnes tiennent dans la moitié droite.
@@ -46,8 +46,10 @@ func _ready() -> void:
 	ligne.alignment = BoxContainer.ALIGNMENT_CENTER
 	ligne.add_theme_constant_override(&"separation", 14)
 	gauche.add_child(ligne)
-	ligne.add_child(Icone.cree("detection", 58))
+	var ch: Dictionary = BkCoups.coup_de(h.character, true)
+	ligne.add_child(Icone.cree(str(ch.get("famille", "")), 58))
 	ligne.add_child(_label(h.display_name, 44, Color.WHITE))
+	gauche.add_child(_label(str(ch.get("nom", "")), 30, BkUi.JAUNE))
 	# Les chassés, à droite (grille de 4 colonnes au plus).
 	var droite: VBoxContainer = VBoxContainer.new()
 	droite.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -82,14 +84,19 @@ func _ready() -> void:
 		var pied: Control = Control.new()
 		pied.custom_minimum_size = Vector2(CASE_L, 0)
 		c.add_child(pied)
-		var piege: Icone = Icone.cree("piege", 34)
-		piege.position = Vector2(CASE_L * 0.5 + 22.0, -40.0)
-		piege.size = Vector2(34, 34)
-		pied.add_child(piege)
+		var cc: Dictionary = BkCoups.coup_de(a.character, false)
+		var icone: Icone = Icone.cree(str(cc.get("famille", "")), 34)
+		icone.position = Vector2(CASE_L * 0.5 + 22.0, -40.0)
+		icone.size = Vector2(34, 34)
+		pied.add_child(icone)
 		var nom: Label = _label(a.display_name.trim_suffix(" (IA)"), 22, BkUi.JAUNE if a == game.local else Color.WHITE)
 		nom.clip_text = true
 		nom.custom_minimum_size = Vector2(CASE_L, 30)
 		c.add_child(nom)
+		var nc: Label = _label(str(cc.get("nom", "")), 13, Color(1, 1, 1, 0.8))
+		nc.clip_text = true
+		nc.custom_minimum_size = Vector2(CASE_L, 20)
+		c.add_child(nc)
 		grille.add_child(c)
 	# « VS » et le compte à rebours, au centre.
 	_vs = _label("VS", 150, BkUi.JAUNE)
@@ -186,10 +193,9 @@ static func son_tension(secondes: float) -> AudioStreamWAV:
 	return s
 
 
-## Petites icônes rondes dessinées : « detection » (onde), « piege » (mâchoire), en attendant les
-## icônes des coups spéciaux (§4).
+## Icône ronde d'une famille de coup spécial (BkEffetsRendu.icone), en attendant les icônes par coup.
 class Icone extends Control:
-	var genre: String = "piege"
+	var genre: String = ""
 
 	static func cree(p_genre: String, taille: float) -> Icone:
 		var i: Icone = Icone.new()
@@ -200,21 +206,4 @@ class Icone extends Control:
 		return i
 
 	func _draw() -> void:
-		var c: Vector2 = size * 0.5
-		var r: float = minf(size.x, size.y) * 0.5 - 2.0
-		BkDraw.ellipse(self, c, r, r, Color.WHITE, 3.0)
-		if genre == "detection":
-			# Onde : point central et deux arcs.
-			BkDraw.ellipse(self, c, r * 0.18, r * 0.18, BkVersus.ROUGE)
-			for k: float in [0.45, 0.72]:
-				draw_arc(c, r * k, -PI * 0.3, PI * 0.3, 12, BkVersus.ROUGE, r * 0.12, true)
-				draw_arc(c, r * k, PI * 0.7, PI * 1.3, 12, BkVersus.ROUGE, r * 0.12, true)
-		else:
-			# Piège : mâchoire à dents.
-			var col: Color = Color("4a5263")
-			draw_arc(c, r * 0.55, PI * 0.1, PI * 0.9, 12, col, r * 0.16, true)
-			draw_arc(c, r * 0.55, PI * 1.1, PI * 1.9, 12, col, r * 0.16, true)
-			for i: int in 4:
-				var x: float = c.x - r * 0.42 + r * 0.28 * i
-				draw_colored_polygon(PackedVector2Array([Vector2(x - r * 0.1, c.y - r * 0.05),
-					Vector2(x + r * 0.1, c.y - r * 0.05), Vector2(x, c.y + r * 0.22)]), BkDraw.INK)
+		BkEffetsRendu.icone(self, size * 0.5, minf(size.x, size.y) * 0.5 - 3.0, genre)

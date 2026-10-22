@@ -5,7 +5,7 @@
 			"id": "gateaux",
 			"groupe": "Bonus",
 			"libelle": "Gâteaux basques",
-			"aide": "Des gâteaux au sol : 1 point et un sprint pour le chassé qui le mange.",
+			"aide": "Des gâteaux au sol : celui qui en mange un recharge tout de suite son coup spécial.",
 			"valide_le": "2026-10-20",
 			"carte_kanban": 347,
 			"reglages": [
@@ -20,15 +20,6 @@
 					"type": "curseur",
 					"libelle": "Nombre de gâteaux",
 					"min": 1,
-					"max": 8,
-					"pas": 1,
-					"defaut": 4
-				},
-				{
-					"cle": "gateau_duree",
-					"type": "curseur",
-					"libelle": "Durée du sprint (s)",
-					"min": 2,
 					"max": 8,
 					"pas": 1,
 					"defaut": 4

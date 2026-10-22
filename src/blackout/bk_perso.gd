@@ -215,7 +215,7 @@ func play_once(anim: String) -> void:
 ## Durée d'un geste ponctuel (s), 0 s'il n'existe pas.
 func length(anim: String) -> float:
 	match anim:
-		"hide_in", "hide_out":
+		"hide_in", "hide_out", "saut":
 			var d: Dictionary = element(actor.character, "jump_hide")
 			return float(d["n"]) / float(d["fps"])
 		"found":
@@ -248,7 +248,7 @@ func _process(dt: float) -> void:
 			_once = ""
 		else:
 			match _once:
-				"hide_in", "hide_out":
+				"hide_in", "hide_out", "saut":
 					el = "jump_hide"
 					_reverse = _once == "hide_out"
 				"found":
@@ -274,21 +274,35 @@ func _process(dt: float) -> void:
 		f = n - 1 - f
 	var cell: Vector2 = d["cell"]
 	texture = d["tex"]
-	material = silhouette_material() if actor.silhouette else null
+	# Effets communs subis (GDD §4.5) : teinte, contour, sprite couché, oscillation (BkEffetsRendu).
+	var pose: Dictionary = BkEffetsRendu.pose(actor, actor == _local())
+	material = silhouette_material() if actor.silhouette else pose["material"]
 	region_rect = Rect2(Vector2(cell.x * float(f), 0.0), cell)
 	var face: float = 1.0 if cos(actor.look) >= 0.0 else -1.0
 	flip_h = face < 0.0
 	var feet: Vector2 = d["feet"]
 	var fx: float = cell.x - feet.x - 1.0 if flip_h else feet.x
 	# Envol du chassé trouvé : il monte en clignotant (GDD §3.6).
-	hover_lift = 0.0
+	# Hauteur : envol du trouvé, saut d'un coup spécial (Passe-Muraille).
+	hover_lift = actor.saut_px
 	var ghost: bool = (actor.role == BkActor.Role.GHOST or actor.role == BkActor.Role.OUT) and k_lift < 0.0
 	if k_lift >= 0.0:
-		hover_lift = BkRules.f("lift_px") * k_lift
-	modulate.a = BkRules.f("fantome_alpha") if ghost else 1.0
+		hover_lift = maxf(hover_lift, BkRules.f("lift_px") * k_lift)
+	modulate = pose["modulate"]
+	if ghost:
+		modulate.a = BkRules.f("fantome_alpha")
 	var blink: bool = k_lift >= 0.0 and fmod(_once_t * BkRules.f("lift_clignote_hz"), 1.0) < 0.5
 	visible = actor.draw_2d and (actor.shown or _once != "") and not actor.inside() and not blink
-	position = (Vector2(-fx, -feet.y + actor.feet_dy() - hover_lift) + _pop_offset()).round()
+	var pieds: Vector2 = Vector2(0, actor.feet_dy() - hover_lift) + _pop_offset() + (pose["decalage"] as Vector2)
+	rotation = float(pose["rotation"])
+	# Le sprite tourne autour de ses pieds (renversé : couché sur le sol).
+	position = (pieds - Vector2(fx, feet.y).rotated(rotation)).round()
+
+
+## Joueur local de la partie (le perso invisible reste visible à 30 % pour lui seul).
+func _local() -> BkActor:
+	var g: Node = actor.get_parent().get_parent() if actor.get_parent() != null else null
+	return (g as BkGame).local if g is BkGame else null
 
 
 ## Sortie de cachette : décalage de dessin qui part de la cachette et rejoint l'acteur (posé sur

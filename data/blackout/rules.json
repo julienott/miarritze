@@ -45,15 +45,16 @@
 	"speed_hunter": 5.4,
 	"speed_ghost": 5.6,
 	"turn_speed_deg": 540.0,
-	"trap_cooldown": 20.0,
-	"trap_max": 2,
-	"trap_slow": 0.5,
-	"trap_duration": 3.0,
-	"trap_seen_range": 2.0,
-	"detect_cooldown": 15.0,
-	"detect_radius": 14.0,
-	"detect_duration": 2.0,
-	"detect_hint_duration": 3.0,
+	"_doc_coups": "Coups spéciaux (GDD §4, data/blackout/coups.json, src/blackout/coups/) : ils remplacent les pièges et l'onde de détection. Effets communs (§4.5, BkEffets) : effets_genants durent effet_max_genant_s s au plus (fenêtre de gêne partagée par les effets qui se suivent), commandes inversées effet_inverse_max_s s au plus, puis effet_protection_s s de protection contre tout nouvel effet gênant (§4.3) ; les bonus (révélé, insensible, invisible, rapide) ne sont pas plafonnés. Valeurs par défaut des effets : ralenti × (1 − effet_ralenti_k), rapide × (1 + effet_rapide_k), tracté à effet_tracte_vitesse cases/s, invisible vu de son joueur à effet_invisible_alpha. annonce_coup_s : icône et nom du coup au-dessus du lanceur (celui du chasseur, vu de tous, §4.2).",
+	"effets_genants": ["fige", "renverse", "colle", "ralenti", "inverse", "aveugle", "tracte"],
+	"effet_max_genant_s": 3.0,
+	"effet_inverse_max_s": 2.0,
+	"effet_protection_s": 2.0,
+	"effet_ralenti_k": 0.3,
+	"effet_rapide_k": 0.3,
+	"effet_tracte_vitesse": 9.0,
+	"effet_invisible_alpha": 0.3,
+	"annonce_coup_s": 2.0,
 	"hide_max": 20.0,
 	"hide_lock": 10.0,
 	"search_time": 1.0,
@@ -94,8 +95,6 @@
 	"idee_gateaux": 1,
 	"gateaux_nombre": 4,
 	"gateau_portee": 0.8,
-	"gateau_sprint": 1.3,
-	"gateau_duree": 4.0,
 	"idee_mouettes": 1,
 	"mouettes_nombre": 6,
 	"mouettes_portee": 1.6,
@@ -152,18 +151,17 @@
 	"score": {
 		"hider_per_10s": 1,
 		"hider_survive": 5,
-		"hider_trap_hit": 2,
+		"hider_coup_touche": 2,
 		"hider_extract": 8,
 		"hunter_find": 3,
 		"hunter_all": 5,
-		"hider_rescue": 2,
-		"hider_cake": 1
+		"hider_rescue": 2
 	},
 	"bot_names": ["Louis", "Maïa", "Patxi", "Xabi", "Mattin", "Amaia", "Txomin", "Kaio", "Karramarro", "Ramuntxo", "Itsaso", "Peio", "Itsasargi"],
 	"characters": ["louis", "maia", "patxi", "xabi", "mattin", "amaia", "txomin", "kaio", "karramarro", "ramuntxo", "itsaso", "peio", "itsasargi"],
 	"ai": {
-		"facile": {"think": 0.9, "danger": 6.0, "relocate": 15.0, "extract_chance": 0.3, "hunter_speed": 0.9, "hunter_scan": 1.2, "hunter_react": 0.8, "clue_memory": 0.5, "search_chance": 0.25, "react": 0.5, "guard_exits": 0.0, "smart_search": false, "smart_wave": false, "trap_ambush": 0.0, "trap_chase": 0.3, "disjoncteur": 0.3},
-		"normal": {"think": 0.5, "danger": 8.0, "relocate": 25.0, "extract_chance": 0.2, "hunter_speed": 1.0, "hunter_scan": 0.8, "hunter_react": 0.3, "clue_memory": 1.0, "search_chance": 0.5, "react": 0.25, "guard_exits": 0.3, "smart_search": true, "smart_wave": false, "trap_ambush": 0.3, "trap_chase": 0.6, "disjoncteur": 0.5},
-		"malin": {"think": 0.3, "danger": 9.0, "relocate": 40.0, "extract_chance": 0.15, "hunter_speed": 1.07, "hunter_scan": 0.4, "hunter_react": 0.0, "clue_memory": 1.3, "search_chance": 0.85, "react": 0.1, "guard_exits": 0.6, "smart_search": true, "smart_wave": true, "trap_ambush": 0.7, "trap_chase": 0.9, "disjoncteur": 0.8}
+		"facile": {"think": 0.9, "danger": 6.0, "relocate": 15.0, "extract_chance": 0.3, "hunter_speed": 0.9, "hunter_scan": 1.2, "hunter_react": 0.8, "clue_memory": 0.5, "search_chance": 0.25, "react": 0.5, "guard_exits": 0.0, "smart_search": false, "coup": 0.3, "disjoncteur": 0.3},
+		"normal": {"think": 0.5, "danger": 8.0, "relocate": 25.0, "extract_chance": 0.2, "hunter_speed": 1.0, "hunter_scan": 0.8, "hunter_react": 0.3, "clue_memory": 1.0, "search_chance": 0.5, "react": 0.25, "guard_exits": 0.3, "smart_search": true, "coup": 0.6, "disjoncteur": 0.5},
+		"malin": {"think": 0.3, "danger": 9.0, "relocate": 40.0, "extract_chance": 0.15, "hunter_speed": 1.07, "hunter_scan": 0.4, "hunter_react": 0.0, "clue_memory": 1.3, "search_chance": 0.85, "react": 0.1, "guard_exits": 0.6, "smart_search": true, "coup": 0.9, "disjoncteur": 0.8}
 	}
 }

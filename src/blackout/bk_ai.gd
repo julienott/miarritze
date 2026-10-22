@@ -1,9 +1,11 @@
 class_name BkAi
 extends RefCounted
 ## IA d'un joueur (GDD-BLACKOUT.md). Elle ne voit que ce que voit son rôle :
-## un chassé voit toute la carte (et le chasseur) ; le chasseur ne sait que ce qu'il voit,
-## ce que lui donnent ses ondes, les pièges qu'il déclenche, les cachettes qui tremblent et les
-## secteurs plongés dans le noir (disjoncteurs, GDD §3.2, §11).
+## un chassé voit toute la carte (et le chasseur) ; le chasseur ne sait que ce qu'il voit, ce que lui
+## donne son coup spécial (piste de Cache-Cache !), les cachettes qui tremblent et les secteurs plongés
+## dans le noir (disjoncteurs, GDD §3.2, §11). Coups spéciaux (GDD §4, BkCoups.essaie_ia) : un chassé
+## lance le sien quand il est en danger, le chasseur quand il a une cible probable (avec la probabilité
+## « coup » de son niveau, à chaque décision) ; la famille du coup juge s'il sert à quelque chose.
 
 var g: BkGame
 var me: BkActor
@@ -29,7 +31,7 @@ var _react_t: float = 0.0
 var lost_pos: Vector2 = Vector2.INF     # chasseur : où il a perdu de vue le dernier chassé poursuivi
 var lost_t: float = -100.0
 var searched: Dictionary = {}           # chasseur : cachette → instant de la dernière fouille
-var ambush: bool = false                # chassé : poser un piège sur son chemin vers sa cachette
+var seen_t: float = 0.0                 # chasseur : dernier instant où il voyait un chassé
 var react_until: float = 0.0            # chasseur : temps de réaction avant de foncer sur un chassé vu
 ## Chassé, idee_mouvement : dernier instant où le chasseur est passé tout près (frôlement), dernier
 ## contournement, et sortie de cachette pour profiter d'une fouille (contourner dès qu'on est dehors).
@@ -71,7 +73,7 @@ func reset() -> void:
 	lost_pos = Vector2.INF
 	lost_t = -100.0
 	searched.clear()
-	ambush = false
+	seen_t = clock
 	plan_switch = -1
 
 
@@ -162,6 +164,12 @@ func _think_hider() -> void:
 	# Disjoncteur : couper la lumière du secteur où rôde le chasseur (avant la fuite).
 	if hunting and _think_switch():
 		return
+	# Coup spécial en danger (repéré ou chasseur menaçant) : la famille juge s'il sert (Passe-Muraille :
+	# un obstacle à franchir qui casse la ligne de vue).
+	if hunting and (me.gauge > 0.0 or _threatened()) and rng.randf() < float(cfg.get("coup", 0.5)) \
+			and g.coups.essaie_ia(me, {"menace": true}):
+		path = PackedVector2Array()
+		return
 	# Détection progressive : il se sait repéré (sa jauge monte) : il file vers l'abri le plus proche.
 	if hunting and BkRules.on("idee_detection") and me.gauge > 0.0:
 		_react_t = 0.0
@@ -195,12 +203,6 @@ func _think_hider() -> void:
 			return
 	if g.phase == BkGame.Phase.HIDE and path.is_empty():
 		_pick_hiding()
-		ambush = rng.randf() < float(cfg.get("trap_ambush", 0.0))
-		return
-	# Embuscade : piège posé à trois pas de sa planque, sur le chemin qu'on vient de prendre.
-	if ambush and me.power_cd <= 0.0 and path.size() - path_i == 3 and g.near_cachette(me, true) < 0:
-		ambush = false
-		want_action = true
 		return
 	# Gâteau basque à portée et chasseur loin : on va le chercher, puis on repart se cacher.
 	if hunting and not g.gateaux.is_empty() and _arrived():
@@ -346,15 +348,11 @@ func _threatened() -> bool:
 ## la plus proche possible, pour casser la ligne de vue au plus vite.
 func _flee(spotted: bool = false) -> void:
 	var h: BkActor = g.hunter
-	# Piège sur son chemin si le chasseur est tout près, ou cachette libre à portée.
+	# Cachette libre à portée quand le chasseur est tout près : on plonge dedans.
 	if h.position.distance_to(me.position) < 5.0 * _tiles() and g.near_cachette(me, true) >= 0 \
 			and rng.randf() < 0.5:
 		want_action = true
 		return
-	# Piège derrière soi quand le chasseur se rapproche.
-	if me.power_cd <= 0.0 and h.position.distance_to(me.position) < float(cfg.get("danger", 8.0)) * 0.75 * _tiles() \
-			and g.near_cachette(me, true) < 0 and rng.randf() < float(cfg.get("trap_chase", 0.6)):
-		want_action = true
 	var best: Vector2i = Vector2i(-1, -1)
 	var bs: float = -INF
 	var here: Vector2i = g.map.to_tile(me.position)
@@ -458,6 +456,7 @@ func _think_hunter() -> void:
 		lost_t = clock
 		chase_id = -1
 	if target:
+		seen_t = clock
 		if target.id != chase_id:
 			react_until = clock + float(cfg.get("hunter_react", 0.3))
 		chase_id = target.id
@@ -474,6 +473,19 @@ func _think_hunter() -> void:
 	# 1 bis. Un secteur est dans le noir : il va rallumer le disjoncteur (un « ? » l'en distrait : 1).
 	if _think_repair():
 		return
+	# 1 ter. Coup spécial quand il a une cible probable : un chassé perdu de vue depuis peu, un indice,
+	# ou personne vu depuis longtemps. Piste de Cache-Cache ! : le dernier pas devient l'indice.
+	var probable: bool = (lost_pos != Vector2.INF and clock - lost_t < 8.0) or (clue_t > 0.0 and clue != Vector2.INF) \
+		or clock - seen_t > 20.0
+	if probable and rng.randf() < float(cfg.get("coup", 0.5)) and g.coups.essaie_ia(me, {"cible_probable": true}):
+		seen_t = clock
+	var piste: Vector2 = g.coups.piste_de(me)
+	if piste != Vector2.INF:
+		var t: Vector2i = g.map.to_tile(piste)
+		if g.map.walkable(t) and (clue == Vector2.INF or clue.distance_to(piste) > _tiles()):
+			clue = g.map.center(t)
+			clue_t = 3.0 * float(cfg.get("clue_memory", 1.0))
+			_go(clue)
 	# 2. Une cachette tremble ou on passe à côté : on fouille (plus souvent si l'IA est maligne).
 	var c: int = g.near_cachette(me, false)
 	if c >= 0:
@@ -492,7 +504,7 @@ func _think_hunter() -> void:
 			searched[c] = clock
 			want_action = true
 			return
-	# 3. Un indice (onde, piège déclenché, dernière position vue) : on y va puis on regarde autour.
+	# 3. Un indice (piste, bruit, dernière position vue) : on y va puis on regarde autour.
 	if clue_t > 0.0 and clue != Vector2.INF:
 		if me.position.distance_to(clue) < 1.5 * _tiles():
 			clue = Vector2.INF
@@ -500,15 +512,7 @@ func _think_hunter() -> void:
 		elif _arrived() or path.is_empty() or path[path.size() - 1].distance_to(clue) > _tiles():
 			_go(clue)
 		return
-	# 4. Onde : dès qu'elle est prête, ou (malin) seulement là où l'on peut se cacher.
-	if me.power_cd <= 0.0:
-		var go: bool = rng.randf() < 0.6
-		if bool(cfg.get("smart_wave", false)):
-			go = g.hunt_elapsed > 8.0 and (_cover_around(7) >= 25 or rng.randf() < 0.1)
-		if go:
-			want_action = true
-			return
-	# 5. Garder une sortie ouverte (plus souvent si l'IA est maligne).
+	# 4. Garder une sortie ouverte (plus souvent si l'IA est maligne).
 	if g.exits_open() and _arrived() and scan_t <= 0.0 and not g.open_exits.is_empty() \
 			and rng.randf() < float(cfg.get("guard_exits", 0.0)) * 0.5:
 		var e: Vector2i = g.open_exits[rng.randi() % g.open_exits.size()]
@@ -518,7 +522,7 @@ func _think_hunter() -> void:
 				_go(g.map.center(t))
 				scan_t = 2.0 * float(cfg.get("hunter_scan", 0.7))
 				return
-	# 6. Patrouille : la zone la moins visitée récemment, puis un tour d'horizon.
+	# 5. Patrouille : la zone la moins visitée récemment, puis un tour d'horizon.
 	if _arrived() and scan_t <= 0.0:
 		var z: int = g.map.zone_of(g.map.to_tile(me.position))
 		if z >= 0:
@@ -612,44 +616,6 @@ func on_noise(pos: Vector2) -> void:
 		return
 	clue = best
 	clue_t = 5.0 * float(cfg.get("clue_memory", 1.0))
-	_go(best)
-
-
-func on_trap(pos: Vector2) -> void:
-	if me.role == BkActor.Role.HUNTER:
-		clue = pos
-		clue_t = 6.0 * float(cfg.get("clue_memory", 1.0))
-
-
-## Cases abritées (couverture ≥ 3) dans un rayon de r cases autour de soi.
-func _cover_around(r: int) -> int:
-	var here: Vector2i = g.map.to_tile(me.position)
-	var n: int = 0
-	for dy: int in range(-r, r + 1):
-		for dx: int in range(-r, r + 1):
-			if int(g.map.cover.get(here + Vector2i(dx, dy), 0)) >= 3:
-				n += 1
-	return n
-
-
-func on_detect(found: Array[Vector2], hint: Vector2 = Vector2.ZERO) -> void:
-	if found.is_empty():
-		# Flèche d'indice : on part dans cette direction, à la première case praticable.
-		if hint != Vector2.ZERO:
-			for k: int in [10, 8, 6, 4]:
-				var t: Vector2i = g.map.to_tile(me.position + hint * float(k) * _tiles())
-				if g.map.walkable(t):
-					clue = g.map.center(t)
-					clue_t = 6.0 * float(cfg.get("clue_memory", 1.0))
-					_go(clue)
-					return
-		return
-	var best: Vector2 = found[0]
-	for p: Vector2 in found:
-		if p.distance_to(me.position) < best.distance_to(me.position):
-			best = p
-	clue = best
-	clue_t = 8.0 * float(cfg.get("clue_memory", 1.0))
 	_go(best)
 
 

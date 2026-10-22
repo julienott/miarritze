@@ -1,7 +1,8 @@
 class_name BkHud
 extends Control
 ## Interface du round (GDD-BLACKOUT.md), en 640×360 et police pixel (§9 : HUD minimal) : rôle,
-## chrono, messages, bouton d'action avec son temps de recharge, joystick tactile, flèche vers le
+## chrono, messages, bouton d'action (nom et icône du coup spécial du rôle, qui se remplit pendant la
+## recharge, GDD §4.1), écran du joueur aveuglé (§4.5), joystick tactile, flèche vers le
 ## chasseur hors champ, voile du chasseur qui compte, scores entre les rounds (« Round k/N », bouton
 ## « Terminer » en partie rapide). Versus et podium sont des écrans à part (BkVersus, BkPodium, en
 ## 1280×720) : le HUD s'y efface.
@@ -122,6 +123,8 @@ func _draw() -> void:
 		var n: int = clampi(int(BkRules.f("phase_hide") - game.phase_t) + 1, 1, BkGame.COUNT_WORDS.size())
 		_text(s * Vector2(0.5, 0.45), BkGame.COUNT_WORDS[n - 1].capitalize() + "…", GRAND, Color.WHITE)
 		_text(s * Vector2(0.5, 0.6), "Tu comptes, les autres se cachent", NORMAL, Color(1, 1, 1, 0.7))
+	# Joueur aveuglé (effet commun) : écran noir ou bleu, sa silhouette seule (GDD §4.3, §4.5).
+	BkEffetsRendu.ecran(self, game)
 	_draw_frisson(s)
 	# Bandeau du haut : rôle, phase, chrono.
 	var role_text: String = {BkActor.Role.HIDER: "CHASSÉ", BkActor.Role.HUNTER: "CHASSEUR",
@@ -191,12 +194,31 @@ func _draw() -> void:
 		var c2: Vector2 = game.input.action_center()
 		var cd: float = game.action_cooldown(me)
 		var rr: float = BkInput.ACTION_RADIUS
+		# Coup spécial : son icône et son nom ; gris s'il n'est pas encore codé (« bientôt ») ou hors de
+		# la chasse ; pendant la recharge, la couleur remonte du bas et l'anneau blanc se referme.
+		var coup: bool = game.action_est_coup(me)
+		var cdata: Dictionary = game.coups.coup(me)
+		var bientot: bool = coup and not BkCoups.code(cdata)
+		var attente: bool = coup and game.phase != BkGame.Phase.HUNT
+		var fond: Color = Color("ff3b30") if me == game.hunter else Color("4aa3ff")
+		if bientot or attente:
+			fond = Color("6a6f7c")
 		draw_circle(c2, rr, Color(0, 0, 0, 0.45))
-		draw_circle(c2, rr - 3, Color("ff3b30") if me == game.hunter else Color("4aa3ff"))
 		if cd > 0.0:
-			draw_circle(c2, rr - 3, Color(0, 0, 0, 0.45))
+			draw_circle(c2, rr - 3, fond.darkened(0.65))
+			_segment(c2, rr - 3, c2.y + (rr - 3) * (2.0 * cd - 1.0), fond)
 			draw_arc(c2, rr - 1.5, -PI * 0.5, -PI * 0.5 + TAU * (1.0 - cd), 32, Color.WHITE, 2.0)
-		_text(c2 + Vector2(0, 5), label, NORMAL, Color.WHITE)
+		else:
+			draw_circle(c2, rr - 3, fond)
+		if coup:
+			BkEffetsRendu.icone(self, c2 + Vector2(0, -16), 9.0, str(cdata.get("famille", "")))
+			_text(c2 + Vector2(0, 8), label, PETIT, Color.WHITE)
+			if bientot or attente:
+				_text(c2 + Vector2(0, 20), "bientôt" if bientot else "à la chasse", PETIT, Color("ffd34a"))
+			elif cd > 0.0:
+				_text(c2 + Vector2(0, 20), "%d s" % ceili(me.coup_cd), PETIT, Color(1, 1, 1, 0.85))
+		else:
+			_text(c2 + Vector2(0, 5), label, NORMAL, Color.WHITE)
 		if me.search_left > 0.0:
 			_text(c2 + Vector2(0, -rr - 6), "Fouille…", PETIT, Color.WHITE)
 		elif me.use_left > 0.0:
@@ -247,6 +269,18 @@ func _maj_terminer() -> void:
 			InputDevice.GAMEPAD: "Terminer la partie (START)"}.get(dev, "Terminer la partie (ÉCHAP)")
 		_terminer.reset_size()
 		_terminer.position = Vector2(roundf(size.x * 0.5 - _terminer.size.x * 0.5), size.y - 40.0)
+
+
+## Partie d'un disque de centre `c` et de rayon `r` sous la ligne y = `niveau` (remplissage du bouton).
+func _segment(c: Vector2, r: float, niveau: float, col: Color) -> void:
+	if niveau >= c.y + r - 0.5:
+		return
+	# Arc sous la corde (y vers le bas) : de asin(h/r) à π − asin(h/r).
+	var a0: float = asin(clampf((niveau - c.y) / r, -1.0, 1.0))
+	var pts: PackedVector2Array = PackedVector2Array()
+	for i: int in 33:
+		pts.append(c + Vector2.from_angle(lerpf(a0, PI - a0, float(i) / 32.0)) * r)
+	draw_colored_polygon(pts, col)
 
 
 func _text(at: Vector2, text: String, fsize: int, col: Color) -> void:
