@@ -31,7 +31,7 @@
 				"params": {"filtre": "bouge", "bouge_s": 0.3, "bulle": "Tuuuut !", "couleur": "#9fe2ff"}}
 		},
 		"patxi": {
-			"chasse": {"id": "appat_sardines", "nom": "Appât de sardines", "famille": "pose", "pret": false,
+			"chasse": {"id": "appat_sardines", "nom": "Appât de sardines", "famille": "pose", "pret": true,
 				"recharge": 25.0, "portee": 3.0, "duree": 4.0,
 				"params": {"objet": "seau", "position": "derriere", "recul": 1.0, "rayon": 1.5, "effet_chasseur": "leurre", "effet_duree": 3.0,
 					"bulle": "Des sardines ?!"}},
@@ -98,7 +98,7 @@
 				"params": {"mode": "dash", "glisse_s": 0.35, "hauteur_px": 0.0}}
 		},
 		"ramuntxo": {
-			"chasse": {"id": "gateau_partage", "nom": "Gâteau du partage", "famille": "pose", "pret": false,
+			"chasse": {"id": "gateau_partage", "nom": "Gâteau du partage", "famille": "pose", "pret": true,
 				"recharge": 25.0, "portee": 1.5, "duree": 15.0,
 				"effets": [{"type": "fige", "duree": 1.5, "params": {"cible": "chasseur"}}, {"type": "rapide", "duree": 3.0, "params": {"k": 0.3, "cible": "chasse"}}],
 				"params": {"objet": "gateau", "position": "pieds", "usages": 1, "bulle_chasseur": "Mmmh…", "bulle_chasse": "Miam !"}},
@@ -109,7 +109,7 @@
 					"bulle_nuage": "kof kof !", "couleur": "#e8392c"}}
 		},
 		"itsaso": {
-			"chasse": {"id": "batisse_eclair", "nom": "Bâtisse éclair", "famille": "pose", "pret": false,
+			"chasse": {"id": "batisse_eclair", "nom": "Bâtisse éclair", "famille": "pose", "pret": true,
 				"recharge": 25.0, "portee": 3.0, "duree": 4.0,
 				"params": {"objet": "muret", "position": "derriere", "largeur": 3}},
 			"chasseur": {"id": "courant_laminak", "nom": "Courant des laminak", "famille": "zone", "pret": true,
