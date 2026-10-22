@@ -470,6 +470,11 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
   chasseur, utiliser leur coup quand c'est pertinent, actionner un disjoncteur.
 - **Chasseur IA** : patrouiller entre les zones, regarder derrière les gros objets, réagir aux indices
   (mouettes, toux, traces), lancer son coup au bon moment, réparer un disjoncteur.
+- **Réaction du chasseur IA par paliers** (*Julien, 23/10*), comme un joueur : dès qu'un chassé entre
+  dans sa vue (même jauge vide), il marque un temps d'arrêt et tourne la tête vers lui ; s'il reste
+  visible, il marche vers l'endroit où il l'a vu (sans connaître sa position exacte dans l'ombre) ;
+  au « ? », il fonce et peut lancer son coup. Temps de réaction selon la difficulté (Facile lent, Malin
+  presque immédiat).
 - **Boss** : chasseur IA plus rapide, qui accélère, avec ses deux pouvoirs (§5).
 - **Difficultés** : Facile (chasseur lent à tourner la tête, chassés qui bougent trop), Normal, Malin
   (fouille méthodique, chassés qui changent de cachette dans son dos).
