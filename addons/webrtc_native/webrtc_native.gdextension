@@ -1,7 +1,6 @@
 ; godotengine/webrtc-native 1.2.2-stable (licence MIT, voir LICENSE.*) : WebRTC hors navigateur
-; (Steam Deck, Recalbox, Mac). Le web utilise le WebRTC du navigateur (exclude_tags).
-; Seules les plateformes du jeu sont gardées ; changer de version = relever RUNTIME_TAG
-; (src/autoload/updater.gd) et WEBRTC_TAG (.github/workflows/deploy.yml).
+; (Mac, Linux). Le web utilise le WebRTC du navigateur (exclude_tags).
+; Sert à src/net/p2p_link.gd hors navigateur (tests en ligne depuis l'éditeur).
 [configuration]
 
 entry_symbol = "webrtc_extension_init"

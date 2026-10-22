@@ -8,7 +8,7 @@ for i in $(seq 1 180); do mkdir "$VERROU" 2>/dev/null && break; sleep 10; done
 trap 'rmdir "$VERROU" 2>/dev/null' EXIT
 MSG="$1"; shift
 godot --headless --path . --import >/dev/null 2>&1
-godot --headless --path . --script res://tests/run_tests.gd 2>&1 | tail -1 | grep -q " 0 échecs" || { echo "TESTS EN ÉCHEC"; exit 1; }
+godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd 2>&1 | tail -1 | grep -q " 0 échecs" || { echo "TESTS EN ÉCHEC"; exit 1; }
 git add $(git ls-files --others --exclude-standard assets) assets tools/gordeka/masques tools/gordeka/taches_*.json tools/gordeka/retouches_recette.json 2>/dev/null
 git commit -q -m "Gordeka : $MSG
 

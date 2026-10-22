@@ -316,11 +316,10 @@ function openCount(assetId) {
 }
 
 // Catégories rangées par famille, une section par perso.
-const BY_KIND = ['Combattants', 'Persos'];
+const BY_KIND = ['Persos'];
 
 // Visage d'un perso pour l'en-tête de sa section.
 function faceOf(cat, group) {
-  if (cat === 'Combattants') return state.assetsById.get(`fighters/${group}/portrait_small.png`);
   if (cat !== 'Persos') return null;
   const mine = state.index.assets.filter((x) => x.cat === cat && x.group === group);
   return mine.find((x) => x.kind === 'modele') || mine.find((x) => x.kind === 'anim') || mine.find((x) => x.kind === 'candidat');

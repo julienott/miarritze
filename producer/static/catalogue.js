@@ -9,7 +9,7 @@ const CAT_TYPES = [
   ['cachette', 'Cachettes'], ['sortie', 'Sorties'], ['objet', 'Objets du décor'], ['sol', 'Sols'],
   ['decor_anim', 'Animations du décor'], ['carte', 'Cartes de jeu (plans)'], ['regles', 'Règles'],
   ['option', 'Options de partie'], ['ecran', 'Écrans de menu'], ['donnees', 'Données (JSON)'],
-  ['mannequin', 'Mannequin'], ['texture', 'Textures & modèles'], ['audio', 'Audio'], ['borroka', 'Borroka (archive)'],
+  ['mannequin', 'Mannequin'], ['texture', 'Textures & modèles'],
 ];
 const CAT_TYPE_LABEL = Object.fromEntries(CAT_TYPES);
 const GROUPINGS = [['type', 'Type'], ['carte', 'Carte de jeu'], ['perso', 'Perso'], ['statut', 'Statut kanban'],
@@ -19,8 +19,6 @@ const CAT_FILTERS = [
   ['sans_masque', 'Sans masque'], ['provisoire', 'Provisoire'], ['sans_carte', 'Sans carte kanban'], ['avis', 'Avis ouverts'],
 ];
 const GROUP_PAGE = 60;            // éléments affichés par groupe avant « Afficher les autres »
-const BORROKA_CATS = new Set(['Combattants', 'VFX', 'Décors', 'Fonds & sprites', 'UI']);
-const AUDIO_CATS = new Set(['Musique', 'SFX', 'Voix']);
 const KIND_PERSO = { modele: 'profil validé', candidat: 'candidat', src: 'source', masque: 'masques de tenue' };
 
 const cat = {
@@ -93,10 +91,6 @@ function catalogueItems() {
       items.push(mk(a, a.type === 'data' ? 'donnees' : 'mannequin'));
     } else if (a.cat === 'Textures & modèles') {
       items.push(mk(a, 'texture'));
-    } else if (AUDIO_CATS.has(a.cat)) {
-      items.push(mk(a, 'audio', { sub: a.cat }));
-    } else {
-      items.push(mk(a, 'borroka', { sub: a.cat }));
     }
   }
   // Animations : une entrée par animation attendue (présente ou manquante) de chaque perso.
@@ -186,7 +180,7 @@ function renderCatalogue() {
   const words = norm(cat.q).split(/[\s·:,]+/).filter(Boolean);
   const shown = [];
   for (const it of items) {
-    if (cat.type ? it.type !== cat.type : it.type === 'borroka') continue;
+    if (cat.type && it.type !== cat.type) continue;
     if (cat.map && !it.cartes.includes(cat.map)) continue;
     if (words.length && !words.every((w) => it.search.includes(w))) continue;
     const { direct } = itemCards(it);

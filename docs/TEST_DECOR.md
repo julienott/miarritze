@@ -67,7 +67,6 @@ vue instantanée (0 à 1). À vérifier à l'œil :
 ## 4. Tests de non-régression
 
 ```bash
-godot --headless --path . --script res://tests/run_tests.gd
 godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd
 ```
 

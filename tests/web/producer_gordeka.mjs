@@ -1,6 +1,6 @@
 // /producer, catalogue de Gordeka : animations des persos (groupées par perso, récapitulatif,
 // manquantes, vignettes au survol), lecteur plein écran, décor avec ou sans masques, filtre
-// « sans masque », sols répétés 2×2, Borroka masqué mais accessible.
+// « sans masque », sols répétés 2×2.
 // Ordinateur (Chromium) + iPhone portrait et paysage (WebKit si installé, sinon Chromium).
 // Env : PRODUCER_URL (défaut http://127.0.0.1:8099/producer/), PRODUCER_TEST_PASSWORD,
 //       PRODUCER_SHOTS (dossier des captures, défaut tests/out/producer).
@@ -262,16 +262,6 @@ for (const [label, browser, opts] of runs) {
   await page.waitForTimeout(800);
   await shot('11_detail_phare');
 
-  // Borroka : hors du catalogue par défaut, accessible par le type « Borroka (archive) ».
-  await page.goto(BASE + '#/assets');
-  await page.waitForSelector('.cgroup');
-  check(`${label} : Borroka masqué par défaut`, !(await page.$('.citem[data-key="fighters/maia/sheet.png"]')));
-  await page.selectOption('#cat-type', 'borroka');
-  await page.fill('#cat-search', 'maia');
-  await page.waitForSelector('.citem[data-key="fighters/maia/sheet.png"]');
-  await page.fill('#cat-search', '');
-  check(`${label} : combattants de Borroka accessibles`, true);
-  await page.selectOption('#cat-type', '');
   await page.click('#tabs a[data-tab="kanban"]');
   await page.waitForSelector('#board .column.active, #board:not(.mobile) .column');
   check(`${label} : kanban`, true);
