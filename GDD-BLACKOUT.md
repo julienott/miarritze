@@ -776,8 +776,8 @@ faibles en chassé, Itsasargi trop fort (flash ~7 fois par round), makila et pim
 projectiles qui touchent rarement une cible qui fuit.
 **File pixelforge arrêtée** (nuit du 23/10, demande de Julien) : le batch (13 persos v3, fantôme commun,
 42 PNJ, 5 boss) a été **annulé** par pixelforge à cause d'un bug de son côté (`skip: ["ghost"]` faisait
-planter le contrôle final d'un set après tout le calcul). Correctif écrit, pas encore déployé. **Ne rien
-redéposer avant d'en reparler avec Julien.** Les requêtes sont prêtes à rejouer : `party_hard_v2.py`,
+planter le contrôle final d'un set après tout le calcul). Correctif écrit, pas encore déployé. **Redéposé à la demande de
+Julien** (23/10) : 13 persos et fantôme en priorité normale, 42 PNJ en priorité nuit (boss non redéposés). Les requêtes sont prêtes à rejouer : `party_hard_v2.py`,
 `pnj_jobs.py`, `taches_fantome.json` et `taches_boss_essai.json` (champ `requete`). Zezengorri n'a que les
 animations de quadrupède : gratter le sol et souffle de soufre restent à demander.
 À intégrer tels quels (`tools/blackout/integre_persos_v2.py`) puis QA par Julien ; poser `keep` sur les
