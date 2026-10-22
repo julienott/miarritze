@@ -489,7 +489,7 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
 - **Son** : aucun pour l'instant (l'audio de Borroka a été supprimé le 22/10). Plan : annexe A.1.
 - Tests : règles en headless (vision, ombre, détection, coups, fin de round, tirage), IA contre IA sur
   la carte, salons à deux navigateurs.
-- Déploiement : à la main, seulement sur décision de Julien.
+- Déploiement : à la main (`deploy.yml`), seulement sur décision de Julien, **à la racine** de https://miarritze.ijulien.com/ ; la racine ne garde que le jeu, `api/` et `producer/` (*Julien, 22/10* : le reste peut être effacé ; plus de version de test séparée).
 
 ## 14. Pipeline d'images (pixelforge)
 - **Moteur A** `pf_px__character_set` : perso et animations en pixel art HD (256 px de case).

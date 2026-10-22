@@ -82,8 +82,10 @@ jobs:
       # Force l'auth par mot de passe — sans ces flags, ssh tente publickey
       # d'abord et un MaxAuthTries bas côté serveur peut nous bloquer avant
       # d'atteindre la tentative par mot de passe. (Même pattern que sutorimu.)
-      # Pas de --delete : FTP_PATH pourrait contenir d'autres fichiers (API
-      # backend plus tard) ; les fichiers index.* sont simplement écrasés.
+      # --delete (Julien 2026-10-22 : « tu dois publier à la racine du site, oui tout le reste peut être
+      # effacé ») : la racine ne garde que le build du jeu, api/ et producer/ (et .well-known/ pour le
+      # certificat). Les anciens dossiers (Borroka, /gordeka/, /blackout/…) partent. La liste de ce qui
+      # est effacé est d'abord affichée (dry-run) dans le journal du job.
       - name: Deploy via rsync over SSH
         env:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
@@ -91,8 +93,11 @@ jobs:
           cp web/.htaccess web/build/.htaccess
           SSH_OPTS="ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1"
           # producer/data/ (SQLite + sessions) n'est jamais dans le build ni touché.
-          sshpass -e rsync -avz -e "$SSH_OPTS" \
-            --exclude='producer/data/' --exclude='producer/files/' \
+          GARDE="--exclude=/api/ --exclude=/producer/ --exclude=/.well-known/ --exclude=/cgi-bin/"
+          echo "== Ce qui sera effacé à la racine =="
+          sshpass -e rsync -avz --delete --dry-run $GARDE -e "$SSH_OPTS" \
+            web/build/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/" | grep '^deleting' || true
+          sshpass -e rsync -avz --delete $GARDE -e "$SSH_OPTS" \
             web/build/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/"
           # API : backend/ → api/ (la base SQLite vit dans api/db/, jamais écrasée
           # car *.sqlite est exclu ; config.php prod pareil).
