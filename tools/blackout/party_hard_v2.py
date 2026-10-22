@@ -33,7 +33,7 @@ def requete(pid: str, prio: str) -> dict:
     return {
         "prompt_style": "pf_px__character_set", "prompt": prompt(pid), "colors": 20, "seed": GRAINE,
         "priority": prio, "tag": TAG,
-        "extras": [{"name": "idle_long", "motion": il["repli"] or il["clip"], "action": il["geste"], "loop": True,
+        "extras": [{"name": "idle_long", "motion": il["clip"], "action": il["geste"], "loop": True,
                     "fps": 10}],
         "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10, "feet_y": 31}],
     }

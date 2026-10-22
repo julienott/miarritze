@@ -1,8 +1,9 @@
 # Animations pixelforge : clips Quaternius (référence)
 
 > Liste de référence des clips de pixelforge. Éléments d'animation des persos et clips retenus :
-> `GDD-BLACKOUT.md` §8 (fait foi). Pixelforge n'expose que la bibliothèque UAL1 ; UAL2 (LiftAir_Idle,
-> Idle_LookAround, Fish_Cast_Idle, Spell_Double_Shoot, Idle_Lantern…) demandée le 22/10.
+> `GDD-BLACKOUT.md` §8 (fait foi). Depuis le 22/10, pixelforge a aussi la bibliothèque UAL2 (182 clips en
+> tout, `GET /v2/motions`), dont LiftAir_Idle_Loop, Fish_Cast_Idle_Loop, Spell_Simple_Shoot. La liste
+> ci-dessous ne couvre que UAL1.
 
 Décision de Julien (21/10) : **uniquement les animations Quaternius**. Les clips sur mesure (wave, thumbs_up,
 shush, laugh, tongue, dance, hunter_reveal, dive_hide, versions sur mesure de found, trap, hide_out, ghost) sont

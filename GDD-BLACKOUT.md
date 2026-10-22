@@ -357,14 +357,12 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 | `idle_long` | pose d'inactivité propre au perso (§8.2) | par perso |
 | `run` | course | Sprint_Loop |
 | `jump_hide` | saut vers la cachette (la sortie = à l'envers) | Jump_Start |
-| `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir_Idle |
+| `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir_Idle_Loop |
 | `ghost` | fantôme, **sans ailes** | Swim_Idle_Loop |
 | `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6) | placeholders pour l'instant |
 
-- Clips : **uniquement Quaternius**, nommés explicitement (`docs/PIXELFORGE_ANIMATIONS.md` liste ceux
-  de pixelforge). LiftAir_Idle, Idle_LookAround, Fish_Cast_Idle, Spell_Double_Shoot et Idle_Lantern
-  appartiennent à la bibliothèque **UAL2**, demandée à pixelforge le 22/10 ; en attendant, on garde
-  le clip précédent du tableau §8.2.
+- Clips : **uniquement Quaternius**, nommés explicitement ; pixelforge a les bibliothèques UAL1 et
+  **UAL2** depuis le 22/10 (182 clips, liste : `GET /v2/motions`).
 
 ### 8.2 Les 13 personnages
 Les prompts sont volontairement **simples** : une description et une signature (ce qui doit se lire de
@@ -375,11 +373,11 @@ corriger **chez pixelforge**, pas dans les prompts (Julien, 21/10).
 (`persos`, `idle_long`) ; script de rejeu : `tools/blackout/party_hard_v2.py` (mêmes paramètres,
 graine 7, chaîne moteur A → moteur B). Toute modification se fait ici d'abord, puis dans le JSON.
 
-| Perso | Description (prompt) | Signature | idle_long : geste — clip (repli tant qu'UAL2 manque) |
+| Perso | Description (prompt) | Signature | idle_long : geste — clip |
 |---|---|---|---|
-| Louis — l'enfant du pays | a little Basque boy with blond hair, a red beret, a white short-sleeved shirt, a red belt and navy rolled-up trousers | a red Basque beret on blond hair | looks around, tapping his foot — Idle_LookAround (Idle_FoldArms_Loop) |
+| Louis — l'enfant du pays | a little Basque boy with blond hair, a red beret, a white short-sleeved shirt, a red belt and navy rolled-up trousers | a red Basque beret on blond hair | folds his arms and taps his foot, glancing around — Idle_FoldArms_Loop |
 | Txomin — maître-nageur | a Basque lifeguard boy with dark brown skin and short black curly hair, a red cap, black sunglasses, a yellow tank top and red swim shorts, barefoot | a red cap and a yellow tank top | talks into a small black walkie-talkie held at his mouth — Idle_TalkingPhone_Loop |
-| Patxi — pêcheur | a bearded Basque fisherman with a blue beanie, a yellow raincoat, light blue trousers and yellow rubber boots | a bright yellow raincoat and yellow boots | casts a fishing rod and waits for a bite — Fish_Cast_Idle (Idle_Rail_Loop) |
+| Patxi — pêcheur | a bearded Basque fisherman with a blue beanie, a yellow raincoat, light blue trousers and yellow rubber boots | a bright yellow raincoat and yellow boots | casts a fishing rod and waits for a bite — Fish_Cast_Idle_Loop |
 | Maïa — surfeuse | a young Basque surfer girl with a brown ponytail, a turquoise wetsuit with a navy panel, a small yellow surfboard strapped upright on her back, barefoot | a small yellow surfboard upright on her back | chats cheerfully with big hand gestures — Idle_Talking_Loop |
 | Xabi — pelotari | a little Basque jai alai player with short dark brown hair, a white polo shirt, plain white trousers, a red sash, red espadrilles and a long curved wicker chistera on his right hand pointing forward | a long curved wicker chistera pointing forward | practises a chistera swing — Sword_Attack |
 | Mattin — leveur de pierre | a short stocky Basque stone lifter with a broad muscular chest, a black beard, a red beret, a red and white horizontally striped shirt, navy trousers and brown shoes | red and white horizontal stripes on a broad chest | lifts a heavy round stone — PickUp_Table |
@@ -387,9 +385,9 @@ graine 7, chaîne moteur A → moteur B). Toute modification se fait ici d'abord
 | Kaio — goéland | a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot and orange webbed feet | a big yellow beak and orange webbed feet | screams with his beak wide open — Idle_Rail_Call |
 | Karramarro — crabe | a cheerful orange cartoon crab standing on six thin pointed crab legs, two big raised pincers, eyes on stalks, a yellow belly and a big happy open mouth | two big raised orange pincers and eyes on stalks | scratches his head with a pincer — Zombie_Scratch |
 | Ramuntxo — chef des Halles | a jolly Basque chef with a small brown mustache, a tall white chef hat, a white chef jacket, a red neck scarf, plain red trousers and black shoes | a tall white chef hat | tastes a sauce from a wooden spoon — Consume |
-| Itsaso — esprit de l'écume | a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with bright white foam, barefoot | long flowing aqua hair and a white foam hem | swirls a small wave between her hands — Spell_Double_Shoot (Spell_Simple_Idle_Loop) |
+| Itsaso — esprit de l'écume | a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with bright white foam, barefoot | long flowing aqua hair and a white foam hem | swirls a small wave between her hands — Spell_Simple_Shoot |
 | Peio — rugbyman | a sturdy young Basque rugby player with medium brown skin and short black hair, a red and white hooped jersey, black shorts, white socks, black boots and an oval rugby ball under his arm | a brown oval rugby ball under his arm | spins his rugby ball in his hands — Interact |
-| Itsasargi — gardien du phare | an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern held firmly by its handle in front of him | a big glowing yellow lantern held forward | raises his lantern and peers into the dark — Idle_Lantern (Idle_Lantern_Loop) |
+| Itsasargi — gardien du phare | an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern held firmly by its handle in front of him | a big glowing yellow lantern held forward | raises his lantern and peers into the dark — Idle_Lantern_Loop |
 
 Changements du 22/10 (retours de Julien sur le run du 21/10) : Txomin sans palmes, casquette rouge ;
 Patxi sans canne (elle n'apparaît que dans son idle_long), pantalon bleu clair et bottes jaunes ; Xabi
@@ -504,7 +502,7 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
   5. objet décrit dans le geste réellement dessiné (talkie-walkie) ;
   6. case de 64×64 en 32 px (256 en HD), pieds à y=60, pour les débordements ;
   7. élément `portrait` (buste de trois-quarts face, 64 px) et élément `lift` ;
-  8. bibliothèque Quaternius **UAL2** ;
+  8. ~~bibliothèque Quaternius UAL2~~ : installée le 22/10 ;
   9. taille boss : 64 px (case 128, HD 512).
 - Méthode de travail : on intègre chaque rendu tel quel, **Julien tranche en QA** sur /producer
   (procédure : `docs/PRODUCER.md`).
@@ -533,7 +531,8 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
   vocabulaire adouci ; round du boss en fin de partie, sans délivrance ; boss 64 px ; fantômes
   visibles des seuls fantômes ; délivrance par halo ; emotes, chatouille, round guidé, couleurs de
   joueur et progression cosmétique retirés ; pas de sprint ; portrait de trois-quarts ; case de 64 ;
-  canne de Patxi retirée ; carte bac à sable ; web, iPhone et Steam Deck.
+  canne de Patxi retirée ; carte bac à sable ; web, iPhone et Steam Deck ; UAL2 chez pixelforge : Louis garde
+  Idle_FoldArms_Loop (Idle_LookAround n'existe pas), Itsaso prend Spell_Simple_Shoot.
 
 ---
 
