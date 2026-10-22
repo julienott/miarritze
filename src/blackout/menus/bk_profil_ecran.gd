@@ -1,14 +1,13 @@
 extends Control
-## Mon profil (GDD-BLACKOUT.md) : le perso (grille des 12, vignettes animées au focus ou au
-## survol), le pseudo, la couleur préférée (12 pastilles : tous les persos se recolorent) et l'emote
-## favorite. Chaque choix est enregistré tout de suite dans le profil.
+## Mon profil (GDD-BLACKOUT.md §7.1) : le perso (grille des 13, vignettes animées au focus ou au
+## survol, son nom dessous) et le pseudo. Rien d'autre : ni couleur, ni emote, ni cosmétique.
+## Chaque choix est enregistré tout de suite dans le profil.
 
 var _grand: BkAvatar
 var _nom: Label
 var _vignettes: Dictionary = {}       # id du perso → BkAvatar
 var _boutons_perso: Dictionary = {}   # id du perso → Button
-var _pastilles: Array[Button] = []
-var _emotes: Array[Button] = []
+var _nom_perso: Label
 var _racine: MarginContainer
 var _page: VBoxContainer
 var _saisie: Control
@@ -33,30 +32,31 @@ func _ready() -> void:
 	gauche.alignment = BoxContainer.ALIGNMENT_CENTER
 	gauche.add_theme_constant_override(&"separation", 8)
 	corps.add_child(gauche)
-	_grand = BkAvatar.cree(BkProfil.perso(), BkRules.color(BkProfil.couleur()), 340)
+	_grand = BkAvatar.cree(BkProfil.perso(), 340)
 	_grand.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	gauche.add_child(_grand)
 	_nom = BkUi.label(BkProfil.pseudo(), 40)
 	gauche.add_child(_nom)
 	gauche.add_child(BkUi.bouton("Changer de pseudo", _changer_pseudo, Vector2(300, 60), BkUi.CREME, 24))
-	# À droite : persos, couleurs, emotes.
+	gauche.add_child(BkUi.label("Pas ton vrai nom !", 22, Color(1, 1, 1, 0.8)))
+	# À droite : les persos.
 	var droite: VBoxContainer = VBoxContainer.new()
 	droite.alignment = BoxContainer.ALIGNMENT_CENTER
 	droite.add_theme_constant_override(&"separation", 12)
 	corps.add_child(droite)
 	var grille: GridContainer = GridContainer.new()
-	grille.columns = 6
+	grille.columns = 5
 	grille.add_theme_constant_override(&"h_separation", 10)
 	grille.add_theme_constant_override(&"v_separation", 10)
 	droite.add_child(grille)
 	for c: Variant in BkRules.data().get("characters", []):
 		var id: String = str(c)
 		var b: Button = BkUi.bouton("", _choisir_perso.bind(id), Vector2(118, 132), Color.WHITE)
-		var av: BkAvatar = BkAvatar.cree(id, BkRules.color(BkProfil.couleur()), 124, false)
+		var av: BkAvatar = BkAvatar.cree(id, 112, false)
 		av.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		av.offset_bottom = -6
 		b.add_child(av)
-		b.tooltip_text = _nom_perso(id)
+		b.tooltip_text = _nom_perso_de(id)
 		b.focus_entered.connect(func() -> void: av.anime = true)
 		b.focus_exited.connect(func() -> void: av.anime = false)
 		b.mouse_entered.connect(func() -> void: av.anime = true)
@@ -64,37 +64,13 @@ func _ready() -> void:
 		grille.add_child(b)
 		_vignettes[id] = av
 		_boutons_perso[id] = b
-	var titre_c: Label = BkUi.label("Ta couleur", 26, BkUi.JAUNE)
-	droite.add_child(titre_c)
-	var couleurs: HBoxContainer = HBoxContainer.new()
-	couleurs.add_theme_constant_override(&"separation", 8)
-	couleurs.alignment = BoxContainer.ALIGNMENT_CENTER
-	droite.add_child(couleurs)
-	var noms: Array = BkRules.data().get("color_names", [])
-	for i: int in 12:
-		var p: Button = BkUi.bouton("", _choisir_couleur.bind(i), Vector2(54, 52), BkRules.color(i))
-		p.tooltip_text = str(noms[i]) if i < noms.size() else ""
-		couleurs.add_child(p)
-		_pastilles.append(p)
-	droite.add_child(BkUi.label("Ton emote", 26, BkUi.JAUNE))
-	var emotes: HBoxContainer = HBoxContainer.new()
-	emotes.add_theme_constant_override(&"separation", 14)
-	emotes.alignment = BoxContainer.ALIGNMENT_CENTER
-	droite.add_child(emotes)
-	for i: int in BkGame.EMOTES.size():
-		var e: Button = BkUi.bouton("", _choisir_emote.bind(i), Vector2(72, 68), Color.WHITE)
-		var icone: Icone = Icone.new()
-		icone.emote = i
-		icone.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		icone.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		e.add_child(icone)
-		emotes.add_child(e)
-		_emotes.append(e)
+	_nom_perso = BkUi.label("", 30, BkUi.JAUNE)
+	droite.add_child(_nom_perso)
 	_maj()
 	(_boutons_perso.get(BkProfil.perso(), _boutons_perso.values()[0]) as Button).grab_focus.call_deferred()
 
 
-func _nom_perso(id: String) -> String:
+func _nom_perso_de(id: String) -> String:
 	var chars: Array = BkRules.data().get("characters", [])
 	var noms: Array = BkRules.data().get("bot_names", [])
 	var i: int = chars.find(id)
@@ -103,40 +79,16 @@ func _nom_perso(id: String) -> String:
 
 func _choisir_perso(id: String) -> void:
 	BkProfil.regler(BkProfil.PERSO, id)
-	_grand.regler(id, BkRules.color(BkProfil.couleur()))
+	_grand.regler(id)
 	_maj()
 
 
-func _choisir_couleur(i: int) -> void:
-	BkProfil.regler(BkProfil.COULEUR, i)
-	for id: String in _vignettes:
-		(_vignettes[id] as BkAvatar).regler(id, BkRules.color(i))
-	_grand.regler(BkProfil.perso(), BkRules.color(i))
-	_maj()
-
-
-func _choisir_emote(i: int) -> void:
-	BkProfil.regler(BkProfil.EMOTE, i)
-	_grand.emote(i)
-	_maj()
-
-
-## Choix en cours surlignés : bord épais doré sur le perso, la couleur et l'emote choisis.
+## Perso choisi surligné (fond doré) et son nom sous la grille.
 func _maj() -> void:
 	for id: String in _boutons_perso:
 		var b: Button = _boutons_perso[id]
 		BkUi.teinter(b, BkUi.JAUNE if id == BkProfil.perso() else Color.WHITE)
-	# Couleur choisie : gros cadre blanc (pas de glyphe : la police du web n'a pas toutes les coches).
-	for i: int in _pastilles.size():
-		var sb: StyleBoxFlat = (_pastilles[i].get_theme_stylebox(&"normal") as StyleBoxFlat).duplicate()
-		var choisie: bool = i == BkProfil.couleur()
-		sb.border_color = Color.WHITE if choisie else BkUi.INK
-		sb.set_border_width_all(7 if choisie else BkUi.BORD)
-		sb.border_width_bottom = 7 if choisie else BkUi.BORD + 6
-		_pastilles[i].add_theme_stylebox_override(&"normal", sb)
-		_pastilles[i].add_theme_stylebox_override(&"hover", sb)
-	for i: int in _emotes.size():
-		BkUi.teinter(_emotes[i], BkUi.JAUNE if i == BkProfil.emote() else Color.WHITE)
+	_nom_perso.text = _nom_perso_de(BkProfil.perso())
 
 
 func _changer_pseudo() -> void:
@@ -176,10 +128,3 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			BkNav.aller("accueil")
 
-
-## Icône d'une emote dans son bouton.
-class Icone extends Control:
-	var emote: int = 0
-
-	func _draw() -> void:
-		BkDraw.emote_icon(self, size * 0.5, minf(size.x, size.y) * 0.32, emote)

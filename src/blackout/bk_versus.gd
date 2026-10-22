@@ -1,8 +1,8 @@
 class_name BkVersus
 extends Control
 ## Écran Versus (GDD-BLACKOUT.md), entre le tirage et la cachette : à gauche le chasseur en grand
-## (avatar animé, pseudo, icône de détection), à droite les chassés (avatar, pseudo, pastille de
-## couleur, icône de piège), grand « VS » au centre qui arrive avec une secousse, compte à rebours
+## (avatar animé, pseudo, icône de détection), à droite les chassés (avatar, pseudo, icône de
+## piège), grand « VS » au centre qui arrive avec une secousse, compte à rebours
 ## 5 → 1 et son de tension généré ici (grondement qui monte, un coup de tambour par seconde).
 ## En attendant les icônes par perso (§4.2), une onde (détection) et une mâchoire (piège) génériques.
 
@@ -39,14 +39,14 @@ func _ready() -> void:
 	gauche.anchor_bottom = 0.95
 	add_child(gauche)
 	gauche.add_child(_label("CHASSEUR", 44, Color.WHITE))
-	var av: BkAvatar = BkAvatar.cree(h.character, h.color, 380)
+	var av: BkAvatar = BkAvatar.cree(h.character, 380)
 	av.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	gauche.add_child(av)
 	var ligne: HBoxContainer = HBoxContainer.new()
 	ligne.alignment = BoxContainer.ALIGNMENT_CENTER
 	ligne.add_theme_constant_override(&"separation", 14)
 	gauche.add_child(ligne)
-	ligne.add_child(Icone.cree("detection", 58, h.color))
+	ligne.add_child(Icone.cree("detection", 58))
 	ligne.add_child(_label(h.display_name, 44, Color.WHITE))
 	# Les chassés, à droite (grille de 4 colonnes au plus).
 	var droite: VBoxContainer = VBoxContainer.new()
@@ -70,23 +70,19 @@ func _ready() -> void:
 	droite.add_child(grille)
 	var hauteur: float = 170.0 if chasses.size() <= 4 else 150.0
 	for a: BkActor in chasses:
-		# Case de taille fixe : l'avatar, sa pastille de couleur et son piège posés à ses pieds, le
-		# pseudo dessous (en jaune pour le joueur local).
+		# Case de taille fixe : l'avatar et son coup posé à ses pieds, le pseudo dessous (en jaune pour
+		# le joueur local). Aucune couleur de joueur (GDD §7.1).
 		var c: VBoxContainer = VBoxContainer.new()
 		c.add_theme_constant_override(&"separation", 0)
 		c.custom_minimum_size = Vector2(CASE_L, 0)
-		var petit: BkAvatar = BkAvatar.cree(a.character, a.color, hauteur)
+		var petit: BkAvatar = BkAvatar.cree(a.character, hauteur)
 		petit.regard_gauche = true
 		petit.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		c.add_child(petit)
 		var pied: Control = Control.new()
 		pied.custom_minimum_size = Vector2(CASE_L, 0)
 		c.add_child(pied)
-		var pastille: Icone = Icone.cree("pastille", 24, a.color)
-		pastille.position = Vector2(CASE_L * 0.5 - 54.0, -34.0)
-		pastille.size = Vector2(24, 24)
-		pied.add_child(pastille)
-		var piege: Icone = Icone.cree("piege", 34, a.color)
+		var piege: Icone = Icone.cree("piege", 34)
 		piege.position = Vector2(CASE_L * 0.5 + 22.0, -40.0)
 		piege.size = Vector2(34, 34)
 		pied.add_child(piege)
@@ -190,15 +186,14 @@ static func son_tension(secondes: float) -> AudioStreamWAV:
 	return s
 
 
-## Petites icônes rondes dessinées : « detection » (onde), « piege » (mâchoire), « pastille ».
+## Petites icônes rondes dessinées : « detection » (onde), « piege » (mâchoire), en attendant les
+## icônes des coups spéciaux (§4).
 class Icone extends Control:
-	var genre: String = "pastille"
-	var couleur: Color = Color.WHITE
+	var genre: String = "piege"
 
-	static func cree(p_genre: String, taille: float, p_couleur: Color) -> Icone:
+	static func cree(p_genre: String, taille: float) -> Icone:
 		var i: Icone = Icone.new()
 		i.genre = p_genre
-		i.couleur = p_couleur
 		i.custom_minimum_size = Vector2(taille, taille)
 		i.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		i.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -207,9 +202,6 @@ class Icone extends Control:
 	func _draw() -> void:
 		var c: Vector2 = size * 0.5
 		var r: float = minf(size.x, size.y) * 0.5 - 2.0
-		if genre == "pastille":
-			BkDraw.ellipse(self, c, r, r, couleur, 3.0)
-			return
 		BkDraw.ellipse(self, c, r, r, Color.WHITE, 3.0)
 		if genre == "detection":
 			# Onde : point central et deux arcs.
@@ -218,8 +210,8 @@ class Icone extends Control:
 				draw_arc(c, r * k, -PI * 0.3, PI * 0.3, 12, BkVersus.ROUGE, r * 0.12, true)
 				draw_arc(c, r * k, PI * 0.7, PI * 1.3, 12, BkVersus.ROUGE, r * 0.12, true)
 		else:
-			# Piège : mâchoire à dents, dans la couleur du joueur.
-			var col: Color = couleur.darkened(0.1)
+			# Piège : mâchoire à dents.
+			var col: Color = Color("4a5263")
 			draw_arc(c, r * 0.55, PI * 0.1, PI * 0.9, 12, col, r * 0.16, true)
 			draw_arc(c, r * 0.55, PI * 1.1, PI * 1.9, 12, col, r * 0.16, true)
 			for i: int in 4:

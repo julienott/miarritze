@@ -1,7 +1,6 @@
 extends Control
-## Réglages (GDD-BLACKOUT.md) : vibration (réglage de l'appareil, autoload Settings), aide (les
-## règles en quelques lignes) et « refaire le round guidé » (§7.2 ; pas encore fait : bouton
-## « bientôt »). Le jeu n'a plus de son (Julien 2026-10-22) : les curseurs Musique et Sons sont
+## Réglages (GDD-BLACKOUT.md §7.1) : vibration (réglage de l'appareil, autoload Settings) et aide
+## (les règles en quelques lignes). Pas de round guidé (retiré le 22/10). Le jeu n'a plus de son (Julien 2026-10-22) : les curseurs Musique et Sons sont
 ## masqués (AVEC_SONS), les volumes restent dans Settings.
 
 const AVEC_SONS: bool = false
@@ -11,7 +10,7 @@ Le chasseur voit seulement dans son cône rouge : s'il te voit, tu es trouvé !
 Cache-toi derrière les bateaux, les caisses, les maisons, ou entre dans un casier.
 Ton bouton d'action : un piège quand tu te caches, une détection quand tu chasses.
 Après 1 min 30, les sorties s'ouvrent : reste 4 s dessus sans être vu pour t'échapper.
-Trouvé ? Tu deviens un petit fantôme : chatouille le chasseur, encourage les autres.
+Trouvé ? Tu deviens un petit fantôme : rejoins un chassé, il peut te délivrer.
 Bouger : flèches, ZQSD, stick ou pouce gauche. Action : Espace, A ou pouce droit."""
 
 var _racine: MarginContainer
@@ -49,10 +48,6 @@ func _ready() -> void:
 	bas.add_theme_constant_override(&"separation", 18)
 	col.add_child(bas)
 	bas.add_child(BkUi.bouton("Aide", _montrer_aide, Vector2(250, 76), BkUi.BLEU))
-	var guide: Button = BkUi.bouton("Refaire le round guidé (bientôt)", func() -> void: pass, Vector2(372, 76),
-		BkUi.CREME, 22)
-	guide.disabled = true
-	bas.add_child(guide)
 	(col.get_child(0) as Control).grab_focus.call_deferred()
 
 

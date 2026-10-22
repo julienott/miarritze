@@ -36,40 +36,6 @@
 			]
 		},
 		{
-			"id": "chatouille",
-			"groupe": "Fantômes",
-			"libelle": "Chatouille",
-			"aide": "Un fantôme qui touche le chasseur le fait rire et le ralentit un instant.",
-			"valide_le": "2026-10-20",
-			"carte_kanban": 345,
-			"reglages": [
-				{
-					"cle": "idee_chatouille",
-					"type": "on_off",
-					"libelle": "Activée",
-					"defaut": 1
-				},
-				{
-					"cle": "chatouille_duree",
-					"type": "curseur",
-					"libelle": "Durée du fou rire (s)",
-					"min": 0.5,
-					"max": 3,
-					"pas": 0.5,
-					"defaut": 1.5
-				},
-				{
-					"cle": "chatouille_repit",
-					"type": "curseur",
-					"libelle": "Répit entre deux chatouilles (s)",
-					"min": 3,
-					"max": 20,
-					"pas": 1,
-					"defaut": 8
-				}
-			]
-		},
-		{
 			"id": "delivrance",
 			"groupe": "Fantômes",
 			"libelle": "Délivrance",

@@ -70,15 +70,6 @@ func reset() -> void:
 	ambush = false
 
 
-## Emote de temps en temps, avec parcimonie : seulement au tirage et sur le podium (index ou -1).
-func want_emote(dt: float) -> int:
-	if g.phase != BkGame.Phase.DRAW and g.phase != BkGame.Phase.PODIUM:
-		return -1
-	if me.emote_t > 0.0 or rng.randf() >= BkRules.f("emote_ai_rate") * dt:
-		return -1
-	return rng.randi_range(0, BkGame.EMOTES.size() - 1)
-
-
 func update(dt: float) -> Dictionary:
 	clock += dt
 	clue_t = maxf(0.0, clue_t - dt)
@@ -595,10 +586,6 @@ func _think_ghost() -> void:
 				else:
 					path = PackedVector2Array()
 				return
-		# Chatouille : filer vers le chasseur dès qu'elle est prête.
-		if BkRules.on("idee_chatouille") and me.power_cd <= 0.0 and g.hunt_elapsed >= g._tickle_free_until - 2.0:
-			_go_ghost(g.hunter.position)
-			return
 	if _arrived() and rng.randf() < 0.25:
 		var keys: Array = g.map.cover.keys()
 		_go(g.map.center(keys[rng.randi() % keys.size()]))

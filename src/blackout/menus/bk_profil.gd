@@ -1,16 +1,14 @@
 class_name BkProfil
 extends RefCounted
 ## Profil Blackout (GDD-BLACKOUT.md) par-dessus les profils locaux de l'appareil (autoload
-## Profiles, user://profiles.json, 4 au plus) : pseudo, perso favori, couleur préférée (0 à 11) et
-## emote favorite (index dans BkGame.EMOTES). Aucune donnée personnelle, plus de code de groupe
-## (les champs de Borroka restent dans le fichier, sans être montrés). Les anciens profils reçoivent
-## leurs champs Blackout au premier chargement (`migrer`).
+## Profiles, user://profiles.json, 4 au plus) : pseudo et perso, rien d'autre (GDD §7.1 : ni couleur,
+## ni emote, ni cosmétique). Aucune donnée personnelle, plus de code de groupe. Les champs d'avant
+## (Borroka, couleur et emote de Blackout) restent dans le fichier, ignorés. Les anciens profils
+## reçoivent leur perso au premier chargement (`migrer`).
 
-## Clés gardées telles quelles (« gk_ » du nom d'avant) : elles sont déjà dans les user://profiles.json
-## des appareils ; les renommer perdrait perso, couleur et emote des profils existants.
+## Clé gardée telle quelle (« gk_ » du nom d'avant) : elle est déjà dans les user://profiles.json des
+## appareils ; la renommer perdrait le perso des profils existants.
 const PERSO: String = "gk_perso"
-const COULEUR: String = "gk_couleur"
-const EMOTE: String = "gk_emote"
 const GROS_MOTS_PATH: String = "res://data/blackout/gros_mots.json"
 
 static var _gros_mots: PackedStringArray = []
@@ -20,8 +18,8 @@ static func profiles() -> Node:
 	return (Engine.get_main_loop() as SceneTree).root.get_node_or_null("/root/Profiles")
 
 
-## Ajoute les champs Blackout qui manquent (anciens profils Borroka) : le perso de Borroka s'il existe
-## dans Blackout, sinon Louis ; une couleur différente pour chaque profil ; la première emote.
+## Ajoute le perso aux profils qui n'en ont pas (anciens profils Borroka) : le perso de Borroka s'il
+## existe dans Blackout, sinon Louis.
 static func migrer() -> void:
 	var p: Node = profiles()
 	if p == null:
@@ -34,26 +32,8 @@ static func migrer() -> void:
 			var f: String = str(prof.get("fighter", "louis"))
 			prof[PERSO] = f if persos.has(f) else "louis"
 			change = true
-		if not prof.has(COULEUR):
-			prof[COULEUR] = _couleur_libre(p, i)
-			change = true
-		if not prof.has(EMOTE):
-			prof[EMOTE] = 0
-			change = true
 	if change:
 		p.save()
-
-
-## Première couleur qu'aucun autre profil de l'appareil n'a prise (frères et sœurs différents).
-static func _couleur_libre(p: Node, sauf: int) -> int:
-	var prises: Array[int] = []
-	for i: int in p.profiles.size():
-		if i != sauf and (p.profiles[i] as Dictionary).has(COULEUR):
-			prises.append(int(p.profiles[i][COULEUR]))
-	for c: int in [0, 1, 2, 3, 7, 5, 4, 6, 9, 11, 8, 10]:
-		if not prises.has(c):
-			return c
-	return 0
 
 
 static func actif() -> Dictionary:
@@ -71,14 +51,6 @@ static func pseudo() -> String:
 
 static func perso() -> String:
 	return str(actif().get(PERSO, "louis"))
-
-
-static func couleur() -> int:
-	return clampi(int(actif().get(COULEUR, 0)), 0, 11)
-
-
-static func emote() -> int:
-	return clampi(int(actif().get(EMOTE, 0)), 0, BkGame.EMOTES.size() - 1)
 
 
 static func regler(cle: String, valeur: Variant) -> void:
@@ -147,18 +119,16 @@ static func creer(texte: String) -> String:
 			return "Ce pseudo est déjà sur cet appareil"
 	if not p.create(texte.strip_edges()):
 		return "4 profils au plus"
-	p.update_active({PERSO: "louis", COULEUR: _couleur_libre(p, p.active_index), EMOTE: 0})
+	p.update_active({PERSO: "louis"})
 	return ""
 
 
-## Le profil actif joue la partie qui commence : pseudo, perso et couleur.
+## Le profil actif joue la partie qui commence : pseudo et perso.
 static func vers_partie() -> void:
 	if not a_un_actif():
 		return
 	BkGame.config["name"] = pseudo()
 	BkGame.config["character"] = perso()
-	BkGame.config["color"] = couleur()
-	BkGame.config["emote"] = emote()
 
 
 ## QA (`--scene=bk_accueil`… sans profil) : un profil jetable pour voir les écrans.

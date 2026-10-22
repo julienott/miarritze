@@ -41,7 +41,7 @@ func _liste() -> void:
 	for i: int in p.profiles.size():
 		var prof: Dictionary = p.profiles[i]
 		var carte: Button = _carte(str(prof.get("pseudo", "?")), str(prof.get(BkProfil.PERSO, "louis")),
-			BkRules.color(int(prof.get(BkProfil.COULEUR, 0))), _choisi.bind(i))
+			_choisi.bind(i))
 		if _suppression:
 			BkUi.teinter(carte, Color("ffb3a8"))
 		rang.add_child(carte)
@@ -68,7 +68,7 @@ func _liste() -> void:
 
 
 ## Carte d'un profil : avatar figé qui s'anime au focus ou au survol, pseudo dessous.
-func _carte(pseudo: String, perso: String, couleur: Color, action: Callable) -> Button:
+func _carte(pseudo: String, perso: String, action: Callable) -> Button:
 	var b: Button = BkUi.bouton("", action, Vector2(230, 330))
 	var col: VBoxContainer = VBoxContainer.new()
 	col.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -76,7 +76,7 @@ func _carte(pseudo: String, perso: String, couleur: Color, action: Callable) -> 
 	col.offset_bottom = -14
 	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_child(col)
-	var av: BkAvatar = BkAvatar.cree(perso, couleur, 230, false)
+	var av: BkAvatar = BkAvatar.cree(perso, 230, false)
 	av.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(av)
 	var nom: Label = BkUi.label(pseudo, 30, BkUi.INK)
@@ -111,8 +111,7 @@ func _confirmer(i: int) -> void:
 	var rang: HBoxContainer = HBoxContainer.new()
 	rang.add_theme_constant_override(&"separation", 40)
 	centre.add_child(rang)
-	var av: BkAvatar = BkAvatar.cree(str(prof.get(BkProfil.PERSO, "louis")),
-		BkRules.color(int(prof.get(BkProfil.COULEUR, 0))), 300)
+	var av: BkAvatar = BkAvatar.cree(str(prof.get(BkProfil.PERSO, "louis")), 300)
 	av.pose("sad")
 	rang.add_child(av)
 	var col: VBoxContainer = VBoxContainer.new()

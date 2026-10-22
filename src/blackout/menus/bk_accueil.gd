@@ -27,7 +27,7 @@ func _ready() -> void:
 	joueur.alignment = BoxContainer.ALIGNMENT_CENTER
 	joueur.add_theme_constant_override(&"separation", 4)
 	milieu.add_child(joueur)
-	var av: BkAvatar = BkAvatar.cree(BkProfil.perso(), BkRules.color(BkProfil.couleur()), 330)
+	var av: BkAvatar = BkAvatar.cree(BkProfil.perso(), 330)
 	av.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	joueur.add_child(av)
 	joueur.add_child(BkUi.label(BkProfil.pseudo(), 40, Color.WHITE))

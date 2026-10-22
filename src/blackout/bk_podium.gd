@@ -2,12 +2,14 @@ class_name BkPodium
 extends Control
 ## Podium de fin de partie (GDD-BLACKOUT.md) : cumul des points, or, argent et bronze sur leurs
 ## marches avec les avatars animés (pose de victoire), les autres en dessous, puis « Retour à
-## l'accueil ». Les emotes restent permises (bulles des avatars) ; le joueur local fait son emote
-## favorite en arrivant.
+## l'accueil ». Pas d'emotes ni de couleur de joueur (GDD §6, §7.1) : les pseudos sous les marches.
 
 const OR: Color = Color("ffd34a")
 const ARGENT: Color = Color("cfd6df")
 const BRONZE: Color = Color("d08a4a")
+## Couleurs des confettis.
+const CONFETTIS: Array[Color] = [Color("e23b3b"), Color("2f6fe0"), Color("2fb24a"), Color("f2c12e"),
+	Color("f08a24"), Color("9b4fd6"), Color("41c7d6"), Color("f27ab3")]
 
 var game: BkGame
 var _avatars: Dictionary = {}     # id d'acteur → BkAvatar
@@ -28,7 +30,7 @@ func _ready() -> void:
 	add_child(titre)
 	for i: int in mini(3, _rangs.size()):
 		var a: BkActor = _rangs[i]
-		var av: BkAvatar = BkAvatar.cree(a.character, a.color, 250.0 if i == 0 else 210.0)
+		var av: BkAvatar = BkAvatar.cree(a.character, 250.0 if i == 0 else 210.0)
 		av.pose("victory")
 		add_child(av)
 		_avatars[a.id] = av
@@ -67,9 +69,6 @@ func _process(dt: float) -> void:
 		av.size = av.custom_minimum_size
 		av.position = Vector2(r.position.x + r.size.x * 0.5 - av.size.x * 0.5, r.position.y - av.size.y + 6.0 - saut)
 		av.modulate.a = k
-		# L'emote des persos du podium (joueur local ou IA) passe par son avatar.
-		if a.emote_t > 0.0 and av.actor != null and av.actor.emote_t <= 0.0 and a.emote >= 0:
-			av.emote(a.emote)
 	_bouton.position = Vector2(size.x * 0.5 - _bouton.size.x * 0.5, size.y - 98.0)
 	queue_redraw()
 
@@ -81,7 +80,7 @@ func _draw() -> void:
 	for i: int in 60:
 		var x: float = fmod(float(i) * 97.3 + _t * (20.0 + i % 7 * 6.0), s.x)
 		var y: float = fmod(float(i) * 53.1 + _t * (60.0 + i % 5 * 15.0), s.y)
-		draw_rect(Rect2(x, y, 10, 6).abs(), BkRules.color(i % 12))
+		draw_rect(Rect2(x, y, 10, 6).abs(), CONFETTIS[i % CONFETTIS.size()])
 	var font: Font = ThemeDB.fallback_font
 	var medailles: Array[Color] = [OR, ARGENT, BRONZE]
 	for i: int in mini(3, _rangs.size()):
@@ -96,7 +95,6 @@ func _draw() -> void:
 	# Les suivants, en colonne à droite.
 	for i: int in range(3, _rangs.size()):
 		var y: float = 190.0 + 40.0 * float(i - 3)
-		draw_circle(Vector2(s.x - 228.0, y - 8.0), 10.0, _rangs[i].color)
 		draw_string_outline(font, Vector2(s.x - 210.0, y), "%d. %s  %d" % [i + 1, _rangs[i].display_name, _rangs[i].score],
 			HORIZONTAL_ALIGNMENT_LEFT, 200, 20, 6, BkUi.INK)
 		draw_string(font, Vector2(s.x - 210.0, y), "%d. %s  %d" % [i + 1, _rangs[i].display_name, _rangs[i].score],
