@@ -1,0 +1,404 @@
+{
+ "basajaun": {
+  "A": "ae16142261fa4cd0814ae1bc7e81b75f",
+  "chaine": [
+   {
+    "task_id": "2e7caf8ac29140cda3c0a3d9ec7cda99",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "size": "boss",
+   "seed": 7,
+   "colors": 20,
+   "priority": "night",
+   "tag": "miarritze/boss_essai",
+   "prompt": "a giant friendly-scary forest lord covered in thick shaggy brown fur, a long beard of green moss, big root-like hands, leaning on a carved tree trunk staff. Signature detail drawn large and bright: a carved tree trunk staff and a mossy green beard.",
+   "skip": [
+    "lift",
+    "ghost",
+    "jump_hide",
+    "interagir",
+    "victoire",
+    "defaite",
+    "renverse",
+    "colle",
+    "ralenti",
+    "aveugle",
+    "tracte"
+   ],
+   "clips": {
+    "run": "Zombie_Walk_Fwd_Loop"
+   },
+   "extras": [
+    {
+     "name": "cri",
+     "motion": "Idle_Rail_Call",
+     "action": "roars with his arms raised",
+     "object": false,
+     "loop": false,
+     "fps": 10
+    },
+    {
+     "name": "pouvoir_1",
+     "motion": "Spell_Simple_Shoot",
+     "action": "raises one hand, glowing green leaves swirl around it",
+     "object": false,
+     "loop": false,
+     "fps": 12
+    },
+    {
+     "name": "pouvoir_2",
+     "motion": "Sword_Attack",
+     "action": "slams his carved trunk staff down onto the ground",
+     "object": false,
+     "loop": false,
+     "fps": 12
+    }
+   ],
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10
+    }
+   ]
+  }
+ },
+ "tartalo": {
+  "A": "23546043021e4f45ae3a7b8864376e3d",
+  "chaine": [
+   {
+    "task_id": "e8a2b6673ad34eccb31992644e61e439",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "size": "boss",
+   "seed": 7,
+   "colors": 20,
+   "priority": "night",
+   "tag": "miarritze/boss_essai",
+   "prompt": "a big clumsy one-eyed ogre giant with a single large round eye in the middle of his forehead, tanned skin, a brown fur tunic and a big wooden club. Signature detail drawn large and bright: a single big round eye and a wooden club.",
+   "skip": [
+    "lift",
+    "ghost",
+    "jump_hide",
+    "interagir",
+    "victoire",
+    "defaite",
+    "renverse",
+    "colle",
+    "ralenti",
+    "aveugle",
+    "tracte"
+   ],
+   "clips": {
+    "run": "Zombie_Walk_Fwd_Loop"
+   },
+   "extras": [
+    {
+     "name": "cri",
+     "motion": "Idle_Rail_Call",
+     "action": "sniffs the air then roars",
+     "object": false,
+     "loop": false,
+     "fps": 10
+    },
+    {
+     "name": "pouvoir_1",
+     "motion": "Idle_Torch_Loop",
+     "action": "stares hard, a red beam shines from his single eye",
+     "object": false,
+     "loop": false,
+     "fps": 12
+    },
+    {
+     "name": "pouvoir_2",
+     "motion": "Sword_Attack",
+     "action": "slams his big wooden club onto the ground",
+     "object": "a big wooden club",
+     "loop": false,
+     "fps": 12
+    }
+   ],
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10
+    }
+   ]
+  }
+ },
+ "intxixu_1": {
+  "A": "a11003de541449518db5a2c6191a03c8",
+  "chaine": [
+   {
+    "task_id": "273876c16d644336b837a1c142affba0",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "size": "normal",
+   "seed": 7,
+   "colors": 20,
+   "priority": "night",
+   "tag": "miarritze/boss_essai",
+   "prompt": "a small hunched cave goblin with grey stone-like skin, animal fur clothes, a green moss tuft on his head, glowing yellow eyes and a pebble sling. Signature detail drawn large and bright: glowing yellow eyes and a green moss tuft.",
+   "skip": [
+    "lift",
+    "ghost",
+    "jump_hide",
+    "portrait",
+    "interagir",
+    "victoire",
+    "defaite",
+    "renverse",
+    "colle",
+    "ralenti",
+    "aveugle",
+    "tracte"
+   ],
+   "clips": {
+    "run": "Sprint_Loop"
+   },
+   "extras": [
+    {
+     "name": "cri",
+     "motion": "Idle_Rail_Call",
+     "action": "cackles with a wide grin",
+     "object": false,
+     "loop": false,
+     "fps": 10
+    },
+    {
+     "name": "pouvoir_1",
+     "motion": "Spell_Simple_Shoot",
+     "action": "raises standing stones from the ground with a wave",
+     "object": false,
+     "loop": false,
+     "fps": 12
+    },
+    {
+     "name": "pouvoir_2",
+     "motion": "OverhandThrow",
+     "action": "throws a handful of pointy pebbles",
+     "object": "a handful of pebbles",
+     "loop": false,
+     "fps": 12
+    }
+   ],
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10
+    }
+   ]
+  }
+ },
+ "intxixu_2": {
+  "A": "6f2d94fe4e2544e79bf3d06e48a0e437",
+  "chaine": [
+   {
+    "task_id": "5331e0f7d5f4479dbcfdabba10a9bd31",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "size": "normal",
+   "seed": 7,
+   "colors": 20,
+   "priority": "night",
+   "tag": "miarritze/boss_essai",
+   "prompt": "a small hunched cave goblin with grey stone-like skin, animal fur clothes, an orange moss tuft on his head, glowing yellow eyes and a small bag of pebbles. Signature detail drawn large and bright: glowing yellow eyes and an orange moss tuft.",
+   "skip": [
+    "lift",
+    "ghost",
+    "jump_hide",
+    "portrait",
+    "interagir",
+    "victoire",
+    "defaite",
+    "renverse",
+    "colle",
+    "ralenti",
+    "aveugle",
+    "tracte"
+   ],
+   "clips": {
+    "run": "Sprint_Loop"
+   },
+   "extras": [
+    {
+     "name": "cri",
+     "motion": "Idle_Rail_Call",
+     "action": "cackles with a wide grin",
+     "object": false,
+     "loop": false,
+     "fps": 10
+    },
+    {
+     "name": "pouvoir_1",
+     "motion": "Spell_Simple_Shoot",
+     "action": "raises standing stones from the ground with a wave",
+     "object": false,
+     "loop": false,
+     "fps": 12
+    },
+    {
+     "name": "pouvoir_2",
+     "motion": "OverhandThrow",
+     "action": "throws a handful of pointy pebbles",
+     "object": "a handful of pebbles",
+     "loop": false,
+     "fps": 12
+    }
+   ],
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10
+    }
+   ]
+  }
+ },
+ "intxixu_3": {
+  "A": "4bd08ee2ded54c59b140708bf39929a1",
+  "chaine": [
+   {
+    "task_id": "52d1a095b7ae4f199ee651303c1ec969",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "size": "normal",
+   "seed": 7,
+   "colors": 20,
+   "priority": "night",
+   "tag": "miarritze/boss_essai",
+   "prompt": "a small hunched cave goblin with grey stone-like skin, animal fur clothes, a purple moss tuft on his head, glowing yellow eyes and a bone necklace. Signature detail drawn large and bright: glowing yellow eyes and a purple moss tuft.",
+   "skip": [
+    "lift",
+    "ghost",
+    "jump_hide",
+    "portrait",
+    "interagir",
+    "victoire",
+    "defaite",
+    "renverse",
+    "colle",
+    "ralenti",
+    "aveugle",
+    "tracte"
+   ],
+   "clips": {
+    "run": "Sprint_Loop"
+   },
+   "extras": [
+    {
+     "name": "cri",
+     "motion": "Idle_Rail_Call",
+     "action": "cackles with a wide grin",
+     "object": false,
+     "loop": false,
+     "fps": 10
+    },
+    {
+     "name": "pouvoir_1",
+     "motion": "Spell_Simple_Shoot",
+     "action": "raises standing stones from the ground with a wave",
+     "object": false,
+     "loop": false,
+     "fps": 12
+    },
+    {
+     "name": "pouvoir_2",
+     "motion": "OverhandThrow",
+     "action": "throws a handful of pointy pebbles",
+     "object": "a handful of pebbles",
+     "loop": false,
+     "fps": 12
+    }
+   ],
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10
+    }
+   ]
+  }
+ },
+ "zezengorri": {
+  "A": "f6d8ee7b1e504a1ebf3ac6b112f90899",
+  "chaine": [
+   {
+    "task_id": "302a29215aa044998f063fb3be5813b4",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__creature",
+   "kind": "quadruped",
+   "size": "boss",
+   "height": 40,
+   "seed": 7,
+   "colors": 20,
+   "priority": "night",
+   "tag": "miarritze/boss_essai",
+   "prompt": "a massive bright scarlet red bull with glowing eyes, magical flames around its horns and smoke puffing from its nostrils",
+   "skip": [
+    "sleep",
+    "lick"
+   ],
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10
+    }
+   ]
+  }
+ },
+ "herensuge": {
+  "A": "3802859a6f5443f29f4ad735de78dad9",
+  "chaine": [
+   {
+    "task_id": "c1bbf92ecd6743559e92f504b890cb93",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__creature",
+   "kind": "serpent3",
+   "size": "boss",
+   "seed": 7,
+   "colors": 20,
+   "priority": "night",
+   "tag": "miarritze/boss_essai",
+   "prompt": "a long winged dragon-serpent with three reptile heads, scales the colour of antique bronze and sulphur yellow",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10
+    }
+   ]
+  }
+ }
+}

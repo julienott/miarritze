@@ -775,7 +775,10 @@ pot, faisceau et geysers vers un indice récent ; persos signalés par les round
 faibles en chassé, Itsasargi trop fort (flash ~7 fois par round), makila et piment peu efficaces,
 projectiles qui touchent rarement une cible qui fuit.
 **En file chez pixelforge** (23/10) : 13 persos v3 (normale), fantôme commun (normale), 42 PNJ humains
-(nuit) ; ids dans `tools/blackout/taches_persos_v3.json`, `taches_fantome.json`, `taches_pnj.json`.
+(nuit), **les 5 boss en essai** (nuit : Basajaun, Tartalo, les 3 Intxixuk en 32 px, Zezengorri et
+Herensuge en `pf_px__creature`) ; ids dans `tools/blackout/taches_persos_v3.json`, `taches_fantome.json`,
+`taches_pnj.json`, `taches_boss_essai.json`. Zezengorri n'a que les animations de quadrupède (idle, marche,
+course) : charge = course ; gratter le sol et souffle de soufre restent à demander.
 À intégrer tels quels (`tools/blackout/integre_persos_v2.py`) puis QA par Julien ; poser `keep` sur les
 persos validés (§14.1). Animaux : chat et chien attendent le feu vert de Julien à pixelforge
 (`pf_px__creature`) ; goéland et pigeon attendent un mode oiseau. Herensuge en marionnette, essai chat
