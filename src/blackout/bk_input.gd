@@ -1,4 +1,4 @@
-class_name GkInput
+class_name BkInput
 extends Node
 ## Source d'entrées du joueur local (SPEC-GORDEKA §5) : déplacement + un seul bouton.
 ##   clavier : flèches ou ZQSD/WASD, Espace ou Entrée ;

@@ -1,6 +1,6 @@
 extends Node
-## Profiles — profils locaux (jusqu'à 4 par appareil), lus et complétés par GkProfil.
-## Hérité de l'ancien jeu, réduit au stockage : à remplacer par un équivalent Gordeka.
+## Profiles — profils locaux (jusqu'à 4 par appareil), lus et complétés par BkProfil.
+## Hérité de l'ancien jeu, réduit au stockage : à remplacer par un équivalent Blackout.
 ##
 ## Persistance : user://profiles.json (IndexedDB en web). Aucune donnée
 ## personnelle : pseudo seul (plus player_id + secret du serveur une fois en ligne).

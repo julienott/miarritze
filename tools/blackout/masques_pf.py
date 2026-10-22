@@ -6,11 +6,11 @@ comme une autre » ; notre calcul local sur la silhouette ne respectait pas les 
   masques_pf.py depose [<id> …]     un job par objet intégré (défaut : tous ceux qui n'en ont pas)
   masques_pf.py releve              rapatrie les jobs finis ; rend la main quand il n'y a plus rien en vol
 
-On envoie l'image INTÉGRÉE (assets/gordeka/decor/objets/<id>.png, 2 px par px de jeu) : les masques
+On envoie l'image INTÉGRÉE (assets/blackout/decor/objets/<id>.png, 2 px par px de jeu) : les masques
 reviennent alignés pixel pour pixel sur ce que le jeu affiche.
-Sorties : assets/gordeka/decor/masques/<id>/{footprint,occluder,ground_contact}.png + masks.json (lus
-par le jeu) ; aperçu de recette tools/gordeka/masques/<id>.png (affiché par /producer).
-Suivi : tools/gordeka/taches_masques.json.
+Sorties : assets/blackout/decor/masques/<id>/{footprint,occluder,ground_contact}.png + masks.json (lus
+par le jeu) ; aperçu de recette tools/blackout/masques/<id>.png (affiché par /producer).
+Suivi : tools/blackout/taches_masques.json.
 """
 import io
 import json
@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.join(ROOT, "tools", "pf"))
 sys.path.insert(0, HERE)
 import nuit  # noqa: E402
 
-DECOR = os.path.join(ROOT, "assets", "gordeka", "decor")
+DECOR = os.path.join(ROOT, "assets", "blackout", "decor")
 INDEX = os.path.join(DECOR, "index.json")
 SUIVI = os.path.join(HERE, "taches_masques.json")
 APERCUS = os.path.join(HERE, "masques")
@@ -43,7 +43,7 @@ MARGE = 16                 # px transparents ajoutés autour (nos images sont re
 
 
 def largeur_jeu(el, img):
-    """Largeur affichée dans le jeu, comme GkDecor._standing_scale : hauteur imposée (hauteur_cases) ou
+    """Largeur affichée dans le jeu, comme BkDecor._standing_scale : hauteur imposée (hauteur_cases) ou
     s = min(largeur emprise / l, hauteur permise / h)."""
     cw, ch = el["taille_cases"]
     s = min(cw * 64 / img.width, (ch + el.get("debord_haut_cases", 0)) * 64 / img.height)

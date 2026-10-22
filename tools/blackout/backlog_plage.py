@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Backlog des assets de la Plage de la Côte des Basques (catalogue de tools/gordeka/make_plage.py).
+"""Backlog des assets de la Plage de la Côte des Basques (catalogue de tools/blackout/make_plage.py).
 
   backlog_plage.py prompts [--fichier <prompts_decor.json>]   section « cartes → plage » de prompts_decor.json
   backlog_plage.py kanban [--essai]                            chapeau « Carte : Plage de la Côte des Basques »
@@ -7,7 +7,7 @@
 
 Prompts : description POSITIVE de l'objet (le générateur ajoute ce qu'on nomme, même précédé de « sans »), puis
 le style commun du jeu (flat cartoon, contour bleu marine épais) et la caméra 3/4 de face (front34). Rien n'est
-déposé chez pixelforge : Julien priorise. Les cartes déjà créées sont notées dans tools/gordeka/taches_plage.json
+déposé chez pixelforge : Julien priorise. Les cartes déjà créées sont notées dans tools/blackout/taches_plage.json
 (pas de doublon si l'on relance). Les images communes reprises du port (« fichier » dans le catalogue) n'ont pas
 de carte.
 """
@@ -28,7 +28,7 @@ SUIVI = os.path.join(HERE, "taches_plage.json")
 CLI = os.path.join(ROOT, "tools", "producer", "cli.py")
 PX = 128
 
-STYLE = ("Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy "
+STYLE = ("Clean flat 2D vector cartoon game art in the style of our game Miarritze Blackout: thick uniform dark navy "
          "#1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded "
          "friendly shapes, cute and readable from far away for 9 year old children. Setting: the Côte des Basques beach "
          "of Biarritz in the Basque Country under a summer sun: golden sand, ochre sandstone cliffs, turquoise and navy "
@@ -110,7 +110,7 @@ def section():
     repris = sorted({el["fichier"].split("/")[-1].removesuffix(".png") for el in list(mp.ELEMENTS.values()) +
                      list(mp.FLOORS.values()) if "fichier" in el})
     return {
-        "_doc": "Assets à créer pour la Plage de la Côte des Basques (tools/gordeka/backlog_plage.py, catalogue de "
+        "_doc": "Assets à créer pour la Plage de la Côte des Basques (tools/blackout/backlog_plage.py, catalogue de "
                 "make_plage.py). Prompts positifs (sans négation), style commun et caméra front34 ; tailles en cases de "
                 "64 px, images à 128 px par case. Les cachettes demandent aussi une image « ouverte » (pf_hd__edit). "
                 "Rien n'est déposé chez pixelforge : Julien priorise sur /producer (carte chapeau « Carte : Plage de la "
@@ -167,7 +167,7 @@ def desc(e):
         lignes.append("Animation : " + e["animation"] + ".")
     if e["placeholder"]:
         lignes.append("Placeholder actuel : " + e["placeholder"])
-    lignes.append(f"Élément : {e['id']} (tools/gordeka/prompts_decor.json → cartes → plage).")
+    lignes.append(f"Élément : {e['id']} (tools/blackout/prompts_decor.json → cartes → plage).")
     return "\n".join(lignes)
 
 
@@ -184,7 +184,7 @@ def cmd_kanban(args):
              "tunnels sombres, cabines rayées, deux restaurants avec cuisine, poste de secours, rochers du Basta, "
              "bateaux tirés au sec, Port-Vieux et sa digue). Carte jouable en partie rapide avec des placeholders "
              "dessinés par le code (assets/maps/plage/decor/provisoires/). Une carte enfant par asset, prompt proposé "
-             "dans la description (tools/gordeka/prompts_decor.json → cartes → plage). À prioriser par Julien : rien "
+             "dans la description (tools/blackout/prompts_decor.json → cartes → plage). À prioriser par Julien : rien "
              "n'est déposé chez pixelforge. Section de la carte : SPEC-GORDEKA §8.")
         suivi["chapeau"] = _id(cli("add-card", "--type", "asset", "--title", "Carte : Plage de la Côte des Basques",
                                    "--desc", d, "--status", "backlog"))

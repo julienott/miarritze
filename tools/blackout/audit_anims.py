@@ -2,7 +2,7 @@
 """Raccord des animations 2D des persos (Julien, 2026-10-20 : « que toutes les animations aient le
 temps de jouer, que leurs transitions soient correctes, que le perso soit raccord d'une animation à
 l'autre et que l'animation ne le déplace pas »). Mesures sur les planches, telles que le jeu les
-dessine (src/gordeka/gk_perso.gd : case recalée de `frame_offsets`, mise à l'échelle `echelle`
+dessine (src/blackout/bk_perso.gd : case recalée de `frame_offsets`, mise à l'échelle `echelle`
 autour des pieds `feet_anchor`). Les PNG ne sont jamais réécrits.
 
   audit_anims.py [<id>…] [--sortie <dossier>] [--brut]
@@ -11,7 +11,7 @@ autour des pieds `feet_anchor`). Les PNG ne sont jamais réécrits.
 
 Quatre volets, par perso et par animation :
  a. durée : durée jouée de chaque animation contre la durée de l'état de jeu qui la déclenche
-    (data/gordeka/rules.json, section `anims`) ;
+    (data/blackout/rules.json, section `anims`) ;
  b. transitions : pour chaque passage d'état possible (TRANSITIONS), dernière image de A (ou chaque
     image d'une boucle interrompue) contre l'image d'entrée de B : 1 − IoU des silhouettes, écart des
     pieds, de hauteur, de couleur moyenne ; avec et sans point d'entrée (`entrees`) ;
@@ -30,8 +30,8 @@ from PIL import Image, ImageDraw
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-PERSOS = os.path.join(ROOT, "assets", "gordeka", "persos")
-RULES = os.path.join(ROOT, "data", "gordeka", "rules.json")
+PERSOS = os.path.join(ROOT, "assets", "blackout", "persos")
+RULES = os.path.join(ROOT, "data", "blackout", "rules.json")
 
 CASE = 256
 ALPHA_MIN = 128
@@ -41,7 +41,7 @@ MOUVEMENT = ("walk", "run_scared", "ghost_move")
 BOUCLES = ("idle", "walk", "run_scared", "ghost", "ghost_move", "trapped", "search", "victory", "sad")
 EMOTES = ("emote_salut", "emote_rire", "emote_danse", "emote_pouce", "emote_chut", "emote_langue")
 SOL = ("idle", "walk", "run_scared")
-# Passages d'état réellement possibles dans le jeu (gk_game.gd, gk_perso.gd::_state_anim) :
+# Passages d'état réellement possibles dans le jeu (bk_game.gd, bk_perso.gd::_state_anim) :
 # A -> [B…]. hide_in finit dans la cachette (invisible) ; victory/sad sont des poses de fin.
 TRANSITIONS = {
     "idle": ["walk", "run_scared", "hide_in", "trap", "found", "extract", "detect", "search",

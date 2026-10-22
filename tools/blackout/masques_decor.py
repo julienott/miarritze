@@ -3,9 +3,9 @@
 
   masques_decor.py [--dest DIR]
 
-Lance le jeu sans fenêtre (`--gk-export-masques=<dest>`) : c'est exactement l'algorithme du jeu
-(src/gordeka/gk_decor.gd) qui choisit et prépare les formes au chargement de la carte : masques de
-pixelforge (assets/gordeka/decor/masques/<id>/, masques_pf.py) quand ils existent, sinon le calcul
+Lance le jeu sans fenêtre (`--bk-export-masques=<dest>`) : c'est exactement l'algorithme du jeu
+(src/blackout/bk_decor.gd) qui choisit et prépare les formes au chargement de la carte : masques de
+pixelforge (assets/blackout/decor/masques/<id>/, masques_pf.py) quand ils existent, sinon le calcul
 local sur la silhouette (repli). Une image par objet en image (sa première pose sur la carte),
 2 px par px de jeu, avec en bandeau la source de la forme :
 - l'image de l'objet sur un damier ;
@@ -13,8 +13,8 @@ local sur la silhouette (repli). Une image par objet en image (sa première pose
 - en violet, ce qui passe devant un perso situé derrière et le masque ;
 - en rouge, la ligne de tri (pieds au-dessus : perso derrière l'objet) ;
 - en pointillé blanc, les cases de l'objet sur la carte.
-Défaut : tools/gordeka/masques/jeu/ (versionné, affiché par tools/producer/build_index.py à côté des
-aperçus de pixelforge, tools/gordeka/masques/<id>.png, écrits par masques_pf.py).
+Défaut : tools/blackout/masques/jeu/ (versionné, affiché par tools/producer/build_index.py à côté des
+aperçus de pixelforge, tools/blackout/masques/<id>.png, écrits par masques_pf.py).
 """
 import argparse
 import glob
@@ -38,8 +38,8 @@ def main():
         for f in glob.glob(os.path.join(dest, "*.png")):
             os.remove(f)
     godot = shutil.which("godot") or sys.exit("godot introuvable dans le PATH")
-    r = subprocess.run([godot, "--headless", "--path", ROOT, "--", "--scene=gk_game",
-                        f"--gk-export-masques={dest}"], capture_output=True, text=True, timeout=600)
+    r = subprocess.run([godot, "--headless", "--path", ROOT, "--", "--scene=bk_game",
+                        f"--bk-export-masques={dest}"], capture_output=True, text=True, timeout=600)
     for line in (r.stdout + r.stderr).splitlines():
         if "masques du décor" in line or "ERROR" in line:
             print(line)

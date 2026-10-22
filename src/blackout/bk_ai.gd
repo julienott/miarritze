@@ -1,11 +1,11 @@
-class_name GkAi
+class_name BkAi
 extends RefCounted
 ## IA d'un joueur (SPEC-GORDEKA §10). Elle ne voit que ce que voit son rôle :
 ## un chassé voit toute la carte (et le chasseur) ; le chasseur ne sait que ce qu'il voit,
 ## ce que lui donnent ses ondes, les pièges qu'il déclenche et les cachettes qui tremblent.
 
-var g: GkGame
-var me: GkActor
+var g: BkGame
+var me: BkActor
 var level: String
 var cfg: Dictionary
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -37,18 +37,18 @@ var slipped_at: float = -100.0
 var slip_pending: bool = false
 
 
-func _init(p_game: GkGame, p_me: GkActor, p_level: String) -> void:
+func _init(p_game: BkGame, p_me: BkActor, p_level: String) -> void:
 	g = p_game
 	me = p_me
 	level = p_level
-	cfg = GkRules.ai(p_level)
+	cfg = BkRules.ai(p_level)
 	rng.seed = hash(p_me.id * 7919 + 17)
 
 
 ## Change de niveau (QA : chasseur IA d'un autre niveau que les chassés).
 func set_level(p_level: String) -> void:
 	level = p_level
-	cfg = GkRules.ai(p_level)
+	cfg = BkRules.ai(p_level)
 
 
 func reset() -> void:
@@ -72,11 +72,11 @@ func reset() -> void:
 
 ## Emote de temps en temps, avec parcimonie : seulement au tirage et sur le podium (index ou -1).
 func want_emote(dt: float) -> int:
-	if g.phase != GkGame.Phase.DRAW and g.phase != GkGame.Phase.PODIUM:
+	if g.phase != BkGame.Phase.DRAW and g.phase != BkGame.Phase.PODIUM:
 		return -1
-	if me.emote_t > 0.0 or rng.randf() >= GkRules.f("emote_ai_rate") * dt:
+	if me.emote_t > 0.0 or rng.randf() >= BkRules.f("emote_ai_rate") * dt:
 		return -1
-	return rng.randi_range(0, GkGame.EMOTES.size() - 1)
+	return rng.randi_range(0, BkGame.EMOTES.size() - 1)
 
 
 func update(dt: float) -> Dictionary:
@@ -85,17 +85,17 @@ func update(dt: float) -> Dictionary:
 	scan_t = maxf(0.0, scan_t - dt)
 	if me.frozen or me.search_left > 0.0:
 		return {}
-	if me.role == GkActor.Role.OUT:
+	if me.role == BkActor.Role.OUT:
 		return {}
 	think_t -= dt
 	if think_t <= 0.0:
 		think_t = float(cfg.get("think", 0.5))
 		match me.role:
-			GkActor.Role.HIDER:
+			BkActor.Role.HIDER:
 				_think_hider()
-			GkActor.Role.HUNTER:
+			BkActor.Role.HUNTER:
 				_think_hunter()
-			GkActor.Role.GHOST:
+			BkActor.Role.GHOST:
 				_think_ghost()
 	# Coincé contre un obstacle : on refait le chemin.
 	if me.position.distance_to(_last_pos) < 2.0 and path_i < path.size():
@@ -108,9 +108,9 @@ func update(dt: float) -> Dictionary:
 		_stuck_t = 0.0
 	_last_pos = me.position
 	var out: Dictionary = {"move": _follow(dt)}
-	if me.role == GkActor.Role.HUNTER and scan_t > 0.0 and out["move"] == Vector2.ZERO:
+	if me.role == BkActor.Role.HUNTER and scan_t > 0.0 and out["move"] == Vector2.ZERO:
 		out["look"] = Vector2.from_angle(me.look + 1.2)
-	elif me.role == GkActor.Role.HIDER and g.hunter:
+	elif me.role == BkActor.Role.HIDER and g.hunter:
 		out["look"] = g.hunter.position - me.position
 	if want_action:
 		want_action = false
@@ -149,21 +149,21 @@ func _tiles() -> float:
 # ---------------------------------------------------------------- chassé
 
 func _think_hider() -> void:
-	var h: GkActor = g.hunter
+	var h: BkActor = g.hunter
 	if me.hidden_in >= 0:
 		plan_cachette = -1
 		# Mouvement : le chasseur fouille une autre cachette à côté, on en profite pour filer.
-		if GkRules.on("idee_mouvement") and _search_window() and int(g._search_target.get(h.id, -1)) != me.hidden_in:
+		if BkRules.on("idee_mouvement") and _search_window() and int(g._search_target.get(h.id, -1)) != me.hidden_in:
 			want_action = true
 			slip_pending = true
 			return
 		var far: bool = h.position.distance_to(me.position) > float(cfg.get("danger", 8.0)) * _tiles()
-		if me.hidden_t > GkRules.f("hide_max") - 2.0 or (far and me.hidden_t > 8.0 and rng.randf() < 0.15):
+		if me.hidden_t > BkRules.f("hide_max") - 2.0 or (far and me.hidden_t > 8.0 and rng.randf() < 0.15):
 			want_action = true                   # on sort avant d'être éjecté
 		return
-	var hunting: bool = g.phase == GkGame.Phase.HUNT
+	var hunting: bool = g.phase == BkGame.Phase.HUNT
 	# Détection progressive : il se sait repéré (sa jauge monte) : il file vers l'abri le plus proche.
-	if hunting and GkRules.on("idee_detection") and me.gauge > 0.0:
+	if hunting and BkRules.on("idee_detection") and me.gauge > 0.0:
 		_react_t = 0.0
 		_flee(true)
 		return
@@ -173,7 +173,7 @@ func _think_hider() -> void:
 			_flee()
 		return
 	_react_t = 0.0
-	if hunting and GkRules.on("idee_mouvement") and _think_movement():
+	if hunting and BkRules.on("idee_mouvement") and _think_movement():
 		return
 	if plan_cachette >= 0:
 		var c: Dictionary = g.cachettes[plan_cachette]
@@ -193,7 +193,7 @@ func _think_hider() -> void:
 			going_exit = true
 			_go(g.map.center(e))
 			return
-	if g.phase == GkGame.Phase.HIDE and path.is_empty():
+	if g.phase == BkGame.Phase.HIDE and path.is_empty():
 		_pick_hiding()
 		ambush = rng.randf() < float(cfg.get("trap_ambush", 0.0))
 		return
@@ -214,7 +214,7 @@ func _think_hider() -> void:
 				return
 	if hunting:
 		relocate_t -= float(cfg.get("think", 0.5))
-		var far_relocate: float = 9.0 if GkRules.on("idee_mouvement") else 12.0
+		var far_relocate: float = 9.0 if BkRules.on("idee_mouvement") else 12.0
 		if relocate_t <= 0.0 and _arrived() and h.position.distance_to(me.position) > far_relocate * _tiles():
 			relocate_t = _relocate_delay() * rng.randf_range(0.7, 1.3)
 			_pick_hiding()
@@ -222,20 +222,20 @@ func _think_hider() -> void:
 
 ## Délai avant de changer de planque (s) ; plus court avec idee_mouvement.
 func _relocate_delay() -> float:
-	var k: float = GkRules.f("mouvement_relocate") if GkRules.on("idee_mouvement") else 1.0
+	var k: float = BkRules.f("mouvement_relocate") if BkRules.on("idee_mouvement") else 1.0
 	return float(cfg.get("relocate", 25.0)) * k
 
 
 ## Le chasseur fouille une cachette (1 s immobile) à portée : une fenêtre pour bouger.
 func _search_window() -> bool:
-	var h: GkActor = g.hunter
-	return h.search_left > 0.0 and h.position.distance_to(me.position) < GkRules.px("mouvement_fenetre_portee")
+	var h: BkActor = g.hunter
+	return h.search_left > 0.0 and h.position.distance_to(me.position) < BkRules.px("mouvement_fenetre_portee")
 
 
 ## idee_mouvement, chassé dehors et pas menacé : profiter d'une fouille, ou contourner le chasseur
 ## qui vient de passer tout près et s'éloigne en nous tournant le dos. Vrai si on a bougé.
 func _think_movement() -> bool:
-	var h: GkActor = g.hunter
+	var h: BkActor = g.hunter
 	var dh: float = h.position.distance_to(me.position) / _tiles()
 	if dh < 4.0:
 		close_t = clock
@@ -244,7 +244,7 @@ func _think_movement() -> bool:
 		return _slip_behind()
 	var away: bool = absf(angle_difference(h.look, (me.position - h.position).angle())) > deg_to_rad(110.0)
 	if clock - close_t < 8.0 and dh > 6.0 and away and clock - slipped_at > 10.0 and _arrived() \
-			and rng.randf() < GkRules.f("mouvement_contourne"):
+			and rng.randf() < BkRules.f("mouvement_contourne"):
 		return _slip_behind()
 	return false
 
@@ -252,7 +252,7 @@ func _think_movement() -> bool:
 ## Se glisser derrière le chasseur, là où il vient de chercher : une case abritée, hors de sa vue,
 ## dans son dos, à 5 cases au moins de lui.
 func _slip_behind() -> bool:
-	var h: GkActor = g.hunter
+	var h: BkActor = g.hunter
 	var fwd: Vector2 = Vector2.from_angle(h.look)
 	var here: Vector2i = g.map.to_tile(h.position)
 	var best: Vector2i = Vector2i(-1, -1)
@@ -284,21 +284,21 @@ func _slip_behind() -> bool:
 
 ## Le chasseur pourrait me voir bientôt : il est proche, rien ne nous sépare et il regarde à peu près vers moi.
 func _threatened() -> bool:
-	var h: GkActor = g.hunter
+	var h: BkActor = g.hunter
 	var v: Vector2 = me.position - h.position
 	var d: float = v.length()
 	if d > float(cfg.get("danger", 8.0)) * _tiles():
 		return false
 	if not g.clear_line(h.position, me.position):
 		return false
-	var facing: bool = absf(angle_difference(h.look, v.angle())) < deg_to_rad(GkRules.f("cone_deg")) * 0.5 + 0.8
+	var facing: bool = absf(angle_difference(h.look, v.angle())) < deg_to_rad(BkRules.f("cone_deg")) * 0.5 + 0.8
 	return facing or d < 3.5 * _tiles()
 
 
 ## Fuite : une case loin du chasseur, abritée et hors de sa vue. `spotted` (il se sait repéré) :
 ## la plus proche possible, pour casser la ligne de vue au plus vite.
 func _flee(spotted: bool = false) -> void:
-	var h: GkActor = g.hunter
+	var h: BkActor = g.hunter
 	# Piège sur son chemin si le chasseur est tout près, ou cachette libre à portée.
 	if h.position.distance_to(me.position) < 5.0 * _tiles() and g.near_cachette(me, true) >= 0 \
 			and rng.randf() < 0.5:
@@ -355,10 +355,10 @@ func _pick_hiding() -> void:
 			continue
 		var p: Vector2 = g.map.center(t)
 		var s: float = float(cov) * 2.0 + minf(p.distance_to(spawn) / _tiles(), 30.0) * 0.4 + rng.randf() * 6.0
-		for b: GkAi in g.brains.values():
+		for b: BkAi in g.brains.values():
 			if b != self and b.path.size() > 0 and b.path[b.path.size() - 1].distance_to(p) < 4.0 * _tiles():
 				s -= 8.0
-		if g.phase == GkGame.Phase.HUNT:
+		if g.phase == BkGame.Phase.HUNT:
 			s += minf(p.distance_to(g.hunter.position) / _tiles(), 25.0) * 0.6
 		if s > bs:
 			bs = s
@@ -368,7 +368,7 @@ func _pick_hiding() -> void:
 
 
 func _cachette_claimed(i: int) -> bool:
-	for b: GkAi in g.brains.values():
+	for b: BkAi in g.brains.values():
 		if b != self and b.plan_cachette == i:
 			return true
 	return false
@@ -392,15 +392,15 @@ func _safest_exit() -> Vector2i:
 # ---------------------------------------------------------------- chasseur
 
 func _think_hunter() -> void:
-	if g.phase != GkGame.Phase.HUNT:
+	if g.phase != BkGame.Phase.HUNT:
 		return
 	# 1. Un chassé est en vue : on fonce. Détection progressive : seulement à partir du « ? » (un
 	# coin de silhouette au bout du cône ne se remarque pas tout de suite) ; il se tourne alors vers
 	# lui et va voir.
-	var notice: float = GkRules.f("detection_doute") if GkRules.on("idee_detection") else 0.0
-	var target: GkActor = null
-	for a: GkActor in g.actors:
-		if a.role == GkActor.Role.HIDER and bool(g._seen.get(a.id, false)) and a.gauge >= notice:
+	var notice: float = BkRules.f("detection_doute") if BkRules.on("idee_detection") else 0.0
+	var target: BkActor = null
+	for a: BkActor in g.actors:
+		if a.role == BkActor.Role.HIDER and bool(g._seen.get(a.id, false)) and a.gauge >= notice:
 			if target == null or a.position.distance_to(me.position) < target.position.distance_to(me.position):
 				target = a
 	if target == null and chase_id >= 0 and clue != Vector2.INF:
@@ -481,7 +481,7 @@ func _patrol() -> void:
 	var r: Rect2i = g.map.zones[pick]["rect"]
 	# Ronde (idee_ronde) : le plus souvent, aller voir derrière un gros objet (case abritée, là où
 	# les chassés se cachent) plutôt qu'au milieu de la zone : il passe tout près des planques.
-	if GkRules.on("idee_ronde") and rng.randf() < GkRules.f("ronde_recoins"):
+	if BkRules.on("idee_ronde") and rng.randf() < BkRules.f("ronde_recoins"):
 		var best: Vector2i = Vector2i(-1, -1)
 		var bs: float = -INF
 		for i: int in 40:
@@ -505,7 +505,7 @@ func _patrol() -> void:
 			return
 
 
-func on_found(a: GkActor) -> void:
+func on_found(a: BkActor) -> void:
 	if a.id == chase_id:
 		chase_id = -1
 		clue = Vector2.INF
@@ -520,7 +520,7 @@ func _go_ghost(target: Vector2) -> void:
 
 ## Chasseur : un bruit entendu (cachette qui grince, mouettes qui s'envolent) devient un indice.
 func on_noise(pos: Vector2) -> void:
-	if me.role != GkActor.Role.HUNTER or chase_id >= 0:
+	if me.role != BkActor.Role.HUNTER or chase_id >= 0:
 		return
 	# Une cachette n'est pas praticable : on vise la case libre voisine la plus proche.
 	var here: Vector2i = g.map.to_tile(pos)
@@ -538,7 +538,7 @@ func on_noise(pos: Vector2) -> void:
 
 
 func on_trap(pos: Vector2) -> void:
-	if me.role == GkActor.Role.HUNTER:
+	if me.role == BkActor.Role.HUNTER:
 		clue = pos
 		clue_t = 6.0 * float(cfg.get("clue_memory", 1.0))
 
@@ -578,25 +578,25 @@ func on_detect(found: Array[Vector2], hint: Vector2 = Vector2.ZERO) -> void:
 # ---------------------------------------------------------------- fantôme
 
 func _think_ghost() -> void:
-	if g.phase == GkGame.Phase.HUNT:
+	if g.phase == BkGame.Phase.HUNT:
 		# Délivrance : rejoindre le chassé libre le plus loin du chasseur (une seule fois par round).
-		if GkRules.on("idee_delivrance") and not me.rescued and g._rescues < int(GkRules.f("delivrance_max")):
-			var best: GkActor = null
+		if BkRules.on("idee_delivrance") and not me.rescued and g._rescues < int(BkRules.f("delivrance_max")):
+			var best: BkActor = null
 			var bs: float = -INF
-			for a: GkActor in g.actors:
-				if a.role == GkActor.Role.HIDER and a.hidden_in < 0:
+			for a: BkActor in g.actors:
+				if a.role == BkActor.Role.HIDER and a.hidden_in < 0:
 					var s: float = a.position.distance_to(g.hunter.position) - a.position.distance_to(me.position) * 0.5
 					if s > bs:
 						bs = s
 						best = a
 			if best != null:
-				if me.position.distance_to(best.position) > GkRules.px("delivrance_portee") * 0.6:
+				if me.position.distance_to(best.position) > BkRules.px("delivrance_portee") * 0.6:
 					_go_ghost(best.position)
 				else:
 					path = PackedVector2Array()
 				return
 		# Chatouille : filer vers le chasseur dès qu'elle est prête.
-		if GkRules.on("idee_chatouille") and me.power_cd <= 0.0 and g.hunt_elapsed >= g._tickle_free_until - 2.0:
+		if BkRules.on("idee_chatouille") and me.power_cd <= 0.0 and g.hunt_elapsed >= g._tickle_free_until - 2.0:
 			_go_ghost(g.hunter.position)
 			return
 	if _arrived() and rng.randf() < 0.25:

@@ -23,11 +23,11 @@ const GK_PLACES_MIN = 4;
 const GK_PLACES_MAX = 8;
 const GK_PLACES_DEFAULT = 6;
 const GK_LAUNCH_MIN_HUMANS = 2;
-const GK_COLOR_COUNT = 12;         // data/gordeka/rules.json « colors »
+const GK_COLOR_COUNT = 12;         // data/blackout/rules.json « colors »
 const GK_ROUNDS_MAX = 12;
 const GK_MAX_SETTINGS_BYTES = 2048;
 const GK_MAX_GAME_BYTES = 4096;
-/** Miroir de data/gordeka/rules.json « characters » (le backend est déployé sans data/). */
+/** Miroir de data/blackout/rules.json « characters » (le backend est déployé sans data/). */
 const GK_CHARACTERS = ['louis', 'maia', 'patxi', 'xabi', 'mattin', 'amaia', 'txomin', 'kaio',
     'karramarro', 'ramuntxo', 'itsaso', 'peio'];
 const GK_MAPS = ['port_pecheurs', 'parc_mazon'];

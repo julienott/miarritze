@@ -1,6 +1,6 @@
-class_name GkAvatar
+class_name BkAvatar
 extends Control
-## Avatar d'un perso pour les menus, le versus et le podium : le vrai perso du jeu (GkActor + GkPerso,
+## Avatar d'un perso pour les menus, le versus et le podium : le vrai perso du jeu (BkActor + BkPerso,
 ## planches animées, tenue à la couleur du joueur), debout sur son ombre, pieds en bas au centre du
 ## contrôle. `anime` faux : image figée (vignettes de la grille, animées seulement au focus).
 ## Un perso sans planches montre son profil validé (modele.png), sans recoloration.
@@ -16,15 +16,15 @@ var anime: bool = true:
 		anime = v
 		_maj_process()
 var regard_gauche: bool = false
-var actor: GkActor
+var actor: BkActor
 var _pivot: Node2D
 var _images: int = 0
 var _perso_id: String = "louis"
 var _couleur: Color = Color.WHITE
 
 
-static func cree(perso_id: String, couleur: Color, h: float, p_anime: bool = true) -> GkAvatar:
-	var a: GkAvatar = GkAvatar.new()
+static func cree(perso_id: String, couleur: Color, h: float, p_anime: bool = true) -> BkAvatar:
+	var a: BkAvatar = BkAvatar.new()
 	a.hauteur = h
 	a.anime = p_anime
 	a._perso_id = perso_id
@@ -58,7 +58,7 @@ func regler(perso_id: String, couleur: Color) -> void:
 func _construire() -> void:
 	if actor != null:
 		actor.queue_free()
-	actor = GkActor.new()
+	actor = BkActor.new()
 	actor.character = _perso_id
 	actor.setup(0, "", _couleur, true)
 	# Pas un corps du monde : rien ne le touche, il ne touche rien.
@@ -78,11 +78,11 @@ func pose(nom: String) -> void:
 
 ## Joue une emote (geste du perso et bulle au-dessus de la tête, comme en jeu).
 func emote(i: int) -> void:
-	if actor == null or i < 0 or i >= GkGame.EMOTES.size():
+	if actor == null or i < 0 or i >= BkGame.EMOTES.size():
 		return
 	actor.emote = i
-	actor.emote_t = GkRules.f("emote_duration")
-	actor.play_once(GkGame.EMOTES[i])
+	actor.emote_t = BkRules.f("emote_duration")
+	actor.play_once(BkGame.EMOTES[i])
 	if actor.perso != null:
 		actor.perso.set_process(true)
 
@@ -113,11 +113,11 @@ func _process(dt: float) -> void:
 func _draw() -> void:
 	if actor == null or actor.emote < 0 or actor.emote_t <= 0.0:
 		return
-	# Bulle d'emote au-dessus de la tête, qui rebondit en entrant (comme GkHud._emote_bubble).
-	var age: float = GkRules.f("emote_duration") - actor.emote_t
+	# Bulle d'emote au-dessus de la tête, qui rebondit en entrant (comme BkHud._emote_bubble).
+	var age: float = BkRules.f("emote_duration") - actor.emote_t
 	var k: float = clampf(age / 0.18, 0.0, 1.0) * clampf(actor.emote_t / 0.15, 0.0, 1.0)
 	var r: float = hauteur * 0.17 * (k + sin(k * PI) * 0.18)
 	if r < 3.0:
 		return
 	var tete: Vector2 = Vector2(size.x * 0.5 + hauteur * 0.12, size.y - hauteur * 0.9)
-	GkDraw.emote_bubble(self, tete + Vector2(0.5, -1).normalized() * (r + 10.0 * k), tete, actor.emote, r)
+	BkDraw.emote_bubble(self, tete + Vector2(0.5, -1).normalized() * (r + 10.0 * k), tete, actor.emote, r)

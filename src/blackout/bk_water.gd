@@ -1,9 +1,9 @@
-class_name GkWater
+class_name BkWater
 extends Node2D
 ## Eau du port, animée (vaguelettes qui glissent, écume le long des quais). Redessinée
 ## 12 fois par seconde seulement : le reste de la carte est un dessin fixe.
 
-var map: GkMap
+var map: BkMap
 var _t: float = 0.0
 var _acc: float = 0.0
 var _rects: Array[Rect2i] = []

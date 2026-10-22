@@ -1,8 +1,8 @@
-class_name GkView3D
+class_name BkView3D
 extends Node3D
 ## Affichage 3D de la partie (SPEC-GORDEKA §9) : même vue de dessus en 3/4, mais des modèles
 ## en volume, ombrage « toon » et contours sombres, pour garder le style cartoon d'origine.
-## Les règles restent en 2D (GkGame, GkMap) : cette vue ne fait que recopier leur état.
+## Les règles restent en 2D (BkGame, BkMap) : cette vue ne fait que recopier leur état.
 ## 1 case (64 px de jeu) = 1 mètre.
 
 const INK: Color = Color("1d2230")
@@ -13,10 +13,10 @@ const ROOF: Color = Color("c0533a")
 const STONE: Color = Color("cbbfa6")
 const SLAB_H: float = 0.35
 ## Caméra : environ 50° de plongée, assez pour voir les personnages de trois quarts.
-var CAM_OFFSET: Vector3 = Vector3(0, 10.0, 8.6) * (0.4 if OS.get_cmdline_user_args().has("--gk-closeup") else 1.0)                        # épaisseur des quais au-dessus de l'eau
+var CAM_OFFSET: Vector3 = Vector3(0, 10.0, 8.6) * (0.4 if OS.get_cmdline_user_args().has("--bk-closeup") else 1.0)                        # épaisseur des quais au-dessus de l'eau
 
-var game: GkGame
-var map: GkMap
+var game: BkGame
+var map: BkMap
 var cam: Camera3D
 var sun: DirectionalLight3D
 var env: Environment
@@ -32,16 +32,16 @@ var _exit_labels: Array[Label3D] = []
 var _mats: Dictionary = {}
 var _outline: StandardMaterial3D
 var _t: float = 0.0
-## QA : `--gk-look=x,y` (en cases) fixe la caméra sur un point de la carte.
+## QA : `--bk-look=x,y` (en cases) fixe la caméra sur un point de la carte.
 var _look_at: Vector2 = Vector2.INF
 
 
-func setup(p_game: GkGame) -> void:
+func setup(p_game: BkGame) -> void:
 	game = p_game
 	map = game.map
 	for arg: String in OS.get_cmdline_user_args():
-		if arg.begins_with("--gk-look="):
-			var xy: PackedStringArray = arg.trim_prefix("--gk-look=").split(",")
+		if arg.begins_with("--bk-look="):
+			var xy: PackedStringArray = arg.trim_prefix("--bk-look=").split(",")
 			_look_at = Vector2(float(xy[0]), float(xy[1]))
 	_outline = StandardMaterial3D.new()
 	_outline.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -54,7 +54,7 @@ func setup(p_game: GkGame) -> void:
 	_build_objects()
 	_build_cachettes()
 	_build_exits()
-	for a: GkActor in game.actors:
+	for a: BkActor in game.actors:
 		_build_actor(a)
 	var ci: MeshInstance3D = MeshInstance3D.new()
 	_cone = ImmediateMesh.new()
@@ -103,14 +103,14 @@ func mat(c: Color, unshaded: bool = false, outline: bool = false) -> StandardMat
 	return m
 
 
-## Matériau texturé (textures peintes de pixelforge, assets/gordeka/textures/) : projection
+## Matériau texturé (textures peintes de pixelforge, assets/blackout/textures/) : projection
 ## « triplanaire » en coordonnées du monde, la texture couvre `meters` mètres et se répète.
 func tex_mat(name: String, meters: float, outline: bool = false) -> StandardMaterial3D:
 	var key: String = "tex|%s|%s|%s" % [name, meters, outline]
 	if _mats.has(key):
 		return _mats[key]
 	var m: StandardMaterial3D = StandardMaterial3D.new()
-	m.albedo_texture = load("res://assets/gordeka/textures/%s.png" % name)
+	m.albedo_texture = load("res://assets/blackout/textures/%s.png" % name)
 	m.uv1_triplanar = true
 	m.uv1_world_triplanar = true
 	m.uv1_scale = Vector3.ONE / meters
@@ -123,10 +123,10 @@ func tex_mat(name: String, meters: float, outline: bool = false) -> StandardMate
 	return m
 
 
-## Modèle généré par pixelforge (assets/gordeka/models/<nom>.glb, face avant vers +Z, pivot au
+## Modèle généré par pixelforge (assets/blackout/models/<nom>.glb, face avant vers +Z, pivot au
 ## sol, mètres), ou null s'il n'est pas encore livré : on garde alors le remplaçant fait en code.
 func model(name: String) -> Node3D:
-	var path: String = "res://assets/gordeka/models/%s.glb" % name
+	var path: String = "res://assets/blackout/models/%s.glb" % name
 	if not ResourceLoader.exists(path):
 		return null
 	var n: Node3D = (load(path) as PackedScene).instantiate()
@@ -257,16 +257,16 @@ func _build_env() -> void:
 	add_child(cam)
 	# Lampe torche du chasseur : son cône de vision, avec de vraies ombres.
 	spot = SpotLight3D.new()
-	spot.spot_range = GkRules.f("cone_range") + 1.0
-	spot.spot_angle = GkRules.f("cone_deg") * 0.5
+	spot.spot_range = BkRules.f("cone_range") + 1.0
+	spot.spot_angle = BkRules.f("cone_deg") * 0.5
 	spot.spot_angle_attenuation = 0.4
 	spot.light_energy = 4.0
-	spot.shadow_enabled = not OS.get_cmdline_user_args().has("--gk-noshadow")
+	spot.shadow_enabled = not OS.get_cmdline_user_args().has("--bk-noshadow")
 	spot.light_color = Color("fff3d6")
 	spot.visible = false
 	add_child(spot)
 	near = OmniLight3D.new()
-	near.omni_range = GkRules.f("near_radius") + 0.8
+	near.omni_range = BkRules.f("near_radius") + 0.8
 	near.light_energy = 0.9
 	near.shadow_enabled = false
 	near.visible = false
@@ -428,7 +428,7 @@ func _gen_house(c: Vector3, sz: Vector3, rng: RandomNumberGenerator) -> bool:
 			var mw: float = float(m[2]) if t else float(m[1])
 			var md: float = float(m[1]) if t else float(m[2])
 			var e: float = absf(log(sz.x / mw)) + absf(log(sz.z / md))
-			if e < err and ResourceLoader.exists("res://assets/gordeka/models/%s.glb" % m[0]):
+			if e < err and ResourceLoader.exists("res://assets/blackout/models/%s.glb" % m[0]):
 				err = e
 				best = str(m[0])
 				turned = t
@@ -652,7 +652,7 @@ func _build_exits() -> void:
 
 ## Petit bonhomme façon Among Us en volume : corps en capsule, visière, sac (ou l'objet du
 ## perso), jambes, et l'accessoire qui le rend reconnaissable.
-func _build_actor(a: GkActor) -> void:
+func _build_actor(a: BkActor) -> void:
 	var root: Node3D = Node3D.new()
 	add_child(root)
 	var body: Node3D = Node3D.new()
@@ -771,8 +771,8 @@ func _head_item(body: Node3D, ch: String, col: Color) -> void:
 
 func refresh(dt: float) -> void:
 	_t += dt
-	var as_hunter: bool = game.local == game.hunter and game.phase != GkGame.Phase.END \
-		and game.phase != GkGame.Phase.PODIUM
+	var as_hunter: bool = game.local == game.hunter and game.phase != BkGame.Phase.END \
+		and game.phase != BkGame.Phase.PODIUM
 	# Lumière : plein jour pour les chassés ; nuit et lampe torche pour le chasseur.
 	sun.light_energy = 0.0 if as_hunter else 0.42
 	env.ambient_light_energy = 0.05 if as_hunter else 0.13
@@ -792,7 +792,7 @@ func refresh(dt: float) -> void:
 	cam.position = want if _t < 0.2 else cam.position.lerp(want, minf(1.0, dt * 6.0))
 	cam.look_at(cam.position - CAM_OFFSET + Vector3(0, 0.6, 0), Vector3.UP)
 	# Personnages.
-	for a: GkActor in game.actors:
+	for a: BkActor in game.actors:
 		var n: Dictionary = _actors[a.id]
 		var root: Node3D = n["root"]
 		var vis: bool = a.shown and a.hidden_in < 0
@@ -812,16 +812,16 @@ func refresh(dt: float) -> void:
 		if ap != null:
 			body.position.y = 0.0
 			var clip: String = "walk" if moving else "idle"
-			if a.role == GkActor.Role.GHOST:
+			if a.role == BkActor.Role.GHOST:
 				clip = "found"
-			elif game.phase == GkGame.Phase.END and a.won_round:
+			elif game.phase == BkGame.Phase.END and a.won_round:
 				clip = "victory"
 			if str(n["cur"]) != clip and ap.has_animation(clip):
 				n["cur"] = clip
 				var anim: Animation = ap.get_animation(clip)
 				anim.loop_mode = Animation.LOOP_NONE if clip == "found" else Animation.LOOP_LINEAR
 				ap.play(clip, 0.15)
-		var ghost: bool = a.role == GkActor.Role.GHOST or a.role == GkActor.Role.OUT
+		var ghost: bool = a.role == BkActor.Role.GHOST or a.role == BkActor.Role.OUT
 		if ghost != bool(n["ghost"]):
 			n["ghost"] = ghost
 			_set_ghost(body, ghost)
@@ -862,10 +862,10 @@ func _set_ghost(body: Node3D, ghost: bool) -> void:
 
 func _draw_cone(as_hunter: bool) -> void:
 	_cone.clear_surfaces()
-	if as_hunter or game.hunter == null or not (game.phase == GkGame.Phase.HUNT or game.phase == GkGame.Phase.HIDE):
+	if as_hunter or game.hunter == null or not (game.phase == BkGame.Phase.HUNT or game.phase == BkGame.Phase.HIDE):
 		return
 	var poly: PackedVector2Array = game.cone_polygon(game.hunter)
-	var m: StandardMaterial3D = mat(Color(1, 0.15, 0.1, 0.28 if game.phase == GkGame.Phase.HUNT else 0.12), true)
+	var m: StandardMaterial3D = mat(Color(1, 0.15, 0.1, 0.28 if game.phase == BkGame.Phase.HUNT else 0.12), true)
 	m.no_depth_test = false
 	_cone.surface_begin(Mesh.PRIMITIVE_TRIANGLES, m)
 	var c: Vector3 = p3(poly[0], 0.04)
@@ -874,7 +874,7 @@ func _draw_cone(as_hunter: bool) -> void:
 		_cone.surface_add_vertex(p3(poly[i], 0.04))
 		_cone.surface_add_vertex(p3(poly[i + 1], 0.04))
 	_cone.surface_end()
-	_ring(_cone, game.hunter.position, GkRules.f("near_radius"), 0.06, Color(1, 0.2, 0.15, 0.5))
+	_ring(_cone, game.hunter.position, BkRules.f("near_radius"), 0.06, Color(1, 0.2, 0.15, 0.5))
 
 
 func _draw_fx(as_hunter: bool) -> void:
@@ -882,7 +882,7 @@ func _draw_fx(as_hunter: bool) -> void:
 	# Pièges (filets jaunes) : visibles des chassés ; le chasseur ne les voit que tout près.
 	for t: Dictionary in game.traps:
 		var p: Vector2 = t["pos"]
-		if as_hunter and (p.distance_to(game.hunter.position) > GkRules.px("trap_seen_range") or not game.sees(game.hunter, p, 6.0)):
+		if as_hunter and (p.distance_to(game.hunter.position) > BkRules.px("trap_seen_range") or not game.sees(game.hunter, p, 6.0)):
 			continue
 		_disc(_fx, p, 0.32, Color(0.95, 0.75, 0.2, 0.85))
 		_ring(_fx, p, 0.32, 0.05, Color("5a3410"))
@@ -893,13 +893,13 @@ func _draw_fx(as_hunter: bool) -> void:
 			continue                            # flèche d'indice : 2D seulement
 		if int(r["id"]) < 0:
 			var k: float = 1.0 - left / 0.6
-			_ring(_fx, r["pos"], GkRules.f("detect_radius") * k, 0.12, Color(0.6, 0.85, 1.0, 1.0 - k))
+			_ring(_fx, r["pos"], BkRules.f("detect_radius") * k, 0.12, Color(0.6, 0.85, 1.0, 1.0 - k))
 		elif as_hunter or not game.local.is_hider():
 			_disc(_fx, r["pos"], 0.45, Color(0.6, 0.85, 1.0, 0.55))
 	# Sortie en cours.
-	for a: GkActor in game.actors:
-		if a.extract_t > 0.0 and a.role == GkActor.Role.HIDER and a.shown:
-			_ring(_fx, a.position, 0.6 * a.extract_t / GkRules.f("extract_hold") + 0.2, 0.08, Color("6fe08a"))
+	for a: BkActor in game.actors:
+		if a.extract_t > 0.0 and a.role == BkActor.Role.HIDER and a.shown:
+			_ring(_fx, a.position, 0.6 * a.extract_t / BkRules.f("extract_hold") + 0.2, 0.08, Color("6fe08a"))
 
 
 func _disc(im: ImmediateMesh, p: Vector2, r: float, c: Color) -> void:

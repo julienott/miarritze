@@ -23,9 +23,9 @@ Sans option : la carte retenue (essai v3d du 2026-10-21), écrite dans assets/ma
 défaut du jeu. La v2 d'avant reste générée à part par make_port_v2.py (assets/maps/port_v2) pour l'A/B.
 
 Écrit assets/maps/<id>/map.txt, zones.json (« decor » : port_pecheurs, le décor en images est partagé)
-et decor.json (objets imposés et ornements, lus par src/gordeka/gk_decor.gd). Vérifie que tout est
-atteignable, sans passage d'une seule case créé par les passes. Mesures : tools/gordeka/analyse_carte.py,
-parties : tools/gordeka/ab_tension.py run <variante> --map <id>. Journal des essais :
+et decor.json (objets imposés et ornements, lus par src/blackout/bk_decor.gd). Vérifie que tout est
+atteignable, sans passage d'une seule case créé par les passes. Mesures : tools/blackout/analyse_carte.py,
+parties : tools/blackout/ab_tension.py run <variante> --map <id>. Journal des essais :
 docs/GORDEKA_EQUILIBRAGE.md (revue de carte).
 """
 import argparse
@@ -446,8 +446,8 @@ def main():
     regles = {kv.split(":")[0]: float(kv.split(":")[1]) for kv in a.regles.split(",") if ":" in kv}
     json.dump({"name": "Port des Pêcheurs", "version": 3, "decor": "port_pecheurs", "passes": passes,
                "regles": regles, "zones": zones, "exits": exits}, open(os.path.join(out, "zones.json"), "w"), ensure_ascii=False, indent=1)
-    json.dump({"_doc": "Placement du décor propre à cette carte (tools/gordeka/make_port_v3.py), lu par "
-                       "src/gordeka/gk_decor.gd : objets imposés ou en miroir, ornements sans effet de jeu.",
+    json.dump({"_doc": "Placement du décor propre à cette carte (tools/blackout/make_port_v3.py), lu par "
+                       "src/blackout/bk_decor.gd : objets imposés ou en miroir, ornements sans effet de jeu.",
                **DECOR}, open(os.path.join(out, "decor.json"), "w"), ensure_ascii=False, indent=1)
     ok = v2.check()
     for y in range(H):

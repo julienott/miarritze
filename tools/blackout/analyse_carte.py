@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Diagnostic chiffré d'une carte de Gordeka (SPEC-GORDEKA §8, revue de carte du 2026-10-20).
+"""Diagnostic chiffré d'une carte de Blackout (SPEC-GORDEKA §8, revue de carte du 2026-10-20).
 
   analyse_carte.py <id de carte> [--ab <variante>[,<variante>…]] [--png <dossier>] [--json <fichier>]
 
@@ -12,7 +12,7 @@ Mesures statiques (map.txt, zones.json), par zone et au total :
 - chemins : graphe des zones (reliées par un couloir ou directement), degré, culs-de-sac, nombre de
   boucles indépendantes (E − V + 1), largeur des couloirs ;
 - sorties : distance au départ et nombre de zones voisines (approches).
-Avec --ab (journaux de tools/gordeka/ab_tension.py, tous niveaux confondus) : part du temps des chassés et
+Avec --ab (journaux de tools/blackout/ab_tension.py, tous niveaux confondus) : part du temps des chassés et
 du chasseur par zone, captures, vu-perdu, frôlements, entrées par cachette, sorties prises ; zones mortes.
 --png : carte de la carte (vides en rouge), des lignes de vue, et cartes de chaleur des parties.
 """
@@ -279,11 +279,11 @@ def sorties(c, edges):
 def parties(c, variantes):
     rs = []
     for v in variantes:
-        dossier = os.path.join(ROOT, "tests", "out", "gordeka_ab", v)
+        dossier = os.path.join(ROOT, "tests", "out", "blackout_ab", v)
         for nom in sorted(os.listdir(dossier)):
             if nom.endswith(".log"):
                 for l in open(os.path.join(dossier, nom), encoding="utf-8"):
-                    if l.startswith("[gk-stats] "):
+                    if l.startswith("[bk-stats] "):
                         rs.append(json.loads(l[11:]))
     heat, hheat = {}, {}
     caps, vp, fro = {}, {}, {}

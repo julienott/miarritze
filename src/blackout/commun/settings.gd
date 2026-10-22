@@ -1,7 +1,7 @@
 extends Node
 ## Settings — réglages de l'appareil (pas du profil) : volumes, vibrations, détection du tactile.
-## Persistés dans user://settings.json. Hérité de l'ancien jeu, réduit à ce que Gordeka lit
-## (écran Réglages, GkFrisson, InputHub) : à remplacer par un équivalent Gordeka.
+## Persistés dans user://settings.json. Hérité de l'ancien jeu, réduit à ce que Blackout lit
+## (écran Réglages, BkFrisson, InputHub) : à remplacer par un équivalent Blackout.
 
 signal changed
 

@@ -1,4 +1,4 @@
-// /producer, catalogue de Gordeka : animations des persos (groupées par perso, récapitulatif,
+// /producer, catalogue de Blackout : animations des persos (groupées par perso, récapitulatif,
 // manquantes, vignettes au survol), lecteur plein écran, décor avec ou sans masques, filtre
 // « sans masque », sols répétés 2×2.
 // Ordinateur (Chromium) + iPhone portrait et paysage (WebKit si installé, sinon Chromium).
@@ -49,7 +49,7 @@ const persosView = async (page) => {
   });
   await page.waitForSelector('.cgroup[data-perso] .citem');
 };
-const cell = (pid, name) => `.citem[data-key="gordeka/persos/${pid}/animations#${name}"]`;
+const cell = (pid, name) => `.citem[data-key="blackout/persos/${pid}/animations#${name}"]`;
 
 let wk = null;
 try { wk = await webkit.launch(); } catch (e) { console.log('     (WebKit indisponible : iPhone émulé dans Chromium)'); }
@@ -89,7 +89,7 @@ for (const [label, browser, opts] of runs) {
   }));
   check(`${label} : Louis, animations`, louis.present >= 15, JSON.stringify(louis.present));
   // Manquantes : celles que l'index ne contient pas (les données bougent chaque jour).
-  const attendu = await page.evaluate(() => Object.fromEntries(['louis', 'amaia'].map((p) => [p, gkSlots(p).filter((x) => !x.anim).map((x) => x.name)])));
+  const attendu = await page.evaluate(() => Object.fromEntries(['louis', 'amaia'].map((p) => [p, bkSlots(p).filter((x) => !x.anim).map((x) => x.name)])));
   check(`${label} : Louis, manquantes affichées`, louis.missing.join(',') === attendu.louis.join(','), louis.missing.join(','));
   const amaia = await page.$eval('.cgroup[data-perso="amaia"]', (s) => s.querySelectorAll('.citem.missing').length);
   check(`${label} : Amaia, manquantes affichées`, amaia === attendu.amaia.length, String(amaia));
@@ -203,7 +203,7 @@ for (const [label, browser, opts] of runs) {
   await page.click('.fs-close');
 
   // Fiche des animations : bouton plein écran et bandeau des manquantes.
-  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/persos/louis/animations'));
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('blackout/persos/louis/animations'));
   await page.waitForSelector('.anim-gallery .anim-cell');
   check(`${label} : fiche des animations, bandeau des manquantes`, !!(await page.$('#detail .missing-band')));
   check(`${label} : fiche des animations, bouton plein écran`, !!(await page.$('#detail button:has-text("Plein écran")')));
@@ -248,15 +248,15 @@ for (const [label, browser, opts] of runs) {
   await page.evaluate(() => { cat.map = ''; cat.type = ''; saveCatalogue(); });
 
   // Fiche d'un objet (repli).
-  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/decor/objets/mur_soutenement.png'));
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('blackout/decor/objets/mur_soutenement.png'));
   await page.waitForSelector('.stage .dlayers');
   await page.click('#detail .seg button:has-text("Avec masques")');
   await page.waitForTimeout(800);
-  const src = await page.evaluate(() => state.assetsById.get('gordeka/decor/objets/mur_soutenement.png').decor.source);
+  const src = await page.evaluate(() => state.assetsById.get('blackout/decor/objets/mur_soutenement.png').decor.source);
   const lib = { pixelforge: 'pixelforge', repli: 'repli', aucun: 'sans masque' }[src] || src;
   check(`${label} : fiche, source des masques affichée`, (await page.textContent('#detail .credits')).includes(lib), src);
   await shot('10_detail_objet');
-  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/decor/objets/tour_phare.png'));
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('blackout/decor/objets/tour_phare.png'));
   await page.waitForSelector('.stage .dlayers');
   await page.click('#detail .seg button:has-text("Avec masques")');
   await page.waitForTimeout(800);
@@ -277,7 +277,7 @@ for (const [label, browser, opts] of runs) {
   await page.fill('#password', PASSWORD);
   await page.click('#login-form button[type=submit]');
   await page.waitForSelector('#view-bord:not([hidden])');
-  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/persos/louis/animations') + '/walk');
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('blackout/persos/louis/animations') + '/walk');
   await page.click('#detail button:has-text("Plein écran")');
   await page.waitForSelector('.fs canvas');
   const swipe = (x0, y0, x1, y1) => page.evaluate(([x0, y0, x1, y1]) => {
@@ -320,7 +320,7 @@ for (const [label, browser, opts] of runs) {
   await page.waitForSelector('#view-bord:not([hidden])');
   await persosView(page);
   const CAS = [['txomin', 'ghost'], ['mattin', 'ghost'], ['amaia', 'hunter_reveal'], ['amaia', 'walk'], ['louis', 'walk']];
-  const present = await page.evaluate((cas) => cas.filter(([p, n]) => gkAnims(p).some((x) => x.name === n)), CAS);
+  const present = await page.evaluate((cas) => cas.filter(([p, n]) => bkAnims(p).some((x) => x.name === n)), CAS);
   // `nom` : seules les images de cette planche comptent (la souris peut frôler une autre vignette en chemin).
   const verifie = async (lieu, frames, nom) => {
     let d = await page.evaluate(() => { const d = window.__draws; window.__draws = []; return d; });
@@ -331,7 +331,7 @@ for (const [label, browser, opts] of runs) {
     return d;
   };
   for (const [pid, name] of present) {
-    const frames = await page.evaluate(([p, n]) => gkAnims(p).find((x) => x.name === n).frames, [pid, name]);
+    const frames = await page.evaluate(([p, n]) => bkAnims(p).find((x) => x.name === n).frames, [pid, name]);
     const vign = cell(pid, name);
     await persosView(page);
     await page.locator(vign).scrollIntoViewIfNeeded();
@@ -364,7 +364,7 @@ for (const [label, browser, opts] of runs) {
     }
     const ec = (k) => { const v = pos.map((p) => p[k]).filter((x) => x !== null); return Math.max(...v) - Math.min(...v); };
     const vu = Math.min(ec(0), ec(1));
-    const attendu = await page.evaluate(([p, n]) => (gkAnims(p).find((x) => x.name === n).glisse || [0])[0], [pid, name]);
+    const attendu = await page.evaluate(([p, n]) => (bkAnims(p).find((x) => x.name === n).glisse || [0])[0], [pid, name]);
     check(`${pid}/${name} : glissement vu = celui de la planche (${Math.round(vu)} px, index ${attendu})`,
       attendu ? Math.abs(vu - attendu) <= 2 : vu < 8, pos.slice(0, 4).map((p) => p.map((x) => Math.round(x)).join('/')).join(' '));
     if (attendu >= 8) check(`${pid}/${name} : le lecteur l'annonce (⚠ glisse)`, (await page.textContent('.fs-info')).includes('glisse'));
@@ -373,23 +373,23 @@ for (const [label, browser, opts] of runs) {
     await page.mouse.move(2, 2);
   }
   // Page des animations (lecteur du détail).
-  await page.goto(BASE + '#/assets/' + encodeURIComponent('gordeka/persos/amaia/animations'));
+  await page.goto(BASE + '#/assets/' + encodeURIComponent('blackout/persos/amaia/animations'));
   await page.waitForSelector('.stage canvas');
   await page.selectOption('.controls select[aria-label=Animation]', 'walk').catch(() => {});
   await page.evaluate(() => { window.__draws = []; });
   await page.waitForTimeout(600);
-  await verifie('amaia/walk, page des animations', await page.evaluate(() => gkAnims('amaia').find((x) => x.name === 'walk').frames));
+  await verifie('amaia/walk, page des animations', await page.evaluate(() => bkAnims('amaia').find((x) => x.name === 'walk').frames));
   // Index périmé : largeurs de case fausses dans l'index, la planche fait foi.
   await persosView(page);
-  await page.evaluate(() => { for (const x of gkAnims('amaia')) x.w += 22; window.__draws = []; });
+  await page.evaluate(() => { for (const x of bkAnims('amaia')) x.w += 22; window.__draws = []; });
   const c2 = cell('amaia', 'walk');
   await page.locator(c2).scrollIntoViewIfNeeded();
   await page.hover(c2);
   await page.waitForTimeout(500);
-  await verifie('index périmé : la planche fait foi', await page.evaluate(() => gkAnims('amaia').find((x) => x.name === 'walk').frames));
+  await verifie('index périmé : la planche fait foi', await page.evaluate(() => bkAnims('amaia').find((x) => x.name === 'walk').frames));
   // En-têtes : URL versionnée immuable, sinon revalidée.
   const hdr = await page.evaluate(async () => {
-    const f = gkAnims('amaia').find((x) => x.name === 'walk').file;
+    const f = bkAnims('amaia').find((x) => x.name === 'walk').file;
     const v = state.index.versions[f];
     const ok = await fetch('index.php?r=file&p=' + encodeURIComponent(f) + '&v=' + v);
     const vieux = await fetch('index.php?r=file&p=' + encodeURIComponent(f) + '&v=0000000000');

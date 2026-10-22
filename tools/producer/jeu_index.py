@@ -1,4 +1,4 @@
-"""Gameplay de Gordeka pour /producer (importé par build_index.py) : règles lisibles, options de
+"""Gameplay de Blackout pour /producer (importé par build_index.py) : règles lisibles, options de
 partie validées, écrans de menu, cartes de jeu (zones, sorties, cachettes, chiffres d'équilibrage),
 jalons de la spec.
 
@@ -15,10 +15,10 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-RULES = ROOT / "data" / "gordeka" / "rules.json"
-OPTIONS = ROOT / "data" / "gordeka" / "options_partie.json"
-NAV = ROOT / "src" / "gordeka" / "menus" / "gk_nav.gd"
-PARTIE_RAPIDE = ROOT / "src" / "gordeka" / "menus" / "gk_partie_rapide.gd"
+RULES = ROOT / "data" / "blackout" / "rules.json"
+OPTIONS = ROOT / "data" / "blackout" / "options_partie.json"
+NAV = ROOT / "src" / "blackout" / "menus" / "bk_nav.gd"
+PARTIE_RAPIDE = ROOT / "src" / "blackout" / "menus" / "bk_partie_rapide.gd"
 SPEC = ROOT / "SPEC-GORDEKA.md"
 EQUILIBRAGE = ROOT / "docs" / "GORDEKA_EQUILIBRAGE.md"
 CAPTURES = ROOT / "docs" / "captures" / "ecrans"       # <id>.png, faites par tools/producer/captures_ecrans.sh
@@ -135,8 +135,8 @@ SCORE = {"hider_per_10s": "Chassé : toutes les 10 s caché", "hider_survive": "
          "ghost_tickle": "Fantôme : chatouille", "hider_rescue": "Chassé : délivre un fantôme",
          "hider_cake": "Chassé : mange un gâteau"}
 
-# Écrans hors de GkNav.ECRANS (scripts sans scène propre), à la suite du parcours.
-ECRANS_EN_PLUS = [("versus", "Versus", "src/gordeka/gk_versus.gd"), ("podium", "Podium", "src/gordeka/gk_podium.gd")]
+# Écrans hors de BkNav.ECRANS (scripts sans scène propre), à la suite du parcours.
+ECRANS_EN_PLUS = [("versus", "Versus", "src/blackout/bk_versus.gd"), ("podium", "Podium", "src/blackout/bk_podium.gd")]
 NOMS_ECRANS = {"qui_joue": "Qui joue ?", "accueil": "Accueil", "profil": "Mon profil", "reglages": "Réglages",
                "partie_rapide": "Partie rapide", "en_ligne": "En ligne", "game": "Partie (jeu et HUD)",
                "versus": "Versus", "podium": "Podium"}
@@ -190,14 +190,14 @@ def regles(add) -> list[dict]:
             continue
         doc = data.get(doc_key, "") if doc_key else ""
         add(id=f"jeu/regles/{gid}", cat="Jeu", group="regles", kind="regles", name=f"Règles · {titre}", type="jeu",
-            version=empreinte(items), file="", preview="", note="data/gordeka/rules.json",
+            version=empreinte(items), file="", preview="", note="data/blackout/rules.json",
             jeu={"sorte": "regles", "titre": titre, "doc": doc, "items": items})
         out.append({"id": gid, "titre": titre, "asset": f"jeu/regles/{gid}"})
     reste = [k for k in data if not k.startswith("_") and k not in pris]
     if reste:
         items = [{"cle": k, "libelle": LIBELLES.get(k, (k, ""))[0], "unite": unite(k), "valeur": data[k]} for k in reste]
         add(id="jeu/regles/autres", cat="Jeu", group="regles", kind="regles", name="Règles · Autres", type="jeu",
-            version=empreinte(items), file="", preview="", note="data/gordeka/rules.json",
+            version=empreinte(items), file="", preview="", note="data/blackout/rules.json",
             jeu={"sorte": "regles", "titre": "Autres", "doc": "", "items": items})
         out.append({"id": "autres", "titre": "Autres", "asset": "jeu/regles/autres"})
     return out, data.get("_doc", "")
@@ -209,7 +209,7 @@ def options(add, liens: dict) -> list[str]:
     for o in data.get("options", []):
         aid = f"jeu/options/{o['id']}"
         add(id=aid, cat="Jeu", group="options", kind="option", name=f"Option · {o.get('libelle', o['id'])}", type="jeu",
-            version=empreinte(o), file="", preview="", note="data/gordeka/options_partie.json",
+            version=empreinte(o), file="", preview="", note="data/blackout/options_partie.json",
             jeu={"sorte": "option", **o})
         if o.get("carte_kanban"):
             liens.setdefault(aid, []).append(int(o["carte_kanban"]))
@@ -229,7 +229,7 @@ def ecrans(add, copy_capture) -> list[str]:
         cap = CAPTURES / f"{i}.png"
         capture = copy_capture(cap) if cap.exists() else None
         info = {"sorte": "ecran", "ecran": i, "nom": nom, "script": script, "role": role,
-                "scene": f"--scene=gk_{i}" if i in trouves else ""}
+                "scene": f"--scene=bk_{i}" if i in trouves else ""}
         if capture:
             info["capture"] = capture
         aid = f"jeu/ecrans/{i}"

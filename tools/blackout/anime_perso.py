@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Anime un perso de Gordeka chez pixelforge (pf_2d__animate), un perso à la fois, à partir des
-prompts soignés de tools/gordeka/prompts_anims.json (Julien, 2026-10-20) : mouvement exagéré par les
+"""Anime un perso de Blackout chez pixelforge (pf_2d__animate), un perso à la fois, à partir des
+prompts soignés de tools/blackout/prompts_anims.json (Julien, 2026-10-20) : mouvement exagéré par les
 réglages du mannequin (`mouvement`), accessoires décrits animation par animation, objets tenus
 verrouillés (`hold`), masque de tenue par un mot simple.
 
@@ -8,7 +8,7 @@ verrouillés (`hold`), masque de tenue par un mot simple.
   anime_perso.py suivant <id>          attend la prochaine animation finie, rapatrie son GIF, rend la main
   anime_perso.py payload <id> <anim>   affiche le payload sans rien envoyer
 
-Suivi : tools/gordeka/taches_<id>.json (relu par import_perso.py). GIF de relecture :
+Suivi : tools/blackout/taches_<id>.json (relu par import_perso.py). GIF de relecture :
 tools/rd/out/<id>/gk2d/anims/<anim>.gif. Les paramètres sont recopiés dans SPEC-GORDEKA.md §16.2.
 """
 import json

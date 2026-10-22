@@ -3,7 +3,7 @@
 items, sauf la file night shift qui peut passer sans problème » ; « lorsqu'un item de QA est invalidé, tu le
 refais passer dans la Todo avec la bonne priorité ».
 
-  wip.py [--essai]          appelé par tools/gordeka/veille_nuit.sh toutes les 5 min
+  wip.py [--essai]          appelé par tools/blackout/veille_nuit.sh toutes les 5 min
 
 1. Une carte refusée en QA (rework, revenue en Doing) repart au sommet du Backlog (Julien repriorise).
 2. Julien passe les cartes de Backlog en Todo (21/10) ; la Todo entre en Doing par priorité, 5 cartes actives
@@ -28,7 +28,7 @@ LIMITE = 5
 ESSAI = "--essai" in sys.argv
 PY = os.path.join(ROOT, ".venv", "bin", "python")
 ETAT = os.path.join(ROOT, "tools", "rd", "out", "recette", "etat.json")
-SUIVI = os.path.join(ROOT, "tools", "gordeka", "taches_decor_nuit.json")
+SUIVI = os.path.join(ROOT, "tools", "blackout", "taches_decor_nuit.json")
 RANG = {"haute": 0, "normale": 1, "basse": 2, "": 3}
 LANCEES = os.path.join(ROOT, "tools", "rd", "out", "recette", "wip_lancees.json")
 POUSSE = os.path.join(HERE, "pousse_qa.sh")
@@ -91,13 +91,13 @@ def lancer(c, prio):
             etat["items"].setdefault(k, {})["essais"] = 0
         json.dump(etat, open(ETAT, "w"), ensure_ascii=False, indent=1)
         for k in a_faire:
-            subprocess.run([PY, os.path.join(ROOT, "tools", "gordeka", "recette.py"), "ko", k] + ([consigne] if consigne else []),
+            subprocess.run([PY, os.path.join(ROOT, "tools", "blackout", "recette.py"), "ko", k] + ([consigne] if consigne else []),
                            cwd=ROOT, check=True, capture_output=True, env=ENV(prio))
         return f"animation(s) relancée(s) : {', '.join(k.split('/')[-1] for k in a_faire)}"
     ent = lire(SUIVI, {}).get(str(c["id"]))
     # carte d'objet sans entrée de suivi (image validée avant le suivi) : l'élément se lit sur son asset
     a = c.get("asset") or ""
-    if not ent and a.startswith("gordeka/decor/objets/") and consigne:
+    if not ent and a.startswith("blackout/decor/objets/") and consigne:
         eid = a.rsplit("/", 1)[-1].removesuffix(".png")
         s = lire(SUIVI, {})
         s.setdefault(f"m-{eid}", {"titre": f"{eid} : masque", "sorte": "masque", "element": eid, "statut": "todo"})

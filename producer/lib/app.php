@@ -1377,7 +1377,7 @@ final class App
                 $same = array_values(array_filter($open, static fn (array $c): bool => (string) $c['detail'] === $detail));
                 if (!$same && $detail !== '') {
                     $labels = [$detail];
-                    foreach (($this->index()['gordeka']['anims'] ?? []) as $an) {
+                    foreach (($this->index()['blackout']['anims'] ?? []) as $an) {
                         if (($an['name'] ?? '') === $detail && ($an['libelle'] ?? '') !== '') {
                             $labels[] = (string) $an['libelle'];
                         }

@@ -6,18 +6,18 @@ commentaire. Le pendant du matin est tools/producer/decor_matin.py (relève, pla
 
   todo_decor.py [--essai]
 
-Cartes reconnues (titre « <Nom de l'élément> : <quoi> », nom = `nom` de tools/gordeka/prompts_decor.json) :
+Cartes reconnues (titre « <Nom de l'élément> : <quoi> », nom = `nom` de tools/blackout/prompts_decor.json) :
   « : image »            pf_2d__prop (pf_2d__ground pour les sols et les bords), 2 variantes
   « : refaire de face »  pf_2d__prop (verrou de caméra mis d'office par pixelforge), 2 variantes
   « : version ouverte »  pf_hd__edit de l'image fermée retenue (index du décor), 2 variantes
   « : animation »        pf_2d__loop (warp / particles / video, un job par piste à comparer)
-  « : masque v3 »        pf_2d__footprint sur l'image intégrée (comme tools/gordeka/masques_pf.py)
+  « : masque v3 »        pf_2d__footprint sur l'image intégrée (comme tools/blackout/masques_pf.py)
   « Décor · toit en tuiles : version calme »   pf_2d__ground, colors 6 + max_saturation
 Une carte qui dépend d'une image pas encore choisie (version ouverte ou animation d'un objet sans image,
 masque ou animation d'un objet dont l'image est refaite cette nuit) reste en Todo avec un commentaire :
 decor_matin.py la dépose quand l'image est intégrée. Masques déjà en v3 et questions : commentaire seul.
 
-Suivi : tools/gordeka/taches_decor_nuit.json ({carte: {sorte, element, jobs, statut, …}}). Idempotent :
+Suivi : tools/blackout/taches_decor_nuit.json ({carte: {sorte, element, jobs, statut, …}}). Idempotent :
 une carte déjà suivie n'est ni redéposée ni recommentée.
 """
 import json
@@ -29,9 +29,9 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-GK = os.path.join(ROOT, "tools", "gordeka")
+BK = os.path.join(ROOT, "tools", "blackout")
 sys.path.insert(0, HERE)
-sys.path.insert(0, GK)
+sys.path.insert(0, BK)
 sys.path.insert(0, os.path.join(ROOT, "tools", "pf"))
 import cli  # noqa: E402
 import gen_anims_pf as pf  # noqa: E402
@@ -42,8 +42,8 @@ import nuit  # noqa: E402   (nuit.ex.b64 : image -> base64)
 from PIL import Image  # noqa: E402
 
 CHAPEAU = 228                      # carte « Décor du port »
-SUIVI = os.path.join(GK, "taches_decor_nuit.json")
-DECOR = os.path.join(ROOT, "assets", "gordeka", "decor")
+SUIVI = os.path.join(BK, "taches_decor_nuit.json")
+DECOR = os.path.join(ROOT, "assets", "blackout", "decor")
 INDEX = os.path.join(DECOR, "index.json")
 OUT_DECOR = os.path.join(ROOT, "tools", "rd", "out", "decor")
 NIGHT_MAX = 2000                   # file « night » de pixelforge
@@ -241,7 +241,7 @@ def image_jeu(eid):
 def payloads_anim(eid):
     pls = []
     # Pistes écrites ici, sinon celles de prompts_decor.json (animation.pistes : éléments ajoutés avec la
-    # carte v3, tools/gordeka/make_port_v3.py).
+    # carte v3, tools/blackout/make_port_v3.py).
     for a in ANIMS.get(eid) or elements()[eid].get("animation", {}).get("pistes", []):
         pl = {k: v for k, v in a.items() if k not in ("quoi", "source")}
         if a.get("source") == "hd":                    # vidéo : la source HD (1024 px), Wan voit mieux

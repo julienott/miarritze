@@ -5,7 +5,7 @@ QA sans avoir généré le masque »).
 
   masques_manquants.py [--essai] [--sauf eid,eid]
 
-Un objet (type « objet » de assets/gordeka/decor/index.json) a besoin d'un masque s'il n'a pas de masks.json,
+Un objet (type « objet » de assets/blackout/decor/index.json) a besoin d'un masque s'il n'a pas de masks.json,
 ou si la taille notée dans masks.json n'est plus celle de son image (image refaite). Les masques déjà en file
 sont repassés en priorité haute ; les autres sont déposés (entrée masque du suivi de decor_matin, carte
 existante ou « m-<élément> »). Dépôt sans attente : si pixelforge est plein, on reprendra au passage suivant
@@ -23,7 +23,7 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, HERE)
 import todo_decor as td  # noqa: E402
 
-DECOR = os.path.join(ROOT, "assets", "gordeka", "decor")
+DECOR = os.path.join(ROOT, "assets", "blackout", "decor")
 ESSAI = "--essai" in sys.argv
 SAUF = set(sys.argv[sys.argv.index("--sauf") + 1].split(",")) if "--sauf" in sys.argv else set()
 

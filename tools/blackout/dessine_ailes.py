@@ -2,7 +2,7 @@
 """Petite aile blanche de fantôme, dessinée par code (TEMPORAIRE, 2026-10-20 : en attendant les vraies
 animations fantôme des persos qui n'en ont pas ; Julien : « ajoute peut-être des ailes blanches »).
 
-  dessine_ailes.py   → assets/gordeka/communs/aile_fantome.png (+ .json : point d'attache)
+  dessine_ailes.py   → assets/blackout/communs/aile_fantome.png (+ .json : point d'attache)
 
 Style du jeu : contour bleu marine épais (#1d2230), plumes blanches, ombre gris clair. Une seule aile,
 vue de profil, déployée vers l'arrière et le haut ; le jeu la pose dans le dos du perso (deux fois,
@@ -15,7 +15,7 @@ import os
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "gordeka", "communs"))
+OUT = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "blackout", "communs"))
 W, H = 160, 128          # taille finale (px)
 SS = 4                   # suréchantillonnage
 INK = (29, 34, 48, 255)

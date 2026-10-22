@@ -4,7 +4,7 @@ extends SceneTree
 ## sondes physiques (cercle du perso qui avance vers l'objet depuis les 4 côtés).
 ## godot --headless --path . --script res://tests/decor/mesure_decor.gd -- --map=port_pecheurs --out=/abs/mesures.json
 
-const GAME: String = "res://src/gordeka/gk_game.tscn"
+const GAME: String = "res://src/blackout/bk_game.tscn"
 
 
 func _initialize() -> void:
@@ -19,16 +19,16 @@ func _run() -> void:
 			map_id = a.trim_prefix("--map=")
 		elif a.begins_with("--out="):
 			out_path = a.trim_prefix("--out=")
-	GkGame.config["map"] = map_id
-	GkGame.config["visite"] = "chasse"
-	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	BkGame.config["map"] = map_id
+	BkGame.config["visite"] = "chasse"
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
 	root.add_child(game)
 	for i: int in 3:
 		await physics_frame
-	var m: GkMap = game.map
-	var d: GkDecor = m.decor
+	var m: BkMap = game.map
+	var d: BkDecor = m.decor
 	var space: PhysicsDirectSpaceState2D = m.get_world_2d().direct_space_state
-	var r: float = GkRules.px("body_radius")
+	var r: float = BkRules.px("body_radius")
 	var res: Array = []
 	for idx: int in d.instances.size():
 		var inst: Dictionary = d.instances[idx]
@@ -46,7 +46,7 @@ func _run() -> void:
 		var top_left: Vector2 = holder.position + sp.position - drawn * 0.5
 		row["drawn"] = [snappedf(drawn.x, 0.1), snappedf(drawn.y, 0.1)]
 		row["top_left"] = [snappedf(top_left.x, 0.1), snappedf(top_left.y, 0.1)]
-		row["h_perso"] = snappedf(drawn.y / GkPerso.HEIGHT_PX, 0.01)
+		row["h_perso"] = snappedf(drawn.y / BkPerso.HEIGHT_PX, 0.01)
 		row["fill_w"] = snappedf(drawn.x / foot.size.x, 0.01)
 		row["img_bottom"] = snappedf(top_left.y + drawn.y, 0.1)
 		row["source"] = inst.get("shape_source", "")
@@ -57,13 +57,13 @@ func _run() -> void:
 			continue
 		row["sort_y"] = snappedf(float(inst["sort_y"]), 0.1)
 		# Hauteur pour la vue (#607), en persos ; objet bas = la vue passe au-dessus (hors couche de vue).
-		row["vue_h_perso"] = snappedf(float(inst.get("view_h", 0.0)) / GkPerso.HEIGHT_PX, 0.01)
+		row["vue_h_perso"] = snappedf(float(inst.get("view_h", 0.0)) / BkPerso.HEIGHT_PX, 0.01)
 		row["vue_basse"] = d.low_view.has(idx)
 		var bb: Rect2 = Rect2()
 		var first: bool = true
 		var area: float = 0.0
 		for poly: PackedVector2Array in inst["polys"]:
-			area += absf(GkDecor._area(poly))
+			area += absf(BkDecor._area(poly))
 			for p: Vector2 in poly:
 				if first:
 					bb = Rect2(p, Vector2.ZERO)
@@ -98,7 +98,7 @@ func _run() -> void:
 		row["cases_plein_marchable"] = plein_marchable
 		# Base dessinée : pour chaque colonne (pas de 4 px), le pixel opaque le plus bas de l'image,
 		# comparé au bas de l'emprise dans cette colonne.
-		var img: Image = GkDecor._read_image(sp.texture.resource_path)
+		var img: Image = BkDecor._read_image(sp.texture.resource_path)
 		var gaps: Array = []
 		var air_cols: int = 0
 		var no_poly_cols: int = 0
@@ -159,7 +159,7 @@ func _run() -> void:
 			# départ hors de toute collision : on recule tant que le départ touche
 			var q: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 			q.shape = shape
-			q.collision_mask = GkMap.LAYER_MOVE
+			q.collision_mask = BkMap.LAYER_MOVE
 			var motion: Vector2 = c - start
 			# de devant (dir = haut) : on part du bas
 			q.transform = Transform2D(0.0, start)
@@ -177,7 +177,7 @@ func _run() -> void:
 		var front: Vector2 = Vector2(c.x, bb.end.y + r)
 		row["masque_devant"] = d.masking(front, game.mask_height(r)) >= 0
 		# Vue du chasseur : 3 cases devant l'emprise, regard vers le haut ; chassé derrière, à côté.
-		var h: GkActor = game.hunter
+		var h: BkActor = game.hunter
 		h.position = Vector2(c.x, bb.end.y + 3.0 * m.tile)
 		h.look = -PI * 0.5
 		row["vu_derriere"] = snappedf(game.sight_fraction(h, behind, r), 0.01)

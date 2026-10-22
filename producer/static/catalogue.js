@@ -62,7 +62,7 @@ function zonesOfDecor(d) {
 /** Tous les éléments du catalogue (recalculés quand l'index change). */
 function catalogueItems() {
   if (itemsCache.index === state.index) return itemsCache;
-  const g = state.index.gordeka || {};
+  const g = state.index.blackout || {};
   const items = [];
   const mk = (a, type, extra = {}) => ({
     key: a.id, route: [a.id, ''], type, asset: a, assetId: a.id, detail: '', name: a.name, sub: '',
@@ -95,9 +95,9 @@ function catalogueItems() {
   }
   // Animations : une entrée par animation attendue (présente ou manquante) de chaque perso.
   for (const pid of g.persos || []) {
-    const aid = `gordeka/persos/${pid}/animations`;
+    const aid = `blackout/persos/${pid}/animations`;
     const a = state.assetsById.get(aid) || null;
-    for (const s of gkSlots(pid)) {
+    for (const s of bkSlots(pid)) {
       items.push({
         key: aid + '#' + s.name, route: [aid, s.name], type: 'anim', asset: a, assetId: aid, detail: s.name, anim: s.anim,
         perso: pid, name: `${persoName(pid)} · ${animLabel(s.name)}`, sub: s.name, missing: !s.anim, aVenir: s.a_venir,
@@ -162,7 +162,7 @@ function passesFilters(it, info) {
 }
 
 function mapName(id) {
-  const c = ((state.index.gordeka || {}).cartes || []).find((m) => m.id === id);
+  const c = ((state.index.blackout || {}).cartes || []).find((m) => m.id === id);
   if (!c) return id;
   return c.jouable ? c.nom : `${c.nom} (ancienne v${c.version || '?'})`;
 }
@@ -191,7 +191,7 @@ function renderCatalogue() {
   renderCatBar(shown.length);
   const groups = groupItems(shown);
   const blocks = [];
-  if (cat.recap && state.index.gordeka) blocks.push(recapTable(state.index.gordeka.persos));
+  if (cat.recap && state.index.blackout) blocks.push(recapTable(state.index.blackout.persos));
   if (!shown.length) blocks.push(el('p', { class: 'empty', text: 'Aucun élément ne correspond à ces filtres.' }));
   for (const gr of groups) blocks.push(groupSection(gr));
   grid.replaceChildren(...blocks);
@@ -219,7 +219,7 @@ function renderCatBar(count) {
     s.addEventListener('change', () => { apply(s.value); saveCatalogue(); renderCatalogue(); });
     return s;
   };
-  const cartes = ((state.index.gordeka || {}).cartes || []).filter((c) => c.jouable);
+  const cartes = ((state.index.blackout || {}).cartes || []).filter((c) => c.jouable);
   const chips = CAT_FILTERS.map(([k, label]) => el('button', {
     type: 'button', class: 'chip-btn' + (cat.filters.has(k) ? ' on' : ''), 'aria-pressed': cat.filters.has(k) ? 'true' : 'false',
     'data-filter': k,
@@ -243,7 +243,7 @@ function renderCatBar(count) {
 
 /** Groupes [{key, title, items, head?}] selon le groupement choisi. */
 function groupItems(shown) {
-  const g = state.index.gordeka || {};
+  const g = state.index.blackout || {};
   const groups = new Map();
   const put = (key, title, pair, extra) => {
     if (!groups.has(key)) groups.set(key, { key, title, items: [], ...extra });
@@ -297,7 +297,7 @@ function groupSection(gr) {
   if (gr.perso) {
     const f = faceOf('Persos', gr.perso);
     face = f ? el('img', { src: fileUrl(f.preview), alt: '', class: 'smooth' }) : null;
-    const slots = gkSlots(gr.perso);
+    const slots = bkSlots(gr.perso);
     extra = el('span', { class: 'muted', text: `${slots.filter((s) => s.anim).length}/${slots.length} animations` });
   }
   if (gr.map) extra = el('a', { href: '#/jeu/cartes', class: 'small', text: 'plan et zones ›' });
@@ -403,7 +403,7 @@ function showFiche(id, detail) {
     showDetail(a, {
       detail, side, pill, contextRef: ref,
       title: it ? it.name : a.name,
-      onAnim: a.id.startsWith('gordeka/persos/') && a.kind === 'anim'
+      onAnim: a.id.startsWith('blackout/persos/') && a.kind === 'anim'
         ? (name) => { location.hash = '#/assets/' + encodeURIComponent(a.id) + '/' + encodeURIComponent(name); } : null,
     });
     window.scrollTo(0, 0);
@@ -440,7 +440,7 @@ function infoList(pairs) {
 
 function ficheSide(it, a, detail, ref) {
   const side = el('aside', { class: 'fiche-side' });
-  const g = state.index.gordeka || {};
+  const g = state.index.blackout || {};
   const assetId = a ? a.id : it ? it.assetId : '';
   const pid = it ? it.perso : '';
   // 1. Pilotage : cartes liées et commentaire.
@@ -511,7 +511,7 @@ function ficheSide(it, a, detail, ref) {
 }
 
 function promptBlock(it, a, detail, d) {
-  const g = state.index.gordeka || {};
+  const g = state.index.blackout || {};
   const parts = [];
   const retouches = g.retouches || {};
   if (it && it.type === 'anim' && detail) {

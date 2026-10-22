@@ -185,10 +185,10 @@ cli('set', String(kidIds[2]), '--parent', '0');
 check('cli set --parent 0 détache', !cli('cards', '--parent', String(hatId)).includes(`${tag} idle`));
 
 // ------------------------------------------- asset lié : vue, détail, commentaire
-const ASSET = 'gordeka/persos/louis/animations';
+const ASSET = 'blackout/persos/louis/animations';
 cli('set', String(kidIds[1]), '--asset', ASSET, '--detail', 'walk');
 cli('move', String(kidIds[1]), 'qa');
-const DECOR = 'gordeka/decor/objets/tour_phare.png';   // objet avec ses masques pixelforge (calque)
+const DECOR = 'blackout/decor/objets/tour_phare.png';   // objet avec ses masques pixelforge (calque)
 const decorId = Number(/#(\d+)/.exec(cli('add-card', '--type', 'asset', '--title', `${tag} fronton masques`, '--asset', DECOR, '--status', 'qa'))[1]);
 // Trace de chaque image dessinée (case source) : lecture case par case vérifiée sur la tuile.
 await page.addInitScript(() => {
@@ -216,7 +216,7 @@ const moving = await page.evaluate(async (id) => {
 }, kidIds[1]);
 check('tuile : l\'animation joue au survol', moving && (await page.$$('#board canvas')).length === 1);
 const tdraws = await page.evaluate(() => window.__draws);
-const walkFrames = await page.evaluate(() => state.assetsById.get('gordeka/persos/louis/animations').anims.find((x) => x.name === 'walk').frames);
+const walkFrames = await page.evaluate(() => state.assetsById.get('blackout/persos/louis/animations').anims.find((x) => x.name === 'walk').frames);
 check('tuile : case par case (décalage multiple exact de la case)', tdraws.length >= 3
   && tdraws.every((d) => d.sw * walkFrames === d.iw && d.sx % d.sw === 0), `${tdraws.length} images`);
 await shot(page, '04a_tuile_survol', false);

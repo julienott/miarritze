@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Profils 2D des persos de Gordeka (pf_2d__character, description seule : partir du pixel art de
+"""Profils 2D des persos de Blackout (pf_2d__character, description seule : partir du pixel art de
 Borroka donne un rendu pixelisé). 3 variantes par perso, déposées toutes ensemble dans la file
 pixelforge, relevées au fil de l'eau.
 

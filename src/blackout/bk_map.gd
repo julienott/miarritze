@@ -1,14 +1,14 @@
-class_name GkMap
+class_name BkMap
 extends Node2D
 ## Carte du prototype gris (SPEC-GORDEKA §8) lue depuis assets/maps/<id>/map.txt :
-## une lettre par case (légende dans tools/gordeka/make_proto_map.py). Construit les
+## une lettre par case (légende dans tools/blackout/make_proto_map.py). Construit les
 ## collisions (couche 1 : on ne passe pas ; couche 2 : on ne voit pas à travers), les
 ## occulteurs de lumière (vue du chasseur), la grille A* des IA et le dessin en blocs.
 
 const LAYER_MOVE: int = 1
 const LAYER_SIGHT: int = 2
 ## Pleins qui cachent la vue / objets bas et eau qui bloquent seulement le passage.
-## Lieux réels (tools/gordeka/carte_reelle.py) : R grand rocher, v végétation (cachent la vue),
+## Lieux réels (tools/blackout/carte_reelle.py) : R grand rocher, v végétation (cachent la vue),
 ## r rochers bas (bloquent le passage) ; sol de sable « : » et de jetée « = ».
 const OCCLUDE: String = "#cBHRv"
 const LOW: String = "t~r"
@@ -26,7 +26,7 @@ var map_id: String = ""
 ## Décor en images de la carte (index.json → carte) : une variante de carte (zones.json → « decor »)
 ## reprend celui de la carte dont elle dérive.
 var decor_id: String = ""
-## Réglages propres à la carte (zones.json → « regles »), posés par GkGame (GkRules.surcharge_carte).
+## Réglages propres à la carte (zones.json → « regles »), posés par BkGame (BkRules.surcharge_carte).
 var regles: Dictionary = {}
 var tiles: Array[String] = []
 var width: int = 0
@@ -40,10 +40,10 @@ var exits: Array[Vector2i] = []
 ## tire quelques-unes à chaque round.
 var exit_groups: Array = []
 var spawns: Array[Vector2i] = []
-## Contenu de zones.json (zones, sorties, « objets » posés par GkDecor…).
+## Contenu de zones.json (zones, sorties, « objets » posés par BkDecor…).
 var info: Dictionary = {}
 ## Cases sombres (grottes, tunnels) : zones.json → zones[].sombre et « sombres » [[x, y, w, h]…] ;
-## la vue du chasseur y porte moins loin si `idee_grottes` est active (GkGame.sight_range).
+## la vue du chasseur y porte moins loin si `idee_grottes` est active (BkGame.sight_range).
 var dark: Dictionary = {}
 ## Abri de chaque case de sol : nombre de voisins (8) qui cachent la vue.
 var cover: Dictionary = {}
@@ -51,18 +51,18 @@ var cover: Dictionary = {}
 ## marchable, case de l'objet que l'emprise ne couvre pas ; faux : bloquée, case de sol couverte par
 ## l'emprise d'un objet qui déborde de ses cases). Voir `_fit_grid_to_decor`.
 var _walk_fix: Dictionary = {}
-## Dessin à plat (prototype gris) ; faux en 3D, où GkView3D dessine la carte.
+## Dessin à plat (prototype gris) ; faux en 3D, où BkView3D dessine la carte.
 var draw_2d: bool = true
-## Décor en images (assets/gordeka/decor/, au fil des livraisons de pixelforge) ; tout ce qui n'a
+## Décor en images (assets/blackout/decor/, au fil des livraisons de pixelforge) ; tout ce qui n'a
 ## pas d'image garde le dessin procédural ci-dessous.
-var decor: GkDecor
-## Contours des formes du décor (QA), cachés sauf `--gk-qa-formes` ou la touche F de la visite.
+var decor: BkDecor
+## Contours des formes du décor (QA), cachés sauf `--bk-qa-formes` ou la touche F de la visite.
 var formes: Node2D
 
 
 func load_map(id: String) -> void:
 	map_id = id
-	tile = GkRules.f("tile_px")
+	tile = BkRules.f("tile_px")
 	var text: String = FileAccess.get_file_as_string("res://assets/maps/%s/map.txt" % id)
 	tiles.clear()
 	for line: String in text.split("\n"):
@@ -102,7 +102,7 @@ func load_map(id: String) -> void:
 	if exit_groups.is_empty() and not exits.is_empty():
 		exit_groups.append({"zone": "", "tiles": exits.duplicate()})
 	if draw_2d:
-		decor = GkDecor.new()
+		decor = BkDecor.new()
 		decor.setup(self)
 	_build_bodies()
 	_fit_grid_to_decor()
@@ -195,16 +195,16 @@ func _build_bodies() -> void:
 		_add_shape(low, Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile))
 	if decor == null:
 		return
-	# QA : `--gk-qa-formes` (ou la touche F de la visite) montre les formes (vert : bloque la vue ;
+	# QA : `--bk-qa-formes` (ou la touche F de la visite) montre les formes (vert : bloque la vue ;
 	# jaune : le passage seul).
 	var qa: Node2D = Node2D.new()
 	qa.z_index = 100
-	qa.visible = OS.get_cmdline_user_args().has("--gk-qa-formes")
+	qa.visible = OS.get_cmdline_user_args().has("--bk-qa-formes")
 	add_child(qa)
 	formes = qa
 	# Objets qui cachent la vue mais plus bas que l'œil du chasseur (#607) : hors de la couche de vue et
-	# sans ombre de la lampe ; GkGame.sight_fraction teste leur hauteur point du corps par point.
-	var eye: float = GkGame.eye_height()
+	# sans ombre de la lampe ; BkGame.sight_fraction teste leur hauteur point du corps par point.
+	var eye: float = BkGame.eye_height()
 	decor.low_view.clear()
 	for i: int in decor.instances.size():
 		var inst: Dictionary = decor.instances[i]
@@ -219,7 +219,7 @@ func _build_bodies() -> void:
 			cp.polygon = poly
 			(solid if blocks else low).add_child(cp)
 			if blocks:
-				_add_occluder(poly, GkDecor.LIGHT_MASK)
+				_add_occluder(poly, BkDecor.LIGHT_MASK)
 			if qa:
 				var line: Line2D = Line2D.new()
 				line.points = poly
@@ -230,7 +230,7 @@ func _build_bodies() -> void:
 
 
 ## Occulteur de la vue du chasseur (ombre des lumières) ; `mask` 1 : murs de la grille (ombrent
-## aussi les objets du décor), GkDecor.LIGHT_MASK : base d'un objet (n'ombre que le sol et les persos).
+## aussi les objets du décor), BkDecor.LIGHT_MASK : base d'un objet (n'ombre que le sol et les persos).
 func _add_occluder(poly: PackedVector2Array, mask: int) -> void:
 	var occ: LightOccluder2D = LightOccluder2D.new()
 	var op: OccluderPolygon2D = OccluderPolygon2D.new()
@@ -277,7 +277,7 @@ func _build_cover() -> void:
 
 
 ## Grille des IA alignée sur la physique (carte #606) : les objets en image ne bloquent que par leur
-## emprise au sol (`GkDecor` → polys), pas par leurs cases. Une case est bloquée si l'emprise entre dans
+## emprise au sol (`BkDecor` → polys), pas par leurs cases. Une case est bloquée si l'emprise entre dans
 ## la case rétrécie de decor_grille_marge cases sur chaque bord (un perso au centre ou qui la traverse
 ## la toucherait), libre sinon : les cases vides d'un objet plus étroit que ses cases deviennent
 ## marchables, les cases de sol couvertes par un objet qui déborde (débord latéral) bloquées. Les
@@ -287,7 +287,7 @@ func _fit_grid_to_decor() -> void:
 	_walk_fix.clear()
 	if decor == null:
 		return
-	var m: float = clampf(GkRules.f("decor_grille_marge"), 0.0, 0.45) * tile
+	var m: float = clampf(BkRules.f("decor_grille_marge"), 0.0, 0.45) * tile
 	var freed: Array[Vector2i] = []
 	var over: Dictionary = {}
 	for inst: Dictionary in decor.instances:
@@ -374,13 +374,13 @@ const FLOORS: Dictionary = {
 const DEPTH: float = 0.42                # hauteur de la face avant des objets (en cases)
 
 
-## QA : `--gk-cam=<zone>[@zoom]` (début du nom, sans casse ni accents ; zoom par défaut : la zone
-## tient à l'écran) ou `--gk-cam=x,y[@zoom]` (case) : caméra fixe, pour les captures du décor.
+## QA : `--bk-cam=<zone>[@zoom]` (début du nom, sans casse ni accents ; zoom par défaut : la zone
+## tient à l'écran) ou `--bk-cam=x,y[@zoom]` (case) : caméra fixe, pour les captures du décor.
 func _qa_camera() -> void:
 	for arg: String in OS.get_cmdline_user_args():
-		if not arg.begins_with("--gk-cam="):
+		if not arg.begins_with("--bk-cam="):
 			continue
-		var spec: PackedStringArray = arg.trim_prefix("--gk-cam=").split("@")
+		var spec: PackedStringArray = arg.trim_prefix("--bk-cam=").split("@")
 		var target: Rect2i = Rect2i()
 		var xy: PackedStringArray = spec[0].split(",")
 		if xy.size() == 2 and xy[0].is_valid_int():
@@ -391,7 +391,7 @@ func _qa_camera() -> void:
 					target = z["rect"]
 					break
 		if target.size == Vector2i.ZERO:
-			push_warning("--gk-cam : zone inconnue « %s »" % spec[0])
+			push_warning("--bk-cam : zone inconnue « %s »" % spec[0])
 			return
 		var px: Rect2 = Rect2(Vector2(target.position) * tile, Vector2(target.size) * tile)
 		var vp: Vector2 = get_viewport_rect().size
@@ -439,7 +439,7 @@ func _build_chunks() -> void:
 				groups[z] = []
 			(groups[z] as Array).append([ch, r])
 	for z: int in range(-1, zones.size()):
-		var c: GkMapChunk = GkMapChunk.new()
+		var c: BkMapChunk = BkMapChunk.new()
 		c.map = self
 		c.zone = z
 		c.items = groups.get(z, [])
@@ -530,16 +530,16 @@ func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
 					else:
 						_wall(ci, p3)
 				"R": _block(ci, p3, Color("a07a58"), Color("6e5038"), 10.0)
-				"r": GkDraw.rbox(ci, p3.grow(-2), Color("9a7a5c"), 8.0, 2.0)
+				"r": BkDraw.rbox(ci, p3.grow(-2), Color("9a7a5c"), 8.0, 2.0)
 				"v": _block(ci, p3, Color("6f9a55"), Color("4c7038"), 12.0)
 
 
 ## Bloc avec un dessus clair et une face avant plus sombre (vue 3/4), contour épais.
 func _block(ci: CanvasItem, px: Rect2, top: Color, front: Color, radius: float = 6.0) -> Rect2:
 	var d: float = minf(tile * DEPTH, px.size.y * 0.45)
-	GkDraw.rbox(ci, px, front, radius, 3.0)
+	BkDraw.rbox(ci, px, front, radius, 3.0)
 	var top_r: Rect2 = Rect2(px.position, Vector2(px.size.x, px.size.y - d))
-	GkDraw.rbox(ci, top_r, top, radius, 3.0)
+	BkDraw.rbox(ci, top_r, top, radius, 3.0)
 	return top_r
 
 
@@ -552,12 +552,12 @@ func _wall(ci: CanvasItem, px: Rect2) -> void:
 
 
 ## Masses bâties entre les zones, vues du dessus : le toit de tuiles (image du décor, déjà posée par
-## GkDecor.draw_floors) cerné d'encre, et sur chaque case dont le sud donne sur le sol, la façade
+## BkDecor.draw_floors) cerné d'encre, et sur chaque case dont le sud donne sur le sol, la façade
 ## blanche labourdine dessinée par le code (provisoire, en attendant facade_labourdine de pixelforge) :
 ## colombages rouges, fenêtres à volets rouges ou verts, parfois une porte ou des géraniums.
 func _roofs(ci: CanvasItem, rr: Rect2i) -> void:
 	var t: float = tile
-	var ink: Color = GkDraw.INK
+	var ink: Color = BkDraw.INK
 	for y: int in range(rr.position.y, rr.end.y):
 		for x: int in range(rr.position.x, rr.end.x):
 			var c: Vector2i = Vector2i(x, y)
@@ -606,9 +606,9 @@ func _low(ci: CanvasItem, px: Rect2) -> void:
 	# Objet bas (étal, table, filet) : petit plateau sur pieds, on voit par-dessus.
 	var top: Rect2 = Rect2(px.position + Vector2(4, 2), px.size - Vector2(8, 14))
 	for x: float in [px.position.x + 10, px.end.x - 14]:
-		GkDraw.rbox(ci, Rect2(x, top.end.y - 4, 6, 14), Color("8a6239"), 2.0, 2.0)
-	GkDraw.rbox(ci, top, Color("e2c28c"), 6.0, 3.0)
-	GkDraw.rbox(ci, Rect2(top.position + Vector2(6, 5), Vector2(top.size.x - 12, 5)), Color(1, 1, 1, 0.35), 2.0, 0.0)
+		BkDraw.rbox(ci, Rect2(x, top.end.y - 4, 6, 14), Color("8a6239"), 2.0, 2.0)
+	BkDraw.rbox(ci, top, Color("e2c28c"), 6.0, 3.0)
+	BkDraw.rbox(ci, Rect2(top.position + Vector2(6, 5), Vector2(top.size.x - 12, 5)), Color(1, 1, 1, 0.35), 2.0, 0.0)
 
 
 func _boat(ci: CanvasItem, px: Rect2, seed: int) -> void:
@@ -616,5 +616,5 @@ func _boat(ci: CanvasItem, px: Rect2, seed: int) -> void:
 	var hull: Rect2 = px.grow(-4)
 	var top: Rect2 = _block(ci, hull, Color("f4f6f8"), Color("c9d2da"), minf(hull.size.y * 0.45, 26.0))
 	var inner: Rect2 = top.grow(-maxf(8.0, top.size.y * 0.18))
-	GkDraw.rbox(ci, inner, Color("c08a55"), minf(inner.size.y * 0.45, 18.0), 2.5)
+	BkDraw.rbox(ci, inner, Color("c08a55"), minf(inner.size.y * 0.45, 18.0), 2.5)
 	ci.draw_rect(Rect2(hull.position.x + 6, top.end.y + 3, hull.size.x - 12, 5), stripes[seed % stripes.size()])

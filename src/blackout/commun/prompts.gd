@@ -2,7 +2,7 @@ class_name Prompts
 extends RefCounted
 ## Indications « appuie sur … » adaptées au dernier appareil utilisé (InputHub.device) : clavier,
 ## manette (Xbox, PlayStation, Nintendo, Steam Deck, générique) ou tactile. Sur iPhone, jamais de
-## touche clavier. Hérité de l'ancien jeu, réduit aux menus : à remplacer par un équivalent Gordeka.
+## touche clavier. Hérité de l'ancien jeu, réduit aux menus : à remplacer par un équivalent Blackout.
 ##
 ## Jetons reconnus dans les textes : {ok} {back} {pause} (menus), {move} (se déplacer), {nav}
 ## (naviguer dans un menu), {left} {right} {up} {down} (directions).

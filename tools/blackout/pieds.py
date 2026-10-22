@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Pieds qui glissent : mesure et correction des planches d'animation 2D des persos (Julien, recette
 du 2026-10-20 : « il glisse sur ses pieds »). Les PNG ne sont jamais réécrits : la correction va dans
-le <anim>.json, appliquée par src/gordeka/gk_perso.gd.
+le <anim>.json, appliquée par src/blackout/bk_perso.gd.
 
   pieds.py [<id>…] [--anim a,b] [--ecrire] [--rapport <dossier>] [--planches <dossier>]
 
@@ -35,7 +35,7 @@ import anim_json  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-PERSOS = os.path.join(ROOT, "assets", "gordeka", "persos")
+PERSOS = os.path.join(ROOT, "assets", "blackout", "persos")
 
 MOUVEMENT = ("walk", "run_scared", "ghost_move")
 ALPHA_MIN = 128      # pixel opaque
@@ -46,14 +46,14 @@ GAP_PX = 5           # deux colonnes séparées par plus de GAP_PX vides = deux 
 APPARIE_PX = 22      # déplacement max d'un même pied posé d'une image à la suivante (sur place)
 APPARIE_MOUV_PX = 32 # idem en déplacement (le pied posé recule vite)
 LISSAGE = 3          # fenêtre de lissage des décalages (images)
-# Échelle et vitesses du jeu, pour le rapport (gk_perso.gd, data/gordeka/rules.json).
+# Échelle et vitesses du jeu, pour le rapport (bk_perso.gd, data/blackout/rules.json).
 ECHELLE = 88.0 / 199.0
 CYCLE_S = {"walk": 0.85, "run_scared": 0.6, "ghost_move": 1.0}
-RATE_MAX = 3.0       # accélération maximale d'une planche de déplacement (× son fps), comme gk_perso.gd
+RATE_MAX = 3.0       # accélération maximale d'une planche de déplacement (× son fps), comme bk_perso.gd
 
 
 def _vitesses() -> dict:
-    r = json.load(open(os.path.join(ROOT, "data", "gordeka", "rules.json")))
+    r = json.load(open(os.path.join(ROOT, "data", "blackout", "rules.json")))
     t = float(r["tile_px"])
     return {"walk": r["speed_hider"] * t, "run_scared": r["speed_hider"] * t, "ghost_move": r["speed_ghost"] * t}
 
@@ -221,7 +221,7 @@ def _analyser_mouvement(r: dict, anim: str) -> dict:
     fps = float(r.get("fps", 24.0))
     sol_avant = vit * CYCLE_S[anim]                     # avance du sol pendant une planche, réglage CYCLE_S
     cadence = vit / stride if stride > 0 else None      # planches par seconde pour un pied immobile
-    borne = RATE_MAX * fps / n                          # cadence maximale admise par gk_perso.gd
+    borne = RATE_MAX * fps / n                          # cadence maximale admise par bk_perso.gd
     cad_jeu = min(cadence, borne) if cadence else 1.0 / CYCLE_S[anim]
     r.update({
         "appuis": len(ok), "v_pied": round(v, 2), "stride_px": round(stride, 1),

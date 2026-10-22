@@ -4,7 +4,7 @@
   import_perso.py <id> <taches.json>
 
 taches.json : {"idle": "<task_id>", "walk": "<task_id>", …} (un task_id par chorégraphie).
-Pour chaque animation, on enregistre dans assets/gordeka/persos/<id>/ :
+Pour chaque animation, on enregistre dans assets/blackout/persos/<id>/ :
   <anim>.png (planche), <anim>_tenue.png (masque de tenue), <anim>.json (fps, boucle, ancrage,
   et frame_offsets / stride_px calculés par pieds.py pour que les pieds ne glissent pas).
 Un GIF d'aperçu par animation va dans tools/rd/out/<id>/gk2d/pf/<anim>/ pour la relecture.
@@ -91,7 +91,7 @@ def nettoyer_tenue(sheet_png: bytes, mask_png: bytes, cell: int = 256) -> bytes:
 
 def main() -> None:
     pid, taches = sys.argv[1], json.load(open(sys.argv[2]))
-    dest = os.path.join(ROOT, "assets", "gordeka", "persos", pid)
+    dest = os.path.join(ROOT, "assets", "blackout", "persos", pid)
     revue = os.path.join(ROOT, "tools", "rd", "out", pid, "gk2d", "pf")
     os.makedirs(dest, exist_ok=True)
     for anim, tid in taches.items():
@@ -120,13 +120,13 @@ def main() -> None:
                 data = urllib.request.urlopen(f["url"], timeout=120).read()
                 open(os.path.join(revue, anim, f["name"]), "wb").write(data)
         # Le masque de pf_2d__animate exclut désormais la tête à la source : le nettoyage maison (fait pour
-        # les premières planches de Louis) ne s'applique plus que sur demande (GK_NETTOYER_TENUE=1).
-        if os.environ.get("GK_NETTOYER_TENUE") and "spritesheet_00.png" in got and "tenue_sheet_00.png" in got:
+        # les premières planches de Louis) ne s'applique plus que sur demande (BK_NETTOYER_TENUE=1).
+        if os.environ.get("BK_NETTOYER_TENUE") and "spritesheet_00.png" in got and "tenue_sheet_00.png" in got:
             got["tenue_sheet_00.png"] = nettoyer_tenue(got["spritesheet_00.png"], got["tenue_sheet_00.png"])
         for name, data in got.items():
             open(os.path.join(dest, ROLES[name].format(a=anim)), "wb").write(data)
         print(f"{anim} : ok")
-    # Post-traitement complet du perso (tools/gordeka/post_anims.py, SPEC-GORDEKA §16.3) : pieds, lampe,
+    # Post-traitement complet du perso (tools/blackout/post_anims.py, SPEC-GORDEKA §16.3) : pieds, lampe,
     # échelle, calage, images utiles, tables d'entrée. Un nouvel idle change la référence de tout le perso.
     try:
         import post_anims
@@ -135,7 +135,7 @@ def main() -> None:
     except Exception as e:  # noqa: BLE001 — l'import des planches ne doit jamais échouer pour ça
         print(f"post_anims : ignoré ({e}), repli sur pieds.py et lampe.py")
     # Repli : pieds qui glissent : recalage par image et stride des planches du perso, écrits dans les .json
-    # (tools/gordeka/pieds.py ; un nouvel idle recale toutes les anims du perso, d'où tout le perso).
+    # (tools/blackout/pieds.py ; un nouvel idle recale toutes les anims du perso, d'où tout le perso).
     try:
         import pieds
         pieds.corriger_perso(pid)
@@ -143,7 +143,7 @@ def main() -> None:
     except Exception as e:  # noqa: BLE001 — l'import des planches ne doit jamais échouer pour ça
         print(f"pieds : recalage ignoré ({e})")
     # Lampe du chasseur : main qui tient la lampe dans hunter_reveal, le jeu y dessine le cône
-    # (tools/gordeka/lampe.py ; après pieds.py, le .json garde ses deux ajouts).
+    # (tools/blackout/lampe.py ; après pieds.py, le .json garde ses deux ajouts).
     try:
         import lampe
         for cle, r in lampe.corriger_perso(pid).items():

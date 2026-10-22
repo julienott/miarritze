@@ -1,6 +1,6 @@
 name: Build & deploy web export
 
-# Depuis le 2026-10-20 (Julien) : main = Miarritze Gordeka, publié À LA RACINE du site (remplace
+# Depuis le 2026-10-20 (Julien) : main = Miarritze Blackout, publié À LA RACINE du site (remplace
 # Borroka, supprimé du dépôt le 2026-10-22) ; /producer est préparé en local (tools/producer/publie.sh)
 # et recopié ensuite par producer.yml.
 # Déploiement à la main seulement, sur décision de Julien.

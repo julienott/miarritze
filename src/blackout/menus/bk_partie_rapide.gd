@@ -3,8 +3,8 @@ extends Control
 ## avec les défauts (6 joueurs, IA Normal, Port des Pêcheurs, rounds = nombre de joueurs, options
 ## validées activées) ; « Réglages » déplie : joueurs (4 à 8), IA (Facile, Normal, Malin), carte,
 ## rounds (3 à 12 ; suivent le nombre de joueurs tant qu'on n'y a pas touché) et les options de
-## gameplay du catalogue data/gordeka/options_partie.json (on/off et curseurs bornés), posées sur
-## rules.json au lancement (GkRules.appliquer_options). Les choix restent le temps de la session.
+## gameplay du catalogue data/blackout/options_partie.json (on/off et curseurs bornés), posées sur
+## rules.json au lancement (BkRules.appliquer_options). Les choix restent le temps de la session.
 
 const NIVEAUX: PackedStringArray = ["facile", "normal", "malin"]
 const NOMS_NIVEAUX: PackedStringArray = ["Facile", "Normal", "Malin"]
@@ -26,10 +26,10 @@ var _lignes_option: Dictionary = {}   # id d'option → Array[Control] (curseurs
 
 static func defauts() -> Dictionary:
 	var opts: Dictionary = {}
-	for o: Dictionary in GkRules.options_partie():
+	for o: Dictionary in BkRules.options_partie():
 		for r: Dictionary in o.get("reglages", []):
 			opts[str(r["cle"])] = float(r.get("defaut", 0.0))
-	var n: int = int(GkRules.f("joueurs_defaut"))
+	var n: int = int(BkRules.f("joueurs_defaut"))
 	return {"players": n, "level": "normal", "map": str(CARTES[0][0]), "rounds": n, "rounds_touche": false,
 		"options": opts}
 
@@ -41,11 +41,11 @@ static func reinitialiser() -> void:
 func _ready() -> void:
 	if choix.is_empty():
 		reinitialiser()
-	var racine: MarginContainer = GkEcran.ecran(self)
+	var racine: MarginContainer = BkEcran.ecran(self)
 	var page: VBoxContainer = VBoxContainer.new()
 	page.add_theme_constant_override(&"separation", 12)
 	racine.add_child(page)
-	GkEcran.entete(page, "Partie rapide", func() -> void: GkNav.aller("accueil"))
+	BkEcran.entete(page, "Partie rapide", func() -> void: BkNav.aller("accueil"))
 	var corps: HBoxContainer = HBoxContainer.new()
 	corps.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	corps.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -56,17 +56,17 @@ func _ready() -> void:
 	col.alignment = BoxContainer.ALIGNMENT_CENTER
 	col.add_theme_constant_override(&"separation", 16)
 	corps.add_child(col)
-	var av: GkAvatar = GkAvatar.cree(GkProfil.perso(), GkRules.color(GkProfil.couleur()), 200)
+	var av: BkAvatar = BkAvatar.cree(BkProfil.perso(), BkRules.color(BkProfil.couleur()), 200)
 	av.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(av)
-	_carte = GkUi.label("", 34, GkUi.JAUNE)
+	_carte = BkUi.label("", 34, BkUi.JAUNE)
 	col.add_child(_carte)
-	_resume = GkUi.label("", 26)
+	_resume = BkUi.label("", 26)
 	col.add_child(_resume)
-	_jouer = GkUi.bouton("Jouer !", lancer, Vector2(400, 110), GkUi.JAUNE, 48)
+	_jouer = BkUi.bouton("Jouer !", lancer, Vector2(400, 110), BkUi.JAUNE, 48)
 	_jouer.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(_jouer)
-	_bouton_reglages = GkUi.bouton("Réglages", _basculer, Vector2(300, 64), GkUi.CREME, 26)
+	_bouton_reglages = BkUi.bouton("Réglages", _basculer, Vector2(300, 64), BkUi.CREME, 26)
 	_bouton_reglages.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(_bouton_reglages)
 	_panneau = _construire_reglages()
@@ -74,7 +74,7 @@ func _ready() -> void:
 	corps.add_child(_panneau)
 	_maj()
 	_jouer.grab_focus.call_deferred()
-	if GkRules.args().has("--gk-qa-reglages"):
+	if BkRules.args().has("--bk-qa-reglages"):
 		_basculer()          # QA : captures du panneau déplié
 
 
@@ -89,7 +89,7 @@ func _basculer() -> void:
 
 ## Panneau des réglages, défilant (doigt, molette ou focus qui suit).
 func _construire_reglages() -> Control:
-	var p: PanelContainer = GkUi.panneau(16)
+	var p: PanelContainer = BkUi.panneau(16)
 	p.custom_minimum_size = Vector2(700, 0)
 	p.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var scroll: ScrollContainer = ScrollContainer.new()
@@ -118,14 +118,14 @@ func _construire_reglages() -> Control:
 		_maj())
 	_cycleur(col, "rounds", "Rounds", func(d: int) -> void: regler_rounds(int(choix["rounds"]) + d))
 	var groupe: String = ""
-	for o: Dictionary in GkRules.options_partie():
+	for o: Dictionary in BkRules.options_partie():
 		if str(o.get("groupe", "")) != groupe:
 			groupe = str(o.get("groupe", ""))
-			var g: Label = GkUi.label(groupe, 26, GkUi.ROUGE, HORIZONTAL_ALIGNMENT_LEFT)
+			var g: Label = BkUi.label(groupe, 26, BkUi.ROUGE, HORIZONTAL_ALIGNMENT_LEFT)
 			g.add_theme_constant_override(&"outline_size", 0)
 			col.add_child(g)
 		_option(col, o)
-	GkUi.touch_scroll(col)
+	BkUi.touch_scroll(col)
 	return p
 
 
@@ -134,18 +134,18 @@ func _cycleur(parent: Container, nom: String, libelle: String, change: Callable)
 	var h: HBoxContainer = HBoxContainer.new()
 	h.add_theme_constant_override(&"separation", 12)
 	parent.add_child(h)
-	var l: Label = GkUi.label(libelle, 28, GkUi.INK, HORIZONTAL_ALIGNMENT_LEFT)
+	var l: Label = BkUi.label(libelle, 28, BkUi.INK, HORIZONTAL_ALIGNMENT_LEFT)
 	l.add_theme_constant_override(&"outline_size", 0)
 	l.custom_minimum_size = Vector2(170, 0)
 	h.add_child(l)
-	var moins: Button = GkUi.bouton("‹", func() -> void: change.call(-1), Vector2(72, 64), Color.WHITE, 34)
+	var moins: Button = BkUi.bouton("‹", func() -> void: change.call(-1), Vector2(72, 64), Color.WHITE, 34)
 	moins.name = "moins_" + nom
 	h.add_child(moins)
-	var v: Label = GkUi.label("", 28, GkUi.INK)
+	var v: Label = BkUi.label("", 28, BkUi.INK)
 	v.add_theme_constant_override(&"outline_size", 0)
 	v.custom_minimum_size = Vector2(300, 0)
 	h.add_child(v)
-	h.add_child(GkUi.bouton("›", func() -> void: change.call(1), Vector2(72, 64), Color.WHITE, 34))
+	h.add_child(BkUi.bouton("›", func() -> void: change.call(1), Vector2(72, 64), Color.WHITE, 34))
 	_valeurs[nom] = v
 
 
@@ -164,7 +164,7 @@ func _option(parent: Container, o: Dictionary) -> void:
 			interrupteur.toggled.connect(func(on: bool) -> void:
 				regler_option(cle, 1.0 if on else 0.0))
 			parent.add_child(interrupteur)
-			var aide: Label = GkUi.label(str(o.get("aide", "")), 20, Color(GkUi.INK, 0.75), HORIZONTAL_ALIGNMENT_LEFT)
+			var aide: Label = BkUi.label(str(o.get("aide", "")), 20, Color(BkUi.INK, 0.75), HORIZONTAL_ALIGNMENT_LEFT)
 			aide.add_theme_constant_override(&"outline_size", 0)
 			aide.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			aide.custom_minimum_size = Vector2(620, 0)
@@ -173,7 +173,7 @@ func _option(parent: Container, o: Dictionary) -> void:
 			var h: HBoxContainer = HBoxContainer.new()
 			h.add_theme_constant_override(&"separation", 12)
 			parent.add_child(h)
-			var l: Label = GkUi.label(str(r.get("libelle", cle)), 22, GkUi.INK, HORIZONTAL_ALIGNMENT_LEFT)
+			var l: Label = BkUi.label(str(r.get("libelle", cle)), 22, BkUi.INK, HORIZONTAL_ALIGNMENT_LEFT)
 			l.add_theme_constant_override(&"outline_size", 0)
 			l.custom_minimum_size = Vector2(300, 0)
 			l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -186,8 +186,8 @@ func _option(parent: Container, o: Dictionary) -> void:
 			s.custom_minimum_size = Vector2(250, 52)
 			s.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			h.add_child(s)
-			GkUi.focus_libelle(s, l)
-			var v: Label = GkUi.label(_nombre(s.value), 24, GkUi.INK)
+			BkUi.focus_libelle(s, l)
+			var v: Label = BkUi.label(_nombre(s.value), 24, BkUi.INK)
 			v.add_theme_constant_override(&"outline_size", 0)
 			v.custom_minimum_size = Vector2(60, 0)
 			h.add_child(v)
@@ -211,15 +211,15 @@ static func _nombre(x: float) -> String:
 # ---------------------------------------------------------------- réglages (testés)
 
 func regler_joueurs(n: int) -> void:
-	choix["players"] = clampi(n, int(GkRules.f("joueurs_min")), int(GkRules.f("joueurs_max")))
+	choix["players"] = clampi(n, int(BkRules.f("joueurs_min")), int(BkRules.f("joueurs_max")))
 	# Les rounds suivent le nombre de joueurs (chacun est chasseur une fois) tant qu'on n'y a pas touché.
 	if not bool(choix.get("rounds_touche", false)):
-		choix["rounds"] = clampi(int(choix["players"]), int(GkRules.f("rounds_min")), int(GkRules.f("rounds_max")))
+		choix["rounds"] = clampi(int(choix["players"]), int(BkRules.f("rounds_min")), int(BkRules.f("rounds_max")))
 	_maj()
 
 
 func regler_rounds(n: int) -> void:
-	choix["rounds"] = clampi(n, int(GkRules.f("rounds_min")), int(GkRules.f("rounds_max")))
+	choix["rounds"] = clampi(n, int(BkRules.f("rounds_min")), int(BkRules.f("rounds_max")))
 	choix["rounds_touche"] = true
 	_maj()
 
@@ -230,19 +230,19 @@ func regler_option(cle: String, v: float) -> void:
 
 ## Pose les réglages sur la partie (config et rules.json), sans la lancer.
 func preparer() -> void:
-	GkRules.appliquer_options(choix["options"])
-	var cfg: Dictionary = GkGame.config
+	BkRules.appliquer_options(choix["options"])
+	var cfg: Dictionary = BkGame.config
 	cfg["players"] = int(choix["players"])
 	cfg["level"] = str(choix["level"])
 	cfg["map"] = str(choix["map"])
 	cfg["rounds"] = int(choix["rounds"])
 	cfg["visite"] = ""
-	GkProfil.vers_partie()
+	BkProfil.vers_partie()
 
 
 func lancer() -> void:
 	preparer()
-	GkNav.aller("game")
+	BkNav.aller("game")
 
 
 func _maj() -> void:
@@ -270,4 +270,4 @@ func _unhandled_input(event: InputEvent) -> void:
 			_basculer()
 			_bouton_reglages.grab_focus.call_deferred()
 		else:
-			GkNav.aller("accueil")
+			BkNav.aller("accueil")

@@ -17,7 +17,7 @@ import numpy as np
 from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PERSOS = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "gordeka", "persos"))
+PERSOS = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "blackout", "persos"))
 BANDE_HAUT = 14
 ECART_MAX = 22
 GRIS_MIN, GRIS_MAX = 120, 222

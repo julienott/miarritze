@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Production de Gordeka chez pixelforge AVEC recette (Julien, 2026-10-20 matin : « fais la recette de
+"""Production de Blackout chez pixelforge AVEC recette (Julien, 2026-10-20 matin : « fais la recette de
 tout ce qui est sorti, si ce n'est pas bon renvoie-le, sinon intègre-le », remplace nuit.py) :
 - un perso à la fois (toutes ses animations), au plus 10 jobs de décor en vol ;
 - chaque sortie est rapatriée en zone de recette avec sa planche, SANS être intégrée ;
@@ -257,11 +257,11 @@ class Routine:
             # Peau confondue avec la tenue par SAM (Itsaso) : masque recalculé par la couleur.
             if tc.traite(a, [b]):
                 log("tenue par la couleur :", a, b)
-            base = f"assets/gordeka/persos/{a}/{b}"
+            base = f"assets/blackout/persos/{a}/{b}"
             # post_anims recalcule les tables d'entrée de tout le perso : tous ses .json partent avec.
-            jsons = [os.path.relpath(j, ROOT) for j in glob.glob(os.path.join(ROOT, "assets/gordeka/persos", a, "*.json"))]
-            nuit.commit([base + ".png", base + "_tenue.png", f"tools/gordeka/taches_{a}.json"] + jsons,
-                        f"Gordeka : {a}, animation {b} (recette OK)")
+            jsons = [os.path.relpath(j, ROOT) for j in glob.glob(os.path.join(ROOT, "assets/blackout/persos", a, "*.json"))]
+            nuit.commit([base + ".png", base + "_tenue.png", f"tools/blackout/taches_{a}.json"] + jsons,
+                        f"Blackout : {a}, animation {b} (recette OK)")
         else:
             src = os.path.join(ed.OUT, a, b)
             os.makedirs(src, exist_ok=True)
@@ -271,9 +271,9 @@ class Routine:
                                     "--sans-capture"], cwd=ROOT, capture_output=True, text=True)
                 if p.returncode:
                     raise RuntimeError(p.stdout[-300:] + p.stderr[-300:])
-                nuit.commit(["assets/gordeka/decor", "tools/gordeka/taches_decor.json"],
-                            f"Gordeka : décor {a} (pf_2d, recette OK)")
-                if lire(ed.PROMPTS, {}) and json.load(open(os.path.join(ROOT, "assets/gordeka/decor/index.json")))[
+                nuit.commit(["assets/blackout/decor", "tools/blackout/taches_decor.json"],
+                            f"Blackout : décor {a} (pf_2d, recette OK)")
+                if lire(ed.PROMPTS, {}) and json.load(open(os.path.join(ROOT, "assets/blackout/decor/index.json")))[
                         "elements"].get(a, {}).get("type") == "objet":
                     if not os.path.exists(os.path.join(HERE, ".decor_pause")):
                         mp.depose([a])           # masques de gameplay (pf_2d__footprint) de la nouvelle image
@@ -317,7 +317,7 @@ class Routine:
                 self.e["courant"] = pid
                 self.sauve()
                 log("perso :", pid, "(profil fantôme à relire avant ses animations fantôme)")
-        # décor : file glissante (suspendue tant que tools/gordeka/.decor_pause existe, Julien 2026-10-20)
+        # décor : file glissante (suspendue tant que tools/blackout/.decor_pause existe, Julien 2026-10-20)
         if os.path.exists(os.path.join(HERE, ".decor_pause")):
             return
         en_vol = len(self.items("en_vol", "decor"))

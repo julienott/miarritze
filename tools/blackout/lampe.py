@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Lampe du chasseur : position de la main qui tient la lampe, image par image, dans l'animation
 hunter_reveal des persos (Julien, 2026-10-20 : les faisceaux dessinés par l'IA « pas crédibles » ;
-c'est le jeu qui dessine le cône de lumière, src/gordeka/gk_lampe.gd). Les PNG ne sont jamais
+c'est le jeu qui dessine le cône de lumière, src/blackout/bk_lampe.gd). Les PNG ne sont jamais
 réécrits : le résultat va dans <anim>.json :
 
   "lampe": {"debut": <image où le faisceau s'allume>, "points": [[x, y] | null, …]}
@@ -36,7 +36,7 @@ import anim_json  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-PERSOS = os.path.join(ROOT, "assets", "gordeka", "persos")
+PERSOS = os.path.join(ROOT, "assets", "blackout", "persos")
 
 ANIMS = ("hunter_reveal",)
 ALPHA_MIN = 128

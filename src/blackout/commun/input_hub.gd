@@ -1,7 +1,7 @@
 extends Node
 ## InputHub — dernier appareil utilisé (clavier, manette, tactile) et famille de la manette, pour
 ## les textes d'aide (Prompts) et les écrans qui s'adaptent à l'appareil. Hérité de l'ancien jeu,
-## réduit au suivi de l'appareil : à remplacer par un équivalent Gordeka.
+## réduit au suivi de l'appareil : à remplacer par un équivalent Blackout.
 
 ## Le joueur vient de changer d'appareil (InputDevice.KEYBOARD/GAMEPAD/TOUCH)
 ## ou de famille de manette : les textes d'aide se remettent à jour.

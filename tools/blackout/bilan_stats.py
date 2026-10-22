@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bilan des rounds IA contre IA (lignes « [gk-stats] {…} » de gk_game avec --gk-stats).
+"""Bilan des rounds IA contre IA (lignes « [bk-stats] {…} » de bk_game avec --bk-stats).
 
   bilan_stats.py <journal.log> [<journal.log> …]
 
@@ -16,8 +16,8 @@ def main() -> None:
     groupes = defaultdict(list)
     for chemin in sys.argv[1:]:
         for ligne in open(chemin, encoding="utf-8"):
-            if ligne.startswith("[gk-stats] "):
-                r = json.loads(ligne[len("[gk-stats] "):])
+            if ligne.startswith("[bk-stats] "):
+                r = json.loads(ligne[len("[bk-stats] "):])
                 groupes[(r["niveau"], r["niveau_chasseur"])].append(r)
     for (niv, nivc), rs in sorted(groupes.items()):
         n = len(rs)

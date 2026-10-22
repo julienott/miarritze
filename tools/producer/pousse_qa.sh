@@ -8,12 +8,12 @@ for i in $(seq 1 180); do mkdir "$VERROU" 2>/dev/null && break; sleep 10; done
 trap 'rmdir "$VERROU" 2>/dev/null' EXIT
 MSG="$1"; shift
 godot --headless --path . --import >/dev/null 2>&1
-godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd 2>&1 | tail -1 | grep -q " 0 échecs" || { echo "TESTS EN ÉCHEC"; exit 1; }
-git add $(git ls-files --others --exclude-standard assets) assets tools/gordeka/masques tools/gordeka/taches_*.json tools/gordeka/retouches_recette.json 2>/dev/null
-git commit -q -m "Gordeka : $MSG
+godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd 2>&1 | tail -1 | grep -q " 0 échecs" || { echo "TESTS EN ÉCHEC"; exit 1; }
+git add $(git ls-files --others --exclude-standard assets) assets tools/blackout/masques tools/blackout/taches_*.json tools/blackout/retouches_recette.json 2>/dev/null
+git commit -q -m "Blackout : $MSG
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_01LXFHAN75rdxEcdsy5wKHqu" -- assets tools/gordeka/masques tools/gordeka/taches_*.json tools/gordeka/retouches_recette.json 2>/dev/null
+Claude-Session: https://claude.ai/code/session_01LXFHAN75rdxEcdsy5wKHqu" -- assets tools/blackout/masques tools/blackout/taches_*.json tools/blackout/retouches_recette.json 2>/dev/null
 git push -q origin main || { echo "PUSH ÉCHOUÉ"; exit 1; }
 gh workflow run deploy.yml --ref main; sleep 8
 id=$(gh run list --workflow deploy.yml --limit 1 --json databaseId -q '.[0].databaseId')

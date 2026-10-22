@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Cartes de jeu fidèles à un lieu réel (Gordeka, SPEC-GORDEKA §8).
+"""Cartes de jeu fidèles à un lieu réel (Blackout, SPEC-GORDEKA §8).
 
 Méthode (Port des Pêcheurs de Biarritz, 2026-10-19) :
   1. `telecharger` : l'orthophoto IGN (BD ORTHO, licence ouverte Etalab 2.0, ~0,22 m/px au zoom 19)
      et les tracés OpenStreetMap (© contributeurs OSM, ODbL) d'un rectangle lat/lon, plus une
      image des tracés OSM superposés pour se repérer. Pas de tuiles Google : leurs conditions
      interdisent de les télécharger pour en tirer un plan.
-  2. On relève à la main, dans tools/gordeka/cartes/<id>.json, les formes du lieu en pixels de
+  2. On relève à la main, dans tools/blackout/cartes/<id>.json, les formes du lieu en pixels de
      l'orthophoto (eau, sol, jetées, rochers, sable, bâtiments, végétation), puis le gameplay en
      cases (objets, cachettes, sorties possibles, départ, zones nommées).
   3. `construire` : dessine le tracé, le superpose à la photo (relecture), le découpe en cases,
@@ -19,7 +19,7 @@ Méthode (Port des Pêcheurs de Biarritz, 2026-10-19) :
 Fichiers de travail : tools/rd/out/cartes/<id>/ (ortho.jpg, osm.json, meta.json, osm_sur_ortho.jpg,
 trace_sur_ortho.jpg, apercu.png).
 
-Format de tools/gordeka/cartes/<id>.json :
+Format de tools/blackout/cartes/<id>.json :
   {"nom": "…", "region": [x, y, w, h] (px ortho), "case_px": 16,
    "couches": [ {"classe": "eau|sol|jetee|rocher_haut|rocher_bas|sable|batiment|vegetation|hors",
                  "polygone": [[x, y], …]}  ou  {"classe": …, "ligne": [[x, y], …], "largeur": px}, … ],
@@ -45,12 +45,12 @@ from PIL import Image, ImageDraw
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 WORK = os.path.join(ROOT, "tools", "rd", "out", "cartes")
-DESC = os.path.join(ROOT, "tools", "gordeka", "cartes")
+DESC = os.path.join(ROOT, "tools", "blackout", "cartes")
 IGN = ("https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS"
        "&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg")
 OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
             "https://maps.mail.ru/osm/tools/overpass/api/interpreter"]
-UA = {"User-Agent": "miarritze-gordeka (carte de jeu)"}
+UA = {"User-Agent": "miarritze-blackout (carte de jeu)"}
 
 CLASSES = ["hors", "sol", "eau", "jetee", "rocher_haut", "rocher_bas", "sable", "batiment", "vegetation"]
 CHAR = {"hors": "#", "sol": ".", "eau": "~", "jetee": "=", "rocher_haut": "R", "rocher_bas": "r",

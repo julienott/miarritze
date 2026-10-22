@@ -10,16 +10,16 @@ config_version=5
 
 [application]
 
-config/name="Miarritze Gordeka"
-run/main_scene="res://src/gordeka/gk_boot.tscn"
+config/name="Miarritze Blackout"
+run/main_scene="res://src/blackout/bk_boot.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
 
-Settings="*res://src/gordeka/commun/settings.gd"
-Profiles="*res://src/gordeka/commun/profiles.gd"
-InputHub="*res://src/gordeka/commun/input_hub.gd"
-QaCapture="*res://src/gordeka/commun/qa_capture.gd"
+Settings="*res://src/blackout/commun/settings.gd"
+Profiles="*res://src/blackout/commun/profiles.gd"
+InputHub="*res://src/blackout/commun/input_hub.gd"
+QaCapture="*res://src/blackout/commun/qa_capture.gd"
 Api="*res://src/net/api.gd"
 
 [audio]

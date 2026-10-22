@@ -1,5 +1,5 @@
 {
- "_doc": "Placement du décor propre à cette carte (tools/gordeka/make_port_v3.py), lu par src/gordeka/gk_decor.gd : objets imposés ou en miroir, ornements sans effet de jeu.",
+ "_doc": "Placement du décor propre à cette carte (tools/blackout/make_port_v3.py), lu par src/blackout/bk_decor.gd : objets imposés ou en miroir, ornements sans effet de jeu.",
  "objets": {
   "38,37": {
    "miroir": true

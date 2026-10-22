@@ -1,5 +1,5 @@
 {
- "_doc": "Blocs de prompts réutilisables du style « façon Party Hard » de Miarritze Gordeka (proposition du 2026-10-21, à valider par Julien). Explications et exemples : docs/STYLE_PARTY_HARD.md et docs/style/*.md. Assemblage : prompt = gabarit (emplacements {…} remplis) + ' ' + style_commun.base + ' ' + style_commun.par_type[type]. Tous les prompts sont en anglais, décrivent seulement le résultat voulu (aucune négation : les modèles ajoutent ce qu'on nomme) et ne citent aucun jeu existant. Paramètres pixelforge : prompt_style, width, height, colors, num_images, seed.",
+ "_doc": "Blocs de prompts réutilisables du style « façon Party Hard » de Miarritze Blackout (proposition du 2026-10-21, à valider par Julien). Explications et exemples : docs/STYLE_PARTY_HARD.md et docs/style/*.md. Assemblage : prompt = gabarit (emplacements {…} remplis) + ' ' + style_commun.base + ' ' + style_commun.par_type[type]. Tous les prompts sont en anglais, décrivent seulement le résultat voulu (aucune négation : les modèles ajoutent ce qu'on nomme) et ne citent aucun jeu existant. Paramètres pixelforge : prompt_style, width, height, colors, num_images, seed.",
  "version": 1,
  "date": "2026-10-21",
  "echelle": {
@@ -166,7 +166,7 @@
   }
  },
  "persos": {
-  "_doc": "Fiches pixel (lecture à 28–33 px) tirées de tools/gordeka/prompts_anims.json et de tools/rd/prompts/fighters.yaml (Itsasargi). signature = ce qui doit se lire de loin. Aucune personnalisation (décision de Julien, 2026-10-21).",
+  "_doc": "Fiches pixel (lecture à 28–33 px) tirées de tools/blackout/prompts_anims.json et de tools/rd/prompts/fighters.yaml (Itsasargi). signature = ce qui doit se lire de loin. Aucune personnalisation (décision de Julien, 2026-10-21).",
   "louis": {
    "corps": "enfant",
    "signature": "a red Basque beret on blond hair",
@@ -492,7 +492,7 @@
   }
  },
  "decor_categories": {
-  "_doc": "Taille de chaque catégorie en cases (1 case = 32 px natifs = 1 perso adulte de haut) et en px natifs pour la toile pixelforge. Exemples repris de tools/gordeka/prompts_decor.json.",
+  "_doc": "Taille de chaque catégorie en cases (1 case = 32 px natifs = 1 perso adulte de haut) et en px natifs pour la toile pixelforge. Exemples repris de tools/blackout/prompts_decor.json.",
   "sol": {
    "cases": [
     1,
@@ -683,6 +683,6 @@
    "ghost"
   ],
   "personnalisation": false,
-  "idle_long": "pose quand le perso reste longtemps inactif, créative et propre à chaque perso, clip Quaternius (Julien 21/10) ; choix par perso dans tools/gordeka/taches_partyhard_v1.json"
+  "idle_long": "pose quand le perso reste longtemps inactif, créative et propre à chaque perso, clip Quaternius (Julien 21/10) ; choix par perso dans tools/blackout/taches_partyhard_v1.json"
  }
 }

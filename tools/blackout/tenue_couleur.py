@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Masque de tenue calculé par la couleur, pour les persos dont la peau se confond avec la tenue aux yeux
 de SAM (Itsaso : peau d'eau cyan pâle, robe bleu profond bordée d'écume blanche). Remplace
-assets/gordeka/persos/<perso>/<anim>_tenue.png.
+assets/blackout/persos/<perso>/<anim>_tenue.png.
 
   tenue_couleur.py <perso> [anim…]        (sans anim : toutes les planches du perso)
 
@@ -20,7 +20,7 @@ from PIL import Image, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-PERSOS = os.path.join(ROOT, "assets", "gordeka", "persos")
+PERSOS = os.path.join(ROOT, "assets", "blackout", "persos")
 
 
 def regle(pid):

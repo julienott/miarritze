@@ -1,4 +1,4 @@
-name: Tests (Gordeka headless, salons, PHP)
+name: Tests (Blackout headless, salons, PHP)
 
 on:
   push:
@@ -29,8 +29,8 @@ jobs:
           chmod +x ~/godot-bin/godot
       - name: Import
         run: ~/godot-bin/godot --headless --path . --import || true
-      - name: Tests de Gordeka (règles, IA, cartes, profils)
-        run: ~/godot-bin/godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd
+      - name: Tests de Blackout (règles, IA, cartes, profils)
+        run: ~/godot-bin/godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd
       - name: PHP lint
         run: find backend producer -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Tests des salons (API)

@@ -1,9 +1,9 @@
-class_name GkRules
+class_name BkRules
 extends RefCounted
-## Règles de Gordeka (data/gordeka/rules.json, SPEC-GORDEKA §2-4). Tout réglage de jeu vient
-## de ce fichier ; `--gk-rules=clé:valeur,…` les surcharge pour la QA (phases raccourcies).
+## Règles de Blackout (data/blackout/rules.json, SPEC-GORDEKA §2-4). Tout réglage de jeu vient
+## de ce fichier ; `--bk-rules=clé:valeur,…` les surcharge pour la QA (phases raccourcies).
 
-const PATH: String = "res://data/gordeka/rules.json"
+const PATH: String = "res://data/blackout/rules.json"
 
 static var _data: Dictionary = {}
 
@@ -13,8 +13,8 @@ static func data() -> Dictionary:
 		var f: FileAccess = FileAccess.open(PATH, FileAccess.READ)
 		_data = JSON.parse_string(f.get_as_text())
 		for arg: String in OS.get_cmdline_user_args():
-			if arg.begins_with("--gk-rules="):
-				for pair: String in arg.trim_prefix("--gk-rules=").split(","):
+			if arg.begins_with("--bk-rules="):
+				for pair: String in arg.trim_prefix("--bk-rules=").split(","):
 					var kv: PackedStringArray = pair.split(":")
 					if kv.size() == 2:
 						_data[kv[0]] = float(kv[1])
@@ -22,19 +22,19 @@ static func data() -> Dictionary:
 
 
 ## Arguments du jeu : ligne de commande, plus, sur le web, le hash de l'adresse
-## (`#scene=gk_game&visite=chasse` → `--scene=gk_game`, `--gk-visite=chasse`).
+## (`#scene=bk_game&visite=chasse` → `--scene=bk_game`, `--bk-visite=chasse`).
 static func args() -> PackedStringArray:
 	var out: PackedStringArray = OS.get_cmdline_user_args()
 	if OS.has_feature("web"):
 		var h: String = str(JavaScriptBridge.eval("window.location.hash", true)).trim_prefix("#")
 		for part: String in h.split("&", false):
-			out.append("--" + part if part.begins_with("scene=") or part.begins_with("gk-") else "--gk-" + part)
+			out.append("--" + part if part.begins_with("scene=") or part.begins_with("bk-") else "--bk-" + part)
 	return out
 
 
-## Options de partie validées par Julien (data/gordeka/options_partie.json), pour le futur menu de
+## Options de partie validées par Julien (data/blackout/options_partie.json), pour le futur menu de
 ## création de partie : liste des options avec leurs réglages (clé de rules.json, type, bornes, défaut).
-const OPTIONS_PATH: String = "res://data/gordeka/options_partie.json"
+const OPTIONS_PATH: String = "res://data/blackout/options_partie.json"
 
 
 static func options_partie() -> Array:
@@ -63,7 +63,7 @@ static func appliquer_options(choix: Dictionary) -> void:
 
 ## Réglages propres à une carte (zones.json → « regles », écrit par le générateur de la carte) : posés
 ## par-dessus rules.json pour la partie, retirés quand elle se termine (`retire_carte`). Une clé passée
-## en ligne de commande (`--gk-rules=`, A/B) garde la priorité. Valeurs d'avant, pour les remettre.
+## en ligne de commande (`--bk-rules=`, A/B) garde la priorité. Valeurs d'avant, pour les remettre.
 static var _carte: Dictionary = {}
 
 
@@ -71,8 +71,8 @@ static func surcharge_carte(regles: Dictionary) -> void:
 	retire_carte()
 	var cli: Array = []
 	for arg: String in OS.get_cmdline_user_args():
-		if arg.begins_with("--gk-rules="):
-			for pair: String in arg.trim_prefix("--gk-rules=").split(","):
+		if arg.begins_with("--bk-rules="):
+			for pair: String in arg.trim_prefix("--bk-rules=").split(","):
 				cli.append(pair.split(":")[0])
 	for k: Variant in regles:
 		var key: String = str(k)
@@ -95,7 +95,7 @@ static func f(key: String) -> float:
 	return float(data().get(key, 0.0))
 
 
-## Drapeau d'une idée de gameplay (0 ou 1 dans rules.json, `--gk-rules=idee_x:1` pour l'A/B).
+## Drapeau d'une idée de gameplay (0 ou 1 dans rules.json, `--bk-rules=idee_x:1` pour l'A/B).
 static func on(key: String) -> bool:
 	return f(key) > 0.5
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Persos façon Party Hard, prompts assemblés UNIQUEMENT depuis data/gordeka/style_party_hard.json
+"""Persos façon Party Hard, prompts assemblés UNIQUEMENT depuis data/blackout/style_party_hard.json
 (docs/STYLE_PARTY_HARD.md, docs/style/) : profil (pf_pro__character) puis course (pf_anim__walking).
 
   party_hard.py <dossier de sortie> louis maia peio kaio [--anim run]
@@ -19,7 +19,7 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, os.path.join(ROOT, "tools", "pf"))
 import gen_anims_pf as pf  # noqa: E402
 
-SPEC = json.load(open(os.path.join(ROOT, "data", "gordeka", "style_party_hard.json")))
+SPEC = json.load(open(os.path.join(ROOT, "data", "blackout", "style_party_hard.json")))
 STYLE = SPEC["style_commun"]
 
 

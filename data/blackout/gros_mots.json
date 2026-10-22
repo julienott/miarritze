@@ -1,5 +1,5 @@
 {
-	"_doc": "Copie de la liste du filtre du serveur (backend/src/Profanity.php), pour refuser un pseudo dès sa saisie, hors ligne (GkProfil.gros_mot). Même normalisation : minuscules, sans accents, chiffres leet (0→o, 1→i, 3→e, 4→a, 5→s, 7→t), puis seulement les lettres ; un mot de la liste contenu dans le pseudo le refuse. Le serveur reste la référence : garder les deux listes identiques.",
+	"_doc": "Copie de la liste du filtre du serveur (backend/src/Profanity.php), pour refuser un pseudo dès sa saisie, hors ligne (BkProfil.gros_mot). Même normalisation : minuscules, sans accents, chiffres leet (0→o, 1→i, 3→e, 4→a, 5→s, 7→t), puis seulement les lettres ; un mot de la liste contenu dans le pseudo le refuse. Le serveur reste la référence : garder les deux listes identiques.",
 	"mots": [
 		"merde", "putain", "pute", "salope", "salaud", "connard", "connasse",
 		"encule", "enculer", "batard", "chiotte", "couille", "nique", "niquer",

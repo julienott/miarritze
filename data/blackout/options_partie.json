@@ -1,5 +1,5 @@
 {
-	"_doc": "Options de gameplay VALIDÉES par Julien, réglables dans le futur menu de création de partie (Julien 2026-10-20). Chaque option pointe vers des clés de rules.json ; GkRules.appliquer_options() pose les valeurs choisies par-dessus rules.json au lancement d'une partie. Une idée non validée n'entre pas ici.",
+	"_doc": "Options de gameplay VALIDÉES par Julien, réglables dans le futur menu de création de partie (Julien 2026-10-20). Chaque option pointe vers des clés de rules.json ; BkRules.appliquer_options() pose les valeurs choisies par-dessus rules.json au lancement d'une partie. Une idée non validée n'entre pas ici.",
 	"options": [
 		{
 			"id": "gateaux",

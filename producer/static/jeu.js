@@ -16,7 +16,7 @@ function renderJeu(sub) {
     href: '#/jeu/' + k, class: 'subtab' + (k === tab ? ' active' : ''), text: label,
   })));
   const box = $('jeu');
-  const g = state.index.gordeka || {};
+  const g = state.index.blackout || {};
   if (!g.regles) { box.replaceChildren(el('p', { class: 'empty', text: 'Index sans données de gameplay : reconstruire /producer.' })); return; }
   if (tab === 'regles') box.replaceChildren(...jeuRegles(g));
   else if (tab === 'options') box.replaceChildren(...jeuOptions(g));
@@ -108,7 +108,7 @@ function rulesTable(j) {
 }
 
 function jeuRegles(g) {
-  const out = [el('p', { class: 'muted intro' }, ...mdInline(g.doc_regles || ''), ' Source : ', el('code', { text: 'data/gordeka/rules.json' }),
+  const out = [el('p', { class: 'muted intro' }, ...mdInline(g.doc_regles || ''), ' Source : ', el('code', { text: 'data/blackout/rules.json' }),
     '. Les options validées se règlent dans la partie rapide ; le reste se change dans le fichier.')];
   for (const r of g.regles) {
     const a = state.assetsById.get(r.asset);

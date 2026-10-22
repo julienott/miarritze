@@ -7,7 +7,7 @@
 
 `run` lance `procs` Godot headless par niveau (« chassés/chasseur »), en temps fixe (--fixed-fps 60,
 même pas de temps qu'en jeu, aussi vite que le processeur le permet), chacun pour sa part des rounds,
-avec --gk-stats ; journaux et bilan dans tests/out/gordeka_ab/<variante>/. `tableau` compare des
+avec --bk-stats ; journaux et bilan dans tests/out/blackout_ab/<variante>/. `tableau` compare des
 variantes déjà mesurées : moyenne ± écart-type par round (± erreur type entre crochets pour les
 indicateurs principaux).
 """
@@ -20,7 +20,7 @@ import sys
 import time
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-OUT = os.path.join(ROOT, "tests", "out", "gordeka_ab")
+OUT = os.path.join(ROOT, "tests", "out", "blackout_ab")
 NIVEAUX = "normal/facile,normal/normal,normal/malin"
 
 
@@ -31,8 +31,8 @@ def lire(dossier, niveau=None):
         if not nom.endswith(".log"):
             continue
         for ligne in open(os.path.join(dossier, nom), encoding="utf-8"):
-            if ligne.startswith("[gk-stats] "):
-                r = json.loads(ligne[len("[gk-stats] "):])
+            if ligne.startswith("[bk-stats] "):
+                r = json.loads(ligne[len("[bk-stats] "):])
                 if niveau is None or f"{r['niveau']}/{r['niveau_chasseur']}" == niveau:
                     rs.append(r)
     return rs
@@ -102,12 +102,12 @@ def run(args):
         chasses, chasseur = niv.split("/")
         for i in range(args.procs):
             cmd = ["godot", "--headless", "--path", args.projet, "--fixed-fps", "60", "--",
-                   "--scene=gk_game", "--gk-bots-only", "--gk-stats", f"--gk-rounds={part}",
-                   f"--gk-level={chasses}", f"--gk-hunter-level={chasseur}", f"--gk-players={args.players}"]
+                   "--scene=bk_game", "--bk-bots-only", "--bk-stats", f"--bk-rounds={part}",
+                   f"--bk-level={chasses}", f"--bk-hunter-level={chasseur}", f"--bk-players={args.players}"]
             if args.rules:
-                cmd.append(f"--gk-rules={args.rules}")
+                cmd.append(f"--bk-rules={args.rules}")
             if args.map:
-                cmd.append(f"--gk-map={args.map}")
+                cmd.append(f"--bk-map={args.map}")
             jobs.append((cmd, os.path.join(dossier, f"{chasses}_{chasseur}_{i}.log")))
     t0 = time.time()
     actifs = []
@@ -184,7 +184,7 @@ def main():
     r.add_argument("--procs", type=int, default=8, help="processus par niveau (chacun fait sa part des rounds)")
     r.add_argument("--paralleles", type=int, default=9, help="processus Godot en même temps")
     r.add_argument("--players", type=int, default=6)
-    r.add_argument("--map", default="", help="variante de carte (assets/maps/<id>/, --gk-map)")
+    r.add_argument("--map", default="", help="variante de carte (assets/maps/<id>/, --bk-map)")
     r.add_argument("--timeout", type=float, default=3600)
     r.add_argument("--projet", default=ROOT, help="copie du projet à lancer (instantané : le code peut changer pendant la mesure)")
     t = sub.add_parser("tableau")

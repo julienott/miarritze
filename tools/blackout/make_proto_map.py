@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Carte du prototype gris de Gordeka : le Port des Pêcheurs en blocs (SPEC-GORDEKA §8).
+"""Carte du prototype gris de Blackout : le Port des Pêcheurs en blocs (SPEC-GORDEKA §8).
 
 15 zones (5 × 3) de 18 × 12 cases, séparées par des murs percés de passages ; taille de The
 Skeld (~5 × 3,5 écrans). Écrit assets/maps/port_pecheurs/map.txt (une lettre par case) et

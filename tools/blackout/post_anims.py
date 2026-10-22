@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Post-traitement des animations 2D d'un perso, en une commande (Julien, 2026-10-20 : « un pipeline
 générique pour tous les persos existants et à venir »). Les PNG ne sont jamais réécrits : tout va
-dans les <anim>.json, lus par src/gordeka/gk_perso.gd.
+dans les <anim>.json, lus par src/blackout/bk_perso.gd.
 
   post_anims.py <id>… | --tous  [--controle] [--sortie <dossier>]
 
@@ -18,7 +18,7 @@ Un nouvel idle change la référence de tout le perso : on recalcule donc toujou
 et planches des pires transitions dans --sortie (défaut tools/rd/out/<id>/gk2d/controle/).
 
 Exceptions par perso, jamais dans le code : section facultative "post" du perso dans
-tools/gordeka/prompts_anims.json, ex. {"echelle": {"found": 1.0}, "decalage": {"walk": [0, -4]},
+tools/blackout/prompts_anims.json, ex. {"echelle": {"found": 1.0}, "decalage": {"walk": [0, -4]},
 "echelle_tol": 0.05, "fige": 0.6}.
 """
 import json

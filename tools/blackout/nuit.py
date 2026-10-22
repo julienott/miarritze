@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Production de nuit de Gordeka chez pixelforge (consigne de Julien, 2026-10-20) :
+"""Production de nuit de Blackout chez pixelforge (consigne de Julien, 2026-10-20) :
 - un seul perso à la fois (toutes ses animations), intégré dans le jeu sans recette ;
 - au plus 10 jobs de décor en file en même temps, intégrés dans le jeu dès réception, sans recette ;
 - chaque asset intégré est commité en local, SANS push (Julien poussera demain matin).
 
   nuit.py [--sans-decor] [--persos louis,txomin,…]
 
-Le décor ne démarre que si le fichier tools/gordeka/.decor_go existe (créé quand pixelforge a confirmé
+Le décor ne démarre que si le fichier tools/blackout/.decor_go existe (créé quand pixelforge a confirmé
 que pf_2d__prop est corrigé) ; il est relu à chaque tour, on peut donc l'ouvrir en cours de nuit.
 Journal : tools/rd/out/nuit.log ; état : tools/rd/out/nuit_etat.json.
 """
@@ -122,7 +122,7 @@ class Perso:
     def modele(self):
         if self.pid == "louis":
             return MODELE_LOUIS
-        return sur_blanc(os.path.join(ROOT, "assets", "gordeka", "persos", self.pid, "modele.png"),
+        return sur_blanc(os.path.join(ROOT, "assets", "blackout", "persos", self.pid, "modele.png"),
                          os.path.join(self.dir, "modele_blanc.png"))
 
     def fantome_png(self):
@@ -199,9 +199,9 @@ class Perso:
         une = os.path.join(self.dir, "_une.json")
         json.dump({anim: tid}, open(une, "w"))
         subprocess.run([PY, os.path.join(HERE, "import_perso.py"), self.pid, une], cwd=ROOT, check=False)
-        base = f"assets/gordeka/persos/{self.pid}/{anim}"
-        commit([base + ".png", base + "_tenue.png", base + ".json", f"tools/gordeka/taches_{self.pid}.json"],
-               f"Gordeka : {self.pid}, animation {anim} (production de nuit, sans recette)")
+        base = f"assets/blackout/persos/{self.pid}/{anim}"
+        commit([base + ".png", base + "_tenue.png", base + ".json", f"tools/blackout/taches_{self.pid}.json"],
+               f"Blackout : {self.pid}, animation {anim} (production de nuit, sans recette)")
         log(self.pid, anim, "intégrée")
 
 
@@ -247,8 +247,8 @@ class Decor:
                     p = subprocess.run([PY, os.path.join(HERE, "integre_decor.py"), eid, "0", "image_00", "--sans-capture"],
                                        cwd=ROOT, capture_output=True, text=True)
                     log("décor", eid, "intégré" if p.returncode == 0 else "intégration refusée : " + p.stdout[-200:] + p.stderr[-200:])
-                    commit(["assets/gordeka/decor", "tools/gordeka/taches_decor.json"],
-                           f"Gordeka : décor {eid} (pf_2d, production de nuit, sans recette)")
+                    commit(["assets/blackout/decor", "tools/blackout/taches_decor.json"],
+                           f"Blackout : décor {eid} (pf_2d, production de nuit, sans recette)")
                 else:
                     log("décor", eid, n, "reçu (taille secondaire)")
         if not os.path.exists(DECOR_GO):

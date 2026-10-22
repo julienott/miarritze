@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Remplit le kanban /producer avec tout ce qui est fait ou reste à faire sur Gordeka (Julien 2026-10-20 :
+"""Remplit le kanban /producer avec tout ce qui est fait ou reste à faire sur Blackout (Julien 2026-10-20 :
 « créer tout ce qu'il y a à faire ou reste à faire sur le kanban pour pouvoir décider »).
 
   remplit_kanban.py [--essai]       --essai : affiche sans rien créer
@@ -68,26 +68,26 @@ def carte(titre, typ, statut, parent=None, desc="", asset="", prio=""):
 
 
 def a_png(pid, a):
-    return os.path.exists(os.path.join(ROOT, "assets", "gordeka", "persos", pid, a + ".png"))
+    return os.path.exists(os.path.join(ROOT, "assets", "blackout", "persos", pid, a + ".png"))
 
 
 # ------------------------------------------------------------------ persos
 chap_persos = carte("Personnages", "perso", "doing",
-                    desc="Les 12 persos de Gordeka : profil validé + 14 animations de base chacun. Emotes et "
+                    desc="Les 12 persos de Blackout : profil validé + 14 animations de base chacun. Emotes et "
                          "fantômes générés en pause (décision de Julien, 20/10).")
 for pid in PERSOS:
     n = NOMS[pid]
     faites = sum(a_png(pid, a) for a in ANIMS)
     chap = carte(f"Perso : {n}", "perso", "qa" if faites == len(ANIMS) else "backlog", parent=chap_persos,
-                 desc=f"{faites}/{len(ANIMS)} animations de base en ligne.", asset=f"gordeka/persos/{pid}/animations")
-    carte(f"{n} · profil de référence", "asset", "qa", parent=chap, asset=f"gordeka/persos/{pid}/modele.png")
+                 desc=f"{faites}/{len(ANIMS)} animations de base en ligne.", asset=f"blackout/persos/{pid}/animations")
+    carte(f"{n} · profil de référence", "asset", "qa", parent=chap, asset=f"blackout/persos/{pid}/modele.png")
     for a, nom in ANIMS.items():
         ok = a_png(pid, a)
         d = DEFAUTS.get((pid, a), "")
         carte(f"{n} · {nom}", "animation", "qa" if ok else "backlog", parent=chap,
               desc=("En ligne." + (" Défaut connu : " + d if d else "")) if ok
-              else "À générer chez pixelforge (pf_2d__animate, prompts dans tools/gordeka/prompts_anims.json).",
-              asset=f"gordeka/persos/{pid}/animations")
+              else "À générer chez pixelforge (pf_2d__animate, prompts dans tools/blackout/prompts_anims.json).",
+              asset=f"blackout/persos/{pid}/animations")
     if a_png(pid, "ghost"):
         carte(f"{n} · fantôme (ailes générées)", "animation", "qa", parent=chap,
               desc="Fantôme immobile et en déplacement générés avec ailes, plus vol stationnaire du jeu.")
@@ -107,14 +107,14 @@ carte("Masques de tenue : recalcul pf_2d__tenue sur les animations de Kaio", "pi
       parent=chap_persos, desc="Correctif pixelforge du masque de cou (foulard) ; repos, se cacher et sortir déjà refaits.")
 
 # ------------------------------------------------------------------ décor
-idx = json.load(open(os.path.join(ROOT, "assets", "gordeka", "decor", "index.json")))["elements"]
-pr = {e["id"]: e for e in json.load(open(os.path.join(ROOT, "tools", "gordeka", "prompts_decor.json")))["elements"]}
-masques = os.path.join(ROOT, "assets", "gordeka", "decor", "masques")
+idx = json.load(open(os.path.join(ROOT, "assets", "blackout", "decor", "index.json")))["elements"]
+pr = {e["id"]: e for e in json.load(open(os.path.join(ROOT, "tools", "blackout", "prompts_decor.json")))["elements"]}
+masques = os.path.join(ROOT, "assets", "blackout", "decor", "masques")
 REFAIRE = {"chambre_froide", "coque_sur_ber", "maison_crampotte", "comptoir_bar", "etabli_atelier", "marches_escalier",
            "caisses_poisson", "lavoir_bassin", "treteaux_cale", "banc_chapelle", "fronton", "autel_chapelle",
            "table_terrasse", "coque_chantier"}
 chap_decor = carte("Décor du port", "asset", "backlog",
-                   desc="Décor en images (pf_2d__prop / pf_2d__ground), intégré par tools/gordeka/integre_decor.py. "
+                   desc="Décor en images (pf_2d__prop / pf_2d__ground), intégré par tools/blackout/integre_decor.py. "
                         "En pause depuis le 20/10 (décision de Julien).")
 sous = {
     "sol": carte("Décor · sols", "asset", "backlog", parent=chap_decor),
@@ -147,7 +147,7 @@ for eid, el in idx.items():
                    "pixelforge disponible ; 14 jobs annulés le 20/10.")
     else:
         carte(f"{nom}", "asset", "qa", parent=sous[g], desc=f"{eid} : en ligne.",
-              asset=f"gordeka/decor/{el['fichiers'][0]}")
+              asset=f"blackout/decor/{el['fichiers'][0]}")
     if g == "cachette":
         carte(f"{nom} : version ouverte", "asset", "backlog", parent=sous[g],
               desc="Image ouverte (pf_hd__edit) + integre_decor.py --etat ouvert.")

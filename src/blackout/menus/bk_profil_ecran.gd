@@ -3,9 +3,9 @@ extends Control
 ## survol), le pseudo, la couleur préférée (12 pastilles : tous les persos se recolorent) et l'emote
 ## favorite. Chaque choix est enregistré tout de suite dans le profil.
 
-var _grand: GkAvatar
+var _grand: BkAvatar
 var _nom: Label
-var _vignettes: Dictionary = {}       # id du perso → GkAvatar
+var _vignettes: Dictionary = {}       # id du perso → BkAvatar
 var _boutons_perso: Dictionary = {}   # id du perso → Button
 var _pastilles: Array[Button] = []
 var _emotes: Array[Button] = []
@@ -15,14 +15,14 @@ var _saisie: Control
 
 
 func _ready() -> void:
-	if not GkProfil.a_un_actif():
-		GkNav.aller("qui_joue")
+	if not BkProfil.a_un_actif():
+		BkNav.aller("qui_joue")
 		return
-	_racine = GkEcran.ecran(self)
+	_racine = BkEcran.ecran(self)
 	_page = VBoxContainer.new()
 	_page.add_theme_constant_override(&"separation", 10)
 	_racine.add_child(_page)
-	GkEcran.entete(_page, "Mon profil", func() -> void: GkNav.aller("accueil"))
+	BkEcran.entete(_page, "Mon profil", func() -> void: BkNav.aller("accueil"))
 	var corps: HBoxContainer = HBoxContainer.new()
 	corps.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	corps.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -33,12 +33,12 @@ func _ready() -> void:
 	gauche.alignment = BoxContainer.ALIGNMENT_CENTER
 	gauche.add_theme_constant_override(&"separation", 8)
 	corps.add_child(gauche)
-	_grand = GkAvatar.cree(GkProfil.perso(), GkRules.color(GkProfil.couleur()), 340)
+	_grand = BkAvatar.cree(BkProfil.perso(), BkRules.color(BkProfil.couleur()), 340)
 	_grand.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	gauche.add_child(_grand)
-	_nom = GkUi.label(GkProfil.pseudo(), 40)
+	_nom = BkUi.label(BkProfil.pseudo(), 40)
 	gauche.add_child(_nom)
-	gauche.add_child(GkUi.bouton("Changer de pseudo", _changer_pseudo, Vector2(300, 60), GkUi.CREME, 24))
+	gauche.add_child(BkUi.bouton("Changer de pseudo", _changer_pseudo, Vector2(300, 60), BkUi.CREME, 24))
 	# À droite : persos, couleurs, emotes.
 	var droite: VBoxContainer = VBoxContainer.new()
 	droite.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -49,10 +49,10 @@ func _ready() -> void:
 	grille.add_theme_constant_override(&"h_separation", 10)
 	grille.add_theme_constant_override(&"v_separation", 10)
 	droite.add_child(grille)
-	for c: Variant in GkRules.data().get("characters", []):
+	for c: Variant in BkRules.data().get("characters", []):
 		var id: String = str(c)
-		var b: Button = GkUi.bouton("", _choisir_perso.bind(id), Vector2(118, 132), Color.WHITE)
-		var av: GkAvatar = GkAvatar.cree(id, GkRules.color(GkProfil.couleur()), 124, false)
+		var b: Button = BkUi.bouton("", _choisir_perso.bind(id), Vector2(118, 132), Color.WHITE)
+		var av: BkAvatar = BkAvatar.cree(id, BkRules.color(BkProfil.couleur()), 124, false)
 		av.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		av.offset_bottom = -6
 		b.add_child(av)
@@ -64,25 +64,25 @@ func _ready() -> void:
 		grille.add_child(b)
 		_vignettes[id] = av
 		_boutons_perso[id] = b
-	var titre_c: Label = GkUi.label("Ta couleur", 26, GkUi.JAUNE)
+	var titre_c: Label = BkUi.label("Ta couleur", 26, BkUi.JAUNE)
 	droite.add_child(titre_c)
 	var couleurs: HBoxContainer = HBoxContainer.new()
 	couleurs.add_theme_constant_override(&"separation", 8)
 	couleurs.alignment = BoxContainer.ALIGNMENT_CENTER
 	droite.add_child(couleurs)
-	var noms: Array = GkRules.data().get("color_names", [])
+	var noms: Array = BkRules.data().get("color_names", [])
 	for i: int in 12:
-		var p: Button = GkUi.bouton("", _choisir_couleur.bind(i), Vector2(54, 52), GkRules.color(i))
+		var p: Button = BkUi.bouton("", _choisir_couleur.bind(i), Vector2(54, 52), BkRules.color(i))
 		p.tooltip_text = str(noms[i]) if i < noms.size() else ""
 		couleurs.add_child(p)
 		_pastilles.append(p)
-	droite.add_child(GkUi.label("Ton emote", 26, GkUi.JAUNE))
+	droite.add_child(BkUi.label("Ton emote", 26, BkUi.JAUNE))
 	var emotes: HBoxContainer = HBoxContainer.new()
 	emotes.add_theme_constant_override(&"separation", 14)
 	emotes.alignment = BoxContainer.ALIGNMENT_CENTER
 	droite.add_child(emotes)
-	for i: int in GkGame.EMOTES.size():
-		var e: Button = GkUi.bouton("", _choisir_emote.bind(i), Vector2(72, 68), Color.WHITE)
+	for i: int in BkGame.EMOTES.size():
+		var e: Button = BkUi.bouton("", _choisir_emote.bind(i), Vector2(72, 68), Color.WHITE)
 		var icone: Icone = Icone.new()
 		icone.emote = i
 		icone.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -91,32 +91,32 @@ func _ready() -> void:
 		emotes.add_child(e)
 		_emotes.append(e)
 	_maj()
-	(_boutons_perso.get(GkProfil.perso(), _boutons_perso.values()[0]) as Button).grab_focus.call_deferred()
+	(_boutons_perso.get(BkProfil.perso(), _boutons_perso.values()[0]) as Button).grab_focus.call_deferred()
 
 
 func _nom_perso(id: String) -> String:
-	var chars: Array = GkRules.data().get("characters", [])
-	var noms: Array = GkRules.data().get("bot_names", [])
+	var chars: Array = BkRules.data().get("characters", [])
+	var noms: Array = BkRules.data().get("bot_names", [])
 	var i: int = chars.find(id)
 	return str(noms[i]) if i >= 0 and i < noms.size() else id.capitalize()
 
 
 func _choisir_perso(id: String) -> void:
-	GkProfil.regler(GkProfil.PERSO, id)
-	_grand.regler(id, GkRules.color(GkProfil.couleur()))
+	BkProfil.regler(BkProfil.PERSO, id)
+	_grand.regler(id, BkRules.color(BkProfil.couleur()))
 	_maj()
 
 
 func _choisir_couleur(i: int) -> void:
-	GkProfil.regler(GkProfil.COULEUR, i)
+	BkProfil.regler(BkProfil.COULEUR, i)
 	for id: String in _vignettes:
-		(_vignettes[id] as GkAvatar).regler(id, GkRules.color(i))
-	_grand.regler(GkProfil.perso(), GkRules.color(i))
+		(_vignettes[id] as BkAvatar).regler(id, BkRules.color(i))
+	_grand.regler(BkProfil.perso(), BkRules.color(i))
 	_maj()
 
 
 func _choisir_emote(i: int) -> void:
-	GkProfil.regler(GkProfil.EMOTE, i)
+	BkProfil.regler(BkProfil.EMOTE, i)
 	_grand.emote(i)
 	_maj()
 
@@ -125,35 +125,35 @@ func _choisir_emote(i: int) -> void:
 func _maj() -> void:
 	for id: String in _boutons_perso:
 		var b: Button = _boutons_perso[id]
-		GkUi.teinter(b, GkUi.JAUNE if id == GkProfil.perso() else Color.WHITE)
+		BkUi.teinter(b, BkUi.JAUNE if id == BkProfil.perso() else Color.WHITE)
 	# Couleur choisie : gros cadre blanc (pas de glyphe : la police du web n'a pas toutes les coches).
 	for i: int in _pastilles.size():
 		var sb: StyleBoxFlat = (_pastilles[i].get_theme_stylebox(&"normal") as StyleBoxFlat).duplicate()
-		var choisie: bool = i == GkProfil.couleur()
-		sb.border_color = Color.WHITE if choisie else GkUi.INK
-		sb.set_border_width_all(7 if choisie else GkUi.BORD)
-		sb.border_width_bottom = 7 if choisie else GkUi.BORD + 6
+		var choisie: bool = i == BkProfil.couleur()
+		sb.border_color = Color.WHITE if choisie else BkUi.INK
+		sb.set_border_width_all(7 if choisie else BkUi.BORD)
+		sb.border_width_bottom = 7 if choisie else BkUi.BORD + 6
 		_pastilles[i].add_theme_stylebox_override(&"normal", sb)
 		_pastilles[i].add_theme_stylebox_override(&"hover", sb)
 	for i: int in _emotes.size():
-		GkUi.teinter(_emotes[i], GkUi.JAUNE if i == GkProfil.emote() else Color.WHITE)
+		BkUi.teinter(_emotes[i], BkUi.JAUNE if i == BkProfil.emote() else Color.WHITE)
 
 
 func _changer_pseudo() -> void:
 	_page.visible = false
 	_saisie = CenterContainer.new()
 	_racine.add_child(_saisie)
-	var s: GkSaisiePseudo = GkSaisiePseudo.new()
-	s.texte_initial = GkProfil.pseudo()
+	var s: BkSaisiePseudo = BkSaisiePseudo.new()
+	s.texte_initial = BkProfil.pseudo()
 	s.valider = func(texte: String) -> String:
-		var err: String = GkProfil.erreur_pseudo(texte)
-		var p: Node = GkProfil.profiles()
+		var err: String = BkProfil.erreur_pseudo(texte)
+		var p: Node = BkProfil.profiles()
 		for i: int in p.profiles.size():
 			if i != p.active_index and str(p.profiles[i].get("pseudo", "")).to_lower() == texte.strip_edges().to_lower():
 				err = "Ce pseudo est déjà sur cet appareil"
 		if err == "":
-			GkProfil.regler("pseudo", texte.strip_edges())
-			_nom.text = GkProfil.pseudo()
+			BkProfil.regler("pseudo", texte.strip_edges())
+			_nom.text = BkProfil.pseudo()
 			_fermer_saisie()
 		return err
 	s.annuler = _fermer_saisie
@@ -165,7 +165,7 @@ func _fermer_saisie() -> void:
 		_saisie.queue_free()
 		_saisie = null
 	_page.visible = true
-	(_boutons_perso.get(GkProfil.perso()) as Button).grab_focus.call_deferred()
+	(_boutons_perso.get(BkProfil.perso()) as Button).grab_focus.call_deferred()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -174,7 +174,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if _saisie != null:
 			_fermer_saisie()
 		else:
-			GkNav.aller("accueil")
+			BkNav.aller("accueil")
 
 
 ## Icône d'une emote dans son bouton.
@@ -182,4 +182,4 @@ class Icone extends Control:
 	var emote: int = 0
 
 	func _draw() -> void:
-		GkDraw.emote_icon(self, size * 0.5, minf(size.x, size.y) * 0.32, emote)
+		BkDraw.emote_icon(self, size * 0.5, minf(size.x, size.y) * 0.32, emote)

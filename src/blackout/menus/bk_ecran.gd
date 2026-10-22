@@ -1,6 +1,6 @@
-class_name GkEcran
+class_name BkEcran
 extends RefCounted
-## Mise en page commune des écrans de menu de Gordeka : fond de mer, marges de la zone sûre de
+## Mise en page commune des écrans de menu de Blackout : fond de mer, marges de la zone sûre de
 ## l'iPhone (encoche, barre d'accueil), rappel des touches selon l'appareil (Prompts), bande du haut
 ## avec « Retour » et titre, musique des menus (Hegoak).
 
@@ -8,7 +8,7 @@ extends RefCounted
 ## des touches en bas. Renvoie le conteneur où poser le contenu (plein écran, marges comprises).
 static func ecran(ecran_ctrl: Control, aide: bool = true) -> MarginContainer:
 	ecran_ctrl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var fond: GkUi.Fond = GkUi.Fond.new()
+	var fond: BkUi.Fond = BkUi.Fond.new()
 	fond.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	fond.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ecran_ctrl.add_child(fond)
@@ -35,7 +35,7 @@ static func barre_aide(parent: Control, variantes: Dictionary = {}) -> Label:
 	if variantes.is_empty():
 		variantes = {Prompts.KEYBOARD: "{ok} : valider    {back} : retour    FLÈCHES : choisir",
 			Prompts.GAMEPAD: "{ok} : valider    {back} : retour    STICK : choisir"}
-	var l: Label = GkUi.label("", 20, Color(1, 1, 1, 0.85))
+	var l: Label = BkUi.label("", 20, Color(1, 1, 1, 0.85))
 	l.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	l.offset_top = -36
 	l.offset_bottom = -6
@@ -51,8 +51,8 @@ static func entete(parent: Container, texte: String, retour: Callable) -> HBoxCo
 	h.add_theme_constant_override(&"separation", 16)
 	parent.add_child(h)
 	if retour.is_valid():
-		h.add_child(GkUi.bouton("‹ Retour", retour, Vector2(190, 68), GkUi.CREME, 26))
-	var t: Label = GkUi.titre(texte)
+		h.add_child(BkUi.bouton("‹ Retour", retour, Vector2(190, 68), BkUi.CREME, 26))
+	var t: Label = BkUi.titre(texte)
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(t)
 	if retour.is_valid():

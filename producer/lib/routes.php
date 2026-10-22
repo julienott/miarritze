@@ -13,7 +13,7 @@ return [
     ['POST', 'login', 'Session', '{password}', 'Connexion par mot de passe (en-tête X-CSRF-Token requis).', ''],
     ['POST', 'logout', 'Session', '{}', 'Déconnexion.', ''],
     // ---------------------------------------------------------------- assets
-    ['GET', 'index', 'Assets', '', 'Index des assets du build (assets, versions des fichiers, données Gordeka : persos, '
+    ['GET', 'index', 'Assets', '', 'Index des assets du build (assets, versions des fichiers, données Blackout : persos, '
         . 'animations attendues, cartes de jeu, règles, liens assets ↔ cartes, file pixelforge).', ''],
     ['GET', 'index_version', 'Assets', '', 'Version légère de l\'index (date + taille), sondée pour le direct.', ''],
     ['GET', 'file', 'Assets', '&p=<chemin>[&v=<empreinte>]', 'Sert un fichier listé par l\'index (liste blanche, '

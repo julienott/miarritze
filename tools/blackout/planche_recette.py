@@ -17,7 +17,7 @@ from PIL import Image, ImageDraw
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-PERSOS = os.path.join(ROOT, "assets", "gordeka", "persos")
+PERSOS = os.path.join(ROOT, "assets", "blackout", "persos")
 CELL = 256
 TAILLE = 128          # taille d'une case sur la planche
 SOL_Y = 236

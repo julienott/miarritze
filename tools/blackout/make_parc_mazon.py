@@ -11,15 +11,15 @@ près des passages, 3 sorties (portillons de la clôture) dont 2 ouvertes par ro
 
 Écrit :
 - assets/maps/parc_mazon/map.txt et zones.json ;
-- assets/gordeka/decor/index_parc_mazon.json : le décor de la carte, lu par GkDecor (index par carte) :
+- assets/blackout/decor/index_parc_mazon.json : le décor de la carte, lu par BkDecor (index par carte) :
   images reprises du port (banc vert, fontaine, poubelle, table de terrasse) et placeholders dessinés
-  par tools/gordeka/placeholders_parc.py (assets/gordeka/decor/parc_mazon/), chacun posé sur ses cases
+  par tools/blackout/placeholders_parc.py (assets/blackout/decor/parc_mazon/), chacun posé sur ses cases
   (`cases`) avec ses masques (emprise au sol, partie haute qui masque) ;
 - avec --apercu <png> : un plan de la carte (lettres, zones, sorties).
 Vérifie que tout est atteignable, sans cul-de-sac, que chaque objet posé a la taille de son image,
 et affiche quelques mesures (sol, cachettes, sorties, lignes de vue).
 
-Légende (GkMap) : . sol   # clôture, bâtiments, fronton   v arbres, buissons, haies, massifs
+Légende (BkMap) : . sol   # clôture, bâtiments, fronton   v arbres, buissons, haies, massifs
                   c gros jeux (toboggans, kiosque)   (tous trois cachent la vue)
                   t objets bas (bancs, tables, tourniquet, balançoires : on voit par-dessus)
                   r massifs de fleurs, carrés potagers (bas)   ~ eau de la mare   : sable   = pont
@@ -36,7 +36,7 @@ from collections import deque
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 MAP_ID = "parc_mazon"
-DECOR = os.path.join(ROOT, "assets", "gordeka", "decor")           # décor commun (images reprises)
+DECOR = os.path.join(ROOT, "assets", "blackout", "decor")           # décor commun (images reprises)
 OWN = os.path.join(ROOT, "assets", "maps", MAP_ID, "decor")       # décor propre à la carte
 W, H = 96, 42
 WALK = ".ES:="
@@ -46,7 +46,7 @@ OCCLUDE = "#cBHRv"
 # Chaque élément : nom, caractère, taille en cases (w, h), débord vers le haut (cases), catégorie,
 # bloque_vue (None : selon le caractère), dessin (placeholder) ou image reprise du port (`reprise`),
 # animation, prompt (pour la génération : description POSITIVE, sans négation), remarques.
-# Les prompts complets sont assemblés par tools/gordeka/backlog_parc.py (style commun + caméra).
+# Les prompts complets sont assemblés par tools/blackout/backlog_parc.py (style commun + caméra).
 CAT = {
     # --- sols (tuiles 2 × 2 cases)
     "pm_sol_gravier": dict(nom="Gravier des allées", car=".", taille=(2, 2), type="tuile_sol", cat="sol",
@@ -778,7 +778,7 @@ def check(verbose=True):
 
 # ------------------------------------------------------------------------------------------- décor
 def decor_index():
-    """Index du décor de la carte (GkDecor, index par carte) : chaque objet posé sur ses cases."""
+    """Index du décor de la carte (BkDecor, index par carte) : chaque objet posé sur ses cases."""
     port = json.load(open(os.path.join(DECOR, "index.json"), encoding="utf-8"))["elements"]
     els = {}
     for eid, el in CAT.items():
@@ -787,9 +787,9 @@ def decor_index():
         if el.get("reprise"):
             src = port[eid]
             e.update({k: src[k] for k in ("type", "fichiers", "ombre", "ombre_decalage", "animation") if k in src})
-            e["fichiers"] = ["res://assets/gordeka/decor/" + f for f in e["fichiers"]]
+            e["fichiers"] = ["res://assets/blackout/decor/" + f for f in e["fichiers"]]
             if "ombre" in e:
-                e["ombre"] = "res://assets/gordeka/decor/" + e["ombre"]
+                e["ombre"] = "res://assets/blackout/decor/" + e["ombre"]
             e["nom"] = src["nom"]
             e["reprise_du_port"] = True
         else:
@@ -810,8 +810,8 @@ def decor_index():
             e["zones"] = []                    # posé seulement là où zones.json → objets le dit
             e["poses"] = len(ps)
         els[eid] = e
-    return {"_doc": "Décor du Parc Mazon (tools/gordeka/make_parc_mazon.py), lu par src/gordeka/gk_decor.gd "
-                    "(décor propre à la carte). Placeholders dessinés par tools/gordeka/placeholders_parc.py, à remplacer "
+    return {"_doc": "Décor du Parc Mazon (tools/blackout/make_parc_mazon.py), lu par src/blackout/bk_decor.gd "
+                    "(décor propre à la carte). Placeholders dessinés par tools/blackout/placeholders_parc.py, à remplacer "
                     "par les images du backlog « Carte : Parc Mazon » ; poses dans ../zones.json → objets.",
             "carte": MAP_ID, "elements": els}
 

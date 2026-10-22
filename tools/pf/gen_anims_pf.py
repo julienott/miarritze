@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Client pixelforge (service de génération d'images et d'animations, local et gratuit) :
 adresse du service, jeton, appel JSON (/v1, /v2, /mcp), attente du service et dépôt d'image.
-Utilisé par tools/gordeka et tools/producer (`import gen_anims_pf as pf` : pf.PF, pf.AUTH,
+Utilisé par tools/blackout et tools/producer (`import gen_anims_pf as pf` : pf.PF, pf.AUTH,
 pf._post_json). Service : PF_URL (défaut https://stellar.tailbeda4d.ts.net) ; jeton PF_TOKEN ou
 .pf_token à la racine (gitignoré).
 """

@@ -1,6 +1,6 @@
-name: Déployer Gordeka (test, /gordeka/)
+name: Déployer Blackout (test, /gordeka/)
 
-# Version de test de Miarritze Gordeka, publiée à part dans <site>/gordeka/ (2026-10-19, demande de
+# Version de test de Miarritze Blackout (ex-Gordeka), publiée à part dans <site>/gordeka/ (2026-10-19, demande de
 # Julien) ; l'API n'est pas touchée. Le déploiement principal (racine du site) est deploy.yml.
 # Déploiement à la main seulement.
 on:

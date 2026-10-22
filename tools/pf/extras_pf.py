@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Aides pixelforge communes : image en base64 (`b64`) et requête par la file asynchrone /v2 avec
-relevé et relances (`infer`). Utilisé par tools/gordeka (`import extras_pf as ex`).
+relevé et relances (`infer`). Utilisé par tools/blackout (`import extras_pf as ex`).
 """
 import base64
 import io

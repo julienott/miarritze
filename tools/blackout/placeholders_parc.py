@@ -2,11 +2,11 @@
 """Placeholders du décor du Parc Mazon, dessinés par le code (formes et couleurs simples, contour bleu
 marine épais, vue 3/4 de face comme le reste du décor), en attendant les images du backlog.
 
-Appelé par tools/gordeka/make_parc_mazon.py (catalogue CAT) ; écrit dans assets/maps/parc_mazon/decor/ :
+Appelé par tools/blackout/make_parc_mazon.py (catalogue CAT) ; écrit dans assets/maps/parc_mazon/decor/ :
 - sols/<id>.png : tuiles raccordables de 2 × 2 cases (256 px) ;
 - objets/<id>.png : 128 px par case d'emprise, hauteur = emprise + débord (même échelle que les images
   intégrées par integre_decor.py) ;
-- masques/<id>/masks.json + occluder.png (format de tools/gordeka/masques_pf.py, lus par GkDecor) pour
+- masques/<id>/masks.json + occluder.png (format de tools/blackout/masques_pf.py, lus par BkDecor) pour
   les objets qui cachent la vue ou qu'on doit contourner au plus juste : emprise au sol (`polygons`,
   base de l'objet), ligne de tri (`back_y`), partie qui masque un perso derrière (`occluder.png`).
   Les objets bas sans masques prennent la forme calculée par le jeu sur la silhouette.
@@ -772,7 +772,7 @@ def dessine_tout(cat, dest):
         m = {"size": [im.width, im.height], "polygons": [[list(q) for q in foot]], "back_y": back_y,
              "front_y": front_y, "baseline_y": (back_y + front_y) // 2,
              "blocks_view": True if bloque is None else bool(bloque), "camera": "front34", "confidence": 1.0,
-             "source": "placeholder (tools/gordeka/placeholders_parc.py)", "warnings": warnings}
+             "source": "placeholder (tools/blackout/placeholders_parc.py)", "warnings": warnings}
         md = os.path.join(dest, "masques", eid)
         n += _write(os.path.join(md, "masks.json"), json.dumps(m, ensure_ascii=False, indent=1).encode())
         n += _write(os.path.join(md, "occluder.png"), _png_bytes(occ))

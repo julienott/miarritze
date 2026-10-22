@@ -1,13 +1,13 @@
-class_name GkDecor
+class_name BkDecor
 extends Node2D
-## Décor en images (pixelforge, intégré élément par élément par tools/gordeka/integre_decor.py),
-## posé sur la carte avec repli sur le dessin procédural de GkMap pour tout ce qui n'a pas encore
+## Décor en images (pixelforge, intégré élément par élément par tools/blackout/integre_decor.py),
+## posé sur la carte avec repli sur le dessin procédural de BkMap pour tout ce qui n'a pas encore
 ## d'image. La grille A* reste celle des cases ; la collision et l'occlusion de la vue des objets en
 ## image suivent leur forme réelle, calculée au chargement depuis l'alpha de l'image (`_shape`) :
 ## seule l'empreinte au sol arrête le passage et la vue, le haut de l'image (toit, face haute, mât)
 ## passe devant les persos qui sont derrière (tri par profondeur sur le pied de l'objet).
 ##
-## index.json (assets/gordeka/decor/) : {carte, elements: {id: {type, categorie, caractere, zones,
+## index.json (assets/blackout/decor/) : {carte, elements: {id: {type, categorie, caractere, zones,
 ## taille_cases, debord_haut_cases, hauteur_cases, animation, fichiers: [chemins relatifs], ombre, ombre_decalage,
 ## ouvert, ouvert_decalage}}}.
 ## - tuile_sol : texture répétée sur les cases du caractère dans ses zones (taille_cases cases par
@@ -18,14 +18,14 @@ extends Node2D
 ## Ce nœud porte les objets debout : il rejoint le calque y-trié des persos (les persos passent
 ## derrière les objets hauts) ; `under` porte les ombres et ce qui est à plat.
 ##
-## Placement propre à une carte (assets/maps/<id>/decor.json, écrit par tools/gordeka/make_port_v3.py) :
+## Placement propre à une carte (assets/maps/<id>/decor.json, écrit par tools/blackout/make_port_v3.py) :
 ## {objets: {"x,y": {id, miroir}}} impose l'élément d'un groupe de cases (clé : son coin haut gauche) et
 ## le retourne en miroir (image, ombre, emprise et masque) ; {ornements: [{id, x, y, l, h, miroir}]}
 ## pose des éléments sans effet de jeu (fanions, linge, lanternes, fumée…) : pied en (x, y) cases,
 ## largeur l et hauteur h en cases. Un élément sans image mais avec « provisoire » (index.json) est
-## dessiné par le code (GkProvisoire) en attendant pixelforge.
+## dessiné par le code (BkProvisoire) en attendant pixelforge.
 
-const DIR: String = "res://assets/gordeka/decor"
+const DIR: String = "res://assets/blackout/decor"
 ## Cases dont le sol « . » de la zone passe dessous (même règle que le dessin procédural).
 const UNDER_FLOOR: String = ".ESHtcB#"
 ## Tangage des barques (methode « jeu ») : amplitude en degrés, flottement en px, vitesses.
@@ -43,7 +43,7 @@ const SHAPE_ALPHA: float = 0.5
 const SHAPE_MIN_AREA: float = 6.0
 const SHAPE_SOURCE_DIV: int = 4
 ## Calque de lumière des objets debout : éclairés par les lumières du chasseur que seuls les murs de
-## la grille ombrent (un objet n'est pas assombri par sa propre base ; voir GkGame._make_view).
+## la grille ombrent (un objet n'est pas assombri par sa propre base ; voir BkGame._make_view).
 const LIGHT_MASK: int = 2
 ## Vitesse du fondu de l'objet qui masque un coéquipier (opacité par seconde).
 const FADE_SPEED: float = 4.0
@@ -56,22 +56,22 @@ static var _pf_cache: Dictionary = {}
 ## une relecture du GPU ; réduite, elle pèse peu en mémoire et reste plus fine que le masque).
 static var _image_cache: Dictionary = {}
 
-var map: GkMap
+var map: BkMap
 var under: Node2D
 var elements: Dictionary = {}
 ## Cases dont le dessin procédural est remplacé (objets en image, sols pleins sur un caractère
-## non marchable comme l'eau ou les toits) : GkMap et GkWater ne les dessinent plus.
+## non marchable comme l'eau ou les toits) : BkMap et BkWater ne les dessinent plus.
 var covered: Dictionary = {}
-## Cases d'un objet en image posé sur l'eau (barques du bassin) : GkWater y dessine l'eau, pas de sol.
+## Cases d'un objet en image posé sur l'eau (barques du bassin) : BkWater y dessine l'eau, pas de sol.
 var water_under: Dictionary = {}
-## Cases d'un objet en image dont la forme a été calculée : GkMap n'y pose plus de rectangle de
+## Cases d'un objet en image dont la forme a été calculée : BkMap n'y pose plus de rectangle de
 ## collision, mais les polygones de base de l'instance.
 var shaped: Dictionary = {}
 ## Instances posées : {id, cells: Array[Vector2i], rect: Rect2i, zone, holder, sprite, kind, base, phase}
 ## et, si la forme est connue : polys (bases au sol, repère de la carte), blocks_view, mask (BitMap de
 ## la silhouette), mask_rect (zone dessinée, repère de la carte), mask_scale, sort_y, fade.
 var instances: Array = []
-## Instances qui cachent la vue mais plus basses que l'œil du chasseur (GkMap les sort de la couche de
+## Instances qui cachent la vue mais plus basses que l'œil du chasseur (BkMap les sort de la couche de
 ## vue) : la vue passe au-dessus, sauf vers les points du corps plus bas qu'elles (`low_blocks`).
 var low_view: Array[int] = []
 var _dir: String = DIR
@@ -87,16 +87,16 @@ var _ornaments: Array = []
 
 ## Lit l'index et prépare sols et objets. Sans index (ou pour une autre carte), ne fait rien :
 ## tout reste procédural.
-func setup(m: GkMap) -> void:
+func setup(m: BkMap) -> void:
 	map = m
 	name = "Decor"
 	y_sort_enabled = true
 	under = Node2D.new()
 	under.name = "DecorSol"
-	# QA : `--gk-decor-dir=/chemin/abs` lit un décor hors projet (images non importées).
+	# QA : `--bk-decor-dir=/chemin/abs` lit un décor hors projet (images non importées).
 	for arg: String in OS.get_cmdline_user_args():
-		if arg.begins_with("--gk-decor-dir="):
-			_dir = arg.trim_prefix("--gk-decor-dir=")
+		if arg.begins_with("--bk-decor-dir="):
+			_dir = arg.trim_prefix("--bk-decor-dir=")
 	_zone_grid.resize(map.width * map.height)
 	for y: int in map.height:
 		for x: int in map.width:
@@ -124,8 +124,8 @@ func setup(m: GkMap) -> void:
 	_build_ornaments()
 	set_process(not _animated.is_empty())
 	for arg: String in OS.get_cmdline_user_args():
-		if arg.begins_with("--gk-export-masques="):
-			export_masks(arg.trim_prefix("--gk-export-masques="))
+		if arg.begins_with("--bk-export-masques="):
+			export_masks(arg.trim_prefix("--bk-export-masques="))
 
 
 ## Accroche les nœuds : `under` sur la carte (après ses morceaux), les objets dans le calque y-trié
@@ -351,7 +351,7 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int, mirror:
 			var nb: String = map.at(c + d)
 			if nb == "~":
 				wet += 1
-			elif GkMap.WALK.contains(nb):
+			elif BkMap.WALK.contains(nb):
 				dry += 1
 	if wet > dry:
 		for c: Vector2i in cells:
@@ -427,7 +427,7 @@ func _place(id: String, cells: Array[Vector2i], rect: Rect2i, zone: int, mirror:
 ## Échelle d'un objet debout dessiné sur une emprise de `foot` px (image de `size` px, case de `t` px) :
 ## - hauteur_cases (index.json, décimales) : hauteur dessinée imposée, quelle que soit l'emprise (une maison
 ##   reste une maison sur 3 ou 4 cases) ; l'image, centrée sur ses cases, peut en déborder sur les côtés
-##   (débord latéral : emprise bloquante et masque suivent, GkMap bloque les cases de sol couvertes) ;
+##   (débord latéral : emprise bloquante et masque suivent, BkMap bloque les cases de sol couvertes) ;
 ## - sinon largeur des cases, débord vers le haut de debord_haut_cases au plus (règle d'origine).
 static func _standing_scale(el: Dictionary, foot: Vector2, size: Vector2, t: float) -> float:
 	var h: float = float(el.get("hauteur_cases", 0.0))
@@ -441,18 +441,18 @@ static func _standing_scale(el: Dictionary, foot: Vector2, size: Vector2, t: flo
 ## Forme de l'objet posé : masques de pixelforge s'il y en a pour cet objet (`_pf_shape`), sinon le
 ## calcul local sur la silhouette (`_shape`, repli ; `decor_masques_pf` = 0 l'impose partout). Elle
 ## est ramenée dans le repère de la carte et l'empreinte est coupée aux cases de l'objet, élargies au
-## débord latéral de l'image (GkMap aligne la grille A* des IA sur cette emprise). Vue bloquée : `blocks_view` de pixelforge, sinon « bloque_vue » de l'index,
-## sinon les caractères de GkMap.OCCLUDE ; les autres objets bloquent le passage seulement.
+## débord latéral de l'image (BkMap aligne la grille A* des IA sur cette emprise). Vue bloquée : `blocks_view` de pixelforge, sinon « bloque_vue » de l'index,
+## sinon les caractères de BkMap.OCCLUDE ; les autres objets bloquent le passage seulement.
 ## Pixelforge donne aussi la ligne de tri (baseline_y : un perso dont les pieds sont au-dessus est
 ## derrière l'objet) : le porteur, que trie le calque des persos, y est descendu ou remonté.
 func _add_shape(inst: Dictionary, el: Dictionary, tex: Texture2D, rel: String, drawn: Vector2) -> void:
 	var ch: String = str(el.get("caractere", ""))
-	var blocks: bool = bool(el.get("bloque_vue", GkMap.OCCLUDE.contains(ch)))
-	if not GkRules.on("decor_formes") or not blocks and not GkMap.LOW.contains(ch):
+	var blocks: bool = bool(el.get("bloque_vue", BkMap.OCCLUDE.contains(ch)))
+	if not BkRules.on("decor_formes") or not blocks and not BkMap.LOW.contains(ch):
 		return
 	var sh: Dictionary = {}
 	var refus: String = ""
-	if GkRules.on("decor_masques_pf"):
+	if BkRules.on("decor_masques_pf"):
 		sh = _pf_shape(str(inst["id"]), tex, rel, drawn)
 		refus = str(sh.get("refus", ""))
 	if not sh.has("polys"):
@@ -550,13 +550,13 @@ func _mirror_shape(sh: Dictionary, drawn: Vector2) -> Dictionary:
 	return out
 
 
-## Objet de jeu sans image, dessiné par le code (GkProvisoire) : posé au pied de son emprise, trié avec
-## les persos ; sa collision reste le rectangle des cases (GkMap), qui ne le dessine plus.
+## Objet de jeu sans image, dessiné par le code (BkProvisoire) : posé au pied de son emprise, trié avec
+## les persos ; sa collision reste le rectangle des cases (BkMap), qui ne le dessine plus.
 func _place_provisoire(id: String, el: Dictionary, cells: Array[Vector2i], rect: Rect2i, mirror: bool) -> void:
 	var t: float = map.tile
 	for c: Vector2i in cells:
 		covered[c] = true
-	var pv: GkProvisoire = GkProvisoire.new()
+	var pv: BkProvisoire = BkProvisoire.new()
 	pv.kind = str(el["provisoire"])
 	pv.size = Vector2(rect.size) * t
 	pv.mirror = mirror
@@ -599,7 +599,7 @@ func _build_ornaments() -> void:
 			node = Node2D.new()
 			node.add_child(sp)
 		elif str(el.get("provisoire", "")) != "":
-			var pv: GkProvisoire = GkProvisoire.new()
+			var pv: BkProvisoire = BkProvisoire.new()
 			pv.kind = str(el["provisoire"])
 			pv.size = Vector2(l, h) * t
 			pv.mirror = mirror
@@ -613,7 +613,7 @@ func _build_ornaments() -> void:
 		host.add_child(node)
 
 
-## Masques de pixelforge (tools/gordeka/masques_pf.py) : <dossier du décor>/masques/<id>/masks.json
+## Masques de pixelforge (tools/blackout/masques_pf.py) : <dossier du décor>/masques/<id>/masks.json
 ## (polygons de l'emprise au sol, baseline_y, blocks_view, en px de l'image intégrée) et occluder.png
 ## (ce qui passe devant un perso derrière). Alignés sur l'image intégrée : ignorés si sa taille a
 ## changé depuis (image réintégrée). Un calcul par objet et par taille dessinée, partagé par toutes
@@ -635,12 +635,12 @@ func _pf_shape(id: String, tex: Texture2D, rel: String, drawn: Vector2) -> Dicti
 		return out
 	var m: Variant = JSON.parse_string(FileAccess.get_file_as_string(dir.path_join("masks.json")))
 	if not m is Dictionary:
-		push_warning("GkDecor : masks.json illisible pour « %s », repli" % id)
+		push_warning("BkDecor : masks.json illisible pour « %s », repli" % id)
 		return out
 	var md: Dictionary = m
 	var size: Array = md.get("size", [0, 0])
 	if size.size() != 2 or Vector2(float(size[0]), float(size[1])) != tex_size:
-		push_warning("GkDecor : masques pixelforge de « %s » pour une image de %s, l'image fait %s : repli" % [id, size, tex_size])
+		push_warning("BkDecor : masques pixelforge de « %s » pour une image de %s, l'image fait %s : repli" % [id, size, tex_size])
 		return out
 	var k: Vector2 = drawn / tex_size          # px de jeu par px de l'image
 	var polys: Array[PackedVector2Array] = []
@@ -653,7 +653,7 @@ func _pf_shape(id: String, tex: Texture2D, rel: String, drawn: Vector2) -> Dicti
 	if polys.is_empty():
 		return out
 	var conf: float = float(md.get("confidence", 0.0))
-	if conf < GkRules.f("decor_masques_pf_confiance_min"):
+	if conf < BkRules.f("decor_masques_pf_confiance_min"):
 		out["refus"] = "confiance %.2f" % conf
 		return out
 	var sil: Dictionary = _shape(tex, rel, drawn)
@@ -663,7 +663,7 @@ func _pf_shape(id: String, tex: Texture2D, rel: String, drawn: Vector2) -> Dicti
 			area += absf(_area(poly))
 		var sc: Vector2 = sil["scale"]
 		var sil_area: float = float((sil["mask"] as BitMap).get_true_bit_count()) * sc.x * sc.y
-		if sil_area > 0.0 and area / sil_area > GkRules.f("decor_masques_pf_part_max"):
+		if sil_area > 0.0 and area / sil_area > BkRules.f("decor_masques_pf_part_max"):
 			out["refus"] = "emprise = %d %% de la silhouette" % roundi(100.0 * area / sil_area)
 			return out
 	# Masquage : occluder.png à SHAPE_STEP px près (à défaut, la silhouette de l'image).
@@ -723,8 +723,8 @@ static func _read_image(path: String) -> Image:
 ## Tout ce qui est au-dessus de l'empreinte (toit, face haute, mât) passe devant un perso qui est
 ## derrière et le masque (`masking`).
 static func _shape(tex: Texture2D, key: String, drawn: Vector2) -> Dictionary:
-	var thin: float = GkRules.f("decor_finesse_px")
-	var dmin_px: float = GkRules.px("decor_profondeur_min")
+	var thin: float = BkRules.f("decor_finesse_px")
+	var dmin_px: float = BkRules.px("decor_profondeur_min")
 	var ck: String = "%s|%d|%d|%.1f|%.1f" % [key, roundi(drawn.x), roundi(drawn.y), thin, dmin_px]
 	if _shape_cache.has(ck):
 		return _shape_cache[ck]
@@ -742,7 +742,7 @@ static func _shape(tex: Texture2D, key: String, drawn: Vector2) -> Dictionary:
 		_image_cache[key] = src
 	var img: Image = _image_cache[key]
 	if img == null or img.is_empty():
-		push_warning("GkDecor : image illisible pour la forme de « %s », collision par cases" % key)
+		push_warning("BkDecor : image illisible pour la forme de « %s », collision par cases" % key)
 		return out
 	img = img.duplicate() as Image
 	var mw: int = maxi(1, ceili(drawn.x / SHAPE_STEP))
@@ -910,7 +910,7 @@ func update_fades(which: Dictionary, alpha: float, dt: float) -> void:
 			(inst["holder"] as Node2D).modulate.a = f
 
 
-## Contrôle des formes (tools/gordeka/masques_decor.py, `--gk-export-masques=<dossier>`) : pour chaque
+## Contrôle des formes (tools/blackout/masques_decor.py, `--bk-export-masques=<dossier>`) : pour chaque
 ## objet en image, sa première pose sur la carte en PNG (2 px par px de jeu), avec la forme que le jeu
 ## utilise vraiment : l'empreinte qui bloque (polygones de collision, coupés aux cases) en vert, la
 ## zone qui masque un perso derrière en violet, la ligne de tri en rouge, les cases en pointillé
@@ -969,7 +969,7 @@ func export_masks(dir: String) -> void:
 	var f: FileAccess = FileAccess.open(dir.path_join("_sources.json"), FileAccess.WRITE)
 	f.store_string(JSON.stringify(sources, " "))
 	f.close()
-	print("[gk] masques du décor : %d images dans %s" % [done.size(), dir])
+	print("[bk] masques du décor : %d images dans %s" % [done.size(), dir])
 	map.get_tree().quit.call_deferred()
 
 
@@ -994,7 +994,7 @@ func _process(dt: float) -> void:
 				sp.rotation = deg_to_rad(SWAY_DEG) * sin(_t * SWAY_SPEED + ph)
 				sp.position = base + Vector2(0, BOB_PX * sin(_t * BOB_SPEED + ph))
 			"tremble":
-				# Ouverture, écrasement et tremblement décidés par la partie (gk_game.cachette_look),
+				# Ouverture, écrasement et tremblement décidés par la partie (bk_game.cachette_look),
 				# appliqués au porteur : l'échelle part du bas de l'objet, posé au sol.
 				var cell: Vector2i = (inst["cells"] as Array)[0]
 				var i: int = map.cachettes.find(cell)

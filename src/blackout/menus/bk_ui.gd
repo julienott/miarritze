@@ -1,12 +1,12 @@
-class_name GkUi
+class_name BkUi
 extends RefCounted
-## Kit d'interface des menus de Gordeka en 1280×720 (1280×720) :
+## Kit d'interface des menus de Blackout en 1280×720 (1280×720) :
 ## style cartoon du jeu (aplats vifs, gros contour encre, coins ronds), gros boutons pour les doigts,
 ## focus doré bien visible au clavier et à la manette, fond de mer. Aucune référence
 ## aux autoloads (la partie et les tests headless s'en servent) ; la mise en page d'un écran de menu
-## (zone sûre, rappel des touches) est dans GkEcran.
+## (zone sûre, rappel des touches) est dans BkEcran.
 
-const INK: Color = GkDraw.INK
+const INK: Color = BkDraw.INK
 const CREME: Color = Color("fff4dc")
 const JAUNE: Color = Color("ffd34a")
 const BLEU: Color = Color("4aa3ff")
@@ -24,7 +24,7 @@ const TEXTE: int = 30
 static var _theme: Theme
 
 
-## Thème de tout le jeu (posé sur la racine par gk_boot) : boutons, cases, curseurs, champs.
+## Thème de tout le jeu (posé sur la racine par bk_boot) : boutons, cases, curseurs, champs.
 static func theme() -> Theme:
 	if _theme != null:
 		return _theme
@@ -251,7 +251,7 @@ class Fond extends Control:
 		var n: int = 12
 		for i: int in n:
 			var k: float = float(i) / float(n)
-			draw_rect(Rect2(0, s.y * k, s.x, s.y / n + 1.0), GkUi.MER.lerp(GkUi.MER_FONCE, k))
+			draw_rect(Rect2(0, s.y * k, s.x, s.y / n + 1.0), BkUi.MER.lerp(BkUi.MER_FONCE, k))
 		# Vagues : petits arcs blancs qui dérivent.
 		for row: int in 7:
 			var y: float = s.y * (0.1 + row * 0.12)

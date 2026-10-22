@@ -1,4 +1,4 @@
-class_name GkDraw
+class_name BkDraw
 extends RefCounted
 ## Petits outils de dessin vectoriel « cartoon propre » (SPEC-GORDEKA §9) : formes arrondies
 ## avec contour sombre épais, aplat + ombre douce. Tout est tracé à l'exécution : net à toute
@@ -79,7 +79,7 @@ static func emote_disc(ci: CanvasItem, c: Vector2, r: float, i: int, ring: Color
 	emote_icon(ci, c, r * 0.72, i)
 
 
-## Icône d'une emote, sans texte (GkGame.EMOTES) : salut, rire, danse, pouce, chut, langue.
+## Icône d'une emote, sans texte (BkGame.EMOTES) : salut, rire, danse, pouce, chut, langue.
 ## Dessinée dans un repère de -10 à 10 centré sur `c`, mis à l'échelle de `r`.
 static func emote_icon(ci: CanvasItem, c: Vector2, r: float, i: int) -> void:
 	ci.draw_set_transform(c, 0.0, Vector2.ONE * r / 10.0)

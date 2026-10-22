@@ -10,7 +10,7 @@ extends Node
 ##   --press=ui_cancel@3,joy:start@4     appuis simulés (action de l'InputMap, ou bouton
 ##                                       de manette joy:a|b|x|y|start|up|down|left|right)
 ##                                       à l'instant donné (s), pour capturer menus/pause
-## L'écran de départ (`--scene=gk_<écran>`) est lu par gk_boot.
+## L'écran de départ (`--scene=bk_<écran>`) est lu par bk_boot.
 ## Web : `?qa=1` dans l'URL publie `window.__qa` (scène + boutons visibles en
 ## fractions d'écran) pour les tests Playwright qui touchent par libellé.
 

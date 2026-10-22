@@ -2,7 +2,7 @@
 # Veille de nuit des rendus pixelforge (Julien 2026-10-20 : « il faudra que tu aies un watcher sur les
 # rendus pixelforge, ça va tourner cette nuit ! »). Toutes les 5 min :
 # - santé de pixelforge (alerte si injoignable 10 min, ou si la file de nuit est ouverte mais n'avance plus) ;
-# - persos : la routine tools/gordeka/recette.py tourne-t-elle ? (relancée sinon) ; ses « À VOIR » sont
+# - persos : la routine tools/blackout/recette.py tourne-t-elle ? (relancée sinon) ; ses « À VOIR » sont
 #   relayés ;
 # - décor : tools/producer/decor_matin.py releve (rapatrie et fait les planches) ; ce qui devient prêt
 #   pour la recette est relayé.
@@ -27,7 +27,7 @@ while true; do
     [ "$etat" != "$dernier_fini" ] && [ "${2:-0}" = "0" ] && [ "$3" = "0" ] && [ "$4" = "0" ] && echo "FILE VIDE : tous les rendus de nuit sont terminés"
     dernier_fini=$etat
   fi
-  pgrep -f "recette.py boucle" >/dev/null || { nohup .venv/bin/python tools/gordeka/recette.py boucle >> tools/rd/out/recette/stdout 2>&1 & echo "routine recette relancée"; }
+  pgrep -f "recette.py boucle" >/dev/null || { nohup .venv/bin/python tools/blackout/recette.py boucle >> tools/rd/out/recette/stdout 2>&1 & echo "routine recette relancée"; }
   n=$(wc -l < "$JOURNAL" 2>/dev/null || echo 0)
   if [ "$n" -gt "$lus" ]; then
     tail -n $((n - lus)) "$JOURNAL" | grep -E "À VOIR|POUR QA|ÉCHEC|ALERTE|Traceback" | sed 's/^/PERSO /'

@@ -3,7 +3,7 @@
 lieu de la toque. On repart de la retouche n° 1 (tools/rd/out/ramuntxo/gk2d/retouche/image_00.png),
 on efface l'écusson du tablier et on colle un petit drapeau basque propre sur le bandeau de la toque.
 
-  ramuntxo_drapeau.py   → assets/gordeka/persos/ramuntxo/modele.png
+  ramuntxo_drapeau.py   → assets/blackout/persos/ramuntxo/modele.png
 """
 import os
 
@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 SRC = os.path.join(ROOT, "tools", "rd", "out", "ramuntxo", "gk2d", "retouche", "image_00.png")
-DST = os.path.join(ROOT, "assets", "gordeka", "persos", "ramuntxo", "modele.png")
+DST = os.path.join(ROOT, "assets", "blackout", "persos", "ramuntxo", "modele.png")
 
 ECUSSON = (244, 338, 309, 407)        # boîte de l'écusson sur le tablier (px de l'image 512)
 BLANC_TABLIER = (255, 255, 255, 255)

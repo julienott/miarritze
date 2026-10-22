@@ -28,7 +28,7 @@ function eventLine(e) {
 
 async function renderBord() {
   const box = $('bord');
-  const g = state.index.gordeka || {};
+  const g = state.index.blackout || {};
   const leaves = state.cards.filter((c) => !c.children);
   const qa = leaves.filter((c) => c.status === 'qa');
   const rework = state.cards.filter((c) => c.rework);
@@ -88,7 +88,7 @@ async function renderBord() {
           t.asset ? [' ', el('a', { href: '#/assets/' + encodeURIComponent(t.asset), class: 'small', text: '↗' })] : null),
         el('td', { class: 'muted small', text: t.depose || (t.depend ? `après #${t.depend}` : '') }));
     })))) : el('p', { class: 'muted', text: 'Rien dans la file de nuit du décor.' }),
-    el('p', { class: 'muted small', text: 'Source : tools/gordeka/taches_decor_nuit.json, au moment du build de /producer.' }));
+    el('p', { class: 'muted small', text: 'Source : tools/blackout/taches_decor_nuit.json, au moment du build de /producer.' }));
 
   const msBox = el('section', { class: 'panel bord-col' }, el('h3', {}, el('span', { text: 'Jalons' }), el('a', { href: '#/roadmap', class: 'small', text: 'roadmap ›' })));
   if (!state.milestones.length) {
@@ -173,7 +173,7 @@ async function renderAide() {
       'tools/producer/cli.py bulk 12 13 14 --status todo --night on',
       'tools/producer/cli.py milestones · add-milestone --title "Contenu v1" --due 2026-12-01',
       'tools/producer/cli.py set 4 --milestone 2 --due 2026-11-15',
-      'tools/producer/cli.py asset-comment gordeka/persos/louis/animations "pieds qui glissent" --detail walk',
+      'tools/producer/cli.py asset-comment blackout/persos/louis/animations "pieds qui glissent" --detail walk',
       'tools/producer/cli.py routes                   # cette liste',
     ].join('\n') }));
 }

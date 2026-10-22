@@ -1,14 +1,14 @@
-class_name GkPerso
+class_name BkPerso
 extends Sprite2D
 ## Le perso dessiné d'un acteur, en 2D flat cartoon façon Among Us (docs/GORDEKA_STYLE_2D.md) :
-## planches pixelforge (`pf_2d__anim`) dans assets/gordeka/persos/<id>/, de profil vers la
+## planches pixelforge (`pf_2d__anim`) dans assets/blackout/persos/<id>/, de profil vers la
 ## droite (miroir à gauche). La tenue prend la couleur du joueur grâce au masque de tenue.
 ## L'animation suit l'état de l'acteur ; les gestes ponctuels (piège, détection, trouvé…)
 ## sont demandés par la partie via `play_once`.
-## Mode pantin (`use_pantin`) : le mannequin articulé (GkPantin) remplace les planches ; il sera
+## Mode pantin (`use_pantin`) : le mannequin articulé (BkPantin) remplace les planches ; il sera
 ## habillé de la garde-robe du perso (docs/GORDEKA_STYLE_2D.md §4).
 
-const DIR: String = "res://assets/gordeka/persos/%s/"
+const DIR: String = "res://assets/blackout/persos/%s/"
 ## Hauteur du perso à l'écran (px), pieds compris ; ~90 px comme dans Among Us en 720p.
 const HEIGHT_PX: float = 88.0
 ## Hauteur du perso dans une case pixelforge (px), pour l'échelle.
@@ -23,7 +23,7 @@ const BOUNCE_PX: float = 5.0        # hauteur du rebond de marche (px à l'écra
 const SQUASH: float = 0.07          # écrasement vertical au contact du pied
 const CYCLE_S: Dictionary = {"walk": 0.85, "run_scared": 0.6, "ghost_move": 1.0}
 ## Pieds qui glissent (recette Julien, 2026-10-20) : une planche de déplacement qui a son `stride_px`
-## (recul du pied posé sur toute la planche, px de case, mesuré par tools/gordeka/pieds.py) joue à la
+## (recul du pied posé sur toute la planche, px de case, mesuré par tools/blackout/pieds.py) joue à la
 ## cadence qui garde le pied posé immobile au sol : planches/s = vitesse réelle / stride. Bornée entre
 ## RATE_MIN et RATE_MAX × son fps (au-delà, des pas trop courts patinent encore un peu). CYCLE_S en repli.
 const RATE_MIN: float = 0.3
@@ -43,7 +43,7 @@ void fragment() {
 
 ## TEMPORAIRE (Julien, 2026-10-20 : génération des fantômes arrêtée) : fantôme des persos sans planches
 ## ghost/ghost_move = leurs idle/walk en vol stationnaire, avec des ailes blanches dessinées par code
-## (tools/gordeka/dessine_ailes.py). Les persos qui ont leurs planches fantôme (ailes comprises) gardent
+## (tools/blackout/dessine_ailes.py). Les persos qui ont leurs planches fantôme (ailes comprises) gardent
 ## les leurs, avec le même vol stationnaire. À retirer quand tous les persos auront leurs planches.
 const HOVER_PX: float = 14.0         # hauteur moyenne au-dessus du sol (px à l'écran)
 const HOVER_BOB_PX: float = 4.0      # amplitude du bobbing
@@ -51,28 +51,28 @@ const HOVER_HZ: float = 1.0          # bobbing et battement d'ailes, par seconde
 const HOVER_TILT_DEG: float = 7.0    # penché vers l'avant en déplacement
 const HOVER_SWAY_PX: float = 2.0     # petite oscillation d'avance et de recul
 const HOVER_WALK_RATE: float = 0.45  # cadence de la marche en vol : elle « nage »
-const WING_PATH: String = "res://assets/gordeka/communs/aile_fantome"
+const WING_PATH: String = "res://assets/blackout/communs/aile_fantome"
 const WING_HEIGHT_K: float = 0.28    # hauteur de l'aile / hauteur du perso
 const WING_FLAP_DEG: float = 14.0
 const SHOULDER_K: float = 0.52       # épaule : part de la hauteur de la silhouette, depuis le haut
 const SHOULDER_INSET_K: float = 0.06 # rentrée dans le dos, en part de la largeur de la silhouette
 
-## Raccord des animations (SPEC-GORDEKA §16.3, tools/gordeka/post_anims.py) : chaque planche est
+## Raccord des animations (SPEC-GORDEKA §16.3, tools/blackout/post_anims.py) : chaque planche est
 ## ramenée à la taille (`echelle`) et à la place (`decalage`, `frame_offsets`) de l'idle du perso, ne
 ## joue que ses images utiles (`debut`, `fin`) et sait où entrer dans l'anim suivante (`entrees`).
 ## Passage d'un état à l'autre : on entre dans la boucle suivante à l'image la plus proche de l'image
 ## courante, puis un fondu enchaîné très court (anim_fondu_s, dosé par l'écart des deux silhouettes)
 ## efface le reste ; les gestes brusques (found, hide_out, extract) partent d'un petit « pouf » de
-## squash & stretch. Réglages dans data/gordeka/rules.json (anim_*, anims).
+## squash & stretch. Réglages dans data/blackout/rules.json (anim_*, anims).
 static var _anims: Dictionary = {}     # "louis/walk" -> {tex, mask, n, fps, loop, cell, feet}
 static var _shader: Shader
-## QA (`--gk-mannequin`) : tous les persos en pantin articulé.
+## QA (`--bk-mannequin`) : tous les persos en pantin articulé.
 static var use_pantin: bool = false
 static var _pdata: Dictionary = {}     # chorégraphie -> {ends, loop}
 
-var pantin: GkPantin
+var pantin: BkPantin
 
-var actor: GkActor
+var actor: BkActor
 var _anim: String = ""
 var _t: float = 0.0
 var _once: String = ""
@@ -81,8 +81,8 @@ var _float_t: float = 0.0
 ## Hauteur de vol du fantôme (px à l'écran) : l'acteur dessine son ombre en conséquence.
 var hover_lift: float = 0.0
 var _wings: Array[Sprite2D] = []
-## Cône de lumière de la lampe pendant hunter_reveal (GkLampe), créé à la première utilisation.
-var _lampe: GkLampe
+## Cône de lumière de la lampe pendant hunter_reveal (BkLampe), créé à la première utilisation.
+var _lampe: BkLampe
 ## Fondu enchaîné : l'image quittée, posée par-dessus la nouvelle, s'efface en `_prev_s` s.
 var _prev: Sprite2D
 var _prev_left: float = 0.0
@@ -108,7 +108,7 @@ static func available(character: String) -> bool:
 static func _pantin_data(anim: String) -> Dictionary:
 	if _pdata.has(anim):
 		return _pdata[anim]
-	var c: Dictionary = GkPantin.load_choreo(anim)
+	var c: Dictionary = BkPantin.load_choreo(anim)
 	var d: Dictionary = {}
 	if not c.is_empty():
 		var ends: PackedFloat32Array = PackedFloat32Array()
@@ -138,11 +138,11 @@ static func _data(character: String, anim: String) -> Dictionary:
 		for i: int in n:
 			acc += float(ms[i]) / 1000.0 if i < ms.size() else 1.0 / float(j.get("fps", 24.0))
 			ends.append(acc)
-		# Recalage par image (px de case) : les pieds posés restent fixes (tools/gordeka/pieds.py).
+		# Recalage par image (px de case) : les pieds posés restent fixes (tools/blackout/pieds.py).
 		var offs: PackedVector2Array = PackedVector2Array()
 		for o: Variant in j.get("frame_offsets", []):
 			offs.append(Vector2(float(o[0]), float(o[1])))
-		# Lampe du chasseur (hunter_reveal) : main par image, px de case (tools/gordeka/lampe.py).
+		# Lampe du chasseur (hunter_reveal) : main par image, px de case (tools/blackout/lampe.py).
 		var lampe: Array = []
 		var lj: Dictionary = j.get("lampe", {})
 		for p: Variant in lj.get("points", []):
@@ -188,7 +188,7 @@ static func _static(character: String, anim: String) -> Dictionary:
 	var used: Rect2i = tex.get_image().get_used_rect()
 	var noir: Image = Image.create(1, 1, false, Image.FORMAT_RGBA8)
 	noir.fill(Color.BLACK)
-	var once_s: float = GkRules.f("emote_duration") if anim.begins_with("emote_") else STATIC_ONCE_S
+	var once_s: float = BkRules.f("emote_duration") if anim.begins_with("emote_") else STATIC_ONCE_S
 	return {
 		"ends": PackedFloat32Array([once_s]),
 		"tex": tex,
@@ -211,10 +211,10 @@ func _exit_tree() -> void:
 		_prev = null
 
 
-func setup(a: GkActor) -> void:
+func setup(a: BkActor) -> void:
 	actor = a
 	if use_pantin:
-		pantin = GkPantin.new()
+		pantin = BkPantin.new()
 		pantin.setup("humain")
 		add_child(pantin)
 		scale = Vector2.ONE * HEIGHT_PX / pantin.height
@@ -274,14 +274,14 @@ static func _utile(d: Dictionary) -> float:
 
 ## Réglage du raccord (rules.json), avec sa valeur par défaut si la clé manque.
 static func _regle(key: String, def: float) -> float:
-	return float(GkRules.data().get(key, def))
+	return float(BkRules.data().get(key, def))
 
 
 ## Réglage par geste (rules.json anims.<table>.<anim>, `emote` pour toutes les emotes) ; 0 si absent.
 static func _par_anim(table: String, anim: String) -> float:
 	if _regle("anim_durees", 1.0) < 0.5:
 		return 0.0
-	var t: Dictionary = (GkRules.data().get("anims", {}) as Dictionary).get(table, {})
+	var t: Dictionary = (BkRules.data().get("anims", {}) as Dictionary).get(table, {})
 	return float(t.get("emote" if anim.begins_with("emote_") else anim, 0.0))
 
 
@@ -320,7 +320,7 @@ func _set_anim(anim: String) -> void:
 			_t = ends[j - 1] if j > 0 else 0.0
 	if not old.is_empty() and visible:
 		_fondu(ecart)
-	if (GkRules.data().get("anims", {}) as Dictionary).get("pouf", []).has(anim):
+	if (BkRules.data().get("anims", {}) as Dictionary).get("pouf", []).has(anim):
 		_pouf_left = _regle("anim_pouf_s", 0.0)
 	texture = d["tex"]
 	(material as ShaderMaterial).set_shader_parameter("tenue", d["mask"])
@@ -371,12 +371,12 @@ func _update_fondu(dt: float) -> void:
 
 ## Animation qui découle de l'état de l'acteur.
 func _state_anim() -> String:
-	var a: GkActor = actor
+	var a: BkActor = actor
 	if a.end_pose != "":
 		return a.end_pose
-	if a.role == GkActor.Role.GHOST or a.role == GkActor.Role.OUT:
+	if a.role == BkActor.Role.GHOST or a.role == BkActor.Role.OUT:
 		return "ghost_move" if a.velocity.length() > 5.0 else "ghost"
-	if a.role == GkActor.Role.HUNTER:
+	if a.role == BkActor.Role.HUNTER:
 		if a.search_left > 0.0:
 			return "search"
 		# Piégé : il se débat sur place ; s'il avance (à vitesse réduite), il marche, sinon la planche
@@ -402,10 +402,10 @@ func _process(dt: float) -> void:
 	var rate: float = _rate_once if _once != "" else 1.0
 	var fake: bool = _once == "" and _fake_ghost(_anim)
 	# Boucle calée sur la durée de son état (anims.cale_etat, ex. la fouille : un cycle exactement).
-	var cales: Dictionary = (GkRules.data().get("anims", {}) as Dictionary).get("cale_etat", {})
+	var cales: Dictionary = (BkRules.data().get("anims", {}) as Dictionary).get("cale_etat", {})
 	var cale: String = str(cales.get(_anim, ""))
-	if _once == "" and cale != "" and GkRules.f(cale) > 0.0 and not d.has("static") and _regle("anim_durees", 1.0) > 0.5:
-		rate = total / GkRules.f(cale)
+	if _once == "" and cale != "" and BkRules.f(cale) > 0.0 and not d.has("static") and _regle("anim_durees", 1.0) > 0.5:
+		rate = total / BkRules.f(cale)
 	if CYCLE_S.has(_anim) and pantin == null and not d.has("static"):
 		var stride: float = float(d.get("stride", 0.0))
 		if stride > 0.0 and not fake:
@@ -413,7 +413,7 @@ func _process(dt: float) -> void:
 			var v_case: float = actor.velocity.length() * float(d["height"]) / HEIGHT_PX
 			rate = clampf(total * v_case / stride, RATE_MIN, RATE_MAX)
 		else:
-			rate = total / float(CYCLE_S[_anim]) * clampf(actor.velocity.length() / GkRules.px("speed_hider"), 0.5, 1.5)
+			rate = total / float(CYCLE_S[_anim]) * clampf(actor.velocity.length() / BkRules.px("speed_hider"), 0.5, 1.5)
 		if fake:
 			rate *= HOVER_WALK_RATE
 	_t += dt * rate
@@ -438,7 +438,7 @@ func _process(dt: float) -> void:
 		f += 1
 	_f = f
 	var face: float = 1.0 if cos(actor.look) >= 0.0 else -1.0
-	var ghost: bool = (actor.role == GkActor.Role.GHOST or actor.role == GkActor.Role.OUT) and _once != "found" \
+	var ghost: bool = (actor.role == BkActor.Role.GHOST or actor.role == BkActor.Role.OUT) and _once != "found" \
 		and _once != "extract"
 	modulate.a = GHOST_ALPHA if ghost else 1.0
 	# Dans une cachette : visible pendant la plongée seulement (la cachette se referme dessus).
@@ -449,7 +449,7 @@ func _process(dt: float) -> void:
 	var pop: Vector2 = _pop_offset()
 	if pantin != null:
 		# Étonné dès que le chasseur le voit (la jauge de capture monte).
-		pantin.head_override = "surprised" if actor.gauge > 0.0 and actor.role == GkActor.Role.HIDER else ""
+		pantin.head_override = "surprised" if actor.gauge > 0.0 and actor.role == BkActor.Role.HIDER else ""
 		pantin.pose(f)
 		var k: float = HEIGHT_PX / pantin.height
 		scale = Vector2(k * face, k)
@@ -487,12 +487,12 @@ func _process(dt: float) -> void:
 	hover_lift = 0.0
 	if ghost:
 		# Vol stationnaire : il décolle, monte et descend doucement, penché vers l'avant et avec un
-		# petit mouvement d'avance et de recul quand il se déplace ; l'ombre reste au sol (GkActor).
+		# petit mouvement d'avance et de recul quand il se déplace ; l'ombre reste au sol (BkActor).
 		_float_t += dt
 		var w: float = TAU * HOVER_HZ * _float_t
 		hover_lift = HOVER_PX + HOVER_BOB_PX * sin(w)
 		anchor.y -= hover_lift
-		var moving: float = clampf(actor.velocity.length() / maxf(GkRules.px("speed_ghost"), 1.0), 0.0, 1.0)
+		var moving: float = clampf(actor.velocity.length() / maxf(BkRules.px("speed_ghost"), 1.0), 0.0, 1.0)
 		anchor.x += face * HOVER_SWAY_PX * (0.5 + moving) * cos(w)
 		rot = face * deg_to_rad(HOVER_TILT_DEG) * moving
 	var o: Vector2 = Vector2(-fx * scale.x, -feet.y * scale.y)
@@ -512,10 +512,10 @@ func _update_lampe(d: Dictionary, f: int, total: float, dt: float) -> void:
 	if pts.is_empty() and _lampe == null:
 		return
 	if _lampe == null:
-		_lampe = GkLampe.new()
+		_lampe = BkLampe.new()
 		add_child(_lampe)
 	var on: bool = _once != "" and _once == _anim and f < pts.size() and pts[f] != null \
-		and f >= int(d.get("lampe_debut", -1)) and _t < total - GkLampe.FONDU_S
+		and f >= int(d.get("lampe_debut", -1)) and _t < total - BkLampe.FONDU_S
 	var p: Vector2 = Vector2.ZERO
 	if on:
 		var cell: Vector2 = d["cell"]
@@ -529,7 +529,7 @@ func _update_lampe(d: Dictionary, f: int, total: float, dt: float) -> void:
 func _pop_offset() -> Vector2:
 	if actor.pop_left <= 0.0:
 		return Vector2.ZERO
-	var p: float = 1.0 - clampf(actor.pop_left / maxf(GkRules.f("cachette_out_s"), 0.01), 0.0, 1.0)
+	var p: float = 1.0 - clampf(actor.pop_left / maxf(BkRules.f("cachette_out_s"), 0.01), 0.0, 1.0)
 	var e: float = 1.0 - pow(1.0 - p, 3.0)
 	return (actor.pop_from - actor.position) * (1.0 - e) + Vector2(0, -POP_JUMP_PX * sin(p * PI))
 

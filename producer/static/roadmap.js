@@ -139,7 +139,7 @@ function milestoneSection(m) {
 function renderRoadmap() {
   const box = $('roadmap');
   const modes = [['jalons', 'Par jalon'], ['chapeaux', 'Par chapeau']];
-  const g = state.index.gordeka || {};
+  const g = state.index.blackout || {};
   const head = el('div', { class: 'rm-bar' },
     el('div', { class: 'seg' }, modes.map(([k, label]) => el('button', {
       type: 'button', class: 'small' + (rm.mode === k ? ' primary' : ''),
@@ -178,7 +178,7 @@ function renderRoadmap() {
 
 /** Crée les jalons de la spec (§14), dans l'ordre. */
 async function seedMilestones() {
-  const list = (state.index.gordeka || {}).jalons_spec || [];
+  const list = (state.index.blackout || {}).jalons_spec || [];
   const ok = await guarded(async () => {
     for (const j of list) await api('milestone', { method: 'POST', body: { title: j.titre, description: j.description } });
     await reloadMilestones();

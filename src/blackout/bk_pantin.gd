@@ -1,15 +1,15 @@
-class_name GkPantin
+class_name BkPantin
 extends Node2D
 ## Pantin articulé (docs/GORDEKA_STYLE_2D.md §4) : le mannequin pixelforge
-## (assets/gordeka/mannequin/<gabarit>/) habillé de sa garde-robe, animé en direct par les
-## chorégraphies (assets/gordeka/choreo/). La composition suit exactement `rig.json` → `compose` :
+## (assets/blackout/mannequin/<gabarit>/) habillé de sa garde-robe, animé en direct par les
+## chorégraphies (assets/blackout/choreo/). La composition suit exactement `rig.json` → `compose` :
 ##   M_local = T(pivot) · T(x·H, −y·H) · R(rot) · S(sx, sy) · T(−pivot)
 ##   M(segment) = M(parent) · M_local ; root s'applique à tout ; `lag` décale le segment et ses
 ##   ancêtres (hors root) de n images.
 ## Le pantin est dessiné dans le repère du canevas ; le nœud parent place les pieds (root.pivot).
 
-const MANNEQUIN: String = "res://assets/gordeka/mannequin/%s/"
-const CHOREO: String = "res://assets/gordeka/choreo/%s.json"
+const MANNEQUIN: String = "res://assets/blackout/mannequin/%s/"
+const CHOREO: String = "res://assets/blackout/choreo/%s.json"
 ## Expressions de tête (head_<nom>.png ; « neutral » = head.png), cf. docs/GORDEKA_STYLE_2D.md.
 const EXPRESSIONS: Array[String] = ["neutral", "blink", "malicious", "scared", "surprised", "happy", "sad",
 	"focused"]

@@ -12,7 +12,7 @@ import numpy as np
 from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PERSOS = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "gordeka", "persos"))
+PERSOS = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "blackout", "persos"))
 TAILLE_MAX = 400
 
 

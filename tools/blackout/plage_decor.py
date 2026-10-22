@@ -1,13 +1,13 @@
-"""Décor provisoire de la carte Plage (tools/gordeka/make_plage.py) : images simples dessinées ici, dans
+"""Décor provisoire de la carte Plage (tools/blackout/make_plage.py) : images simples dessinées ici, dans
 le style du jeu (aplats, contour bleu marine épais, vue 3/4 de face : dessus clair, face avant plus sombre,
-haut qui dépasse vers le haut), et l'index du décor (assets/maps/plage/decor/index.json) lu par GkDecor.
+haut qui dépasse vers le haut), et l'index du décor (assets/maps/plage/decor/index.json) lu par BkDecor.
 
-Chaque objet touche le bas de son image sur toute sa largeur au sol : GkDecor en déduit l'empreinte qui
+Chaque objet touche le bas de son image sur toute sa largeur au sol : BkDecor en déduit l'empreinte qui
 bloque (passage, vue) et laisse le haut passer devant les persos qui sont derrière (masquage). Les images
-communes du port qui conviennent sont reprises telles quelles (res://assets/gordeka/decor/…). Les
+communes du port qui conviennent sont reprises telles quelles (res://assets/blackout/decor/…). Les
 cachettes ont une image « ouverte » (porte, couvercle ou rideau ouvert sur du noir).
 
-Pillow requis : .venv/bin/python tools/gordeka/make_plage.py
+Pillow requis : .venv/bin/python tools/blackout/make_plage.py
 """
 import json
 import math
@@ -770,7 +770,7 @@ def sol_talus():
 
 SOLS = {"talus": sol_talus, "sable": lambda: sol_sable(), "sable_mouille": lambda: sol_sable(True), "sol_grotte": sol_grotte,
         "marches": sol_marches, "falaise": sol_falaise, "falaise_face": sol_falaise_face}
-COMMUN = "res://assets/gordeka/decor/"
+COMMUN = "res://assets/blackout/decor/"
 
 
 def ecrit(out, elements, floors, zone_names, placed, zone_name):
@@ -779,9 +779,9 @@ def ecrit(out, elements, floors, zone_names, placed, zone_name):
     used = {}
     for (el, x, y, w, h) in placed:
         used.setdefault(el, set()).add(zone_name(x, y))
-    index = {"_doc": "Décor de la carte Plage de la Côte des Basques (tools/gordeka/make_plage.py, plage_decor.py) : "
+    index = {"_doc": "Décor de la carte Plage de la Côte des Basques (tools/blackout/make_plage.py, plage_decor.py) : "
                      "images provisoires dessinées par le code (provisoires/), images communes du port reprises en res://. "
-                     "Lu par GkDecor (assets/maps/<id>/decor/index.json) ; zones.json → « objets » fixe l'élément de "
+                     "Lu par BkDecor (assets/maps/<id>/decor/index.json) ; zones.json → « objets » fixe l'élément de "
                      "chaque objet posé. À remplacer élément par élément par les images de pixelforge (kanban : "
                      "« Carte : Plage de la Côte des Basques »).",
              "carte": "plage", "elements": {}}

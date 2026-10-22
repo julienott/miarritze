@@ -48,7 +48,7 @@ const state = {
 
 // Zoom entier le plus grand qui tient en largeur ET en hauteur (≈ 55 % de
 // l'écran) : les commandes et les commentaires restent visibles sur mobile.
-// Un asset plus grand que la scène (HD de Gordeka) est réduit, sans arrondi.
+// Un asset plus grand que la scène (HD de Blackout) est réduit, sans arrondi.
 function autoZoom(stage, w, h, max) {
   const fitW = (Math.min(stage.clientWidth, 900) - 24) / w;
   // Fiche sur téléphone : visionneuse plus basse, le pilotage reste à portée de pouce.
@@ -326,7 +326,7 @@ function faceOf(cat, group) {
 }
 
 // Familles d'assets d'un combattant, dans l'ordre de la review.
-// Gordeka donne la famille dans l'index (a.kind).
+// Blackout donne la famille dans l'index (a.kind).
 const KINDS = [
   ['anim', 'Animations'], ['masque', 'Masques'], ['modele', 'Profil validé'], ['candidat', 'Profils candidats'],
   ['portrait', 'Portraits'], ['ending', 'Image de fin'],
@@ -351,19 +351,19 @@ function kindBlocks(items) {
   });
 }
 
-// ============================================================ GORDEKA : PERSOS
+// ============================================================ BLACKOUT : PERSOS
 
 // Animations d'un perso (asset « animations ») et masques de tenue.
-function gkAnims(pid) {
-  const a = state.assetsById.get(`gordeka/persos/${pid}/animations`);
+function bkAnims(pid) {
+  const a = state.assetsById.get(`blackout/persos/${pid}/animations`);
   return a ? a.anims : [];
 }
 
 // Liste ordonnée des animations du perso : attendues (présentes ou manquantes),
 // puis celles qui existent sans être attendues.
-function gkSlots(pid) {
-  const have = new Map(gkAnims(pid).map((x) => [x.name, x]));
-  const exp = state.index.gordeka.anims;
+function bkSlots(pid) {
+  const have = new Map(bkAnims(pid).map((x) => [x.name, x]));
+  const exp = state.index.blackout.anims;
   const slots = exp.map((e) => ({ ...e, anim: have.get(e.name) || null }));
   for (const [n, x] of have) if (!exp.some((e) => e.name === n)) slots.push({ name: n, loop: x.loop, a_venir: false, anim: x });
   return slots;
@@ -371,12 +371,12 @@ function gkSlots(pid) {
 
 // Récapitulatif global perso × animation.
 function recapTable(persos) {
-  const exp = state.index.gordeka.anims;
+  const exp = state.index.blackout.anims;
   const head = el('tr', {}, el('th', { class: 'corner', text: 'Perso' }),
     exp.map((e) => el('th', { class: 'v' + (e.a_venir ? ' a-venir' : ''), title: e.a_venir ? 'à venir (clip sur mesure)' : '' }, el('span', { text: e.name }))),
     el('th', { class: 'v' }, el('span', { text: 'total' })));
   const rows = persos.map((pid) => {
-    const have = new Set(gkAnims(pid).map((x) => x.name));
+    const have = new Set(bkAnims(pid).map((x) => x.name));
     const n = exp.filter((e) => have.has(e.name)).length;
     return el('tr', { 'data-perso': pid },
       el('th', {}, el('button', {
@@ -400,7 +400,7 @@ const FS_BGS = [['light', 'Clair'], ['dark', 'Sombre'], ['checker', 'Damier']];
 
 function openPlayer(pid, name) {
   closePlayer(false);
-  const persos = state.index.gordeka.persos.filter((p) => gkAnims(p).length);
+  const persos = state.index.blackout.persos.filter((p) => bkAnims(p).length);
   const fs = { pid, anims: [], anim: null, img: null, mask: null, frame: 0, playing: true, timer: 0,
     showMask: false, showFeet: false, bg: store('producer-fs-bg') || state.stageBg || 'checker' };
   state.fs = fs;
@@ -412,7 +412,7 @@ function openPlayer(pid, name) {
   const maskBtn = el('button', { type: 'button', title: 'Masque de tenue par-dessus' }, 'Masque');
   const feetBtn = el('button', { type: 'button', title: 'Ligne des pieds (feet_anchor)' }, 'Pieds');
   // « Comme en jeu » : recalage par image (frame_offsets), décalage et échelle de la planche,
-  // appliqués comme gk_perso.gd ; sinon la planche brute, case par case.
+  // appliqués comme bk_perso.gd ; sinon la planche brute, case par case.
   fs.jeu = store('producer-fs-jeu') !== '0';
   const jeuBtn = el('button', { type: 'button', class: fs.jeu ? 'on' : null,
     title: 'Comme en jeu : recalage par image (frame_offsets), décalage et échelle appliqués ; sinon planche brute' }, 'Comme en jeu');
@@ -497,8 +497,8 @@ function openPlayer(pid, name) {
 
   const load = (p, n) => {
     fs.pid = p;
-    fs.anims = gkAnims(p);
-    const masks = (state.assetsById.get(`gordeka/persos/${p}/masques`) || { anims: [] }).anims;
+    fs.anims = bkAnims(p);
+    const masks = (state.assetsById.get(`blackout/persos/${p}/masques`) || { anims: [] }).anims;
     const a = fs.anims.find((x) => x.name === n) || fs.anims[0];
     if (!a) return;
     const m = masks.find((x) => x.name === a.name);
@@ -582,7 +582,7 @@ function openPlayer(pid, name) {
 }
 
 /**
- * Mise en place d'une planche dans le lecteur plein écran. `jeu` : comme gk_perso.gd, chaque case
+ * Mise en place d'une planche dans le lecteur plein écran. `jeu` : comme bk_perso.gd, chaque case
  * est posée pieds sur l'ancre, décalée de frame_offsets[f] + decalage et mise à l'échelle `echelle`
  * autour des pieds ; le canvas englobe toutes les images. Sinon : la case brute.
  */
@@ -623,7 +623,7 @@ function closePlayer(back) {
 
 window.addEventListener('popstate', () => { if (state.fs) { state.fs.pushed = false; closePlayer(false); } });
 
-// ============================================================ GORDEKA : DÉCOR
+// ============================================================ BLACKOUT : DÉCOR
 
 const DECOR_MODES = [['image', 'Sans masques'], ['masques', 'Avec masques'], ['controle', 'Contrôle du jeu']];
 const SOURCE_LABEL = { pixelforge: 'pixelforge', repli: 'repli local', aucun: 'sans masque' };
@@ -967,15 +967,15 @@ function showDetail(a, opts = {}) {
       p.playing = false; clearTimeout(p.timer); playBtn.textContent = '▶ Lecture';
       p.frame = (p.frame + dir + p.anim.frames) % p.anim.frames; draw();
     };
-    // Persos de Gordeka : lecteur plein écran (animations et masques ont les mêmes noms).
-    const gk = /^gordeka\/persos\/([^/]+)\//.exec(a.id);
+    // Persos de Blackout : lecteur plein écran (animations et masques ont les mêmes noms).
+    const bk = /^blackout\/persos\/([^/]+)\//.exec(a.id);
     controls.append(animSel, playBtn,
       el('button', { type: 'button', class: 'small', onclick: () => step(-1), 'aria-label': 'Frame précédente' }, '◀'),
       el('button', { type: 'button', class: 'small', onclick: () => step(1), 'aria-label': 'Frame suivante' }, '▶'),
-      gk && state.index.gordeka ? el('button', { type: 'button', class: 'small primary', onclick: () => openPlayer(gk[1], p.anim.name) }, '⛶ Plein écran') : null,
+      bk && state.index.blackout ? el('button', { type: 'button', class: 'small primary', onclick: () => openPlayer(bk[1], p.anim.name) }, '⛶ Plein écran') : null,
       frameLbl);
-    if (gk && state.index.gordeka && a.kind === 'anim') {
-      const missing = gkSlots(gk[1]).filter((x) => !x.anim).map((x) => x.name);
+    if (bk && state.index.blackout && a.kind === 'anim') {
+      const missing = bkSlots(bk[1]).filter((x) => !x.anim).map((x) => x.name);
       if (missing.length) {
         controls.append(el('p', { class: 'missing-band' },
           el('strong', { text: `${missing.length} manquante${missing.length > 1 ? 's' : ''} : ` }), missing.join(', ')));
@@ -1478,7 +1478,7 @@ function renderKbFilters() {
     sel.value = opts.some(([v]) => v === value) ? value : '';
     sel.classList.toggle('on', !!sel.value);
   };
-  const g = state.index.gordeka || {};
+  const g = state.index.blackout || {};
   fill('kb-type', 'Tous les types', Object.entries(TYPE_LABEL), state.kb.type);
   fill('kb-perso', 'Tous les persos', (g.persos || []).map((p) => [p, persoName(p)]), state.kb.perso);
   fill('kb-map', 'Toutes les cartes de jeu', (g.cartes || []).filter((c) => c.jouable).map((c) => [c.id, c.nom]), state.kb.map);
@@ -1502,7 +1502,7 @@ function cardMatchesPerso(c, pid) {
 }
 
 function cardMatchesMap(c, mid) {
-  const carte = ((state.index.gordeka || {}).cartes || []).find((m) => m.id === mid);
+  const carte = ((state.index.blackout || {}).cartes || []).find((m) => m.id === mid);
   const nom = carte ? norm(carte.nom) : mid;
   return selfOrAncestor(c, (x) => {
     if (carte && carte.chapeau === x.id) return true;
@@ -2142,7 +2142,7 @@ function renderCardAsset() {
   box.hidden = false;
   const detail = $('cf-detail').value.trim();
   const anim = cardAnim(a, detail);
-  const gk = /^gordeka\/persos\/([^/]+)\/(animations|masques)$/.exec(a.id);
+  const bk = /^blackout\/persos\/([^/]+)\/(animations|masques)$/.exec(a.id);
   const openAsset = () => { $('card-dialog').close(); location.hash = '#/assets/' + encodeURIComponent(a.id); };
   let view;
   if (anim) {
@@ -2150,11 +2150,11 @@ function renderCardAsset() {
       type: 'button', class: 'anim-cell big', title: 'Survoler pour animer, cliquer pour le plein écran',
       onclick: () => {
         $('card-dialog').close();
-        if (gk) openPlayer(gk[1], anim.name); else openAsset();
+        if (bk) openPlayer(bk[1], anim.name); else openAsset();
       },
     }), (mini) => [el('div', { class: 'anim-box' }, mini), el('span', { text: `${anim.name} · ${anim.frames} im. · ${anim.fps} i/s` })]);
     view = el('div', { class: 'ca-anim' + (a.smooth ? ' smooth' : '') }, cell,
-      gk ? el('button', { type: 'button', class: 'small primary', onclick: () => { $('card-dialog').close(); openPlayer(gk[1], anim.name); } }, '⛶ Plein écran') : null);
+      bk ? el('button', { type: 'button', class: 'small primary', onclick: () => { $('card-dialog').close(); openPlayer(bk[1], anim.name); } }, '⛶ Plein écran') : null);
   } else if (a.decor && a.kind === 'objet') {
     let mode = a.decor.calque ? 'masques' : 'image';
     const holder = el('div', { class: 'dbox' }, decorView(a, mode));

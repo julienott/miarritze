@@ -15,7 +15,7 @@ du décor de chaque objet posé) et decor/ (index.json + images provisoires dess
 Vérifie que tout est atteignable et affiche le diagnostic de la carte (liaisons, culs-de-sac, boucles,
 lignes de vue, vides, sorties).
 
-Légende (GkMap) : .  sol (sable, planches, carrelage selon la zone)
+Légende (BkMap) : .  sol (sable, planches, carrelage selon la zone)
                   R  falaise (masse)      v  pied de falaise (face rocheuse, posé tout seul)
                   #  bord de carte        c  objet haut (cabine, rocher, paravent, kiosque, façade…)
                   B  bateau tiré au sec   t  objet bas (parasol, transat, table, douche : on voit par-dessus)
@@ -25,7 +25,7 @@ Légende (GkMap) : .  sol (sable, planches, carrelage selon la zone)
 Usage : .venv/bin/python make_plage.py [--variante=<nom>] [--sans-images]
 Variantes (essais A/B, écrites dans assets/maps/plage_<nom>/ avec le décor de « plage ») : voir VARIANTES.
 
-Essais retenus (tools/gordeka/ab_tension.py, docs/GORDEKA_EQUILIBRAGE.md, 2026-10-21) : tunnels qui arrivent
+Essais retenus (tools/blackout/ab_tension.py, docs/GORDEKA_EQUILIBRAGE.md, 2026-10-21) : tunnels qui arrivent
 au palier du milieu de l'escalier et de la rampe, canot des sauveteurs au bout d'un ponton ; talus entre les
 volées (la montée se voit d'en bas) ; plus de zone « Bord de l'eau » (bande de sable mouillé rattachée aux
 plages) ; moins de cabines et de gros rochers (moins de planques derrière). Écartés : plus d'abris sur le sable,

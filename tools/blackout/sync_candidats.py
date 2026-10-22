@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Copie réduite (512 px, fond blanc) des profils candidats et des retouches de chaque perso, de
-tools/rd/out/<id>/gk2d/<lot>/ (gitignoré) vers tools/gordeka/candidats/<id>/<lot>/ (versionné), pour
+tools/rd/out/<id>/gk2d/<lot>/ (gitignoré) vers tools/blackout/candidats/<id>/<lot>/ (versionné), pour
 que /producer en ligne les montre : Julien choisit ses variantes à distance (2026-10-20).
 Un lot = un dossier contenant params.json. Les animations (pf/, pf_ondule/) ne sont pas copiées.
 
@@ -21,11 +21,11 @@ DST = os.path.join(HERE, "candidats")
 def main():
     n = 0
     for pid in sorted(os.listdir(SRC)):
-        gk = os.path.join(SRC, pid, "gk2d")
-        if not os.path.isdir(gk):
+        bk = os.path.join(SRC, pid, "gk2d")
+        if not os.path.isdir(bk):
             continue
-        for lot in sorted(os.listdir(gk)):
-            d = os.path.join(gk, lot)
+        for lot in sorted(os.listdir(bk)):
+            d = os.path.join(bk, lot)
             if not os.path.exists(os.path.join(d, "params.json")):
                 continue
             out = os.path.join(DST, pid, lot)

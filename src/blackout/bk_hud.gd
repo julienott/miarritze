@@ -1,13 +1,13 @@
-class_name GkHud
+class_name BkHud
 extends Control
 ## Interface du round (SPEC-GORDEKA §2, §5) : rôle, chrono, messages, bouton d'action avec
 ## son temps de recharge, joystick tactile, flèche vers le chasseur hors champ, voile du
 ## chasseur qui compte, scores entre les rounds (« Round k/N », bouton « Terminer » en partie rapide).
-## Versus et podium sont des écrans à part (GkVersus, GkPodium), sous ce calque : le HUD n'y montre
+## Versus et podium sont des écrans à part (BkVersus, BkPodium), sous ce calque : le HUD n'y montre
 ## que « Quitter » et l'éventail des emotes. Emotes : bulles d'icône au-dessus des têtes, petit bouton
 ## et éventail des 6 bulles quand elles sont permises.
 
-var game: GkGame
+var game: BkGame
 var _quit: Button
 ## Partie rapide : arrêter la partie pendant les scores, podium tout de suite (SPEC-GORDEKA §2.2).
 var _terminer: Button
@@ -31,8 +31,8 @@ func _ready() -> void:
 	add_child(_quit)
 	# Visite de debug (temporaire) : boutons Formes et Perso, pour le tactile.
 	_visite_buttons()
-	_terminer = GkUi.bouton("Terminer la partie", func() -> void: game.quit_to_podium(), Vector2(340, 70),
-		GkUi.CREME, 26)
+	_terminer = BkUi.bouton("Terminer la partie", func() -> void: game.quit_to_podium(), Vector2(340, 70),
+		BkUi.CREME, 26)
 	_terminer.visible = false
 	# Jamais le focus : Espace (l'action du jeu) ne doit pas terminer la partie par erreur ; au clavier
 	# et à la manette, c'est Échap / Start (rappelés sur le bouton).
@@ -66,7 +66,7 @@ static func vignette_texture() -> ImageTexture:
 
 ## Ressenti du chassé (idee_frisson) : vignettage qui pulse avec le cœur, et « Il fouille à côté ! ».
 func _draw_frisson(s: Vector2, font: Font) -> void:
-	var f: GkFrisson = game.frisson
+	var f: BkFrisson = game.frisson
 	if f == null:
 		return
 	if f.level > 0.01:
@@ -104,26 +104,26 @@ func _draw() -> void:
 		return
 	var s: Vector2 = size
 	var font: Font = ThemeDB.fallback_font
-	var me: GkActor = game.local
-	_quit.visible = game.phase != GkGame.Phase.PODIUM
+	var me: BkActor = game.local
+	_quit.visible = game.phase != BkGame.Phase.PODIUM
 	_maj_terminer()
-	if game.phase == GkGame.Phase.PODIUM:
+	if game.phase == BkGame.Phase.PODIUM:
 		_draw_emote_wheel(font)
 		return
-	if game.phase == GkGame.Phase.VERSUS:
+	if game.phase == BkGame.Phase.VERSUS:
 		return
 	# Voile du chasseur qui compte (il ne voit rien pendant la cachette).
-	if game.phase == GkGame.Phase.HIDE and me == game.hunter:
+	if game.phase == BkGame.Phase.HIDE and me == game.hunter:
 		draw_rect(Rect2(Vector2.ZERO, s), Color(0.03, 0.03, 0.07, 0.96))
-		var n: int = clampi(int(GkRules.f("phase_hide") - game.phase_t) + 1, 1, GkGame.COUNT_WORDS.size())
-		_text(font, s * Vector2(0.5, 0.42), GkGame.COUNT_WORDS[n - 1].capitalize() + "…", 96, Color.WHITE)
+		var n: int = clampi(int(BkRules.f("phase_hide") - game.phase_t) + 1, 1, BkGame.COUNT_WORDS.size())
+		_text(font, s * Vector2(0.5, 0.42), BkGame.COUNT_WORDS[n - 1].capitalize() + "…", 96, Color.WHITE)
 		_text(font, s * Vector2(0.5, 0.58), "Tu comptes, les autres se cachent", 30, Color(1, 1, 1, 0.7))
 	_draw_frisson(s, font)
 	# Bandeau du haut : rôle, phase, chrono.
-	var role_text: String = {GkActor.Role.HIDER: "CHASSÉ", GkActor.Role.HUNTER: "CHASSEUR",
-		GkActor.Role.GHOST: "FANTÔME", GkActor.Role.OUT: "ÉCHAPPÉ"}[me.role]
-	var role_col: Color = {GkActor.Role.HIDER: Color("4aa3ff"), GkActor.Role.HUNTER: Color("ff3b30"),
-		GkActor.Role.GHOST: Color("b8c0cc"), GkActor.Role.OUT: Color("6fe08a")}[me.role]
+	var role_text: String = {BkActor.Role.HIDER: "CHASSÉ", BkActor.Role.HUNTER: "CHASSEUR",
+		BkActor.Role.GHOST: "FANTÔME", BkActor.Role.OUT: "ÉCHAPPÉ"}[me.role]
+	var role_col: Color = {BkActor.Role.HIDER: Color("4aa3ff"), BkActor.Role.HUNTER: Color("ff3b30"),
+		BkActor.Role.GHOST: Color("b8c0cc"), BkActor.Role.OUT: Color("6fe08a")}[me.role]
 	draw_rect(Rect2(16, 16, 230, 52), Color(0, 0, 0, 0.55))
 	_text(font, Vector2(131, 52), role_text, 30, role_col)
 	if game.visite != "":
@@ -131,29 +131,29 @@ func _draw() -> void:
 		draw_rect(Rect2(s.x * 0.5 - 170, 12, 340, 36), Color(0, 0, 0, 0.45))
 		_text(font, Vector2(s.x * 0.5, 37), "VISITE (debug) · F formes · C perso · G fantôme", 17, Color("ffd34a"))
 	else:
-		var phase_text: String = {GkGame.Phase.DRAW: "Tirage…", GkGame.Phase.HIDE: "Cachez-vous !",
-			GkGame.Phase.HUNT: "Chasse", GkGame.Phase.END: "Fin du round"}.get(game.phase, "")
+		var phase_text: String = {BkGame.Phase.DRAW: "Tirage…", BkGame.Phase.HIDE: "Cachez-vous !",
+			BkGame.Phase.HUNT: "Chasse", BkGame.Phase.END: "Fin du round"}.get(game.phase, "")
 		var no: String = "%d/%d" % [game.round_no, game.rounds_total] if game.rounds_total > 0 else str(game.round_no)
 		var t: int = maxi(0, ceili(game.phase_t))
 		draw_rect(Rect2(s.x * 0.5 - 150, 12, 300, 70), Color(0, 0, 0, 0.55))
 		_text(font, Vector2(s.x * 0.5, 42), "%s · round %s" % [phase_text, no], 22, Color(1, 1, 1, 0.85))
 		_text(font, Vector2(s.x * 0.5, 74), "%d:%02d" % [t / 60, t % 60], 32,
-			Color("ff6b5e") if game.phase == GkGame.Phase.HUNT and t <= 20 else Color.WHITE)
-		var left: int = game.actors.filter(func(a: GkActor) -> bool: return a.role == GkActor.Role.HIDER).size()
+			Color("ff6b5e") if game.phase == BkGame.Phase.HUNT and t <= 20 else Color.WHITE)
+		var left: int = game.actors.filter(func(a: BkActor) -> bool: return a.role == BkActor.Role.HIDER).size()
 		_text(font, Vector2(s.x * 0.5, 104), "%d chassé%s encore libre%s" % [left, "s" if left > 1 else "", "s" if left > 1 else ""],
 			20, Color(1, 1, 1, 0.8))
-		if not game.open_exit_zones.is_empty() and (game.phase == GkGame.Phase.HIDE or game.phase == GkGame.Phase.HUNT):
+		if not game.open_exit_zones.is_empty() and (game.phase == BkGame.Phase.HIDE or game.phase == BkGame.Phase.HUNT):
 			var where: String = " et ".join(game.open_exit_zones)
 			if game.exits_open():
 				_text(font, Vector2(s.x * 0.5, 128), "Sorties ouvertes : " + where, 20, Color("6fe08a"))
 			else:
 				_text(font, Vector2(s.x * 0.5, 128), "Sorties du round : " + where, 20, Color(1, 1, 1, 0.7))
 	# Fantôme : ce qu'il peut encore faire (idées chatouille et délivrance).
-	if me.role == GkActor.Role.GHOST and game.phase == GkGame.Phase.HUNT:
+	if me.role == BkActor.Role.GHOST and game.phase == BkGame.Phase.HUNT:
 		var tips: PackedStringArray = []
-		if GkRules.on("idee_chatouille"):
+		if BkRules.on("idee_chatouille"):
 			tips.append("Touche le chasseur : il rit !")
-		if GkRules.on("idee_delivrance") and not me.rescued and game._rescues < int(GkRules.f("delivrance_max")):
+		if BkRules.on("idee_delivrance") and not me.rescued and game._rescues < int(BkRules.f("delivrance_max")):
 			tips.append("Rejoins un chassé : il te délivre !")
 		var ty: float = s.y - 30.0 - 38.0 * float(tips.size() - 1)
 		for tip: String in tips:
@@ -167,7 +167,7 @@ func _draw() -> void:
 		_text(font, Vector2(s.x * 0.5, y), str(m["text"]), 38, m["color"])
 		y += 48
 	# Flèche vers le chasseur quand il est hors champ (chassés et fantômes).
-	if me != game.hunter and game.hunter and game.hunter.visible and game.phase == GkGame.Phase.HUNT:
+	if me != game.hunter and game.hunter and game.hunter.visible and game.phase == BkGame.Phase.HUNT:
 		var sp: Vector2 = game.screen_pos(game.hunter.position)
 		var r: Rect2 = Rect2(Vector2.ZERO, s).grow(-40)
 		if not r.has_point(sp):
@@ -179,47 +179,47 @@ func _draw() -> void:
 			draw_colored_polygon(pts, Color("ff3b30"))
 	# En 3D, jauges de repérage au-dessus des chassés (dessinées ici, dans l'écran).
 	if game.use_3d:
-		for a: GkActor in game.actors:
-			if a.gauge > 0.0 and a.role == GkActor.Role.HIDER and a.shown and a.hidden_in < 0:
+		for a: BkActor in game.actors:
+			if a.gauge > 0.0 and a.role == BkActor.Role.HIDER and a.shown and a.hidden_in < 0:
 				var gp: Vector2 = game.screen_pos(a.position, 1.9)
 				var w: float = 70.0
 				var gr: Rect2 = Rect2(gp - Vector2(w * 0.5, 0), Vector2(w, 10))
-				draw_rect(gr.grow(3), GkDraw.INK)
+				draw_rect(gr.grow(3), BkDraw.INK)
 				draw_rect(Rect2(gr.position, Vector2(w * clampf(a.gauge, 0.0, 1.0), 10)), Color("ff3b30"))
 	# Bulles d'emote au-dessus des têtes (seulement des persos que l'on voit).
-	for a: GkActor in game.actors:
+	for a: BkActor in game.actors:
 		if a.shown and a.hidden_in < 0:
 			var tip: Vector2 = game.screen_pos(a.position, 2.3) if game.use_3d else \
 				game.screen_pos(a.position + Vector2(0, a.name_y() - 24.0))
 			_emote_bubble(a, tip, Vector2(0, -1))
 	# Bouton d'action.
 	var label: String = game.action_label(me)
-	if label != "" and game.phase in [GkGame.Phase.HIDE, GkGame.Phase.HUNT] and not me.frozen:
+	if label != "" and game.phase in [BkGame.Phase.HIDE, BkGame.Phase.HUNT] and not me.frozen:
 		var c2: Vector2 = game.input.action_center()
 		var cd: float = game.action_cooldown(me)
-		draw_circle(c2, GkInput.ACTION_RADIUS, Color(0, 0, 0, 0.45))
-		draw_circle(c2, GkInput.ACTION_RADIUS - 8, Color("ff3b30") if me == game.hunter else Color("4aa3ff"))
+		draw_circle(c2, BkInput.ACTION_RADIUS, Color(0, 0, 0, 0.45))
+		draw_circle(c2, BkInput.ACTION_RADIUS - 8, Color("ff3b30") if me == game.hunter else Color("4aa3ff"))
 		if cd > 0.0:
-			draw_circle(c2, GkInput.ACTION_RADIUS - 8, Color(0, 0, 0, 0.45))
-			draw_arc(c2, GkInput.ACTION_RADIUS - 4, -PI * 0.5, -PI * 0.5 + TAU * (1.0 - cd), 48, Color.WHITE, 6.0)
+			draw_circle(c2, BkInput.ACTION_RADIUS - 8, Color(0, 0, 0, 0.45))
+			draw_arc(c2, BkInput.ACTION_RADIUS - 4, -PI * 0.5, -PI * 0.5 + TAU * (1.0 - cd), 48, Color.WHITE, 6.0)
 		_text(font, c2 + Vector2(0, 10), label, 28, Color.WHITE)
 		if me.search_left > 0.0:
-			_text(font, c2 + Vector2(0, -GkInput.ACTION_RADIUS - 14), "Fouille…", 24, Color.WHITE)
+			_text(font, c2 + Vector2(0, -BkInput.ACTION_RADIUS - 14), "Fouille…", 24, Color.WHITE)
 	# Joystick tactile.
 	if game.input.touch_index >= 0:
-		draw_circle(game.input.touch_origin, GkInput.STICK_RADIUS, Color(1, 1, 1, 0.15))
-		draw_arc(game.input.touch_origin, GkInput.STICK_RADIUS, 0, TAU, 48, Color(1, 1, 1, 0.4), 3.0)
-		var knob: Vector2 = game.input.touch_origin + (game.input.touch_pos - game.input.touch_origin).limit_length(GkInput.STICK_RADIUS)
+		draw_circle(game.input.touch_origin, BkInput.STICK_RADIUS, Color(1, 1, 1, 0.15))
+		draw_arc(game.input.touch_origin, BkInput.STICK_RADIUS, 0, TAU, 48, Color(1, 1, 1, 0.4), 3.0)
+		var knob: Vector2 = game.input.touch_origin + (game.input.touch_pos - game.input.touch_origin).limit_length(BkInput.STICK_RADIUS)
 		draw_circle(knob, 38, Color(1, 1, 1, 0.5))
 	# Scores du round.
-	if game.phase == GkGame.Phase.END:
+	if game.phase == BkGame.Phase.END:
 		_draw_scores(s, font)
 	_draw_emote_wheel(font)
 
 
 func _draw_scores(s: Vector2, font: Font) -> void:
-	var rows: Array[GkActor] = game.actors.duplicate()
-	rows.sort_custom(func(a: GkActor, b: GkActor) -> bool: return a.score > b.score)
+	var rows: Array[BkActor] = game.actors.duplicate()
+	rows.sort_custom(func(a: BkActor, b: BkActor) -> bool: return a.score > b.score)
 	var h: float = 90.0 + 48.0 * rows.size()
 	var box: Rect2 = Rect2(s.x * 0.5 - 330, s.y * 0.5 - h * 0.5, 660, h)
 	draw_rect(box, Color(0.05, 0.06, 0.1, 0.88))
@@ -227,11 +227,11 @@ func _draw_scores(s: Vector2, font: Font) -> void:
 		else "Round %d terminé" % game.round_no
 	_text(font, Vector2(s.x * 0.5, box.position.y + 50), titre, 34, Color.WHITE)
 	if game.rounds_total > 0 and game.round_no >= game.rounds_total:
-		_text(font, Vector2(s.x * 0.5, box.position.y + h + 40), "Dernier round : place au podium !", 28, GkUi.JAUNE)
+		_text(font, Vector2(s.x * 0.5, box.position.y + h + 40), "Dernier round : place au podium !", 28, BkUi.JAUNE)
 	var y: float = box.position.y + 100
-	for a: GkActor in rows:
+	for a: BkActor in rows:
 		draw_circle(Vector2(box.position.x + 40, y - 10), 14, a.color)
-		var tag: String = "chasseur" if a == game.hunter else {GkActor.Role.OUT: "échappé", GkActor.Role.GHOST: "trouvé"}.get(a.role, "caché")
+		var tag: String = "chasseur" if a == game.hunter else {BkActor.Role.OUT: "échappé", BkActor.Role.GHOST: "trouvé"}.get(a.role, "caché")
 		draw_string(font, Vector2(box.position.x + 66, y), "%s — %s%s" % [a.display_name, tag, "  ★" if a.won_round else ""],
 			HORIZONTAL_ALIGNMENT_LEFT, 420, 26, Color("ffd34a") if a.won_round else Color.WHITE)
 		draw_string(font, Vector2(box.position.x + 480, y), "+%d   %d pts" % [a.round_points, a.score],
@@ -256,32 +256,32 @@ func _maj_terminer() -> void:
 
 ## Bulle de l'emote en cours d'un acteur, pointe en `tip`, posée dans la direction `dir` :
 ## elle apparaît en rebondissant et disparaît en se rétractant.
-func _emote_bubble(a: GkActor, tip: Vector2, dir: Vector2) -> void:
+func _emote_bubble(a: BkActor, tip: Vector2, dir: Vector2) -> void:
 	if a.emote < 0 or a.emote_t <= 0.0:
 		return
-	var age: float = GkRules.f("emote_duration") - a.emote_t
+	var age: float = BkRules.f("emote_duration") - a.emote_t
 	var k: float = clampf(age / 0.18, 0.0, 1.0) * clampf(a.emote_t / 0.15, 0.0, 1.0)
 	var r: float = 38.0 * (k + sin(k * PI) * 0.18)
 	if r < 3.0:
 		return
-	GkDraw.emote_bubble(self, tip + dir.normalized() * (r + 14.0 * k), tip, a.emote, r)
+	BkDraw.emote_bubble(self, tip + dir.normalized() * (r + 14.0 * k), tip, a.emote, r)
 
 
 ## Petit bouton d'emote et, ouvert, l'éventail des 6 bulles (touches 1 à 6 rappelées au clavier).
 func _draw_emote_wheel(font: Font) -> void:
-	var inp: GkInput = game.input
+	var inp: BkInput = game.input
 	if not inp.emotes_enabled:
 		return
 	var c: Vector2 = inp.emote_center()
-	draw_circle(c, GkInput.EMOTE_RADIUS + 6, Color(0, 0, 0, 0.45))
-	GkDraw.emote_disc(self, c, GkInput.EMOTE_RADIUS, 1, Color("ffd34a") if inp.wheel_open else Color(0, 0, 0, 0))
+	draw_circle(c, BkInput.EMOTE_RADIUS + 6, Color(0, 0, 0, 0.45))
+	BkDraw.emote_disc(self, c, BkInput.EMOTE_RADIUS, 1, Color("ffd34a") if inp.wheel_open else Color(0, 0, 0, 0))
 	if not inp.wheel_open:
 		return
-	for i: int in GkGame.EMOTES.size():
+	for i: int in BkGame.EMOTES.size():
 		var b: Vector2 = inp.bubble_center(i)
-		GkDraw.emote_disc(self, b, GkInput.BUBBLE_RADIUS, i, Color("ffd34a") if i == inp.wheel_sel else Color(0, 0, 0, 0))
+		BkDraw.emote_disc(self, b, BkInput.BUBBLE_RADIUS, i, Color("ffd34a") if i == inp.wheel_sel else Color(0, 0, 0, 0))
 		if not inp.touch_used:
-			draw_circle(b + Vector2(28, 26), 13, GkDraw.INK)
+			draw_circle(b + Vector2(28, 26), 13, BkDraw.INK)
 			_text(font, b + Vector2(28, 33), str(i + 1), 20, Color.WHITE)
 
 

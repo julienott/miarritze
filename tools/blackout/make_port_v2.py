@@ -6,7 +6,7 @@ tailles variées reliées par des couloirs, une boucle (objet dont on fait le to
 basque par zone, une cachette par zone, 5 sorties possibles dont 2 tirées au sort par round.
 
 Écrit assets/maps/port_v2/map.txt et zones.json (zones nommées + sorties possibles ; la carte par défaut,
-port_pecheurs, est la v3 depuis le 2026-10-21 : tools/gordeka/make_port_v3.py),
+port_pecheurs, est la v3 depuis le 2026-10-21 : tools/blackout/make_port_v3.py),
 vérifie que tout est atteignable et affiche quelques mesures (liaisons, distances aux sorties).
 
 Légende : . sol   # mur/bâtiment   c caisse   B bateau   (pleins, cachent la vue)
@@ -17,7 +17,7 @@ Usage : make_port_v2.py [--sans-tension] [--id port_v2]
 Tension (2026-10-20, docs/GORDEKA_EQUILIBRAGE.md) : caisses qui coupent les longues lignes de vue
 (place, criée, jetée, escalier, atelier), coffres au milieu du quai nord, cachettes déplacées des
 recoins vers les passages, avec plusieurs côtés libres pour en ressortir. `--sans-tension` redonne
-la carte d'avant (A/B). Le décor suit tout seul : GkDecor pose l'image de chaque objet d'après son
+la carte d'avant (A/B). Le décor suit tout seul : BkDecor pose l'image de chaque objet d'après son
 caractère, sa zone et sa taille (caisses 2 × 2, cachettes 1 × 1, comme les images existantes).
 """
 import json

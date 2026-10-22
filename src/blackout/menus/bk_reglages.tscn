@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://src/gordeka/menus/gk_reglages.gd" id="1"]
+[ext_resource type="Script" path="res://src/blackout/menus/bk_reglages.gd" id="1"]
 
-[node name="GkReglages" type="Control"]
+[node name="BkReglages" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

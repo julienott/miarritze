@@ -14,13 +14,13 @@ const STATUS_RANK = Object.fromEntries(ITEM_STATUSES.map(([k], i) => [k, i]));
 
 /** Nom affiché d'un perso (Maïa, Karramarro…). */
 function persoName(pid) {
-  const noms = (state.index && state.index.gordeka && state.index.gordeka.noms) || {};
+  const noms = (state.index && state.index.blackout && state.index.blackout.noms) || {};
   return noms[pid] || (pid ? pid.charAt(0).toUpperCase() + pid.slice(1) : '');
 }
 
 /** Libellé d'une animation (titres des cartes « Louis · marche »). */
 function animLabel(name) {
-  const a = ((state.index && state.index.gordeka && state.index.gordeka.anims) || []).find((x) => x.name === name);
+  const a = ((state.index && state.index.blackout && state.index.blackout.anims) || []).find((x) => x.name === name);
   return a && a.libelle ? a.libelle : name;
 }
 
@@ -46,7 +46,7 @@ function linkMap() {
   };
   const byId = new Map(state.cards.map((c) => [c.id, c]));
   for (const c of state.cards) push(c.asset, c);
-  const liens = (state.index && state.index.gordeka && state.index.gordeka.liens) || {};
+  const liens = (state.index && state.index.blackout && state.index.blackout.liens) || {};
   for (const [aid, ids] of Object.entries(liens)) for (const id of ids) push(aid, byId.get(id));
   linkCache = { cards: state.cards, index: state.index, map: byAsset };
   return byAsset;
@@ -56,7 +56,7 @@ function linkMap() {
 function cardAnimName(c) {
   if (c.detail) return c.detail;
   const t = norm(c.title);
-  for (const a of ((state.index.gordeka || {}).anims || [])) {
+  for (const a of ((state.index.blackout || {}).anims || [])) {
     for (const l of [a.libelle, a.name]) {
       if (l && t.endsWith(' · ' + norm(l))) return a.name;
     }

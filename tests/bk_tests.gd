@@ -1,10 +1,10 @@
 extends SceneTree
-## Tests headless de Gordeka : détection progressive (jauge, seuils), ressenti du chassé, mesures
+## Tests headless de Blackout : détection progressive (jauge, seuils), ressenti du chassé, mesures
 ## de tension (frôlements, vu puis perdu), une partie IA contre IA courte, et la partie en N rounds
 ## (tirage en sac, versus, podium), la partie rapide (réglages → règles) et le profil (persistance).
-## godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd [-- --only=nom]
+## godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd [-- --only=nom]
 
-const GAME: String = "res://src/gordeka/gk_game.tscn"
+const GAME: String = "res://src/blackout/bk_game.tscn"
 const DT: float = 1.0 / 60.0
 
 var _failures: int = 0
@@ -18,8 +18,8 @@ func _initialize() -> void:
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--only="):
 			_only = arg.trim_prefix("--only=")
-	_saved = GkRules.data().duplicate(true)
-	_saved_cfg = GkGame.config.duplicate(true)
+	_saved = BkRules.data().duplicate(true)
+	_saved_cfg = BkGame.config.duplicate(true)
 	_run.call_deferred()
 
 
@@ -31,8 +31,8 @@ func _run() -> void:
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
 			continue
-		GkRules._data = _saved.duplicate(true)
-		GkGame.config = _saved_cfg.duplicate(true)
+		BkRules._data = _saved.duplicate(true)
+		BkGame.config = _saved_cfg.duplicate(true)
 		var before: int = _failures
 		var start: int = Time.get_ticks_msec()
 		await t.call()
@@ -58,7 +58,7 @@ func fill_time(d: float, vis: float) -> float:
 	var g: float = 0.0
 	var t: float = 0.0
 	while g < 1.0 and t < 10.0:
-		g = GkGame.next_gauge(g, vis, d, DT)
+		g = BkGame.next_gauge(g, vis, d, DT)
 		t += DT
 	return t
 
@@ -68,28 +68,28 @@ func fill_time(d: float, vis: float) -> float:
 ## Catalogue des options validées (futur menu de création de partie) : chaque clé existe dans
 ## rules.json, les choix sont bornés et seules les clés déclarées sont acceptées.
 func test_options_partie() -> void:
-	var opts: Array = GkRules.options_partie()
+	var opts: Array = BkRules.options_partie()
 	check(not opts.is_empty(), "options_partie.json vide ou illisible")
 	for o: Dictionary in opts:
 		for r: Dictionary in o.get("reglages", []):
-			check(GkRules.data().has(str(r["cle"])), "clé inconnue de rules.json : " + str(r["cle"]))
-	GkRules.appliquer_options({"gateaux_nombre": 99, "idee_gateaux": 0, "pas_une_option": 5})
-	check(near(GkRules.f("gateaux_nombre"), 8.0, 0.001), "curseur non borné")
-	check(not GkRules.on("idee_gateaux"), "on/off non appliqué")
-	check(not GkRules.data().has("pas_une_option"), "clé non déclarée acceptée")
+			check(BkRules.data().has(str(r["cle"])), "clé inconnue de rules.json : " + str(r["cle"]))
+	BkRules.appliquer_options({"gateaux_nombre": 99, "idee_gateaux": 0, "pas_une_option": 5})
+	check(near(BkRules.f("gateaux_nombre"), 8.0, 0.001), "curseur non borné")
+	check(not BkRules.on("idee_gateaux"), "on/off non appliqué")
+	check(not BkRules.data().has("pas_une_option"), "clé non déclarée acceptée")
 
 
 # ------------------------------------------------------------------ jauge de détection
 
 func test_jauge_remplissage() -> void:
-	GkRules._data["idee_detection"] = 1.0
-	var tile: float = GkRules.f("tile_px")
-	var near_px: float = GkRules.px("near_radius")
-	var far_px: float = GkRules.px("cone_range")
+	BkRules._data["idee_detection"] = 1.0
+	var tile: float = BkRules.f("tile_px")
+	var near_px: float = BkRules.px("near_radius")
+	var far_px: float = BkRules.px("cone_range")
 	var t_near: float = fill_time(near_px, 1.0)
 	var t_far: float = fill_time(far_px, 1.0)
-	check(near(t_near, GkRules.f("detection_temps_pres"), 2.0 * DT), "tout près : pleine en %.2f s (attendu %.2f)" % [t_near, GkRules.f("detection_temps_pres")])
-	check(near(t_far, GkRules.f("detection_temps_loin"), 2.0 * DT), "au bout du cône : pleine en %.2f s (attendu %.2f)" % [t_far, GkRules.f("detection_temps_loin")])
+	check(near(t_near, BkRules.f("detection_temps_pres"), 2.0 * DT), "tout près : pleine en %.2f s (attendu %.2f)" % [t_near, BkRules.f("detection_temps_pres")])
+	check(near(t_far, BkRules.f("detection_temps_loin"), 2.0 * DT), "au bout du cône : pleine en %.2f s (attendu %.2f)" % [t_far, BkRules.f("detection_temps_loin")])
 	# Plus près = plus vite, de façon monotone ; dans le petit cercle, la vitesse la plus forte.
 	var last: float = 0.0
 	for k: int in 8:
@@ -101,60 +101,60 @@ func test_jauge_remplissage() -> void:
 	var t_part: float = fill_time(far_px * 0.5, 1.0 / 3.0)
 	check(t_part > fill_time(far_px * 0.5, 2.0 / 3.0) and fill_time(far_px * 0.5, 2.0 / 3.0) > fill_time(far_px * 0.5, 1.0),
 		"vu en partie : plus lent")
-	check(near(GkGame.detection_rate(far_px, 0.0) * GkRules.f("detection_temps_loin"), GkRules.f("detection_partiel"), 1e-4),
+	check(near(BkGame.detection_rate(far_px, 0.0) * BkRules.f("detection_temps_loin"), BkRules.f("detection_partiel"), 1e-4),
 		"part vue nulle : vitesse × detection_partiel")
 
 
 func test_jauge_decroissance() -> void:
-	GkRules._data["idee_detection"] = 1.0
-	var dec: float = GkRules.f("detection_decroissance")
+	BkRules._data["idee_detection"] = 1.0
+	var dec: float = BkRules.f("detection_decroissance")
 	var g: float = 0.8
 	var t: float = 0.0
 	while g > 0.0 and t < 10.0:
-		g = GkGame.next_gauge(g, 0.0, 0.0, DT)
+		g = BkGame.next_gauge(g, 0.0, 0.0, DT)
 		t += DT
 	check(near(t, 0.8 / dec, 2.0 * DT), "hors de vue : redescend en %.2f s (attendu %.2f)" % [t, 0.8 / dec])
 	check(g == 0.0, "jamais sous zéro")
 	# Redescente plus lente que la montée de près : un frôlement laisse le temps de voir le « ? ».
-	check(dec < 1.0 / GkRules.f("detection_temps_pres"), "redescend plus lentement qu'elle ne monte de près")
+	check(dec < 1.0 / BkRules.f("detection_temps_pres"), "redescend plus lentement qu'elle ne monte de près")
 	# Seuil du « ? » franchi avant la capture, à toute distance.
-	var g2: float = GkGame.next_gauge(0.0, 1.0, GkRules.px("near_radius"), DT)
-	check(g2 < GkRules.f("detection_doute"), "le « ? » n'est pas immédiat (une image ne suffit pas)")
-	check(GkRules.f("detection_doute") > 0.0 and GkRules.f("detection_doute") < 1.0, "seuil du « ? » entre 0 et 1")
+	var g2: float = BkGame.next_gauge(0.0, 1.0, BkRules.px("near_radius"), DT)
+	check(g2 < BkRules.f("detection_doute"), "le « ? » n'est pas immédiat (une image ne suffit pas)")
+	check(BkRules.f("detection_doute") > 0.0 and BkRules.f("detection_doute") < 1.0, "seuil du « ? » entre 0 et 1")
 
 
 func test_jauge_sans_detection() -> void:
-	GkRules._data["idee_detection"] = 0.0
-	var t: float = fill_time(GkRules.px("cone_range"), 1.0 / 3.0)
-	check(near(t, GkRules.f("capture_time"), 2.0 * DT), "règle d'avant : capture en capture_time à toute distance (%.2f s)" % t)
-	var g: float = GkGame.next_gauge(0.5, 0.0, 0.0, 0.1)
-	check(near(g, 0.5 - 0.1 * GkRules.f("capture_decay") / GkRules.f("capture_time"), 1e-5), "règle d'avant : vidage rapide")
+	BkRules._data["idee_detection"] = 0.0
+	var t: float = fill_time(BkRules.px("cone_range"), 1.0 / 3.0)
+	check(near(t, BkRules.f("capture_time"), 2.0 * DT), "règle d'avant : capture en capture_time à toute distance (%.2f s)" % t)
+	var g: float = BkGame.next_gauge(0.5, 0.0, 0.0, 0.1)
+	check(near(g, 0.5 - 0.1 * BkRules.f("capture_decay") / BkRules.f("capture_time"), 1e-5), "règle d'avant : vidage rapide")
 
 
 # ------------------------------------------------------------------ ressenti du chassé
 
 func test_frisson_intensite() -> void:
-	var tile: float = GkRules.f("tile_px")
-	check(GkFrisson.intensity(GkRules.px("frisson_portee") + tile, 0.0) == 0.0, "rien au-delà de frisson_portee")
-	check(near(GkFrisson.intensity(0.0, 0.0), 1.0, 1e-5), "maximum au contact")
+	var tile: float = BkRules.f("tile_px")
+	check(BkFrisson.intensity(BkRules.px("frisson_portee") + tile, 0.0) == 0.0, "rien au-delà de frisson_portee")
+	check(near(BkFrisson.intensity(0.0, 0.0), 1.0, 1e-5), "maximum au contact")
 	var last: float = 2.0
 	for k: int in 10:
-		var v: float = GkFrisson.intensity(tile * k, 0.0)
+		var v: float = BkFrisson.intensity(tile * k, 0.0)
 		check(v <= last + 1e-6, "décroît avec la distance (%d cases)" % k)
 		last = v
-	check(GkFrisson.intensity(GkRules.px("frisson_portee") + tile, 0.2) >= 0.7, "en train d'être vu : au moins fort, même de loin")
+	check(BkFrisson.intensity(BkRules.px("frisson_portee") + tile, 0.2) >= 0.7, "en train d'être vu : au moins fort, même de loin")
 
 
 func test_frisson_coeur() -> void:
-	var s: AudioStreamWAV = GkFrisson.heartbeat_stream()
+	var s: AudioStreamWAV = BkFrisson.heartbeat_stream()
 	check(s.data.size() > 4000 and s.get_length() > 0.3, "battement de cœur généré (%.2f s)" % s.get_length())
 
 
 ## En partie : le chassé local ressent le chasseur proche ; le chasseur, lui, jamais.
 func test_frisson_local() -> void:
-	GkRules._data["idee_frisson"] = 1.0
-	var game: GkGame = await make_game()
-	var me: GkActor = game.actors[1]
+	BkRules._data["idee_frisson"] = 1.0
+	var game: BkGame = await make_game()
+	var me: BkActor = game.actors[1]
 	game.local = me
 	me.position = game.hunter.position + Vector2(-2.5 * game.map.tile, 0)
 	for i: int in 30:
@@ -165,7 +165,7 @@ func test_frisson_local() -> void:
 	game.frisson._process(DT)
 	check(game.frisson.search_near > 0.0, "le chasseur fouille à côté : « Il fouille à côté ! »")
 	game.hunter.search_left = 0.0
-	me.position = game.hunter.position + Vector2(-(GkRules.f("frisson_portee") + 2.0) * game.map.tile, 0)
+	me.position = game.hunter.position + Vector2(-(BkRules.f("frisson_portee") + 2.0) * game.map.tile, 0)
 	for i: int in 60:
 		game.frisson._process(DT)
 	check(game.frisson.level < 0.05, "loin : plus de frisson (%.2f)" % game.frisson.level)
@@ -180,34 +180,34 @@ func test_frisson_local() -> void:
 
 ## Partie posée sur la carte, sans boucle de jeu : on place les acteurs et on appelle la capture et
 ## les mesures à la main. Chasseur = acteur 0 en (36, 17) regardant vers l'est, place du fronton.
-func make_game() -> GkGame:
-	var game: GkGame = (load(GAME) as PackedScene).instantiate()
-	GkGame.config["players"] = 3
+func make_game() -> BkGame:
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
+	BkGame.config["players"] = 3
 	root.add_child(game)
 	game.set_physics_process(false)
 	await physics_frame
 	await physics_frame
 	game._stats = true
-	game.phase = GkGame.Phase.HUNT
+	game.phase = BkGame.Phase.HUNT
 	game.hunter = game.actors[0]
-	for a: GkActor in game.actors:
-		a.set_role(GkActor.Role.HUNTER if a == game.hunter else GkActor.Role.HIDER)
+	for a: BkActor in game.actors:
+		a.set_role(BkActor.Role.HUNTER if a == game.hunter else BkActor.Role.HIDER)
 		a.frozen = false
 		a.gauge = 0.0
 		a.position = Vector2(-5000, -5000)
-	game._st.merge(GkGame.tension_keys(), true)
+	game._st.merge(BkGame.tension_keys(), true)
 	game._tens.clear()
 	game.hunter.position = tile_pos(game, 36, 17)
 	game.hunter.look = 0.0
 	return game
 
 
-func tile_pos(game: GkGame, x: float, y: float) -> Vector2:
+func tile_pos(game: BkGame, x: float, y: float) -> Vector2:
 	return Vector2(x + 0.5, y + 0.5) * game.map.tile
 
 
 ## `secs` s de jeu : capture puis mesures (comme dans _physics_process).
-func tick(game: GkGame, secs: float) -> void:
+func tick(game: BkGame, secs: float) -> void:
 	var n: int = int(round(secs / DT))
 	for i: int in n:
 		game.hunt_elapsed += DT
@@ -215,14 +215,14 @@ func tick(game: GkGame, secs: float) -> void:
 		game.track_tension(DT)
 
 
-func free_game(game: GkGame) -> void:
+func free_game(game: BkGame) -> void:
 	game.queue_free()
 	await process_frame
 
 
 func test_frolements() -> void:
-	var game: GkGame = await make_game()
-	var h: GkActor = game.actors[1]
+	var game: BkGame = await make_game()
+	var h: BkActor = game.actors[1]
 	# Dans le dos du chasseur, à 1,95 case : hors du petit cercle, hors du cône.
 	h.position = game.hunter.position + Vector2(-1.95 * game.map.tile, 0)
 	check(not game.sees(game.hunter, h.position, h.radius), "précondition : pas vu dans le dos")
@@ -246,16 +246,16 @@ func test_frolements() -> void:
 
 
 func test_vu_perdu() -> void:
-	GkRules._data["idee_detection"] = 1.0
-	var game: GkGame = await make_game()
-	var h: GkActor = game.actors[1]
+	BkRules._data["idee_detection"] = 1.0
+	var game: BkGame = await make_game()
+	var h: BkActor = game.actors[1]
 	h.position = tile_pos(game, 41, 17)                 # devant, à 5 cases
 	check(game.sees(game.hunter, h.position, h.radius), "précondition : vu devant")
 	tick(game, 0.4)
-	check(h.role == GkActor.Role.HIDER and h.gauge > GkRules.f("detection_doute"), "jauge entamée, pas encore trouvé (%.2f)" % h.gauge)
-	check(game.hunter_alert > GkRules.f("detection_doute"), "le « ? » s'affiche au-dessus du chasseur")
+	check(h.role == BkActor.Role.HIDER and h.gauge > BkRules.f("detection_doute"), "jauge entamée, pas encore trouvé (%.2f)" % h.gauge)
+	check(game.hunter_alert > BkRules.f("detection_doute"), "le « ? » s'affiche au-dessus du chasseur")
 	h.position = game.hunter.position + Vector2(-5.0 * game.map.tile, 0)     # sorti du cône
-	tick(game, GkGame.TENSION_VU_GRACE + 0.1)
+	tick(game, BkGame.TENSION_VU_GRACE + 0.1)
 	check(int(game._st["vus"]) == 1 and int(game._st["vu_perdu"]) == 1, "vu puis perdu compté (%d/%d)" % [game._st["vu_perdu"], game._st["vus"]])
 	check(h.gauge > 0.0, "la jauge redescend doucement (%.2f)" % h.gauge)
 	tick(game, 2.0)
@@ -266,12 +266,12 @@ func test_vu_perdu() -> void:
 
 
 func test_capture_pas_frolement() -> void:
-	GkRules._data["idee_detection"] = 1.0
-	var game: GkGame = await make_game()
-	var h: GkActor = game.actors[1]
+	BkRules._data["idee_detection"] = 1.0
+	var game: BkGame = await make_game()
+	var h: BkActor = game.actors[1]
 	h.position = game.hunter.position + Vector2(1.0 * game.map.tile, 0)      # tout près, devant
-	tick(game, GkRules.f("detection_temps_pres") + 0.1)
-	check(h.role == GkActor.Role.GHOST, "trouvé de près en detection_temps_pres")
+	tick(game, BkRules.f("detection_temps_pres") + 0.1)
+	check(h.role == BkActor.Role.GHOST, "trouvé de près en detection_temps_pres")
 	check(game.alert_bang > 0.0, "« ! » au-dessus du chasseur")
 	h.position = game.hunter.position + Vector2(-6.0 * game.map.tile, 0)
 	tick(game, 0.2)
@@ -282,25 +282,25 @@ func test_capture_pas_frolement() -> void:
 # ------------------------------------------------------------------ poursuite (désactivée par défaut)
 
 func test_poursuite() -> void:
-	GkRules._data["idee_detection"] = 1.0
-	check(not GkRules.on("idee_poursuite"), "poursuite désactivée par défaut (c'est Julien qui décide)")
-	GkRules._data["idee_poursuite"] = 1.0
-	GkRules._data["poursuite_mult_chasseur"] = 1.15
-	GkRules._data["poursuite_mult_chasse"] = 1.25
-	var game: GkGame = await make_game()
-	var h: GkActor = game.actors[1]
+	BkRules._data["idee_detection"] = 1.0
+	check(not BkRules.on("idee_poursuite"), "poursuite désactivée par défaut (c'est Julien qui décide)")
+	BkRules._data["idee_poursuite"] = 1.0
+	BkRules._data["poursuite_mult_chasseur"] = 1.15
+	BkRules._data["poursuite_mult_chasse"] = 1.25
+	var game: BkGame = await make_game()
+	var h: BkActor = game.actors[1]
 	var base_h: float = h.speed()
 	var base_c: float = game.hunter.speed()
 	h.position = tile_pos(game, 41, 17)
 	tick(game, 0.1)
 	check(h.chase_left == 0.0, "pas de poursuite avant le « ? »")
 	tick(game, 0.25)
-	check(h.gauge >= GkRules.f("poursuite_seuil") and h.role == GkActor.Role.HIDER, "précondition : « ? » atteint, pas trouvé")
+	check(h.gauge >= BkRules.f("poursuite_seuil") and h.role == BkActor.Role.HIDER, "précondition : « ? » atteint, pas trouvé")
 	check(h.chase_left > 0.0 and game.hunter.chase_left > 0.0, "« ? » : poursuite des deux")
 	check(near(h.speed(), base_h * 1.25, 0.01) and near(game.hunter.speed(), base_c * 1.15, 0.01), "vitesses de poursuite (chassé ×1,25, chasseur ×1,15)")
 	check(int(game._st["poursuites"]) == 1, "une poursuite comptée")
 	h.position = game.hunter.position + Vector2(-6.0 * game.map.tile, 0)        # il s'échappe
-	for i: int in int((GkRules.f("poursuite_duree_s") + 0.2) / DT):
+	for i: int in int((BkRules.f("poursuite_duree_s") + 0.2) / DT):
 		h.step(Vector2.ZERO, Vector2.ZERO, DT)
 		game.hunter.step(Vector2.ZERO, Vector2.ZERO, DT)
 		game.hunt_elapsed += DT
@@ -312,13 +312,13 @@ func test_poursuite() -> void:
 
 ## Précision de Julien : pendant la poursuite, tous les chassés que voit le chasseur en profitent.
 func test_poursuite_tous_vus() -> void:
-	GkRules._data["idee_detection"] = 1.0
-	GkRules._data["idee_poursuite"] = 1.0
+	BkRules._data["idee_detection"] = 1.0
+	BkRules._data["idee_poursuite"] = 1.0
 	for tous: float in [1.0, 0.0]:
-		GkRules._data["poursuite_tous_vus"] = tous
-		var game: GkGame = await make_game()
-		var h1: GkActor = game.actors[1]
-		var h2: GkActor = game.actors[2]
+		BkRules._data["poursuite_tous_vus"] = tous
+		var game: BkGame = await make_game()
+		var h1: BkActor = game.actors[1]
+		var h2: BkActor = game.actors[2]
 		h1.position = tile_pos(game, 41, 17)
 		h2.position = game.hunter.position + Vector2(-6.0 * game.map.tile, 0)    # dans son dos
 		tick(game, 0.35)
@@ -336,14 +336,14 @@ func test_poursuite_tous_vus() -> void:
 
 func test_partie_ia_courte() -> void:
 	for k: String in ["idee_detection", "idee_mouvement", "idee_frisson"]:
-		GkRules._data[k] = 1.0
-	GkRules._data["phase_draw"] = 0.5
-	GkRules._data["phase_hide"] = 3.0
-	GkRules._data["phase_hunt"] = 25.0
-	GkRules._data["phase_end"] = 0.5
-	GkRules._data["exits_open_at"] = 10.0
-	GkGame.config["players"] = 6
-	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+		BkRules._data[k] = 1.0
+	BkRules._data["phase_draw"] = 0.5
+	BkRules._data["phase_hide"] = 3.0
+	BkRules._data["phase_hunt"] = 25.0
+	BkRules._data["phase_end"] = 0.5
+	BkRules._data["exits_open_at"] = 10.0
+	BkGame.config["players"] = 6
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
 	game._bots_only = true
 	game._stats = true
 	root.add_child(game)
@@ -353,31 +353,31 @@ func test_partie_ia_courte() -> void:
 		frames += 1
 	check(game.round_no >= 3, "deux rounds complets joués (%d images)" % frames)
 	check(game.hunter != null and game.actors.size() == 6, "six joueurs, un chasseur")
-	var keys: Dictionary = GkGame.tension_keys()
+	var keys: Dictionary = BkGame.tension_keys()
 	for k: String in keys:
 		check(game.last_stats.has(k), "mesure présente : " + k)
 	check(float(game.last_stats.get("chasse_s", 0.0)) > 0.0, "temps de chasse mesuré")
 	await free_game(game)
 
 
-## Parc Mazon (tools/gordeka/make_parc_mazon.py) : sélectionnable, tout le sol atteignable, cachettes
+## Parc Mazon (tools/blackout/make_parc_mazon.py) : sélectionnable, tout le sol atteignable, cachettes
 ## accessibles, 3 sorties, décor posé (placeholders et images du port) avec ses formes ; deux rounds IA.
 func test_parc_mazon() -> void:
-	var ids: Array = load("res://src/gordeka/menus/gk_partie_rapide.gd").CARTES.map(func(c: Array) -> String: return str(c[0]))
+	var ids: Array = load("res://src/blackout/menus/bk_partie_rapide.gd").CARTES.map(func(c: Array) -> String: return str(c[0]))
 	check(ids.has("parc_mazon"), "Parc Mazon dans le sélecteur de la partie rapide")
-	GkRules._data["phase_draw"] = 0.5
-	GkRules._data["phase_hide"] = 3.0
-	GkRules._data["phase_hunt"] = 25.0
-	GkRules._data["phase_end"] = 0.5
-	GkRules._data["exits_open_at"] = 10.0
-	GkGame.config["players"] = 6
-	GkGame.config["map"] = "parc_mazon"
-	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	BkRules._data["phase_draw"] = 0.5
+	BkRules._data["phase_hide"] = 3.0
+	BkRules._data["phase_hunt"] = 25.0
+	BkRules._data["phase_end"] = 0.5
+	BkRules._data["exits_open_at"] = 10.0
+	BkGame.config["players"] = 6
+	BkGame.config["map"] = "parc_mazon"
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
 	game._bots_only = true
 	game._stats = true
 	root.add_child(game)
 	await physics_frame
-	var m: GkMap = game.map
+	var m: BkMap = game.map
 	check(m.map_id == "parc_mazon" and m.zones.size() >= 14, "carte et zones chargées")
 	var start: Vector2i = m.spawns[0]
 	var n_walk: int = 0
@@ -408,25 +408,25 @@ func test_parc_mazon() -> void:
 	await free_game(game)
 
 
-## Plage de la Côte des Basques (tools/gordeka/make_plage.py) : sélectionnable, tout le sol atteignable,
+## Plage de la Côte des Basques (tools/blackout/make_plage.py) : sélectionnable, tout le sol atteignable,
 ## cachettes accessibles, 4 sorties, chaque objet posé avec son image (provisoires et images du port) et
 ## une forme, grottes et tunnels sombres (vue réduite seulement avec idee_grottes) ; deux rounds IA.
 func test_plage() -> void:
-	var ids: Array = load("res://src/gordeka/menus/gk_partie_rapide.gd").CARTES.map(func(c: Array) -> String: return str(c[0]))
+	var ids: Array = load("res://src/blackout/menus/bk_partie_rapide.gd").CARTES.map(func(c: Array) -> String: return str(c[0]))
 	check(ids.has("plage"), "Plage dans le sélecteur de la partie rapide")
-	GkRules._data["phase_draw"] = 0.5
-	GkRules._data["phase_hide"] = 3.0
-	GkRules._data["phase_hunt"] = 25.0
-	GkRules._data["phase_end"] = 0.5
-	GkRules._data["exits_open_at"] = 10.0
-	GkGame.config["players"] = 6
-	GkGame.config["map"] = "plage"
-	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	BkRules._data["phase_draw"] = 0.5
+	BkRules._data["phase_hide"] = 3.0
+	BkRules._data["phase_hunt"] = 25.0
+	BkRules._data["phase_end"] = 0.5
+	BkRules._data["exits_open_at"] = 10.0
+	BkGame.config["players"] = 6
+	BkGame.config["map"] = "plage"
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
 	game._bots_only = true
 	game._stats = true
 	root.add_child(game)
 	await physics_frame
-	var m: GkMap = game.map
+	var m: BkMap = game.map
 	check(m.map_id == "plage" and m.zones.size() >= 14, "carte et zones chargées")
 	var start: Vector2i = m.spawns[0]
 	var n_walk: int = 0
@@ -455,15 +455,15 @@ func test_plage() -> void:
 	# Grottes : cases sombres, vue réduite seulement avec idee_grottes.
 	var cave: Vector2i = Vector2i(20, 4)
 	check(m.dark.has(cave) and not m.dark.has(start), "grotte sombre, plage claire")
-	var h: GkActor = game.actors[0]
+	var h: BkActor = game.actors[0]
 	h.position = m.center(cave)
-	var full: float = GkRules.px("cone_range")
+	var full: float = BkRules.px("cone_range")
 	check(is_equal_approx(game.sight_range(h, m.center(cave + Vector2i(2, 0))), full), "sans idee_grottes : vue entière")
-	GkRules._data["idee_grottes"] = 1.0
+	BkRules._data["idee_grottes"] = 1.0
 	check(game.sight_range(h, m.center(cave + Vector2i(2, 0))) < full, "idee_grottes : vue réduite dans la grotte")
 	h.position = m.center(start)
 	check(is_equal_approx(game.sight_range(h, m.center(start + Vector2i(3, 0))), full), "idee_grottes : vue entière au soleil")
-	GkRules._data["idee_grottes"] = 0.0
+	BkRules._data["idee_grottes"] = 0.0
 	var frames: int = 0
 	while game.round_no < 3 and frames < 60 * 90:
 		await physics_frame
@@ -472,23 +472,23 @@ func test_plage() -> void:
 	await free_game(game)
 
 
-## Port des Pêcheurs v3 (tools/gordeka/make_port_v3.py, carte par défaut) : tout le sol atteignable,
+## Port des Pêcheurs v3 (tools/blackout/make_port_v3.py, carte par défaut) : tout le sol atteignable,
 ## cachettes à deux côtés libres au moins, 4 sorties possibles, décor imposé posé avec ses images et
 ## ses formes, ornements de decor.json ; deux rounds IA.
 func test_port_v3() -> void:
-	GkRules._data["phase_draw"] = 0.5
-	GkRules._data["phase_hide"] = 3.0
-	GkRules._data["phase_hunt"] = 25.0
-	GkRules._data["phase_end"] = 0.5
-	GkRules._data["exits_open_at"] = 10.0
-	GkGame.config["players"] = 6
-	GkGame.config["map"] = "port_pecheurs"
-	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	BkRules._data["phase_draw"] = 0.5
+	BkRules._data["phase_hide"] = 3.0
+	BkRules._data["phase_hunt"] = 25.0
+	BkRules._data["phase_end"] = 0.5
+	BkRules._data["exits_open_at"] = 10.0
+	BkGame.config["players"] = 6
+	BkGame.config["map"] = "port_pecheurs"
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
 	game._bots_only = true
 	game._stats = true
 	root.add_child(game)
 	await physics_frame
-	var m: GkMap = game.map
+	var m: BkMap = game.map
 	check(m.map_id == "port_pecheurs" and m.zones.size() == 14 and int(m.info.get("version", 0)) == 3,
 		"carte v3 et ses 14 zones")
 	var start: Vector2i = m.spawns[0]
@@ -521,49 +521,49 @@ func test_port_v3() -> void:
 		"objets posés avec leur image (%d images, %d provisoires)" % [with_img, prov])
 	if decor_livre(): check(shaped >= 100, "formes des objets (%d)" % shaped)
 	if decor_livre(): check(m.decor._ornaments.size() >= 50, "ornements de decor.json (%d)" % m.decor._ornaments.size())
-	check(is_equal_approx(GkRules.f("exits_open_at"), 110.0), "réglage propre à la carte : sorties à 110 s")
+	check(is_equal_approx(BkRules.f("exits_open_at"), 110.0), "réglage propre à la carte : sorties à 110 s")
 	var frames: int = 0
 	while game.round_no < 3 and frames < 60 * 90:
 		await physics_frame
 		frames += 1
 	check(game.round_no >= 3, "deux rounds IA joués sur le port (%d images)" % frames)
 	await free_game(game)
-	check(is_equal_approx(GkRules.f("exits_open_at"), 10.0), "réglage de la carte retiré à la fin de la partie")
+	check(is_equal_approx(BkRules.f("exits_open_at"), 10.0), "réglage de la carte retiré à la fin de la partie")
 
 
 ## Vue du chasseur (#607) : la ligne de l'œil vers les pieds passe sous un objet bas posé juste devant
 ## le chassé, celle vers la tête au-dessus ; un objet plus haut que l'œil cache tout.
 func test_vue_objet_bas() -> void:
-	var d: GkDecor = GkDecor.new()
+	var d: BkDecor = BkDecor.new()
 	var box: PackedVector2Array = PackedVector2Array([Vector2(280, -20), Vector2(320, -20), Vector2(320, 20), Vector2(280, 20)])
-	d.instances = [{"polys": [box], "poly_bb": Rect2(280, -20, 40, 40), "view_h": 0.6 * GkPerso.HEIGHT_PX}]
+	d.instances = [{"polys": [box], "poly_bb": Rect2(280, -20, 40, 40), "view_h": 0.6 * BkPerso.HEIGHT_PX}]
 	d.low_view = [0]
-	var eye: float = GkGame.eye_height()
+	var eye: float = BkGame.eye_height()
 	var a: Vector2 = Vector2.ZERO
 	var b: Vector2 = Vector2(340, 0)
-	check(d.low_blocks(a, b, eye, GkRules.f("vue_pieds") * GkPerso.HEIGHT_PX), "objet bas : pieds cachés")
-	check(not d.low_blocks(a, b, eye, GkRules.f("vue_tete") * GkPerso.HEIGHT_PX), "objet bas : tête vue")
+	check(d.low_blocks(a, b, eye, BkRules.f("vue_pieds") * BkPerso.HEIGHT_PX), "objet bas : pieds cachés")
+	check(not d.low_blocks(a, b, eye, BkRules.f("vue_tete") * BkPerso.HEIGHT_PX), "objet bas : tête vue")
 	check(not d.low_blocks(a, Vector2(0, 300), eye, 0.0), "ligne qui ne traverse pas l'objet : rien de caché")
 	d.instances[0]["view_h"] = eye + 1.0
-	check(d.low_blocks(a, b, eye, GkRules.f("vue_tete") * GkPerso.HEIGHT_PX), "objet plus haut que l'œil : tête cachée")
-	check(GkRules.f("vue_oeil") >= GkRules.f("vue_tete"), "l'œil du chasseur est au moins à hauteur de tête")
+	check(d.low_blocks(a, b, eye, BkRules.f("vue_tete") * BkPerso.HEIGHT_PX), "objet plus haut que l'œil : tête cachée")
+	check(BkRules.f("vue_oeil") >= BkRules.f("vue_tete"), "l'œil du chasseur est au moins à hauteur de tête")
 	d.free()
 
 
 # ------------------------------------------------------------------ partie en N rounds
 
 func test_rounds_pour() -> void:
-	check(GkGame.rounds_pour({"players": 6, "rounds": 0}) == 6, "par défaut : un round par joueur")
-	check(GkGame.rounds_pour({"players": 2, "rounds": 0}) == int(GkRules.f("rounds_min")), "au moins rounds_min")
-	check(GkGame.rounds_pour({"players": 6, "rounds": 40}) == int(GkRules.f("rounds_max")), "au plus rounds_max")
-	check(GkGame.rounds_pour({"players": 6, "rounds": 5}) == 5, "choix du menu")
-	check(GkGame.rounds_pour({"players": 6}, true) == 0, "IA contre IA : sans fin")
-	check(GkGame.rounds_pour({"players": 6}, true, 40) == 40, "--gk-rounds l'emporte")
+	check(BkGame.rounds_pour({"players": 6, "rounds": 0}) == 6, "par défaut : un round par joueur")
+	check(BkGame.rounds_pour({"players": 2, "rounds": 0}) == int(BkRules.f("rounds_min")), "au moins rounds_min")
+	check(BkGame.rounds_pour({"players": 6, "rounds": 40}) == int(BkRules.f("rounds_max")), "au plus rounds_max")
+	check(BkGame.rounds_pour({"players": 6, "rounds": 5}) == 5, "choix du menu")
+	check(BkGame.rounds_pour({"players": 6}, true) == 0, "IA contre IA : sans fin")
+	check(BkGame.rounds_pour({"players": 6}, true, 40) == 40, "--bk-rounds l'emporte")
 
 
 ## Tirage en sac : chacun est chasseur une fois par tour de sac, jamais deux rounds de suite.
 func test_sac() -> void:
-	var game: GkGame = await make_game()
+	var game: BkGame = await make_game()
 	var n: int = game.actors.size()
 	game.round_no = 2
 	game._sac.clear()
@@ -583,18 +583,18 @@ func test_sac() -> void:
 
 
 func _phases_courtes() -> void:
-	GkRules._data["phase_draw"] = 0.2
-	GkRules._data["phase_versus"] = 0.4
-	GkRules._data["phase_hide"] = 0.3
-	GkRules._data["phase_hunt"] = 1.0
-	GkRules._data["phase_end"] = 0.2
+	BkRules._data["phase_draw"] = 0.2
+	BkRules._data["phase_versus"] = 0.4
+	BkRules._data["phase_hide"] = 0.3
+	BkRules._data["phase_hunt"] = 1.0
+	BkRules._data["phase_end"] = 0.2
 
 
 ## IA contre IA : pas de versus (personne ne regarde), et pas de fin de partie.
 func test_versus_saute_en_ia() -> void:
 	_phases_courtes()
-	GkGame.config["players"] = 4
-	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	BkGame.config["players"] = 4
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
 	game._bots_only = true
 	root.add_child(game)
 	var vu: bool = false
@@ -602,7 +602,7 @@ func test_versus_saute_en_ia() -> void:
 	while game.round_no < 3 and frames < 60 * 20:
 		await physics_frame
 		frames += 1
-		vu = vu or game.phase == GkGame.Phase.VERSUS
+		vu = vu or game.phase == BkGame.Phase.VERSUS
 	check(not vu, "pas de versus en IA contre IA")
 	check(game.rounds_total == 0 and game.round_no >= 3, "IA contre IA : les rounds s'enchaînent sans fin")
 	await free_game(game)
@@ -611,37 +611,37 @@ func test_versus_saute_en_ia() -> void:
 ## Partie de 3 rounds : tirage, versus, cachette, chasse, scores, trois fois, puis le podium.
 func test_rounds_fixes_podium() -> void:
 	_phases_courtes()
-	GkGame.config["players"] = 4
-	GkGame.config["rounds"] = 3
-	var game: GkGame = (load(GAME) as PackedScene).instantiate()
+	BkGame.config["players"] = 4
+	BkGame.config["rounds"] = 3
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
 	game._local_bot = true
 	root.add_child(game)
 	var versus: int = 0
 	var t_versus: float = 0.0
-	var last: GkGame.Phase = game.phase
+	var last: BkGame.Phase = game.phase
 	var chasseurs: Array[int] = []
 	var frames: int = 0
-	while game.phase != GkGame.Phase.PODIUM and frames < 60 * 30:
+	while game.phase != BkGame.Phase.PODIUM and frames < 60 * 30:
 		await physics_frame
 		frames += 1
-		if game.phase == GkGame.Phase.VERSUS:
+		if game.phase == BkGame.Phase.VERSUS:
 			t_versus += DT
-			if last != GkGame.Phase.VERSUS:
+			if last != BkGame.Phase.VERSUS:
 				versus += 1
 				chasseurs.append(game.hunter.id)
 				check(game.versus != null, "écran versus ouvert")
-				check(last == GkGame.Phase.DRAW, "le versus suit le tirage")
-		if last == GkGame.Phase.VERSUS and game.phase != GkGame.Phase.VERSUS:
-			check(game.phase == GkGame.Phase.HIDE, "la cachette suit le versus")
+				check(last == BkGame.Phase.DRAW, "le versus suit le tirage")
+		if last == BkGame.Phase.VERSUS and game.phase != BkGame.Phase.VERSUS:
+			check(game.phase == BkGame.Phase.HIDE, "la cachette suit le versus")
 			check(game.versus == null, "écran versus refermé")
 		last = game.phase
 	check(game.rounds_total == 3, "3 rounds choisis (%d)" % game.rounds_total)
-	check(game.phase == GkGame.Phase.PODIUM and game.round_no == 3, "podium après le 3e round (round %d)" % game.round_no)
+	check(game.phase == BkGame.Phase.PODIUM and game.round_no == 3, "podium après le 3e round (round %d)" % game.round_no)
 	check(versus == 3, "un versus par round (%d)" % versus)
-	check(near(t_versus / 3.0, GkRules.f("phase_versus"), 3.0 * DT), "versus de phase_versus s (%.2f)" % (t_versus / 3.0))
+	check(near(t_versus / 3.0, BkRules.f("phase_versus"), 3.0 * DT), "versus de phase_versus s (%.2f)" % (t_versus / 3.0))
 	check(chasseurs.size() == 3 and chasseurs[0] != chasseurs[1] and chasseurs[1] != chasseurs[2], "trois chasseurs différents")
 	check(game.podium != null, "écran du podium")
-	var rangs: Array[GkActor] = GkPodium.classement(game.actors)
+	var rangs: Array[BkActor] = BkPodium.classement(game.actors)
 	for i: int in range(1, rangs.size()):
 		check(rangs[i - 1].score >= rangs[i].score, "podium trié par points")
 	await free_game(game)
@@ -652,17 +652,17 @@ func test_rounds_fixes_podium() -> void:
 ## Les réglages de l'écran passent dans la partie : joueurs, rounds (qui suivent les joueurs tant
 ## qu'on n'y a pas touché), options du catalogue posées sur rules.json et bornées.
 func test_partie_rapide_options() -> void:
-	var scr: GDScript = load("res://src/gordeka/menus/gk_partie_rapide.gd")
+	var scr: GDScript = load("res://src/blackout/menus/bk_partie_rapide.gd")
 	scr.reinitialiser()
-	var ecran: Control = (load("res://src/gordeka/menus/gk_partie_rapide.tscn") as PackedScene).instantiate()
+	var ecran: Control = (load("res://src/blackout/menus/bk_partie_rapide.tscn") as PackedScene).instantiate()
 	root.add_child(ecran)
 	await process_frame
 	var choix: Dictionary = scr.choix
-	check(int(choix["players"]) == int(GkRules.f("joueurs_defaut")) and int(choix["rounds"]) == int(choix["players"]),
+	check(int(choix["players"]) == int(BkRules.f("joueurs_defaut")) and int(choix["rounds"]) == int(choix["players"]),
 		"défauts : 6 joueurs, autant de rounds")
 	var interrupteurs: int = ecran.find_children("*", "CheckButton", true, false).size()
 	var on_off: int = 0
-	for o: Dictionary in GkRules.options_partie():
+	for o: Dictionary in BkRules.options_partie():
 		for r: Dictionary in o.get("reglages", []):
 			if str(r.get("type", "")) == "on_off":
 				on_off += 1
@@ -670,23 +670,23 @@ func test_partie_rapide_options() -> void:
 	ecran.regler_joueurs(8)
 	check(int(choix["rounds"]) == 8, "les rounds suivent les joueurs")
 	ecran.regler_joueurs(2)
-	check(int(choix["players"]) == int(GkRules.f("joueurs_min")), "au moins joueurs_min joueurs")
+	check(int(choix["players"]) == int(BkRules.f("joueurs_min")), "au moins joueurs_min joueurs")
 	ecran.regler_rounds(10)
 	ecran.regler_joueurs(5)
 	check(int(choix["rounds"]) == 10, "rounds touchés : ils ne suivent plus les joueurs")
 	ecran.regler_rounds(99)
-	check(int(choix["rounds"]) == int(GkRules.f("rounds_max")), "rounds bornés")
+	check(int(choix["rounds"]) == int(BkRules.f("rounds_max")), "rounds bornés")
 	ecran.regler_option("idee_gateaux", 0.0)
 	ecran.regler_option("gateaux_nombre", 99.0)
 	ecran.regler_option("chatouille_duree", 2.5)
-	GkGame.config["visite"] = "chasse"
+	BkGame.config["visite"] = "chasse"
 	ecran.preparer()
-	check(not GkRules.on("idee_gateaux"), "option coupée dans la partie")
-	check(near(GkRules.f("gateaux_nombre"), 8.0, 1e-4), "curseur borné à son max")
-	check(near(GkRules.f("chatouille_duree"), 2.5, 1e-4), "curseur posé sur rules.json")
-	check(int(GkGame.config["players"]) == 5 and int(GkGame.config["rounds"]) == int(GkRules.f("rounds_max")),
+	check(not BkRules.on("idee_gateaux"), "option coupée dans la partie")
+	check(near(BkRules.f("gateaux_nombre"), 8.0, 1e-4), "curseur borné à son max")
+	check(near(BkRules.f("chatouille_duree"), 2.5, 1e-4), "curseur posé sur rules.json")
+	check(int(BkGame.config["players"]) == 5 and int(BkGame.config["rounds"]) == int(BkRules.f("rounds_max")),
 		"joueurs et rounds dans la config de la partie")
-	check(str(GkGame.config["visite"]) == "", "une partie rapide n'est jamais une visite")
+	check(str(BkGame.config["visite"]) == "", "une partie rapide n'est jamais une visite")
 	scr.reinitialiser()
 	ecran.queue_free()
 	await process_frame
@@ -695,7 +695,7 @@ func test_partie_rapide_options() -> void:
 # ------------------------------------------------------------------ profil
 
 ## Le profil garde perso, couleur et emote (relu depuis user://profiles.json) ; les anciens profils
-## reçoivent leurs champs Gordeka. Le fichier du joueur est remis tel quel à la fin.
+## reçoivent leurs champs Blackout. Le fichier du joueur est remis tel quel à la fin.
 func test_profil_persiste() -> void:
 	await process_frame
 	var p: Node = root.get_node("/root/Profiles")
@@ -705,26 +705,26 @@ func test_profil_persiste() -> void:
 	var actif: int = p.active_index
 	p.profiles.clear()
 	p.active_index = -1
-	check(GkProfil.creer("Lea") == "", "profil créé")
-	GkProfil.regler(GkProfil.PERSO, "maia")
-	GkProfil.regler(GkProfil.COULEUR, 7)
-	GkProfil.regler(GkProfil.EMOTE, 4)
+	check(BkProfil.creer("Lea") == "", "profil créé")
+	BkProfil.regler(BkProfil.PERSO, "maia")
+	BkProfil.regler(BkProfil.COULEUR, 7)
+	BkProfil.regler(BkProfil.EMOTE, 4)
 	p._load()
-	check(GkProfil.perso() == "maia" and GkProfil.couleur() == 7 and GkProfil.emote() == 4,
-		"perso, couleur et emote relus du fichier (%s, %d, %d)" % [GkProfil.perso(), GkProfil.couleur(), GkProfil.emote()])
-	check(not GkProfil.actif().has("group_code") or str(GkProfil.actif()["group_code"]) == "", "aucun code de groupe")
-	check(GkProfil.creer("lea") != "", "même pseudo refusé sur l'appareil")
-	# Ancien profil de Borroka, sans champs Gordeka.
+	check(BkProfil.perso() == "maia" and BkProfil.couleur() == 7 and BkProfil.emote() == 4,
+		"perso, couleur et emote relus du fichier (%s, %d, %d)" % [BkProfil.perso(), BkProfil.couleur(), BkProfil.emote()])
+	check(not BkProfil.actif().has("group_code") or str(BkProfil.actif()["group_code"]) == "", "aucun code de groupe")
+	check(BkProfil.creer("lea") != "", "même pseudo refusé sur l'appareil")
+	# Ancien profil de Borroka, sans champs Blackout.
 	p.profiles.append({"pseudo": "Ancien", "fighter": "txomin"})
 	p.save()
 	p._load()
-	GkProfil.migrer()
+	BkProfil.migrer()
 	var ancien: Dictionary = p.profiles[1]
-	check(str(ancien.get(GkProfil.PERSO, "")) == "txomin", "migration : le perso de Borroka est gardé")
-	check(ancien.has(GkProfil.COULEUR) and int(ancien[GkProfil.COULEUR]) != 7, "migration : une couleur libre")
-	check(int(ancien.get(GkProfil.EMOTE, -1)) == 0, "migration : première emote")
-	GkProfil.vers_partie()
-	check(str(GkGame.config["character"]) == "maia" and int(GkGame.config["color"]) == 7 and str(GkGame.config["name"]) == "Lea",
+	check(str(ancien.get(BkProfil.PERSO, "")) == "txomin", "migration : le perso de Borroka est gardé")
+	check(ancien.has(BkProfil.COULEUR) and int(ancien[BkProfil.COULEUR]) != 7, "migration : une couleur libre")
+	check(int(ancien.get(BkProfil.EMOTE, -1)) == 0, "migration : première emote")
+	BkProfil.vers_partie()
+	check(str(BkGame.config["character"]) == "maia" and int(BkGame.config["color"]) == 7 and str(BkGame.config["name"]) == "Lea",
 		"le profil actif joue la partie")
 	# Remise en état.
 	p.profiles = profils
@@ -739,17 +739,17 @@ func test_profil_persiste() -> void:
 
 func test_pseudo() -> void:
 	await process_frame
-	check(GkProfil.erreur_pseudo("Léa_9") == "", "pseudo accepté (accents, chiffres, _)")
-	check(GkProfil.erreur_pseudo("a") != "", "trop court")
-	check(GkProfil.erreur_pseudo("abcdefghijklmnop") != "", "trop long")
-	check(GkProfil.erreur_pseudo("le roi") != "", "pas d'espace")
-	check(GkProfil.erreur_pseudo("x!y") != "", "caractères interdits")
-	check(GkProfil.gros_mot("PuT4in") and GkProfil.gros_mot("Mérde"), "gros mots repérés (leet, accents)")
-	check(not GkProfil.gros_mot("Louis") and not GkProfil.gros_mot("Itsaso"), "pseudos normaux acceptés")
-	check(GkProfil.erreur_pseudo("fuck_12") != "", "gros mot refusé")
+	check(BkProfil.erreur_pseudo("Léa_9") == "", "pseudo accepté (accents, chiffres, _)")
+	check(BkProfil.erreur_pseudo("a") != "", "trop court")
+	check(BkProfil.erreur_pseudo("abcdefghijklmnop") != "", "trop long")
+	check(BkProfil.erreur_pseudo("le roi") != "", "pas d'espace")
+	check(BkProfil.erreur_pseudo("x!y") != "", "caractères interdits")
+	check(BkProfil.gros_mot("PuT4in") and BkProfil.gros_mot("Mérde"), "gros mots repérés (leet, accents)")
+	check(not BkProfil.gros_mot("Louis") and not BkProfil.gros_mot("Itsaso"), "pseudos normaux acceptés")
+	check(BkProfil.erreur_pseudo("fuck_12") != "", "gros mot refusé")
 
 
 ## Reboot visuel du 21/10/2026 (style Party Hard) : l'ancien décor est dans archive/2026-10-21-flat-cartoon ;
 ## les vérifications d'images ne valent que lorsque le nouveau décor est livré.
 func decor_livre() -> bool:
-	return FileAccess.file_exists("res://assets/gordeka/decor/index.json")
+	return FileAccess.file_exists("res://assets/blackout/decor/index.json")

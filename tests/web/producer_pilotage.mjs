@@ -163,7 +163,7 @@ for (const [label, browser, opts] of runs) {
     await go('#/jeu/' + tab, sel);
     await shot(n);
   }
-  const caps = await page.evaluate(() => state.index.gordeka.ecrans.filter((id) => (state.assetsById.get(id).jeu || {}).capture).length);
+  const caps = await page.evaluate(() => state.index.blackout.ecrans.filter((id) => (state.assetsById.get(id).jeu || {}).capture).length);
   check(`${label} : écrans de menu avec capture`, caps >= 5, String(caps));
   await go('#/jeu/cartes', '.carte-jeu');
   const maps = await page.$$eval('.carte-jeu .jeu-head h3', (l) => l.map((x) => x.textContent));
@@ -205,7 +205,7 @@ for (const [label, browser, opts] of runs) {
   await page.selectOption('#kb-perso', 'louis');
   await page.waitForTimeout(400);
   const louis = await page.evaluate(() => [...document.querySelectorAll('#board .card[data-id]')].map((n) => cardById(Number(n.dataset.id)).title));
-  // Une carte d'un perso : son titre, son asset (gordeka/persos/<id>/…) ou son chapeau le nomme.
+  // Une carte d'un perso : son titre, son asset (blackout/persos/<id>/…) ou son chapeau le nomme.
   check(`${label} : filtre par perso`, louis.some((t) => /louis/i.test(t)) && !louis.some((t) => /txomin|amaia|patxi/i.test(t)), `${louis.length} cartes`);
   await shot('16_kanban_filtres');
   // Sélection + action groupée : night shift sur les cartes affichées.

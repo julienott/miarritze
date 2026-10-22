@@ -5,9 +5,9 @@ extends SceneTree
 ## est devant l'objet et regarde vers lui, un chassé figurant derrière ; on note s'il est vu.
 ## godot --path . --script res://tests/decor/visite_decor.gd -- --role=chasse|chasseur --out=/abs/dir [--map=port_pecheurs] [--only=id,id]
 
-const GAME: String = "res://src/gordeka/gk_game.tscn"
+const GAME: String = "res://src/blackout/bk_game.tscn"
 
-var game: GkGame
+var game: BkGame
 var out: String = ""
 var role: String = "chasse"
 var only: PackedStringArray = []
@@ -35,22 +35,22 @@ func _run() -> void:
 		elif a.begins_with("--only="):
 			only = a.trim_prefix("--only=").split(",")
 	DirAccess.make_dir_recursive_absolute(out)
-	GkGame.config["map"] = map_id
-	GkGame.config["visite"] = role
-	GkGame.config["players"] = 2
+	BkGame.config["map"] = map_id
+	BkGame.config["visite"] = role
+	BkGame.config["players"] = 2
 	game = (load(GAME) as PackedScene).instantiate()
 	game._figurants = role == "chasseur"
 	root.add_child(game)
 	await _wait(90)
 	game._camera.position_smoothing_enabled = false
-	var m: GkMap = game.map
-	var d: GkDecor = m.decor
-	var r: float = GkRules.px("body_radius")
+	var m: BkMap = game.map
+	var d: BkDecor = m.decor
+	var r: float = BkRules.px("body_radius")
 	var shape: CircleShape2D = CircleShape2D.new()
 	shape.radius = r
 	var space: PhysicsDirectSpaceState2D = m.get_world_2d().direct_space_state
 	var done: Dictionary = {}
-	var other: GkActor = game.actors[1]
+	var other: BkActor = game.actors[1]
 	for idx: int in d.instances.size():
 		var inst: Dictionary = d.instances[idx]
 		var id: String = str(inst["id"])
@@ -85,7 +85,7 @@ func _run() -> void:
 			var start: Vector2 = c - dir * (maxf(bb.size.x, bb.size.y) * 0.5 + 3.0 * r)
 			var q: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 			q.shape = shape
-			q.collision_mask = GkMap.LAYER_MOVE
+			q.collision_mask = BkMap.LAYER_MOVE
 			q.transform = Transform2D(0.0, start)
 			q.motion = c - start
 			var fr: PackedFloat32Array = space.cast_motion(q)
@@ -94,7 +94,7 @@ func _run() -> void:
 			poses[dn] = start + (c - start) * f
 		var view: Rect2 = img_rect.merge(bb).grow(r * 3.0)
 		for p: Vector2 in poses.values():
-			view = view.expand(p + Vector2(-r * 2, -GkPerso.HEIGHT_PX - 10)).expand(p + Vector2(r * 2, r * 2))
+			view = view.expand(p + Vector2(-r * 2, -BkPerso.HEIGHT_PX - 10)).expand(p + Vector2(r * 2, r * 2))
 		var row: Dictionary = {"tag": tag, "id": id, "poses": {}}
 		if role == "chasse":
 			for dn: String in poses:
@@ -109,7 +109,7 @@ func _run() -> void:
 					await _wait(2)
 					_shot(view, "%s__%s.png" % [tag, dn])
 				row["poses"][dn] = [snappedf(poses[dn].x, 0.1), snappedf(poses[dn].y, 0.1),
-					d.masking(poses[dn], GkGame.mask_height(r)) == idx, snappedf(float(inst.get("fade", 1.0)), 0.01)]
+					d.masking(poses[dn], BkGame.mask_height(r)) == idx, snappedf(float(inst.get("fade", 1.0)), 0.01)]
 		else:
 			# Chasseur 2,5 cases devant l'emprise, regard vers le haut ; chassé figurant derrière.
 			var hpos: Vector2 = Vector2(c.x, bb.end.y + 2.5 * m.tile)
@@ -142,8 +142,8 @@ func _run() -> void:
 	quit()
 
 
-func _reset_hider(a: GkActor, p: Vector2) -> void:
-	a.set_role(GkActor.Role.HIDER)
+func _reset_hider(a: BkActor, p: Vector2) -> void:
+	a.set_role(BkActor.Role.HIDER)
 	a.gauge = 0.0
 	a.doubted = false
 	a.position = p

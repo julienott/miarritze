@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Backlog des assets du Parc Mazon (catalogue de tools/gordeka/make_parc_mazon.py).
+"""Backlog des assets du Parc Mazon (catalogue de tools/blackout/make_parc_mazon.py).
 
   backlog_parc.py prompts [--fichier <prompts_decor.json>]   section « cartes → parc_mazon » de prompts_decor.json
   backlog_parc.py kanban [--essai]                            chapeau « Carte : Parc Mazon » + une carte par asset (Backlog)
@@ -7,7 +7,7 @@
 Prompts : description POSITIVE de l'objet (FLUX ajoute ce qu'on nomme, même précédé de « sans »), puis le
 style commun du jeu (flat cartoon, contour bleu marine épais) et la caméra 3/4 de face (front34). Rien n'est
 déposé chez pixelforge : Julien priorise. Les cartes déjà créées sont notées dans
-tools/gordeka/taches_parc_mazon.json (pas de doublon si l'on relance).
+tools/blackout/taches_parc_mazon.json (pas de doublon si l'on relance).
 """
 import argparse
 import json
@@ -25,7 +25,7 @@ SUIVI = os.path.join(HERE, "taches_parc_mazon.json")
 CLI = os.path.join(ROOT, "tools", "producer", "cli.py")
 PX = 128
 
-STYLE = ("Clean flat 2D vector cartoon game art in the style of our game Miarritze Gordeka: thick uniform dark navy "
+STYLE = ("Clean flat 2D vector cartoon game art in the style of our game Miarritze Blackout: thick uniform dark navy "
          "#1d2230 outline, flat bright colours with one darker cel-shadow tone and tiny white highlights, chunky rounded "
          "friendly shapes, cute and readable from far away for 9 year old children. Setting: a leafy city park of "
          "Biarritz in the Basque Country, with Basque red #9e1b1b and dark green #1f6b3a touches.")
@@ -121,7 +121,7 @@ def catalogue():
 
 def section():
     return {
-        "_doc": "Assets à créer pour le Parc Mazon (tools/gordeka/backlog_parc.py, catalogue de make_parc_mazon.py). "
+        "_doc": "Assets à créer pour le Parc Mazon (tools/blackout/backlog_parc.py, catalogue de make_parc_mazon.py). "
                 "Prompts positifs (sans négation), style commun et caméra front34 ; tailles en cases de 64 px, "
                 "images à 128 px par case. Rien n'est déposé chez pixelforge : Julien priorise sur /producer "
                 "(carte chapeau « Carte : Parc Mazon »). Repris du port sans nouvelle image : banc_vert, fontaine_place, "
@@ -174,7 +174,7 @@ def desc(e):
         lignes.append("Placeholder actuel : " + e["placeholder"])
     if e["remarques"]:
         lignes.append("Remarques : " + e["remarques"])
-    lignes.append(f"Élément : {e['id']} (tools/gordeka/prompts_decor.json → cartes → parc_mazon).")
+    lignes.append(f"Élément : {e['id']} (tools/blackout/prompts_decor.json → cartes → parc_mazon).")
     return "\n".join(lignes)
 
 
@@ -190,7 +190,7 @@ def cmd_kanban(args):
         d = ("Assets à créer pour la nouvelle carte Parc Mazon (parc urbain pour enfants, fronton central, aires de jeux "
              "des petits et des grands). Carte jouable en partie rapide avec des placeholders dessinés par le code "
              "(assets/maps/parc_mazon/decor/). Une carte enfant par asset, prompt proposé dans la description "
-             "(tools/gordeka/prompts_decor.json → cartes → parc_mazon). À prioriser par Julien : rien n'est déposé chez "
+             "(tools/blackout/prompts_decor.json → cartes → parc_mazon). À prioriser par Julien : rien n'est déposé chez "
              "pixelforge. Section de la carte : SPEC-GORDEKA §8.")
         suivi["chapeau"] = _id(cli("add-card", "--type", "asset", "--title", "Carte : Parc Mazon", "--desc", d,
                                    "--status", "backlog"))

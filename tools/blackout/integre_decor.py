@@ -4,13 +4,13 @@
   integre_decor.py <id> [<n> [<variante>]] [--ajoute] [--source DIR] [--dest DIR] [--sans-capture]
   integre_decor.py <id> [<n> [<variante>]] --etat ouvert [--fichier PNG] [--source DIR] [--dest DIR]
 
-  <id>        élément de tools/gordeka/prompts_decor.json (ex. sol_dalles_quai, caisses_poisson)
+  <id>        élément de tools/blackout/prompts_decor.json (ex. sol_dalles_quai, caisses_poisson)
   <n>         job de l'élément : tools/rd/out/decor/<id>/<n>/ (défaut : le premier livré)
   <variante>  image retenue dans ce job (défaut : image_00)
   --ajoute    tuile de sol : ajoute l'image comme variante supplémentaire au lieu de remplacer
   --source    racine des livraisons (défaut : tools/rd/out/decor)
-  --dest      racine du décor du jeu (défaut : assets/gordeka/decor). Hors projet, la capture passe
-              au jeu `--gk-decor-dir=<dest>` (essais sans toucher aux assets).
+  --dest      racine du décor du jeu (défaut : assets/blackout/decor). Hors projet, la capture passe
+              au jeu `--bk-decor-dir=<dest>` (essais sans toucher aux assets).
   --sans-capture   pas de capture de vérification
   --etat ouvert    image de l'état ouvert d'une cachette déjà intégrée (retouche pf_hd__edit de
               l'image fermée) : écrit <dest>/objets/<id>_ouvert.png et met à jour `ouvert` et
@@ -24,11 +24,11 @@ Traitement :
 - état ouvert : même échelle que l'image fermée. Si l'image fermée d'origine (job et variante de
   `sources`) a la même taille que l'image ouverte (retouche de la même image), le recadrage se
   fait sur l'union des deux contenus et le décalage est exact ; sinon l'image ouverte est mise à la
-  largeur de la fermée, bas et centre alignés. Le jeu la fond par-dessus la fermée (GkDecor) ;
+  largeur de la fermée, bas et centre alignés. Le jeu la fond par-dessus la fermée (BkDecor) ;
 - tuile_sol : réduction sans recadrage à 128 px par case (256 px pour 2×2 cases), faite en
   enroulant la tuile (3×3) pour qu'elle reste raccordable ; contrôle des raccords avant/après.
 Écrit <dest>/sols|objets/<id>.png (+ <id>_ombre.png), met à jour <dest>/index.json (lu par
-src/gordeka/gk_decor.gd ; décrit tous les éléments, `fichiers` pour ceux qui ont une image), importe dans Godot puis capture la zone (`--gk-cam=<zone>`) dans
+src/blackout/bk_decor.gd ; décrit tous les éléments, `fichiers` pour ceux qui ont une image), importe dans Godot puis capture la zone (`--bk-cam=<zone>`) dans
 tests/out/decor/<id>.png (<id>_ouvert.png pendant une entrée pour l'état ouvert), avec une planche de la tuile 2×2 pour les sols.
 """
 import argparse
@@ -47,7 +47,7 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 PROMPTS = os.path.join(HERE, "prompts_decor.json")
 SUIVI = os.path.join(HERE, "taches_decor.json")
 SOURCE = os.path.join(ROOT, "tools", "rd", "out", "decor")
-DEST = os.path.join(ROOT, "assets", "gordeka", "decor")
+DEST = os.path.join(ROOT, "assets", "blackout", "decor")
 CAPTURES = os.path.join(ROOT, "tests", "out", "decor")
 ZONES = os.path.join(ROOT, "assets", "maps", "port_pecheurs", "zones.json")
 PX_CASE = 128          # px par case dans les images intégrées (2× la case de jeu de 64 px)
@@ -170,7 +170,7 @@ def main():
     el = els[o.id]
     typ = el["type"]
     if typ in ("tuile_bord", "bande_facade"):
-        erreur(f"type {typ} pas encore géré par le jeu (gk_decor.gd)")
+        erreur(f"type {typ} pas encore géré par le jeu (bk_decor.gd)")
     if o.fichier:
         n, variante, src = o.n or "0", os.path.basename(o.fichier).removesuffix(".png"), o.fichier
     else:
@@ -191,7 +191,7 @@ def main():
                   "sans doute coupé (toit tronqué…) ; à régénérer avec de la marge, à regarder sur la capture")
     index_path = os.path.join(dest, "index.json")
     index = json.load(open(index_path)) if os.path.exists(index_path) else {
-        "_doc": "Décor en images intégré par tools/gordeka/integre_decor.py, lu par src/gordeka/gk_decor.gd.",
+        "_doc": "Décor en images intégré par tools/blackout/integre_decor.py, lu par src/blackout/bk_decor.gd.",
         "carte": "port_pecheurs", "elements": {}}
     ancien = index["elements"].get(o.id, {})
     entree = {k: el[k] for k in CHAMPS if k in el}
@@ -250,7 +250,7 @@ def main():
         hmax = (ch + (debord if typ == "objet" else 0)) * PX_CASE
         s = min(cw * PX_CASE / bw, hmax / bh)
         if typ == "objet" and float(el.get("hauteur_cases", 0)) > 0:
-            # Hauteur imposée (GkDecor._standing_scale) : la largeur suit, débord latéral permis.
+            # Hauteur imposée (BkDecor._standing_scale) : la largeur suit, débord latéral permis.
             s = float(el["hauteur_cases"]) * PX_CASE / bh
         taille = (max(1, round(bw * s)), max(1, round(bh * s)))
         crop.resize(taille, Image.LANCZOS).save(os.path.join(dest, "objets", f"{o.id}.png"), optimize=True)
@@ -339,12 +339,12 @@ def capture(o, el, dest):
     if os.path.exists(shot):
         os.remove(shot)
     zone = zone_capture(el)
-    args = ["--", "--scene=gk_game", "--gk-bots-only", f"--gk-cam={zone}", f"--shot={shot}", "--delay=6"]
+    args = ["--", "--scene=bk_game", "--bk-bots-only", f"--bk-cam={zone}", f"--shot={shot}", "--delay=6"]
     if ouvert:
-        # Capture pendant une entrée : la cachette est ouverte (gk_game, --gk-qa-cachette).
-        args += [f"--gk-qa-cachette={zone}", "--gk-rules=phase_draw:60"]
+        # Capture pendant une entrée : la cachette est ouverte (bk_game, --bk-qa-cachette).
+        args += [f"--bk-qa-cachette={zone}", "--bk-rules=phase_draw:60"]
     if not dans_projet:
-        args.append(f"--gk-decor-dir={dest}")
+        args.append(f"--bk-decor-dir={dest}")
     r = godot(*args)
     if not os.path.exists(shot):
         print(r.stdout[-2000:], r.stderr[-2000:])

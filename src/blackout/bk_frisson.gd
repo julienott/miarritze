@@ -1,4 +1,4 @@
-class_name GkFrisson
+class_name BkFrisson
 extends Node
 ## Ressenti du chassé local (`idee_frisson`, SPEC-GORDEKA §3.4) : battement de cœur, vignettage et
 ## vibration qui montent quand le chasseur approche, « Il fouille à côté ! » quand il fouille une
@@ -18,7 +18,7 @@ const VIBRE_MS: int = 45
 ## Intensité minimale quand sa propre jauge de repérage monte (il se sait vu).
 const VU_MIN: float = 0.7
 
-var game: GkGame
+var game: BkGame
 ## Intensité 0 → 1 (vignettage, battement) et enveloppe du dernier battement (1 → 0, pulsation).
 var level: float = 0.0
 var beat: float = 0.0
@@ -42,8 +42,8 @@ func _ready() -> void:
 ## Intensité pour un chassé à `d` px du chasseur, `gauge` = sa jauge de repérage : 0 au-delà de
 ## frisson_portee cases, 1 au contact (petit cercle de vue), au moins VU_MIN s'il est en train d'être vu.
 static func intensity(d: float, gauge: float) -> float:
-	var near: float = GkRules.px("near_radius")
-	var far: float = maxf(GkRules.px("frisson_portee"), near + 1.0)
+	var near: float = BkRules.px("near_radius")
+	var far: float = maxf(BkRules.px("frisson_portee"), near + 1.0)
 	var k: float = clampf(1.0 - (d - near) / (far - near), 0.0, 1.0)
 	if gauge > 0.0:
 		k = maxf(k, VU_MIN + (1.0 - VU_MIN) * clampf(gauge, 0.0, 1.0))
@@ -51,14 +51,14 @@ static func intensity(d: float, gauge: float) -> float:
 
 
 func _process(dt: float) -> void:
-	var me: GkActor = game.local if game else null
-	var on: bool = me != null and GkRules.on("idee_frisson") and game.visite == "" \
-		and game.phase == GkGame.Phase.HUNT and me != game.hunter and me.role == GkActor.Role.HIDER
+	var me: BkActor = game.local if game else null
+	var on: bool = me != null and BkRules.on("idee_frisson") and game.visite == "" \
+		and game.phase == BkGame.Phase.HUNT and me != game.hunter and me.role == BkActor.Role.HIDER
 	var want: float = intensity(me.position.distance_to(game.hunter.position), me.gauge) if on else 0.0
 	level = move_toward(level, want, dt * 2.5)
 	beat = maxf(0.0, beat - dt * 4.0)
-	var h: GkActor = game.hunter if game else null
-	if on and h.search_left > 0.0 and h.position.distance_to(me.position) < GkRules.px("frisson_fouille_portee"):
+	var h: BkActor = game.hunter if game else null
+	if on and h.search_left > 0.0 and h.position.distance_to(me.position) < BkRules.px("frisson_fouille_portee"):
 		search_near = 1.2
 	search_near = maxf(0.0, search_near - dt) if on else 0.0
 	if level < 0.03:

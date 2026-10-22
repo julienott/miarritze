@@ -1,4 +1,4 @@
-class_name GkVersus
+class_name BkVersus
 extends Control
 ## Écran Versus (SPEC-GORDEKA §2.2), entre le tirage et la cachette : à gauche le chasseur en grand
 ## (avatar animé, pseudo, icône de détection), à droite les chassés (avatar, pseudo, pastille de
@@ -17,7 +17,7 @@ const GRONDE_A: float = 110.0
 const TAMBOUR_HZ: float = 70.0
 const TAMBOUR_S: float = 0.35
 
-var game: GkGame
+var game: BkGame
 var duree: float = 5.0
 var _t: float = 0.0
 var _vs: Label
@@ -28,7 +28,7 @@ var _son: AudioStreamPlayer
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var h: GkActor = game.hunter
+	var h: BkActor = game.hunter
 	# Le chasseur, à gauche.
 	var gauche: VBoxContainer = VBoxContainer.new()
 	gauche.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -39,7 +39,7 @@ func _ready() -> void:
 	gauche.anchor_bottom = 0.95
 	add_child(gauche)
 	gauche.add_child(_label("CHASSEUR", 44, Color.WHITE))
-	var av: GkAvatar = GkAvatar.cree(h.character, h.color, 380)
+	var av: BkAvatar = BkAvatar.cree(h.character, h.color, 380)
 	av.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	gauche.add_child(av)
 	var ligne: HBoxContainer = HBoxContainer.new()
@@ -58,8 +58,8 @@ func _ready() -> void:
 	droite.anchor_bottom = 0.95
 	add_child(droite)
 	droite.add_child(_label("CHASSÉS", 40, Color.WHITE))
-	var chasses: Array[GkActor] = []
-	for a: GkActor in game.actors:
+	var chasses: Array[BkActor] = []
+	for a: BkActor in game.actors:
 		if a != h:
 			chasses.append(a)
 	var grille: GridContainer = GridContainer.new()
@@ -69,13 +69,13 @@ func _ready() -> void:
 	grille.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	droite.add_child(grille)
 	var hauteur: float = 170.0 if chasses.size() <= 4 else 150.0
-	for a: GkActor in chasses:
+	for a: BkActor in chasses:
 		# Case de taille fixe : l'avatar, sa pastille de couleur et son piège posés à ses pieds, le
 		# pseudo dessous (en jaune pour le joueur local).
 		var c: VBoxContainer = VBoxContainer.new()
 		c.add_theme_constant_override(&"separation", 0)
 		c.custom_minimum_size = Vector2(CASE_L, 0)
-		var petit: GkAvatar = GkAvatar.cree(a.character, a.color, hauteur)
+		var petit: BkAvatar = BkAvatar.cree(a.character, a.color, hauteur)
 		petit.regard_gauche = true
 		petit.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		c.add_child(petit)
@@ -90,13 +90,13 @@ func _ready() -> void:
 		piege.position = Vector2(CASE_L * 0.5 + 22.0, -40.0)
 		piege.size = Vector2(34, 34)
 		pied.add_child(piege)
-		var nom: Label = _label(a.display_name.trim_suffix(" (IA)"), 22, GkUi.JAUNE if a == game.local else Color.WHITE)
+		var nom: Label = _label(a.display_name.trim_suffix(" (IA)"), 22, BkUi.JAUNE if a == game.local else Color.WHITE)
 		nom.clip_text = true
 		nom.custom_minimum_size = Vector2(CASE_L, 30)
 		c.add_child(nom)
 		grille.add_child(c)
 	# « VS » et le compte à rebours, au centre.
-	_vs = _label("VS", 150, GkUi.JAUNE)
+	_vs = _label("VS", 150, BkUi.JAUNE)
 	_vs.add_theme_constant_override(&"outline_size", 28)
 	_vs.set_anchors_preset(Control.PRESET_CENTER)
 	_vs.size = Vector2(300, 200)
@@ -119,7 +119,7 @@ func _ready() -> void:
 
 
 func _label(texte: String, taille: int, couleur: Color) -> Label:
-	var l: Label = GkUi.label(texte, taille, couleur)
+	var l: Label = BkUi.label(texte, taille, couleur)
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return l
 
@@ -137,7 +137,7 @@ func _process(dt: float) -> void:
 	var n: int = clampi(ceili(duree - _t), 1, 5)
 	_compte.text = str(n)
 	_compte.position = s * Vector2(0.47, 0.66) - _compte.size * 0.5
-	_compte.add_theme_color_override(&"font_color", Color.WHITE.lerp(GkUi.ROUGE, 1.0 - float(n) / 5.0))
+	_compte.add_theme_color_override(&"font_color", Color.WHITE.lerp(BkUi.ROUGE, 1.0 - float(n) / 5.0))
 	queue_redraw()
 
 
@@ -158,7 +158,7 @@ func _draw() -> void:
 		var a: float = _t * 0.6 + TAU * float(i) / 12.0
 		draw_colored_polygon(PackedVector2Array([c, c + Vector2.from_angle(a - 0.08) * 900.0,
 			c + Vector2.from_angle(a + 0.08) * 900.0]), Color(1, 1, 1, 0.05))
-	draw_line(Vector2(mx + 60, 0), Vector2(mx - 60, s.y), GkUi.INK, 10.0, true)
+	draw_line(Vector2(mx + 60, 0), Vector2(mx - 60, s.y), BkUi.INK, 10.0, true)
 
 
 ## Son de tension : grondement grave qui monte et grossit, avec un coup de tambour à chaque seconde.
@@ -208,15 +208,15 @@ class Icone extends Control:
 		var c: Vector2 = size * 0.5
 		var r: float = minf(size.x, size.y) * 0.5 - 2.0
 		if genre == "pastille":
-			GkDraw.ellipse(self, c, r, r, couleur, 3.0)
+			BkDraw.ellipse(self, c, r, r, couleur, 3.0)
 			return
-		GkDraw.ellipse(self, c, r, r, Color.WHITE, 3.0)
+		BkDraw.ellipse(self, c, r, r, Color.WHITE, 3.0)
 		if genre == "detection":
 			# Onde : point central et deux arcs.
-			GkDraw.ellipse(self, c, r * 0.18, r * 0.18, GkVersus.ROUGE)
+			BkDraw.ellipse(self, c, r * 0.18, r * 0.18, BkVersus.ROUGE)
 			for k: float in [0.45, 0.72]:
-				draw_arc(c, r * k, -PI * 0.3, PI * 0.3, 12, GkVersus.ROUGE, r * 0.12, true)
-				draw_arc(c, r * k, PI * 0.7, PI * 1.3, 12, GkVersus.ROUGE, r * 0.12, true)
+				draw_arc(c, r * k, -PI * 0.3, PI * 0.3, 12, BkVersus.ROUGE, r * 0.12, true)
+				draw_arc(c, r * k, PI * 0.7, PI * 1.3, 12, BkVersus.ROUGE, r * 0.12, true)
 		else:
 			# Piège : mâchoire à dents, dans la couleur du joueur.
 			var col: Color = couleur.darkened(0.1)
@@ -225,4 +225,4 @@ class Icone extends Control:
 			for i: int in 4:
 				var x: float = c.x - r * 0.42 + r * 0.28 * i
 				draw_colored_polygon(PackedVector2Array([Vector2(x - r * 0.1, c.y - r * 0.05),
-					Vector2(x + r * 0.1, c.y - r * 0.05), Vector2(x, c.y + r * 0.22)]), GkDraw.INK)
+					Vector2(x + r * 0.1, c.y - r * 0.05), Vector2(x, c.y + r * 0.22)]), BkDraw.INK)

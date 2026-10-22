@@ -35,5 +35,5 @@ producer/data/
 .producer_token
 .pf_token
 backend/turn.php
-tools/gordeka/.decor_go
-tools/gordeka/.decor_pause
+tools/blackout/.decor_go
+tools/blackout/.decor_pause

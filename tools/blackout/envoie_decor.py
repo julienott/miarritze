@@ -5,7 +5,7 @@
   envoie_decor.py suivant             attend le prochain job fini, le rapatrie, rend la main
   envoie_decor.py annule <id> …       annule les jobs encore en attente de ces éléments
 
-Suivi : tools/gordeka/taches_decor.json ({id: [task_id, …]}), sorties dans tools/rd/out/decor/<id>/<n>/.
+Suivi : tools/blackout/taches_decor.json ({id: [task_id, …]}), sorties dans tools/rd/out/decor/<id>/<n>/.
 Les `edits` (états ouverts, images suivantes de l'eau) attendent qu'une image soit validée.
 """
 import json

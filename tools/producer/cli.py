@@ -27,7 +27,7 @@ Exemples :
   cli.py add-milestone --title "Contenu v1" --due 2026-12-01
   cli.py set-milestone 2 --due 2026-12-15 [--closed on]
   cli.py set 4 --milestone 2 --due 2026-11-30   (0 / aucune pour retirer)
-  cli.py asset-comment gordeka/persos/louis/animations "pieds qui glissent" --detail walk
+  cli.py asset-comment blackout/persos/louis/animations "pieds qui glissent" --detail walk
                                (commentaire d'asset reporté sur la carte liée, ou nouvelle carte)
   cli.py routes                (toutes les routes de l'API)
 """
@@ -602,7 +602,7 @@ def main() -> None:
     s.set_defaults(fn=cmd_set_milestone)
 
     s = sub.add_parser("asset-comment", help="commenter un asset ; reporté sur sa carte (ou nouvelle carte)")
-    s.add_argument("asset", help="id de l'asset (ex. gordeka/persos/louis/animations, jeu/regles/partie)")
+    s.add_argument("asset", help="id de l'asset (ex. blackout/persos/louis/animations, jeu/regles/partie)")
     s.add_argument("text")
     s.add_argument("--detail", help="animation visée (ex. walk)")
     s.add_argument("--card", type=int, help="carte où reporter le commentaire (sinon : choisie par le serveur)")

@@ -7,8 +7,8 @@ planche de recette par carte et liste ce qui attend la recette de JULIEN. Rien n
   decor_matin.py integre <carte> [<variante>] [--sans-capture] [--nuit]
         image / refaire : <variante> = image_00 | image_01        (integre_decor.py, commit local)
         version ouverte : <variante> = image_00 | image_01        (integre_decor.py --etat ouvert)
-        animation       : <variante> = numéro de la piste : 0, 1… (planche + json dans assets/gordeka/decor/anims/)
-        masque          : sans variante                           (masques dans assets/gordeka/decor/masques/<id>/)
+        animation       : <variante> = numéro de la piste : 0, 1… (planche + json dans assets/blackout/decor/anims/)
+        masque          : sans variante                           (masques dans assets/blackout/decor/masques/<id>/)
       puis dépose ce qui attendait cette image (masque v3, version ouverte, animation ; masque d'office pour
       un nouvel objet sans carte de masque), en priorité « normal » (« night » avec --nuit), et passe ces
       cartes en Doing. La carte intégrée est notée « prête pour la QA » (commentaire sur le kanban) : elle
@@ -16,7 +16,7 @@ planche de recette par carte et liste ce qui attend la recette de JULIEN. Rien n
   decor_matin.py relance <carte> ["consigne"]   redépose (priorité normal), consigne ajoutée au prompt
 
 <carte> = numéro de la carte kanban (ou « m-<id> » pour un masque déposé d'office).
-Suivi : tools/gordeka/taches_decor_nuit.json. Commits locaux à chemins explicites, jamais de push.
+Suivi : tools/blackout/taches_decor_nuit.json. Commits locaux à chemins explicites, jamais de push.
 """
 import json
 import os
@@ -28,7 +28,7 @@ import urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import todo_decor as td  # noqa: E402   (payloads, dépôt, suivi, kanban)
-from todo_decor import ROOT, GK, DECOR, INDEX, OUT_DECOR, lire, ecrire  # noqa: E402
+from todo_decor import ROOT, BK, DECOR, INDEX, OUT_DECOR, lire, ecrire  # noqa: E402
 
 import nuit  # noqa: E402
 import masques_pf as mp  # noqa: E402
@@ -38,7 +38,7 @@ from PIL import Image, ImageDraw  # noqa: E402
 
 STAGE = os.path.join(ROOT, "tools", "rd", "out", "decor_nuit")
 PY = os.path.join(ROOT, ".venv", "bin", "python")
-SUIVI_DECOR = os.path.join(GK, "taches_decor.json")
+SUIVI_DECOR = os.path.join(BK, "taches_decor.json")
 ANIMS = os.path.join(DECOR, "anims")
 
 
@@ -154,7 +154,7 @@ def liste(tout=False):
 
 def commit(chemins, message):
     chemins = [os.path.relpath(c, ROOT) if os.path.isabs(c) else c for c in chemins]
-    nuit.commit(chemins + ["tools/gordeka/taches_decor_nuit.json"], message)
+    nuit.commit(chemins + ["tools/blackout/taches_decor_nuit.json"], message)
 
 
 def godot_import():
@@ -190,11 +190,11 @@ def integre_image(cle, ent, variante, sans_capture):
     ecrire(SUIVI_DECOR, sd)
     if el["type"] in ("tuile_bord", "bande_facade"):
         ent["retenu"] = {"job": n, "variante": variante, "dossier": dest}
-        print(f"{eid} : type {el['type']} pas encore affiché par le jeu (gk_decor.gd) : image retenue "
+        print(f"{eid} : type {el['type']} pas encore affiché par le jeu (bk_decor.gd) : image retenue "
               f"({dest}/{variante}.png), intégration au jeu à faire")
-        commit(["tools/gordeka/taches_decor.json"], f"Gordeka : décor {eid}, image retenue {variante} (recette Julien)")
+        commit(["tools/blackout/taches_decor.json"], f"Blackout : décor {eid}, image retenue {variante} (recette Julien)")
         return []
-    args = [os.path.join(GK, "integre_decor.py"), eid, str(n), variante]
+    args = [os.path.join(BK, "integre_decor.py"), eid, str(n), variante]
     if sans_capture:
         args.append("--sans-capture")
     run(*args)
@@ -202,21 +202,21 @@ def integre_image(cle, ent, variante, sans_capture):
         fichiers = [os.path.join(DECOR, f) for f in td.index()[eid]["fichiers"]]
     else:
         fichiers = [os.path.join(DECOR, "objets", f"{eid}.png"), os.path.join(DECOR, "objets", f"{eid}_ombre.png")]
-    commit(fichiers + [INDEX, "tools/gordeka/taches_decor.json"],
-           f"Gordeka : décor {eid} {'refait de face' if ent['sorte'] == 'refaire' else 'nouvelle image'} "
+    commit(fichiers + [INDEX, "tools/blackout/taches_decor.json"],
+           f"Blackout : décor {eid} {'refait de face' if ent['sorte'] == 'refaire' else 'nouvelle image'} "
            f"(pf_2d, {variante}, recette Julien)")
     return [os.path.join(DECOR, "objets", f"{eid}.png")]
 
 
 def integre_ouvert(cle, ent, variante, sans_capture):
     eid, j = ent["element"], ent["jobs"][0]
-    args = [os.path.join(GK, "integre_decor.py"), eid, "--etat", "ouvert",
+    args = [os.path.join(BK, "integre_decor.py"), eid, "--etat", "ouvert",
             "--fichier", os.path.join(j["dossier"], variante + ".png")]
     if sans_capture:
         args.append("--sans-capture")
     run(*args)
     commit([os.path.join(DECOR, "objets", f"{eid}_ouvert.png"), INDEX],
-           f"Gordeka : décor {eid}, état ouvert (pf_hd__edit, {variante}, recette Julien)")
+           f"Blackout : décor {eid}, état ouvert (pf_hd__edit, {variante}, recette Julien)")
 
 
 def integre_anim(cle, ent, piste):
@@ -228,7 +228,7 @@ def integre_anim(cle, ent, piste):
     meta.update(source_task=j["tid"], piste=j["quoi"])
     json.dump(meta, open(js, "w"), ensure_ascii=False, indent=1)
     # L'animation est notée dans prompts_decor.json (integre_decor.py recopie `animation` de là dans l'index)
-    # et dans l'index. Le jeu (gk_decor.gd) ne lit pas encore les planches : c'est une tâche à part.
+    # et dans l'index. Le jeu (bk_decor.gd) ne lit pas encore les planches : c'est une tâche à part.
     pd = json.load(open(td.ed.PROMPTS))
     for e in pd["elements"]:
         if e["id"] == eid:
@@ -239,7 +239,7 @@ def integre_anim(cle, ent, piste):
     ix["elements"].setdefault(eid, {})["animation"] = anim
     json.dump(ix, open(INDEX, "w"), ensure_ascii=False, indent=1)
     godot_import()
-    commit([png, js, INDEX, td.ed.PROMPTS], f"Gordeka : décor {eid}, animation en boucle ({j['quoi']}, recette Julien)")
+    commit([png, js, INDEX, td.ed.PROMPTS], f"Blackout : décor {eid}, animation en boucle ({j['quoi']}, recette Julien)")
 
 
 def integre_masque(cle, ent):
@@ -256,7 +256,7 @@ def integre_masque(cle, ent):
         shutil.copy(ap, os.path.join(mp.APERCUS_JEU, eid + ".png"))
         fichiers.append(os.path.join(mp.APERCUS_JEU, eid + ".png"))
     godot_import()
-    commit(fichiers, f"Gordeka : masques v3 de {eid} (pf_2d__footprint, recette Julien)")
+    commit(fichiers, f"Blackout : masques v3 de {eid} (pf_2d__footprint, recette Julien)")
 
 
 def depose_suites(cle, ent, prio):
@@ -363,7 +363,7 @@ def relance(cle, consigne):
 
 
 if __name__ == "__main__":
-    mp.APERCUS_JEU = mp.APERCUS                      # aperçus lus par /producer (tools/gordeka/masques/)
+    mp.APERCUS_JEU = mp.APERCUS                      # aperçus lus par /producer (tools/blackout/masques/)
     a = sys.argv[1:]
     if not a:
         sys.exit(__doc__)

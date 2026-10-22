@@ -1,9 +1,9 @@
-class_name GkLampe
+class_name BkLampe
 extends Node2D
 ## Cône de lumière de la lampe du chasseur pendant son animation `hunter_reveal` (Julien, 2026-10-20 :
 ## les faisceaux dessinés par l'IA ne sont « pas crédibles », c'est le jeu qui dessine la lumière).
-## Enfant du GkPerso : il part de la main mesurée image par image (« lampe » du .json de l'anim,
-## tools/gordeka/lampe.py), vers l'avant du perso. Il s'allume en clignotant à l'image `debut`,
+## Enfant du BkPerso : il part de la main mesurée image par image (« lampe » du .json de l'anim,
+## tools/blackout/lampe.py), vers l'avant du perso. Il s'allume en clignotant à l'image `debut`,
 ## suit la main, puis s'éteint en fondu à la fin du geste, quand le cône de vision prend le relais.
 ## Dessiné en px d'écran : son échelle annule celle du perso.
 

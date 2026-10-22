@@ -1,15 +1,17 @@
-class_name GkProfil
+class_name BkProfil
 extends RefCounted
-## Profil Gordeka (SPEC-GORDEKA §6.0, §7) par-dessus les profils locaux de l'appareil (autoload
+## Profil Blackout (SPEC-GORDEKA §6.0, §7) par-dessus les profils locaux de l'appareil (autoload
 ## Profiles, user://profiles.json, 4 au plus) : pseudo, perso favori, couleur préférée (0 à 11) et
-## emote favorite (index dans GkGame.EMOTES). Aucune donnée personnelle, plus de code de groupe
+## emote favorite (index dans BkGame.EMOTES). Aucune donnée personnelle, plus de code de groupe
 ## (les champs de Borroka restent dans le fichier, sans être montrés). Les anciens profils reçoivent
-## leurs champs Gordeka au premier chargement (`migrer`).
+## leurs champs Blackout au premier chargement (`migrer`).
 
+## Clés gardées telles quelles (« gk_ » du nom d'avant) : elles sont déjà dans les user://profiles.json
+## des appareils ; les renommer perdrait perso, couleur et emote des profils existants.
 const PERSO: String = "gk_perso"
 const COULEUR: String = "gk_couleur"
 const EMOTE: String = "gk_emote"
-const GROS_MOTS_PATH: String = "res://data/gordeka/gros_mots.json"
+const GROS_MOTS_PATH: String = "res://data/blackout/gros_mots.json"
 
 static var _gros_mots: PackedStringArray = []
 
@@ -18,14 +20,14 @@ static func profiles() -> Node:
 	return (Engine.get_main_loop() as SceneTree).root.get_node_or_null("/root/Profiles")
 
 
-## Ajoute les champs Gordeka qui manquent (anciens profils Borroka) : le perso de Borroka s'il existe
-## dans Gordeka, sinon Louis ; une couleur différente pour chaque profil ; la première emote.
+## Ajoute les champs Blackout qui manquent (anciens profils Borroka) : le perso de Borroka s'il existe
+## dans Blackout, sinon Louis ; une couleur différente pour chaque profil ; la première emote.
 static func migrer() -> void:
 	var p: Node = profiles()
 	if p == null:
 		return
 	var change: bool = false
-	var persos: Array = GkRules.data().get("characters", [])
+	var persos: Array = BkRules.data().get("characters", [])
 	for i: int in p.profiles.size():
 		var prof: Dictionary = p.profiles[i]
 		if not prof.has(PERSO) or not persos.has(str(prof[PERSO])):
@@ -76,7 +78,7 @@ static func couleur() -> int:
 
 
 static func emote() -> int:
-	return clampi(int(actif().get(EMOTE, 0)), 0, GkGame.EMOTES.size() - 1)
+	return clampi(int(actif().get(EMOTE, 0)), 0, BkGame.EMOTES.size() - 1)
 
 
 static func regler(cle: String, valeur: Variant) -> void:
@@ -134,7 +136,7 @@ static func normaliser(texte: String) -> String:
 	return out
 
 
-## Crée un profil (actif) avec ses champs Gordeka ; renvoie le message d'erreur, ou "".
+## Crée un profil (actif) avec ses champs Blackout ; renvoie le message d'erreur, ou "".
 static func creer(texte: String) -> String:
 	var err: String = erreur_pseudo(texte)
 	if err != "":
@@ -153,13 +155,13 @@ static func creer(texte: String) -> String:
 static func vers_partie() -> void:
 	if not a_un_actif():
 		return
-	GkGame.config["name"] = pseudo()
-	GkGame.config["character"] = perso()
-	GkGame.config["color"] = couleur()
-	GkGame.config["emote"] = emote()
+	BkGame.config["name"] = pseudo()
+	BkGame.config["character"] = perso()
+	BkGame.config["color"] = couleur()
+	BkGame.config["emote"] = emote()
 
 
-## QA (`--scene=gk_accueil`… sans profil) : un profil jetable pour voir les écrans.
+## QA (`--scene=bk_accueil`… sans profil) : un profil jetable pour voir les écrans.
 static func assurer_qa() -> void:
 	var p: Node = profiles()
 	if p != null and p.profiles.is_empty():

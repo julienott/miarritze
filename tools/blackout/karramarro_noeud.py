@@ -3,7 +3,7 @@
 nœud par retouche. On repart du foulard n° 2 (tools/rd/out/karramarro/gk2d/foulard/image_00.png), on
 efface le pendant et on dessine un petit nœud rond propre avec deux pointes, au trait du perso.
 
-  karramarro_noeud.py   → assets/gordeka/persos/karramarro/modele.png
+  karramarro_noeud.py   → assets/blackout/persos/karramarro/modele.png
 """
 import os
 
@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 SRC = os.path.join(ROOT, "tools", "rd", "out", "karramarro", "gk2d", "foulard", "image_00.png")
-DST = os.path.join(ROOT, "assets", "gordeka", "persos", "karramarro", "modele.png")
+DST = os.path.join(ROOT, "assets", "blackout", "persos", "karramarro", "modele.png")
 
 ZONE = (318, 336, 380, 424)          # zone nettoyée autour de l'ancien nœud (px de l'image 512)
 NOEUD = (337, 349)                   # coin du foulard, où l'on pose le nouveau nœud
