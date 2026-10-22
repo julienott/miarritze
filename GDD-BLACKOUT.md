@@ -453,8 +453,7 @@ simples ; Kaio et Karramarro sans foulard, Karramarro sur pattes de crabe ; Ramu
 uni et chaussures noires ; Itsaso écume blanche ; Itsasargi lanterne plus grosse, bien tenue. Louis,
 Maïa et Peio inchangés.
 
-- **Proportions trapues façon Party Hard** (*Julien avec pixelforge, 23/10*) : ~7 px de large à 32 px
-  (Louis passait de 5 à 7).
+- **Proportions fines** (*Julien, 23/10*, après un essai trapu) : ~5 têtes, 5 à 7 px de large à 32 px.
 - **Character set complet** (*Julien, 23/10*) : éléments fixes + **9 éléments standard** communs à tous
   (`interagir`, `victoire`, `defaite` et les 6 animations d'effets), demandés à pixelforge le 23/10, + **3
   extras propres au perso** (`idle_long`, `cast_chasse`, `cast_chasseur`). Un perso déjà validé reçoit ce
@@ -547,6 +546,11 @@ Même pipeline, `size: "boss"` (64 px dans une case de 128, §8.1). Éléments d
 `profile`, `portrait` (versus), `idle`, `run` (sa démarche, clip propre au boss), `etourdi` (Zezengorri
 contre un rocher) et 3 extras : `cri` (il repère un joueur), `pouvoir_1`, `pouvoir_2` (§5.2). Pas de saut
 de cachette, d'envol ni de fantôme.
+
+**Créatures non humaines** (*Julien, 23/10*) : Herensuge animé « en marionnette » par pixelforge (dessiné une
+fois, parties découpées, mouvements calculés, comme le fantôme) ; pour les animaux PNJ, essai comparé sur le
+chat entre la marionnette et des vidéos pilotes d'animaux 3D (Quaternius, CC0) avant de choisir.
+Intxixuk : trois character sets (un par lutin, variantes), groupés par le jeu.
 
 **Essai du 23/10 : Basajaun.**
 - Prompt : « a giant friendly-scary forest lord covered in thick shaggy brown fur, a long beard of green
