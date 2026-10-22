@@ -30,6 +30,13 @@ var vanish_left: float = 0.0
 var pop_from: Vector2 = Vector2.ZERO
 var pop_left: float = 0.0
 var search_left: float = 0.0
+## Disjoncteur (GDD §3.2) : secondes d'action restantes sur le boîtier `use_target` (immobile).
+var use_left: float = 0.0
+var use_target: int = -1
+## Lumière (GDD §3.2) : pieds éclairés par une source allumée (calculé par la partie pendant la
+## chasse) ; vu du chasseur dans l'ombre, il n'est qu'une silhouette (`silhouette`, sans pseudo).
+var lit: bool = true
+var silhouette: bool = false
 var gauge: float = 0.0               # repérage par le chasseur (0 → 1 = trouvé)
 ## Détection progressive : la jauge a passé le « ? » (detection_doute) ; « ouf ! » restant (s) quand
 ## elle est retombée à zéro sans capture (frôlement).
@@ -148,7 +155,7 @@ func speed() -> float:
 
 ## Avance d'un pas : `move` de longueur ≤ 1, `look_dir` optionnel pour regarder sans bouger.
 func step(move: Vector2, look_dir: Vector2, dt: float) -> void:
-	if frozen or hidden_in >= 0 or search_left > 0.0:
+	if frozen or hidden_in >= 0 or search_left > 0.0 or use_left > 0.0:
 		velocity = Vector2.ZERO
 	else:
 		velocity = move.limit_length(1.0) * speed()
@@ -181,9 +188,11 @@ func _draw() -> void:
 		var ring: PackedVector2Array = BkDraw.ellipse_points(Vector2(0, fy), t * 0.32, t * 0.12, 20)
 		ring.append(ring[0])
 		draw_polyline(ring, Color("ff3b30"), 1.0)
-	# Pseudo au-dessus de la tête : on reconnaît les joueurs à leur pseudo (GDD §7.1).
+	# Pseudo au-dessus de la tête : on reconnaît les joueurs à leur pseudo (GDD §7.1) ; pas celui d'une
+	# silhouette dans l'ombre (le chasseur ne sait pas qui c'est).
 	var top: float = name_y()
-	BkDraw.texte(self, Vector2(0, top), display_name, NOM_TAILLE, Color(1, 1, 1, 0.55 if ghost else 1.0), 2)
+	if not silhouette:
+		BkDraw.texte(self, Vector2(0, top), display_name, NOM_TAILLE, Color(1, 1, 1, 0.55 if ghost else 1.0), 2)
 	if slow_left > 0.0:
 		for k2: int in 3:
 			var p: Vector2 = Vector2(0, top + 4) + Vector2.from_angle(float(k2) * TAU / 3.0 + slow_left * 4.0) * t * 0.22

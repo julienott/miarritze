@@ -1,8 +1,8 @@
 class_name BkMap
 extends Node2D
 ## Carte lue depuis assets/maps/<id>/map.txt (GDD-BLACKOUT.md §10) : une lettre par case (légende
-## ci-dessous et dans tools/blackout/make_bac_a_sable.py), et zones.json (zones, sorties, lampadaires,
-## disjoncteurs, places des gâteaux et des mouettes). Construit les collisions (couche 1 : on ne passe
+## ci-dessous et dans tools/blackout/make_bac_a_sable.py), et zones.json (zones, sorties, secteurs, sources
+## de lumière, disjoncteurs, places des gâteaux et des mouettes). Construit les collisions (couche 1 : on ne passe
 ## pas ; couche 2 : on ne voit pas à travers), les occulteurs de lumière (vue du chasseur), la grille
 ## A* des IA et le dessin en placeholders pixel art (aplats et formes simples, cases de tile_px).
 
@@ -50,12 +50,13 @@ var exits: Array[Vector2i] = []
 ## tire quelques-unes à chaque round.
 var exit_groups: Array = []
 var spawns: Array[Vector2i] = []
-## Emplacements des lampadaires {pos: Vector2i, rayon (cases), secteur} et des disjoncteurs
-## {pos: Vector2i (case où l'on se tient), mur: Vector2i (côté du boîtier), secteur} (zones.json) :
-## données et marqueurs seulement, la lumière vient à l'étape suivante (GDD §3.2).
-var lampadaires: Array = []
+## Sources de lumière fixes {pos: Vector2i, rayon (cases), secteur, type, couleur (Color, ou noire :
+## celle du type), mur: Vector2i (néon : côté du mur qui le porte)} et disjoncteurs {pos: Vector2i (case
+## où l'on se tient), mur: Vector2i (côté du boîtier), secteur} (zones.json, GDD §3.2). La lumière et
+## les boîtiers sont dessinés et animés par la partie (BkLumieres, BkGame).
+var lumieres: Array = []
 var disjoncteurs: Array = []
-## Secteurs de la carte {id, rect: Rect2i} (un disjoncteur par secteur).
+## Secteurs de la carte {id, nom, rect: Rect2i} (un disjoncteur par secteur).
 var secteurs: Array = []
 ## Places des gâteaux basques et des mouettes (zones.json → « gateaux », « mouettes ») ; vides : tirage
 ## au hasard sur les cases dégagées.
@@ -140,26 +141,46 @@ func load_map(id: String) -> void:
 
 ## Lampadaires, disjoncteurs, secteurs, places des gâteaux et des mouettes (zones.json).
 func _read_points() -> void:
-	lampadaires.clear()
+	lumieres.clear()
 	disjoncteurs.clear()
 	secteurs.clear()
 	gateaux_places.clear()
 	mouettes_places.clear()
-	for l: Variant in info.get("lampadaires", []):
+	# « lampadaires » : ancien nom de la liste (étape 1).
+	for l: Variant in info.get("lumieres", info.get("lampadaires", [])):
 		var ld: Dictionary = l
-		lampadaires.append({"pos": _v2i(ld["pos"]), "rayon": float(ld.get("rayon", 3.0)),
-			"secteur": str(ld.get("secteur", ""))})
+		lumieres.append({"pos": _v2i(ld["pos"]), "rayon": float(ld.get("rayon", 3.0)),
+			"secteur": str(ld.get("secteur", "")), "type": str(ld.get("type", "lampadaire")),
+			"couleur": Color(str(ld["couleur"])) if ld.has("couleur") else Color.BLACK,
+			"mur": _v2i(ld.get("mur", [0, 0]))})
 	for d: Variant in info.get("disjoncteurs", []):
 		var dd: Dictionary = d
 		disjoncteurs.append({"pos": _v2i(dd["pos"]), "mur": _v2i(dd.get("mur", [0, -1])),
 			"secteur": str(dd.get("secteur", ""))})
 	for sct: Variant in info.get("secteurs", []):
 		var r: Array = (sct as Dictionary)["rect"]
-		secteurs.append({"id": str(sct["id"]), "rect": Rect2i(int(r[0]), int(r[1]), int(r[2]), int(r[3]))})
+		secteurs.append({"id": str(sct["id"]), "nom": str((sct as Dictionary).get("nom", sct["id"])),
+			"rect": Rect2i(int(r[0]), int(r[1]), int(r[2]), int(r[3]))})
 	for g: Variant in info.get("gateaux", []):
 		gateaux_places.append(_v2i(g))
 	for m: Variant in info.get("mouettes", []):
 		mouettes_places.append(_v2i(m))
+
+
+## Secteur d'une case (id), "" hors des secteurs.
+func secteur_of(t: Vector2i) -> String:
+	for s: Dictionary in secteurs:
+		if (s["rect"] as Rect2i).has_point(t):
+			return str(s["id"])
+	return ""
+
+
+## Nom d'un secteur (pour les messages), son id s'il n'en a pas.
+func secteur_nom(id: String) -> String:
+	for s: Dictionary in secteurs:
+		if str(s["id"]) == id:
+			return str(s["nom"])
+	return id
 
 
 static func _v2i(a: Variant) -> Vector2i:
@@ -249,24 +270,29 @@ func _build_bodies() -> void:
 	low.collision_layer = LAYER_MOVE
 	low.collision_mask = 0
 	add_child(low)
-	# Cases d'un objet en image : son empreinte au sol (forme réelle) remplace le rectangle des cases.
-	var shaped: Dictionary = decor.shaped if decor else {}
-	for r: Rect2i in merged_rects(OCCLUDE, shaped):
-		var px: Rect2 = thin_rect(r)
-		_add_shape(solid, px)
-		_add_occluder(PackedVector2Array([px.position, Vector2(px.end.x, px.position.y), px.end,
-			Vector2(px.position.x, px.end.y)]), 1)
-	for r: Rect2i in merged_rects(LOW, shaped):
-		_add_shape(low, Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile))
-	if decor == null:
-		return
-	# QA : `--bk-qa-formes` (ou la touche F de la visite) montre les formes (vert : bloque la vue ;
-	# jaune : le passage seul).
+	# QA : `--bk-qa-formes` (ou la touche F du debug) montre les formes (vert : bloque la vue et le
+	# passage ; jaune : le passage seul), celles des cases comme celles des objets en image.
 	var qa: Node2D = Node2D.new()
 	qa.z_index = 100
 	qa.visible = OS.get_cmdline_user_args().has("--bk-qa-formes")
 	add_child(qa)
 	formes = qa
+	# Cases d'un objet en image : son empreinte au sol (forme réelle) remplace le rectangle des cases.
+	var shaped: Dictionary = decor.shaped if decor else {}
+	for r: Rect2i in merged_rects(OCCLUDE, shaped):
+		var px: Rect2 = thin_rect(r)
+		var pts: PackedVector2Array = PackedVector2Array([px.position, Vector2(px.end.x, px.position.y), px.end,
+			Vector2(px.position.x, px.end.y)])
+		_add_shape(solid, px)
+		_add_occluder(pts, 1)
+		_forme(pts, Color("2fe05a"))
+	for r: Rect2i in merged_rects(LOW, shaped):
+		var px2: Rect2 = Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile)
+		_add_shape(low, px2)
+		_forme(PackedVector2Array([px2.position, Vector2(px2.end.x, px2.position.y), px2.end,
+			Vector2(px2.position.x, px2.end.y)]), Color("f2c12e"))
+	if decor == null:
+		return
 	# Objets qui cachent la vue mais plus bas que l'œil du chasseur (#607) : hors de la couche de vue et
 	# sans ombre de la lampe ; BkGame.sight_fraction teste leur hauteur point du corps par point.
 	var eye: float = BkGame.eye_height()
@@ -285,13 +311,18 @@ func _build_bodies() -> void:
 			(solid if blocks else low).add_child(cp)
 			if blocks:
 				_add_occluder(poly, BkDecor.LIGHT_MASK)
-			if qa:
-				var line: Line2D = Line2D.new()
-				line.points = poly
-				line.closed = true
-				line.width = 3.0
-				line.default_color = Color("2fe05a") if blocks else Color("f2c12e")
-				qa.add_child(line)
+			_forme(poly, Color("2fe05a") if blocks else Color("f2c12e"))
+
+
+## Contour d'une forme (QA, touche F) : trait fin, rentré d'un pixel pour que deux formes voisines se
+## distinguent.
+func _forme(poly: PackedVector2Array, col: Color) -> void:
+	var line: Line2D = Line2D.new()
+	line.points = poly
+	line.closed = true
+	line.width = 2.0
+	line.default_color = col
+	formes.add_child(line)
 
 
 ## Rectangle (px) de la forme de cases fusionnées : la case entière, ou une bande mince centrée pour
@@ -506,8 +537,6 @@ const C_GRILLE: Color = Color("b8c0cc")
 const C_VITRE: Color = Color("7fb8d8")
 const C_ROCHER: Color = Color("8c7a6a")
 const C_BARQUE: Color = Color("d8dde3")
-const C_LAMPE: Color = Color("ffd34a")
-const C_DISJ: Color = Color("c9cfd8")
 ## Hauteur de la face avant des objets debout (en cases), vue « maison de poupée » (GDD §9).
 const DEPTH: float = 0.35
 
@@ -544,17 +573,9 @@ func _build_chunks() -> void:
 		c.zone = z
 		c.items = groups.get(z, [])
 		add_child(c)
-	# Marqueurs des lampadaires et des disjoncteurs, par-dessus le sol (données de l'étape suivante).
-	var marks: BkMapChunk = BkMapChunk.new()
-	marks.map = self
-	marks.zone = -2
-	add_child(marks)
 
 
 func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
-	if zi == -2:
-		_draw_marks(ci)
-		return
 	var t: float = tile
 	if zi < 0 and decor:
 		decor.draw_floors(ci, -1)
@@ -686,27 +707,3 @@ func _window(ci: CanvasItem, rr: Rect2i) -> void:
 			ci.draw_rect(Rect2(g.position, Vector2(g.size.x, 1)), Color.WHITE)
 			ci.draw_rect(Rect2(Vector2(roundf(g.get_center().x), g.position.y), Vector2(1, g.size.y)), C_MUR_HAUT)
 			ci.draw_rect(Rect2(Vector2(g.position.x, roundf(g.get_center().y)), Vector2(g.size.x, 1)), C_MUR_HAUT)
-
-
-## Marqueurs des lampadaires (poteau, lanterne, portée de la lumière en pointillés) et des
-## disjoncteurs (boîtier gris avec un éclair, sur le mur indiqué).
-func _draw_marks(ci: CanvasItem) -> void:
-	var t: float = tile
-	for l: Dictionary in lampadaires:
-		var c: Vector2 = center(l["pos"]).round()
-		var rad: float = float(l["rayon"]) * t
-		for k: int in 32:
-			var a: float = TAU * float(k) / 32.0
-			ci.draw_rect(Rect2((c + Vector2.from_angle(a) * rad).round(), Vector2(1, 1)), Color(C_LAMPE, 0.35))
-		ci.draw_rect(Rect2(c + Vector2(-3, 4), Vector2(6, 2)), BkDraw.INK)
-		ci.draw_rect(Rect2(c + Vector2(-1, -18), Vector2(2, 22)), Color("3a3f52"))
-		ci.draw_rect(Rect2(c + Vector2(-4, -24), Vector2(8, 7)), BkDraw.INK)
-		ci.draw_rect(Rect2(c + Vector2(-3, -23), Vector2(6, 5)), C_LAMPE)
-	for d: Dictionary in disjoncteurs:
-		var c2: Vector2 = (center(d["pos"]) + Vector2(d["mur"]) * t * 0.5).round()
-		var b: Rect2 = Rect2(c2 - Vector2(5, 7), Vector2(10, 12))
-		ci.draw_rect(b, BkDraw.INK)
-		ci.draw_rect(b.grow(-1), C_DISJ)
-		ci.draw_colored_polygon(PackedVector2Array([c2 + Vector2(1, -5), c2 + Vector2(-2, 0), c2 + Vector2(0, 0),
-			c2 + Vector2(-1, 4), c2 + Vector2(2, -1), c2 + Vector2(0, -1)]), C_LAMPE.darkened(0.1))
-		BkDraw.texte(ci, c2 + Vector2(0, -10), str(d["secteur"]), 8, Color(1, 1, 1, 0.8), 2, 40)

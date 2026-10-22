@@ -2,7 +2,8 @@ class_name BkAi
 extends RefCounted
 ## IA d'un joueur (GDD-BLACKOUT.md). Elle ne voit que ce que voit son rôle :
 ## un chassé voit toute la carte (et le chasseur) ; le chasseur ne sait que ce qu'il voit,
-## ce que lui donnent ses ondes, les pièges qu'il déclenche et les cachettes qui tremblent.
+## ce que lui donnent ses ondes, les pièges qu'il déclenche, les cachettes qui tremblent et les
+## secteurs plongés dans le noir (disjoncteurs, GDD §3.2, §11).
 
 var g: BkGame
 var me: BkActor
@@ -35,6 +36,9 @@ var react_until: float = 0.0            # chasseur : temps de réaction avant de
 var close_t: float = -100.0
 var slipped_at: float = -100.0
 var slip_pending: bool = false
+## Disjoncteur visé (index de BkGame.boitiers), -1 sinon : un chassé va couper la lumière, le chasseur
+## va la rallumer.
+var plan_switch: int = -1
 
 
 func _init(p_game: BkGame, p_me: BkActor, p_level: String) -> void:
@@ -68,6 +72,7 @@ func reset() -> void:
 	lost_t = -100.0
 	searched.clear()
 	ambush = false
+	plan_switch = -1
 
 
 func update(dt: float) -> Dictionary:
@@ -143,6 +148,7 @@ func _think_hider() -> void:
 	var h: BkActor = g.hunter
 	if me.hidden_in >= 0:
 		plan_cachette = -1
+		plan_switch = -1
 		# Mouvement : le chasseur fouille une autre cachette à côté, on en profite pour filer.
 		if BkRules.on("idee_mouvement") and _search_window() and int(g._search_target.get(h.id, -1)) != me.hidden_in:
 			want_action = true
@@ -153,6 +159,9 @@ func _think_hider() -> void:
 			want_action = true                   # on sort avant d'être éjecté
 		return
 	var hunting: bool = g.phase == BkGame.Phase.HUNT
+	# Disjoncteur : couper la lumière du secteur où rôde le chasseur (avant la fuite).
+	if hunting and _think_switch():
+		return
 	# Détection progressive : il se sait repéré (sa jauge monte) : il file vers l'abri le plus proche.
 	if hunting and BkRules.on("idee_detection") and me.gauge > 0.0:
 		_react_t = 0.0
@@ -209,6 +218,53 @@ func _think_hider() -> void:
 		if relocate_t <= 0.0 and _arrived() and h.position.distance_to(me.position) > far_relocate * _tiles():
 			relocate_t = _relocate_delay() * rng.randf_range(0.7, 1.3)
 			_pick_hiding()
+
+
+## Chassé : va couper le disjoncteur de son secteur quand le chasseur y est et qu'il est éclairé ou en
+## danger (chance « disjoncteur » de son niveau, boîtier à disjoncteur_ia_portee cases au plus, 4 s'il
+## est déjà repéré) ; arrivé au boîtier, il l'actionne. Vrai s'il s'en occupe.
+func _think_switch() -> bool:
+	if plan_switch >= 0:
+		if not g.boitier_utile(me, plan_switch) and me.use_left <= 0.0:
+			plan_switch = -1
+			return false
+		if me.use_left > 0.0:
+			return true
+		if g.near_boitier(me) == plan_switch:
+			want_action = true
+		elif _arrived():
+			_go(g.map.center(g.boitiers[plan_switch]["pos"]))
+		return true
+	var h: BkActor = g.hunter
+	var sect: String = g.map.secteur_of(g.map.to_tile(me.position))
+	if sect == "" or g.map.secteur_of(g.map.to_tile(h.position)) != sect:
+		return false
+	var spotted: bool = me.gauge > 0.0
+	if not (me.lit or spotted or _threatened()):
+		return false
+	if rng.randf() >= float(cfg.get("disjoncteur", 0.5)):
+		return false
+	var reach: float = (4.0 if spotted else BkRules.f("disjoncteur_ia_portee")) * _tiles()
+	for i: int in g.boitiers.size():
+		var b: Dictionary = g.boitiers[i]
+		if str(b["secteur"]) != sect or not g.boitier_utile(me, i) or _switch_claimed(i):
+			continue
+		var p: Vector2 = g.map.center(b["pos"])
+		if p.distance_to(me.position) > reach:
+			continue
+		plan_switch = i
+		plan_cachette = -1
+		going_exit = false
+		_go(p)
+		return true
+	return false
+
+
+func _switch_claimed(i: int) -> bool:
+	for b: BkAi in g.brains.values():
+		if b != self and b.plan_switch == i:
+			return true
+	return false
 
 
 ## Délai avant de changer de planque (s) ; plus court avec idee_mouvement.
@@ -351,6 +407,9 @@ func _pick_hiding() -> void:
 				s -= 8.0
 		if g.phase == BkGame.Phase.HUNT:
 			s += minf(p.distance_to(g.hunter.position) / _tiles(), 25.0) * 0.6
+		# Planque dans l'ombre (GDD §11) : la jauge y monte 3 fois moins vite.
+		if g.eclaire(p):
+			s -= 6.0
 		if s > bs:
 			bs = s
 			best = t
@@ -412,6 +471,9 @@ func _think_hunter() -> void:
 		else:
 			_go(target.position)
 		return
+	# 1 bis. Un secteur est dans le noir : il va rallumer le disjoncteur (un « ? » l'en distrait : 1).
+	if _think_repair():
+		return
 	# 2. Une cachette tremble ou on passe à côté : on fouille (plus souvent si l'IA est maligne).
 	var c: int = g.near_cachette(me, false)
 	if c >= 0:
@@ -463,6 +525,31 @@ func _think_hunter() -> void:
 			visited[z] = clock
 		scan_t = 1.4 * float(cfg.get("hunter_scan", 0.7))
 		_patrol()
+
+
+## Chasseur : le boîtier d'un secteur coupé le plus proche ; il y va et l'actionne. Vrai s'il s'en occupe.
+func _think_repair() -> bool:
+	if me.use_left > 0.0:
+		return true
+	var best: int = -1
+	var bd: float = INF
+	for i: int in g.boitiers.size():
+		if not g.boitier_utile(me, i):
+			continue
+		var d: float = g.map.center(g.boitiers[i]["pos"]).distance_to(me.position)
+		if d < bd:
+			bd = d
+			best = i
+	plan_switch = best
+	if best < 0:
+		return false
+	if g.near_boitier(me) == best:
+		want_action = true
+		return true
+	var p: Vector2 = g.map.center(g.boitiers[best]["pos"])
+	if path.is_empty() or _arrived() or path[path.size() - 1].distance_to(p) > _tiles():
+		_go(p)
+	return true
 
 
 func _patrol() -> void:

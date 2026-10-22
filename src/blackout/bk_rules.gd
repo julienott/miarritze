@@ -113,6 +113,12 @@ static func ai(level: String) -> Dictionary:
 	return (data().get("ai", {}) as Dictionary).get(level, {})
 
 
+## Couleur écrite en texte dans rules.json (« #rrggbb »), `defaut` si la clé manque.
+static func couleur(key: String, defaut: Color = Color.WHITE) -> Color:
+	var v: Variant = data().get(key)
+	return Color(str(v)) if v is String else defaut
+
+
 static func color(i: int) -> Color:
 	var cs: Array = data().get("colors", ["#ffffff"])
 	return Color(str(cs[i % cs.size()]))

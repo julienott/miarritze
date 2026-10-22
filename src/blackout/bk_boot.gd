@@ -2,7 +2,9 @@ extends Node
 ## Démarrage de Miarritze Blackout : thème cartoon en 1280×720 (BkUi), profils mis à jour pour
 ## Blackout, puis « Qui joue ? » (GDD-BLACKOUT.md).
 ## QA : `--scene=bk_game` (web : `#scene=bk_game`) lance directement une partie contre l'IA ;
-## avec `--bk-visite=chasse|chasseur` (web : `#scene=bk_game&visite=…`), la visite de debug ;
+## avec `--bk-debug [--bk-debug-role=chasse|chasseur] [--bk-debug-perso=<id>] [--bk-sans-chrono]
+## [--bk-debug-seul]` (web : `#scene=bk_game&debug&debug-role=chasseur&sans-chrono`), le menu debug ;
+## avec `--bk-visite=chasse|chasseur` (web : `#scene=bk_game&visite=…`), la visite de la carte ;
 ## `--scene=bk_accueil|bk_profil|bk_reglages|bk_partie_rapide|bk_qui_joue|bk_en_ligne` ouvre cet écran
 ## (un profil « Testeur » est créé s'il n'y en a aucun).
 

@@ -130,6 +130,23 @@
 	"_doc_grottes": "Zones sombres d'une carte (grottes et tunnels, zones.json → zones[].sombre et « sombres ») : idee_grottes = 1, la vue du chasseur ne porte qu'à grotte_portee cases quand lui ou le chassé regardé y est (cône éclairé raccourci aussi). Essai A/B de la carte Plage (archive/2026-10-22-docs-gordeka/GORDEKA_EQUILIBRAGE.md), désactivé par défaut.",
 	"idee_grottes": 0,
 	"grotte_portee": 4.0,
+	"_doc_lumiere": "Lumière et ombre (GDD §3.2, §9 ; src/blackout/bk_lumieres.gd). Nuit : tout le monde voit la carte multipliée par nuit_couleur ; le chasseur, hors de son cône, par nuit_couleur_chasseur (son cône rend la nuit des chassés). Sources fixes de la carte (zones.json → « lumieres » : case, rayon en cases, secteur, type, couleur) : lumière additive de lumiere_energie, couleur du type (lumiere_couleur_<type>) sauf couleur propre, bord adouci sur lumiere_douceur du rayon ; elles clignotent lumiere_clignote_s s quand elles s'éteignent ou se rallument. Règle : un chassé est éclairé si ses pieds sont dans le rayon d'une source allumée sans mur plein (couche de vue) entre la source et eux ; sinon il est dans l'ombre : dans la vue du chasseur, sa jauge monte ombre_facteur fois moins vite et le chasseur ne voit de lui qu'une silhouette de silhouette_couleur.",
+	"nuit_couleur": "#6e74ad",
+	"nuit_couleur_chasseur": "#464a6a",
+	"lumiere_energie": 1.15,
+	"lumiere_douceur": 0.3,
+	"lumiere_clignote_s": 0.5,
+	"lumiere_couleur_lampadaire": "#ffb21e",
+	"lumiere_couleur_plafonnier": "#ffc44a",
+	"lumiere_couleur_neon": "#ff4fb8",
+	"ombre_facteur": 3.0,
+	"silhouette_couleur": "#10121f",
+	"_doc_disjoncteur": "Disjoncteur (GDD §3.2, §6) : un boîtier par secteur (zones.json → « disjoncteurs »). À disjoncteur_portee cases de sa case, le bouton devient « Actionner » (après cachette et fouille, avant le coup spécial) : on reste disjoncteur_temps s sur place. Un chassé éteint alors toutes les sources du secteur pendant disjoncteur_duree s (boîtier en recharge disjoncteur_cooldown s depuis la coupure) ; le chasseur rallume un secteur éteint de la même façon. IA : un chassé dans un secteur où se trouve le chasseur va couper (à disjoncteur_ia_portee cases au plus) s'il est éclairé ou en danger, avec la probabilité « disjoncteur » de son niveau à chaque décision ; le chasseur IA va réparer un secteur éteint (sauf s'il poursuit un chassé).",
+	"disjoncteur_portee": 1.3,
+	"disjoncteur_temps": 1.0,
+	"disjoncteur_duree": 15.0,
+	"disjoncteur_cooldown": 30.0,
+	"disjoncteur_ia_portee": 10.0,
 	"use_range": 1.3,
 	"scared_range": 4.0,
 	"score": {
@@ -145,8 +162,8 @@
 	"bot_names": ["Louis", "Maïa", "Patxi", "Xabi", "Mattin", "Amaia", "Txomin", "Kaio", "Karramarro", "Ramuntxo", "Itsaso", "Peio", "Itsasargi"],
 	"characters": ["louis", "maia", "patxi", "xabi", "mattin", "amaia", "txomin", "kaio", "karramarro", "ramuntxo", "itsaso", "peio", "itsasargi"],
 	"ai": {
-		"facile": {"think": 0.9, "danger": 6.0, "relocate": 15.0, "extract_chance": 0.3, "hunter_speed": 0.9, "hunter_scan": 1.2, "hunter_react": 0.8, "clue_memory": 0.5, "search_chance": 0.25, "react": 0.5, "guard_exits": 0.0, "smart_search": false, "smart_wave": false, "trap_ambush": 0.0, "trap_chase": 0.3},
-		"normal": {"think": 0.5, "danger": 8.0, "relocate": 25.0, "extract_chance": 0.2, "hunter_speed": 1.0, "hunter_scan": 0.8, "hunter_react": 0.3, "clue_memory": 1.0, "search_chance": 0.5, "react": 0.25, "guard_exits": 0.3, "smart_search": true, "smart_wave": false, "trap_ambush": 0.3, "trap_chase": 0.6},
-		"malin": {"think": 0.3, "danger": 9.0, "relocate": 40.0, "extract_chance": 0.15, "hunter_speed": 1.07, "hunter_scan": 0.4, "hunter_react": 0.0, "clue_memory": 1.3, "search_chance": 0.85, "react": 0.1, "guard_exits": 0.6, "smart_search": true, "smart_wave": true, "trap_ambush": 0.7, "trap_chase": 0.9}
+		"facile": {"think": 0.9, "danger": 6.0, "relocate": 15.0, "extract_chance": 0.3, "hunter_speed": 0.9, "hunter_scan": 1.2, "hunter_react": 0.8, "clue_memory": 0.5, "search_chance": 0.25, "react": 0.5, "guard_exits": 0.0, "smart_search": false, "smart_wave": false, "trap_ambush": 0.0, "trap_chase": 0.3, "disjoncteur": 0.3},
+		"normal": {"think": 0.5, "danger": 8.0, "relocate": 25.0, "extract_chance": 0.2, "hunter_speed": 1.0, "hunter_scan": 0.8, "hunter_react": 0.3, "clue_memory": 1.0, "search_chance": 0.5, "react": 0.25, "guard_exits": 0.3, "smart_search": true, "smart_wave": false, "trap_ambush": 0.3, "trap_chase": 0.6, "disjoncteur": 0.5},
+		"malin": {"think": 0.3, "danger": 9.0, "relocate": 40.0, "extract_chance": 0.15, "hunter_speed": 1.07, "hunter_scan": 0.4, "hunter_react": 0.0, "clue_memory": 1.3, "search_chance": 0.85, "react": 0.1, "guard_exits": 0.6, "smart_search": true, "smart_wave": true, "trap_ambush": 0.7, "trap_chase": 0.9, "disjoncteur": 0.8}
 	}
 }

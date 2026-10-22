@@ -9,6 +9,11 @@ extends Node
 ## Seule source qui lit les InputEvent bruts (CLAUDE.md §0.4) ; le jeu ne voit que move/action.
 
 signal quit_requested
+## Touches du menu debug (GDD §7.2) : "F" formes du décor, "L" zones de lumière, "C" perso suivant,
+## "G" fantôme ; la partie ne les écoute qu'en debug.
+signal debug_key(touche: String)
+
+const TOUCHES_DEBUG: Dictionary = {KEY_F: "F", KEY_L: "L", KEY_C: "C", KEY_G: "G"}
 
 const STICK_RADIUS: float = 45.0
 const ACTION_RADIUS: float = 46.0
@@ -94,6 +99,8 @@ func _input(event: InputEvent) -> void:
 			_action_pending = true
 		elif k.physical_keycode == KEY_ESCAPE:
 			quit_requested.emit()
+		elif TOUCHES_DEBUG.has(k.physical_keycode):
+			debug_key.emit(str(TOUCHES_DEBUG[k.physical_keycode]))
 	elif event is InputEventJoypadButton and event.pressed:
 		var b: InputEventJoypadButton = event
 		if b.button_index == JOY_BUTTON_A:

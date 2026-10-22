@@ -32,8 +32,8 @@ func _ready() -> void:
 	_quit.offset_bottom = 24
 	_quit.pressed.connect(func() -> void: game.quit_to_podium())
 	add_child(_quit)
-	# Visite de debug (temporaire) : boutons Formes et Perso, pour le tactile.
-	_visite_buttons()
+	# Debug et visite : boutons Formes, Lumière et Perso, pour le tactile (touches F, L, C).
+	_debug_buttons()
 	_terminer = Button.new()
 	_terminer.text = "Terminer la partie"
 	_terminer.pressed.connect(func() -> void: game.quit_to_podium())
@@ -86,10 +86,11 @@ func _draw_frisson(s: Vector2) -> void:
 		_text(at, "Il fouille à côté !", NORMAL, Color(Color("ffd34a"), k))
 
 
-func _visite_buttons() -> void:
-	if game == null or game.visite == "":
+func _debug_buttons() -> void:
+	if game == null or (game.visite == "" and not game.debug):
 		return
-	var specs: Array = [["Formes", game.visite_toggle_formes], ["Perso", game.visite_next_character]]
+	var specs: Array = [["Formes", game.visite_toggle_formes], ["Lumière", game.debug_toggle_lumiere],
+		["Perso", game.visite_next_character]]
 	for i: int in specs.size():
 		var b: Button = Button.new()
 		b.text = str(specs[i][0])
@@ -129,10 +130,12 @@ func _draw() -> void:
 		BkActor.Role.GHOST: Color("b8c0cc"), BkActor.Role.OUT: Color("6fe08a")}[me.role]
 	draw_rect(Rect2(6, 6, 84, 20), Color(0, 0, 0, 0.55))
 	_text(Vector2(48, 22), role_text, NORMAL, role_col)
+	if game.debug and game.visite == "":
+		_text(Vector2(48, 38), "DEBUG · F · L", PETIT, Color("ffd34a"))
 	if game.visite != "":
 		# Visite de debug (temporaire) : pas de chrono, un bandeau discret.
 		draw_rect(Rect2(s.x * 0.5 - 110, 6, 220, 14), Color(0, 0, 0, 0.45))
-		_text(Vector2(s.x * 0.5, 16), "VISITE (debug) · F formes · C perso · G fantôme", PETIT, Color("ffd34a"))
+		_text(Vector2(s.x * 0.5, 16), "VISITE (debug) · F formes · L lumière · C perso · G fantôme", PETIT, Color("ffd34a"))
 	else:
 		var phase_text: String = {BkGame.Phase.DRAW: "Tirage…", BkGame.Phase.HIDE: "Cachez-vous !",
 			BkGame.Phase.HUNT: "Chasse", BkGame.Phase.END: "Fin du round"}.get(game.phase, "")
@@ -140,8 +143,11 @@ func _draw() -> void:
 		var t: int = maxi(0, ceili(game.phase_t))
 		draw_rect(Rect2(s.x * 0.5 - 60, 4, 120, 32), Color(0, 0, 0, 0.55))
 		_text(Vector2(s.x * 0.5, 14), "%s · round %s" % [phase_text, no], PETIT, Color(1, 1, 1, 0.85))
-		_text(Vector2(s.x * 0.5, 32), "%d:%02d" % [t / 60, t % 60], NORMAL,
-			Color("ff6b5e") if game.phase == BkGame.Phase.HUNT and t <= 20 else Color.WHITE)
+		if game.sans_chrono and game.phase == BkGame.Phase.HUNT:
+			_text(Vector2(s.x * 0.5, 32), "sans chrono", NORMAL, Color("ffd34a"))
+		else:
+			_text(Vector2(s.x * 0.5, 32), "%d:%02d" % [t / 60, t % 60], NORMAL,
+				Color("ff6b5e") if game.phase == BkGame.Phase.HUNT and t <= 20 else Color.WHITE)
 		var left: int = game.actors.filter(func(a: BkActor) -> bool: return a.role == BkActor.Role.HIDER).size()
 		_text(Vector2(s.x * 0.5, 46), "%d chassé%s encore libre%s" % [left, "s" if left > 1 else "", "s" if left > 1 else ""],
 			PETIT, Color(1, 1, 1, 0.8))
@@ -151,6 +157,13 @@ func _draw() -> void:
 				_text(Vector2(s.x * 0.5, 57), "Sorties ouvertes : " + where, PETIT, Color("6fe08a"))
 			else:
 				_text(Vector2(s.x * 0.5, 57), "Sorties du round : " + where, PETIT, Color(1, 1, 1, 0.7))
+		# Secteurs dans le noir (disjoncteur coupé), avec le temps avant le retour de la lumière.
+		var noirs: PackedStringArray = []
+		for k: Variant in game.pannes:
+			var reste: float = float(game.pannes[k])
+			noirs.append(game.map.secteur_nom(str(k)) + ("" if reste > 1.0e8 else " %d s" % ceili(reste)))
+		if not noirs.is_empty() and game.phase == BkGame.Phase.HUNT:
+			_text(Vector2(s.x * 0.5, 68), "Dans le noir : " + ", ".join(noirs), PETIT, Color("9fd8ef"))
 	# Fantôme : ce qu'il peut encore faire (délivrance).
 	if me.role == BkActor.Role.GHOST and game.phase == BkGame.Phase.HUNT and BkRules.on("idee_delivrance") \
 			and not me.rescued and game._rescues < int(BkRules.f("delivrance_max")):
@@ -186,6 +199,8 @@ func _draw() -> void:
 		_text(c2 + Vector2(0, 5), label, NORMAL, Color.WHITE)
 		if me.search_left > 0.0:
 			_text(c2 + Vector2(0, -rr - 6), "Fouille…", PETIT, Color.WHITE)
+		elif me.use_left > 0.0:
+			_text(c2 + Vector2(0, -rr - 6), "Actionne…", PETIT, Color.WHITE)
 	# Joystick tactile.
 	if game.input.touch_index >= 0:
 		draw_circle(game.input.touch_origin, BkInput.STICK_RADIUS, Color(1, 1, 1, 0.15))

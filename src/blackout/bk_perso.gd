@@ -25,6 +25,23 @@ const REPLI: Dictionary = {"profile": [1, 1.0, false], "idle": [2, 3.0, true], "
 const IMMOBILE: float = 5.0
 
 static var _cache: Dictionary = {}     # "id/élément" → {tex, n, fps, loop, cell, feet}
+## Silhouette sombre (vue du chasseur, chassé dans l'ombre, GDD §3.2) : le sprite en aplat de
+## silhouette_couleur, un liseré plus clair d'un pixel autour pour qu'elle se détache du sol de nuit.
+static var _silhouette: ShaderMaterial
+const SILHOUETTE_SHADER: String = """shader_type canvas_item;
+render_mode unshaded;
+uniform vec4 teinte : source_color;
+uniform vec4 lisere : source_color;
+void fragment() {
+	float a = texture(TEXTURE, UV).a;
+	float bord = 0.0;
+	if (a < 0.5) {
+		bord = max(max(texture(TEXTURE, UV + vec2(TEXTURE_PIXEL_SIZE.x, 0.0)).a, texture(TEXTURE, UV - vec2(TEXTURE_PIXEL_SIZE.x, 0.0)).a),
+			max(texture(TEXTURE, UV + vec2(0.0, TEXTURE_PIXEL_SIZE.y)).a, texture(TEXTURE, UV - vec2(0.0, TEXTURE_PIXEL_SIZE.y)).a));
+	}
+	COLOR = a >= 0.5 ? vec4(teinte.rgb, teinte.a) : vec4(lisere.rgb, lisere.a * step(0.5, bord));
+}
+"""
 
 var actor: BkActor
 var _anim: String = ""
@@ -40,6 +57,18 @@ var hover_lift: float = 0.0
 ## Hauteur d'un perso dans le monde (px) : perso_hauteur cases.
 static func hauteur_px() -> float:
 	return BkRules.f("perso_hauteur") * BkRules.f("tile_px")
+
+
+static func silhouette_material() -> ShaderMaterial:
+	if _silhouette == null:
+		var sh: Shader = Shader.new()
+		sh.code = SILHOUETTE_SHADER
+		_silhouette = ShaderMaterial.new()
+		_silhouette.shader = sh
+		var c: Color = BkRules.couleur("silhouette_couleur", Color("10121f"))
+		_silhouette.set_shader_parameter("teinte", c)
+		_silhouette.set_shader_parameter("lisere", Color(c.lightened(0.35), 0.8))
+	return _silhouette
 
 
 ## Tout perso du roster est jouable : sans planches, il a sa silhouette de repli.
@@ -245,6 +274,7 @@ func _process(dt: float) -> void:
 		f = n - 1 - f
 	var cell: Vector2 = d["cell"]
 	texture = d["tex"]
+	material = silhouette_material() if actor.silhouette else null
 	region_rect = Rect2(Vector2(cell.x * float(f), 0.0), cell)
 	var face: float = 1.0 if cos(actor.look) >= 0.0 else -1.0
 	flip_h = face < 0.0

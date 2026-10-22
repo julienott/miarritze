@@ -1,8 +1,9 @@
 class_name BkGame
 extends Node2D
 ## Partie de Blackout contre l'IA (prototype gris, GDD-BLACKOUT.md, jalon 1).
-## La partie tourne entièrement ici (rôle d'hôte) : rounds, vision du chasseur, capture,
-## cachettes, pièges, détections, sorties et points. Les joueurs n'envoient que move/look/action.
+## La partie tourne entièrement ici (rôle d'hôte) : rounds, vision du chasseur, lumière et ombre,
+## disjoncteurs, capture, cachettes, pièges, détections, sorties et points. Les joueurs n'envoient que
+## move/look/action.
 
 ## VERSUS (écran de suspense entre le tirage et la cachette) est ajouté en dernier : les valeurs des
 ## autres phases ne bougent pas.
@@ -135,11 +136,11 @@ var _qa_clock: float = 0.0
 ## x et y en cases, décimales permises) pose un acteur au premier round (à lancer avec
 ## `--bk-rules=phase_draw:60` : tout le monde reste figé).
 var _qa_place: Array = []
-## TEMPORAIRE, debug (Julien, 2026-10-20) : « visite en tant que chassé / chasseur ». Carte complète,
-## ni chrono ni fin de manche, personne d'autre (`--bk-visite-figurants` : les autres sont là,
-## immobiles), pour vérifier collisions, masquage, cachettes, décor et animations. Lancement : menu
-## (config["visite"]), `--bk-visite=chasse|chasseur`, web `#scene=bk_game&visite=…`. Touches : F les
-## formes du décor, C le perso suivant ; Échap ou Quitter : retour au menu. À retirer après la mise au point.
+## Visite (debug « sans adversaires ») : carte complète, ni chrono ni fin de manche, personne d'autre
+## (`--bk-visite-figurants` : les autres sont là, immobiles), pour vérifier collisions, masquage,
+## cachettes, décor et animations. Lancement : menu debug (adversaires : personne), `--bk-visite=
+## chasse|chasseur` (tests/decor/visite_decor.gd), web `#scene=bk_game&visite=…`. Touches : F les formes
+## du décor, L la lumière, C le perso suivant, G fantôme ; Échap ou Quitter : retour au menu.
 var visite: String = ""
 var _figurants: bool = false
 ## QA de la visite : `--bk-visite-fantome` (ou la touche G) met le joueur en fantôme ; `--bk-qa-tourne`
@@ -160,6 +161,25 @@ var _sans_versus: bool = false
 var _ecrans: CanvasLayer
 var versus: BkVersus
 var podium: BkPodium
+## Lumière et ombre (GDD §3.2, carte #625) : sources fixes de la carte (BkLumieres), nuit pour tous.
+var lumieres: BkLumieres
+## Disjoncteurs (GDD §3.2, carte #626) : un boîtier par secteur {pos, mur, secteur, cd (s de recharge)},
+## et secteurs coupés (id → s avant que la lumière revienne).
+var boitiers: Array = []
+var pannes: Dictionary = {}
+## Menu debug (GDD §7.2, carte #634) : rôle imposé à chaque round ("hunter" ou "hider"), boss choisi
+## (aucun pour l'instant), sans chrono (le round ne finit que quand tous sont trouvés) ; touches F
+## (formes du décor) et L (zones de lumière). Lancement : partie rapide → Debug, `--bk-debug`
+## [`--bk-debug-role=chasse|chasseur`] [`--bk-debug-perso=<id>`] [`--bk-debug-boss=<id>`]
+## [`--bk-sans-chrono`] [`--bk-debug-seul`], web `#scene=bk_game&debug&debug-role=chasseur&sans-chrono`.
+var debug: bool = false
+var debug_role: String = ""
+var debug_boss: String = ""
+var sans_chrono: bool = false
+## QA : `--bk-qa-panne=<secteur>` coupe ce secteur à chaque début de chasse (captures) ;
+## `--bk-qa-lumiere` montre les zones de lumière dès le départ (comme la touche L).
+var _qa_panne: String = ""
+var _qa_lumiere: bool = false
 
 
 func _exit_tree() -> void:
@@ -168,6 +188,10 @@ func _exit_tree() -> void:
 
 func _ready() -> void:
 	visite = str(config.get("visite", ""))
+	debug = bool(config.get("debug", false))
+	debug_role = str(config.get("debug_role", ""))
+	debug_boss = str(config.get("debug_boss", ""))
+	sans_chrono = bool(config.get("sans_chrono", false))
 	for arg: String in BkRules.args():
 		if arg.begins_with("--bk-visite="):
 			visite = arg.trim_prefix("--bk-visite=")
@@ -217,6 +241,26 @@ func _ready() -> void:
 			_force_role = arg.trim_prefix("--bk-local-role=")
 		elif arg.begins_with("--bk-qa-place="):
 			_qa_place.append(arg.trim_prefix("--bk-qa-place=").split(":"))
+		elif arg == "--bk-debug":
+			debug = true
+		elif arg.begins_with("--bk-debug-role="):
+			debug = true
+			debug_role = role_debug(arg.trim_prefix("--bk-debug-role="))
+		elif arg.begins_with("--bk-debug-perso="):
+			debug = true
+			config["character"] = arg.trim_prefix("--bk-debug-perso=")
+		elif arg.begins_with("--bk-debug-boss="):
+			debug = true
+			debug_boss = arg.trim_prefix("--bk-debug-boss=")
+		elif arg == "--bk-sans-chrono":
+			sans_chrono = true
+		elif arg == "--bk-debug-seul":
+			debug = true
+			visite = "chasseur" if debug_role == "hunter" else "chasse"
+		elif arg.begins_with("--bk-qa-panne="):
+			_qa_panne = arg.trim_prefix("--bk-qa-panne=")
+		elif arg == "--bk-qa-lumiere":
+			_qa_lumiere = true
 	# Rendu pixel art en 640×360 (GDD §9) ; les menus repassent en 1280×720 (BkEchelle).
 	BkEchelle.jeu()
 	map = BkMap.new()
@@ -231,6 +275,15 @@ func _ready() -> void:
 	for t: Vector2i in map.cachettes:
 		cachettes.append({"tile": t, "pos": map.center(t)})
 	_reset_cachettes()
+	for d: Dictionary in map.disjoncteurs:
+		var b: Dictionary = d.duplicate()
+		b["cd"] = 0.0
+		boitiers.append(b)
+	# Sources de lumière : par-dessus la carte, sous les persos.
+	lumieres = BkLumieres.new()
+	add_child(lumieres)
+	lumieres.setup(self)
+	lumieres.debug = _qa_lumiere
 	# QA : première entrée calée pour que la capture tombe `_qa_cachette_t` s après.
 	_qa_next = maxf(0.5, (_qa_next if _qa_next > 0.0 else 3.0) - _qa_cachette_t)
 	var people: Node2D = Node2D.new()
@@ -244,6 +297,7 @@ func _ready() -> void:
 	input = BkInput.new()
 	add_child(input)
 	input.quit_requested.connect(quit_to_podium)
+	input.debug_key.connect(_debug_key)
 	hud = BkHud.new()
 	hud.game = self
 	var hud_layer: CanvasLayer = CanvasLayer.new()
@@ -256,7 +310,7 @@ func _ready() -> void:
 	_ecrans = CanvasLayer.new()
 	_ecrans.layer = 9
 	add_child(_ecrans)
-	rounds_total = rounds_pour(config, _bots_only, _rounds_max)
+	rounds_total = 0 if debug and _rounds_max <= 0 else rounds_pour(config, _bots_only, _rounds_max)
 	_start_round()
 	if _qa_podium:
 		quit_to_podium()
@@ -315,10 +369,11 @@ func _make_view() -> void:
 	_camera.limit_right = int(map.size_px().x)
 	_camera.limit_bottom = int(map.size_px().y)
 	add_child(_camera)
-	# Vue du chasseur : tout est sombre sauf son cône et un petit cercle, que les objets
-	# bloquent (ombres des LightOccluder2D de la carte).
+	# Nuit (GDD §3.2, §9) : toute la carte est assombrie (nuit_couleur) ; pour le chasseur, encore plus
+	# hors de son cône et d'un petit cercle, que les objets bloquent (ombres des LightOccluder2D de la
+	# carte). Les sources de lumière (BkLumieres) ajoutent leurs halos par-dessus.
 	_dark = CanvasModulate.new()
-	_dark.color = Color.WHITE
+	_dark.color = BkRules.couleur("nuit_couleur", Color.WHITE)
 	add_child(_dark)
 	_cone_light = _make_light(_cone_texture(BkRules.f("cone_deg")), BkRules.px("cone_range"))
 	_near_light = _make_light(_cone_texture(360.0), BkRules.px("near_radius") + 10.0)
@@ -344,10 +399,20 @@ func _make_light(tex: Texture2D, radius: float, decor: bool = false) -> PointLig
 	l.shadow_item_cull_mask = 1 if decor else 1 | BkDecor.LIGHT_MASK
 	l.shadow_enabled = true
 	l.shadow_filter = Light2D.SHADOW_FILTER_PCF5
-	l.energy = 0.8
+	# Dans son cône, le chasseur voit la nuit des chassés : la lumière rend ce que la nuit du chasseur
+	# retire.
+	l.color = cone_couleur()
+	l.energy = 1.0
 	l.enabled = false
 	add_child(l)
 	return l
+
+
+## Couleur de la lumière du cône : nuit des chassés moins nuit du chasseur.
+static func cone_couleur() -> Color:
+	var n: Color = BkRules.couleur("nuit_couleur", Color.WHITE)
+	var h: Color = BkRules.couleur("nuit_couleur_chasseur", Color(0.3, 0.3, 0.4))
+	return Color(maxf(n.r - h.r, 0.0), maxf(n.g - h.g, 0.0), maxf(n.b - h.b, 0.0))
 
 
 ## Texture de lumière (256 px, agrandie par texture_scale) : secteur de `deg` degrés vers +X,
@@ -393,12 +458,12 @@ static func rounds_pour(cfg: Dictionary, bots_only: bool = false, forced: int = 
 
 ## Le versus se joue-t-il ? Pas en IA contre IA (personne ne regarde), ni en visite.
 func versus_actif() -> bool:
-	return BkRules.f("phase_versus") > 0.0 and not _bots_only and not _sans_versus and visite == ""
+	return BkRules.f("phase_versus") > 0.0 and not _bots_only and not _sans_versus and visite == "" and not debug
 
 
 ## Partie rapide : le joueur peut terminer plus tôt pendant les scores (GDD-BLACKOUT.md).
 func peut_terminer() -> bool:
-	return phase == Phase.END and visite == "" and not _bots_only
+	return phase == Phase.END and visite == "" and not _bots_only and not debug
 
 
 func _start_round() -> void:
@@ -423,7 +488,10 @@ func _start_round() -> void:
 		# Carte (tools/blackout/ab_tension.py chaleur) : présence par case (« x,y » → s, échantillon par
 		# seconde), entrées par cachette, lieux des vu-perdu et des frôlements, sorties prises.
 		"chaleur": {}, "chaleur_chasseur": {}, "cachettes_entrees": {}, "lieux_vu_perdu": [],
-		"lieux_frolements": [], "sorties_lieux": []}
+		"lieux_frolements": [], "sorties_lieux": [],
+		# Lumière (#625, #626) : captures à la vue d'un chassé éclairé ou dans l'ombre, coupures et
+		# rallumages des disjoncteurs.
+		"trouves_eclaires": 0, "trouves_ombre": 0, "coupures": 0, "rallumages": 0}
 	_heat_t = 0.0
 	_st.merge(tension_keys())
 	_tens.clear()
@@ -432,6 +500,9 @@ func _start_round() -> void:
 	_last_find_t = 0.0
 	_noise_at = -100.0
 	_rescues = 0
+	pannes.clear()
+	for b: Dictionary in boitiers:
+		b["cd"] = 0.0
 	_place_bonus()
 	hunter_alert = 0.0
 	alert_bang = 0.0
@@ -446,6 +517,9 @@ func _start_round() -> void:
 		a2.elan_mult = 1.0
 		a2.rescue_k = 0.0
 		a2.rescued = false
+		a2.use_left = 0.0
+		a2.lit = true
+		a2.silhouette = false
 	if hunter.is_bot:
 		var hl: String = _hunter_level if _hunter_level != "" else str(config.get("level", "normal"))
 		hunter.speed_mult = float(BkRules.ai(hl).get("hunter_speed", 1.0))
@@ -489,6 +563,8 @@ func _start_round() -> void:
 	if visite != "":
 		_start_visite()
 		return
+	if debug and round_no == 1:
+		_say("Debug : F formes · L lumière", Color("ffd34a"), 4.0)
 	_say("Tu es le CHASSEUR !" if local == hunter else "%s est le chasseur. Cache-toi !" % hunter.display_name,
 		Color("ff3b30") if local == hunter else Color("ffffff"), 3.0)
 
@@ -507,7 +583,7 @@ func _start_visite() -> void:
 	messages.clear()
 	if _visite_fantome:
 		visite_toggle_ghost()
-	_say("Visite %s (debug) : F formes, C perso, G fantôme" % ("du chasseur" if local == hunter else "du chassé"),
+	_say("Visite %s (debug) : F formes, L lumière, C perso, G fantôme" % ("du chasseur" if local == hunter else "du chassé"),
 		Color("ffd34a"), 4.0)
 
 
@@ -551,20 +627,37 @@ func visite_toggle_formes() -> void:
 		map.formes.visible = not map.formes.visible
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if visite == "" or not event is InputEventKey or not (event as InputEventKey).pressed or (event as InputEventKey).echo:
+## Zones de lumière et rayon des sources (touche L du debug).
+func debug_toggle_lumiere() -> void:
+	lumieres.debug = not lumieres.debug
+
+
+## Touches du debug et de la visite (BkInput) : F formes, L lumière, C perso, G fantôme.
+func _debug_key(touche: String) -> void:
+	if visite == "" and not debug:
 		return
-	match (event as InputEventKey).physical_keycode:
-		KEY_F:
+	match touche:
+		"F":
 			visite_toggle_formes()
-		KEY_C:
+		"L":
+			debug_toggle_lumiere()
+		"C":
 			visite_next_character()
-		KEY_G:
+		"G":
 			visite_toggle_ghost()
 
 
 ## Tirage « en sac » : chacun est chasseur une fois avant qu'on recommence, jamais deux fois de suite.
 func _draw_hunter() -> BkActor:
+	# Debug : rôle imposé à chaque round ; en chassé, les IA chassent tour à tour.
+	if debug and debug_role == "hunter":
+		_last_hunter = local.id
+		return local
+	if debug and debug_role == "hider" and actors.size() > 1:
+		var others: Array[BkActor] = actors.filter(func(a: BkActor) -> bool: return a != local)
+		var h: BkActor = others[(round_no - 1) % others.size()]
+		_last_hunter = h.id
+		return h
 	if _sac.is_empty():
 		for a: BkActor in actors:
 			_sac.append(a.id)
@@ -651,7 +744,7 @@ func _give(a: BkActor, pts: int) -> void:
 
 
 func quit_to_podium() -> void:
-	if visite != "":
+	if visite != "" or debug:
 		go_menu()
 		return
 	if phase == Phase.PODIUM:
@@ -671,8 +764,14 @@ func quit_to_podium() -> void:
 	_ecrans.add_child(podium)
 
 
+## Retour au menu : la partie rapide pour le debug (on y relance un essai), l'accueil sinon.
 func go_menu() -> void:
-	BkNav.aller("accueil")
+	BkNav.aller("partie_rapide" if debug else "accueil")
+
+
+## Rôle du menu debug ou de la ligne de commande (« chasse », « chasseur », « hider », « hunter »).
+static func role_debug(r: String) -> String:
+	return "hunter" if r == "chasseur" or r == "hunter" else "hider"
 
 
 func _ouvrir_versus() -> void:
@@ -733,8 +832,12 @@ func _physics_process(dt: float) -> void:
 				phase_t = BkRules.f("phase_hunt")
 				hunter.frozen = false
 				_say("Le chasseur arrive !", Color("ff3b30"), 2.0)
+				if _qa_panne != "":
+					pannes[_qa_panne] = 1.0e9
 		Phase.HUNT:
 			hunt_elapsed += dt
+			if sans_chrono:
+				phase_t += dt            # debug : le chrono ne descend pas
 			if absf(hunt_elapsed - BkRules.f("exits_open_at")) < dt * 0.5 + 0.0001:
 				_say("Les sorties sont ouvertes !", Color("6fe08a"), 3.0)
 			if visite == "" and (phase_t <= 0.0 or _hiders_left() == 0):
@@ -749,6 +852,7 @@ func _physics_process(dt: float) -> void:
 	_control(dt)
 	if phase == Phase.HUNT:
 		_update_searches(dt)
+		_update_boitiers(dt)
 		_update_traps()
 		if visite != "chasse":
 			_update_capture(dt)
@@ -800,8 +904,10 @@ func _control(dt: float) -> void:
 
 
 ## Le bouton d'action, selon le rôle et l'endroit (GDD-BLACKOUT.md).
+## Priorité du bouton (GDD §6) : cachette (Entrer, Sortir) ou Fouiller, puis Actionner (disjoncteur),
+## sinon le pouvoir.
 func act_for(a: BkActor) -> void:
-	if phase != Phase.HIDE and phase != Phase.HUNT:
+	if phase != Phase.HIDE and phase != Phase.HUNT or a.use_left > 0.0:
 		return
 	match a.role:
 		BkActor.Role.HIDER:
@@ -811,15 +917,21 @@ func act_for(a: BkActor) -> void:
 				_leave_cachette(a, false)
 				return
 			var c: int = near_cachette(a, true)
+			var b: int = boitier_pour(a)
 			if c >= 0:
 				_enter_cachette(a, c)
+			elif b >= 0:
+				_start_boitier(a, b)
 			elif a.power_cd <= 0.0:
 				_place_trap(a)
 		BkActor.Role.HUNTER:
 			if phase != Phase.HUNT or a.search_left > 0.0:
 				return
 			var c2: int = near_cachette(a, false)
-			if c2 >= 0:
+			var b2: int = boitier_pour(a)
+			if c2 < 0 and b2 >= 0:
+				_start_boitier(a, b2)
+			elif c2 >= 0:
 				a.search_left = BkRules.f("search_time")
 				_search_target[a.id] = c2
 				# Elle tremble, s'ouvre pendant la fouille, puis se referme (fin de fouille).
@@ -838,10 +950,14 @@ func action_label(a: BkActor) -> String:
 				return "Sortir"
 			if near_cachette(a, true) >= 0:
 				return "Entrer"
+			if boitier_pour(a) >= 0:
+				return "Actionner"
 			return "Piège"
 		BkActor.Role.HUNTER:
 			if near_cachette(a, false) >= 0:
 				return "Fouiller"
+			if boitier_pour(a) >= 0:
+				return "Actionner"
 			return "Onde"
 	return ""
 
@@ -933,13 +1049,17 @@ static func detection_rate(d: float, vis: float) -> float:
 	return lerpf(BkRules.f("detection_partiel"), 1.0, clampf(vis, 0.0, 1.0)) / maxf(t, 0.05)
 
 
-## Jauge d'un chassé après `dt` s : remplie s'il est vu (`vis` > 0, à `d` px du chasseur), sinon
-## vidée doucement. Sans détection progressive : capture en capture_time s, vidage capture_decay fois
-## plus vite (règle d'avant, gardée pour l'A/B).
-static func next_gauge(gauge: float, vis: float, d: float, dt: float) -> float:
+## Jauge d'un chassé après `dt` s : remplie s'il est vu (`vis` > 0, à `d` px du chasseur), ombre_facteur
+## fois moins vite s'il est dans l'ombre (`lit` faux, GDD §3.2), sinon vidée doucement. Sans détection
+## progressive : capture en capture_time s, vidage capture_decay fois plus vite (règle d'avant, gardée
+## pour l'A/B).
+static func next_gauge(gauge: float, vis: float, d: float, dt: float, lit: bool = true) -> float:
 	var progressive: bool = BkRules.on("idee_detection")
 	if vis > 0.0:
-		return gauge + dt * (detection_rate(d, vis) if progressive else 1.0 / BkRules.f("capture_time"))
+		var rate: float = detection_rate(d, vis) if progressive else 1.0 / BkRules.f("capture_time")
+		if not lit:
+			rate /= maxf(BkRules.f("ombre_facteur"), 1.0)
+		return gauge + dt * rate
 	var decay: float = BkRules.f("detection_decroissance") if progressive \
 		else BkRules.f("capture_decay") / BkRules.f("capture_time")
 	return maxf(0.0, gauge - dt * decay)
@@ -950,6 +1070,112 @@ static func next_gauge(gauge: float, vis: float, d: float, dt: float) -> float:
 ## du chasseur et pour la transparence vue des coéquipiers).
 static func mask_height(r: float) -> float:
 	return r * 2.0
+
+
+# ---------------------------------------------------------------- lumière et ombre (GDD §3.2)
+
+## Une source de lumière est allumée tant que le disjoncteur de son secteur n'est pas coupé.
+func source_allumee(s: Dictionary) -> bool:
+	return float(pannes.get(str(s["secteur"]), 0.0)) <= 0.0
+
+
+## Règle de la lumière : le point `p` (les pieds d'un perso) est éclairé s'il est dans le rayon d'une
+## source allumée sans mur plein (couche de vue) entre la source et lui. Les objets bas (murets,
+## buissons), les grilles et les fenêtres laissent passer la lumière comme la vue.
+func eclaire(p: Vector2) -> bool:
+	for s: Dictionary in map.lumieres:
+		if not source_allumee(s):
+			continue
+		var c: Vector2 = BkLumieres.centre(map, s)
+		if c.distance_to(p) <= float(s["rayon"]) * map.tile and clear_line(c, p):
+			return true
+	return false
+
+
+## Pieds d'un acteur (px), là où l'on juge s'il est éclairé.
+static func pieds(a: BkActor) -> Vector2:
+	return a.position + Vector2(0, a.feet_dy())
+
+
+# ---------------------------------------------------------------- disjoncteurs (GDD §3.2)
+
+## Boîtier à portée de main d'un acteur (disjoncteur_portee cases de sa case), -1 sinon.
+func near_boitier(a: BkActor) -> int:
+	var best: int = -1
+	var bd: float = BkRules.px("disjoncteur_portee")
+	for i: int in boitiers.size():
+		var d: float = a.position.distance_to(map.center(boitiers[i]["pos"]))
+		if d <= bd:
+			bd = d
+			best = i
+	return best
+
+
+## L'acteur peut-il actionner ce boîtier ? Pendant la chasse : un chassé coupe un secteur allumé dont
+## le boîtier est prêt ; le chasseur rallume un secteur coupé.
+func boitier_utile(a: BkActor, i: int) -> bool:
+	if phase != Phase.HUNT or i < 0 or i >= boitiers.size() or a.hidden_in >= 0:
+		return false
+	var b: Dictionary = boitiers[i]
+	var coupe: bool = float(pannes.get(str(b["secteur"]), 0.0)) > 0.0
+	match a.role:
+		BkActor.Role.HIDER:
+			return not coupe and float(b["cd"]) <= 0.0
+		BkActor.Role.HUNTER:
+			return coupe
+	return false
+
+
+## Boîtier que le bouton de l'acteur actionnerait, -1 sinon.
+func boitier_pour(a: BkActor) -> int:
+	var i: int = near_boitier(a)
+	return i if boitier_utile(a, i) else -1
+
+
+## Actionner : disjoncteur_temps s sur place, puis la coupure ou le rallumage (`_actionne`).
+func _start_boitier(a: BkActor, i: int) -> void:
+	a.use_left = BkRules.f("disjoncteur_temps")
+	a.use_target = i
+
+
+func _update_boitiers(dt: float) -> void:
+	for b: Dictionary in boitiers:
+		b["cd"] = maxf(0.0, float(b["cd"]) - dt)
+	for k: Variant in pannes.keys():
+		pannes[k] = float(pannes[k]) - dt
+		if float(pannes[k]) <= 0.0:
+			pannes.erase(k)
+			_say("La lumière revient : %s" % map.secteur_nom(str(k)), Color("ffd34a"), 2.0)
+	for a: BkActor in actors:
+		if a.use_left <= 0.0:
+			continue
+		if (a.role != BkActor.Role.HIDER and a.role != BkActor.Role.HUNTER) or a.hidden_in >= 0:
+			a.use_left = 0.0
+			continue
+		a.use_left -= dt
+		if a.use_left <= 0.0:
+			a.use_left = 0.0
+			_actionne(a, a.use_target)
+
+
+## Fin de l'action sur un boîtier : un chassé coupe le secteur disjoncteur_duree s (boîtier en recharge
+## disjoncteur_cooldown s), le chasseur le rallume.
+func _actionne(a: BkActor, i: int) -> void:
+	if not boitier_utile(a, i):
+		return
+	var b: Dictionary = boitiers[i]
+	var sect: String = str(b["secteur"])
+	if a.role == BkActor.Role.HIDER:
+		pannes[sect] = BkRules.f("disjoncteur_duree")
+		b["cd"] = BkRules.f("disjoncteur_cooldown")
+		_say("Panne de lumière : %s !" % map.secteur_nom(sect), Color("9fd8ef"), 2.0)
+		if _stats:
+			_st["coupures"] += 1
+	else:
+		pannes.erase(sect)
+		_say("Le chasseur rallume : %s" % map.secteur_nom(sect), Color("ffd34a"), 2.0)
+		if _stats:
+			_st["rallumages"] += 1
 
 
 func clear_line(a: Vector2, b: Vector2) -> bool:
@@ -971,8 +1197,9 @@ func _update_capture(dt: float) -> void:
 			continue
 		var vis: float = sight_fraction(hunter, a.position, a.radius, progressive)
 		_seen[a.id] = vis > 0.0
+		a.lit = eclaire(pieds(a))
 		var before: float = a.gauge
-		a.gauge = next_gauge(a.gauge, vis, a.position.distance_to(hunter.position), dt)
+		a.gauge = next_gauge(a.gauge, vis, a.position.distance_to(hunter.position), dt, a.lit)
 		if a.gauge >= 1.0:
 			_found(a)
 			if progressive:
@@ -1161,6 +1388,8 @@ func _found(a: BkActor, via: String = "vue") -> void:
 			_st["captures_poursuite"] += 1
 		if hunt_elapsed > BkRules.f("phase_hunt") - TENSION_FIN_S:
 			_st["captures_fin"] += 1
+		if via == "vue":
+			_st["trouves_eclaires" if a.lit else "trouves_ombre"] += 1
 	_last_find_t = hunt_elapsed
 	# Poursuite : elle s'arrête avec la capture (sauf si un autre chassé est encore poursuivi).
 	a.chase_left = 0.0
@@ -1168,6 +1397,7 @@ func _found(a: BkActor, via: String = "vue") -> void:
 		hunter.chase_left = 0.0
 	hunter.elan_mult = 1.0
 	a.rescue_k = 0.0
+	a.use_left = 0.0
 	if a.hidden_in >= 0:
 		_leave_cachette(a, false)
 	a.play_once("found")
@@ -1700,7 +1930,8 @@ func _say(text: String, color: Color, seconds: float) -> void:
 
 func _update_view() -> void:
 	var as_hunter: bool = local == hunter and phase != Phase.END and phase != Phase.PODIUM
-	_dark.color = Color(0.3, 0.3, 0.4) if as_hunter else Color.WHITE
+	_dark.color = BkRules.couleur("nuit_couleur_chasseur" if as_hunter else "nuit_couleur", Color.WHITE)
+	lumieres.maj(_last_dt)
 	for l: PointLight2D in [_cone_light, _near_light, _cone_light_decor, _near_light_decor]:
 		l.enabled = as_hunter
 		if as_hunter:
@@ -1734,6 +1965,8 @@ func _update_view() -> void:
 		if a.shown != show:
 			a.shown = show
 			a.queue_redraw()
+		# Dans l'ombre, le chasseur ne voit d'un chassé qu'une silhouette sombre (GDD §3.2).
+		a.silhouette = as_hunter and a != hunter and a.role == BkActor.Role.HIDER and not a.lit
 	_camera.position = local.position
 	_overlay.queue_redraw()
 	hud.queue_redraw()
@@ -1773,6 +2006,12 @@ func _draw_overlay(ci: CanvasItem) -> void:
 		ci.draw_rect(px.grow(-0.5), Color("6fe08a") if open else Color("8a8a8a"), false, 1.0)
 		BkDraw.texte(ci, Vector2(px.get_center().x, px.get_center().y + 3), "SORTIE" if open else "FERMÉE", 8,
 			Color.WHITE, 2, px.size.x + 16)
+	# Disjoncteurs (vus de tous) : boîtier sur son mur, voyant vert (prêt), rouge (secteur coupé, avec le
+	# temps qui reste) ou gris (en recharge) ; anneau de l'action en cours (vu du chasseur s'il voit
+	# celui qui actionne).
+	for i0: int in boitiers.size():
+		_draw_boitier(ci, i0, as_hunter)
+	lumieres.draw_debug(ci)
 	# Cachettes : caisse orange qui s'ouvre, s'écrase et tremble (entrée, sortie, fouille).
 	for i: int in cachettes.size():
 		var c: Dictionary = cachettes[i]
@@ -1861,6 +2100,28 @@ func _draw_overlay(ci: CanvasItem) -> void:
 		if a.extract_t > 0.0 and a.role == BkActor.Role.HIDER and (not as_hunter or bool(_seen.get(a.id, false))):
 			ci.draw_arc(a.position, a.radius + 4, -PI * 0.5, -PI * 0.5 + TAU * a.extract_t / BkRules.f("extract_hold"),
 				32, Color("6fe08a"), 2.0)
+
+
+func _draw_boitier(ci: CanvasItem, i: int, as_hunter: bool) -> void:
+	var b: Dictionary = boitiers[i]
+	var t: float = map.tile
+	var c: Vector2 = (map.center(b["pos"]) + Vector2(b["mur"] as Vector2i) * t * 0.5).round()
+	var r: Rect2 = Rect2(c - Vector2(6, 8), Vector2(12, 14))
+	var coupe: float = float(pannes.get(str(b["secteur"]), 0.0))
+	var led: Color = Color("ff3b30") if coupe > 0.0 else (Color("8a8f9c") if float(b["cd"]) > 0.0 else Color("6fe08a"))
+	ci.draw_rect(r.grow(1), BkDraw.INK)
+	ci.draw_rect(r, Color("c9cfd8"))
+	ci.draw_rect(Rect2(r.position + Vector2(1, 1), Vector2(r.size.x - 2, 2)), Color("eef1f5"))
+	# Éclair jaune et voyant.
+	ci.draw_colored_polygon(PackedVector2Array([c + Vector2(1, -5), c + Vector2(-2, 0), c + Vector2(0, 0),
+		c + Vector2(-1, 4), c + Vector2(2, -1), c + Vector2(0, -1)]), Color("e8b400"))
+	ci.draw_rect(Rect2(c + Vector2(2, -7), Vector2(3, 3)), led)
+	if coupe > 0.0 and coupe < 1.0e8:
+		BkDraw.texte(ci, c + Vector2(17, 3), "%d" % ceili(coupe), 8, Color("ff6b5e"), 2, 30)
+	for a: BkActor in actors:
+		if a.use_left > 0.0 and a.use_target == i and (not as_hunter or a == local or bool(_seen.get(a.id, false))):
+			var k: float = 1.0 - a.use_left / maxf(BkRules.f("disjoncteur_temps"), 0.01)
+			ci.draw_arc(c, 11.0, -PI * 0.5, -PI * 0.5 + TAU * k, 24, Color("ffd34a"), 2.0)
 
 
 ## Caisse orange procédurale (cachette sans image) : le couvercle, sur le dessus, bascule vers

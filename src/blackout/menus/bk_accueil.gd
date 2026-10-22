@@ -1,7 +1,7 @@
 extends Control
 ## Accueil (GDD-BLACKOUT.md) : quatre gros boutons Partie rapide, En ligne, Mon profil, Réglages,
 ## avec l'avatar animé du profil actif à côté (le toucher ouvre Mon profil). « Changer de joueur »
-## revient à « Qui joue ? ». Les boutons « DEBUG · Visite » restent en bas (temporaires).
+## revient à « Qui joue ? ». Le debug (et la visite de la carte) est dans la partie rapide (GDD §7.2).
 
 
 func _ready() -> void:
@@ -47,26 +47,7 @@ func _ready() -> void:
 	grille.add_child(BkUi.bouton("En ligne", func() -> void: BkNav.aller("en_ligne"), taille, BkUi.BLEU, 36))
 	grille.add_child(BkUi.bouton("Mon profil", func() -> void: BkNav.aller("profil"), taille, BkUi.VERT, 36))
 	grille.add_child(BkUi.bouton("Réglages", func() -> void: BkNav.aller("reglages"), taille, BkUi.GRIS, 36))
-	# TEMPORAIRE, debug (Julien, 2026-10-20) : visite de la carte en chassé ou en chasseur (BkGame.visite).
-	var dbg: HBoxContainer = HBoxContainer.new()
-	dbg.alignment = BoxContainer.ALIGNMENT_CENTER
-	dbg.add_theme_constant_override(&"separation", 12)
-	col.add_child(dbg)
-	for spec: Array in [["DEBUG · Visite : chassé", "chasse"], ["DEBUG · Visite : chasseur", "chasseur"]]:
-		var mode: String = str(spec[1])
-		var b: Button = BkUi.bouton(str(spec[0]), func() -> void: _visite(mode), Vector2(300, 48),
-			Color("3a3f4b"), 20)
-		b.add_theme_color_override(&"font_color", BkUi.JAUNE)
-		b.add_theme_color_override(&"font_focus_color", BkUi.JAUNE)
-		b.add_theme_color_override(&"font_hover_color", BkUi.JAUNE)
-		dbg.add_child(b)
 	jouer.grab_focus.call_deferred()
-
-
-func _visite(mode: String) -> void:
-	BkProfil.vers_partie()
-	BkGame.config["visite"] = mode
-	BkNav.aller("game")
 
 
 func _unhandled_input(event: InputEvent) -> void:

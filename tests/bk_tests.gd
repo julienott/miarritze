@@ -2,7 +2,10 @@ extends SceneTree
 ## Tests headless de Blackout : détection progressive (jauge, seuils), ressenti du chassé, mesures
 ## de tension (frôlements, vu puis perdu), une partie IA contre IA courte, et la partie en N rounds
 ## (tirage en sac, versus, podium), la partie rapide (réglages → règles), le profil (persistance),
-## la carte bac à sable (cases de vue et de passage), les persos en pixel art (planches et repli).
+## la carte bac à sable (cases de vue et de passage), les persos en pixel art (planches et repli),
+## la lumière et l'ombre (éclairé derrière un mur, jauge 3 fois plus lente, silhouette), les
+## disjoncteurs (coupure de 15 s, recharge, rallumage par le chasseur, priorité du bouton) et le menu
+## debug.
 ## godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd [-- --only=nom]
 
 const GAME: String = "res://src/blackout/bk_game.tscn"
@@ -29,7 +32,9 @@ func _run() -> void:
 		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus, test_vue_objet_bas,
 		test_options_partie, test_partie_ia_courte, test_rounds_pour, test_sac, test_versus_saute_en_ia,
 		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo, test_roster,
-		test_persos_px32, test_cases_vue_passage, test_bac_a_sable, test_regles_carte]
+		test_persos_px32, test_cases_vue_passage, test_bac_a_sable, test_regles_carte,
+		test_eclaire_mur, test_ombre_facteur, test_ombre_capture_silhouette, test_disjoncteur,
+		test_disjoncteur_priorite, test_disjoncteur_ia, test_menu_debug]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
 			continue
@@ -186,8 +191,10 @@ const CHASSEUR: Vector2i = Vector2i(24, 12)
 
 
 ## Partie posée sur la carte, sans boucle de jeu : on place les acteurs et on appelle la capture et
-## les mesures à la main. Chasseur = acteur 0 en CHASSEUR regardant vers l'est.
-func make_game() -> BkGame:
+## les mesures à la main. Chasseur = acteur 0 en CHASSEUR regardant vers l'est. `pleine_lumiere` :
+## une grande source (secteur « T ») sur le chasseur éclaire tout ce qu'il voit, pour tester la
+## détection comme avant la lumière (GDD §3.2 : un chassé éclairé est détecté à la vitesse normale).
+func make_game(pleine_lumiere: bool = true) -> BkGame:
 	var game: BkGame = (load(GAME) as PackedScene).instantiate()
 	BkGame.config["players"] = 3
 	root.add_child(game)
@@ -206,7 +213,15 @@ func make_game() -> BkGame:
 	game._tens.clear()
 	game.hunter.position = tile_pos(game, CHASSEUR.x, CHASSEUR.y)
 	game.hunter.look = 0.0
+	if pleine_lumiere:
+		game.map.lumieres.append(source(CHASSEUR, 30.0, "T"))
 	return game
+
+
+## Source de lumière de test (même format que BkMap.lumieres).
+func source(t: Vector2i, rayon: float, secteur: String) -> Dictionary:
+	return {"pos": t, "rayon": rayon, "secteur": secteur, "type": "lampadaire", "couleur": Color.BLACK,
+		"mur": Vector2i.ZERO}
 
 
 func tile_pos(game: BkGame, x: float, y: float) -> Vector2:
@@ -732,7 +747,10 @@ func test_bac_a_sable() -> void:
 	check(m.secteurs.size() == 3 and m.disjoncteurs.size() == m.secteurs.size(), "un disjoncteur par secteur")
 	for d: Dictionary in m.disjoncteurs:
 		check(m.walkable(d["pos"]) and m.at((d["pos"] as Vector2i) + (d["mur"] as Vector2i)) == "#", "disjoncteur %s contre un mur" % d["pos"])
-	check(m.lampadaires.size() >= m.secteurs.size(), "des lampadaires dans chaque secteur")
+	for sct: Dictionary in m.secteurs:
+		var n_src: int = m.lumieres.filter(func(l: Dictionary) -> bool: return str(l["secteur"]) == str(sct["id"])).size()
+		check(n_src >= 2, "des sources de lumière dans le secteur %s (%d)" % [sct["id"], n_src])
+	check(m.lumieres.any(func(l: Dictionary) -> bool: return str(l["type"]) == "neon"), "au moins un néon")
 	check(game.gateaux.size() == int(BkRules.f("gateaux_nombre")), "gâteaux posés (%d)" % game.gateaux.size())
 	for g: Dictionary in game.gateaux:
 		check(m.gateaux_places.has(m.to_tile(g["pos"])), "gâteau sur une place de la carte")
@@ -759,3 +777,232 @@ func test_regles_carte() -> void:
 	check(is_equal_approx(BkRules.f("exits_open_at"), 110.0), "réglage propre à la carte : sorties à 110 s")
 	await free_game(game)
 	check(is_equal_approx(BkRules.f("exits_open_at"), 10.0), "réglage de la carte retiré à la fin de la partie")
+
+
+# ------------------------------------------------------------------ lumière et ombre (#625)
+
+## Règle « éclairé » (GDD §3.2) : pieds dans le rayon d'une source allumée, sans mur plein entre elle et
+## eux ; une grille ou un objet bas laisse passer la lumière ; une source éteinte n'éclaire plus.
+func test_eclaire_mur() -> void:
+	var game: BkGame = await make_game(false)
+	var m: BkMap = game.map
+	game.map.lumieres.clear()
+	# Source dans le couloir de la maison (12, 10) ; mur plein en (12, 9) entre elle et la cuisine.
+	game.map.lumieres.append(source(Vector2i(12, 10), 3.0, "T"))
+	check(m.at(Vector2i(12, 9)) == "#" and m.walkable(Vector2i(12, 8)) and m.walkable(Vector2i(12, 11)), "précondition : mur entre (12, 10) et (12, 8)")
+	check(game.eclaire(m.center(Vector2i(14, 10))), "à 2 cases, rien entre : éclairé")
+	check(not game.eclaire(m.center(Vector2i(12, 8))), "à 2 cases derrière un mur plein : dans l'ombre")
+	check(not game.eclaire(m.center(Vector2i(16, 10))), "à 4 cases (rayon 3) : dans l'ombre")
+	# Les pieds comptent, pas le centre du corps.
+	var a: BkActor = game.actors[1]
+	a.position = m.center(Vector2i(12, 11))
+	check(game.eclaire(BkGame.pieds(a)), "pieds d'un acteur dans la zone : éclairé")
+	# Une grille laisse passer la lumière (jardin de la Place : grille en (26, 4)).
+	game.map.lumieres.append(source(Vector2i(25, 4), 3.0, "U"))
+	check(m.at(Vector2i(26, 4)) == "g" and game.eclaire(m.center(Vector2i(27, 4))), "à travers une grille : éclairé")
+	# Une source dont le secteur est coupé n'éclaire plus.
+	game.pannes["T"] = 5.0
+	check(not game.eclaire(m.center(Vector2i(14, 10))), "secteur coupé : dans l'ombre")
+	await free_game(game)
+
+
+## Dans l'ombre, la jauge monte ombre_facteur (3) fois moins vite ; elle redescend pareil.
+func test_ombre_facteur() -> void:
+	BkRules._data["idee_detection"] = 1.0
+	check(near(BkRules.f("ombre_facteur"), 3.0, 1e-6), "ombre_facteur = 3 (GDD §3.2)")
+	for d: float in [BkRules.px("near_radius"), BkRules.px("cone_range") * 0.6, BkRules.px("cone_range")]:
+		var lit: float = BkGame.next_gauge(0.0, 1.0, d, 0.05, true)
+		var dark: float = BkGame.next_gauge(0.0, 1.0, d, 0.05, false)
+		check(near(lit / dark, 3.0, 1e-4), "à %.0f px : 3 fois moins vite dans l'ombre (%.3f)" % [d, lit / dark])
+	check(near(BkGame.next_gauge(0.5, 0.0, 0.0, 0.1, false), BkGame.next_gauge(0.5, 0.0, 0.0, 0.1, true), 1e-6),
+		"hors de vue : la jauge redescend pareil")
+	BkRules._data["idee_detection"] = 0.0
+	check(near(BkGame.next_gauge(0.0, 1.0, 64.0, 0.05, true) / BkGame.next_gauge(0.0, 1.0, 64.0, 0.05, false), 3.0, 1e-4),
+		"règle d'avant (sans détection progressive) : facteur 3 aussi")
+
+
+## Dans la partie : un chassé vu dans l'ombre se remplit 3 fois moins vite qu'éclairé, et le chasseur
+## (joueur local) ne voit de lui qu'une silhouette, sans pseudo ; éclairé, son sprite normal.
+func test_ombre_capture_silhouette() -> void:
+	BkRules._data["idee_detection"] = 1.0
+	var game: BkGame = await make_game(false)
+	game.map.lumieres.clear()
+	game.local = game.hunter
+	var h: BkActor = game.actors[1]
+	h.position = devant(game, 4)
+	check(game.sees(game.hunter, h.position, h.radius), "précondition : vu devant")
+	tick(game, 0.1)
+	var g_ombre: float = h.gauge
+	check(not h.lit, "sans source : dans l'ombre")
+	game._update_view()
+	check(h.silhouette, "vu du chasseur : silhouette")
+	h.perso._process(0.0)
+	check(h.perso.material == BkPerso.silhouette_material(), "silhouette : shader monochrome sur le sprite")
+	# La même chose sous une lampe.
+	h.gauge = 0.0
+	game.map.lumieres.append(source(game.map.to_tile(h.position), 2.0, "T"))
+	tick(game, 0.1)
+	check(h.lit, "sous la lampe : éclairé")
+	check(near(h.gauge / maxf(g_ombre, 1e-6), 3.0, 0.15), "jauge 3 fois plus haute éclairé (%.3f / %.3f)" % [h.gauge, g_ombre])
+	game._update_view()
+	h.perso._process(0.0)
+	check(not h.silhouette and h.perso.material == null, "éclairé : son sprite normal")
+	# Les chassés voient tout normalement.
+	game.local = h
+	game.pannes["T"] = 5.0
+	tick(game, DT)
+	game._update_view()
+	check(not h.lit and not h.silhouette, "vu d'un chassé : jamais de silhouette")
+	await free_game(game)
+
+
+# ------------------------------------------------------------------ disjoncteurs (#626)
+
+## Placer un acteur sur la case d'un boîtier et avancer le jeu de `secs` s (boîtiers et pas).
+func avance_boitiers(game: BkGame, secs: float) -> void:
+	for i: int in int(round(secs / DT)):
+		game._update_boitiers(DT)
+		for a: BkActor in game.actors:
+			a.step(Vector2.ZERO, Vector2.ZERO, DT)
+
+
+## Un chassé actionne (1 s, immobile) : le secteur est coupé 15 s, toutes ses sources éteintes ; boîtier
+## en recharge 30 s ; le chasseur le rallume de la même façon ; la lumière revient seule au bout de 15 s.
+func test_disjoncteur() -> void:
+	var game: BkGame = await make_game(false)
+	var m: BkMap = game.map
+	var i: int = 1                                      # boîtier du secteur B (la Place)
+	var b: Dictionary = game.boitiers[i]
+	check(str(b["secteur"]) == "B", "précondition : boîtier de la Place")
+	var lampe: Dictionary = m.lumieres.filter(func(l: Dictionary) -> bool: return str(l["secteur"]) == "B")[0]
+	var sous_lampe: Vector2 = BkLumieres.centre(m, lampe) + Vector2(0, 8)
+	check(game.eclaire(sous_lampe), "précondition : sous un lampadaire de la Place, éclairé")
+	var h: BkActor = game.actors[1]
+	h.position = m.center(b["pos"])
+	check(game.action_label(h) == "Actionner", "près du boîtier : « Actionner » (%s)" % game.action_label(h))
+	game.act_for(h)
+	check(near(h.use_left, BkRules.f("disjoncteur_temps"), 1e-6), "action de disjoncteur_temps s")
+	var avant: Vector2 = h.position
+	h.step(Vector2.RIGHT, Vector2.ZERO, DT)
+	check(h.position == avant, "immobile pendant l'action")
+	avance_boitiers(game, BkRules.f("disjoncteur_temps") * 0.5)
+	check(game.pannes.is_empty(), "pas de coupure avant la fin de l'action")
+	avance_boitiers(game, BkRules.f("disjoncteur_temps") * 0.5 + 2.0 * DT)
+	check(near(float(game.pannes.get("B", 0.0)), BkRules.f("disjoncteur_duree"), 0.1), "secteur coupé %.1f s" % float(game.pannes.get("B", 0.0)))
+	check(not game.eclaire(sous_lampe), "toutes les sources du secteur éteintes")
+	check(game.eclaire(BkLumieres.centre(m, m.lumieres[0]) + Vector2(0, 8)), "les autres secteurs restent allumés")
+	check(near(float(b["cd"]), BkRules.f("disjoncteur_cooldown"), 0.1), "boîtier en recharge %.1f s" % float(b["cd"]))
+	check(int(game._st["coupures"]) == 1, "coupure comptée")
+	# Un chassé ne peut pas recouper un secteur coupé ni un boîtier en recharge.
+	check(game.action_label(h) != "Actionner", "plus d'« Actionner » pour un chassé")
+	# La lumière revient seule au bout de disjoncteur_duree s.
+	avance_boitiers(game, BkRules.f("disjoncteur_duree") - 1.0)
+	check(not game.pannes.is_empty(), "encore coupé juste avant la fin")
+	avance_boitiers(game, 1.2)
+	check(game.pannes.is_empty() and game.eclaire(sous_lampe), "lumière revenue au bout de %d s" % int(BkRules.f("disjoncteur_duree")))
+	check(float(b["cd"]) > 0.0 and game.action_label(h) != "Actionner", "boîtier encore en recharge (%.1f s)" % float(b["cd"]))
+	avance_boitiers(game, BkRules.f("disjoncteur_cooldown") - BkRules.f("disjoncteur_duree"))
+	check(game.action_label(h) == "Actionner", "recharge finie au bout de %d s : on peut recouper" % int(BkRules.f("disjoncteur_cooldown")))
+	# Le chasseur rallume un secteur coupé.
+	game.act_for(h)
+	avance_boitiers(game, BkRules.f("disjoncteur_temps") + 2.0 * DT)
+	check(game.pannes.has("B"), "recoupé")
+	var c: BkActor = game.hunter
+	c.position = m.center(b["pos"])
+	check(game.action_label(c) == "Actionner", "chasseur près d'un secteur coupé : « Actionner »")
+	game.act_for(c)
+	avance_boitiers(game, BkRules.f("disjoncteur_temps") + 2.0 * DT)
+	check(game.pannes.is_empty() and game.eclaire(sous_lampe), "le chasseur a rallumé")
+	check(int(game._st["rallumages"]) == 1, "rallumage compté")
+	check(game.action_label(c) == "Onde", "secteur allumé : le chasseur n'a rien à actionner")
+	await free_game(game)
+
+
+## Priorité du bouton (GDD §6) : cachette > disjoncteur > pouvoir ; rien hors de la chasse.
+func test_disjoncteur_priorite() -> void:
+	var game: BkGame = await make_game(false)
+	var h: BkActor = game.actors[1]
+	var b: Dictionary = game.boitiers[0]
+	h.position = game.map.center(b["pos"])
+	check(game.action_label(h) == "Actionner", "près du boîtier seul : Actionner")
+	# Une cachette posée à côté du boîtier passe avant.
+	game.cachettes.append({"tile": b["pos"], "pos": game.map.center(b["pos"]) + Vector2(game.map.tile, 0)})
+	game._reset_cachettes()
+	check(game.action_label(h) == "Entrer", "cachette à portée : Entrer d'abord (%s)" % game.action_label(h))
+	game.cachettes.pop_back()
+	h.position = game.map.center(Vector2i(24, 18))
+	check(game.action_label(h) == "Piège", "loin de tout : le pouvoir")
+	game.phase = BkGame.Phase.HIDE
+	h.position = game.map.center(b["pos"])
+	check(game.action_label(h) != "Actionner", "pendant la cachette : pas de disjoncteur")
+	await free_game(game)
+
+
+## IA : un chassé éclairé dans le secteur du chasseur va couper ; le chasseur IA va rallumer.
+func test_disjoncteur_ia() -> void:
+	BkRules._data["ai"]["normal"]["disjoncteur"] = 1.0
+	var game: BkGame = await make_game(false)
+	var m: BkMap = game.map
+	var h: BkActor = game.actors[1]
+	var ai: BkAi = BkAi.new(game, h, "normal")
+	var b: Dictionary = game.boitiers[1]
+	h.position = m.center(Vector2i(31, 4))            # sur la Place, près du boîtier B (30, 1)
+	h.lit = true
+	game.hunter.position = m.center(Vector2i(36, 18))  # chasseur sur la Place aussi
+	ai._think_hider()
+	check(ai.plan_switch == 1, "chassé éclairé, chasseur dans le secteur : il va au disjoncteur")
+	h.position = m.center(b["pos"])
+	ai._think_hider()
+	check(ai.want_action, "arrivé au boîtier : il l'actionne")
+	# Chasseur IA : un secteur coupé, il y va et l'actionne.
+	game.pannes["B"] = 10.0
+	var hai: BkAi = BkAi.new(game, game.hunter, "normal")
+	hai._think_hunter()
+	check(hai.plan_switch == 1 and not hai.path.is_empty(), "le chasseur IA part rallumer")
+	game.hunter.position = m.center(b["pos"])
+	hai._think_hunter()
+	check(hai.want_action, "le chasseur IA actionne le boîtier")
+	await free_game(game)
+
+
+# ------------------------------------------------------------------ menu debug (#634)
+
+## Menu debug de la partie rapide : rôle imposé à chaque round, perso choisi, sans chrono, retour à la
+## partie rapide ; une partie rapide normale remet tout à zéro.
+func test_menu_debug() -> void:
+	var scr: GDScript = load("res://src/blackout/menus/bk_partie_rapide.gd")
+	scr.reinitialiser()
+	var ecran: Control = (load("res://src/blackout/menus/bk_partie_rapide.tscn") as PackedScene).instantiate()
+	root.add_child(ecran)
+	await process_frame
+	scr.debug_choix = {"perso": "patxi", "role": "hunter", "boss": "", "chrono": false, "seul": false}
+	ecran.preparer_debug()
+	var cfg: Dictionary = BkGame.config
+	check(bool(cfg["debug"]) and str(cfg["debug_role"]) == "hunter" and str(cfg["character"]) == "patxi"
+		and bool(cfg["sans_chrono"]) and str(cfg["map"]) == "bac_a_sable" and str(cfg["visite"]) == "", "debug posé sur la partie")
+	BkRules._data["phase_draw"] = 0.1
+	BkRules._data["phase_hide"] = 0.1
+	BkRules._data["phase_hunt"] = 0.5
+	BkGame.config["players"] = 4
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
+	root.add_child(game)
+	for i: int in 40:
+		await physics_frame
+	check(game.debug and game.hunter == game.local and game.local.character == "patxi", "chasseur imposé, perso choisi")
+	check(game.phase == BkGame.Phase.HUNT and game.rounds_total == 0, "pas de versus, partie sans fin")
+	check(not game.versus_actif() and not game.peut_terminer(), "debug : ni versus ni podium")
+	check(game.phase_t > BkRules.f("phase_hunt") - 0.01, "sans chrono : le chrono ne descend pas (%.2f)" % game.phase_t)
+	game._debug_key("L")
+	check(game.lumieres.debug, "touche L : zones de lumière")
+	game._debug_key("F")
+	check(game.map.formes.visible and game.map.formes.get_child_count() > 0, "touche F : formes du décor")
+	await free_game(game)
+	scr.debug_choix["role"] = "hider"
+	scr.debug_choix["seul"] = true
+	ecran.preparer_debug()
+	check(str(cfg["debug_role"]) == "hider" and str(cfg["visite"]) == "chasse", "personne en face : la visite")
+	ecran.preparer()
+	check(not bool(cfg["debug"]) and str(cfg["visite"]) == "" and not bool(cfg["sans_chrono"]), "partie rapide normale : debug remis à zéro")
+	scr.reinitialiser()
+	ecran.queue_free()
+	await process_frame
