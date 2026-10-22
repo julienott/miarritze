@@ -1,0 +1,83 @@
+{
+ "factor": 4,
+ "canvas": [
+  32,
+  32
+ ],
+ "feet_y": 31,
+ "palette": [
+  "#190c06",
+  "#1e0004",
+  "#391b0e",
+  "#440009",
+  "#59290e",
+  "#737a97",
+  "#830013",
+  "#c65c21",
+  "#ed0300",
+  "#ffffff"
+ ],
+ "elements": {
+  "profile": {
+   "frames": 1,
+   "fps": 1,
+   "loop": false
+  },
+  "idle": {
+   "frames": 2,
+   "fps": 3,
+   "loop": true
+  },
+  "run": {
+   "frames": 4,
+   "fps": 12,
+   "loop": true
+  },
+  "jump_hide": {
+   "frames": 5,
+   "fps": 12,
+   "loop": false
+  },
+  "ghost": {
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "idle_long": {
+   "frames": 8,
+   "fps": 10.0,
+   "loop": true
+  }
+ },
+ "source": "4d2b712456744d1a849e170fa3d96a7a",
+ "controls": {
+  "warnings": [
+   "teinte d'une zone dérivée de 39.0 ΔE entre 128 et 32"
+  ],
+  "height_px": 30,
+  "body_width_px": 6,
+  "colors_used": 10,
+  "isolated_px": 10,
+  "feet_bottom": {
+   "profile": [
+    31
+   ],
+   "idle": [
+    31,
+    31
+   ],
+   "run": [
+    31,
+    31,
+    31,
+    31
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 39.0,
+  "saturation_mean": 0.83,
+  "lightness_range": 96,
+  "colors_budget": 10
+ }
+}

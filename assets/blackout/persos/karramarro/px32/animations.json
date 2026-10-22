@@ -1,0 +1,50 @@
+{
+ "idle": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/idle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/idle_sheet.png",
+  "fps": 3,
+  "loop": true,
+  "count": 2,
+  "caption": "idle · 2 images · 3 i/s · boucle"
+ },
+ "run": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/run_sheet.png",
+  "fps": 12,
+  "loop": true,
+  "count": 4,
+  "caption": "run · 4 images · 12 i/s · boucle"
+ },
+ "jump_hide": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/jump_hide.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/jump_hide_sheet.png",
+  "fps": 12,
+  "loop": false,
+  "count": 5,
+  "caption": "jump_hide · 5 images · 12 i/s"
+ },
+ "ghost": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/ghost.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/ghost_sheet.png",
+  "fps": 6,
+  "loop": true,
+  "count": 4,
+  "caption": "ghost · 4 images · 6 i/s · boucle"
+ },
+ "idle_long": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/idle_long.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/idle_long_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "idle_long · 8 images · 10 i/s · boucle"
+ },
+ "profile": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/dfae44902c8b4ab9a7678c8d541ffc79/profile_sheet.png",
+  "fps": 1,
+  "loop": false,
+  "count": 1,
+  "caption": "profile · 1 image · 1 i/s"
+ }
+}
