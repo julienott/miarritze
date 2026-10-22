@@ -1,7 +1,7 @@
 {
- "_doc": "Blocs de prompts réutilisables du style « façon Party Hard » de Miarritze Blackout (proposition du 2026-10-21, à valider par Julien). Explications et exemples : docs/STYLE_PARTY_HARD.md et docs/style/*.md. Assemblage : prompt = gabarit (emplacements {…} remplis) + ' ' + style_commun.base + ' ' + style_commun.par_type[type]. Tous les prompts sont en anglais, décrivent seulement le résultat voulu (aucune négation : les modèles ajoutent ce qu'on nomme) et ne citent aucun jeu existant. Paramètres pixelforge : prompt_style, width, height, colors, num_images, seed.",
- "version": 1,
- "date": "2026-10-21",
+ "_doc": "Copie machine des prompts de Miarritze Blackout. Ce qui fait foi : GDD-BLACKOUT.md (§8.2 pour les persos, §9 style, §14 pipeline) ; toute modification se fait d'abord dans le GDD, puis ici. Analyse du style : docs/STYLE_PARTY_HARD.md. Prompts en anglais, simples, sans négation, sans citer de jeu existant. Persos (v2) : prompt du moteur A = persos[id].description + '. Signature detail drawn large and bright: ' + signature + '.' ; rejeu : tools/blackout/party_hard_v2.py. Les gabarits (prop, cachette, sol, mur, anime, carte_zone) et style_commun servent au décor ; gabarits.perso et animations.* (48 px, pf_pro__character / pf_anim__*) sont l'essai du 21/10, remplacé par les moteurs A et B.",
+ "version": 2,
+ "date": "2026-10-22",
  "echelle": {
   "_doc": "Résolution native du monde et correspondance avec le jeu (rules.json tile_px = 64 en 1280×720).",
   "resolution_native": [
@@ -166,7 +166,7 @@
   }
  },
  "persos": {
-  "_doc": "Fiches pixel (lecture à 28–33 px) tirées de tools/blackout/prompts_anims.json et de tools/rd/prompts/fighters.yaml (Itsasargi). signature = ce qui doit se lire de loin. Aucune personnalisation (décision de Julien, 2026-10-21).",
+  "_doc": "Fiches v2 du 22/10 (GDD-BLACKOUT.md §8.2, qui fait foi). description + signature = prompt du moteur A. Le champ corps ne sert qu'à l'essai du 21/10.",
   "louis": {
    "corps": "enfant",
    "signature": "a red Basque beret on blond hair",
@@ -174,13 +174,13 @@
   },
   "txomin": {
    "corps": "enfant",
-   "signature": "black sunglasses and blue swim fins hanging at the hip",
-   "description": "a Basque lifeguard boy with dark brown skin and short black curly hair, black sunglasses, a yellow tank top, red swim shorts, blue swim fins hanging from his belt, barefoot"
+   "signature": "a red cap and a yellow tank top",
+   "description": "a Basque lifeguard boy with dark brown skin and short black curly hair, a red cap, black sunglasses, a yellow tank top and red swim shorts, barefoot"
   },
   "patxi": {
    "corps": "adulte",
-   "signature": "a fishing rod sticking up diagonally from his back",
-   "description": "a bearded Basque fisherman with a blue beanie, a yellow raincoat, navy trousers, black boots and a fishing rod strapped diagonally on his back"
+   "signature": "a bright yellow raincoat and yellow boots",
+   "description": "a bearded Basque fisherman with a blue beanie, a yellow raincoat, light blue trousers and yellow rubber boots"
   },
   "maia": {
    "corps": "enfant",
@@ -189,38 +189,38 @@
   },
   "xabi": {
    "corps": "enfant",
-   "signature": "a long curved wicker chistera on his right hand",
-   "description": "a little Basque jai alai player with short dark brown hair, a white polo shirt, white trousers, a red sash, red espadrilles and a long curved wicker chistera on his right hand"
+   "signature": "a long curved wicker chistera pointing forward",
+   "description": "a little Basque jai alai player with short dark brown hair, a white polo shirt, plain white trousers, a red sash, red espadrilles and a long curved wicker chistera on his right hand pointing forward"
   },
   "mattin": {
    "corps": "costaud",
-   "signature": "red and white horizontal stripes and big arms",
-   "description": "a strong Basque stone lifter with a black beard, a red beret, a red and white horizontally striped shirt, navy trousers, brown shoes and big muscular arms"
+   "signature": "red and white horizontal stripes on a broad chest",
+   "description": "a short stocky Basque stone lifter with a broad muscular chest, a black beard, a red beret, a red and white horizontally striped shirt, navy trousers and brown shoes"
   },
   "amaia": {
    "corps": "enfant",
    "signature": "a red headscarf and a red skirt",
-   "description": "a Basque folk dancer girl with a red headscarf, a green vest over a white blouse, a red skirt, white espadrilles and a wooden makila stick on her back"
+   "description": "a Basque folk dancer girl with a red headscarf, a green vest over a white blouse, a red skirt, simple white shoes and a wooden makila stick on her back"
   },
   "kaio": {
    "corps": "creature",
    "signature": "a big yellow beak and orange webbed feet",
-   "description": "a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot, orange webbed feet and a small neckerchief"
+   "description": "a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot and orange webbed feet"
   },
   "karramarro": {
    "corps": "creature",
    "signature": "two big raised orange pincers and eyes on stalks",
-   "description": "a cheerful orange cartoon crab with thin legs, two big raised pincers, eyes on stalks, a yellow belly, a big happy open mouth and a small neckerchief"
+   "description": "a cheerful orange cartoon crab standing on six thin pointed crab legs, two big raised pincers, eyes on stalks, a yellow belly and a big happy open mouth"
   },
   "ramuntxo": {
    "corps": "costaud",
    "signature": "a tall white chef hat",
-   "description": "a jolly Basque chef with a small brown mustache, a tall white chef hat, a white chef jacket, a red neck scarf, red and white checkered trousers and a black frying pan at his belt"
+   "description": "a jolly Basque chef with a small brown mustache, a tall white chef hat, a white chef jacket, a red neck scarf, plain red trousers and black shoes"
   },
   "itsaso": {
    "corps": "enfant",
-   "signature": "long flowing aqua hair and a foamy wave hem",
-   "description": "a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with white foam, barefoot"
+   "signature": "long flowing aqua hair and a white foam hem",
+   "description": "a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with bright white foam, barefoot"
   },
   "peio": {
    "corps": "costaud",
@@ -229,8 +229,8 @@
   },
   "itsasargi": {
    "corps": "adulte",
-   "signature": "a glowing yellow lantern held forward",
-   "description": "an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a glowing brass lantern held forward"
+   "signature": "a big glowing yellow lantern held forward",
+   "description": "an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern held firmly by its handle in front of him"
   }
  },
  "pnj_fete": {
@@ -251,7 +251,7 @@
   ]
  },
  "animations": {
-  "_doc": "Décision de Julien (2026-10-21) : on fait simple. Chaque perso = 1) profil (sprite de référence), 2) idle, 3) course, 4) saut vers la cachette (la sortie = la même animation jouée à l'envers), 5) fantôme. Aucune personnalisation : ni masque de tenue ni couleur de joueur. Tout est de profil tourné vers la droite ; la gauche est le miroir. Cadence d'après les vidéos de Party Hard (mesures_video) : poses tenues 100 ms (10 i/s), marche en 4 poses, rebond de 1 px. Prompt d'une anim = '{description}, ' + action + ', ' + expression + '.' + style_commun.base + par_type.anim. Décision de Julien (21/10) : uniquement des clips Quaternius, nommés explicitement dans « motion » (docs/PIXELFORGE_ANIMATIONS.md) ; pf_px__character_set utilise Sprint_Loop (course) et Jump_Start (saut vers la cachette).",
+  "_doc": "Essai du 21/10 (48 px, pf_pro__character / pf_anim__*), remplacé par les moteurs A et B ; gardé pour les mesures vidéo (mesures_video). Éléments et clips en vigueur : decisions et GDD-BLACKOUT.md §8.1.",
   "mesures_video": {
    "source": "Steam app 356570 : « Lets Play by Mike Rose » (720p30, ×2 exact, caméra fixe) et « Launch Trailer » (1080p60, zoom ×4,7 à ×5) ; docs/STYLE_PARTY_HARD.md §10",
    "cadence_poses_fps": 10,
@@ -353,7 +353,7 @@
   }
  },
  "cartes": {
-  "_doc": "Recettes par carte (zones de assets/maps/<id>/zones.json, SPEC-GORDEKA §8). Une carte fait 96 × 40 à 42 cases = 3072 × 1280 px natifs, environ 4,8 × 3,6 écrans : la caméra suit le joueur.",
+  "_doc": "Recettes par carte (zones de assets/maps/<id>/zones.json, GDD-BLACKOUT.md). Une carte fait 96 × 40 à 42 cases = 3072 × 1280 px natifs, environ 4,8 × 3,6 écrans : la caméra suit le joueur.",
   "port_pecheurs": {
    "carte": "the old fishermen's port of Biarritz",
    "lumieres": "lantern strings across the streets, warm windows, a lighthouse beam, reflections on the dark harbour water",
@@ -437,7 +437,7 @@
   }
  },
  "musique": {
-  "_doc": "Prompts de style musical (ex. Suno) : descriptifs, en anglais, sans nom d'artiste ni de jeu. Assemblage : base + ' ' + morceaux[id]. Analyse : docs/STYLE_PARTY_HARD.md §11 ; mode d'emploi : docs/style/06_musique.md. Mesures sur les bandes-annonces Steam : PH1 120 BPM, grosse caisse sur chaque temps, ~50 % de l'énergie sous 150 Hz ; PH2 120 BPM, motifs en croches plus funk.",
+  "_doc": "Prompts de style musical (ex. Suno) : descriptifs, en anglais, sans nom d'artiste ni de jeu. Assemblage : base + ' ' + morceaux[id]. Analyse : docs/STYLE_PARTY_HARD.md §11 ; mode d'emploi : docs/PROMPTS_MUSIQUE.md. Mesures sur les bandes-annonces Steam : PH1 120 BPM, grosse caisse sur chaque temps, ~50 % de l'énergie sous 150 Hz ; PH2 120 BPM, motifs en croches plus funk.",
   "base": "Upbeat retro electronic dance music for a cheerful children's party game, analog synth bass, bright arpeggiated synths, punchy drum machine, catchy hook, instrumental, playful and fun, family friendly, light Basque folk color.",
   "touches_basques": [
    "txalaparta wooden plank percussion playing interlocking rhythms",
@@ -671,18 +671,109 @@
   }
  },
  "decisions": {
-  "date": "2026-10-21",
+  "date": "2026-10-22",
+  "_doc": "Résumé machine ; la référence est GDD-BLACKOUT.md §8 et §9.",
   "taille_perso_px": 32,
+  "case_px": 64,
+  "pieds_y": 60,
+  "hd_case_px": 256,
+  "boss_px": 64,
+  "boss_case_px": 128,
+  "resolution": [
+   640,
+   360
+  ],
   "camera": "suit le joueur",
   "elements_perso": [
-   "profil",
+   "profile",
+   "portrait",
    "idle",
    "idle_long",
    "run",
-   "hide_jump",
+   "jump_hide",
+   "lift",
    "ghost"
   ],
-  "personnalisation": false,
-  "idle_long": "pose quand le perso reste longtemps inactif, créative et propre à chaque perso, clip Quaternius (Julien 21/10) ; choix par perso dans tools/blackout/taches_partyhard_v1.json"
+  "portrait": {
+   "cadrage": "buste de trois-quarts face",
+   "px": 64,
+   "hd_px": 256
+  },
+  "clips": {
+   "idle": "Idle_Loop",
+   "run": "Sprint_Loop",
+   "jump_hide": "Jump_Start",
+   "lift": "LiftAir_Idle",
+   "ghost": "Swim_Idle_Loop"
+  },
+  "personnalisation": false
+ },
+ "idle_long": {
+  "_doc": "Pose d'inactivité par perso (GDD §8.2) : geste (texte) + clip Quaternius ; repli = clip UAL1 utilisé tant que pixelforge n'a pas UAL2.",
+  "louis": {
+   "geste": "looks around, tapping his foot",
+   "clip": "Idle_LookAround",
+   "repli": "Idle_FoldArms_Loop"
+  },
+  "txomin": {
+   "geste": "talks into a small black walkie-talkie held at his mouth",
+   "clip": "Idle_TalkingPhone_Loop",
+   "repli": null
+  },
+  "patxi": {
+   "geste": "casts a fishing rod and waits for a bite",
+   "clip": "Fish_Cast_Idle",
+   "repli": "Idle_Rail_Loop"
+  },
+  "maia": {
+   "geste": "chats cheerfully with big hand gestures",
+   "clip": "Idle_Talking_Loop",
+   "repli": null
+  },
+  "xabi": {
+   "geste": "practises a chistera swing",
+   "clip": "Sword_Attack",
+   "repli": null
+  },
+  "mattin": {
+   "geste": "lifts a heavy round stone",
+   "clip": "PickUp_Table",
+   "repli": null
+  },
+  "amaia": {
+   "geste": "dances a few Basque folk steps",
+   "clip": "Dance_Loop",
+   "repli": null
+  },
+  "kaio": {
+   "geste": "screams with his beak wide open",
+   "clip": "Idle_Rail_Call",
+   "repli": null
+  },
+  "karramarro": {
+   "geste": "scratches his head with a pincer",
+   "clip": "Zombie_Scratch",
+   "repli": null
+  },
+  "ramuntxo": {
+   "geste": "tastes a sauce from a wooden spoon",
+   "clip": "Consume",
+   "repli": null
+  },
+  "itsaso": {
+   "geste": "swirls a small wave between her hands",
+   "clip": "Spell_Double_Shoot",
+   "repli": "Spell_Simple_Idle_Loop"
+  },
+  "peio": {
+   "geste": "spins his rugby ball in his hands",
+   "clip": "Interact",
+   "repli": null
+  },
+  "itsasargi": {
+   "geste": "raises his lantern and peers into the dark",
+   "clip": "Idle_Lantern",
+   "repli": "Idle_Lantern_Loop"
+  }
  }
 }
