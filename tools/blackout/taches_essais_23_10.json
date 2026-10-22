@@ -1,0 +1,112 @@
+{
+ "txomin": {
+  "A": "7ff58347e1e04d1a978d6423127f5417",
+  "chaine": [
+   {
+    "task_id": "7f60ff480a114ee98ca532001add4324",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "prompt": "a Basque lifeguard boy with dark brown skin and short black curly hair, a red cap, black sunglasses, a yellow tank top and red swim shorts, barefoot. Signature detail drawn large and bright: a red cap and a yellow tank top.",
+   "colors": 20,
+   "seed": 7,
+   "priority": "normal",
+   "tag": "miarritze/essai_set_complet",
+   "extras": [
+    {
+     "name": "idle_long",
+     "motion": "Idle_TalkingPhone_Loop",
+     "action": "talks into his walkie-talkie held at his mouth",
+     "loop": true,
+     "fps": 10,
+     "object": "a small red walkie-talkie"
+    },
+    {
+     "name": "cast_chasse",
+     "motion": "OverhandThrow",
+     "action": "throws his red rescue buoy forward to a friend",
+     "object": "a red rescue tube buoy",
+     "loop": false,
+     "fps": 12
+    },
+    {
+     "name": "cast_chasseur",
+     "motion": "Consume",
+     "action": "blows hard into his lifeguard whistle",
+     "object": "a silver whistle",
+     "loop": false,
+     "fps": 12
+    }
+   ],
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10
+    }
+   ]
+  }
+ },
+ "basajaun": {
+  "A": "d65639ebc3454db9a7ee46fc3e668d33",
+  "chaine": [
+   {
+    "task_id": "b75f0321465b446ea5e67acc467b8c3f",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "size": "boss",
+   "seed": 7,
+   "colors": 20,
+   "priority": "normal",
+   "tag": "miarritze/essai_boss",
+   "prompt": "a giant friendly-scary forest lord covered in thick shaggy brown fur, a long beard of green moss, big root-like hands, leaning on a carved tree trunk staff. Signature detail drawn large and bright: a carved tree trunk staff and a mossy green beard.",
+   "skip": [
+    "lift",
+    "ghost"
+   ],
+   "clips": {
+    "run": "Zombie_Walk_Fwd_Loop"
+   },
+   "extras": [
+    {
+     "name": "cri",
+     "motion": "Idle_Rail_Call",
+     "action": "roars with his arms raised",
+     "object": false,
+     "loop": false,
+     "fps": 10
+    },
+    {
+     "name": "pouvoir_1",
+     "motion": "Spell_Simple_Shoot",
+     "action": "raises one hand, glowing green leaves swirl around it",
+     "object": false,
+     "loop": false,
+     "fps": 12
+    },
+    {
+     "name": "pouvoir_2",
+     "motion": "Sword_Attack",
+     "action": "slams his carved trunk staff down onto the ground",
+     "object": false,
+     "loop": false,
+     "fps": 12
+    }
+   ],
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10
+    }
+   ]
+  }
+ }
+}

@@ -208,29 +208,30 @@ Durées *à équilibrer* ; elles respectent déjà §4.3. `(c)` = case.
 | **Itsasargi** | **Feu à occultation** : flash ; si le chasseur est à 6 c et regarde vers lui, son écran devient noir 2 s (il voit sa silhouette). | **Éclat révélateur** : faisceau droit devant (10 c) ; les chassés touchés, même derrière un buisson ou un muret, sont révélés à travers les murs 3 s et ralentis de 30 % 3 s. |
 
 ### 4.5 Effets communs (catalogue)
-Les effets subis sont **les mêmes pour tous les persos** et **faits par le code**, posés sur n'importe
-quel sprite : la matrice persos × effets se réduit à 13 + 10 éléments.
+Les effets subis sont **les mêmes pour tous les persos**. Le code dessine les marques (étoiles,
+résine, plumes…) ; **le perso joue en plus une animation d'effet** (*Julien, 23/10*), élément standard de
+son character set (§8.1), la même pour tous.
 
-| Effet | Rendu (placeholder puis final) |
-|---|---|
-| Figé | contour bleu clair, petites étoiles |
-| Renversé | sprite couché (rotation 90°), étoiles |
-| Collé | flaque de résine sous les pieds |
-| Ralenti | traits bleus derrière, sprite qui oscille |
-| Révélé | contour lumineux visible à travers les murs (pour le chasseur) |
-| Commandes inversées | plumes qui tournent au-dessus de la tête |
-| Aveuglé / masqué | écran noir ou bleu d'eau, silhouette du joueur seule |
-| Tracté | corde ou ligne tendue, glissade |
-| Insensible | halo doré |
-| Invisible / enfoui | sprite à 30 % pour son joueur seulement, rien pour les autres |
+| Effet | Marques par le code | Animation du perso (élément standard, clip) |
+|---|---|---|
+| Figé | contour bleu clair, petites étoiles | `etourdi` (Hit_Head : coup sur la tête, puis il tangue) |
+| Commandes inversées | plumes qui tournent au-dessus de la tête | `etourdi` |
+| Renversé | étoiles | `renverse` (Hit_Knockback puis LayToIdle : il tombe et se relève) |
+| Collé | flaque de résine sous les pieds | `colle` (Push_Loop : il tire sur ses pieds collés) |
+| Ralenti | traits bleus derrière | `ralenti` (Zombie_Walk_Fwd_Loop : marche lourde) |
+| Aveuglé / masqué | écran noir ou bleu d'eau, silhouette du joueur seule | `aveugle` (Idle_No_Loop : il se frotte les yeux) |
+| Tracté | corde ou ligne tendue | `tracte` (Slide_Loop : il glisse en se laissant tirer) |
+| Révélé | contour lumineux visible à travers les murs (pour le chasseur) | aucune |
+| Insensible | halo doré | aucune |
+| Invisible / enfoui | sprite à 30 % pour son joueur seulement, rien pour les autres | aucune |
 
 ### 4.6 Animation des coups (*recommandation retenue*)
-- Chaque perso a **2 animations de lancement** : un clip Quaternius pour son coup de chassé, un pour
-  son coup de chasseur. **Pour l'instant : placeholders** (pose figée + flash + icône), affinés au fur
-  et à mesure.
+- Chaque perso a **2 animations de lancement** (extras `cast_chasse`, `cast_chasseur`) : un clip
+  Quaternius pour son coup de chassé, un pour son coup de chasseur, choisis par coup (liste des 26 à
+  valider par Julien ; essai sur Txomin le 23/10). En attendant : placeholders (pose figée + flash).
 - Ce qui est lancé ou posé (pelote, bouée, pierre, gâteau, nuage, muret, geysers) : **formes simples
   en placeholder**, remplacées plus tard par de petits sprites pixelforge.
-- Les effets subis : §4.5, par le code.
+- Les effets subis : §4.5 (marques par le code, animation d'effet commune).
 
 ## 5. Le round du boss
 
@@ -370,7 +371,10 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 | `jump_hide` | saut vers la cachette (la sortie = à l'envers) | Jump_Start |
 | `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir_Idle_Loop |
 | `ghost` | **fantôme générique, le même pour tous** (*Julien, 23/10*) : petit drap blanc aux grands yeux ronds et petit béret rouge, qui flotte et avance ; le pseudo au-dessus dit à qui il est | sprite commun (`assets/blackout/fantome/`), plus d'élément ghost par perso |
-| `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6) | placeholders pour l'instant |
+| `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6), propres au perso | extras, clip par coup |
+| `interagir` | fouiller une cachette, actionner un disjoncteur (1 s) | élément standard, Interact |
+| `victoire`, `defaite` | podium | éléments standard, Dance_Loop et Idle_No_Loop |
+| `etourdi`, `renverse`, `colle`, `ralenti`, `aveugle`, `tracte` | effets subis (§4.5) | éléments standard, clips du §4.5 |
 
 - Clips : **uniquement Quaternius**, nommés explicitement ; pixelforge a les bibliothèques UAL1 et
   **UAL2** depuis le 22/10 (182 clips, liste : `GET /v2/motions`).
@@ -407,9 +411,25 @@ simples ; Kaio et Karramarro sans foulard, Karramarro sur pattes de crabe ; Ramu
 uni et chaussures noires ; Itsaso écume blanche ; Itsasargi lanterne plus grosse, bien tenue. Louis,
 Maïa et Peio inchangés.
 
+- **Character set complet** (*Julien, 23/10*) : éléments fixes + **9 éléments standard** communs à tous
+  (`interagir`, `victoire`, `defaite` et les 6 animations d'effets), demandés à pixelforge le 23/10, + **3
+  extras propres au perso** (`idle_long`, `cast_chasse`, `cast_chasseur`). Un perso déjà validé reçoit ce
+  qui lui manque par le mode « extras seuls » (§14.1), sans toucher au reste.
+
 ### 8.3 Boss
-Même pipeline, en 64 px (§8.1). Prompts tirés des fiches §5.2 (visuel), écrits au moment de les
-générer et ajoutés ici.
+Même pipeline, `size: "boss"` (64 px dans une case de 128, §8.1). Éléments d'un boss (*23/10*) :
+`profile`, `portrait` (versus), `idle`, `run` (sa démarche, clip propre au boss), `etourdi` (Zezengorri
+contre un rocher) et 3 extras : `cri` (il repère un joueur), `pouvoir_1`, `pouvoir_2` (§5.2). Pas de saut
+de cachette, d'envol ni de fantôme.
+
+**Essai du 23/10 : Basajaun.**
+- Prompt : « a giant friendly-scary forest lord covered in thick shaggy brown fur, a long beard of green
+  moss, big root-like hands, leaning on a carved tree trunk staff ». Signature : « a carved tree trunk
+  staff and a mossy green beard ».
+- `run` : Zombie_Walk_Fwd_Loop (démarche lourde) ; `cri` : Idle_Rail_Call, « roars with his arms
+  raised » ; `pouvoir_1` Murmure des bois : Spell_Simple_Shoot, « raises one hand, glowing green leaves
+  swirl around it » ; `pouvoir_2` Étreinte racinaire : Sword_Attack, « slams his carved trunk staff down
+  onto the ground ».
 
 ## 9. Direction artistique
 
