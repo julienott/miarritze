@@ -1,32 +1,32 @@
-# Miarritze Borroka
+# Miarritze Gordeka
 
-Jeu de combat 2D en pixel art, esprit Mortal Kombat mais solaire, basque et pour les enfants. Douze combattants de la côte basque et le Gardien du Phare s'affrontent sur dix lieux de Biarritz. *Borroka* = « combat » en basque.
+Cache-cache en ligne pour enfants, façon *Among Us*, dans les décors de Biarritz : un chasseur, des
+chassés qui se cachent, des rounds courts. *Gordeka* = « cache-cache » en basque.
 
-- Spec complète (source de vérité) : `SPEC-BORROKA.md`
-- Résumés : `DESIGN.md` (le quoi/pourquoi), `CLAUDE.md` (architecture, conventions, commandes)
-- Reprise sur un autre ordinateur : `docs/HANDOFF.md`
-- Avancement : `docs/STATUS.md` · décisions : `docs/DECISIONS.md` · revues : `docs/REVIEWS.md`
+- Spec (seule source de vérité) : `SPEC-GORDEKA.md`
+- Conventions, commandes, architecture : `CLAUDE.md`
+- En ligne (API des salons) : `docs/ONLINE_GORDEKA.md` · pilotage : `docs/PRODUCER.md`
+
+L'ancien jeu de combat *Miarritze Borroka* a été retiré du dépôt le 2026-10-22 (tag
+`avant-suppression-borroka`, branche `borroka`).
 
 ## Jouer en local
 
 ```sh
+godot --path .                                             # « Qui joue ? »
+godot --path . -- --scene=gk_game                          # une partie contre l'IA tout de suite
 godot --headless --path . --export-release "Web" web/build/index.html
-node tests/web/serve.mjs   # ou tout serveur qui envoie COOP/COEP (voir web/.htaccess)
+node tests/web/smoke.mjs chromium "#scene=gk_game" 20      # build web servi avec COOP/COEP
 ```
-
-Puis ouvrir `http://localhost:<port>/index.html` (Chrome ou Firefox). Le build web exige un contexte sécurisé : `localhost` ou HTTPS.
-
-Clavier : J1 = WASD + J (poing) K (pied) L (spécial) Espace (garde) ; J2 = flèches + pavé 1/2/3/0. Manette : stick + X/A/B/RB. iPhone : manette virtuelle ou gestes.
 
 ## Tests
 
 ```sh
-godot --headless --path . --script res://tests/run_tests.gd     # sim, netcode, règles
-godot --headless --path . res://tests/touch_test.tscn            # manette tactile
-python3 tests/backend/api_test.py                                # API PHP
-node tests/web/online_two.mjs                                    # combat en ligne à deux pages
+godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd   # règles, IA, cartes, profils
+python3 tests/backend/rooms_test.py                                         # API des salons (php -S)
 ```
 
 ## Prérequis
 
-Godot 4.7 (éditeur standard, pas .NET) + modèles d'export Web ; PHP 8 avec SQLite pour le backend ; Python 3 (`.venv` : Pillow, numpy, PyYAML, soundfile) pour les outils d'assets ; Node 20 + Playwright pour les tests web.
+Godot 4.7 (éditeur standard, pas .NET) + modèles d'export Web ; PHP 8 avec SQLite pour le backend ;
+Python 3 (`.venv` : Pillow, numpy) pour les outils ; Node 20 + Playwright pour les tests web.

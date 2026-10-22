@@ -1,8 +1,9 @@
 # Miarritze Gordeka — spécification
 
 > Cache-cache en ligne pour enfants, façon *Among Us*, dans les décors de Biarritz.
-> Brouillon du 2026-10-19 (pivot décidé par Julien). Remplace `SPEC-BORROKA.md` (jeu de combat),
-> gardée en archive. Les points **[À trancher]** attendent une décision de Julien.
+> Brouillon du 2026-10-19 (pivot décidé par Julien). Remplace le jeu de combat Miarritze Borroka, retiré
+> du dépôt le 2026-10-22 (récupérable par le tag `avant-suppression-borroka` et la branche `borroka`).
+> Seule source de vérité du projet. Les points **[À trancher]** attendent une décision de Julien.
 
 ---
 
@@ -630,6 +631,13 @@ taille, mêmes 4 sorties possibles. Mesures et journal des essais : `docs/GORDEK
   - deux navigateurs Playwright pour le salon en ligne (comme `tests/web/online_two.mjs`).
 
 ## 13. Ce qu'on garde de Miarritze Borroka, ce qu'on laisse
+
+> **2026-10-22 (Julien) : Borroka est supprimé du dépôt.** De l'ancien jeu ne restent que le réseau
+> des salons (`src/net`, backend `/gk/player`, `/room/*`, `/net/*`), le client pixelforge
+> (`tools/pf`) et, faute de remplaçant, quelques briques indispensables réduites dans
+> `src/gordeka/commun/` (réglages, profils, appareil courant, indications de touches, zone sûre,
+> champ texte web, captures QA), à remplacer. Plus d'audio (ni *Hegoak* ni sons), plus de version
+> Steam Deck / Recalbox, plus d'icônes PWA. Le tableau ci-dessous est l'intention du 2026-10-19.
 
 | On garde | On laisse (archivé) |
 |---|---|
