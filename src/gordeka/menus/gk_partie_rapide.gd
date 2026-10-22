@@ -125,7 +125,7 @@ func _construire_reglages() -> Control:
 			g.add_theme_constant_override(&"outline_size", 0)
 			col.add_child(g)
 		_option(col, o)
-	UiKit.touch_scroll(col)
+	GkUi.touch_scroll(col)
 	return p
 
 
@@ -162,8 +162,7 @@ func _option(parent: Container, o: Dictionary) -> void:
 			interrupteur.custom_minimum_size = Vector2(620, 64)
 			interrupteur.button_pressed = float(choix["options"].get(cle, r.get("defaut", 1))) > 0.5
 			interrupteur.toggled.connect(func(on: bool) -> void:
-				regler_option(cle, 1.0 if on else 0.0)
-				GkUi._sfx(&"ui_ok"))
+				regler_option(cle, 1.0 if on else 0.0))
 			parent.add_child(interrupteur)
 			var aide: Label = GkUi.label(str(o.get("aide", "")), 20, Color(GkUi.INK, 0.75), HORIZONTAL_ALIGNMENT_LEFT)
 			aide.add_theme_constant_override(&"outline_size", 0)

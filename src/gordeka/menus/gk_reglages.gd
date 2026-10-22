@@ -1,6 +1,6 @@
 extends Control
 ## Réglages (SPEC-GORDEKA §6.0) : musique, sons, vibration (réglages de l'appareil, autoload
-## Settings, appliqués par AudioManager), aide (les règles en quelques lignes) et « refaire le round
+## Settings ; le jeu n'a pas encore de sons : les volumes sont seulement enregistrés), aide (les règles en quelques lignes) et « refaire le round
 ## guidé » (§7.2 ; pas encore fait : bouton « bientôt »).
 
 const AIDE: String = """Un joueur est le CHASSEUR, les autres se cachent.
@@ -31,19 +31,15 @@ func _ready() -> void:
 	col.add_theme_constant_override(&"separation", 18)
 	panneau.add_child(col)
 	var musique: HSlider = _curseur(col, "Musique", Settings.music_volume, func(v: float) -> void:
-		Settings.set_value("music_volume", v)
-		AudioManager.apply_volumes())
+		Settings.set_value("music_volume", v))
 	_curseur(col, "Sons", Settings.sfx_volume, func(v: float) -> void:
-		Settings.set_value("sfx_volume", v)
-		AudioManager.apply_volumes()
-		AudioManager.sfx(&"ui_move"))
+		Settings.set_value("sfx_volume", v))
 	var vib: CheckButton = CheckButton.new()
 	vib.text = "Vibration"
 	vib.button_pressed = Settings.vibrations
 	vib.custom_minimum_size = Vector2(640, 72)
 	vib.toggled.connect(func(on: bool) -> void:
-		Settings.set_value("vibrations", on)
-		GkUi._sfx(&"ui_ok"))
+		Settings.set_value("vibrations", on))
 	col.add_child(vib)
 	var bas: HBoxContainer = HBoxContainer.new()
 	bas.add_theme_constant_override(&"separation", 18)

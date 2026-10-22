@@ -107,5 +107,3 @@ func _envoyer() -> void:
 		return
 	var err: String = str(valider.call(edit.text))
 	_err.text = err
-	if err != "":
-		GkUi._sfx(&"ui_no")

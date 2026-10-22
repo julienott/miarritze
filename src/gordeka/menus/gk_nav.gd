@@ -24,9 +24,6 @@ static func chemin(id: String) -> String:
 
 static func aller(id: String) -> void:
 	var tree: SceneTree = Engine.get_main_loop() as SceneTree
-	var am: Node = tree.root.get_node_or_null("/root/AudioManager")
-	if id == "game" and am != null:
-		am.stop_music()
 	tree.change_scene_to_file.call_deferred(chemin(id))
 
 

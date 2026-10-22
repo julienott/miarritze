@@ -705,9 +705,6 @@ func quit_to_podium() -> void:
 	# Le joueur local fait son emote favorite en montant sur le podium.
 	if not local.is_bot:
 		emote(local, int(config.get("emote", 0)))
-	var am: Node = get_node_or_null("/root/AudioManager")
-	if am != null:
-		am.play_music(&"victory")
 
 
 func go_menu() -> void:

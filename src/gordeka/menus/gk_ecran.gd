@@ -27,9 +27,6 @@ static func ecran(ecran_ctrl: Control, aide: bool = true) -> MarginContainer:
 	m.resized.connect(marges)
 	if aide:
 		barre_aide(ecran_ctrl)
-	var am: Node = (Engine.get_main_loop() as SceneTree).root.get_node_or_null("/root/AudioManager")
-	if am != null:
-		am.play_music(&"hegoak")
 	return m
 
 

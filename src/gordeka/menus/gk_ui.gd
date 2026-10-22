@@ -1,8 +1,8 @@
 class_name GkUi
 extends RefCounted
-## Kit d'interface des menus de Gordeka en 1280×720 (pendant HD de UiKit, pensé pour 384×216) :
+## Kit d'interface des menus de Gordeka en 1280×720 (1280×720) :
 ## style cartoon du jeu (aplats vifs, gros contour encre, coins ronds), gros boutons pour les doigts,
-## focus doré bien visible au clavier et à la manette, sons de menu, fond de mer. Aucune référence
+## focus doré bien visible au clavier et à la manette, fond de mer. Aucune référence
 ## aux autoloads (la partie et les tests headless s'en servent) ; la mise en page d'un écran de menu
 ## (zone sûre, rappel des touches) est dans GkEcran.
 
@@ -170,10 +170,7 @@ static func bouton(texte: String, action: Callable, taille: Vector2 = Vector2(32
 	b.add_theme_font_size_override(&"font_size", police)
 	if couleur != CREME:
 		teinter(b, couleur)
-	b.pressed.connect(func() -> void:
-		_sfx(&"ui_ok")
-		action.call())
-	b.focus_entered.connect(func() -> void: _sfx(&"ui_move"))
+	b.pressed.connect(action)
 	return b
 
 
@@ -192,8 +189,7 @@ static func focus_libelle(ctrl: Control, l: Label) -> void:
 	var couleur: Color = l.get_theme_color(&"font_color")
 	ctrl.focus_entered.connect(func() -> void:
 		l.text = "> " + texte
-		l.add_theme_color_override(&"font_color", ROUGE.darkened(0.15))
-		_sfx(&"ui_move"))
+		l.add_theme_color_override(&"font_color", ROUGE.darkened(0.15)))
 	ctrl.focus_exited.connect(func() -> void:
 		l.text = texte
 		l.add_theme_color_override(&"font_color", couleur))
@@ -228,10 +224,18 @@ static func panneau(marge: int = 24) -> PanelContainer:
 	return p
 
 
-static func _sfx(nom: StringName) -> void:
-	var am: Node = (Engine.get_main_loop() as SceneTree).root.get_node_or_null("/root/AudioManager")
-	if am != null:
-		am.sfx(nom)
+## Liste dans un ScrollContainer : les boutons laissent passer le glissé du doigt
+## (MOUSE_FILTER_PASS), sinon on ne peut défiler qu'en partant d'un titre.
+static func touch_scroll(list: Control) -> void:
+	_pass_buttons(list)
+	list.child_entered_tree.connect(_pass_buttons)
+
+
+static func _pass_buttons(n: Node) -> void:
+	if n is BaseButton or n is LineEdit:
+		(n as Control).mouse_filter = Control.MOUSE_FILTER_PASS
+	for c: Node in n.get_children():
+		_pass_buttons(c)
 
 
 ## Fond des menus : mer en dégradé, vagues qui ondulent doucement, sable en bas.
