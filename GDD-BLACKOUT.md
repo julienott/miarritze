@@ -498,21 +498,43 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
 - **Les jobs passent par la file de pixelforge** (API), jamais par un message. Les messages à
   pixelforge servent aux demandes de capacité.
 - **Prompts simples** (§8.2) ; pixelforge corrige ses défauts lui-même.
-- **Demandes en cours à pixelforge (22/10)** :
-  1. pas d'ombre au sol ; fond enfermé transparent (entre les jambes, entre la main et un objet, dans
-     le dos) tout en gardant le blanc des vêtements ;
-  2. nettoyage des halos de bord en HD avant la réduction ;
-  3. couleurs stables d'une image à l'autre (plus de flashs) ;
-  4. pieds propres sur la ligne de sol (course) ;
-  5. objet décrit dans le geste réellement dessiné (talkie-walkie) ;
-  6. case de 64×64 en 32 px (256 en HD), pieds à y=60, pour les débordements ;
-  7. élément `portrait` (buste de trois-quarts face, 64 px) et élément `lift` ;
-  8. ~~bibliothèque Quaternius UAL2~~ : installée le 22/10 ;
-  9. taille boss : 64 px (case 128, HD 512).
-- **Fait par pixelforge le 22/10** (commit be24c7a) : points 1 à 7 et 9 ci-dessus. Le moteur B lit la ligne
-  des pieds dans le `set.json` du moteur A (60, ou 120 pour un boss) ; l'accessoire d'un extra se nomme
-  dans `object` (colonne `objet` de `idle_long` dans le JSON) ; `lift` et `portrait` sont produits par
-  défaut. Limite connue : à 32 px, cheveux noirs et lunettes de soleil se fondent encore.
+
+### 14.1 Contrat persos avec pixelforge (*22/10*)
+Référence côté pixelforge : la description publiée des styles (`GET /v2/styles`, `pf_px__character_set`
+et `pf_px__reduce`). Ce qui suit est ce que **nous** attendons ; tout écart se règle par message à
+pixelforge, jamais par un traitement de notre côté.
+
+**Ce que nous envoyons** (un job par perso, `tools/blackout/party_hard_v2.py`) : le prompt (description +
+signature, §8.2), `colors`, la graine, et la liste `extras`. Rien d'autre : ni palette, ni retouche.
+
+**Ce que pixelforge livre**, chaîne A (HD, case 256, pieds à 240) → B (32 px, case 64, pieds à 60) :
+- éléments fixes : `profile`, `portrait` (buste de trois-quarts face), `idle` (Idle_Loop), `run`
+  (4 poses, Sprint_Loop), `jump_hide` (Jump_Start), `lift` (LiftAir_Idle_Loop), `ghost` (Swim_Idle_Loop) ;
+- **plusieurs extras** dans le même set : chacun `{name, motion, action, object, loop, fps, frames,
+  anchor}`, même palette, même cadrage, même ligne de pieds. Aujourd'hui un seul (`idle_long`) ; demain
+  aussi les lancements des coups spéciaux (§4.6) ;
+- `set.json` : cadence, boucle, calage, ligne des pieds, palette, contrôles.
+
+**Clip absent de sa banque** : uniquement des clips Quaternius nommés (21/10). Un clip inconnu doit être
+**refusé au dépôt** avec les clips les plus proches, pas ignoré en silence ; je soumets le remplaçant à
+Julien. Une nouvelle bibliothèque se demande par message, avec l'accord de Julien. Pas de clip sur mesure.
+
+**Qualité due par pixelforge** (Julien : « Nous devons faire des prompts, pixelforge nous livrer des
+images de qualité. C'est à lui de faire les traitements corrects. ») :
+1. aucune ombre au sol ; fond enfermé transparent (entre les jambes, entre la main et un objet), blanc
+   des vêtements gardé ;
+2. pas de halo de bord ; palette simplifiée pour la réduction (aucune nuance jumelle) ;
+3. chaque zone garde sa couleur d'une image à l'autre, en se référant au profil (aucun clignotement) ;
+4. course fluide : les 4 phases clés (contact, passage, contact, passage), tête stable à 1 px près ;
+5. portrait et animations fidèles au profil, sans détail inventé ;
+6. objet de l'action réellement dessiné ;
+7. pieds sur la ligne, rien qui sorte de la case.
+
+**Défauts ouverts** (Louis v2, 22/10) : 1 (ombre et blanc entre les jambes sur `profile_hd`), 2 (palette
+de 20 couleurs avec rouges jumeaux), 3 (pantalon bordeaux sur une image de la course HD), 4 (course
+irrégulière), 5 (étoile jaune inventée sur le béret du portrait). Run v2 suspendu jusqu'à leur
+correction ; on relancera Louis seul d'abord.
+
 - **Décor** : masques en suspens (§10.2).
 - Méthode de travail : on intègre chaque rendu tel quel, **Julien tranche en QA** sur /producer
   (procédure : `docs/PRODUCER.md`).
