@@ -83,6 +83,9 @@ Cumulé sur la partie, affiché entre les rounds et au podium. Pas de classement
 ### 3.1 Vision du chasseur
 - **Cône** de 90°, portée 7 cases, plus un cercle de 1,5 case tout autour de lui. Il suit la direction
   de marche (rotation lissée). Pas de second stick.
+- **Rendu (*Julien, 23/10*)** : le cône et le cercle de proximité forment **une seule forme**, sans
+  bordure, en aplat de couleur, avec un léger dégradé d'opacité qui s'efface avec la distance. Sous le
+  chasseur, un **halo rouge pixellisé** à la place de l'anneau.
 - Le cône est **coupé par les murs pleins et les objets hauts**. Les **éléments traversables**
   (fenêtres, grilles, rambardes) laissent passer la vue mais pas le passage.
 - Hors de sa vue, l'écran du chasseur est assombri ; le décor reste visible pour s'orienter ; les
@@ -94,6 +97,14 @@ Cumulé sur la partie, affiché entre les rounds et au podium. Pas de classement
 - **Dans le cône, un chassé éclairé** est détecté à la vitesse normale (§3.3). **Dans l'ombre**, la
   jauge monte **3 fois moins vite**, et le chasseur ne voit de lui qu'une **silhouette sombre**
   (shader monochrome), pas son sprite.
+- **Dans le noir, le chasseur voit moins loin** (*Julien, 23/10*) : regardé dans l'ombre, un chassé n'est
+  vu qu'à **4 cases** au lieu de 7 (`ombre_portee`) ; le cercle de proximité reste. Un secteur coupé
+  devient un vrai refuge.
+- **Silhouette progressive** (*Julien, 23/10*) : un chassé dans l'ombre est une silhouette sombre au bout
+  de la vue ; ses couleurs reviennent peu à peu quand le chasseur s'approche, et il est entier dans le
+  cercle de proximité.
+- La carte doit avoir **assez de lumières et de disjoncteurs** pour que l'ombre et les coupures comptent
+  (retour de Julien sur le bac à sable : à augmenter).
 - **Disjoncteur** : un boîtier par secteur. Un chassé qui l'actionne (bouton, 1 s) éteint toutes les
   lumières du secteur pendant **15 s**. Le chasseur IA va le réparer ; un chasseur joueur peut le
   rallumer de la même façon. Cooldown du boîtier 30 s.
