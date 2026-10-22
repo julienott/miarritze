@@ -1,7 +1,10 @@
 extends Control
-## Réglages (SPEC-GORDEKA §6.0) : musique, sons, vibration (réglages de l'appareil, autoload
-## Settings ; le jeu n'a pas encore de sons : les volumes sont seulement enregistrés), aide (les règles en quelques lignes) et « refaire le round
-## guidé » (§7.2 ; pas encore fait : bouton « bientôt »).
+## Réglages (SPEC-GORDEKA §6.0) : vibration (réglage de l'appareil, autoload Settings), aide (les
+## règles en quelques lignes) et « refaire le round guidé » (§7.2 ; pas encore fait : bouton
+## « bientôt »). Le jeu n'a plus de son (Julien 2026-10-22) : les curseurs Musique et Sons sont
+## masqués (AVEC_SONS), les volumes restent dans Settings.
+
+const AVEC_SONS: bool = false
 
 const AIDE: String = """Un joueur est le CHASSEUR, les autres se cachent.
 Le chasseur voit seulement dans son cône rouge : s'il te voit, tu es trouvé !
@@ -17,23 +20,24 @@ var _aide: Control
 
 
 func _ready() -> void:
-	_racine = GkEcran.ecran(self)
+	_racine = BkEcran.ecran(self)
 	_page = VBoxContainer.new()
 	_page.add_theme_constant_override(&"separation", 18)
 	_racine.add_child(_page)
-	GkEcran.entete(_page, "Réglages", _retour)
+	BkEcran.entete(_page, "Réglages", _retour)
 	var centre: CenterContainer = CenterContainer.new()
 	centre.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_page.add_child(centre)
-	var panneau: PanelContainer = GkUi.panneau(30)
+	var panneau: PanelContainer = BkUi.panneau(30)
 	centre.add_child(panneau)
 	var col: VBoxContainer = VBoxContainer.new()
 	col.add_theme_constant_override(&"separation", 18)
 	panneau.add_child(col)
-	var musique: HSlider = _curseur(col, "Musique", Settings.music_volume, func(v: float) -> void:
-		Settings.set_value("music_volume", v))
-	_curseur(col, "Sons", Settings.sfx_volume, func(v: float) -> void:
-		Settings.set_value("sfx_volume", v))
+	if AVEC_SONS:
+		_curseur(col, "Musique", Settings.music_volume, func(v: float) -> void:
+			Settings.set_value("music_volume", v))
+		_curseur(col, "Sons", Settings.sfx_volume, func(v: float) -> void:
+			Settings.set_value("sfx_volume", v))
 	var vib: CheckButton = CheckButton.new()
 	vib.text = "Vibration"
 	vib.button_pressed = Settings.vibrations
@@ -44,19 +48,19 @@ func _ready() -> void:
 	var bas: HBoxContainer = HBoxContainer.new()
 	bas.add_theme_constant_override(&"separation", 18)
 	col.add_child(bas)
-	bas.add_child(GkUi.bouton("Aide", _montrer_aide, Vector2(250, 76), GkUi.BLEU))
-	var guide: Button = GkUi.bouton("Refaire le round guidé (bientôt)", func() -> void: pass, Vector2(372, 76),
-		GkUi.CREME, 22)
+	bas.add_child(BkUi.bouton("Aide", _montrer_aide, Vector2(250, 76), BkUi.BLEU))
+	var guide: Button = BkUi.bouton("Refaire le round guidé (bientôt)", func() -> void: pass, Vector2(372, 76),
+		BkUi.CREME, 22)
 	guide.disabled = true
 	bas.add_child(guide)
-	musique.grab_focus.call_deferred()
+	(col.get_child(0) as Control).grab_focus.call_deferred()
 
 
 func _curseur(parent: Container, texte: String, valeur: float, change: Callable) -> HSlider:
 	var h: HBoxContainer = HBoxContainer.new()
 	h.add_theme_constant_override(&"separation", 20)
 	parent.add_child(h)
-	var l: Label = GkUi.label(texte, 30, GkUi.INK, HORIZONTAL_ALIGNMENT_LEFT)
+	var l: Label = BkUi.label(texte, 30, BkUi.INK, HORIZONTAL_ALIGNMENT_LEFT)
 	l.add_theme_constant_override(&"outline_size", 0)
 	l.custom_minimum_size = Vector2(170, 0)
 	h.add_child(l)
@@ -69,7 +73,7 @@ func _curseur(parent: Container, texte: String, valeur: float, change: Callable)
 	s.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	s.value_changed.connect(change)
 	h.add_child(s)
-	GkUi.focus_libelle(s, l)
+	BkUi.focus_libelle(s, l)
 	return s
 
 
@@ -77,19 +81,19 @@ func _montrer_aide() -> void:
 	_page.visible = false
 	_aide = CenterContainer.new()
 	_racine.add_child(_aide)
-	var p: PanelContainer = GkUi.panneau(30)
+	var p: PanelContainer = BkUi.panneau(30)
 	_aide.add_child(p)
 	var col: VBoxContainer = VBoxContainer.new()
 	col.add_theme_constant_override(&"separation", 16)
 	p.add_child(col)
-	var t: Label = GkUi.label("Comment on joue ?", 40, GkUi.ROUGE)
+	var t: Label = BkUi.label("Comment on joue ?", 40, BkUi.ROUGE)
 	t.add_theme_constant_override(&"outline_size", 0)
 	col.add_child(t)
-	var l: Label = GkUi.label(AIDE, 24, GkUi.INK, HORIZONTAL_ALIGNMENT_LEFT)
+	var l: Label = BkUi.label(AIDE, 24, BkUi.INK, HORIZONTAL_ALIGNMENT_LEFT)
 	l.add_theme_constant_override(&"outline_size", 0)
 	l.add_theme_constant_override(&"line_spacing", 6)
 	col.add_child(l)
-	var ok: Button = GkUi.bouton("J'ai compris !", _fermer_aide, Vector2(300, 76), GkUi.VERT)
+	var ok: Button = BkUi.bouton("J'ai compris !", _fermer_aide, Vector2(300, 76), BkUi.VERT)
 	ok.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(ok)
 	ok.grab_focus.call_deferred()
@@ -103,7 +107,7 @@ func _fermer_aide() -> void:
 
 
 func _retour() -> void:
-	GkNav.aller("accueil")
+	BkNav.aller("accueil")
 
 
 func _unhandled_input(event: InputEvent) -> void:
