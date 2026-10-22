@@ -1,0 +1,74 @@
+{
+ "motion": "laugh",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "eyes closed, mouth wide open laughing",
+ "tenue": "tank top",
+ "drive": {
+  "clip": "laugh"
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Laughs out loud: leans back, hand on the belly, shoulders shaking, little hops. The blue swim fins hanging from the belt at the hip: stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame.",
+ "frame_offsets": [
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [2.0, 0.0],
+  [4.0, 0.0],
+  [6.5, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [6.5, 0.0],
+  [6.5, 0.0],
+  [6.5, 0.0],
+  [6.5, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.5, 0.0],
+  [7.5, 0.0],
+  [7.5, 0.0],
+  [5.0, 0.0],
+  [3.0, 0.0],
+  [1.0, 0.0]
+ ],
+ "debut": 2,
+ "entrees": {
+  "idle": {
+   "i": [2, 31, 31, 5, 11, 18, 24, 6, 8, 22, 24, 27, 27, 22, 24, 11, 11, 22, 21, 24, 24, 21, 24, 9, 9, 22, 22, 27, 14, 26, 18, 29, 29],
+   "e": [2, 3, 2, 4, 6, 10, 11, 6, 6, 7, 9, 6, 6, 6, 9, 6, 6, 6, 9, 5, 5, 7, 10, 6, 6, 6, 7, 6, 6, 6, 10, 9, 3]
+  },
+  "walk": {
+   "i": [21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21],
+   "e": [33, 33, 33, 37, 37, 38, 39, 36, 36, 36, 37, 35, 35, 36, 37, 34, 34, 36, 37, 35, 35, 36, 38, 35, 35, 36, 37, 34, 34, 35, 38, 35, 34]
+  },
+  "run_scared": {
+   "i": [19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19],
+   "e": [42, 42, 42, 45, 45, 47, 49, 47, 47, 47, 48, 46, 46, 47, 48, 46, 46, 47, 48, 47, 47, 47, 48, 46, 46, 47, 47, 46, 46, 46, 47, 44, 44]
+  }
+ }
+}

@@ -1,0 +1,104 @@
+{
+ "name": "detect",
+ "fps": 24,
+ "frames": 12,
+ "loop": false,
+ "description": "Repérer : tend le cou, petit bond surpris, pointe du bras vers l'avant.",
+ "tracks": {
+  "root": [
+   {
+    "f": 0,
+    "y": 0
+   },
+   {
+    "f": 3,
+    "y": 0,
+    "sy": 0.93,
+    "sx": 1.04
+   },
+   {
+    "f": 5,
+    "y": 0.07,
+    "sy": 1.08,
+    "sx": 0.96
+   },
+   {
+    "f": 7,
+    "y": 0,
+    "sy": 0.95,
+    "sx": 1.03
+   },
+   {
+    "f": 9,
+    "y": 0,
+    "sy": 1,
+    "sx": 1
+   }
+  ],
+  "body": [
+   {
+    "f": 0,
+    "rot": 0
+   },
+   {
+    "f": 3,
+    "rot": 10
+   },
+   {
+    "f": 7,
+    "rot": 6
+   }
+  ],
+  "head": [
+   {
+    "f": 0,
+    "rot": 0
+   },
+   {
+    "f": 3,
+    "rot": -9
+   },
+   {
+    "f": 11,
+    "rot": -5
+   }
+  ],
+  "arm_front": [
+   {
+    "f": 0,
+    "rot": 0
+   },
+   {
+    "f": 5,
+    "rot": -50
+   },
+   {
+    "f": 8,
+    "rot": -72
+   },
+   {
+    "f": 11,
+    "rot": -68
+   }
+  ]
+ },
+ "head": [
+  [
+   0,
+   "focused"
+  ],
+  [
+   4,
+   "surprised"
+  ]
+ ],
+ "body": [
+  [
+   0,
+   "legs"
+  ]
+ ],
+ "lag": {
+  "hat": 1
+ }
+}

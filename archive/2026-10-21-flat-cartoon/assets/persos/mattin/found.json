@@ -1,0 +1,71 @@
+{
+ "motion": "found",
+ "quaternius": "Hit_Chest",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "shocked surprise with round eyes and open mouth, then laughing",
+ "tenue": "shirt",
+ "drive": {
+  "exaggerate": 1.5
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Being caught: huge startled jump straight up, feet leaving the ground, arms flung out, a big exclamation mark pops above the head, then lands and slumps down laughing, hand on the belly. The red beret: stays firmly on the head.",
+ "frame_offsets": [
+  [-8.5, 0.0],
+  [-8.5, 0.0],
+  [-8.5, 0.0],
+  [-8.0, 0.0],
+  [-8.0, 0.0],
+  [-7.5, 0.0],
+  [-6.5, 0.0],
+  [-5.5, 0.0],
+  [-4.5, 0.0],
+  [-3.5, 0.0],
+  [-2.0, 0.0],
+  [-0.5, 0.0],
+  [0.5, 0.0],
+  [1.5, 0.0],
+  [2.0, 0.0],
+  [2.5, 0.0],
+  [2.5, 0.0],
+  [1.5, 0.0],
+  [0.5, 0.0],
+  [-1.0, 0.0],
+  [-2.0, 0.0],
+  [-2.5, 0.0],
+  [-2.5, 0.0],
+  [-1.5, 0.0],
+  [-0.5, 0.0],
+  [0.0, 0.0],
+  [1.0, 0.0],
+  [1.5, 0.0],
+  [2.0, 0.0],
+  [2.5, 0.0],
+  [2.5, 0.0],
+  [2.5, 0.0],
+  [2.5, 0.0]
+ ],
+ "debut": 1,
+ "fin": 32,
+ "entrees": {
+  "ghost": {
+   "i": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 24, 24, 24, 24, 24, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
+   "e": [61, 61, 61, 60, 60, 60, 60, 60, 59, 59, 59, 59, 58, 58, 58, 56, 56, 56, 55, 52, 53, 51, 50, 49, 47, 48, 47, 47, 46, 46, 46, 46, 46]
+  },
+  "ghost_move": {
+   "i": [19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 24, 24, 24, 19, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24],
+   "e": [63, 63, 63, 63, 63, 63, 62, 63, 62, 62, 61, 61, 61, 60, 60, 58, 58, 58, 57, 54, 55, 53, 52, 51, 50, 50, 49, 49, 48, 48, 48, 48, 48]
+  }
+ }
+}

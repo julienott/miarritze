@@ -1,0 +1,275 @@
+{
+ "autel_chapelle": {
+  "bloque_vue": true,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (1% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "losange plafonné en profondeur",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ },
+ "banc_chapelle": {
+  "bloque_vue": false,
+  "confidence": 1.0,
+  "source": "pixelforge",
+  "warnings": []
+ },
+ "banc_vert": {
+  "bloque_vue": false,
+  "confidence": 0.95,
+  "source": "pixelforge",
+  "warnings": [
+   "rapport largeur/profondeur 6.5 hors de [1.5 ; 6] (sur pieds (pieds arrière), x 16-207)",
+   "emprise imposée (footprint_override)"
+  ]
+ },
+ "bitte_amarrage": {
+  "bloque_vue": false,
+  "confidence": 0.9,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (23% de l'objet) : traversable, hors occluder"
+  ]
+ },
+ "cachette_bac_poissons": {
+  "bloque_vue": false,
+  "confidence": 0.9,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (3% de l'objet) : traversable, hors occluder"
+  ]
+ },
+ "cachette_caisse_glace": {
+  "bloque_vue": false,
+  "confidence": 1.0,
+  "source": "pixelforge",
+  "warnings": []
+ },
+ "cachette_casier_homards": {
+  "bloque_vue": false,
+  "confidence": 0.8,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (13% de l'objet) : traversable, hors occluder",
+   "profondeur estimée (sur pieds, 117 px de large) : 41 px, faute de face du dessus lisible"
+  ]
+ },
+ "cachette_coffre_cordages": {
+  "bloque_vue": false,
+  "confidence": 0.9,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (28% de l'objet) : traversable, hors occluder"
+  ]
+ },
+ "cachette_coffre_quai": {
+  "bloque_vue": false,
+  "confidence": 0.8,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (42% de l'objet) : traversable, hors occluder",
+   "profondeur estimée (posé, 74 px de large) : 26 px, faute de face du dessus lisible",
+   "2 morceaux d'emprise"
+  ]
+ },
+ "cachette_confessionnal": {
+  "bloque_vue": false,
+  "confidence": 0.8,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (16% de l'objet) : traversable, hors occluder",
+   "profondeur estimée (posé, 38 px de large) : 13 px, faute de face du dessus lisible",
+   "1 morceau(x) dans la face avant d'une base ronde : fusionné(s)"
+  ]
+ },
+ "cachette_poubelle_ruelle": {
+  "bloque_vue": false,
+  "confidence": 1.0,
+  "source": "pixelforge",
+  "warnings": []
+ },
+ "caisses_poisson": {
+  "bloque_vue": true,
+  "confidence": 0.9,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (2% de l'objet) : traversable, hors occluder"
+  ]
+ },
+ "chalutier_quai": {
+  "bloque_vue": true,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (20% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ },
+ "chambre_froide": {
+  "bloque_vue": true,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (4% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ },
+ "comptoir_bar": {
+  "bloque_vue": true,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (17% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ },
+ "coque_chantier": {
+  "bloque_vue": true,
+  "confidence": 1.0,
+  "source": "pixelforge",
+  "warnings": [
+   "2 morceaux d'emprise"
+  ]
+ },
+ "coque_sur_ber": {
+  "bloque_vue": true,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (2% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "losange plafonné en profondeur",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ },
+ "etabli_atelier": {
+  "bloque_vue": false,
+  "confidence": 0.9,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (16% de l'objet) : traversable, hors occluder"
+  ]
+ },
+ "etal_criee": {
+  "bloque_vue": false,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (19% de l'objet) : traversable, hors occluder",
+   "caméra en coin : emprise approchée (losange sur le bord bas)",
+   "emprise imposée (footprint_override)"
+  ]
+ },
+ "fontaine_place": {
+  "bloque_vue": false,
+  "confidence": 0.8,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (48% de l'objet) : traversable, hors occluder",
+   "profondeur estimée (posé, 20 px de large) : 7 px, faute de face du dessus lisible",
+   "profondeur estimée (sur pieds, 22 px de large) : 8 px, faute de face du dessus lisible",
+   "profondeur estimée (sur pieds, 40 px de large) : 14 px, faute de face du dessus lisible",
+   "profondeur estimée (posé, 20 px de large) : 7 px, faute de face du dessus lisible",
+   "profondeur estimée (sur pieds, 23 px de large) : 8 px, faute de face du dessus lisible",
+   "7 morceau(x) dans la face avant d'une base ronde : fusionné(s)",
+   "emprise imposée (footprint_override)"
+  ]
+ },
+ "fronton": {
+  "bloque_vue": true,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (18% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ },
+ "lavoir_bassin": {
+  "bloque_vue": false,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (7% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "losange plafonné en profondeur",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ },
+ "maison_crampotte": {
+  "bloque_vue": true,
+  "confidence": 0.9,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (31% de l'objet) : traversable, hors occluder",
+   "2 morceaux d'emprise"
+  ]
+ },
+ "marches_escalier": {
+  "bloque_vue": false,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (17% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ },
+ "mur_soutenement": {
+  "bloque_vue": false,
+  "confidence": 0.75,
+  "source": "pixelforge",
+  "warnings": [
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ },
+ "rayonnage_filets": {
+  "bloque_vue": true,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (7% de l'objet) : traversable, hors occluder",
+   "losange plafonné en profondeur",
+   "caméra en coin : emprise approchée (losange sur le bord bas)",
+   "losange dégénéré : emprise calculée sur la forme de la base",
+   "emprise imposée (footprint_override)"
+  ]
+ },
+ "table_terrasse": {
+  "bloque_vue": false,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (29% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "caméra en coin : emprise approchée (losange sur le bord bas)",
+   "losange dégénéré : emprise calculée sur la forme de la base"
+  ]
+ },
+ "tour_phare": {
+  "bloque_vue": true,
+  "confidence": 0.8,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (10% de l'objet) : traversable, hors occluder",
+   "profondeur estimée (posé, 137 px de large) : 48 px, faute de face du dessus lisible",
+   "1 morceau(x) dans la face avant d'une base ronde : fusionné(s)"
+  ]
+ },
+ "treteaux_cale": {
+  "bloque_vue": false,
+  "confidence": 0.65,
+  "source": "pixelforge",
+  "warnings": [
+   "socle de sol détecté (12% de l'objet) : traversable, hors occluder",
+   "vue en coin détectée sur l'image : emprise calculée en camera corner",
+   "caméra en coin : emprise approchée (losange sur le bord bas)"
+  ]
+ }
+}

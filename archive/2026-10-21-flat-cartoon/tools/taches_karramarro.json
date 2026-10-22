@@ -1,0 +1,22 @@
+{
+ "idle": "79373ceb8d724529ae0785bb5f940b8d",
+ "walk": "cef78e21fcb04c3fa384ff8f887cb4b6",
+ "run_scared": "818229040a9741868f7e68db59cec7bd",
+ "hide_in": "0d651dfe0fea4dd7b8c9bda214238c1c",
+ "hide_out": "2ad275562d4c4a52ab5794ac32b2bff1",
+ "found": "24cb6ae5e02f456085f39c97919af013",
+ "trap": "5525a3eb158448dc9e1bc7d730be141e",
+ "trapped": "14199a0a0af841feb5f8dfac3f8f6480",
+ "search": "7b2d45284af24bf29a8a593f35d93230",
+ "detect": "ff2232d5b7864c8a8e8b76585142be1e",
+ "extract": "2cfa05a618564e84a8eb6c9a535244d2",
+ "victory": "78d9a88e194e4ae9a298c4c110433374",
+ "sad": "b5b0f2f407d045d1b40906bac4393000",
+ "hunter_reveal": "b17a7b0253a04164973665b249880694",
+ "emote_salut": "393869a34c78467f9de5fb525c9a6fdb",
+ "emote_rire": "45134e8e35ef44178cf9e81d53bbd83a",
+ "emote_danse": "84c9c3556c514095b4a5141303826955",
+ "emote_pouce": "080da0347d8d4113aef74ee0c107d243",
+ "emote_chut": "d7fe9aa61ac64d2393cdbdc77709f5ee",
+ "emote_langue": "dd87bdbb2196465b9381ff9d92603d0a"
+}

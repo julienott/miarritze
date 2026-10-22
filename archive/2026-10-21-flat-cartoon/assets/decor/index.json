@@ -1,0 +1,2710 @@
+{
+ "_doc": "Décor en images intégré par tools/gordeka/integre_decor.py, lu par src/gordeka/gk_decor.gd.",
+ "carte": "port_pecheurs",
+ "elements": {
+  "sol_dalles_quai": {
+   "nom": "Dalles de quai",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Jetée",
+    "Bassin (quai nord)",
+    "Quai des chalutiers",
+    "Lavoir"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "sols/sol_dalles_quai.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "c882eac3527242f48dfc7386f3f4eb91",
+     "date": "2026-10-19"
+    }
+   ]
+  },
+  "sol_carrelage_criee": {
+   "nom": "Carrelage de la criée",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Criée"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "sols/sol_carrelage_criee.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "933b4c60c4624e2fba2f7ea74badf1ca",
+     "date": "2026-10-20"
+    }
+   ]
+  },
+  "sol_beton_atelier": {
+   "nom": "Béton du hangar, de l'atelier et de la cale",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Hangar à filets",
+    "Atelier",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "sols/sol_beton_atelier.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "cb3128bb17b648b09a2144612158cdf7",
+     "date": "2026-10-20"
+    }
+   ]
+  },
+  "sol_paves_ruelle": {
+   "nom": "Pavés des ruelles",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Crampottes",
+    "couloirs (rue des pêcheurs, passages entre zones)",
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "sols/sol_paves_ruelle.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "71ac1f679d1648a2a0953703713c9dc3",
+     "date": "2026-10-20"
+    }
+   ]
+  },
+  "sol_paves_place": {
+   "nom": "Pavage de la place du fronton",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "sols/sol_paves_place.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "478aae6423df4f39a347a11fb7dd1179",
+     "date": "2026-10-20"
+    }
+   ]
+  },
+  "sol_planches_terrasse": {
+   "nom": "Planches de la terrasse",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Terrasse"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "sols/sol_planches_terrasse.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "96e28e319d7e46028f88b77c389af45f",
+     "date": "2026-10-20"
+    }
+   ]
+  },
+  "sol_tomettes_chapelle": {
+   "nom": "Tomettes de la chapelle",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "sols/sol_tomettes_chapelle.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "c872ec4a95264213adda03a962f36ae2",
+     "date": "2026-10-20"
+    }
+   ]
+  },
+  "sol_rocher_phare": {
+   "nom": "Plateforme rocheuse du phare",
+   "type": "tuile_sol",
+   "categorie": "sol",
+   "caractere": ".",
+   "zones": [
+    "Phare"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "sols/sol_rocher_phare.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "e281df140a1240078de57c76a3134968",
+     "date": "2026-10-20"
+    }
+   ]
+  },
+  "eau_mer": {
+   "nom": "Eau du port et de la mer",
+   "type": "tuile_sol",
+   "categorie": "eau",
+   "caractere": "~",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "vagues qui ondulent en boucle (4 à 8 images) ; repli : défilement lent des UV par shader",
+    "planche": "anims/eau_mer.png",
+    "planche_json": "anims/eau_mer.json"
+   },
+   "fichiers": [
+    "sols/eau_mer.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "545e1292803c44c2a2687ded049710df",
+     "date": "2026-10-20"
+    }
+   ]
+  },
+  "bord_quai_eau": {
+   "nom": "Bord de quai sur l'eau",
+   "type": "tuile_bord",
+   "categorie": "eau",
+   "caractere": "~ / .",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "écume qui va et vient au pied du quai, boucle"
+   }
+  },
+  "mur_pierre": {
+   "nom": "Mur de pierre (bord de carte, murs entre zones)",
+   "type": "tuile_bord",
+   "categorie": "mur",
+   "caractere": "#",
+   "zones": [
+    "toute la carte"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "toit_tuiles": {
+   "nom": "Toits de tuiles rouges (grandes masses bâties)",
+   "type": "tuile_sol",
+   "categorie": "mur",
+   "caractere": "#",
+   "zones": [
+    "masses entre zones (crampottes, criée, hangar, chapelle…)"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "sols/toit_tuiles.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "d9f0608b3e5847f6938724316ef2b3f2",
+     "date": "2026-10-21"
+    }
+   ]
+  },
+  "facade_labourdine": {
+   "nom": "Façade blanche à colombages",
+   "type": "bande_facade",
+   "categorie": "mur",
+   "caractere": "#",
+   "zones": [
+    "face sud des masses bâties"
+   ],
+   "taille_cases": [
+    4,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {}
+  },
+  "maison_crampotte": {
+   "nom": "Crampotte (cabane de pêcheur)",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Crampottes",
+    "Jetée"
+   ],
+   "taille_cases": [
+    4,
+    3
+   ],
+   "debord_haut_cases": 1,
+   "hauteur_cases": 4.1,
+   "animation": {},
+   "fichiers": [
+    "objets/maison_crampotte.png"
+   ],
+   "sources": [
+    {
+     "job": 4,
+     "variante": "image_01",
+     "task": "0fe79a02b2fb4af38e0ab4cce0c5fcf0",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/maison_crampotte_ombre.png",
+   "ombre_decalage": [
+    53,
+    266
+   ]
+  },
+  "chambre_froide": {
+   "nom": "Chambre froide de la criée",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Criée"
+   ],
+   "taille_cases": [
+    4,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "fichiers": [
+    "objets/chambre_froide.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_01",
+     "task": "1e363b78f7d64b2a906a96acb456386e",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/chambre_froide_ombre.png",
+   "ombre_decalage": [
+    57,
+    326
+   ]
+  },
+  "tour_phare": {
+   "nom": "Tour du phare (feu du port)",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "#",
+   "zones": [
+    "Phare"
+   ],
+   "taille_cases": [
+    5,
+    5
+   ],
+   "debord_haut_cases": 3,
+   "animation": {
+    "methode": "planche",
+    "description": "faisceau de la lanterne qui tourne ; le halo lumineux peut être ajouté par le jeu",
+    "planche": "anims/tour_phare.png",
+    "planche_json": "anims/tour_phare.json"
+   },
+   "fichiers": [
+    "objets/tour_phare.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "896d94dfe59a4eebafb850a50dde783c",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/tour_phare_ombre.png",
+   "ombre_decalage": [
+    120,
+    584
+   ]
+  },
+  "fronton": {
+   "nom": "Fronton de pelote basque",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "#",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    10,
+    1
+   ],
+   "debord_haut_cases": 4,
+   "animation": {},
+   "fichiers": [
+    "objets/fronton.png"
+   ],
+   "sources": [
+    {
+     "job": 2,
+     "variante": "image_00",
+     "task": "d8939717a0f14200aab2a240074379b5",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/fronton_ombre.png",
+   "ombre_decalage": [
+    70,
+    359
+   ]
+  },
+  "rayonnage_filets": {
+   "nom": "Rayonnage du hangar à filets",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Hangar à filets"
+   ],
+   "taille_cases": [
+    2,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "fichiers": [
+    "objets/rayonnage_filets.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "692ea33fce6c444eb3f0ca5d808c53ac",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/rayonnage_filets_ombre.png",
+   "ombre_decalage": [
+    44,
+    199
+   ]
+  },
+  "autel_chapelle": {
+   "nom": "Autel de la chapelle des marins",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "#",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "fichiers": [
+    "objets/autel_chapelle.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "738f112ece1c489ead35e479b48d93a2",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/autel_chapelle_ombre.png",
+   "ombre_decalage": [
+    32,
+    169
+   ]
+  },
+  "comptoir_bar": {
+   "nom": "Comptoir de la terrasse",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Terrasse"
+   ],
+   "taille_cases": [
+    3,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/comptoir_bar.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "54988b9579784e4ba7a051d9163b7498",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/comptoir_bar_ombre.png",
+   "ombre_decalage": [
+    27,
+    144
+   ]
+  },
+  "mur_soutenement": {
+   "nom": "Mur de soutènement de l'escalier",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    2,
+    8
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/mur_soutenement.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "3c15771de6754645bb76beaf80e362b0",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/mur_soutenement_ombre.png",
+   "ombre_decalage": [
+    23,
+    128
+   ]
+  },
+  "caisses_poisson": {
+   "nom": "Pile de caisses de poisson",
+   "type": "objet",
+   "categorie": "objet",
+   "caractere": "c",
+   "zones": [
+    "Jetée",
+    "Criée",
+    "Phare",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Atelier",
+    "Escalier de la ville",
+    "Cale sèche",
+    "Bassin",
+    "Hangar à filets",
+    "Terrasse",
+    "Lavoir",
+    "Chapelle des marins",
+    "Crampottes",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "fichiers": [
+    "objets/caisses_poisson.png"
+   ],
+   "sources": [
+    {
+     "job": 3,
+     "variante": "image_01",
+     "task": "5df4cb503ede43d2958702da4c16256f",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/caisses_poisson_ombre.png",
+   "ombre_decalage": [
+    26,
+    140
+   ]
+  },
+  "barque_mouillage": {
+   "nom": "Barque basque au mouillage",
+   "type": "objet",
+   "categorie": "bateau",
+   "caractere": "B",
+   "zones": [
+    "Bassin"
+   ],
+   "taille_cases": [
+    6,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tangage lent et flottement vertical"
+   },
+   "fichiers": [
+    "objets/barque_mouillage.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "c06456d5df0648df9c7852fd4a3753a4",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/barque_mouillage_ombre.png",
+   "ombre_decalage": [
+    29,
+    146
+   ]
+  },
+  "chalutier_quai": {
+   "nom": "Chalutier à quai",
+   "type": "objet",
+   "categorie": "bateau",
+   "caractere": "B",
+   "zones": [
+    "Quai des chalutiers"
+   ],
+   "taille_cases": [
+    7,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "planche",
+    "description": "petit drapeau vert qui flotte au mât ; coque immobile (sur ses tins)",
+    "planche": "anims/chalutier_quai.png",
+    "planche_json": "anims/chalutier_quai.json"
+   },
+   "fichiers": [
+    "objets/chalutier_quai.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "4e6799bf07da4884b8ad2dbb7deb165b",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/chalutier_quai_ombre.png",
+   "ombre_decalage": [
+    67,
+    366
+   ]
+  },
+  "coque_sur_ber": {
+   "nom": "Coque sur ber (cale sèche)",
+   "type": "objet",
+   "categorie": "bateau",
+   "caractere": "B",
+   "zones": [
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    6,
+    3
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "fichiers": [
+    "objets/coque_sur_ber.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "22b5036a014c46bda7d69487e0f889c5",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/coque_sur_ber_ombre.png",
+   "ombre_decalage": [
+    69,
+    292
+   ]
+  },
+  "coque_chantier": {
+   "nom": "Coque en chantier (atelier)",
+   "type": "objet",
+   "categorie": "bateau",
+   "caractere": "B",
+   "zones": [
+    "Atelier"
+   ],
+   "taille_cases": [
+    5,
+    4
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "fichiers": [
+    "objets/coque_chantier.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "1e68146d38314c4daf8f17347a869311",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/coque_chantier_ombre.png",
+   "ombre_decalage": [
+    24,
+    121
+   ]
+  },
+  "etal_criee": {
+   "nom": "Étal de la criée",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Criée"
+   ],
+   "taille_cases": [
+    5,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/etal_criee.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "6e0c3c1e49dd497b90f4c4ceecabd7d0",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/etal_criee_ombre.png",
+   "ombre_decalage": [
+    13,
+    73
+   ]
+  },
+  "bitte_amarrage": {
+   "nom": "Bitte d'amarrage",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Jetée",
+    "Bassin (quai nord)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": -0.4,
+   "animation": {},
+   "fichiers": [
+    "objets/bitte_amarrage.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "26cdfb2a6dbd4d7dbf7efd26d0d3872f",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/bitte_amarrage_ombre.png",
+   "ombre_decalage": [
+    13,
+    72
+   ]
+  },
+  "tas_filets": {
+   "nom": "Filets et casiers posés au sol",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Jetée",
+    "Hangar à filets"
+   ],
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/tas_filets.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "18863d92006b490a9346e0d621e06f87",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/tas_filets_ombre.png",
+   "ombre_decalage": [
+    14,
+    73
+   ]
+  },
+  "fontaine_place": {
+   "nom": "Fontaine de la place",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "t",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    4,
+    4
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "jet d'eau et rides du bassin, boucle",
+    "planche": "anims/fontaine_place.png",
+    "planche_json": "anims/fontaine_place.json"
+   },
+   "fichiers": [
+    "objets/fontaine_place.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "d4f43361cb0841b9864eb4b60654a0b1",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/fontaine_place_ombre.png",
+   "ombre_decalage": [
+    49,
+    284
+   ]
+  },
+  "banc_vert": {
+   "nom": "Banc vert du front de mer",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/banc_vert.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "c1c3af5481e141219392559ae075a2a8",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/banc_vert_ombre.png",
+   "ombre_decalage": [
+    13,
+    73
+   ]
+  },
+  "banc_chapelle": {
+   "nom": "Banc de la chapelle",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "taille_cases": [
+    4,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/banc_chapelle.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "0e954b948e5e490b88c69ac80aa60cfa",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/banc_chapelle_ombre.png",
+   "ombre_decalage": [
+    12,
+    73
+   ]
+  },
+  "etabli_atelier": {
+   "nom": "Établi de l'atelier",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Atelier"
+   ],
+   "taille_cases": [
+    5,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/etabli_atelier.png"
+   ],
+   "sources": [
+    {
+     "job": 2,
+     "variante": "image_00",
+     "task": "8006ed25f8594eba9db4bc09fc0f733d",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/etabli_atelier_ombre.png",
+   "ombre_decalage": [
+    12,
+    73
+   ]
+  },
+  "marches_escalier": {
+   "nom": "Marches de l'escalier de la ville",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    6,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/marches_escalier.png"
+   ],
+   "sources": [
+    {
+     "job": 2,
+     "variante": "image_00",
+     "task": "fa0f9242123d430bb0bc063ea5314547",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/marches_escalier_ombre.png",
+   "ombre_decalage": [
+    13,
+    73
+   ]
+  },
+  "table_terrasse": {
+   "nom": "Table de terrasse",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Terrasse"
+   ],
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/table_terrasse.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_01",
+     "task": "7370943e7da8405eb56f28937202baf7",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/table_terrasse_ombre.png",
+   "ombre_decalage": [
+    17,
+    73
+   ]
+  },
+  "treteaux_cale": {
+   "nom": "Tréteaux et planches de la cale",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/treteaux_cale.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "6e223d68d5ca4429ac5e8e074ab226f3",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/treteaux_cale_ombre.png",
+   "ombre_decalage": [
+    15,
+    72
+   ]
+  },
+  "lavoir_bassin": {
+   "nom": "Bassin du lavoir",
+   "type": "objet",
+   "categorie": "repere",
+   "caractere": "~",
+   "zones": [
+    "Lavoir"
+   ],
+   "taille_cases": [
+    6,
+    3
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "rides et bulles de savon qui montent, boucle"
+   },
+   "fichiers": [
+    "objets/lavoir_bassin.png"
+   ],
+   "sources": [
+    {
+     "job": 2,
+     "variante": "image_00",
+     "task": "cc94bff32ddd4d17bdffa3c6fd149e90",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/lavoir_bassin_ombre.png",
+   "ombre_decalage": [
+    38,
+    219
+   ]
+  },
+  "cachette_casier_homards": {
+   "nom": "Casier à homards géant",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Jetée"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort"
+   },
+   "fichiers": [
+    "objets/cachette_casier_homards.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "e1e738b6a1d7448381aeef6df846f845",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_casier_homards_ombre.png",
+   "ombre_decalage": [
+    13,
+    72
+   ]
+  },
+  "cachette_coffre_quai": {
+   "nom": "Coffre de quai",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Bassin"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_coffre_quai.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "7f5255ad62814296ab80f3a06763db1a",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_coffre_quai_ombre.png",
+   "ombre_decalage": [
+    12,
+    72
+   ],
+   "ouvert": "objets/cachette_coffre_quai_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    10
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "7f5255ad62814296ab80f3a06763db1a",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/304_cachette_coffre_quai/0/image_00.png"
+    }
+   ]
+  },
+  "cachette_caisse_glace": {
+   "nom": "Caisse à glace",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Criée"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_caisse_glace.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "935ca38c1fa44788aacdade589e990f4",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_caisse_glace_ombre.png",
+   "ombre_decalage": [
+    11,
+    61
+   ],
+   "ouvert": "objets/cachette_caisse_glace_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    2
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "935ca38c1fa44788aacdade589e990f4",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/307_cachette_caisse_glace/0/image_01.png"
+    }
+   ]
+  },
+  "cachette_coffre_cordages": {
+   "nom": "Coffre à cordages du phare",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Phare"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_coffre_cordages.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "96e956cd81644f55a30e46e5c30dfc79",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_coffre_cordages_ombre.png",
+   "ombre_decalage": [
+    14,
+    72
+   ],
+   "ouvert": "objets/cachette_coffre_cordages_ouvert.png",
+   "ouvert_decalage": [
+    1,
+    -1
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "96e956cd81644f55a30e46e5c30dfc79",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/310_cachette_coffre_cordages/0/image_00.png"
+    }
+   ]
+  },
+  "cachette_poubelle_ruelle": {
+   "nom": "Grande poubelle de ruelle",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Crampottes",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_poubelle_ruelle.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "4df14a29b8da4beeb843ed6ab102e6c8",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_poubelle_ruelle_ombre.png",
+   "ombre_decalage": [
+    14,
+    72
+   ],
+   "ouvert": "objets/cachette_poubelle_ruelle_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    1
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "4df14a29b8da4beeb843ed6ab102e6c8",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/313_cachette_poubelle_ruelle/0/image_00.png"
+    }
+   ]
+  },
+  "cachette_bac_poissons": {
+   "nom": "Grand bac à poissons",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Quai des chalutiers"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_bac_poissons.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "a891f8e12ec047948234e2a73f654f18",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_bac_poissons_ombre.png",
+   "ombre_decalage": [
+    11,
+    62
+   ],
+   "ouvert": "objets/cachette_bac_poissons_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    1
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "a891f8e12ec047948234e2a73f654f18",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/316_cachette_bac_poissons/0/image_00.png"
+    }
+   ]
+  },
+  "cachette_malle_pelotes": {
+   "nom": "Malle à pelotes",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_malle_pelotes.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_01",
+     "task": "a49325237da7409794b131c844ac578b",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_malle_pelotes_ombre.png",
+   "ombre_decalage": [
+    11,
+    62
+   ]
+  },
+  "cachette_tas_filets_cachette": {
+   "nom": "Montagne de filets",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Hangar à filets"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_tas_filets_cachette.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "36dc398daf6c4c25bd00db36c0bc886d",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_tas_filets_cachette_ombre.png",
+   "ombre_decalage": [
+    16,
+    67
+   ]
+  },
+  "cachette_confessionnal": {
+   "nom": "Confessionnal en bois",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Chapelle des marins"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "hauteur_cases": 1.8,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_confessionnal.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "f11e8c683c6340db95debd136d76d918",
+     "date": "2026-10-20"
+    }
+   ],
+   "ombre": "objets/cachette_confessionnal_ombre.png",
+   "ombre_decalage": [
+    14,
+    75
+   ],
+   "ouvert": "objets/cachette_confessionnal_ouvert.png",
+   "ouvert_decalage": [
+    -1,
+    1
+   ],
+   "sources_ouvert": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "f11e8c683c6340db95debd136d76d918",
+     "date": "2026-10-21",
+     "fichier": "/Users/julien/Dev/miarritze/tools/rd/out/decor_nuit/323_cachette_confessionnal/0/image_01.png"
+    }
+   ]
+  },
+  "cachette_barque_retournee": {
+   "nom": "Barque retournée",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_barque_retournee.png"
+   ],
+   "sources": [
+    {
+     "job": 2,
+     "variante": "image_00",
+     "task": "4f3913f692f94f41aaa906cfdcbf8d22",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_barque_retournee_ombre.png",
+   "ombre_decalage": [
+    5,
+    25
+   ]
+  },
+  "cachette_tonneau_cidre": {
+   "nom": "Tonneau de cidre géant",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Terrasse"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_tonneau_cidre.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "ee7d379cc35244c1b231857ab7f19b73",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_tonneau_cidre_ombre.png",
+   "ombre_decalage": [
+    12,
+    70
+   ]
+  },
+  "cachette_panier_linge": {
+   "nom": "Grand panier à linge",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Lavoir"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_panier_linge.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "af3ac18b2eee4474bbcf36040d7b66b2",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_panier_linge_ombre.png",
+   "ombre_decalage": [
+    13,
+    72
+   ]
+  },
+  "cachette_caisse_voiles": {
+   "nom": "Caisse à voiles de l'atelier",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Atelier"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_caisse_voiles.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "79094137d43142baaaf9c39d53af9cec",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_caisse_voiles_ombre.png",
+   "ombre_decalage": [
+    12,
+    63
+   ]
+  },
+  "cachette_cabine_plage": {
+   "nom": "Cabine de plage rayée",
+   "type": "objet",
+   "categorie": "cachette",
+   "caractere": "H",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "hauteur_cases": 1.95,
+   "animation": {
+    "methode": "jeu",
+    "description": "tremble quand quelqu'un y entre ou en sort ; état ouvert par pf_hd__edit"
+   },
+   "fichiers": [
+    "objets/cachette_cabine_plage.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "271f328bc9e24a0592a98a6ff9fb4079",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/cachette_cabine_plage_ombre.png",
+   "ombre_decalage": [
+    20,
+    101
+   ]
+  },
+  "sortie_barque_jetee": {
+   "nom": "Sortie : barque au bout de la jetée",
+   "type": "objet",
+   "categorie": "sortie",
+   "caractere": "E",
+   "zones": [
+    "Jetée"
+   ],
+   "taille_cases": [
+    2,
+    3
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "la barque tangue ; lanterne qui scintille"
+   },
+   "fichiers": [
+    "objets/sortie_barque_jetee.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "2c2537bab5a14e7eb18ecdd2fd88ed5b",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "sortie_echelle_phare": {
+   "nom": "Sortie : échelle derrière le phare",
+   "type": "objet",
+   "categorie": "sortie",
+   "caractere": "E",
+   "zones": [
+    "Phare"
+   ],
+   "taille_cases": [
+    2,
+    3
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/sortie_echelle_phare.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "6b87d856e6e948bea0390a56ef722669",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "sortie_barque_cale": {
+   "nom": "Sortie : barque de la cale",
+   "type": "objet",
+   "categorie": "sortie",
+   "caractere": "E",
+   "zones": [
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "jeu",
+    "description": "la barque tangue au bout de la cale"
+   },
+   "fichiers": [
+    "objets/sortie_barque_cale.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "7ef30a95e4f743b6bce08105ec3b3972",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "sortie_porte_ville": {
+   "nom": "Sortie : porte de la ville",
+   "type": "objet",
+   "categorie": "sortie",
+   "caractere": "E",
+   "zones": [
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    2,
+    2
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "fichiers": [
+    "objets/sortie_porte_ville.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "15fb6f4fa9734197886c016474a4cad7",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "depart_lauburu": {
+   "nom": "Marque de départ",
+   "type": "decal",
+   "categorie": "sol",
+   "caractere": "S",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/depart_lauburu.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "0822fca5e9484e2aa98ea7cd6179e25d",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "piege_generique": {
+   "nom": "Piège générique (flaque collante)",
+   "type": "decal",
+   "categorie": "piege",
+   "caractere": "—",
+   "zones": [
+    "posé par les chassés, n'importe où"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "bulles qui gonflent et éclatent, boucle"
+   },
+   "fichiers": [
+    "objets/piege_generique.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "78432456f7944e69986f5669b87b6dbf",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "barriques_cidre": {
+   "nom": "Deux barriques de cidre",
+   "type": "objet",
+   "categorie": "objet",
+   "caractere": "c",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "hauteur_cases": 1.4,
+   "animation": {},
+   "fichiers": [
+    "objets/barriques_cidre.png"
+   ],
+   "sources": [
+    {
+     "job": 1,
+     "variante": "image_00",
+     "task": "056909b4c1244749bd5b877f7aadf226",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/barriques_cidre_ombre.png",
+   "ombre_decalage": [
+    9,
+    51
+   ]
+  },
+  "pot_hortensias": {
+   "nom": "Pot d'hortensias",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Crampottes",
+    "Place du fronton",
+    "Chapelle des marins",
+    "Terrasse",
+    "Lavoir",
+    "Escalier de la ville",
+    "Phare",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/pot_hortensias.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "aecd288a6ab84f4abd96b661433408f2",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/pot_hortensias_ombre.png",
+   "ombre_decalage": [
+    17,
+    74
+   ]
+  },
+  "casier_bouees": {
+   "nom": "Casier et bouées",
+   "type": "objet",
+   "categorie": "objet_bas",
+   "caractere": "t",
+   "zones": [
+    "Criée",
+    "Hangar à filets",
+    "Atelier",
+    "Cale sèche",
+    "Quai des chalutiers"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/casier_bouees.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "56d84adcfec747afb641dc9d9d0b042a",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/casier_bouees_ombre.png",
+   "ombre_decalage": [
+    9,
+    49
+   ]
+  },
+  "platane_place": {
+   "nom": "Platane de la place",
+   "type": "objet",
+   "categorie": "vegetation",
+   "caractere": "v",
+   "zones": [
+    "Place du fronton"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 2,
+   "hauteur_cases": 3.6,
+   "animation": {
+    "methode": "planche",
+    "description": "feuillage qui frémit au vent, boucle lente",
+    "pistes": [
+     {
+      "quoi": "feuillage (warp wind)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "bottom",
+      "amplitude_px": 3,
+      "waves": 1,
+      "frames": 12,
+      "fps": 8
+     }
+    ]
+   },
+   "fichiers": [
+    "objets/platane_place.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "bd1a971d092c497f88bd2817085eced4",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/platane_place_ombre.png",
+   "ombre_decalage": [
+    22,
+    117
+   ]
+  },
+  "fanions_basques": {
+   "nom": "Guirlande de fanions basques",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    6,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "les fanions claquent au vent, boucle",
+    "pistes": [
+     {
+      "quoi": "fanions au vent (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "top",
+      "amplitude_px": 5,
+      "waves": 2,
+      "frames": 12,
+      "fps": 10
+     },
+     {
+      "quoi": "fanions au vent (vidéo)",
+      "mode": "video",
+      "frames": 16,
+      "fps": 8,
+      "prompt": "the little triangular flags of the garland flutter and swing in the sea breeze, the rope sways gently, seamless loop"
+     }
+    ]
+   },
+   "fichiers": [
+    "objets/fanions_basques.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "4ec9367264e14505babf75ba6052ac21",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "linge_seche": {
+   "nom": "Linge qui sèche",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Lavoir",
+    "Crampottes",
+    "Cale sèche",
+    "Terrasse"
+   ],
+   "taille_cases": [
+    3,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "le linge flotte au vent, boucle",
+    "pistes": [
+     {
+      "quoi": "linge au vent (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "top",
+      "amplitude_px": 6,
+      "waves": 2,
+      "frames": 12,
+      "fps": 10
+     }
+    ]
+   },
+   "fichiers": [
+    "objets/linge_seche.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "bb7d7e094e0b46b4a17a2f57ecfb01c0",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "lanterne_murale": {
+   "nom": "Lanterne de façade",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "la flamme vacille, halo chaud",
+    "pistes": [
+     {
+      "quoi": "flamme qui vacille (vidéo)",
+      "mode": "video",
+      "frames": 12,
+      "fps": 8,
+      "prompt": "the warm light inside the lantern flickers softly and its glow pulses gently, the lantern stays still"
+     }
+    ]
+   },
+   "fichiers": [
+    "objets/lanterne_murale.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "8dc2aa0320d640d08a14da5908ba803e",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "fumee_cheminee": {
+   "nom": "Cheminée qui fume",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "masses entre zones (crampottes, criée, hangar, chapelle…)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "planche",
+    "description": "bouffées de fumée qui montent et s'effacent",
+    "pistes": [
+     {
+      "quoi": "fumée (particles smoke)",
+      "mode": "particles",
+      "kind": "smoke",
+      "count": 6,
+      "size_px": 14,
+      "frames": 16,
+      "fps": 8
+     }
+    ]
+   },
+   "fichiers": [
+    "objets/fumee_cheminee.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "79dae5563e164329808a726e675d11dc",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "bouee_murale": {
+   "nom": "Bouée accrochée au mur",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/bouee_murale.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "c08971a9bfd34fb6b6783c3b6b448f0d",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "filet_suspendu": {
+   "nom": "Filet suspendu au mur",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "le filet se balance doucement",
+    "pistes": [
+     {
+      "quoi": "filet qui se balance (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "top",
+      "amplitude_px": 3,
+      "waves": 1,
+      "frames": 12,
+      "fps": 8
+     }
+    ]
+   },
+   "fichiers": [
+    "objets/filet_suspendu.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "32ef30075fb54e47ba329e769450931b",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "mouette_posee": {
+   "nom": "Mouette posée",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "masses entre zones (crampottes, criée, hangar, chapelle…)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "la mouette hoche la tête et cligne, boucle",
+    "pistes": [
+     {
+      "quoi": "mouette qui hoche la tête (vidéo)",
+      "mode": "video",
+      "frames": 12,
+      "fps": 8,
+      "prompt": "the seagull bobs its head, looks around and ruffles its wings a little, its feet stay in place, seamless loop"
+     }
+    ]
+   },
+   "fichiers": [
+    "objets/mouette_posee.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "13f7ee10f31c4e7dbd56bfb6c97757a4",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "chat_du_port": {
+   "nom": "Chat du port endormi",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Terrasse",
+    "Crampottes",
+    "Lavoir",
+    "Escalier de la ville"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {
+    "methode": "planche",
+    "description": "le chat respire et bat de la queue, boucle",
+    "pistes": [
+     {
+      "quoi": "chat qui dort (vidéo)",
+      "mode": "video",
+      "frames": 12,
+      "fps": 8,
+      "prompt": "the sleeping cat breathes slowly and the tip of its tail flicks, it stays curled in place, seamless loop"
+     }
+    ]
+   },
+   "fichiers": [
+    "objets/chat_du_port.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "5f10d1febf3948218470e703c0fbcdef",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "ancre_decor": {
+   "nom": "Vieille ancre",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Quai des chalutiers",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/ancre_decor.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "e30ca0686ebb437e912f58d28cd02e9c",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "cordage_enroule": {
+   "nom": "Cordage enroulé",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Quai des chalutiers",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/cordage_enroule.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "de04bdd3af3a4e759ca776995228ec2a",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "lampadaire_port": {
+   "nom": "Réverbère du port",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Bassin",
+    "Criée",
+    "Phare",
+    "Crampottes",
+    "Quai des chalutiers",
+    "Place du fronton",
+    "Hangar à filets",
+    "Chapelle des marins",
+    "Cale sèche",
+    "Terrasse",
+    "Lavoir",
+    "Atelier",
+    "Escalier de la ville",
+    "couloirs (rue des pêcheurs, passages entre zones)"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {},
+   "fichiers": [
+    "objets/lampadaire_port.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "860af064d99a4a1b8be90049e78d51d2",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "drapeau_mat": {
+   "nom": "Drapeau sur un mât",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Jetée",
+    "Phare"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 1,
+   "animation": {
+    "methode": "planche",
+    "description": "le drapeau flotte au vent",
+    "pistes": [
+     {
+      "quoi": "drapeau au vent (warp flag)",
+      "mode": "warp",
+      "kind": "flag",
+      "anchor": "left",
+      "amplitude_px": 6,
+      "waves": 2,
+      "frames": 12,
+      "fps": 10
+     }
+    ]
+   },
+   "fichiers": [
+    "objets/drapeau_mat.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "987951dd17474f7da88b412a38fba552",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "maison_crampotte_verte": {
+   "nom": "Crampotte aux volets verts",
+   "type": "objet",
+   "categorie": "batiment",
+   "caractere": "#",
+   "zones": [
+    "Crampottes",
+    "Jetée"
+   ],
+   "taille_cases": [
+    4,
+    3
+   ],
+   "debord_haut_cases": 1,
+   "hauteur_cases": 3.7,
+   "animation": {},
+   "fichiers": [
+    "objets/maison_crampotte_verte.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_01",
+     "task": "21d24c89282d407cbbbf8351c7f01665",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "objets/maison_crampotte_verte_ombre.png",
+   "ombre_decalage": [
+    51,
+    278
+   ]
+  },
+  "panier_poissons": {
+   "nom": "Panier de poissons",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Criée",
+    "Quai des chalutiers",
+    "Bassin",
+    "Jetée"
+   ],
+   "taille_cases": [
+    1,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/panier_poissons.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "6fcab9bc0115438ab16f7f8dbe0a1470",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  },
+  "filet_au_sol": {
+   "nom": "Filet étendu au sol",
+   "type": "ornement",
+   "categorie": "ornement",
+   "caractere": "",
+   "zones": [
+    "Hangar à filets",
+    "Jetée",
+    "Quai des chalutiers",
+    "Cale sèche"
+   ],
+   "taille_cases": [
+    2,
+    1
+   ],
+   "debord_haut_cases": 0,
+   "animation": {},
+   "fichiers": [
+    "objets/filet_au_sol.png"
+   ],
+   "sources": [
+    {
+     "job": 0,
+     "variante": "image_00",
+     "task": "a22d6c95831b473989b4d5ac2a54f079",
+     "date": "2026-10-21"
+    }
+   ],
+   "ombre": "",
+   "ombre_decalage": [
+    0,
+    0
+   ]
+  }
+ }
+}

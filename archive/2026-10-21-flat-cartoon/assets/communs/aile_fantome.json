@@ -1,0 +1,11 @@
+{
+ "_doc": "Point d'attache de l'aile (\u00e9paule), en px de l'image ; dessine_ailes.py.",
+ "attache": [
+  128,
+  92
+ ],
+ "size": [
+  160,
+  128
+ ]
+}

@@ -1,0 +1,109 @@
+{
+ "motion": "hunter_reveal",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "playful determined grin, one eyebrow raised",
+ "tenue": "shirt",
+ "drive": {
+  "clip": "hunter_reveal"
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Becomes the hunter: takes a small flashlight from his belt, clicks it on, then holds it steady with his arm stretched forward; a clean straight cone of soft yellow light shines forward from the lamp. The arm stays still and steady once the lamp is on. The red beret: stays firmly on the head.",
+ "frame_offsets": [
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.5, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [2.0, 0.0],
+  [16.5, 0.0],
+  [31.5, 0.0],
+  [46.0, 0.0],
+  [45.5, 0.0],
+  [44.5, 0.0],
+  [44.5, 0.0],
+  [44.0, 0.0],
+  [44.0, 0.0],
+  [44.5, 0.0],
+  [44.5, 0.0],
+  [45.5, 0.0],
+  [46.0, 0.0],
+  [46.5, 0.0],
+  [47.0, 0.0],
+  [46.5, 0.0],
+  [46.5, 0.0],
+  [46.0, 0.0],
+  [46.0, 0.0],
+  [45.5, 0.0],
+  [45.0, 0.0],
+  [44.5, 0.0],
+  [44.5, 0.0],
+  [44.5, 0.0],
+  [45.0, 0.0],
+  [45.0, 0.0],
+  [45.0, 0.0]
+ ],
+ "lampe": {
+  "debut": 8,
+  "points": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   [200, 107],
+   [200, 106],
+   [201, 105],
+   [201, 103],
+   [201, 103],
+   [201, 103],
+   [201, 103],
+   [202, 103],
+   [202, 103],
+   [201, 103],
+   [201, 103],
+   [201, 102],
+   [201, 102],
+   [201, 102],
+   [201, 103],
+   [201, 103],
+   [201, 103],
+   [201, 103],
+   [202, 103],
+   [202, 103],
+   [202, 103],
+   [202, 103],
+   [201, 103],
+   [201, 103],
+   [201, 103]
+  ]
+ },
+ "debut": 1,
+ "fin": 32,
+ "entrees": {
+  "idle": {
+   "i": [4, 4, 21, 3, 3, 3, 3, 31, 6, 24, 26, 26, 26, 26, 26, 26, 26, 27, 26, 4, 3, 4, 3, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26],
+   "e": [2, 2, 2, 3, 4, 4, 4, 35, 41, 17, 18, 19, 19, 19, 19, 19, 19, 18, 18, 17, 17, 17, 17, 17, 17, 18, 18, 19, 19, 19, 18, 18, 18]
+  },
+  "walk": {
+   "i": [22, 22, 22, 22, 22, 22, 22, 21, 23, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22],
+   "e": [29, 29, 30, 30, 29, 29, 29, 41, 43, 36, 36, 35, 35, 36, 36, 35, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 35, 35, 35, 35, 36, 36, 35]
+  }
+ }
+}

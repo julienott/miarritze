@@ -1,0 +1,654 @@
+{
+ "_doc": "Prompts des animations des persos de Gordeka (pf_2d__animate), 2026-10-20, demande de Julien : mouvements exagérés et lisibles, mouvement de CHAQUE accessoire décrit pour chaque animation. Contrat pixelforge : le squelette Quaternius (`motion`) fait le mouvement du corps, le texte agit sur le visage, les détails et les éléments souples ; l'exagération passe par `mouvement` (exaggerate, bounce, arms, cycles) et les objets tenus par `hold`. Payload = motion + mouvement + description du perso + action (animation + allure + accessoires) + expression + tenue (mot simple pour SAM 3).",
+ "regles_communes": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size.",
+ "animations": {
+  "idle": {
+   "action": "Standing still, relaxed, gentle breathing (chest rises and falls slightly), one slow blink, tiny weight shift from foot to foot. Almost still, like a calm pause.",
+   "expression": "calm neutral face with a small content smile",
+   "boucle": true,
+   "mouvement": {
+    "motion": "idle"
+   }
+  },
+  "walk": {
+   "action": "Happy bouncy trot of a child sneaking off to hide: springy little hops on each step, body bobbing clearly up and down, knees lifted high, arms swinging cheerfully, slight forward lean, a playful skip in the rhythm. Exaggerated, cartoon, joyful, never a calm adult walk.",
+   "expression": "mischievous sly smile, eyes squinting with fun, as if thinking 'I know the perfect hiding spot'",
+   "boucle": true,
+   "mouvement": {
+    "motion": "walk",
+    "exaggerate": 1.3,
+    "bounce": 0.05
+   }
+  },
+  "run_scared": {
+   "action": "Panicked cartoon sprint, running for dear life: very long strides, legs spinning fast, body leaning far forward, both arms flailing wildly forward and back at shoulder height, hands never in front of the face, sweat drops flying off the head, a little dust puff at the heels. Hugely exaggerated, comic, never violent.",
+   "expression": "terrified comic face: eyes wide open and round, looking ahead, mouth open in a big round O of fear",
+   "boucle": true,
+   "mouvement": {
+    "motion": "run_scared",
+    "arms": "swing",
+    "exaggerate": 1.3
+   }
+  },
+  "hide_in": {
+   "action": "Dives into a hiding spot: quick crouch with squash, springy jump up and forward with stretch, then drops down out of the bottom of the frame head first, as if diving into a box. Ends with the character completely gone.",
+   "expression": "excited grin, then eyes shut tight while diving",
+   "boucle": false,
+   "mouvement": {
+    "motion": "hide_in",
+    "exaggerate": 1.3
+   }
+  },
+  "hide_out": {
+   "action": "Pops out of a hiding spot: from a low crouch, springs up and forward toward the right in a short hop, arms spread wide at shoulder height, the face stays visible in profile in every frame, lands with a little squash, then stands up straight and shakes off.",
+   "expression": "cheeky grin",
+   "boucle": false,
+   "mouvement": {
+    "motion": "hide_out",
+    "exaggerate": 1.3
+   }
+  },
+  "found": {
+   "action": "Being caught: huge startled jump straight up, feet leaving the ground, arms flung out, then lands and slumps down laughing, hand on the belly. Both feet land back on the same spot of the ground and stay planted there.",
+   "expression": "shocked surprise with round eyes and open mouth, then laughing",
+   "boucle": false,
+   "mouvement": {
+    "motion": "found",
+    "exaggerate": 1.5
+   }
+  },
+  "trap": {
+   "action": "Sets a trap: looks left and right sneakily, bends forward at the waist with both legs straight, one open hand presses down on the ground in front of the feet, then straightens up rubbing both hands with glee.",
+   "expression": "sneaky mischievous grin",
+   "boucle": false,
+   "mouvement": {
+    "motion": "trap",
+    "exaggerate": 1.2
+   }
+  },
+  "trapped": {
+   "action": "Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance.",
+   "expression": "annoyed frustrated pout, cheeks puffed",
+   "boucle": true,
+   "mouvement": {
+    "motion": "trapped",
+    "exaggerate": 1.4
+   }
+  },
+  "search": {
+   "action": "Rummages through a hiding spot: bent far forward, both arms digging fast in front, tossing imaginary things over the shoulder, head bobbing as if peeking inside.",
+   "expression": "focused determined squint, tongue sticking out a little",
+   "boucle": true,
+   "mouvement": {
+    "motion": "search",
+    "exaggerate": 1.3,
+    "bounce": 0.04
+   }
+  },
+  "detect": {
+   "action": "Listens and sniffs: cups one hand behind the ear, leans the head toward it, then sniffs the air with the nose raised, looks left then right with big eye movements.",
+   "expression": "focused suspicious squint",
+   "boucle": false,
+   "mouvement": {
+    "motion": "detect",
+    "exaggerate": 1.3
+   }
+  },
+  "extract": {
+   "action": "Reaches the exit: big jump of joy with both fists in the air, little spin, then runs off quickly out of the right side of the frame waving goodbye.",
+   "expression": "overjoyed huge smile",
+   "boucle": false,
+   "mouvement": {
+    "motion": "extract",
+    "exaggerate": 1.3
+   }
+  },
+  "victory": {
+   "action": "Celebrates: repeated joyful jumps with both arms raised high, a fist pump at the top of each jump, little dance shuffle between jumps.",
+   "expression": "ecstatic laughing smile",
+   "boucle": true,
+   "mouvement": {
+    "motion": "victory",
+    "exaggerate": 1.3,
+    "bounce": 0.08
+   }
+  },
+  "sad": {
+   "action": "Disappointed: shoulders drop, head hangs low, a slow big sigh (shoulders lift then sink), kicks a pebble lightly with one foot.",
+   "expression": "sad pout with a small frown, eyebrows raised in the middle, eyes looking down at the feet",
+   "boucle": true,
+   "mouvement": {
+    "motion": "sad",
+    "exaggerate": 1.4
+   }
+  },
+  "hunter_reveal": {
+   "action": "Becomes the hunter: takes a small flashlight from his belt, clicks it on, then holds it steady with his arm stretched forward; only the small round lens of the lamp glows, a tiny bright dot at the tip of the lamp. The arm stays still and steady once the lamp is on.",
+   "expression": "playful determined grin, one eyebrow raised",
+   "boucle": false,
+   "mouvement": {
+    "motion": "hunter_reveal"
+   }
+  },
+  "ghost": {
+   "action": "Floats gently in place: the whole body slowly bobs up and down in the air, feet dangling relaxed off the ground, the small white angel wings flap softly and slowly. Both legs stay slightly bent back at the knees as if flying, feet off the ground.",
+   "expression": "gentle smile, mouth closed and still, the mouth does not move",
+   "boucle": true,
+   "mouvement": {
+    "motion": "ghost"
+   },
+   "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option",
+   "en_pause": "Julien 2026-10-20 : fantômes générés annulés ; vol stationnaire + ailes par le code en attendant"
+  },
+  "ghost_move": {
+   "action": "Glides forward through the air: body leaning slightly forward, legs trailing behind relaxed, the small white angel wings flap clearly and steadily. Both legs stay slightly bent back at the knees as if flying, feet off the ground.",
+   "expression": "gentle smile, mouth closed and still, the mouth does not move",
+   "boucle": true,
+   "mouvement": {
+    "motion": "ghost_move"
+   },
+   "note": "profil fantôme (perso + petites ailes d'ange) en image d'entrée ; le jeu le rend transparent et le fait flotter (choix de Julien, comme Louis) ; essai du préréglage pixelforge ghost (queue ondulante) en option",
+   "en_pause": "Julien 2026-10-20 : fantômes générés annulés ; vol stationnaire + ailes par le code en attendant"
+  },
+  "emote_salut": {
+   "action": "Waves hello: arm stretched forward at shoulder height, forearm raised, open hand waving left and right.",
+   "expression": "big friendly smile",
+   "boucle": false,
+   "mouvement": {
+    "motion": "wave"
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
+  },
+  "emote_rire": {
+   "action": "Laughs out loud: throws the head far back, then doubles over forward clutching the belly with both hands, shoulders shaking hard, little hops on the spot.",
+   "expression": "eyes closed, mouth wide open laughing",
+   "boucle": false,
+   "mouvement": {
+    "motion": "laugh",
+    "exaggerate": 1.4,
+    "bounce": 0.06
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
+  },
+  "emote_danse": {
+   "action": "Happy little dance: both arms stretched forward at shoulder height going up and down in turn, body swaying, head bobbing, small hops on the spot.",
+   "expression": "laughing with joy, eyes closed, big open smile",
+   "boucle": true,
+   "mouvement": {
+    "motion": "dance"
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
+  },
+  "emote_pouce": {
+   "action": "Thumbs up: thrusts one arm straight forward at full length with a big raised thumb at the end, a proud wink and a confident little nod, then a second thumbs up with a small hop.",
+   "expression": "confident smile with a wink",
+   "boucle": false,
+   "mouvement": {
+    "motion": "thumbs_up",
+    "exaggerate": 1.3
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
+  },
+  "emote_chut": {
+   "action": "Shushes: puts one finger in front of the lips, leans forward slightly, looks left and right.",
+   "expression": "secretive smile, eyes wide",
+   "boucle": false,
+   "mouvement": {
+    "motion": "shush"
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
+  },
+  "emote_langue": {
+   "action": "Teases playfully: sticks a long bright pink tongue far out past the lips, clearly visible in profile, both thumbs at the temples with the fingers wiggling, head wobbling side to side.",
+   "expression": "cheeky face with a big pink tongue sticking far out of the mouth, clearly visible in profile",
+   "boucle": false,
+   "mouvement": {
+    "motion": "tongue",
+    "exaggerate": 1.3
+   },
+   "en_pause": "Julien 2026-10-20 : pas d'emotes aujourd'hui, prompts gardés"
+  }
+ },
+ "persos": {
+  "louis": {
+   "description": "a little Basque boy with blond hair, a red beret, white short-sleeved shirt, red belt, navy rolled-up trousers",
+   "tenue": "shirt",
+   "accessoires": [
+    {
+     "objet": "red beret",
+     "defaut": "stays firmly on the head, tilted the same way in every frame",
+     "par_animation": {
+      "run_scared": "the beret lifts slightly off the head and lands back",
+      "found": "the beret pops up above the head during the jump and lands back"
+     }
+    }
+   ]
+  },
+  "txomin": {
+   "description": "a Basque lifeguard boy with dark brown skin, short black curly hair, black sunglasses, yellow tank top, red swim shorts, a silver whistle on a cord around his neck, a pair of blue swim fins hanging from his belt at his hip, barefoot",
+   "tenue": "tank top",
+   "accessoires": [
+    {
+     "objet": "blue swim fins hanging from the belt at the hip",
+     "defaut": "stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet; they stay on the same hip as in the reference image in every frame, never switching to the other side",
+     "par_animation": {
+      "idle": "hang still, tiny sway",
+      "run_scared": "flap wildly behind him",
+      "hide_in": "follow the body into the hiding spot",
+      "trap": "dangle down as he crouches",
+      "victory": "bounce up and down with each jump"
+     }
+    },
+    {
+     "objet": "silver whistle on a cord around the neck",
+     "defaut": "hangs on the chest and bounces lightly with the body",
+     "par_animation": {
+      "hunter_reveal": "he blows the whistle once before pulling out the flashlight"
+     }
+    },
+    {
+     "objet": "black sunglasses",
+     "defaut": "stay on the eyes in every frame",
+     "par_animation": {
+      "found": "slide down his nose during the startled jump"
+     }
+    }
+   ]
+  },
+  "patxi": {
+   "description": "a bearded Basque fisherman with a blue beanie, yellow raincoat, navy trousers, black boots, a fishing rod strapped diagonally on his back",
+   "tenue": "raincoat",
+   "accessoires": [
+    {
+     "objet": "fishing rod strapped diagonally on the back",
+     "defaut": "stays rigid and fixed on the back at the same diagonal angle, moving only with the torso, never in his hands, the thin tip bends slightly with the motion",
+     "par_animation": {
+      "run_scared": "the tip whips back and forth",
+      "hide_in": "goes down with him, the tip last to disappear",
+      "search": "the tip wobbles as he rummages"
+     }
+    },
+    {
+     "objet": "blue beanie",
+     "defaut": "stays on the head",
+     "par_animation": {
+      "found": "the pompom bounces"
+     }
+    }
+   ]
+  },
+  "maia": {
+   "description": "a young Basque surfer girl with wet brown hair in a ponytail, deep turquoise wetsuit with a navy panel, a small yellow surfboard carried upright on her back with two shoulder straps, barefoot",
+   "tenue": "wetsuit",
+   "accessoires": [
+    {
+     "objet": "small yellow surfboard strapped upright on the back",
+     "defaut": "stays strapped flat against her back, upright, moving only with the torso, never in front of her body, never in her hands",
+     "par_animation": {
+      "run_scared": "bounces against her back with each stride",
+      "hide_in": "she dives in, the board following her body",
+      "trap": "stays on her back while she crouches",
+      "victory": "bounces on her back as she jumps"
+     }
+    },
+    {
+     "objet": "brown ponytail",
+     "defaut": "swings behind the head with the motion, with a little delay",
+     "par_animation": {
+      "run_scared": "streams straight back",
+      "found": "flies up"
+     }
+    }
+   ]
+  },
+  "xabi": {
+   "description": "a little Basque jai alai player boy with short dark brown hair, white polo shirt, white trousers, red sash belt, red espadrilles, a long curved wicker chistera basket worn on his right hand",
+   "tenue": "shirt",
+   "accessoires": [
+    {
+     "objet": "long curved wicker chistera worn on the right hand",
+     "defaut": "stays attached to his right hand as an extension of the arm, keeps its long curved banana shape and its length in every frame, follows the right arm swing like a long glove, never detaches, never changes into a racket or a ball",
+     "par_animation": {
+      "walk": "swings forward and back with the right arm",
+      "run_scared": "flails up in the air with the right arm",
+      "trap": "he sets the trap with his free left hand, the chistera held aside",
+      "search": "he scoops with the chistera like a shovel",
+      "victory": "raised high above the head",
+      "emote_salut": "he waves with the chistera"
+     }
+    },
+    {
+     "objet": "red sash belt ends",
+     "defaut": "the loose ends flutter behind at the hip",
+     "par_animation": {}
+    }
+   ],
+   "hold": {
+    "right_arm": "forward"
+   },
+   "hold_sauf": [
+    "victory",
+    "emote_salut",
+    "search",
+    "hunter_reveal",
+    "emote_rire",
+    "emote_danse",
+    "emote_pouce",
+    "emote_chut",
+    "emote_langue",
+    "hide_out",
+    "ghost",
+    "ghost_move"
+   ]
+  },
+  "mattin": {
+   "description": "a strong Basque stone lifter man with a black beard, red beret, red and white horizontally striped shirt, navy trousers, brown shoes, big muscular arms",
+   "tenue": "shirt",
+   "accessoires": [
+    {
+     "objet": "red beret",
+     "defaut": "stays firmly on the head",
+     "par_animation": {}
+    }
+   ],
+   "allure": "heavy powerful moves: each step has weight, big arm swings, stomps when he lands"
+  },
+  "amaia": {
+   "description": "a Basque folk dancer girl with a red headscarf, green vest over a white blouse, red skirt, white espadrilles, a wooden makila walking stick slung diagonally on her back",
+   "tenue": "skirt",
+   "accessoires": [
+    {
+     "objet": "wooden makila stick slung diagonally on the back",
+     "defaut": "stays rigid on her back at the same diagonal angle, moving only with the torso, never in her hands; it stays on the same side of her body as in the reference image in every frame, never crossing to the other side",
+     "par_animation": {
+      "run_scared": "bounces on her back",
+      "hide_in": "goes in with her"
+     }
+    },
+    {
+     "objet": "red headscarf with knotted tails at the back of the head",
+     "defaut": "stays tied on the head, the two knot tails flutter behind with the motion",
+     "par_animation": {
+      "run_scared": "the tails stream straight back",
+      "victory": "the tails flap up and down"
+     }
+    },
+    {
+     "objet": "red skirt",
+     "defaut": "flares and swirls with each step like a dancer",
+     "par_animation": {
+      "emote_danse": "twirls wide open"
+     }
+    }
+   ],
+   "allure": "light dancer's steps, on her toes",
+   "lexique": {
+    "\\bhimself\\b": "herself",
+    "\\bhim\\b": "her",
+    "\\bhis\\b": "her",
+    "\\bhe\\b": "she"
+   },
+   "post": {}
+  },
+  "kaio": {
+   "description": "a cheeky anthropomorphic seagull standing upright on two orange webbed feet, big yellow beak with a red dot, white head and belly, light grey wings used as arms with feathered fingertips, small grey tail, a small neckerchief scarf tied at the front",
+   "tenue": "scarf",
+   "accessoires": [
+    {
+     "objet": "light grey wings used as arms",
+     "defaut": "behave like arms with feathered fingertips, swinging with the walk; they are not flying wings",
+     "par_animation": {
+      "run_scared": "flap frantically at his sides at shoulder height as if trying to take off, feet still running; he has no hands and no human arms, only his two grey wings",
+      "found": "fly up in surprise, a couple of feathers pop off",
+      "victory": "flap wide open"
+     }
+    },
+    {
+     "objet": "small grey tail",
+     "defaut": "wags with the waddle",
+     "par_animation": {}
+    },
+    {
+     "objet": "small neckerchief scarf",
+     "defaut": "stays tied in place, the two short tips flutter with the motion",
+     "par_animation": {}
+    }
+   ],
+   "allure": "seagull waddle: body rocks side to side, webbed feet slap the ground, head bobs forward and back with each step",
+   "mouvement": {
+    "run_scared": {
+     "arms": "wings_up",
+     "exaggerate": null
+    }
+   },
+   "actions": {
+    "run_scared": "Runs in panic with both wings raised high and held still, very long strides, webbed feet spinning fast, body leaning forward, sweat drops flying."
+   },
+   "lexique": {
+    "\\ba big thumbs up\\b": "a big raised wing tip",
+    "\\bthumbs up\\b": "raised wing tip",
+    "\\bboth fists\\b": "both wing tips",
+    "\\bfists\\b": "wing tips",
+    "\\bfist\\b": "wing tip",
+    "\\bboth hands\\b": "both wings",
+    "\\bhands\\b": "wings",
+    "\\bhand\\b": "wing tip",
+    "\\bfingers\\b": "feathers",
+    "\\bfinger\\b": "feather tip",
+    "\\bthumbs\\b": "wing tips",
+    "\\bthumb\\b": "wing tip",
+    "\\bboth arms\\b": "both wings",
+    "\\barms\\b": "wings",
+    "\\barm\\b": "wing",
+    "\\bnose\\b": "beak"
+   },
+   "mouvement_tous": {
+    "arms": "wings"
+   }
+  },
+  "karramarro": {
+   "description": "a cheerful orange cartoon crab with thin legs, two big orange pincers raised, eyes on stalks, yellow belly, big happy open mouth, a small neckerchief scarf tied at the front",
+   "tenue": "scarf",
+   "accessoires": [
+    {
+     "objet": "two big pincers",
+     "defaut": "held up, clacking open and shut with the rhythm",
+     "par_animation": {
+      "run_scared": "waving wildly above the head",
+      "search": "dig and snip quickly",
+      "trap": "place the trap delicately"
+     }
+    },
+    {
+     "objet": "eyes on stalks",
+     "defaut": "wobble with the motion, slightly delayed",
+     "par_animation": {
+      "found": "shoot up straight",
+      "detect": "swivel left and right independently"
+     }
+    },
+    {
+     "objet": "thin legs",
+     "defaut": "all legs scuttle in a fast ripple, the crab keeps facing right",
+     "par_animation": {}
+    },
+    {
+     "objet": "small neckerchief scarf",
+     "defaut": "stays tied in place, the two short tips flutter with the motion",
+     "par_animation": {}
+    }
+   ],
+   "allure": "fast scuttling with all legs rippling, little hops",
+   "lexique": {
+    "\\ba big thumbs up\\b": "a big raised pincer",
+    "\\bthumbs up\\b": "raised pincer",
+    "\\bboth fists\\b": "both pincers",
+    "\\bfists\\b": "pincers",
+    "\\bfist\\b": "pincer",
+    "\\bboth hands\\b": "both pincers",
+    "\\bhands\\b": "pincers",
+    "\\bhand\\b": "pincer",
+    "\\bfingers\\b": "pincer tips",
+    "\\bfinger\\b": "pincer tip",
+    "\\bthumbs\\b": "pincers",
+    "\\bthumb\\b": "pincer",
+    "\\bboth arms\\b": "both pincers",
+    "\\barms\\b": "pincers",
+    "\\barm\\b": "pincer"
+   },
+   "mouvement_tous": {
+    "arms": "side"
+   },
+   "mouvement": {
+    "run_scared": {
+     "exaggerate": 1.15
+    },
+    "search": {
+     "arms": null,
+     "exaggerate": 1.4,
+     "bounce": 0.05
+    },
+    "detect": {
+     "arms": null,
+     "exaggerate": 1.4,
+     "bounce": 0.05
+    },
+    "victory": {
+     "arms": null,
+     "exaggerate": 1.4,
+     "bounce": 0.08
+    },
+    "hunter_reveal": {
+     "arms": null,
+     "exaggerate": 1.4,
+     "bounce": 0.05
+    },
+    "emote_salut": {
+     "arms": null,
+     "exaggerate": 1.3
+    },
+    "emote_rire": {
+     "arms": null,
+     "exaggerate": 1.3
+    },
+    "emote_danse": {
+     "arms": null,
+     "exaggerate": 1.3
+    },
+    "emote_pouce": {
+     "arms": null,
+     "exaggerate": 1.3
+    },
+    "emote_chut": {
+     "arms": null,
+     "exaggerate": 1.3
+    },
+    "emote_langue": {
+     "arms": null,
+     "exaggerate": 1.3
+    }
+   },
+   "actions": {
+    "search": "scuttles sideways and peeks left and right, eyes on stalks turning, pincers snipping at the ground",
+    "detect": "jolts upright and leans forward, eyes on stalks stretching tall toward the right",
+    "victory": "happy little hops on the spot, both pincers raised high and clacking, eyes on stalks bouncing",
+    "hunter_reveal": "he rises tall on his legs and swings the flashlight held in his right pincer from his side to point it forward, eyes on stalks stretching tall"
+   }
+  },
+  "ramuntxo": {
+   "description": "a jolly Basque chef with light peach skin, a small brown mustache, tall white chef hat with a small Basque flag on its band, white chef jacket, red neck scarf, red and white checkered trousers, white apron, a black frying pan hanging from his belt",
+   "tenue": "scarf",
+   "accessoires": [
+    {
+     "objet": "tall white chef hat with a small Basque flag on the band",
+     "defaut": "stays on the head, the soft top wobbles slightly, the flag stays on the band",
+     "par_animation": {
+      "run_scared": "the hat tilts back and wobbles hard",
+      "found": "the hat pops up and lands back"
+     }
+    },
+    {
+     "objet": "black frying pan hanging from the belt",
+     "defaut": "hangs from the belt at the hip and swings like a pendulum with each step, never in his hand",
+     "par_animation": {
+      "trap": "he unhooks the pan, sets a trap with it, then hooks it back",
+      "search": "bangs against his leg as he rummages"
+     }
+    },
+    {
+     "objet": "red neck scarf and white apron",
+     "defaut": "the scarf tips and the apron flutter lightly with the motion",
+     "par_animation": {}
+    }
+   ],
+   "allure": "jolly round bouncing walk, belly first"
+  },
+  "itsaso": {
+   "description": "a mythical girl made of sea water, pale cyan skin, long wavy aqua hair, a dress of deep blue waves edged with white sea foam, barefoot",
+   "tenue": "dress",
+   "accessoires": [
+    {
+     "objet": "dress made of deep blue waves edged with white foam",
+     "defaut": "the hem ripples continuously like rolling sea waves, foam curling at the edges, even when she stands still",
+     "par_animation": {
+      "idle": "gentle swell like a calm sea",
+      "run_scared": "crashing waves spraying droplets behind",
+      "hide_in": "she melts down into a splash of water",
+      "hide_out": "she rises up from a splash of water",
+      "victory": "waves splash up with each jump"
+     }
+    },
+    {
+     "objet": "long wavy aqua hair",
+     "defaut": "floats and flows as if underwater, slow and graceful",
+     "par_animation": {
+      "run_scared": "streams back like a wave"
+     }
+    }
+   ],
+   "allure": "graceful gliding steps, as light as water; she is a magical sea creature",
+   "lexique": {
+    "\\bhimself\\b": "herself",
+    "\\bhim\\b": "her",
+    "\\bhis\\b": "her",
+    "\\bhe\\b": "she"
+   },
+   "tenue_couleur": {
+    "teinte": [
+     196,
+     235
+    ],
+    "sat_min": 0.6,
+    "val_max": 0.82,
+    "liseré_px": 3,
+    "val_min": 0.42
+   }
+  },
+  "peio": {
+   "description": "a sturdy young Basque rugby player with medium brown skin and short black hair, red and white hooped rugby jersey, black shorts, white socks, black boots, a brown oval rugby ball tucked under his near arm",
+   "tenue": "jersey",
+   "accessoires": [
+    {
+     "objet": "brown oval rugby ball under the near arm",
+     "defaut": "stays tucked tightly under his near arm against the ribs in every frame, never dropped, never floating",
+     "par_animation": {
+      "run_scared": "clutched tight to his chest with both arms like a try run",
+      "trap": "kept under the arm, he places the trap with his free hand",
+      "victory": "held high above his head with both hands",
+      "found": "he juggles it in surprise then catches it back",
+      "emote_pouce": "ball under the arm, thumbs up with the free hand",
+      "emote_danse": "stays tucked under the near arm, only the free arm dances"
+     }
+    }
+   ],
+   "allure": "powerful rugby run, head forward, knees high",
+   "hold": {
+    "left_arm": "tucked"
+   },
+   "hold_sauf": [
+    "victory",
+    "run_scared"
+   ]
+  }
+ }
+}

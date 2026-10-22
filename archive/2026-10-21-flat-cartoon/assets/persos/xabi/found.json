@@ -1,0 +1,73 @@
+{
+ "motion": "found",
+ "quaternius": "Hit_Chest",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "shocked surprise with round eyes and open mouth, then laughing",
+ "tenue": "shirt",
+ "drive": {
+  "exaggerate": 1.5,
+  "hold": {
+   "right_arm": "forward"
+  }
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Being caught: huge startled jump straight up, feet leaving the ground, arms flung out, a big exclamation mark pops above the head, then lands and slumps down laughing, hand on the belly. The long curved wicker chistera worn on the right hand: stays attached to his right hand as an extension of the arm, keeps its long curved banana shape and its length in every frame, follows the right arm swing like a long glove, never detaches, never changes into a racket or a ball. The red sash belt ends: the loose ends flutter behind at the hip.",
+ "frame_offsets": [
+  [4.5, 0.0],
+  [4.0, 0.0],
+  [4.0, 0.0],
+  [4.0, 0.0],
+  [4.0, 0.0],
+  [4.5, 0.0],
+  [5.0, 0.0],
+  [5.5, 0.0],
+  [6.0, 0.0],
+  [6.5, 0.0],
+  [8.5, 0.0],
+  [9.5, 0.0],
+  [11.0, 0.0],
+  [12.5, 0.0],
+  [14.0, 0.0],
+  [16.0, 0.0],
+  [17.0, 0.0],
+  [19.0, 0.0],
+  [21.0, 0.0],
+  [23.0, 0.0],
+  [24.5, 0.0],
+  [27.0, 0.0],
+  [29.0, 0.0],
+  [30.5, 0.0],
+  [31.0, 0.0],
+  [31.0, 0.0],
+  [31.0, 0.0],
+  [31.0, 0.0],
+  [31.0, 0.0],
+  [31.0, 0.0],
+  [31.5, 0.0],
+  [31.0, 0.0],
+  [31.0, 0.0]
+ ],
+ "echelle": 1.08,
+ "entrees": {
+  "ghost": {
+   "i": [20, 20, 20, 3, 20, 3, 3, 3, 3, 3, 3, 19, 3, 3, 19, 3, 19, 3, 3, 3, 3, 3, 4, 3, 25, 25, 1, 27, 27, 27, 27, 11, 27],
+   "e": [53, 54, 54, 54, 54, 54, 54, 54, 54, 53, 53, 51, 51, 50, 48, 48, 46, 46, 44, 42, 41, 40, 38, 37, 38, 37, 36, 36, 37, 37, 39, 39, 39]
+  },
+  "ghost_move": {
+   "i": [20, 20, 20, 20, 20, 20, 21, 21, 21, 21, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21],
+   "e": [62, 62, 62, 63, 62, 62, 62, 62, 61, 61, 61, 60, 60, 59, 59, 59, 58, 59, 58, 58, 57, 57, 56, 56, 56, 56, 55, 55, 55, 55, 54, 53, 53]
+  }
+ }
+}

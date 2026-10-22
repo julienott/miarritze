@@ -1,0 +1,71 @@
+{
+ "polygons": [
+  [
+   [
+    425,
+    446
+   ],
+   [
+    506,
+    482
+   ],
+   [
+    191,
+    620
+   ],
+   [
+    110,
+    585
+   ]
+  ]
+ ],
+ "convex_polygons": [
+  [
+   [
+    441,
+    462
+   ],
+   [
+    522,
+    498
+   ],
+   [
+    207,
+    636
+   ],
+   [
+    126,
+    601
+   ]
+  ]
+ ],
+ "inset_px": 3.0,
+ "bbox": [
+  0,
+  0,
+  614,
+  654
+ ],
+ "front_y": 637,
+ "back_y": 440,
+ "baseline_y": 538,
+ "height_px": 637,
+ "blocks_view": true,
+ "sort_y": 456,
+ "camera": "corner",
+ "scale": 2.0,
+ "depth_px": 197.0,
+ "shapes": [],
+ "confidence": 0.65,
+ "warnings": [
+  "socle de sol d\u00e9tect\u00e9 (20% de l'objet) : traversable, hors occluder",
+  "vue en coin d\u00e9tect\u00e9e sur l'image : emprise calcul\u00e9e en camera corner",
+  "cam\u00e9ra en coin : emprise approch\u00e9e (losange sur le bord bas)"
+ ],
+ "size": [
+  598,
+  640
+ ],
+ "ground_y_encoding": "PNG gris 16 bits : Y \u00e9cran (px de l'image) du point au sol sous le pixel, + 1 ; 0 hors occluder",
+ "marge_retiree": 16
+}

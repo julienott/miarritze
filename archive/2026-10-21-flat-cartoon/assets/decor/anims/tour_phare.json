@@ -1,0 +1,29 @@
+{
+ "mode": "video",
+ "kind": null,
+ "frames": 16,
+ "fps": 8.0,
+ "loop": true,
+ "duration_s": 2.0,
+ "cell": [
+  1331,
+  1331
+ ],
+ "layout": "row",
+ "loop_jump": 3.47,
+ "offset": [
+  416,
+  153
+ ],
+ "canvas": [
+  1331,
+  1331
+ ],
+ "wan_frames": 33,
+ "loop_cut": 28,
+ "warnings": [
+  "la boucle saute (écart fin -> début 3.5× l'écart moyen)"
+ ],
+ "source_task": "afa1f8abd03c46538a16ac0ff7dd5cd0",
+ "piste": "faisceau qui tourne (vidéo)"
+}

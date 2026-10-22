@@ -1,0 +1,72 @@
+{
+ "motion": "hunter_reveal",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "playful determined grin, one eyebrow raised",
+ "tenue": "shirt",
+ "drive": {
+  "clip": "hunter_reveal",
+  "hold": {
+   "right_arm": "down"
+  }
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Becomes the hunter: takes a small flashlight from his belt, clicks it on, then holds it steady with his arm stretched forward; a clean straight cone of soft yellow light shines forward from the lamp. The arm stays still and steady once the lamp is on. The long curved wicker chistera worn on the right hand: stays attached to his right hand as an extension of the arm, keeps its long curved banana shape and its length in every frame, follows the right arm swing like a long glove, never detaches, never changes into a racket or a ball. The red sash belt ends: the loose ends flutter behind at the hip. The jai alai cesta stays strapped on his right hand, hanging down along his leg; with his LEFT hand he takes a small flashlight and holds it stretched forward, steady.",
+ "frame_offsets": [
+  [0.0, 0.0],
+  [0.5, 0.0],
+  [1.0, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [1.0, 0.0],
+  [0.5, 0.0],
+  [-0.5, 0.0],
+  [-1.0, 0.0],
+  [-2.0, 0.0],
+  [-2.0, 0.0],
+  [-2.5, 0.0],
+  [-2.5, 0.0],
+  [-2.5, 0.0],
+  [-2.5, 0.0],
+  [-2.0, 0.0],
+  [-2.0, 0.0],
+  [-1.5, 0.0],
+  [-1.0, 0.0],
+  [-0.5, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [-0.5, 0.0],
+  [-1.5, 0.0],
+  [-2.0, 0.0],
+  [-2.5, 0.0],
+  [-2.5, 0.0],
+  [-2.5, 0.0],
+  [-2.5, 0.0],
+  [-2.5, 0.0]
+ ],
+ "entrees": {
+  "idle": {
+   "i": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+   "e": [14, 13, 14, 13, 12, 12, 10, 12, 13, 16, 17, 20, 20, 21, 21, 21, 21, 21, 21, 20, 18, 17, 15, 15, 14, 16, 18, 20, 21, 21, 21, 21, 22]
+  },
+  "walk": {
+   "i": [22, 20, 20, 20, 20, 20, 20, 20, 20, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22],
+   "e": [44, 44, 44, 45, 45, 45, 44, 45, 44, 43, 42, 42, 42, 41, 41, 42, 42, 43, 43, 44, 44, 45, 44, 44, 44, 44, 43, 42, 42, 42, 43, 42, 42]
+  }
+ }
+}

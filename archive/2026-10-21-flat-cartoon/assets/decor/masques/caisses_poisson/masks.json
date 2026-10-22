@@ -1,0 +1,135 @@
+{
+ "polygons": [
+  [
+   [
+    43,
+    116
+   ],
+   [
+    47,
+    116
+   ],
+   [
+    53,
+    119
+   ],
+   [
+    81,
+    134
+   ],
+   [
+    176,
+    185
+   ],
+   [
+    228,
+    213
+   ],
+   [
+    228,
+    214
+   ],
+   [
+    224,
+    214
+   ],
+   [
+    218,
+    211
+   ],
+   [
+    190,
+    196
+   ],
+   [
+    95,
+    145
+   ],
+   [
+    43,
+    117
+   ]
+  ]
+ ],
+ "convex_polygons": [
+  [
+   [
+    59,
+    132
+   ],
+   [
+    63,
+    132
+   ],
+   [
+    69,
+    135
+   ],
+   [
+    97,
+    150
+   ],
+   [
+    192,
+    201
+   ],
+   [
+    244,
+    229
+   ],
+   [
+    244,
+    230
+   ],
+   [
+    240,
+    230
+   ],
+   [
+    234,
+    227
+   ],
+   [
+    206,
+    212
+   ],
+   [
+    111,
+    161
+   ],
+   [
+    59,
+    133
+   ]
+  ]
+ ],
+ "inset_px": 3.0,
+ "bbox": [
+  0,
+  0,
+  272,
+  263
+ ],
+ "front_y": 239,
+ "back_y": 110,
+ "baseline_y": 174,
+ "height_px": 239,
+ "blocks_view": true,
+ "sort_y": 126,
+ "camera": "corner",
+ "scale": 2.0,
+ "depth_px": 129.0,
+ "shapes": [],
+ "confidence": 0.65,
+ "warnings": [
+  "socle de sol d\u00e9tect\u00e9 (48% de l'objet) : traversable, hors occluder",
+  "vue en coin d\u00e9tect\u00e9e sur l'image : emprise calcul\u00e9e en camera corner",
+  "cam\u00e9ra en coin : emprise approch\u00e9e (losange sur le bord bas)"
+ ],
+ "size": [
+  256,
+  247
+ ],
+ "ground_y_encoding": "PNG gris 16 bits : Y \u00e9cran (px de l'image) du point au sol sous le pixel, + 1 ; 0 hors occluder",
+ "marge_retiree": 16
+}

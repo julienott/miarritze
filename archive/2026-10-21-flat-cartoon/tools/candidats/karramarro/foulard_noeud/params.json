@@ -1,0 +1,8 @@
+{
+ "style": "pf_hd__edit",
+ "entree": "tools/rd/out/karramarro/gk2d/foulard/image_00.png",
+ "prompt": "Keep this exact crab with its white bandana, same pose, colors and cartoon style. Only fix the knot of the bandana: replace the odd dangling tie at the bottom with a simple neat round knot at the front of the bandana with two short pointed tips, clean thick dark navy outline. Nothing else changes. Plain white background.",
+ "seed": 1,
+ "num_images": 2,
+ "task": "598802fb28b34b39a3d9102b783079ba"
+}

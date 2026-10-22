@@ -1,0 +1,217 @@
+{
+ "polygons": [
+  [
+   [
+    14,
+    103
+   ],
+   [
+    15,
+    102
+   ],
+   [
+    17,
+    101
+   ],
+   [
+    26,
+    98
+   ],
+   [
+    31,
+    97
+   ],
+   [
+    39,
+    96
+   ],
+   [
+    59,
+    96
+   ],
+   [
+    67,
+    97
+   ],
+   [
+    72,
+    98
+   ],
+   [
+    81,
+    101
+   ],
+   [
+    83,
+    102
+   ],
+   [
+    84,
+    103
+   ],
+   [
+    84,
+    105
+   ],
+   [
+    82,
+    109
+   ],
+   [
+    81,
+    110
+   ],
+   [
+    72,
+    113
+   ],
+   [
+    67,
+    114
+   ],
+   [
+    43,
+    114
+   ],
+   [
+    26,
+    113
+   ],
+   [
+    17,
+    110
+   ],
+   [
+    15,
+    109
+   ],
+   [
+    14,
+    108
+   ]
+  ]
+ ],
+ "convex_polygons": [
+  [
+   [
+    30,
+    119
+   ],
+   [
+    31,
+    118
+   ],
+   [
+    33,
+    117
+   ],
+   [
+    42,
+    114
+   ],
+   [
+    47,
+    113
+   ],
+   [
+    55,
+    112
+   ],
+   [
+    75,
+    112
+   ],
+   [
+    83,
+    113
+   ],
+   [
+    88,
+    114
+   ],
+   [
+    97,
+    117
+   ],
+   [
+    99,
+    118
+   ],
+   [
+    100,
+    119
+   ],
+   [
+    100,
+    121
+   ],
+   [
+    98,
+    125
+   ],
+   [
+    97,
+    126
+   ],
+   [
+    88,
+    129
+   ],
+   [
+    83,
+    130
+   ],
+   [
+    59,
+    130
+   ],
+   [
+    42,
+    129
+   ],
+   [
+    33,
+    126
+   ],
+   [
+    31,
+    125
+   ],
+   [
+    30,
+    124
+   ]
+  ]
+ ],
+ "inset_px": 3.0,
+ "bbox": [
+  0,
+  0,
+  144,
+  148
+ ],
+ "front_y": 119,
+ "back_y": 90,
+ "baseline_y": 104,
+ "height_px": 119,
+ "blocks_view": false,
+ "sort_y": 106,
+ "camera": "front34",
+ "scale": 2.0,
+ "depth_px": 29.0,
+ "shapes": [
+  "arrondi"
+ ],
+ "confidence": 0.8,
+ "warnings": [
+  "socle de sol d\u00e9tect\u00e9 (16% de l'objet) : traversable, hors occluder",
+  "profondeur estim\u00e9e (pos\u00e9, 38 px de large) : 13 px, faute de face du dessus lisible",
+  "1 morceau(x) dans la face avant d'une base ronde : fusionn\u00e9(s)"
+ ],
+ "size": [
+  128,
+  132
+ ],
+ "ground_y_encoding": "PNG gris 16 bits : Y \u00e9cran (px de l'image) du point au sol sous le pixel, + 1 ; 0 hors occluder",
+ "marge_retiree": 16
+}

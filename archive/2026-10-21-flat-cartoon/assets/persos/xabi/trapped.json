@@ -1,0 +1,78 @@
+{
+ "motion": "trapped",
+ "quaternius": "Push_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "annoyed frustrated pout, cheeks puffed",
+ "tenue": "shirt",
+ "drive": {
+  "exaggerate": 1.4,
+  "hold": {
+   "right_arm": "down"
+  }
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Stuck in a sticky trap: feet glued to the ground, pulls hard on one leg then the other with both hands, body wobbling and stretching like rubber, arms windmilling for balance. The long curved wicker chistera worn on the right hand: stays attached to his right hand as an extension of the arm, keeps its long curved banana shape and its length in every frame, follows the right arm swing like a long glove, never detaches, never changes into a racket or a ball. The red sash belt ends: the loose ends flutter behind at the hip. Only his free left hand presses flat on the invisible wall in front of him; his right arm hangs down along his body holding the jai alai cesta, a rigid wicker basket that keeps exactly the same long curved shape and size in every frame, tip pointing to the ground behind him; it never curls, flaps or folds, and nothing is held in front of his chest.",
+ "frame_offsets": [
+  [20.0, 0.0],
+  [19.5, 0.0],
+  [19.5, 0.0],
+  [19.5, 0.0],
+  [19.5, 0.0],
+  [20.0, 0.0],
+  [20.5, 0.0],
+  [21.0, 0.0],
+  [21.0, 0.0],
+  [22.0, 0.0],
+  [22.0, 0.0],
+  [23.0, 0.0],
+  [23.5, 0.0],
+  [23.5, 0.0],
+  [24.0, 0.0],
+  [25.5, 0.0],
+  [27.0, 0.0],
+  [23.5, 0.0],
+  [18.5, 0.0],
+  [13.0, 0.0],
+  [12.0, 0.0],
+  [11.0, 0.0],
+  [10.5, 0.0],
+  [10.0, 0.0],
+  [9.5, 0.0],
+  [9.5, 0.0],
+  [9.5, 0.0],
+  [12.5, 0.0],
+  [16.5, 0.0],
+  [20.5, 0.0],
+  [21.0, 0.0],
+  [20.5, 0.0]
+ ],
+ "entrees": {
+  "idle": {
+   "i": [28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28],
+   "e": [59, 58, 60, 62, 64, 65, 70, 71, 73, 74, 76, 79, 81, 82, 79, 80, 76, 73, 68, 64, 65, 64, 69, 69, 72, 72, 73, 65, 58, 60, 60, 58]
+  },
+  "walk": {
+   "i": [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 19, 19, 19, 19, 20, 20, 20, 20, 20, 20, 22, 20, 20, 20],
+   "e": [69, 68, 69, 70, 71, 72, 75, 76, 77, 78, 80, 82, 84, 85, 82, 83, 79, 77, 74, 70, 70, 69, 72, 71, 73, 73, 73, 69, 66, 68, 69, 68]
+  },
+  "search": {
+   "i": [22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 27],
+   "e": [56, 55, 57, 58, 60, 61, 65, 66, 68, 69, 71, 74, 76, 77, 74, 75, 71, 68, 64, 61, 61, 60, 65, 65, 68, 68, 69, 61, 54, 56, 57, 56]
+  },
+  "detect": {
+   "e": [61, 60, 62, 64, 66, 67, 71, 72, 74, 75, 77, 80, 82, 83, 80, 81, 77, 74, 70, 66, 67, 66, 70, 70, 74, 74, 75, 67, 60, 62, 62, 61]
+  }
+ }
+}

@@ -1,0 +1,57 @@
+{
+ "motion": "run_scared",
+ "quaternius": "Sprint_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "terrified comic face, eyes wide open, mouth open in a scream",
+ "tenue": "tank top",
+ "drive": {
+  "arms": "up",
+  "exaggerate": 1.3
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Panicked cartoon sprint, running for dear life: very long strides, legs spinning fast, body leaning far forward, both arms flailing up in the air above the head, sweat drops flying off the head, a little dust puff at the heels. Hugely exaggerated, comic, never violent. The blue swim fins hanging from the belt at the hip: flap wildly behind him. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame.",
+ "stride_px": 214.2,
+ "decalage": [-12.0, 0.0],
+ "entrees": {
+  "idle": {
+   "i": [29, 29, 29, 30, 30, 30, 30, 30, 30, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 30, 30, 30, 18, 18, 18, 18, 30, 29, 29, 29, 29, 29],
+   "e": [48, 48, 46, 43, 43, 48, 56, 53, 53, 51, 51, 58, 58, 59, 57, 53, 53, 49, 45, 43, 43, 45, 50, 56, 56, 51, 50, 58, 58, 57, 56, 52]
+  },
+  "walk": {
+   "i": [4, 4, 19, 5, 5, 5, 6, 6, 6, 5, 5, 20, 20, 20, 19, 19, 19, 4, 4, 4, 4, 4, 21, 6, 6, 21, 5, 9, 9, 9, 19, 19],
+   "e": [46, 45, 43, 39, 39, 41, 44, 44, 45, 45, 47, 52, 52, 54, 50, 47, 47, 44, 42, 43, 43, 46, 47, 46, 46, 45, 46, 50, 50, 52, 51, 47]
+  },
+  "hide_in": {
+   "e": [49, 49, 47, 44, 44, 48, 57, 54, 54, 52, 52, 59, 59, 60, 57, 54, 53, 50, 46, 43, 43, 45, 50, 57, 57, 51, 50, 59, 59, 58, 56, 52]
+  },
+  "trap": {
+   "e": [51, 51, 48, 45, 45, 46, 56, 55, 55, 53, 54, 58, 58, 60, 56, 53, 53, 50, 46, 44, 44, 45, 48, 54, 54, 50, 50, 59, 59, 58, 56, 53]
+  },
+  "found": {
+   "e": [68, 68, 67, 61, 61, 62, 69, 68, 68, 68, 67, 71, 71, 71, 70, 68, 68, 67, 65, 61, 61, 59, 62, 67, 67, 66, 68, 74, 74, 73, 72, 70]
+  },
+  "extract": {
+   "e": [55, 55, 52, 45, 46, 46, 55, 55, 55, 55, 59, 64, 64, 65, 60, 55, 55, 53, 50, 45, 45, 46, 47, 52, 51, 49, 53, 64, 64, 63, 60, 58]
+  },
+  "victory": {
+   "i": [30, 30, 30, 30, 30, 24, 24, 28, 28, 30, 30, 28, 28, 28, 28, 28, 28, 30, 30, 30, 30, 24, 21, 21, 21, 24, 30, 28, 28, 28, 28, 30],
+   "e": [48, 48, 46, 43, 43, 49, 56, 53, 53, 51, 49, 53, 53, 54, 53, 50, 50, 48, 44, 43, 43, 45, 50, 56, 56, 51, 49, 55, 55, 54, 53, 50]
+  },
+  "sad": {
+   "i": [8, 8, 6, 18, 18, 3, 3, 3, 3, 6, 11, 11, 11, 10, 13, 7, 7, 6, 6, 3, 3, 3, 3, 3, 3, 3, 18, 11, 11, 11, 9, 9],
+   "e": [39, 39, 38, 38, 38, 42, 52, 48, 48, 42, 41, 51, 51, 54, 52, 47, 47, 41, 37, 39, 39, 42, 46, 54, 54, 46, 45, 50, 50, 51, 48, 42]
+  }
+ }
+}

@@ -1,0 +1,73 @@
+{
+ "motion": "trap",
+ "quaternius": "Farm_PlantSeed",
+ "lib": "ual2",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "sneaky mischievous grin",
+ "tenue": "tank top",
+ "drive": {
+  "exaggerate": 1.2
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Sets a trap: looks left and right sneakily, crouches down, places a small object on the ground in front of him, pats it, stands back up rubbing his hands with glee. The blue swim fins hanging from the belt at the hip: dangle down as he crouches. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame.",
+ "frame_offsets": [
+  [2.0, 0.0],
+  [2.5, 0.0],
+  [5.0, 0.0],
+  [7.0, 0.0],
+  [11.5, 0.0],
+  [12.5, 0.0],
+  [13.5, 0.0],
+  [12.0, 0.0],
+  [14.0, 0.0],
+  [17.5, 0.0],
+  [21.5, 0.0],
+  [24.0, 0.0],
+  [26.0, 0.0],
+  [27.0, 0.0],
+  [28.5, 0.0],
+  [29.0, 0.0],
+  [30.0, 0.0],
+  [31.0, 0.0],
+  [32.0, 0.0],
+  [33.0, 0.0],
+  [33.5, 0.0],
+  [34.5, 0.0],
+  [33.5, 0.0],
+  [32.5, 0.0],
+  [32.5, 0.0],
+  [31.0, 0.0],
+  [25.0, 0.0],
+  [16.0, 0.0],
+  [8.0, 0.0],
+  [3.0, 0.0],
+  [-0.5, 0.0],
+  [-2.0, 0.0],
+  [-1.5, 0.0]
+ ],
+ "entrees": {
+  "idle": {
+   "i": [18, 16, 29, 29, 29, 29, 28, 28, 28, 28, 27, 27, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 29, 29, 29, 30, 30, 18, 16],
+   "e": [12, 11, 13, 25, 36, 43, 66, 73, 74, 77, 78, 79, 79, 80, 80, 80, 80, 81, 81, 81, 82, 82, 81, 79, 79, 75, 62, 42, 30, 22, 16, 16, 15]
+  },
+  "walk": {
+   "i": [21, 21, 21, 5, 5, 5, 21, 21, 21, 21, 5, 5, 5, 5, 5, 21, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5, 21, 21, 21, 21, 21],
+   "e": [33, 33, 33, 37, 44, 50, 68, 73, 74, 76, 77, 79, 80, 81, 81, 81, 82, 83, 83, 83, 84, 84, 83, 81, 81, 77, 65, 50, 36, 28, 30, 32, 32]
+  },
+  "run_scared": {
+   "i": [19, 19, 19, 18, 18, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 12, 12, 18, 19, 19, 19, 19],
+   "e": [44, 44, 44, 42, 47, 44, 58, 67, 69, 75, 79, 82, 83, 83, 83, 83, 84, 84, 85, 85, 85, 86, 85, 83, 83, 74, 55, 43, 36, 38, 40, 42, 42]
+  }
+ }
+}

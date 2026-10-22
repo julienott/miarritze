@@ -1,0 +1,37 @@
+{
+ "motion": "ghost_move",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "gentle smile, mouth closed and still, the mouth does not move",
+ "tenue": "tank top",
+ "drive": {
+  "clip": "fly",
+  "bounce": 0.03,
+  "exaggerate": 1.0
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Glides forward through the air: body leaning slightly forward, legs trailing behind relaxed, the small white angel wings flap clearly and steadily. Both legs stay slightly bent back at the knees as if flying, feet off the ground. The blue swim fins hanging from the belt at the hip: stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet; they stay on the same hip as in the reference image in every frame, never switching to the other side. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame.",
+ "echelle": 0.77,
+ "decalage": [30.0, 0.0],
+ "entrees": {
+  "ghost": {
+   "i": [19, 19, 19, 19, 19, 20, 20, 20, 19, 19, 18, 18, 17, 4, 20, 20, 19, 19, 19, 19, 19, 20, 20, 20, 19, 19, 19, 19, 19, 20, 20, 20],
+   "e": [22, 22, 23, 22, 21, 21, 21, 19, 19, 21, 22, 20, 19, 19, 20, 19, 22, 22, 25, 27, 27, 27, 27, 27, 27, 28, 28, 25, 24, 22, 21, 21]
+  },
+  "hide_out": {
+   "e": [71, 70, 71, 71, 71, 72, 72, 73, 73, 72, 73, 74, 74, 74, 73, 72, 71, 71, 70, 68, 68, 68, 68, 68, 68, 68, 69, 70, 70, 71, 71, 71]
+  }
+ }
+}

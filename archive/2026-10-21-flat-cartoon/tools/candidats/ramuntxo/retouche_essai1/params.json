@@ -1,0 +1,8 @@
+{
+ "style": "pf_hd__edit",
+ "entree": "tools/rd/out/ramuntxo/gk2d/profil/image_00_white.png",
+ "prompt": "Keep this exact chef character, pose, colors and cartoon style. Add only two details: a small neat dark brown mustache under his nose, and a tiny Basque flag (ikurrina: red background, green diagonal saltire cross, white upright cross) printed on the band at the bottom of his white chef hat. Plain white background.",
+ "seed": 1,
+ "num_images": 2,
+ "task": "66cdb4d067ec4068b03110bb709c1bf5"
+}

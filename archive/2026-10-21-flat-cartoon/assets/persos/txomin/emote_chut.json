@@ -1,0 +1,74 @@
+{
+ "motion": "shush",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "secretive smile, eyes wide",
+ "tenue": "tank top",
+ "drive": {
+  "clip": "shush"
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Shushes: puts one finger in front of the lips, leans forward slightly, looks left and right. The blue swim fins hanging from the belt at the hip: stay hooked to the belt at the hip, swinging and flapping loosely with each step like a pendulum, never in his hands, never on his feet. The silver whistle on a cord around the neck: hangs on the chest and bounces lightly with the body. The black sunglasses: stay on the eyes in every frame.",
+ "frame_offsets": [
+  [-0.5, 0.0],
+  [-0.5, 0.0],
+  [0.0, 0.0],
+  [0.5, 0.0],
+  [1.0, 0.0],
+  [2.5, 0.0],
+  [4.0, 0.0],
+  [5.0, 0.0],
+  [5.5, 0.0],
+  [6.0, 0.0],
+  [6.5, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0],
+  [6.5, 0.0],
+  [6.0, 0.0],
+  [6.0, 0.0],
+  [5.5, 0.0],
+  [5.0, 0.0],
+  [5.0, 0.0],
+  [5.0, 0.0],
+  [5.0, 0.0],
+  [5.0, 0.0],
+  [5.0, 0.0],
+  [5.5, 0.0],
+  [6.0, 0.0],
+  [6.5, 0.0],
+  [7.0, 0.0],
+  [6.5, 0.0],
+  [6.0, 0.0],
+  [5.0, 0.0],
+  [4.0, 0.0],
+  [3.5, 0.0]
+ ],
+ "debut": 1,
+ "entrees": {
+  "idle": {
+   "i": [2, 17, 2, 30, 30, 29, 30, 30, 30, 29, 29, 29, 29, 29, 29, 29, 29, 30, 30, 29, 29, 29, 30, 30, 29, 29, 29, 29, 29, 29, 29, 29, 29],
+   "e": [4, 3, 3, 3, 4, 7, 10, 11, 11, 11, 12, 13, 13, 13, 12, 11, 11, 11, 10, 10, 9, 9, 10, 11, 10, 11, 13, 14, 13, 12, 11, 7, 7]
+  },
+  "walk": {
+   "i": [21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21],
+   "e": [33, 33, 33, 34, 34, 32, 31, 30, 31, 31, 31, 31, 32, 32, 31, 31, 31, 30, 30, 31, 31, 31, 30, 30, 31, 31, 31, 32, 31, 31, 30, 31, 31]
+  },
+  "run_scared": {
+   "i": [19, 19, 19, 19, 19, 19, 19, 3, 3, 3, 18, 18, 18, 18, 3, 3, 3, 3, 3, 19, 19, 19, 19, 3, 3, 3, 3, 18, 3, 3, 3, 19, 19],
+   "e": [42, 42, 42, 44, 43, 44, 40, 40, 40, 40, 39, 39, 39, 39, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 39, 40, 39, 40, 41, 41, 41]
+  }
+ }
+}

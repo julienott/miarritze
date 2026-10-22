@@ -1,0 +1,152 @@
+{
+ "tour_phare": {
+  "tid": "cd1a622c71724b7d92bcf4741d10dd03",
+  "fichier": "objets/tour_phare.png",
+  "statut": "succeeded"
+ },
+ "rayonnage_filets": {
+  "tid": "8eb618cd19214501a10bd4981432d18b",
+  "fichier": "objets/rayonnage_filets.png",
+  "statut": "succeeded",
+  "essai": "override"
+ },
+ "mur_soutenement": {
+  "tid": "1e874f2a311a4dbc8c230324b051f6a3",
+  "fichier": "objets/mur_soutenement.png",
+  "statut": "succeeded"
+ },
+ "chalutier_quai": {
+  "tid": "fb76e21c2efb42328c782161d0797cf2",
+  "fichier": "objets/chalutier_quai.png",
+  "statut": "succeeded",
+  "essai": "v2"
+ },
+ "etal_criee": {
+  "tid": "f914598b36244fbcbf21a39b7ccdb894",
+  "fichier": "objets/etal_criee.png",
+  "statut": "succeeded",
+  "essai": "override3"
+ },
+ "bitte_amarrage": {
+  "tid": "bec8426d9dac415cb885ed73de8e3e7d",
+  "fichier": "objets/bitte_amarrage.png",
+  "statut": "succeeded"
+ },
+ "fontaine_place": {
+  "tid": "d9806db772b64471abd74e1102b00564",
+  "fichier": "objets/fontaine_place.png",
+  "statut": "succeeded",
+  "essai": "override3"
+ },
+ "banc_vert": {
+  "tid": "5894a54aab764d1ca0c017152dfe0266",
+  "fichier": "objets/banc_vert.png",
+  "statut": "succeeded",
+  "essai": "override4"
+ },
+ "cachette_casier_homards": {
+  "tid": "d82eb41865bb42aa9eaa2d35dd291ddc",
+  "fichier": "objets/cachette_casier_homards.png",
+  "statut": "succeeded"
+ },
+ "cachette_coffre_quai": {
+  "tid": "7411a426d76c44d29371006af18fa128",
+  "fichier": "objets/cachette_coffre_quai.png",
+  "statut": "succeeded"
+ },
+ "cachette_caisse_glace": {
+  "tid": "c0157977068046c4ad82bb2d6c83f696",
+  "fichier": "objets/cachette_caisse_glace.png",
+  "statut": "succeeded"
+ },
+ "cachette_coffre_cordages": {
+  "tid": "5b823722f0364cc69ae2ab7f0cf6c688",
+  "fichier": "objets/cachette_coffre_cordages.png",
+  "statut": "succeeded"
+ },
+ "cachette_poubelle_ruelle": {
+  "tid": "87c5fcc08a0747a8af272aaf22e486d4",
+  "fichier": "objets/cachette_poubelle_ruelle.png",
+  "statut": "succeeded"
+ },
+ "cachette_bac_poissons": {
+  "tid": "d483ee23a5734446be56e47931e0329a",
+  "fichier": "objets/cachette_bac_poissons.png",
+  "statut": "succeeded"
+ },
+ "maison_crampotte": {
+  "tid": "1552f7a7cbef4c4da5c4843fd19204ad",
+  "fichier": "objets/maison_crampotte.png",
+  "statut": "succeeded"
+ },
+ "chambre_froide": {
+  "tid": "e79a39ce161e4fb7ac2f768657f5a646",
+  "fichier": "objets/chambre_froide.png",
+  "statut": "succeeded"
+ },
+ "fronton": {
+  "tid": "643c742abea848e0bc5a2c398988bd3c",
+  "fichier": "objets/fronton.png",
+  "statut": "succeeded"
+ },
+ "autel_chapelle": {
+  "tid": "0cbe36c0e7fc400b838852399fee0b6e",
+  "fichier": "objets/autel_chapelle.png",
+  "statut": "succeeded"
+ },
+ "comptoir_bar": {
+  "tid": "0ceb9cad7c0f42dcabf789070886815e",
+  "fichier": "objets/comptoir_bar.png",
+  "statut": "succeeded"
+ },
+ "caisses_poisson": {
+  "tid": "04f7db6876a04a17a84afbfc9a8d2092",
+  "fichier": "objets/caisses_poisson.png",
+  "statut": "succeeded"
+ },
+ "coque_sur_ber": {
+  "tid": "0e6c83ffd693481c8249bf84e9040873",
+  "fichier": "objets/coque_sur_ber.png",
+  "statut": "succeeded"
+ },
+ "coque_chantier": {
+  "tid": "d1f9b14bdba94a5885c6613f0dcb2637",
+  "fichier": "objets/coque_chantier.png",
+  "statut": "succeeded"
+ },
+ "banc_chapelle": {
+  "tid": "f897a20027bb41bdb40e5b0320c5a1ae",
+  "fichier": "objets/banc_chapelle.png",
+  "statut": "succeeded"
+ },
+ "etabli_atelier": {
+  "tid": "ffddb896bb004278a40fc2f5e638f17c",
+  "fichier": "objets/etabli_atelier.png",
+  "statut": "succeeded"
+ },
+ "marches_escalier": {
+  "tid": "3710b6afb9894dd3b36e622aba0b3e7b",
+  "fichier": "objets/marches_escalier.png",
+  "statut": "succeeded"
+ },
+ "table_terrasse": {
+  "tid": "9b05f7099f2d49f3912cb2babcb29601",
+  "fichier": "objets/table_terrasse.png",
+  "statut": "succeeded"
+ },
+ "treteaux_cale": {
+  "tid": "d136cceb33fc4097b2a190f75dc40fe3",
+  "fichier": "objets/treteaux_cale.png",
+  "statut": "succeeded"
+ },
+ "lavoir_bassin": {
+  "tid": "b39b13b27f504c15bde9984bfef8e12a",
+  "fichier": "objets/lavoir_bassin.png",
+  "statut": "succeeded"
+ },
+ "cachette_confessionnal": {
+  "tid": "aa2d4ae8cc1a4fb489489ba96bfb613c",
+  "fichier": "objets/cachette_confessionnal.png",
+  "statut": "succeeded"
+ }
+}

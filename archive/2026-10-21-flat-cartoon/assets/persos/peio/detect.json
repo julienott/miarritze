@@ -1,0 +1,77 @@
+{
+ "motion": "detect",
+ "quaternius": "Interact",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "focused suspicious squint",
+ "tenue": "jersey",
+ "drive": {
+  "exaggerate": 1.3,
+  "hold": {
+   "left_arm": "tucked"
+  }
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Listens and sniffs: cups one hand behind the ear, leans the head toward it, then sniffs the air with the nose raised, looks left then right with big eye movements. The brown oval rugby ball under the near arm: stays tucked tightly under his near arm against the ribs in every frame, never dropped, never floating.",
+ "frame_offsets": [
+  [9.5, 0.0],
+  [9.5, 0.0],
+  [9.0, 0.0],
+  [9.0, 0.0],
+  [8.5, 0.0],
+  [10.0, 0.0],
+  [11.0, 0.0],
+  [13.0, 0.0],
+  [13.5, 0.0],
+  [14.5, 0.0],
+  [14.5, 0.0],
+  [15.0, 0.0],
+  [15.0, 0.0],
+  [15.0, 0.0],
+  [14.5, 0.0],
+  [14.5, 0.0],
+  [14.0, 0.0],
+  [14.0, 0.0],
+  [14.0, 0.0],
+  [14.0, 0.0],
+  [14.0, 0.0],
+  [13.5, 0.0],
+  [13.0, 0.0],
+  [13.0, 0.0],
+  [12.0, 0.0],
+  [11.0, 0.0],
+  [10.0, 0.0],
+  [10.0, 0.0],
+  [10.0, 0.0],
+  [10.0, 0.0],
+  [10.0, 0.0],
+  [9.5, 0.0],
+  [9.5, 0.0]
+ ],
+ "fin": 32,
+ "entrees": {
+  "idle": {
+   "i": [0, 1, 1, 0, 1, 0, 21, 18, 18, 1, 17, 31, 31, 31, 31, 31, 16, 1, 1, 1, 1, 2, 18, 1, 18, 0, 0, 0, 31, 31, 31, 31, 31],
+   "e": [9, 9, 9, 9, 9, 10, 10, 8, 8, 9, 8, 9, 9, 9, 9, 9, 10, 9, 9, 9, 9, 8, 9, 9, 8, 8, 8, 9, 9, 9, 9, 9, 9]
+  },
+  "walk": {
+   "i": [21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21],
+   "e": [27, 27, 27, 27, 27, 28, 28, 28, 28, 27, 26, 26, 26, 26, 26, 26, 26, 27, 27, 28, 28, 29, 28, 28, 28, 27, 27, 26, 26, 26, 26, 26, 26]
+  },
+  "trapped": {
+   "i": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+   "e": [18, 18, 18, 17, 18, 15, 24, 20, 20, 19, 18, 17, 17, 17, 17, 17, 18, 18, 18, 19, 19, 20, 19, 18, 20, 18, 17, 17, 17, 17, 17, 17, 17]
+  }
+ }
+}

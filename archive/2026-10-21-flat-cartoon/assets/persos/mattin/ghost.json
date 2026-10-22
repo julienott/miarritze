@@ -1,0 +1,65 @@
+{
+ "motion": "idle",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "gentle smile, mouth closed and still, the mouth does not move",
+ "tenue": "shirt",
+ "drive": {},
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Floats gently in place: the whole body slowly bobs up and down in the air, feet dangling relaxed off the ground, the small white angel wings flap softly and slowly. Both legs stay slightly bent back at the knees as if flying, feet off the ground. The red beret: stays firmly on the head. The small white angel wings on his back flap clearly and steadily.",
+ "frame_offsets": [
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [13.0, 0.0],
+  [13.0, 0.0],
+  [13.5, 0.0],
+  [13.5, 0.0],
+  [13.5, 0.0],
+  [13.5, 0.0],
+  [13.5, 0.0],
+  [13.0, 0.0],
+  [13.0, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [12.5, 0.0],
+  [13.0, 0.0],
+  [13.5, 0.0],
+  [13.5, 0.0],
+  [13.5, 0.0],
+  [13.0, 0.0],
+  [13.0, 0.0],
+  [12.5, 0.0]
+ ],
+ "entrees": {
+  "ghost_move": {
+   "i": [0, 1, 2, 1, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 31, 0, 0, 1, 2, 2, 0, 0, 0, 0],
+   "e": [10, 10, 10, 10, 10, 11, 12, 12, 10, 10, 10, 11, 11, 12, 12, 11, 10, 10, 10, 10, 10, 12, 12, 11, 10, 10, 10, 11, 11, 11, 11, 11]
+  },
+  "hide_out": {
+   "e": [47, 47, 46, 46, 46, 46, 47, 46, 47, 47, 48, 48, 48, 49, 48, 47, 47, 47, 46, 46, 46, 46, 46, 46, 46, 47, 48, 48, 48, 48, 48, 47]
+  }
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "motion": "idle",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "calm neutral face with a small content smile",
+ "tenue": "scarf",
+ "drive": {},
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Standing still, relaxed, gentle breathing (chest rises and falls slightly), one slow blink, tiny weight shift from foot to foot. Almost still, like a calm pause. Way of moving: seagull waddle: body rocks side to side, webbed feet slap the ground, head bobs forward and back with each step. The light grey wings used as arms: behave like arms with feathered fingertips, swinging with the walk; they are not flying wings. The small grey tail: wags with the waddle. The small neckerchief scarf: stays tied in place, the two short tips flutter with the motion.",
+ "frame_offsets": [
+  [0.5, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0],
+  [0.5, 0.0]
+ ],
+ "entrees": {
+  "walk": {
+   "i": [22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22],
+   "e": [28, 28, 28, 28, 29, 29, 29, 29, 29, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 29, 29, 29, 29, 29, 29, 28, 28, 28, 28, 28, 28, 28]
+  },
+  "run_scared": {
+   "i": [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25],
+   "e": [15, 16, 16, 17, 17, 17, 18, 18, 17, 17, 16, 16, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 16, 16, 15, 15, 15, 15, 16]
+  },
+  "hide_in": {
+   "e": [3, 4, 4, 5, 5, 5, 5, 6, 5, 5, 3, 3, 3, 3, 3, 3, 3, 4, 4, 5, 5, 5, 5, 5, 5, 4, 3, 3, 3, 2, 3, 2]
+  },
+  "trap": {
+   "e": [3, 3, 3, 4, 4, 4, 4, 5, 4, 4, 3, 3, 3, 3, 3, 3, 3, 4, 3, 4, 4, 4, 4, 4, 5, 3, 3, 3, 3, 3, 3, 3]
+  },
+  "found": {
+   "e": [25, 24, 24, 24, 24, 23, 23, 23, 23, 23, 24, 25, 25, 25, 25, 25, 25, 24, 24, 24, 23, 23, 23, 23, 23, 24, 24, 25, 25, 25, 25, 25]
+  },
+  "extract": {
+   "e": [2, 1, 1, 2, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+  },
+  "detect": {
+   "e": [2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2]
+  },
+  "search": {
+   "i": [0, 0, 0, 11, 11, 11, 9, 9, 11, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 11, 11, 11, 11, 11, 0, 0, 0, 0, 0, 0, 0],
+   "e": [1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1]
+  },
+  "trapped": {
+   "i": [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
+   "e": [16, 16, 17, 17, 17, 18, 18, 18, 17, 17, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 18, 18, 18, 17, 18, 16, 16, 16, 16, 15, 16, 16]
+  },
+  "hunter_reveal": {
+   "e": [10, 10, 10, 11, 11, 11, 12, 11, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 10, 10, 10, 10, 10, 10]
+  },
+  "victory": {
+   "i": [22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22],
+   "e": [17, 16, 16, 16, 16, 16, 17, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17]
+  },
+  "sad": {
+   "i": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+   "e": [2, 2, 3, 3, 3, 4, 4, 4, 3, 3, 2, 3, 2, 2, 2, 2, 2, 3, 2, 3, 3, 4, 3, 3, 4, 2, 3, 2, 2, 2, 2, 2]
+  }
+ }
+}

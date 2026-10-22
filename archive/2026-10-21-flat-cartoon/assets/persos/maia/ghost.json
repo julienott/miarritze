@@ -1,0 +1,69 @@
+{
+ "motion": "ghost",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 32,
+ "fps": 24.0,
+ "loop": true,
+ "duration_s": 1.333,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "gentle smile, mouth closed and still, the mouth does not move",
+ "tenue": "wetsuit",
+ "drive": {
+  "clip": "fly",
+  "bounce": 0.04
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Floats gently in place: the whole body slowly bobs up and down in the air, feet dangling relaxed off the ground, the small white angel wings flap softly and slowly. Both legs stay slightly bent back at the knees as if flying, feet off the ground. The small yellow surfboard strapped upright on the back: stays strapped flat against her back, upright, moving only with the torso, never in front of her body, never in her hands. The brown ponytail: swings behind the head with the motion, with a little delay.",
+ "frame_offsets": [
+  [32.5, -4.0],
+  [33.0, -4.0],
+  [33.0, -2.0],
+  [33.0, -1.0],
+  [33.0, -1.0],
+  [33.0, 1.0],
+  [33.0, 3.0],
+  [33.0, 3.0],
+  [33.0, 3.0],
+  [33.0, 4.0],
+  [33.0, 4.0],
+  [33.0, 3.0],
+  [33.0, 3.0],
+  [33.0, 3.0],
+  [32.5, 2.0],
+  [32.5, 0.0],
+  [32.0, 0.0],
+  [32.0, -1.0],
+  [32.0, -2.0],
+  [32.0, -1.0],
+  [32.0, 0.0],
+  [32.0, 1.0],
+  [32.0, 3.0],
+  [32.0, 4.0],
+  [32.0, 4.0],
+  [32.0, 4.0],
+  [32.0, 4.0],
+  [32.0, 3.0],
+  [32.0, 3.0],
+  [32.0, 3.0],
+  [32.0, 1.0],
+  [32.5, 0.0]
+ ],
+ "echelle": 0.75,
+ "entrees": {
+  "ghost_move": {
+   "i": [14, 14, 14, 13, 14, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 16, 16, 15, 15, 1, 0, 0, 0, 16, 16, 15, 15, 14, 14],
+   "e": [23, 24, 23, 23, 23, 24, 25, 27, 26, 27, 28, 28, 28, 29, 28, 26, 25, 23, 21, 20, 20, 21, 20, 19, 18, 18, 20, 21, 21, 22, 23, 23]
+  },
+  "hide_out": {
+   "e": [73, 73, 73, 73, 73, 74, 74, 75, 75, 75, 75, 76, 76, 76, 76, 75, 74, 72, 71, 71, 71, 71, 71, 70, 69, 69, 70, 71, 71, 72, 73, 73]
+  }
+ }
+}

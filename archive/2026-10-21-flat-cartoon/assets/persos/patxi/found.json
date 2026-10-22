@@ -1,0 +1,71 @@
+{
+ "motion": "found",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "shocked surprise with round eyes and open mouth, then laughing",
+ "tenue": "raincoat",
+ "drive": {
+  "clip": "startle",
+  "anchor": "common",
+  "exaggerate": 1.5
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Being caught: huge startled jump straight up, feet leaving the ground, arms flung out, a big exclamation mark pops above the head, then lands and slumps down laughing, hand on the belly. Both feet stay planted on the same spot of the ground when he lands, they never slide. The fishing rod strapped diagonally on the back: stays rigid and fixed on the back at the same diagonal angle, moving only with the torso, never in his hands, the thin tip bends slightly with the motion. The blue beanie: the pompom bounces.",
+ "frame_offsets": [
+  [7.5, 1.0],
+  [7.0, 1.0],
+  [6.0, 1.0],
+  [4.0, 1.0],
+  [2.0, 1.0],
+  [1.5, 1.0],
+  [1.5, 1.0],
+  [2.0, 7.0],
+  [2.0, 0.0],
+  [2.0, 0.0],
+  [2.5, 0.0],
+  [2.5, 0.0],
+  [3.0, 0.0],
+  [3.0, 0.0],
+  [3.0, 0.0],
+  [2.0, 3.0],
+  [0.0, 1.0],
+  [-1.5, 0.0],
+  [-0.5, 0.0],
+  [2.0, 0.0],
+  [4.0, 0.0],
+  [5.0, 0.0],
+  [5.0, 0.0],
+  [5.5, 0.0],
+  [5.5, 0.0],
+  [5.5, 0.0],
+  [6.0, 0.0],
+  [6.0, 0.0],
+  [6.0, 0.0],
+  [6.5, 0.0],
+  [6.5, 0.0],
+  [7.0, 0.0],
+  [7.0, 0.0]
+ ],
+ "entrees": {
+  "ghost": {
+   "i": [23, 23, 23, 23, 23, 23, 23, 23, 23, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
+   "e": [78, 79, 80, 82, 83, 84, 85, 83, 85, 86, 86, 86, 85, 85, 85, 83, 84, 85, 85, 82, 78, 77, 76, 75, 75, 75, 73, 74, 73, 72, 73, 72, 73]
+  },
+  "ghost_move": {
+   "i": [20, 20, 20, 20, 20, 20, 20, 24, 24, 24, 24, 24, 24, 24, 24, 24, 20, 20, 20, 20, 20, 20, 24, 24, 20, 24, 24, 24, 24, 20, 24, 24, 24],
+   "e": [72, 73, 74, 76, 78, 78, 79, 78, 79, 81, 81, 81, 80, 80, 79, 78, 79, 80, 79, 76, 72, 71, 69, 69, 69, 69, 67, 67, 67, 66, 66, 66, 67]
+  }
+ }
+}

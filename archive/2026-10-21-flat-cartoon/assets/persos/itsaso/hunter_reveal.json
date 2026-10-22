@@ -1,0 +1,107 @@
+{
+ "motion": "hunter_reveal",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "playful determined grin, one eyebrow raised",
+ "tenue": "dress",
+ "drive": {
+  "clip": "hunter_reveal"
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Strict side view facing right in every frame: the torso and the face never turn toward the camera. The body keeps the same shape and size as the reference in every frame, and rigid objects keep exactly their shape and size. Becomes the hunter: takes a small flashlight from her belt, clicks it on, then holds it steady with her arm stretched forward; a clean straight cone of soft yellow light shines forward from the lamp. The arm stays still and steady once the lamp is on. The dress made of deep blue waves edged with white foam: the hem ripples continuously like rolling sea waves, foam curling at the edges, even when she stands still. The long wavy aqua hair: floats and flows as if underwater, slow and graceful.",
+ "frame_offsets": [
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.0, 0.0],
+  [0.5, 0.0],
+  [0.0, 0.0],
+  [4.5, 0.0],
+  [9.5, 0.0],
+  [15.5, 0.0],
+  [16.0, 0.0],
+  [17.0, 0.0],
+  [17.0, 0.0],
+  [14.0, 0.0],
+  [14.0, 0.0],
+  [14.5, 0.0],
+  [14.5, 0.0],
+  [15.0, 0.0],
+  [12.0, 0.0],
+  [15.5, 0.0],
+  [15.5, 0.0],
+  [18.5, 0.0],
+  [18.5, 0.0],
+  [18.5, 0.0],
+  [18.0, 0.0],
+  [17.5, 0.0],
+  [14.5, 0.0],
+  [11.0, 0.0],
+  [8.0, 0.0],
+  [8.0, 0.0],
+  [8.0, 0.0],
+  [8.0, 0.0],
+  [8.0, 0.0]
+ ],
+ "lampe": {
+  "debut": 8,
+  "points": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   [176, 115],
+   [177, 113],
+   [178, 111],
+   [178, 111],
+   [178, 111],
+   [178, 111],
+   [178, 111],
+   [178, 111],
+   [177, 111],
+   [177, 110],
+   [178, 110],
+   [178, 110],
+   [178, 110],
+   [178, 110],
+   [178, 111],
+   [178, 111],
+   [178, 111],
+   [178, 111],
+   [178, 111],
+   [186, 111],
+   [187, 111],
+   [187, 111],
+   [187, 111],
+   [187, 111],
+   [187, 111]
+  ]
+ },
+ "entrees": {
+  "idle": {
+   "i": [14, 14, 14, 14, 29, 25, 30, 12, 4, 31, 15, 15, 15, 1, 12, 1, 1, 12, 4, 12, 1, 15, 15, 15, 15, 15, 17, 30, 15, 15, 15, 15, 15],
+   "e": [1, 1, 1, 2, 2, 2, 3, 15, 18, 8, 16, 15, 15, 19, 13, 18, 18, 16, 23, 16, 15, 9, 10, 10, 12, 12, 18, 11, 14, 14, 13, 13, 13]
+  },
+  "walk": {
+   "i": [24, 24, 24, 24, 24, 24, 24, 24, 22, 21, 22, 22, 22, 22, 24, 22, 22, 24, 22, 24, 22, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22],
+   "e": [26, 26, 26, 26, 26, 26, 27, 28, 26, 28, 25, 25, 25, 25, 28, 25, 25, 29, 27, 30, 27, 28, 28, 28, 27, 27, 25, 27, 25, 25, 25, 25, 25]
+  }
+ }
+}

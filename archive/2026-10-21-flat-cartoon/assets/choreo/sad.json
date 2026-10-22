@@ -1,0 +1,82 @@
+{
+ "name": "sad",
+ "fps": 24,
+ "frames": 6,
+ "loop": true,
+ "description": "Triste : épaules tombantes, tête baissée, respiration lente.",
+ "tracks": {
+  "body": [
+   {
+    "f": 0,
+    "rot": 10,
+    "sy": 0.97
+   },
+   {
+    "f": 3,
+    "rot": 12,
+    "sy": 0.95
+   }
+  ],
+  "head": [
+   {
+    "f": 0,
+    "rot": 16
+   },
+   {
+    "f": 3,
+    "rot": 19
+   }
+  ],
+  "arm_front": [
+   {
+    "f": 0,
+    "rot": 6
+   },
+   {
+    "f": 3,
+    "rot": 8
+   }
+  ],
+  "arm_back": [
+   {
+    "f": 0,
+    "rot": 4
+   },
+   {
+    "f": 3,
+    "rot": 6
+   }
+  ]
+ },
+ "head": [
+  [
+   0,
+   "sad"
+  ],
+  [
+   3,
+   "blink"
+  ],
+  [
+   4,
+   "sad"
+  ]
+ ],
+ "body": [
+  [
+   0,
+   "legs"
+  ]
+ ],
+ "lag": {
+  "hat": 1
+ },
+ "frame_ms": [
+  340,
+  340,
+  340,
+  140,
+  340,
+  340
+ ]
+}

@@ -1,0 +1,106 @@
+{
+ "name": "trapped",
+ "fps": 24,
+ "frames": 8,
+ "loop": true,
+ "description": "Coincé : se tortille, bras levés qui s'agitent, jambes qui gigotent.",
+ "tracks": {
+  "root": [
+   {
+    "f": 0,
+    "x": -0.03,
+    "sy": 0.9,
+    "sx": 1.06
+   }
+  ],
+  "body": [
+   {
+    "f": 0,
+    "rot": -6
+   },
+   {
+    "f": 2,
+    "rot": 4
+   },
+   {
+    "f": 4,
+    "rot": -6
+   },
+   {
+    "f": 6,
+    "rot": 4
+   }
+  ],
+  "arm_front": [
+   {
+    "f": 0,
+    "rot": -110
+   },
+   {
+    "f": 2,
+    "rot": -130
+   },
+   {
+    "f": 4,
+    "rot": -110
+   },
+   {
+    "f": 6,
+    "rot": -130
+   }
+  ],
+  "arm_back": [
+   {
+    "f": 0,
+    "rot": -150
+   },
+   {
+    "f": 2,
+    "rot": -130
+   },
+   {
+    "f": 4,
+    "rot": -150
+   },
+   {
+    "f": 6,
+    "rot": -130
+   }
+  ],
+  "leg_front": [
+   {
+    "f": 0,
+    "rot": -16
+   },
+   {
+    "f": 4,
+    "rot": -2
+   }
+  ],
+  "leg_back": [
+   {
+    "f": 0,
+    "rot": 2
+   },
+   {
+    "f": 4,
+    "rot": 16
+   }
+  ]
+ },
+ "head": [
+  [
+   0,
+   "scared"
+  ]
+ ],
+ "body": [
+  [
+   0,
+   "legs"
+  ]
+ ],
+ "lag": {
+  "hat": 1
+ }
+}

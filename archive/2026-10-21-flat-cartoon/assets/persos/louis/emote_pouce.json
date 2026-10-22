@@ -1,0 +1,74 @@
+{
+ "motion": "thumbs_up",
+ "quaternius": "Idle_Loop",
+ "lib": "ual1",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "confident smile with a wink",
+ "tenue": "shirt",
+ "drive": {
+  "clip": "thumbs_up"
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Gives a big thumbs up toward the viewer with a little nod and a wink. The red beret: stays firmly on the head, tilted the same way in every frame.",
+ "frame_offsets": [
+  [-1.5, 0.0],
+  [-1.5, 0.0],
+  [-1.5, 0.0],
+  [-1.5, 0.0],
+  [-1.0, 0.0],
+  [-1.0, 0.0],
+  [-1.0, 0.0],
+  [-1.0, 0.0],
+  [-1.0, 0.0],
+  [-1.0, 0.0],
+  [-1.5, 0.0],
+  [-2.0, 0.0],
+  [-2.0, 0.0],
+  [-2.0, 0.0],
+  [-2.0, 0.0],
+  [-1.5, 0.0],
+  [-1.0, 0.0],
+  [-1.0, 0.0],
+  [-1.0, 0.0],
+  [-0.5, 0.0],
+  [-0.5, 0.0],
+  [-0.5, 0.0],
+  [-0.5, 0.0],
+  [-0.5, 0.0],
+  [-1.0, 0.0],
+  [-1.0, 0.0],
+  [-1.5, 0.0],
+  [-1.5, 0.0],
+  [-2.0, 0.0],
+  [-1.5, 0.0],
+  [-1.5, 0.0],
+  [-1.5, 0.0],
+  [-1.5, 0.0]
+ ],
+ "debut": 1,
+ "entrees": {
+  "idle": {
+   "i": [23, 23, 23, 7, 8, 8, 8, 8, 8, 8, 23, 23, 23, 23, 23, 23, 8, 8, 8, 18, 18, 18, 18, 25, 8, 8, 9, 9, 22, 9, 24, 24, 24],
+   "e": [4, 4, 3, 3, 4, 4, 9, 9, 9, 9, 10, 11, 11, 11, 10, 10, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 11, 11, 6, 4, 3]
+  },
+  "walk": {
+   "i": [23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
+   "e": [36, 36, 36, 37, 37, 37, 40, 40, 40, 40, 41, 41, 41, 41, 41, 41, 41, 41, 40, 40, 40, 40, 40, 40, 40, 40, 41, 41, 41, 41, 39, 37, 37]
+  },
+  "run_scared": {
+   "i": [20, 21, 21, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 21, 21, 21],
+   "e": [41, 41, 42, 44, 44, 44, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 45, 44, 43]
+  }
+ }
+}

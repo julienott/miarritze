@@ -1,0 +1,76 @@
+{
+ "motion": "trap",
+ "quaternius": "Farm_PlantSeed",
+ "lib": "ual2",
+ "frames": 33,
+ "fps": 24.0,
+ "loop": false,
+ "duration_s": 1.375,
+ "cell": [
+  256,
+  256
+ ],
+ "layout": "row",
+ "feet_anchor": [
+  128,
+  236
+ ],
+ "expression": "sneaky mischievous grin",
+ "tenue": "shirt",
+ "drive": {
+  "exaggerate": 1.2,
+  "hold": {
+   "right_arm": "forward"
+  }
+ },
+ "action": "Side view facing right, exactly two legs and two feet in every frame (never a third foot or a ghost leg), the whole body stays inside the frame, feet on the same ground line except during jumps, smooth clean cartoon with the same thick dark navy outline as the reference image, same colors and proportions as the reference image in every frame, nothing added, nothing removed, accessories keep their exact shape and stay attached where they are on the reference. Sets a trap: looks left and right sneakily, crouches down, places a small object on the ground in front of him, pats it, stands back up rubbing his hands with glee. The long curved wicker chistera worn on the right hand: he sets the trap with his free left hand, the chistera held aside. The red sash belt ends: the loose ends flutter behind at the hip.",
+ "frame_offsets": [
+  [-0.5, 0.0],
+  [-0.5, 0.0],
+  [2.5, 0.0],
+  [6.5, 0.0],
+  [13.0, 0.0],
+  [16.5, 0.0],
+  [14.0, 0.0],
+  [10.0, 0.0],
+  [8.0, 0.0],
+  [11.0, 0.0],
+  [14.0, 0.0],
+  [14.5, 0.0],
+  [15.0, 0.0],
+  [14.5, 0.0],
+  [14.5, 0.0],
+  [14.5, 0.0],
+  [14.0, 0.0],
+  [13.0, 0.0],
+  [12.0, 0.0],
+  [11.5, 0.0],
+  [10.5, 0.0],
+  [11.0, 0.0],
+  [11.0, 0.0],
+  [11.5, 0.0],
+  [10.0, 0.0],
+  [9.0, 0.0],
+  [12.0, 0.0],
+  [9.5, 0.0],
+  [7.5, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [1.5, 0.0],
+  [2.0, 0.0]
+ ],
+ "entrees": {
+  "idle": {
+   "i": [3, 3, 28, 28, 28, 28, 28, 28, 30, 26, 26, 4, 21, 21, 21, 21, 21, 4, 4, 4, 4, 4, 6, 8, 26, 26, 28, 28, 28, 31, 31, 31, 31],
+   "e": [2, 2, 8, 25, 44, 59, 72, 76, 76, 76, 77, 75, 75, 74, 75, 75, 77, 76, 76, 76, 76, 76, 77, 77, 75, 70, 61, 51, 40, 30, 26, 24, 24]
+  },
+  "walk": {
+   "i": [20, 20, 20, 20, 20, 20, 19, 19, 21, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 21, 20, 20, 20, 22, 22, 22, 22],
+   "e": [46, 46, 46, 49, 59, 68, 73, 75, 72, 73, 76, 78, 78, 78, 79, 79, 78, 78, 78, 78, 77, 77, 75, 75, 72, 67, 69, 63, 57, 46, 45, 44, 44]
+  },
+  "run_scared": {
+   "i": [21, 21, 19, 19, 10, 12, 13, 13, 13, 13, 13, 4, 4, 13, 13, 4, 4, 4, 4, 4, 4, 4, 4, 13, 13, 13, 12, 12, 18, 19, 20, 20, 20],
+   "e": [57, 57, 57, 58, 60, 62, 64, 65, 69, 73, 77, 80, 81, 81, 81, 81, 81, 81, 80, 80, 79, 80, 77, 76, 71, 61, 60, 59, 57, 55, 55, 56, 56]
+  }
+ }
+}

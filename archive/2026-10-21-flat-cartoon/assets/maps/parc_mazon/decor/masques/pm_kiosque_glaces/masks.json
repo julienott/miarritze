@@ -1,0 +1,34 @@
+{
+ "size": [
+  512,
+  512
+ ],
+ "polygons": [
+  [
+   [
+    10,
+    350
+   ],
+   [
+    502,
+    350
+   ],
+   [
+    502,
+    507
+   ],
+   [
+    10,
+    507
+   ]
+  ]
+ ],
+ "back_y": 350,
+ "front_y": 507,
+ "baseline_y": 428,
+ "blocks_view": true,
+ "camera": "front34",
+ "confidence": 1.0,
+ "source": "placeholder (tools/gordeka/placeholders_parc.py)",
+ "warnings": []
+}

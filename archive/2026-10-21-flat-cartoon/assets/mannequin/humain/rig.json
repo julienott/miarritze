@@ -1,0 +1,270 @@
+{
+ "template": "humain",
+ "canvas": [
+  560,
+  560
+ ],
+ "height_px": 466.0,
+ "outline_px": 6,
+ "outline_color": "#1d2230",
+ "facing": "right",
+ "transforms": "locales au parent ; pivots en px du canevas au repos ; x, y des pistes en fraction de height_px (y vers le haut) ; rot en degrés, + = horaire ; sx, sy autour du pivot",
+ "segments": [
+  {
+   "name": "arm_back",
+   "parent": "body",
+   "pivot": [
+    280.0,
+    262.0
+   ],
+   "pivot_name": "shoulder_back",
+   "z": 0,
+   "side": "back"
+  },
+  {
+   "name": "hand_back",
+   "parent": "arm_back",
+   "pivot": [
+    280.0,
+    347.5
+   ],
+   "pivot_name": "wrist_back",
+   "z": 1,
+   "side": "back"
+  },
+  {
+   "name": "leg_back",
+   "parent": "root",
+   "pivot": [
+    254.0,
+    374.0
+   ],
+   "pivot_name": "hip_back",
+   "z": 2,
+   "side": "back"
+  },
+  {
+   "name": "foot_back",
+   "parent": "leg_back",
+   "pivot": [
+    254.0,
+    474.0
+   ],
+   "pivot_name": "ankle_back",
+   "z": 3,
+   "side": "back"
+  },
+  {
+   "name": "leg_front",
+   "parent": "root",
+   "pivot": [
+    318.0,
+    374.0
+   ],
+   "pivot_name": "hip_front",
+   "z": 4,
+   "side": "front"
+  },
+  {
+   "name": "foot_front",
+   "parent": "leg_front",
+   "pivot": [
+    318.0,
+    474.0
+   ],
+   "pivot_name": "ankle_front",
+   "z": 5,
+   "side": "front"
+  },
+  {
+   "name": "body",
+   "parent": "root",
+   "pivot": [
+    284.0,
+    396.0
+   ],
+   "pivot_name": "root",
+   "z": 6,
+   "side": "mid"
+  },
+  {
+   "name": "head",
+   "parent": "body",
+   "pivot": [
+    282.0,
+    232.0
+   ],
+   "pivot_name": "neck",
+   "z": 7,
+   "side": "mid"
+  },
+  {
+   "name": "hat",
+   "parent": "head",
+   "pivot": [
+    282.0,
+    232.0
+   ],
+   "pivot_name": "neck",
+   "z": 8,
+   "side": "mid"
+  },
+  {
+   "name": "arm_front",
+   "parent": "body",
+   "pivot": [
+    256.0,
+    262.0
+   ],
+   "pivot_name": "shoulder_front",
+   "z": 9,
+   "side": "front"
+  },
+  {
+   "name": "hand_front",
+   "parent": "arm_front",
+   "pivot": [
+    256.0,
+    352.0
+   ],
+   "pivot_name": "wrist_front",
+   "z": 10,
+   "side": "front"
+  }
+ ],
+ "root": {
+  "pivot": [
+   286.0,
+   520.0
+  ]
+ },
+ "back": {
+  "shade": 0.8,
+  "arm_scale": 0.95,
+  "baked": true
+ },
+ "variants": {
+  "head": [
+   "neutral",
+   "blink",
+   "malicious",
+   "scared",
+   "surprised",
+   "happy",
+   "sad",
+   "focused"
+  ],
+  "body": [
+   "legs",
+   "ghost"
+  ]
+ },
+ "expressions": {
+  "neutral": "immobile",
+  "blink": "clignement",
+  "malicious": "sourire malicieux, je vais me cacher (walk, ghost_move, trap)",
+  "scared": "affolé (run_scared, trapped)",
+  "surprised": "vu ou trouvé (found)",
+  "happy": "content (victory, extract, hide_out)",
+  "sad": "déçu (sad)",
+  "focused": "concentré, rusé, chasseur (search, detect)"
+ },
+ "order": [
+  "arm_back",
+  "hand_back",
+  "leg_back",
+  "foot_back",
+  "leg_front",
+  "foot_front",
+  "body",
+  "head",
+  "hat",
+  "arm_front",
+  "hand_front"
+ ],
+ "pivots": {
+  "feet": [
+   286.0,
+   520.0
+  ],
+  "root": [
+   284.0,
+   396.0
+  ],
+  "waist": [
+   284.0,
+   396.0
+  ],
+  "neck": [
+   282.0,
+   232.0
+  ],
+  "hip_front": [
+   318.0,
+   374.0
+  ],
+  "ankle_front": [
+   318.0,
+   474.0
+  ],
+  "shoulder_front": [
+   256.0,
+   262.0
+  ],
+  "wrist_front": [
+   256.0,
+   352.0
+  ],
+  "hip_back": [
+   254.0,
+   374.0
+  ],
+  "ankle_back": [
+   254.0,
+   474.0
+  ],
+  "shoulder_back": [
+   280.0,
+   262.0
+  ],
+  "wrist_back": [
+   280.0,
+   347.5
+  ]
+ },
+ "clip_legs": false,
+ "zones": {
+  "haut": [
+   "body",
+   "arm_front",
+   "arm_back"
+  ],
+  "bas": [
+   "leg_front",
+   "leg_back"
+  ],
+  "chaussures": [
+   "foot_front",
+   "foot_back"
+  ],
+  "peau": [
+   "head",
+   "hand_front",
+   "hand_back"
+  ]
+ },
+ "compose": {
+  "repere": "px du canevas au repos, x vers la droite, y vers le BAS ; tous les PNG (segments, vêtements) sont alignés sur ce canevas",
+  "matrice_locale": "M_local(piste, pivot) = T(pivot) · T(x·H, −y·H) · R(rot) · S(sx, sy) · T(−pivot)",
+  "H": "height_px du rig (x, y des pistes en fraction de H ; y positif = vers le HAUT, d'où −y·H)",
+  "rotation": "rot en degrés ; R(θ) = [[cos θ, −sin θ], [sin θ, cos θ]] appliquée en repère y vers le bas, donc θ > 0 = sens HORAIRE à l'écran (corps penché en avant ; membre vers l'arrière, le perso regardant à droite)",
+  "hierarchie": "M(root) = M_local(piste root, root.pivot) ; M(segment) = M(parent) · M_local(piste du segment, pivot du segment) ; rotations LOCALES au parent. Piste absente = identité (x = y = rot = 0, sx = sy = 1, alpha = 1). head, hat, arm_*, hand_* suivent body ; leg_*, foot_* suivent root (pas body) ; root s'applique à tout.",
+  "lag": "lag = {\"<segment>\": n} : le segment et toute sa chaîne d'ancêtres (hors root) sont pris n images plus tôt : M(seg) = M(root)(f) · M_local(a1)(f−n) · … · M_local(seg)(f−n) (ex. head 1 : M_local(body)(f−1) · M_local(head)(f−1) ; hat 2 : body, head et hat à f−2). Un enfant d'un segment en retard sans lag propre suit ce segment tel quel. f−n modulo frames si loop, sinon borné à 0",
+  "interpolation": "par propriété, entre les deux clés qui l'encadrent (une clé peut ne donner que certaines propriétés) ; t = (f − f0) / (f1 − f0), adouci t' = 0,5 − 0,5·cos(π t) sauf si la clé de départ porte \"ease\": \"linear\" ; avant la 1re clé / après la dernière : valeur de la clé ; en boucle, la 1re clé est recopiée à f + frames (et la dernière à f − frames) pour fermer le cycle",
+  "variantes": "head : image de la tête remplacée par head_<expr> (clé en marches, sans interpolation) ; body : \"ghost\" remplace body par body_ghost et masque leg_* et foot_*",
+  "alpha": "alpha d'un segment = produit des alphas de la chaîne root → … → segment",
+  "ordre": "z croissant (champ z des segments), fixe : il ne change jamais selon l'image",
+  "echantillonnage": "chaque segment est transformé en alpha prémultiplié, bicubique, sur une grille ×2, composé « over » dans l'ordre z, puis réduit (Lanczos) ; un écart de ±1 niveau sur les bords anti-crénelés est normal entre moteurs",
+  "temps": "image i affichée frame_ms[i] millisecondes (frame_ms absent : 1000 / fps)"
+ }
+}

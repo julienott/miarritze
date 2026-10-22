@@ -1,0 +1,125 @@
+{
+ "polygons": [
+  [
+   [
+    23,
+    105
+   ],
+   [
+    131,
+    103
+   ],
+   [
+    144,
+    120
+   ],
+   [
+    10,
+    122
+   ]
+  ],
+  [
+   [
+    154,
+    111
+   ],
+   [
+    154,
+    112
+   ],
+   [
+    153,
+    112
+   ]
+  ],
+  [
+   [
+    1,
+    113
+   ],
+   [
+    1,
+    114
+   ],
+   [
+    0,
+    114
+   ]
+  ]
+ ],
+ "convex_polygons": [
+  [
+   [
+    39,
+    121
+   ],
+   [
+    147,
+    119
+   ],
+   [
+    160,
+    136
+   ],
+   [
+    26,
+    138
+   ]
+  ],
+  [
+   [
+    170,
+    127
+   ],
+   [
+    170,
+    128
+   ],
+   [
+    169,
+    128
+   ]
+  ],
+  [
+   [
+    17,
+    129
+   ],
+   [
+    17,
+    130
+   ],
+   [
+    16,
+    130
+   ]
+  ]
+ ],
+ "inset_px": 3.0,
+ "bbox": [
+  0,
+  0,
+  170,
+  144
+ ],
+ "front_y": 127,
+ "back_y": 97,
+ "baseline_y": 112,
+ "height_px": 127,
+ "blocks_view": true,
+ "sort_y": 113,
+ "camera": "front34",
+ "scale": 2.0,
+ "depth_px": 30.0,
+ "shapes": [
+  "pos\u00e9 (face du dessus) trap\u00e8ze"
+ ],
+ "confidence": 1.0,
+ "warnings": [],
+ "size": [
+  154,
+  128
+ ],
+ "ground_y_encoding": "PNG gris 16 bits : Y \u00e9cran (px de l'image) du point au sol sous le pixel, + 1 ; 0 hors occluder",
+ "marge_retiree": 16
+}

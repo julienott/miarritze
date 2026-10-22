@@ -1,0 +1,8 @@
+{
+ "style": "pf_hd__edit",
+ "entree": "tools/rd/out/peio/gk2d/profil/image_02_white.png",
+ "prompt": "Keep this exact rugby player character, pose, colors and cartoon style. Add only one thing: he holds a brown oval rugby ball tucked under his arm against his side, his hand around the ball. Plain white background.",
+ "seed": 1,
+ "num_images": 2,
+ "task": "dc8fd1bce2e64321b3e5469e3a8bbe4c"
+}
