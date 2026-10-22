@@ -755,6 +755,32 @@ vérifier, avant les 12 autres.
 6. **En ligne** : salons branchés sur le jeu (signalisation `/room/signal`).
 7. **Finitions** : son et musique, écran « tourne ton appareil », icônes et PWA, export Steam Deck.
 
+### 15.1 Où on en est (soir du 23/10) et ce qui reste
+**Fait et publié à la racine** (étapes 1 à 4 du jalon 1) : pixel art 640×360, cases de 32 px, carte bac à
+sable, persos placeholders (Louis v5), nuit, lumière et ombre, disjoncteurs, menu debug, moteur des coups
+spéciaux et **les 26 coups** (placeholders), 10 effets communs et garde-fous, pièges et emotes retirés.
+65 tests ; IA contre IA : 70 % de trouvés, chasseur gagnant 90 % des rounds (trop fort, à équilibrer).
+
+**Reste à faire, jalon 1** (cartes du kanban) :
+- #644 vue du chasseur : cône et proximité fusionnés sans bordure, dégradé, halo pixellisé, vue à 4 cases
+  dans le noir, silhouette progressive, plus de lumières et de disjoncteurs ;
+- #645 textes du HUD, pseudos et bulles nets en 1280×720 ;
+- #633 IA : réaction du chasseur par paliers (§11), coups, ombre, disjoncteurs, boss ;
+- #631 fantômes visibles des seuls fantômes et délivrance par halo ; #646 fantôme commun à intégrer ;
+- #632 round du boss final ; #636 versus, scores et podium aux règles Blackout ;
+- chasseur sans pseudos des chassés (§3.8) ; équilibrage des coups.
+**Écarts et points ouverts de l'étape 4** : Kaio n'a pas de cachettes en hauteur (la carte n'en a pas) ;
+Débordement crabe dans la direction de marche ; appât de Patxi lu comme un rayon de 1,5 case ; l'IA lance
+pot, faisceau et geysers vers un indice récent ; persos signalés par les rounds IA : Louis et Kaio trop
+faibles en chassé, Itsasargi trop fort (flash ~7 fois par round), makila et piment peu efficaces,
+projectiles qui touchent rarement une cible qui fuit.
+**En file chez pixelforge** (23/10) : 13 persos v3 (normale), fantôme commun (normale), 42 PNJ humains
+(nuit) ; ids dans `tools/blackout/taches_persos_v3.json`, `taches_fantome.json`, `taches_pnj.json`.
+À intégrer tels quels (`tools/blackout/integre_persos_v2.py`) puis QA par Julien ; poser `keep` sur les
+persos validés (§14.1). Animaux : chat et chien attendent le feu vert de Julien à pixelforge
+(`pf_px__creature`) ; goéland et pigeon attendent un mode oiseau. Herensuge en marionnette, essai chat
+a/b : en pause. PNJ dans le jeu (#647) et masques du décor (§10.2) : après le jalon 1.
+
 ## 16. Journal des décisions
 - **19/10** : pivot du jeu de combat Borroka vers un cache-cache (« Gordeka »).
 - **20/10** : salons publics et privés à la place des groupes ; menus, versus, podium.
