@@ -590,3 +590,30 @@ Pour chaque objet : 4 candidats, graine 7, planche de recette. Intégration tell
   `docs/STYLE_PARTY_HARD.md`, `archive/2026-10-22-docs-gordeka/SPEC-GORDEKA.md` (§ règles du décor),
   `archive/2026-10-21-flat-cartoon/assets/decor/masques/`, `tools/blackout/masques/*.png`,
   `GET https://stellar.tailbeda4d.ts.net/v2/styles` (lu le 22/10/2026).
+
+### 6.7 Amendements après l'avis de pixelforge (22/10)
+Avis de pixelforge : faisable ; toute la géométrie se calcule sans GPU ; seul risque, la fidélité de la
+génération (A1). Retenu d'un commun accord :
+- **Guidage** : rendu « argile » gris du proxy en image 1 de Qwen Image Edit 2511 (méthode des persos) ;
+  ControlNet Union (profondeur) seulement si A1 échoue. Qwen est sous Apache-2.0.
+- **Conformité** : recalage translation/échelle ±5 % au meilleur IoU, puis coupe hors proxy dilaté de
+  2 px (hors primitives `libre`) ; A3 tenu par construction.
+- **Drapeau `rendu`** par primitive (vrai par défaut) : une primitive `rendu: false` compte pour la
+  collision mais pas pour la silhouette. Banc : 4 pieds réels (`rendu`, `passage`) + 2 bandes
+  `rendu: false`, `passage` ; idem grilles et barrières.
+- **Cartes d'ids et `geo`** calculées analytiquement au pixel de jeu, ×4 en HD ; pixels libres rattachés
+  en HD puis vote 4×4.
+- **Porte de cachette** : `porte: {face, x0, x1, h0, h1}` ; couche `porte_ouverte` par retouche Qwen,
+  refusée si l'IoU hors porte < 0,97 ; repli : intérieur sombre peint par le code. Cabine du lot : face
+  avant, x 10–22, h 0–40.
+- **Ombre v1** : ombre de contact (empreinte adoucie). Les ombres des lumières sont calculées en jeu
+  (`occulteur_lumiere`, GDD §3.2).
+- **Projection** : `k_sol = 1`, `k_haut = 1` (sol à grille carrée et perso de 32 px = une case, §2 de
+  STYLE_PARTY_HARD), gardés en paramètres.
+- **Palette** : une par objet pour l'essai.
+- **A9** : géométrie identique au bit près ; images identiques à graine égale sur la même machine et les
+  mêmes versions. **A10** : ≤ 5 min pour 4 candidats (lot d'essai), 2 candidats par défaut ensuite.
+- **`pf_geo__fit`** sans TRELLIS en v1 (supprimé le 19/10) : proxys écrits par Claude.
+- **Découpage** : 1) `pf_geo__proxy` + masques + aperçu, avec livraison des proxys rendus des 4 objets
+  avant toute génération ; 2) `pf_px__prop` ; 3) `pf_px__reduce` étendu et lot d'essai
+  (`miarritze/decor_proxy_essai`) ; 4) `pf_geo__fit`.
