@@ -1,0 +1,422 @@
+{
+ "festayre": {
+  "A": "7b4daebbdddf405cb193527a1ef7ddcf",
+  "chaine": [
+   {
+    "task_id": "40e011824eec4447b905ffb3e29ec1a4",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "txistulari": {
+  "A": "34a0602357854b6aaa4849960d406a5c",
+  "chaine": [
+   {
+    "task_id": "13891eced1d949afb839c7321aab92cd",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "amona": {
+  "A": "7e1eaf7c880e4cd59f02d933be48fa0f",
+  "chaine": [
+   {
+    "task_id": "c1a547c5dc48447a90e88fd55b3fa193",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "marin": {
+  "A": "83774e1cc12e4f558ed5e8fe05c5e577",
+  "chaine": [
+   {
+    "task_id": "be0ca01c8f26472cb60888aaea6aa612",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "surfeuse": {
+  "A": "23722c9ad6ab466cb3de21761a704b5e",
+  "chaine": [
+   {
+    "task_id": "7db3e3a876d243b1a801ccf27135f75e",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "serveur": {
+  "A": "d158bd3c239440499294b0cd343cd782",
+  "chaine": [
+   {
+    "task_id": "c9b01fe095fc42f09562cf72e82546e8",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "sardine": {
+  "A": "dd53483450a14553bde1928ef1712056",
+  "chaine": [
+   {
+    "task_id": "c7687c28c99a4511a8672e9f87996162",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "errege": {
+  "A": "35ba5e4774e849c2bb64493e7270d643",
+  "chaine": [
+   {
+    "task_id": "6eacb05265ab4402a4da639d9996e09a",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "ballon": {
+  "A": "82c11c8fb59d4a74b816c419479fbdfe",
+  "chaine": [
+   {
+    "task_id": "6b39003b4c5747a7be731b4a800f42bc",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "trompettiste": {
+  "A": "e6a941a20d8541c29926b489b3d5cc91",
+  "chaine": [
+   {
+    "task_id": "9d87c60e2cbc4c5ba6fc063cfead3dc5",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "glacier": {
+  "A": "bf2cc2395b0147d7907e5c0626c57fbb",
+  "chaine": [
+   {
+    "task_id": "1c2c42cc415043d3bdc424ffe440380e",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "supporter": {
+  "A": "8f49aca10b3a40b69e81d1681c3ed690",
+  "chaine": [
+   {
+    "task_id": "ecb0f7aecca344bc913a297cad0bd0b3",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "touriste": {
+  "A": "3992b581ae0c48b38cc84e386d306498",
+  "chaine": [
+   {
+    "task_id": "7b536fb963a649d6980eb5ea48ccca0d",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "jogger": {
+  "A": "875bb78f92e4437a84272f247054b4fd",
+  "chaine": [
+   {
+    "task_id": "32c8c5b0bc0c4d80bfd18ee1d1ef268c",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "ado": {
+  "A": "ec85afda8fad432284f52625ad83ca55",
+  "chaine": [
+   {
+    "task_id": "0690f7031cc046da9d6e00b427fdaa7d",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "lecteur": {
+  "A": "8b000c74dd024f53ab498551fe2b4d51",
+  "chaine": [
+   {
+    "task_id": "a0ece8cafec74b2a89315c82b1fd2898",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "promeneuse": {
+  "A": "788f07e4da794b1fbd6e2587669963da",
+  "chaine": [
+   {
+    "task_id": "94a86aa1d069491887770db353c353b9",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "cycliste": {
+  "A": "2f65902677724f5597d976e8c823540e",
+  "chaine": [
+   {
+    "task_id": "dad48464a0b24baa9ab878ec4da95c61",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "musicienne": {
+  "A": "66d47a3c781a4e048bb61a081bda7e1e",
+  "chaine": [
+   {
+    "task_id": "3ec88e831bba4aa4b551685f2661d846",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "amoureux": {
+  "A": "f04cb8d8f9184501b5e097dfe965996f",
+  "chaine": [
+   {
+    "task_id": "201ca8461ab84a1993641f9093dca02f",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "policier": {
+  "A": "f2db8aacddd14a33a2ab19f9a2ffc511",
+  "chaine": [
+   {
+    "task_id": "5f947ea382184d7f9b6ffe388f3efd05",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "pecheuse": {
+  "A": "303cc351013a49f49bf6b326f9b2f01c",
+  "chaine": [
+   {
+    "task_id": "6555209e5d204064934757fa8a2c7034",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "passant_jean": {
+  "A": "ebbb913e81b048d790a1cfc70a53d10b",
+  "chaine": [
+   {
+    "task_id": "c6b9bc09645d4931be9124b9aab68623",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "passante_robe": {
+  "A": "5e85417bea5842fe86402a546b90d098",
+  "chaine": [
+   {
+    "task_id": "0bf08e96290d437fbb4f5322f9993ee6",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "papy_gilet": {
+  "A": "23b55b3ea94a41af9126f21aae7d1878",
+  "chaine": [
+   {
+    "task_id": "b2eb5c54d3b8446ca286d5d44fe7cb90",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "mamie_cabas": {
+  "A": "820f8c748fcd470ba272bff71b8b8fc6",
+  "chaine": [
+   {
+    "task_id": "2cdc089dba334f0887bd104e6521b45f",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "femme_tailleur": {
+  "A": "7de5bbf35fde42ef8f352529dd90908b",
+  "chaine": [
+   {
+    "task_id": "442ed74c0f6c43ad9ec0c9acbd2d9e15",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "homme_costume": {
+  "A": "63776479cffe44de8aa94ecfb08b3ae4",
+  "chaine": [
+   {
+    "task_id": "47955121e4f548d9abb0f99308349370",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "etudiante": {
+  "A": "ba85af8663e44378ad2a7510756940ad",
+  "chaine": [
+   {
+    "task_id": "29d9a2d7cb054b739366b0a352a168e9",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "etudiant": {
+  "A": "076d2eb45f7a4ec290603f72eb90d297",
+  "chaine": [
+   {
+    "task_id": "297f1fd98c6e4771b1ca7bbeb10d4215",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "maman": {
+  "A": "2dbd7fac07bd4efba47a30feb6fd9b0d",
+  "chaine": [
+   {
+    "task_id": "61b8890ba403419a85a3d0db4340becc",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "papa": {
+  "A": "f2ff1b0569714a5f917804402bdba6e2",
+  "chaine": [
+   {
+    "task_id": "8654c863032042b6931bd2fc4bd4d727",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "enfant_fille": {
+  "A": "c4cb653216674d3a963fb7fc18427ff9",
+  "chaine": [
+   {
+    "task_id": "6ed539f4a9534a4f8a8ac75e41fbacbc",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "enfant_garcon": {
+  "A": "e333b4fb954a4684bfa389e1750f8618",
+  "chaine": [
+   {
+    "task_id": "a43d6b69655744bbab573d0998ba4fdf",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "femme_pull": {
+  "A": "0d45226e8cf6432e8611dd4a35eaf3b7",
+  "chaine": [
+   {
+    "task_id": "9fd01caa8391422090f286755cd02ffa",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "homme_polo": {
+  "A": "30c7a602544c4526a078c411fc9f922c",
+  "chaine": [
+   {
+    "task_id": "b0854d85edc74f36855b8b5372ae617d",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "jeune_casquette": {
+  "A": "a5473f8352ee4ae4bcd5bf7c603e8dd1",
+  "chaine": [
+   {
+    "task_id": "4d43c64f5f084dc38a1ffdc9b44309dc",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "femme_imper": {
+  "A": "7a1b6197eaaf4f71ba6f78a538cc17e0",
+  "chaine": [
+   {
+    "task_id": "0739253206464da2b87c8e85abbf8206",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "homme_doudoune": {
+  "A": "4bd8379e2b30401a837c9b41cba5ec04",
+  "chaine": [
+   {
+    "task_id": "fe335df9abb14ff1be5e069c1701a680",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "femme_short": {
+  "A": "eb5db8b698d64af59f0df50daac8c96a",
+  "chaine": [
+   {
+    "task_id": "927c2b5462834387ac31c34d1ceaa887",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "homme_chemise": {
+  "A": "0736a7048a1a4c6ba8ed1fcba267fbe8",
+  "chaine": [
+   {
+    "task_id": "b3b97fbb79f94a79b1b3cff6f3664de3",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ },
+ "ado_skate": {
+  "A": "203a8c321b65406d9b8b8e6425da13f4",
+  "chaine": [
+   {
+    "task_id": "7bc6f8c973bb42879adb4d7e8cce9765",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ]
+ }
+}

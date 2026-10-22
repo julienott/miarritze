@@ -1,0 +1,26 @@
+{
+ "fantome": {
+  "A": "904af482456f48d394ee50546a6a5e56",
+  "chaine": [
+   {
+    "task_id": "c07f4831a85848ca8222b1bf22fdc7aa",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "requete": {
+   "prompt_style": "pf_px__ghost",
+   "prompt": "a small friendly white sheet ghost with big round dark eyes and a tiny red Basque beret, floating",
+   "seed": 7,
+   "priority": "normal",
+   "tag": "miarritze/fantome",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 8
+    }
+   ]
+  }
+ }
+}

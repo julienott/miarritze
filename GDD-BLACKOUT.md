@@ -271,6 +271,25 @@ son character set (§8.1), la même pour tous.
 - Chaque perso a **2 animations de lancement** (extras `cast_chasse`, `cast_chasseur`) : un clip
   Quaternius pour son coup de chassé, un pour son coup de chasseur, choisis par coup (liste des 26 à
   valider par Julien ; essai sur Txomin le 23/10). En attendant : placeholders (pose figée + flash).
+
+**Clips de lancement** (*choisis le 23/10, à revoir en QA* ; copie : `casts` dans `data/blackout/style_party_hard.json`)
+
+| Perso | Coup de chassé : clip, action | Coup de chasseur : clip, action |
+|---|---|---|
+| louis | NinjaJump_Start, « vaults over a low wall » | Idle_Rail_Call, « cups his hands around his mouth and calls out » |
+| txomin | OverhandThrow, « throws his red rescue buoy forward to a friend » | Consume, « blows hard into his lifeguard whistle » |
+| patxi | Interact, « tips a bucket of sardines onto the ground behind him » | OverhandThrow, « casts his fishing line far forward » |
+| maia | Roll, « dives low and rolls under a wave » | Slide_Start, « jumps on her surfboard and surfs forward » |
+| xabi | NinjaJump_Start, « bounces off a wall in a quick dash » | OverhandThrow, « hurls a pelota ball with his chistera » |
+| mattin | Yes, « flexes his big arms proudly » | PickUp_Table, « heaves a heavy round stone forward » |
+| amaia | Dance_Loop, « does quick light Basque dance steps » | Interact, « strikes the ground with her makila stick » |
+| kaio | NinjaJump_Start, « leaps up and glides » | Idle_Rail_Call, « screams with his beak wide open » |
+| karramarro | Sitting_Enter, « digs himself down into the sand » | Slide_Start, « slides sideways very fast » |
+| ramuntxo | Interact, « places a Basque cake on the ground » | OverhandThrow, « throws a small pot of red pepper » |
+| itsaso | Spell_Simple_Shoot, « raises a little stone wall with a wave of her hand » | Spell_Simple_Enter, « calls water geysers out of the ground » |
+| peio | Roll, « sidesteps and rolls away quickly » | Idle_Rail_Call, « shouts a war cry with his fists up » |
+| itsasargi | Spell_Simple_Shoot, « raises his lantern and it flashes bright » | Idle_Torch_Loop, « points his lantern beam straight ahead » |
+
 - Ce qui est lancé ou posé (pelote, bouée, pierre, gâteau, nuage, muret, geysers) : **formes simples
   en placeholder**, remplacées plus tard par de petits sprites pixelforge.
 - Les effets subis : §4.5 (marques par le code, animation d'effet commune).

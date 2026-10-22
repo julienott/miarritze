@@ -18,8 +18,8 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, os.path.join(ROOT, "tools", "pf"))
 
 SPEC = json.load(open(os.path.join(ROOT, "data", "blackout", "style_party_hard.json"), encoding="utf-8"))
-SORTIE = os.path.join(HERE, "taches_partyhard_v2.json")
-TAG = "miarritze/partyhard_v2"
+SORTIE = os.path.join(HERE, "taches_persos_v3.json")
+TAG = "miarritze/persos_v3"
 GRAINE = 7
 
 
@@ -28,13 +28,21 @@ def prompt(pid: str) -> str:
     return f"{p['description']}. Signature detail drawn large and bright: {p['signature']}."
 
 
+def casts(pid: str) -> list:
+    """Lancements des deux coups spéciaux (GDD §4.6), extras cast_chasse et cast_chasseur."""
+    c = SPEC.get("casts", {}).get(pid, {})
+    return [{"name": n, "motion": c[n]["clip"], "action": c[n]["action"], "object": c[n]["objet"] or False,
+             "loop": False, "fps": 12} for n in ("cast_chasse", "cast_chasseur") if n in c]
+
+
 def requete(pid: str, prio: str) -> dict:
     il = SPEC["idle_long"][pid]
     return {
         "prompt_style": "pf_px__character_set", "prompt": prompt(pid), "colors": 20, "seed": GRAINE,
         "priority": prio, "tag": TAG,
+        "skip": ["ghost"],                       # fantôme commun (pf_px__ghost, GDD §8.1)
         "extras": [{"name": "idle_long", "motion": il["clip"], "action": il["geste"], "loop": True, "fps": 10,
-                    "object": il.get("objet") or False}],
+                    "object": il.get("objet") or False}] + casts(pid),
         # B lit la ligne des pieds dans le set.json de A (60 en 32 px, case 64) : pas de feet_y.
         "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10}],
     }

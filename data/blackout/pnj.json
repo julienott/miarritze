@@ -7,7 +7,15 @@
    "jump_hide",
    "lift",
    "ghost",
-   "standard"
+   "interagir",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "renverse",
+   "colle",
+   "ralenti",
+   "aveugle",
+   "tracte"
   ],
   "run_action": "runs away in panic, arms up",
   "extras_communs": [

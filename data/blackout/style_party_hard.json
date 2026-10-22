@@ -782,5 +782,164 @@
    "repli": null,
    "objet": "a brass lantern"
   }
+ },
+ "casts": {
+  "_doc": "Lancements des coups spéciaux (GDD §4.6) : extras cast_chasse et cast_chasseur ; clip Quaternius, action, objet (false = aucun). Choisis le 23/10, à revoir en QA.",
+  "louis": {
+   "cast_chasse": {
+    "clip": "NinjaJump_Start",
+    "action": "vaults over a low wall",
+    "objet": false
+   },
+   "cast_chasseur": {
+    "clip": "Idle_Rail_Call",
+    "action": "cups his hands around his mouth and calls out",
+    "objet": false
+   }
+  },
+  "txomin": {
+   "cast_chasse": {
+    "clip": "OverhandThrow",
+    "action": "throws his red rescue buoy forward to a friend",
+    "objet": "a red rescue tube buoy"
+   },
+   "cast_chasseur": {
+    "clip": "Consume",
+    "action": "blows hard into his lifeguard whistle",
+    "objet": "a silver whistle"
+   }
+  },
+  "patxi": {
+   "cast_chasse": {
+    "clip": "Interact",
+    "action": "tips a bucket of sardines onto the ground behind him",
+    "objet": "a small bucket"
+   },
+   "cast_chasseur": {
+    "clip": "OverhandThrow",
+    "action": "casts his fishing line far forward",
+    "objet": "a fishing rod"
+   }
+  },
+  "maia": {
+   "cast_chasse": {
+    "clip": "Roll",
+    "action": "dives low and rolls under a wave",
+    "objet": false
+   },
+   "cast_chasseur": {
+    "clip": "Slide_Start",
+    "action": "jumps on her surfboard and surfs forward",
+    "objet": "a yellow surfboard"
+   }
+  },
+  "xabi": {
+   "cast_chasse": {
+    "clip": "NinjaJump_Start",
+    "action": "bounces off a wall in a quick dash",
+    "objet": false
+   },
+   "cast_chasseur": {
+    "clip": "OverhandThrow",
+    "action": "hurls a pelota ball with his chistera",
+    "objet": "a wicker chistera"
+   }
+  },
+  "mattin": {
+   "cast_chasse": {
+    "clip": "Yes",
+    "action": "flexes his big arms proudly",
+    "objet": false
+   },
+   "cast_chasseur": {
+    "clip": "PickUp_Table",
+    "action": "heaves a heavy round stone forward",
+    "objet": "a heavy round stone"
+   }
+  },
+  "amaia": {
+   "cast_chasse": {
+    "clip": "Dance_Loop",
+    "action": "does quick light Basque dance steps",
+    "objet": false
+   },
+   "cast_chasseur": {
+    "clip": "Interact",
+    "action": "strikes the ground with her makila stick",
+    "objet": "a wooden makila stick"
+   }
+  },
+  "kaio": {
+   "cast_chasse": {
+    "clip": "NinjaJump_Start",
+    "action": "leaps up and glides",
+    "objet": false
+   },
+   "cast_chasseur": {
+    "clip": "Idle_Rail_Call",
+    "action": "screams with his beak wide open",
+    "objet": false
+   }
+  },
+  "karramarro": {
+   "cast_chasse": {
+    "clip": "Sitting_Enter",
+    "action": "digs himself down into the sand",
+    "objet": false
+   },
+   "cast_chasseur": {
+    "clip": "Slide_Start",
+    "action": "slides sideways very fast",
+    "objet": false
+   }
+  },
+  "ramuntxo": {
+   "cast_chasse": {
+    "clip": "Interact",
+    "action": "places a Basque cake on the ground",
+    "objet": "a round Basque cake"
+   },
+   "cast_chasseur": {
+    "clip": "OverhandThrow",
+    "action": "throws a small pot of red pepper",
+    "objet": "a small red pot"
+   }
+  },
+  "itsaso": {
+   "cast_chasse": {
+    "clip": "Spell_Simple_Shoot",
+    "action": "raises a little stone wall with a wave of her hand",
+    "objet": false
+   },
+   "cast_chasseur": {
+    "clip": "Spell_Simple_Enter",
+    "action": "calls water geysers out of the ground",
+    "objet": false
+   }
+  },
+  "peio": {
+   "cast_chasse": {
+    "clip": "Roll",
+    "action": "sidesteps and rolls away quickly",
+    "objet": false
+   },
+   "cast_chasseur": {
+    "clip": "Idle_Rail_Call",
+    "action": "shouts a war cry with his fists up",
+    "objet": false
+   }
+  },
+  "itsasargi": {
+   "cast_chasse": {
+    "clip": "Spell_Simple_Shoot",
+    "action": "raises his lantern and it flashes bright",
+    "objet": "a brass lantern"
+   },
+   "cast_chasseur": {
+    "clip": "Idle_Torch_Loop",
+    "action": "points his lantern beam straight ahead",
+    "objet": "a brass lantern"
+   }
+  }
  }
 }

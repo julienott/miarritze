@@ -19,7 +19,7 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, os.path.join(ROOT, "tools", "pf"))
 import gen_anims_pf as pf  # noqa: E402
 
-TACHES = os.path.join(HERE, "taches_partyhard_v2.json")
+TACHES = os.path.join(HERE, os.environ.get("TACHES_PERSOS", "taches_persos_v3.json"))
 
 
 def tache(tid: str) -> dict:
