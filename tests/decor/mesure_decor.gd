@@ -46,7 +46,7 @@ func _run() -> void:
 		var top_left: Vector2 = holder.position + sp.position - drawn * 0.5
 		row["drawn"] = [snappedf(drawn.x, 0.1), snappedf(drawn.y, 0.1)]
 		row["top_left"] = [snappedf(top_left.x, 0.1), snappedf(top_left.y, 0.1)]
-		row["h_perso"] = snappedf(drawn.y / BkPerso.HEIGHT_PX, 0.01)
+		row["h_perso"] = snappedf(drawn.y / BkPerso.hauteur_px(), 0.01)
 		row["fill_w"] = snappedf(drawn.x / foot.size.x, 0.01)
 		row["img_bottom"] = snappedf(top_left.y + drawn.y, 0.1)
 		row["source"] = inst.get("shape_source", "")
@@ -57,7 +57,7 @@ func _run() -> void:
 			continue
 		row["sort_y"] = snappedf(float(inst["sort_y"]), 0.1)
 		# Hauteur pour la vue (#607), en persos ; objet bas = la vue passe au-dessus (hors couche de vue).
-		row["vue_h_perso"] = snappedf(float(inst.get("view_h", 0.0)) / BkPerso.HEIGHT_PX, 0.01)
+		row["vue_h_perso"] = snappedf(float(inst.get("view_h", 0.0)) / BkPerso.hauteur_px(), 0.01)
 		row["vue_basse"] = d.low_view.has(idx)
 		var bb: Rect2 = Rect2()
 		var first: bool = true

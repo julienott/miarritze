@@ -78,6 +78,13 @@ func _press(what: String) -> void:
 func _capture(path: String, quit_after: bool) -> void:
 	await RenderingServer.frame_post_draw
 	var image: Image = get_viewport().get_texture().get_image()
+	# Jeu en 640×360 étiré en « viewport » (BkEchelle) : la capture a la taille de la fenêtre, pixels
+	# agrandis au plus proche voisin, comme à l'écran.
+	var root: Window = get_tree().root
+	if root.content_scale_mode == Window.CONTENT_SCALE_MODE_VIEWPORT and DisplayServer.get_name() != "headless":
+		var w: Vector2i = DisplayServer.window_get_size()
+		var k: int = maxi(1, mini(w.x / maxi(image.get_width(), 1), w.y / maxi(image.get_height(), 1)))
+		image.resize(image.get_width() * k, image.get_height() * k, Image.INTERPOLATE_NEAREST)
 	image.save_png(path)
 	print("qa_capture: écrit %s" % path)
 	if quit_after:

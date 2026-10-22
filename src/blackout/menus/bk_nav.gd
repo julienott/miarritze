@@ -24,6 +24,9 @@ static func chemin(id: String) -> String:
 
 static func aller(id: String) -> void:
 	var tree: SceneTree = Engine.get_main_loop() as SceneTree
+	# Menus en 1280×720 ; la partie repasse elle-même en 640×360 (BkEchelle).
+	if chemin(id) != ECRANS["game"]:
+		BkEchelle.menus()
 	tree.change_scene_to_file.call_deferred(chemin(id))
 
 

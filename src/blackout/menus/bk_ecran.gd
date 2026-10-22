@@ -7,6 +7,7 @@ extends RefCounted
 ## Prépare un écran de menu : fond de mer, marges de la zone sûre (encoche de l'iPhone) et rappel
 ## des touches en bas. Renvoie le conteneur où poser le contenu (plein écran, marges comprises).
 static func ecran(ecran_ctrl: Control, aide: bool = true) -> MarginContainer:
+	BkEchelle.menus()
 	ecran_ctrl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var fond: BkUi.Fond = BkUi.Fond.new()
 	fond.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

@@ -94,7 +94,7 @@ func _run() -> void:
 			poses[dn] = start + (c - start) * f
 		var view: Rect2 = img_rect.merge(bb).grow(r * 3.0)
 		for p: Vector2 in poses.values():
-			view = view.expand(p + Vector2(-r * 2, -BkPerso.HEIGHT_PX - 10)).expand(p + Vector2(r * 2, r * 2))
+			view = view.expand(p + Vector2(-r * 2, -BkPerso.hauteur_px() - 10)).expand(p + Vector2(r * 2, r * 2))
 		var row: Dictionary = {"tag": tag, "id": id, "poses": {}}
 		if role == "chasse":
 			for dn: String in poses:

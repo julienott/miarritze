@@ -28,10 +28,12 @@ general/default_playback_type.web=0
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/window_width_override=1280
+window/size/window_height_override=720
 window/handheld/orientation=4
-window/stretch/mode="canvas_items"
+window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 
 [input_devices]
@@ -48,7 +50,9 @@ common/physics_jitter_fix=0.0
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-textures/canvas_textures/default_texture_filter=1
+textures/canvas_textures/default_texture_filter=0
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true
 textures/vram_compression/import_etc2_astc=true
 lights_and_shadows/positional_shadow/atlas_size=4096
 lights_and_shadows/positional_shadow/atlas_size.mobile=2048

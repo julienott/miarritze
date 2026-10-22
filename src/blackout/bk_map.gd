@@ -1,25 +1,35 @@
 class_name BkMap
 extends Node2D
-## Carte du prototype gris (GDD-BLACKOUT.md) lue depuis assets/maps/<id>/map.txt :
-## une lettre par case (légende dans tools/blackout/make_proto_map.py). Construit les
-## collisions (couche 1 : on ne passe pas ; couche 2 : on ne voit pas à travers), les
-## occulteurs de lumière (vue du chasseur), la grille A* des IA et le dessin en blocs.
+## Carte lue depuis assets/maps/<id>/map.txt (GDD-BLACKOUT.md §10) : une lettre par case (légende
+## ci-dessous et dans tools/blackout/make_bac_a_sable.py), et zones.json (zones, sorties, lampadaires,
+## disjoncteurs, places des gâteaux et des mouettes). Construit les collisions (couche 1 : on ne passe
+## pas ; couche 2 : on ne voit pas à travers), les occulteurs de lumière (vue du chasseur), la grille
+## A* des IA et le dessin en placeholders pixel art (aplats et formes simples, cases de tile_px).
 
 const LAYER_MOVE: int = 1
 const LAYER_SIGHT: int = 2
-## Pleins qui cachent la vue / objets bas et eau qui bloquent seulement le passage.
-## Lieux réels (tools/blackout/carte_reelle.py) : R grand rocher, v végétation (cachent la vue),
-## r rochers bas (bloquent le passage) ; sol de sable « : » et de jetée « = ».
-const OCCLUDE: String = "#cBHRv"
-const LOW: String = "t~r"
+## Légende des cases (GDD §3.1, §10.1, §10.2) :
+##   sol : « . » sol de la zone, « E » sortie, « S » départ, « : » sol meuble (sable), « = » jetée ;
+##   cachent la vue et bloquent le passage : « # » mur plein, « c » objet haut (caisses, armoire),
+##     « B » barque, « H » cachette, « R » grand rocher, « v » végétation haute,
+##     « | » et « - » cloisons fines (verticale, horizontale : une forme de cloison_epaisseur case) ;
+##   bloquent le passage, pas la vue d'un perso debout : « t » objet bas (table, étal), « ~ » eau,
+##     « r » rochers bas, « m » muret d'une case, « b » buisson, « g » grille, « f » fenêtre.
+const OCCLUDE: String = "#cBHRv|-"
+const LOW: String = "t~rmbgf"
 const WALK: String = ".ES:="
+## Cloisons fines (forme mince centrée dans la case, sens de la cloison).
+const THIN_V: String = "|"
+const THIN_H: String = "-"
+## Sol meuble (Karramarro s'y enfouit, GDD §4.4).
+const MEUBLE: String = ":"
 
 const COLORS: Dictionary = {
 	"#": Color("3b4253"), "c": Color("a0703e"), "B": Color("e8eef2"), "H": Color("e08a2e"),
 	"t": Color("c9a873"), "~": Color("2f7fb8"), "R": Color("8c6446"), "r": Color("9a7a5c"), "v": Color("5f8a4a"),
 }
 ## Sols particuliers, case par case (le reste prend le sol de sa zone).
-const TILE_FLOORS: Dictionary = {":": Color("e6cf98"), "=": Color("b8b2a6")}
+const TILE_FLOORS: Dictionary = {":": Color("c9b27e"), "=": Color("8f8a80")}
 const FLOOR_TINTS: Array[Color] = [Color("d9d2c3"), Color("cfc8b6"), Color("d4cdbf")]
 
 var map_id: String = ""
@@ -40,6 +50,17 @@ var exits: Array[Vector2i] = []
 ## tire quelques-unes à chaque round.
 var exit_groups: Array = []
 var spawns: Array[Vector2i] = []
+## Emplacements des lampadaires {pos: Vector2i, rayon (cases), secteur} et des disjoncteurs
+## {pos: Vector2i (case où l'on se tient), mur: Vector2i (côté du boîtier), secteur} (zones.json) :
+## données et marqueurs seulement, la lumière vient à l'étape suivante (GDD §3.2).
+var lampadaires: Array = []
+var disjoncteurs: Array = []
+## Secteurs de la carte {id, rect: Rect2i} (un disjoncteur par secteur).
+var secteurs: Array = []
+## Places des gâteaux basques et des mouettes (zones.json → « gateaux », « mouettes ») ; vides : tirage
+## au hasard sur les cases dégagées.
+var gateaux_places: Array[Vector2i] = []
+var mouettes_places: Array[Vector2i] = []
 ## Contenu de zones.json (zones, sorties, « objets » posés par BkDecor…).
 var info: Dictionary = {}
 ## Cases sombres (grottes, tunnels) : zones.json → zones[].sombre et « sombres » [[x, y, w, h]…] ;
@@ -76,8 +97,10 @@ func load_map(id: String) -> void:
 	zones.clear()
 	for z: Variant in (zj as Dictionary).get("zones", []):
 		var r: Array = (z as Dictionary)["rect"]
-		zones.append({"name": str(z["name"]), "rect": Rect2i(int(r[0]), int(r[1]), int(r[2]), int(r[3]))})
+		zones.append({"name": str(z["name"]), "rect": Rect2i(int(r[0]), int(r[1]), int(r[2]), int(r[3])),
+			"sol": str((z as Dictionary).get("sol", ""))})
 	info = zj as Dictionary
+	_read_points()
 	dark.clear()
 	var dark_rects: Array = (info.get("sombres", []) as Array).duplicate()
 	for z: Variant in info.get("zones", []):
@@ -113,6 +136,48 @@ func load_map(id: String) -> void:
 		decor.attach()
 	_qa_camera()
 	queue_redraw()
+
+
+## Lampadaires, disjoncteurs, secteurs, places des gâteaux et des mouettes (zones.json).
+func _read_points() -> void:
+	lampadaires.clear()
+	disjoncteurs.clear()
+	secteurs.clear()
+	gateaux_places.clear()
+	mouettes_places.clear()
+	for l: Variant in info.get("lampadaires", []):
+		var ld: Dictionary = l
+		lampadaires.append({"pos": _v2i(ld["pos"]), "rayon": float(ld.get("rayon", 3.0)),
+			"secteur": str(ld.get("secteur", ""))})
+	for d: Variant in info.get("disjoncteurs", []):
+		var dd: Dictionary = d
+		disjoncteurs.append({"pos": _v2i(dd["pos"]), "mur": _v2i(dd.get("mur", [0, -1])),
+			"secteur": str(dd.get("secteur", ""))})
+	for sct: Variant in info.get("secteurs", []):
+		var r: Array = (sct as Dictionary)["rect"]
+		secteurs.append({"id": str(sct["id"]), "rect": Rect2i(int(r[0]), int(r[1]), int(r[2]), int(r[3]))})
+	for g: Variant in info.get("gateaux", []):
+		gateaux_places.append(_v2i(g))
+	for m: Variant in info.get("mouettes", []):
+		mouettes_places.append(_v2i(m))
+
+
+static func _v2i(a: Variant) -> Vector2i:
+	return Vector2i(int(a[0]), int(a[1]))
+
+
+## Vrai si la case est un sol meuble (sable).
+func meuble(t: Vector2i) -> bool:
+	return MEUBLE.contains(at(t))
+
+
+## Règles des cases, sans le décor en image : bloque le passage / bloque la vue d'un perso debout.
+func blocks_move(t: Vector2i) -> bool:
+	return OCCLUDE.contains(at(t)) or LOW.contains(at(t))
+
+
+func blocks_view(t: Vector2i) -> bool:
+	return OCCLUDE.contains(at(t))
 
 
 func at(t: Vector2i) -> String:
@@ -187,7 +252,7 @@ func _build_bodies() -> void:
 	# Cases d'un objet en image : son empreinte au sol (forme réelle) remplace le rectangle des cases.
 	var shaped: Dictionary = decor.shaped if decor else {}
 	for r: Rect2i in merged_rects(OCCLUDE, shaped):
-		var px: Rect2 = Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile)
+		var px: Rect2 = thin_rect(r)
 		_add_shape(solid, px)
 		_add_occluder(PackedVector2Array([px.position, Vector2(px.end.x, px.position.y), px.end,
 			Vector2(px.position.x, px.end.y)]), 1)
@@ -227,6 +292,19 @@ func _build_bodies() -> void:
 				line.width = 3.0
 				line.default_color = Color("2fe05a") if blocks else Color("f2c12e")
 				qa.add_child(line)
+
+
+## Rectangle (px) de la forme de cases fusionnées : la case entière, ou une bande mince centrée pour
+## une cloison fine (cloison_epaisseur case ; « | » verticale, « - » horizontale).
+func thin_rect(r: Rect2i) -> Rect2:
+	var px: Rect2 = Rect2(Vector2(r.position) * tile, Vector2(r.size) * tile)
+	var ch: String = at(r.position)
+	var e: float = roundf(clampf(BkRules.f("cloison_epaisseur"), 0.05, 1.0) * tile)
+	if ch == THIN_V:
+		return Rect2(roundf(px.get_center().x - e * 0.5), px.position.y, e, px.size.y)
+	if ch == THIN_H:
+		return Rect2(px.position.x, roundf(px.get_center().y - e * 0.5), px.size.x, e)
+	return px
 
 
 ## Occulteur de la vue du chasseur (ombre des lumières) ; `mask` 1 : murs de la grille (ombrent
@@ -363,17 +441,6 @@ func path(a: Vector2, b: Vector2) -> PackedVector2Array:
 	return pts
 
 
-## Sol de chaque zone selon son nom : (couleur, motif).
-const FLOORS: Dictionary = {
-	"Jetée": ["cfc6b4", "dalles"], "Bassin": ["cfc6b4", "dalles"], "Quai": ["d3cab7", "dalles"],
-	"Rampe": ["bdb8ad", "beton"], "Criée": ["d6d2c8", "carrelage"], "Hangar": ["c3beb3", "beton"],
-	"Atelier": ["c3beb3", "beton"], "Crampottes": ["cdb99e", "paves"], "Rue": ["cdb99e", "paves"],
-	"Place": ["dccdb0", "paves"], "Parking": ["6f747d", "parking"], "Cale": ["bdb8ad", "beton"],
-	"Terrasse": ["c99662", "planches"],
-}
-const DEPTH: float = 0.42                # hauteur de la face avant des objets (en cases)
-
-
 ## QA : `--bk-cam=<zone>[@zoom]` (début du nom, sans casse ni accents ; zoom par défaut : la zone
 ## tient à l'écran) ou `--bk-cam=x,y[@zoom]` (case) : caméra fixe, pour les captures du décor.
 func _qa_camera() -> void:
@@ -415,16 +482,49 @@ static func _plain(s: String) -> String:
 	return out
 
 
-func _floor_of(name: String) -> Array:
+## Sols des zones, en placeholders (GDD §9 : sols à motif par zone, peu contrastés, couleurs de nuit
+## désaturées) : zones.json → zones[].sol, sinon selon le nom de la zone (anciennes cartes).
+const FLOORS: Dictionary = {
+	"Jetée": "5d6273", "Bassin": "5d6273", "Quai": "61667a", "Rampe": "575c6c", "Criée": "676c80",
+	"Hangar": "565b6b", "Atelier": "565b6b", "Crampottes": "6a6070", "Rue": "6a6070", "Place": "6e6575",
+	"Parking": "4a4e5a", "Cale": "575c6c", "Terrasse": "735f5a",
+}
+## Couleurs des placeholders de la carte (aplats, GDD §9 : nuit bleutée, objets lisibles).
+const C_MUR_HAUT: Color = Color("262a3d")
+const C_MUR_FACE: Color = Color("4b5372")
+const C_MUR_JOINT: Color = Color("3e4562")
+const C_CLOISON: Color = Color("8a7a66")
+const C_HAUT: Color = Color("b07a45")
+const C_HAUT_FACE: Color = Color("7a5230")
+const C_BAS: Color = Color("c9a873")
+const C_BAS_FACE: Color = Color("8a6a40")
+const C_MURET: Color = Color("9a9488")
+const C_MURET_FACE: Color = Color("6e695f")
+const C_BUISSON: Color = Color("4f7d3c")
+const C_BUISSON_CLAIR: Color = Color("6f9a55")
+const C_GRILLE: Color = Color("b8c0cc")
+const C_VITRE: Color = Color("7fb8d8")
+const C_ROCHER: Color = Color("8c7a6a")
+const C_BARQUE: Color = Color("d8dde3")
+const C_LAMPE: Color = Color("ffd34a")
+const C_DISJ: Color = Color("c9cfd8")
+## Hauteur de la face avant des objets debout (en cases), vue « maison de poupée » (GDD §9).
+const DEPTH: float = 0.35
+
+
+func _floor_color(zi: int) -> Color:
+	var z: Dictionary = zones[zi]
+	if str(z.get("sol", "")) != "":
+		return Color(str(z["sol"]))
 	for k: String in FLOORS:
-		if name.begins_with(k):
-			return FLOORS[k]
-	return ["d0c9b8", "dalles"]
+		if str(z["name"]).begins_with(k):
+			return Color(str(FLOORS[k]))
+	return Color("5f6474")
 
 
 func _draw() -> void:
 	if draw_2d:
-		draw_rect(Rect2(Vector2.ZERO, size_px()), Color("b9b2a3"))
+		draw_rect(Rect2(Vector2.ZERO, size_px()), Color("4a4f60"))
 
 
 ## Découpe du dessin en morceaux (une zone chacun, plus les murs entre zones) : Godot ne
@@ -432,7 +532,7 @@ func _draw() -> void:
 func _build_chunks() -> void:
 	var groups: Dictionary = {}
 	# Les cases couvertes par une image du décor ne sont plus dessinées ici.
-	for ch: String in "#cBtRrv":
+	for ch: String in "#cBtRrvm|-gfb":
 		for r: Rect2i in merged_rects(ch, decor.covered if decor else {}):
 			var z: int = zone_of(r.position + r.size / 2)
 			if not groups.has(z):
@@ -444,177 +544,169 @@ func _build_chunks() -> void:
 		c.zone = z
 		c.items = groups.get(z, [])
 		add_child(c)
+	# Marqueurs des lampadaires et des disjoncteurs, par-dessus le sol (données de l'étape suivante).
+	var marks: BkMapChunk = BkMapChunk.new()
+	marks.map = self
+	marks.zone = -2
+	add_child(marks)
 
 
 func draw_chunk(ci: CanvasItem, zi: int, items: Array) -> void:
+	if zi == -2:
+		_draw_marks(ci)
+		return
 	var t: float = tile
 	if zi < 0 and decor:
 		decor.draw_floors(ci, -1)
 	if zi >= 0:
 		var z: Dictionary = zones[zi]
 		var r: Rect2i = z["rect"]
-		var f: Array = _floor_of(str(z["name"]))
-		var px: Rect2 = Rect2(Vector2(r.position) * t, Vector2(r.size) * t)
-		var base: Color = Color(str(f[0]))
-		# Sol case par case (par plages d'une ligne) : pas de sol peint sur l'eau ni sous les rochers.
+		var base: Color = _floor_color(zi)
+		# Sol case par case : un damier très doux (sol à motif peu contrasté), pas sous l'eau.
 		for y: int in range(r.position.y, r.end.y):
-			var x: int = r.position.x
-			while x < r.end.x:
-				var ch: String = at(Vector2i(x, y))
-				var dry: bool = WALK.contains(ch) or "cBHt#".contains(ch) \
-						or decor != null and decor.covered.has(Vector2i(x, y))
-				if not dry or decor and decor.water_under.has(Vector2i(x, y)):
-					x += 1
+			for x: int in range(r.position.x, r.end.x):
+				var c: Vector2i = Vector2i(x, y)
+				var ch: String = at(c)
+				if ch == "~" or ch == "#" or decor and decor.water_under.has(c):
 					continue
-				var x2: int = x
-				while x2 < r.end.x and at(Vector2i(x2, y)) == ch:
-					x2 += 1
-				ci.draw_rect(Rect2(Vector2(x, y) * t, Vector2(x2 - x, 1) * t), TILE_FLOORS.get(ch, base))
-				x = x2
-		var line: Color = base.darkened(0.12)
-		# Sol en image si le décor en a un pour cette zone, sinon motif procédural.
-		var pattern: String = str(f[1])
+				var col: Color = TILE_FLOORS.get(ch, base)
+				if (x + y) % 2 == 0:
+					col = col.darkened(0.04)
+				ci.draw_rect(Rect2(Vector2(c) * t, Vector2(t, t)), col)
+				if ch == ":" and absi(x * 7 + y * 13) % 3 == 0:
+					# Sable : quelques grains.
+					ci.draw_rect(Rect2(Vector2(c) * t + Vector2(t * 0.3, t * 0.4).round(), Vector2(1, 1)), col.lightened(0.2))
+					ci.draw_rect(Rect2(Vector2(c) * t + Vector2(t * 0.7, t * 0.75).round(), Vector2(1, 1)), col.darkened(0.15))
 		if decor:
 			decor.draw_floors(ci, zi)
-			if decor.has_floor(".", zi):
-				pattern = ""
-		match pattern:
-			"dalles":
-				for y: int in range(r.position.y, r.end.y):
-					for x: int in range(r.position.x, r.end.x):
-						if at(Vector2i(x, y)) != ".":
-							continue
-						var o: float = 0.5 * t if y % 2 == 0 else 0.0
-						ci.draw_rect(Rect2(Vector2(x, y) * t + Vector2(o, 0), Vector2(t, t)).intersection(px), line, false, 2.0)
-			"paves":
-				for y: int in range(r.position.y * 2, r.end.y * 2):
-					for x: int in range(r.position.x * 2, r.end.x * 2):
-						var c: Vector2 = (Vector2(x, y) + Vector2(0.5 + 0.25 * (y % 2), 0.5)) * t * 0.5
-						if px.has_point(c) and at(Vector2i(int(c.x / t), int(c.y / t))) == ".":
-							ci.draw_circle(c, t * 0.2, base.lightened(0.04 * float((x * 7 + y * 3) % 3)))
-			"carrelage":
-				for y: int in range(r.position.y, r.end.y):
-					for x: int in range(r.position.x, r.end.x):
-						if (x + y) % 2 == 0 and at(Vector2i(x, y)) == ".":
-							ci.draw_rect(Rect2(Vector2(x, y) * t, Vector2(t, t)), base.darkened(0.05))
-			"planches":
-				for y: int in range(r.position.y * 4, r.end.y * 4):
-					ci.draw_line(Vector2(px.position.x, y * t * 0.25), Vector2(px.end.x, y * t * 0.25), line, 2.0)
-			"parking":
-				for x: int in range(r.position.x, r.end.x, 4):
-					ci.draw_line(Vector2(x * t + t * 0.5, px.position.y + t), Vector2(x * t + t * 0.5, px.end.y - t),
-						Color(1, 1, 1, 0.55), 4.0)
-			"beton":
-				for y: int in range(r.position.y, r.end.y, 3):
-					ci.draw_line(Vector2(px.position.x, y * t), Vector2(px.end.x, y * t), line, 2.0)
-		ci.draw_string(ThemeDB.fallback_font, Vector2(r.position) * t + Vector2(16, 40), str(z["name"]).to_upper(),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color(0, 0, 0, 0.22))
-	# Ombres portées, puis les objets (bas, caisses, bateaux, murs).
-	for it: Array in items:
-		var rr: Rect2i = it[1]
-		var p2: Rect2 = Rect2(Vector2(rr.position) * t, Vector2(rr.size) * t)
-		ci.draw_rect(Rect2(p2.position + Vector2(t * 0.18, t * 0.22), p2.size), Color(0, 0, 0, 0.16))
-	for ch: String in "rtcBRv#":
+		BkDraw.texte(ci, Vector2(r.position) * t + Vector2(r.size.x * t * 0.5, 12), str(z["name"]).to_upper(), 8,
+			Color(1, 1, 1, 0.22), 0, r.size.x * t)
+	# Objets : bas d'abord, puis hauts et murs (la face avant recouvre le sol de la case du dessous).
+	for ch: String in "rtmbgfcBRv|-#":
 		for it: Array in items:
 			if str(it[0]) != ch:
 				continue
 			var rr: Rect2i = it[1]
 			var p3: Rect2 = Rect2(Vector2(rr.position) * t, Vector2(rr.size) * t)
 			match ch:
-				"t": _low(ci, p3)
-				"c": _crate(ci, p3)
-				"B": _boat(ci, p3, rr.position.x * 3 + rr.position.y)
-				"#":
-					if zi < 0 and decor and decor.has_floor("#", -1):
-						_roofs(ci, rr)
-					else:
-						_wall(ci, p3)
-				"R": _block(ci, p3, Color("a07a58"), Color("6e5038"), 10.0)
-				"r": BkDraw.rbox(ci, p3.grow(-2), Color("9a7a5c"), 8.0, 2.0)
-				"v": _block(ci, p3, Color("6f9a55"), Color("4c7038"), 12.0)
+				"#": _wall(ci, rr)
+				"c": _block(ci, p3.grow(-1), C_HAUT, C_HAUT_FACE, 0.5)
+				"B": _block(ci, p3.grow(-2), C_BARQUE, Color("2f6fe0"), 0.4)
+				"R": _block(ci, p3.grow(-1), C_ROCHER, C_ROCHER.darkened(0.3), 0.5)
+				"v": _bush(ci, p3, Color("3f6a32"), Color("5b8a45"))
+				"t": _block(ci, p3.grow(-3), C_BAS, C_BAS_FACE, 0.2)
+				"m": _block(ci, p3, C_MURET, C_MURET_FACE, 0.25)
+				"r": _block(ci, p3.grow(-3), C_ROCHER.lightened(0.1), C_ROCHER.darkened(0.2), 0.2)
+				"b": _bush(ci, p3, C_BUISSON, C_BUISSON_CLAIR)
+				"g": _grille(ci, rr)
+				"f": _window(ci, rr)
+				"|", "-": _cloison(ci, rr)
 
 
-## Bloc avec un dessus clair et une face avant plus sombre (vue 3/4), contour épais.
-func _block(ci: CanvasItem, px: Rect2, top: Color, front: Color, radius: float = 6.0) -> Rect2:
-	var d: float = minf(tile * DEPTH, px.size.y * 0.45)
-	BkDraw.rbox(ci, px, front, radius, 3.0)
-	var top_r: Rect2 = Rect2(px.position, Vector2(px.size.x, px.size.y - d))
-	BkDraw.rbox(ci, top_r, top, radius, 3.0)
-	return top_r
+## Bloc vu « maison de poupée » : dessus clair, face avant plus sombre de `depth` cases, contour d'un
+## pixel.
+func _block(ci: CanvasItem, px: Rect2, top: Color, front: Color, depth: float) -> void:
+	px = Rect2(px.position.round(), px.size.round())
+	var d: float = roundf(minf(tile * depth, px.size.y * 0.5))
+	ci.draw_rect(px, BkDraw.INK)
+	ci.draw_rect(px.grow(-1), front)
+	ci.draw_rect(Rect2(px.position + Vector2(1, 1), Vector2(px.size.x - 2, px.size.y - d - 1)), top)
+	ci.draw_rect(Rect2(px.position + Vector2(1, 1), Vector2(px.size.x - 2, 1)), top.lightened(0.2))
 
 
-func _wall(ci: CanvasItem, px: Rect2) -> void:
-	var top: Rect2 = _block(ci, px, Color("aeb3bf"), Color("6e7383"), 4.0)
-	# Joints de pierre sur la face avant.
-	var y0: float = top.end.y
-	for x: float in range(int(px.position.x) + 24, int(px.end.x) - 8, 48):
-		ci.draw_line(Vector2(x, y0 + 4), Vector2(x, px.end.y - 4), Color(0, 0, 0, 0.18), 2.0)
-
-
-## Masses bâties entre les zones, vues du dessus : le toit de tuiles (image du décor, déjà posée par
-## BkDecor.draw_floors) cerné d'encre, et sur chaque case dont le sud donne sur le sol, la façade
-## blanche labourdine dessinée par le code (provisoire, en attendant facade_labourdine de pixelforge) :
-## colombages rouges, fenêtres à volets rouges ou verts, parfois une porte ou des géraniums.
-func _roofs(ci: CanvasItem, rr: Rect2i) -> void:
+## Mur plein : dessus sombre ; sa face (pierre) se montre côté sud quand le sol est dessous (mur du
+## fond, GDD §9), les autres bords réduits à une arête sombre.
+func _wall(ci: CanvasItem, rr: Rect2i) -> void:
 	var t: float = tile
-	var ink: Color = BkDraw.INK
+	var face_h: float = roundf(t * DEPTH * 1.6)
 	for y: int in range(rr.position.y, rr.end.y):
 		for x: int in range(rr.position.x, rr.end.x):
 			var c: Vector2i = Vector2i(x, y)
 			var o: Vector2 = Vector2(c) * t
-			for d: Vector2i in [Vector2i(0, -1), Vector2i(-1, 0), Vector2i(1, 0)]:
-				if at(c + d) != "#":
-					var a: Vector2 = o + (Vector2(0, 0) if d.x <= 0 else Vector2(t, 0))
-					var b: Vector2 = a + (Vector2(t, 0) if d.y != 0 else Vector2(0, t))
-					ci.draw_line(a, b, ink, 3.0)
+			ci.draw_rect(Rect2(o, Vector2(t, t)), C_MUR_HAUT)
 			var below: String = at(c + Vector2i(0, 1))
-			if below == "#" or below == "~" or y + 1 >= height:
-				continue
-			var h: float = t * 0.8
-			var f: Rect2 = Rect2(o + Vector2(0, t - h), Vector2(t, h))
-			ci.draw_rect(f, Color("f4f1ea"))
-			ci.draw_rect(Rect2(f.position, Vector2(t, 7)), Color("9e1b1b"))
-			ci.draw_rect(Rect2(f.position + Vector2(0, 7), Vector2(t, 5)), Color(0, 0, 0, 0.12))
-			var k: int = absi(x * 7 + y * 13) % 7
-			if k == 0:
-				# Porte rouge, linteau de grès.
-				ci.draw_rect(Rect2(f.position + Vector2(t * 0.3, h * 0.32), Vector2(t * 0.4, h * 0.68)), Color("9e1b1b"))
-				ci.draw_rect(Rect2(f.position + Vector2(t * 0.26, h * 0.26), Vector2(t * 0.48, 5)), Color("d9c39a"))
-			elif k != 3:
-				var shut: Color = Color("9e1b1b") if (x + y) % 3 != 0 else Color("2f6b45")
-				var wr: Rect2 = Rect2(f.position + Vector2(t * 0.34, h * 0.34), Vector2(t * 0.32, h * 0.36))
-				ci.draw_rect(wr, Color("33405a"))
-				ci.draw_rect(Rect2(wr.position - Vector2(t * 0.14, 0), Vector2(t * 0.13, wr.size.y)), shut)
-				ci.draw_rect(Rect2(wr.end - Vector2(0, wr.size.y), Vector2(t * 0.13, wr.size.y)), shut)
-				if k == 5:
-					for i: int in 3:
-						ci.draw_circle(wr.position + Vector2(wr.size.x * (0.2 + 0.3 * i), wr.size.y + 4), 4.5, Color("e3526b"))
-			ci.draw_line(f.position + Vector2(0, h), f.position + Vector2(t, h), ink, 3.0)
-			if at(c + Vector2i(-1, 0)) != "#" or at(c + Vector2i(-1, 1)) != "#" and at(c + Vector2i(-1, 1)) != ".":
-				ci.draw_line(f.position, f.position + Vector2(0, h), ink, 3.0)
-			if at(c + Vector2i(1, 0)) != "#":
-				ci.draw_line(f.position + Vector2(t, 0), f.position + Vector2(t, h), ink, 3.0)
+			if below != "#" and y + 1 < height:
+				var f: Rect2 = Rect2(o + Vector2(0, t - face_h), Vector2(t, face_h))
+				ci.draw_rect(f, C_MUR_FACE)
+				ci.draw_rect(Rect2(f.position, Vector2(t, 1)), C_MUR_FACE.lightened(0.25))
+				var off: float = 0.0 if y % 2 == 0 else t * 0.5
+				for k: int in 2:
+					ci.draw_rect(Rect2(o + Vector2(roundf(fmod(off + k * t * 0.5, t)), t - face_h + 2), Vector2(1, face_h - 3)), C_MUR_JOINT)
+				ci.draw_rect(Rect2(o + Vector2(0, t - roundf(face_h * 0.5)), Vector2(t, 1)), C_MUR_JOINT)
 
 
-func _crate(ci: CanvasItem, px: Rect2) -> void:
-	var top: Rect2 = _block(ci, px, Color("dca865"), Color("a8743a"), 5.0)
-	for x: float in range(int(top.position.x) + 16, int(top.end.x) - 8, 16):
-		ci.draw_line(Vector2(x, top.position.y + 5), Vector2(x, top.end.y - 5), Color(0, 0, 0, 0.15), 2.0)
+## Cloison fine : bande mince (forme de collision) avec un dessus clair et une petite face.
+func _cloison(ci: CanvasItem, rr: Rect2i) -> void:
+	var px: Rect2 = thin_rect(rr)
+	ci.draw_rect(px, BkDraw.INK)
+	ci.draw_rect(px.grow(-1), C_CLOISON)
+	if at(rr.position) == THIN_H:
+		ci.draw_rect(Rect2(px.position + Vector2(1, px.size.y - 3), Vector2(px.size.x - 2, 2)), C_CLOISON.darkened(0.3))
 
 
-func _low(ci: CanvasItem, px: Rect2) -> void:
-	# Objet bas (étal, table, filet) : petit plateau sur pieds, on voit par-dessus.
-	var top: Rect2 = Rect2(px.position + Vector2(4, 2), px.size - Vector2(8, 14))
-	for x: float in [px.position.x + 10, px.end.x - 14]:
-		BkDraw.rbox(ci, Rect2(x, top.end.y - 4, 6, 14), Color("8a6239"), 2.0, 2.0)
-	BkDraw.rbox(ci, top, Color("e2c28c"), 6.0, 3.0)
-	BkDraw.rbox(ci, Rect2(top.position + Vector2(6, 5), Vector2(top.size.x - 12, 5)), Color(1, 1, 1, 0.35), 2.0, 0.0)
+## Buisson : touffes rondes (objet bas).
+func _bush(ci: CanvasItem, px: Rect2, dark: Color, light: Color) -> void:
+	var t: float = tile
+	for y: int in range(int(px.size.y / t)):
+		for x: int in range(int(px.size.x / t)):
+			var c: Vector2 = px.position + Vector2(x + 0.5, y + 0.55) * t
+			ci.draw_circle(c.round() + Vector2(0, 2), t * 0.45, BkDraw.INK)
+			ci.draw_circle(c.round() + Vector2(0, 2), t * 0.42, dark)
+			ci.draw_circle(c.round() + Vector2(-3, -2), t * 0.24, light)
+			ci.draw_circle(c.round() + Vector2(4, -1), t * 0.2, light)
 
 
-func _boat(ci: CanvasItem, px: Rect2, seed: int) -> void:
-	var stripes: Array[Color] = [Color("2f6fe0"), Color("d83a34"), Color("2fb24a"), Color("f2c12e")]
-	var hull: Rect2 = px.grow(-4)
-	var top: Rect2 = _block(ci, hull, Color("f4f6f8"), Color("c9d2da"), minf(hull.size.y * 0.45, 26.0))
-	var inner: Rect2 = top.grow(-maxf(8.0, top.size.y * 0.18))
-	BkDraw.rbox(ci, inner, Color("c08a55"), minf(inner.size.y * 0.45, 18.0), 2.5)
-	ci.draw_rect(Rect2(hull.position.x + 6, top.end.y + 3, hull.size.x - 12, 5), stripes[seed % stripes.size()])
+## Grille (vue oui, passage non) : barreaux sur le sol, une traverse en haut et en bas.
+func _grille(ci: CanvasItem, rr: Rect2i) -> void:
+	var px: Rect2 = Rect2(Vector2(rr.position) * tile, Vector2(rr.size) * tile)
+	var vertical: bool = rr.size.y > rr.size.x
+	if vertical:
+		var x0: float = roundf(px.get_center().x)
+		ci.draw_rect(Rect2(x0 - 2, px.position.y, 4, px.size.y), Color(BkDraw.INK, 0.5))
+		for y: int in range(int(px.position.y) + 2, int(px.end.y), 5):
+			ci.draw_rect(Rect2(x0 - 3, y, 6, 1), C_GRILLE)
+		ci.draw_rect(Rect2(x0 - 1, px.position.y, 2, px.size.y), C_GRILLE.darkened(0.2))
+	else:
+		var top: float = px.position.y + roundf(tile * 0.3)
+		ci.draw_rect(Rect2(px.position.x, top, px.size.x, 1), C_GRILLE)
+		ci.draw_rect(Rect2(px.position.x, px.end.y - 3, px.size.x, 1), C_GRILLE.darkened(0.2))
+		for x: int in range(int(px.position.x) + 2, int(px.end.x), 4):
+			ci.draw_rect(Rect2(x, top, 1, px.end.y - 3 - top), C_GRILLE)
+
+
+## Fenêtre dans un mur (vue oui, passage non) : le mur, percé d'une vitre claire.
+func _window(ci: CanvasItem, rr: Rect2i) -> void:
+	var t: float = tile
+	for y: int in range(rr.position.y, rr.end.y):
+		for x: int in range(rr.position.x, rr.end.x):
+			var o: Vector2 = Vector2(x, y) * t
+			ci.draw_rect(Rect2(o, Vector2(t, t)), C_MUR_HAUT)
+			var g: Rect2 = Rect2(o, Vector2(t, t)).grow(-roundf(t * 0.22))
+			ci.draw_rect(g, Color(C_VITRE, 0.75))
+			ci.draw_rect(Rect2(g.position, Vector2(g.size.x, 1)), Color.WHITE)
+			ci.draw_rect(Rect2(Vector2(roundf(g.get_center().x), g.position.y), Vector2(1, g.size.y)), C_MUR_HAUT)
+			ci.draw_rect(Rect2(Vector2(g.position.x, roundf(g.get_center().y)), Vector2(g.size.x, 1)), C_MUR_HAUT)
+
+
+## Marqueurs des lampadaires (poteau, lanterne, portée de la lumière en pointillés) et des
+## disjoncteurs (boîtier gris avec un éclair, sur le mur indiqué).
+func _draw_marks(ci: CanvasItem) -> void:
+	var t: float = tile
+	for l: Dictionary in lampadaires:
+		var c: Vector2 = center(l["pos"]).round()
+		var rad: float = float(l["rayon"]) * t
+		for k: int in 32:
+			var a: float = TAU * float(k) / 32.0
+			ci.draw_rect(Rect2((c + Vector2.from_angle(a) * rad).round(), Vector2(1, 1)), Color(C_LAMPE, 0.35))
+		ci.draw_rect(Rect2(c + Vector2(-3, 4), Vector2(6, 2)), BkDraw.INK)
+		ci.draw_rect(Rect2(c + Vector2(-1, -18), Vector2(2, 22)), Color("3a3f52"))
+		ci.draw_rect(Rect2(c + Vector2(-4, -24), Vector2(8, 7)), BkDraw.INK)
+		ci.draw_rect(Rect2(c + Vector2(-3, -23), Vector2(6, 5)), C_LAMPE)
+	for d: Dictionary in disjoncteurs:
+		var c2: Vector2 = (center(d["pos"]) + Vector2(d["mur"]) * t * 0.5).round()
+		var b: Rect2 = Rect2(c2 - Vector2(5, 7), Vector2(10, 12))
+		ci.draw_rect(b, BkDraw.INK)
+		ci.draw_rect(b.grow(-1), C_DISJ)
+		ci.draw_colored_polygon(PackedVector2Array([c2 + Vector2(1, -5), c2 + Vector2(-2, 0), c2 + Vector2(0, 0),
+			c2 + Vector2(-1, 4), c2 + Vector2(2, -1), c2 + Vector2(0, -1)]), C_LAMPE.darkened(0.1))
+		BkDraw.texte(ci, c2 + Vector2(0, -10), str(d["secteur"]), 8, Color(1, 1, 1, 0.8), 2, 40)

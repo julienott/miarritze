@@ -1,7 +1,8 @@
 extends SceneTree
 ## Tests headless de Blackout : détection progressive (jauge, seuils), ressenti du chassé, mesures
 ## de tension (frôlements, vu puis perdu), une partie IA contre IA courte, et la partie en N rounds
-## (tirage en sac, versus, podium), la partie rapide (réglages → règles) et le profil (persistance).
+## (tirage en sac, versus, podium), la partie rapide (réglages → règles), le profil (persistance),
+## la carte bac à sable (cases de vue et de passage), les persos en pixel art (planches et repli).
 ## godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd [-- --only=nom]
 
 const GAME: String = "res://src/blackout/bk_game.tscn"
@@ -27,7 +28,8 @@ func _run() -> void:
 	var tests: Array[Callable] = [test_jauge_remplissage, test_jauge_decroissance, test_jauge_sans_detection,
 		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus, test_vue_objet_bas,
 		test_options_partie, test_partie_ia_courte, test_rounds_pour, test_sac, test_versus_saute_en_ia,
-		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo, test_parc_mazon, test_plage, test_port_v3]
+		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo, test_roster,
+		test_persos_px32, test_cases_vue_passage, test_bac_a_sable, test_regles_carte]
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
 			continue
@@ -178,8 +180,13 @@ func test_frisson_local() -> void:
 
 # ------------------------------------------------------------------ mesures de tension
 
+## Case du chasseur des tests (carte bac à sable) : au milieu de la Place, une ligne dégagée d'au moins
+## 8 cases devant lui, vers l'est.
+const CHASSEUR: Vector2i = Vector2i(24, 12)
+
+
 ## Partie posée sur la carte, sans boucle de jeu : on place les acteurs et on appelle la capture et
-## les mesures à la main. Chasseur = acteur 0 en (36, 17) regardant vers l'est, place du fronton.
+## les mesures à la main. Chasseur = acteur 0 en CHASSEUR regardant vers l'est.
 func make_game() -> BkGame:
 	var game: BkGame = (load(GAME) as PackedScene).instantiate()
 	BkGame.config["players"] = 3
@@ -197,13 +204,18 @@ func make_game() -> BkGame:
 		a.position = Vector2(-5000, -5000)
 	game._st.merge(BkGame.tension_keys(), true)
 	game._tens.clear()
-	game.hunter.position = tile_pos(game, 36, 17)
+	game.hunter.position = tile_pos(game, CHASSEUR.x, CHASSEUR.y)
 	game.hunter.look = 0.0
 	return game
 
 
 func tile_pos(game: BkGame, x: float, y: float) -> Vector2:
 	return Vector2(x + 0.5, y + 0.5) * game.map.tile
+
+
+## Case à `k` cases devant le chasseur des tests.
+func devant(game: BkGame, k: float) -> Vector2:
+	return tile_pos(game, CHASSEUR.x + k, CHASSEUR.y)
 
 
 ## `secs` s de jeu : capture puis mesures (comme dans _physics_process).
@@ -249,7 +261,7 @@ func test_vu_perdu() -> void:
 	BkRules._data["idee_detection"] = 1.0
 	var game: BkGame = await make_game()
 	var h: BkActor = game.actors[1]
-	h.position = tile_pos(game, 41, 17)                 # devant, à 5 cases
+	h.position = devant(game, 5)                 # devant, à 5 cases
 	check(game.sees(game.hunter, h.position, h.radius), "précondition : vu devant")
 	tick(game, 0.4)
 	check(h.role == BkActor.Role.HIDER and h.gauge > BkRules.f("detection_doute"), "jauge entamée, pas encore trouvé (%.2f)" % h.gauge)
@@ -291,7 +303,7 @@ func test_poursuite() -> void:
 	var h: BkActor = game.actors[1]
 	var base_h: float = h.speed()
 	var base_c: float = game.hunter.speed()
-	h.position = tile_pos(game, 41, 17)
+	h.position = devant(game, 5)
 	tick(game, 0.1)
 	check(h.chase_left == 0.0, "pas de poursuite avant le « ? »")
 	tick(game, 0.25)
@@ -319,11 +331,11 @@ func test_poursuite_tous_vus() -> void:
 		var game: BkGame = await make_game()
 		var h1: BkActor = game.actors[1]
 		var h2: BkActor = game.actors[2]
-		h1.position = tile_pos(game, 41, 17)
+		h1.position = devant(game, 5)
 		h2.position = game.hunter.position + Vector2(-6.0 * game.map.tile, 0)    # dans son dos
 		tick(game, 0.35)
 		check(h1.chase_left > 0.0 and h2.chase_left == 0.0, "seul le chassé vu part en poursuite")
-		h2.position = tile_pos(game, 43, 17)                                      # entre dans le champ
+		h2.position = devant(game, 7)                                      # entre dans le champ
 		tick(game, DT)
 		if tous > 0.5:
 			check(h2.chase_left > 0.0, "tous_vus : le chassé qui entre dans le champ en profite aussi")
@@ -360,192 +372,21 @@ func test_partie_ia_courte() -> void:
 	await free_game(game)
 
 
-## Parc Mazon (tools/blackout/make_parc_mazon.py) : sélectionnable, tout le sol atteignable, cachettes
-## accessibles, 3 sorties, décor posé (placeholders et images du port) avec ses formes ; deux rounds IA.
-func test_parc_mazon() -> void:
-	var ids: Array = load("res://src/blackout/menus/bk_partie_rapide.gd").CARTES.map(func(c: Array) -> String: return str(c[0]))
-	check(ids.has("parc_mazon"), "Parc Mazon dans le sélecteur de la partie rapide")
-	BkRules._data["phase_draw"] = 0.5
-	BkRules._data["phase_hide"] = 3.0
-	BkRules._data["phase_hunt"] = 25.0
-	BkRules._data["phase_end"] = 0.5
-	BkRules._data["exits_open_at"] = 10.0
-	BkGame.config["players"] = 6
-	BkGame.config["map"] = "parc_mazon"
-	var game: BkGame = (load(GAME) as PackedScene).instantiate()
-	game._bots_only = true
-	game._stats = true
-	root.add_child(game)
-	await physics_frame
-	var m: BkMap = game.map
-	check(m.map_id == "parc_mazon" and m.zones.size() >= 14, "carte et zones chargées")
-	var start: Vector2i = m.spawns[0]
-	var n_walk: int = 0
-	var reach: int = 0
-	for y: int in m.height:
-		for x: int in m.width:
-			if m.walkable(Vector2i(x, y)):
-				n_walk += 1
-				if not m.path(m.center(start), m.center(Vector2i(x, y))).is_empty():
-					reach += 1
-	check(n_walk > 0 and reach == n_walk, "tout le sol atteignable (%d / %d)" % [reach, n_walk])
-	check(m.cachettes.size() >= 20, "au moins 20 cachettes (%d)" % m.cachettes.size())
-	for c: Vector2i in m.cachettes:
-		var free: int = 0
-		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-			free += int(m.walkable(c + d))
-		check(free >= 2, "cachette %s : au moins deux côtés libres" % c)
-	check(m.exit_groups.size() == 3, "trois sorties (%d)" % m.exit_groups.size())
-	var shaped: int = 0
-	for inst: Dictionary in m.decor.instances:
-		shaped += int(inst.has("polys"))
-	if decor_livre(): check(m.decor.instances.size() > 100 and shaped > 60, "décor posé avec ses formes (%d objets, %d formes)" % [m.decor.instances.size(), shaped])
-	var frames: int = 0
-	while game.round_no < 3 and frames < 60 * 90:
-		await physics_frame
-		frames += 1
-	check(game.round_no >= 3, "deux rounds IA joués sur le parc (%d images)" % frames)
-	await free_game(game)
-
-
-## Plage de la Côte des Basques (tools/blackout/make_plage.py) : sélectionnable, tout le sol atteignable,
-## cachettes accessibles, 4 sorties, chaque objet posé avec son image (provisoires et images du port) et
-## une forme, grottes et tunnels sombres (vue réduite seulement avec idee_grottes) ; deux rounds IA.
-func test_plage() -> void:
-	var ids: Array = load("res://src/blackout/menus/bk_partie_rapide.gd").CARTES.map(func(c: Array) -> String: return str(c[0]))
-	check(ids.has("plage"), "Plage dans le sélecteur de la partie rapide")
-	BkRules._data["phase_draw"] = 0.5
-	BkRules._data["phase_hide"] = 3.0
-	BkRules._data["phase_hunt"] = 25.0
-	BkRules._data["phase_end"] = 0.5
-	BkRules._data["exits_open_at"] = 10.0
-	BkGame.config["players"] = 6
-	BkGame.config["map"] = "plage"
-	var game: BkGame = (load(GAME) as PackedScene).instantiate()
-	game._bots_only = true
-	game._stats = true
-	root.add_child(game)
-	await physics_frame
-	var m: BkMap = game.map
-	check(m.map_id == "plage" and m.zones.size() >= 14, "carte et zones chargées")
-	var start: Vector2i = m.spawns[0]
-	var n_walk: int = 0
-	var reach: int = 0
-	for y: int in m.height:
-		for x: int in m.width:
-			if m.walkable(Vector2i(x, y)):
-				n_walk += 1
-				if not m.path(m.center(start), m.center(Vector2i(x, y))).is_empty():
-					reach += 1
-	check(n_walk > 0 and reach == n_walk, "tout le sol atteignable (%d / %d)" % [reach, n_walk])
-	check(m.cachettes.size() >= 16, "au moins 16 cachettes (%d)" % m.cachettes.size())
-	for c: Vector2i in m.cachettes:
-		var free: int = 0
-		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-			free += int(m.walkable(c + d))
-		check(free >= 2, "cachette %s : au moins deux côtés libres" % c)
-		if decor_livre(): check(m.decor.has_image_at(c), "cachette %s : dessinée" % c)
-	check(m.exit_groups.size() == 4, "quatre sorties possibles (%d)" % m.exit_groups.size())
-	var objets: Array = m.info.get("objets", [])
-	var shaped: int = 0
-	for inst: Dictionary in m.decor.instances:
-		shaped += int(inst.has("polys"))
-	if decor_livre(): check(m.decor.instances.size() == objets.size(), "chaque objet posé a son image (%d / %d)" % [m.decor.instances.size(), objets.size()])
-	if decor_livre(): check(shaped > 60, "formes des objets calculées (%d)" % shaped)
-	# Grottes : cases sombres, vue réduite seulement avec idee_grottes.
-	var cave: Vector2i = Vector2i(20, 4)
-	check(m.dark.has(cave) and not m.dark.has(start), "grotte sombre, plage claire")
-	var h: BkActor = game.actors[0]
-	h.position = m.center(cave)
-	var full: float = BkRules.px("cone_range")
-	check(is_equal_approx(game.sight_range(h, m.center(cave + Vector2i(2, 0))), full), "sans idee_grottes : vue entière")
-	BkRules._data["idee_grottes"] = 1.0
-	check(game.sight_range(h, m.center(cave + Vector2i(2, 0))) < full, "idee_grottes : vue réduite dans la grotte")
-	h.position = m.center(start)
-	check(is_equal_approx(game.sight_range(h, m.center(start + Vector2i(3, 0))), full), "idee_grottes : vue entière au soleil")
-	BkRules._data["idee_grottes"] = 0.0
-	var frames: int = 0
-	while game.round_no < 3 and frames < 60 * 90:
-		await physics_frame
-		frames += 1
-	check(game.round_no >= 3, "deux rounds IA joués sur la plage (%d images)" % frames)
-	await free_game(game)
-
-
-## Port des Pêcheurs v3 (tools/blackout/make_port_v3.py, carte par défaut) : tout le sol atteignable,
-## cachettes à deux côtés libres au moins, 4 sorties possibles, décor imposé posé avec ses images et
-## ses formes, ornements de decor.json ; deux rounds IA.
-func test_port_v3() -> void:
-	BkRules._data["phase_draw"] = 0.5
-	BkRules._data["phase_hide"] = 3.0
-	BkRules._data["phase_hunt"] = 25.0
-	BkRules._data["phase_end"] = 0.5
-	BkRules._data["exits_open_at"] = 10.0
-	BkGame.config["players"] = 6
-	BkGame.config["map"] = "port_pecheurs"
-	var game: BkGame = (load(GAME) as PackedScene).instantiate()
-	game._bots_only = true
-	game._stats = true
-	root.add_child(game)
-	await physics_frame
-	var m: BkMap = game.map
-	check(m.map_id == "port_pecheurs" and m.zones.size() == 14 and int(m.info.get("version", 0)) == 3,
-		"carte v3 et ses 14 zones")
-	var start: Vector2i = m.spawns[0]
-	var n_walk: int = 0
-	var reach: int = 0
-	for y: int in m.height:
-		for x: int in m.width:
-			if m.walkable(Vector2i(x, y)):
-				n_walk += 1
-				if not m.path(m.center(start), m.center(Vector2i(x, y))).is_empty():
-					reach += 1
-	check(n_walk > 0 and reach == n_walk, "tout le sol atteignable (%d / %d)" % [reach, n_walk])
-	check(m.cachettes.size() >= 16, "au moins 16 cachettes (%d)" % m.cachettes.size())
-	for c: Vector2i in m.cachettes:
-		var free: int = 0
-		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-			free += int(m.walkable(c + d))
-		check(free >= 2, "cachette %s : au moins deux côtés libres" % c)
-	check(m.exit_groups.size() == 4, "quatre sorties possibles (%d)" % m.exit_groups.size())
-	# Toutes les images sont livrées (21/10) : chaque objet posé a son image (ou, à défaut, son
-	# provisoire dessiné par le code), et la grande majorité une forme (emprise, masque).
-	var with_img: int = 0
-	var prov: int = 0
-	var shaped: int = 0
-	for inst: Dictionary in m.decor.instances:
-		prov += int(inst.get("provisoire", false))
-		with_img += int(inst.get("sprite") != null)
-		shaped += int(inst.has("polys"))
-	if decor_livre(): check(with_img + prov == m.decor.instances.size() and with_img >= 120,
-		"objets posés avec leur image (%d images, %d provisoires)" % [with_img, prov])
-	if decor_livre(): check(shaped >= 100, "formes des objets (%d)" % shaped)
-	if decor_livre(): check(m.decor._ornaments.size() >= 50, "ornements de decor.json (%d)" % m.decor._ornaments.size())
-	check(is_equal_approx(BkRules.f("exits_open_at"), 110.0), "réglage propre à la carte : sorties à 110 s")
-	var frames: int = 0
-	while game.round_no < 3 and frames < 60 * 90:
-		await physics_frame
-		frames += 1
-	check(game.round_no >= 3, "deux rounds IA joués sur le port (%d images)" % frames)
-	await free_game(game)
-	check(is_equal_approx(BkRules.f("exits_open_at"), 10.0), "réglage de la carte retiré à la fin de la partie")
-
-
 ## Vue du chasseur (#607) : la ligne de l'œil vers les pieds passe sous un objet bas posé juste devant
 ## le chassé, celle vers la tête au-dessus ; un objet plus haut que l'œil cache tout.
 func test_vue_objet_bas() -> void:
 	var d: BkDecor = BkDecor.new()
 	var box: PackedVector2Array = PackedVector2Array([Vector2(280, -20), Vector2(320, -20), Vector2(320, 20), Vector2(280, 20)])
-	d.instances = [{"polys": [box], "poly_bb": Rect2(280, -20, 40, 40), "view_h": 0.6 * BkPerso.HEIGHT_PX}]
+	d.instances = [{"polys": [box], "poly_bb": Rect2(280, -20, 40, 40), "view_h": 0.6 * BkPerso.hauteur_px()}]
 	d.low_view = [0]
 	var eye: float = BkGame.eye_height()
 	var a: Vector2 = Vector2.ZERO
 	var b: Vector2 = Vector2(340, 0)
-	check(d.low_blocks(a, b, eye, BkRules.f("vue_pieds") * BkPerso.HEIGHT_PX), "objet bas : pieds cachés")
-	check(not d.low_blocks(a, b, eye, BkRules.f("vue_tete") * BkPerso.HEIGHT_PX), "objet bas : tête vue")
+	check(d.low_blocks(a, b, eye, BkRules.f("vue_pieds") * BkPerso.hauteur_px()), "objet bas : pieds cachés")
+	check(not d.low_blocks(a, b, eye, BkRules.f("vue_tete") * BkPerso.hauteur_px()), "objet bas : tête vue")
 	check(not d.low_blocks(a, Vector2(0, 300), eye, 0.0), "ligne qui ne traverse pas l'objet : rien de caché")
 	d.instances[0]["view_h"] = eye + 1.0
-	check(d.low_blocks(a, b, eye, BkRules.f("vue_tete") * BkPerso.HEIGHT_PX), "objet plus haut que l'œil : tête cachée")
+	check(d.low_blocks(a, b, eye, BkRules.f("vue_tete") * BkPerso.hauteur_px()), "objet plus haut que l'œil : tête cachée")
 	check(BkRules.f("vue_oeil") >= BkRules.f("vue_tete"), "l'œil du chasseur est au moins à hauteur de tête")
 	d.free()
 
@@ -678,12 +519,12 @@ func test_partie_rapide_options() -> void:
 	check(int(choix["rounds"]) == int(BkRules.f("rounds_max")), "rounds bornés")
 	ecran.regler_option("idee_gateaux", 0.0)
 	ecran.regler_option("gateaux_nombre", 99.0)
-	ecran.regler_option("chatouille_duree", 2.5)
+	ecran.regler_option("delivrance_temps", 2.5)
 	BkGame.config["visite"] = "chasse"
 	ecran.preparer()
 	check(not BkRules.on("idee_gateaux"), "option coupée dans la partie")
 	check(near(BkRules.f("gateaux_nombre"), 8.0, 1e-4), "curseur borné à son max")
-	check(near(BkRules.f("chatouille_duree"), 2.5, 1e-4), "curseur posé sur rules.json")
+	check(near(BkRules.f("delivrance_temps"), 2.5, 1e-4), "curseur posé sur rules.json")
 	check(int(BkGame.config["players"]) == 5 and int(BkGame.config["rounds"]) == int(BkRules.f("rounds_max")),
 		"joueurs et rounds dans la config de la partie")
 	check(str(BkGame.config["visite"]) == "", "une partie rapide n'est jamais une visite")
@@ -694,8 +535,9 @@ func test_partie_rapide_options() -> void:
 
 # ------------------------------------------------------------------ profil
 
-## Le profil garde perso, couleur et emote (relu depuis user://profiles.json) ; les anciens profils
-## reçoivent leurs champs Blackout. Le fichier du joueur est remis tel quel à la fin.
+## Le profil garde le perso (relu depuis user://profiles.json), rien d'autre (GDD §7.1) ; les anciens
+## profils (Borroka, ou Blackout avec couleur et emote) se chargent toujours. Le fichier du joueur est
+## remis tel quel à la fin.
 func test_profil_persiste() -> void:
 	await process_frame
 	var p: Node = root.get_node("/root/Profiles")
@@ -706,26 +548,26 @@ func test_profil_persiste() -> void:
 	p.profiles.clear()
 	p.active_index = -1
 	check(BkProfil.creer("Lea") == "", "profil créé")
-	BkProfil.regler(BkProfil.PERSO, "maia")
-	BkProfil.regler(BkProfil.COULEUR, 7)
-	BkProfil.regler(BkProfil.EMOTE, 4)
+	BkProfil.regler(BkProfil.PERSO, "itsasargi")
 	p._load()
-	check(BkProfil.perso() == "maia" and BkProfil.couleur() == 7 and BkProfil.emote() == 4,
-		"perso, couleur et emote relus du fichier (%s, %d, %d)" % [BkProfil.perso(), BkProfil.couleur(), BkProfil.emote()])
+	check(BkProfil.perso() == "itsasargi", "perso relu du fichier (%s)" % BkProfil.perso())
+	check(not BkProfil.actif().has("gk_couleur") and not BkProfil.actif().has("gk_emote"), "ni couleur ni emote")
 	check(not BkProfil.actif().has("group_code") or str(BkProfil.actif()["group_code"]) == "", "aucun code de groupe")
 	check(BkProfil.creer("lea") != "", "même pseudo refusé sur l'appareil")
-	# Ancien profil de Borroka, sans champs Blackout.
+	# Ancien profil de Borroka, et profil Blackout d'avant le 22/10 (couleur, emote) : ils se chargent.
 	p.profiles.append({"pseudo": "Ancien", "fighter": "txomin"})
+	p.profiles.append({"pseudo": "Avant", "gk_perso": "maia", "gk_couleur": 7, "gk_emote": 4})
 	p.save()
 	p._load()
 	BkProfil.migrer()
-	var ancien: Dictionary = p.profiles[1]
-	check(str(ancien.get(BkProfil.PERSO, "")) == "txomin", "migration : le perso de Borroka est gardé")
-	check(ancien.has(BkProfil.COULEUR) and int(ancien[BkProfil.COULEUR]) != 7, "migration : une couleur libre")
-	check(int(ancien.get(BkProfil.EMOTE, -1)) == 0, "migration : première emote")
+	check(p.profiles.size() == 3, "trois profils relus (%d)" % p.profiles.size())
+	check(str(p.profiles[1].get(BkProfil.PERSO, "")) == "txomin", "migration : le perso de Borroka est gardé")
+	check(str(p.profiles[2].get(BkProfil.PERSO, "")) == "maia", "profil d'avant : son perso est gardé")
+	p.select(2)
 	BkProfil.vers_partie()
-	check(str(BkGame.config["character"]) == "maia" and int(BkGame.config["color"]) == 7 and str(BkGame.config["name"]) == "Lea",
+	check(str(BkGame.config["character"]) == "maia" and str(BkGame.config["name"]) == "Avant",
 		"le profil actif joue la partie")
+	check(not BkGame.config.has("color") and not BkGame.config.has("emote"), "la partie n'a ni couleur ni emote")
 	# Remise en état.
 	p.profiles = profils
 	p.active_index = actif
@@ -753,3 +595,167 @@ func test_pseudo() -> void:
 ## les vérifications d'images ne valent que lorsque le nouveau décor est livré.
 func decor_livre() -> bool:
 	return FileAccess.file_exists("res://assets/blackout/decor/index.json")
+
+
+# ------------------------------------------------------------------ roster, persos, carte bac à sable
+
+## 13 persos (GDD §8.2), Itsasargi compris, un nom pour chacun ; plus de couleurs de joueur.
+func test_roster() -> void:
+	var chars: Array = BkRules.data().get("characters", [])
+	var noms: Array = BkRules.data().get("bot_names", [])
+	check(chars.size() == 13 and chars.has("itsasargi"), "13 persos dont Itsasargi (%d)" % chars.size())
+	check(noms.size() == chars.size(), "un nom par perso")
+	check(not BkRules.data().has("colors") and not BkRules.data().has("color_names"), "plus de couleurs de joueur")
+	check(not BkRules.data().has("idee_chatouille") and not BkRules.data().has("emote_duration"),
+		"ni chatouille ni emotes dans les règles")
+	for o: Dictionary in BkRules.options_partie():
+		check(str(o.get("id", "")) != "chatouille", "plus d'option chatouille")
+	var couleurs: Dictionary = BkRules.data().get("perso_couleurs", {})
+	for c: Variant in chars:
+		check(couleurs.has(str(c)), "couleur de repli pour %s" % c)
+
+
+## Persos px32 : planches livrées lues (images, cadence, pieds), repli capsule de 64×64 (pieds à 60)
+## pour un perso ou un élément sans planche, perso de 32 px de haut.
+func test_persos_px32() -> void:
+	var a: Dictionary = BkPerso.element("louis", "idle")
+	if BkPerso.has_sheets("louis"):
+		check(not a.has("repli") and int(a["n"]) >= 1, "planche idle de Louis lue (%d images)" % int(a["n"]))
+		var cell: Vector2 = a["cell"]
+		var tex: Texture2D = a["tex"]
+		check(is_equal_approx(cell.x * float(a["n"]), float(tex.get_width())), "images × largeur = planche")
+		check(float((a["feet"] as Vector2).y) < cell.y, "pieds dans la case")
+	var r: Dictionary = BkPerso.element("perso_de_test", "run")
+	check(r.has("repli") and int(r["n"]) == 4 and (r["cell"] as Vector2) == Vector2(64, 64), "repli : course en 4 images de 64×64")
+	check((r["feet"] as Vector2).y == float(BkPerso.PIEDS_Y), "repli : pieds à y = 60")
+	var img: Image = (r["tex"] as Texture2D).get_image()
+	var haut: int = 0
+	for y: int in 64:
+		for x: int in 64:
+			if img.get_pixel(x, y).a > 0.5:
+				haut = maxi(haut, 64 - y)
+				break
+	check(haut >= 28 and haut <= 36, "repli : silhouette d'environ 32 px de haut (%d)" % haut)
+	check(BkPerso.element("perso_de_test", "lift").is_empty(), "pas de planche lift : envol fait par le code")
+	check(is_equal_approx(BkPerso.hauteur_px(), BkRules.f("tile_px")), "un perso = une case (32 px)")
+	check(int(BkRules.f("tile_px")) == 32, "cases de 32 px")
+
+
+## Types de cases (GDD §10.1, §10.2) : murs et cloisons fines bloquent vue et passage ; murets,
+## buissons, grilles et fenêtres bloquent le passage mais pas la vue ; sol meuble marchable.
+func test_cases_vue_passage() -> void:
+	var game: BkGame = await make_game()
+	var m: BkMap = game.map
+	var vus: Dictionary = {"#": false, "|": false, "-": false, "c": false, "H": false,
+		"m": true, "b": true, "g": true, "f": true, "t": true, "r": true}
+	for ch: String in vus:
+		var t: Vector2i = _case(m, ch)
+		check(t != Vector2i(-1, -1), "case « %s » présente dans le bac à sable" % ch)
+		if t == Vector2i(-1, -1):
+			continue
+		check(not m.walkable(t), "« %s » : on ne passe pas (grille A*)" % ch)
+		check(m.blocks_move(t) and m.blocks_view(t) != bool(vus[ch]), "« %s » : règle de vue" % ch)
+		# Vue réelle : une ligne qui traverse la case de part en part (le long de son axe libre).
+		var c: Vector2 = m.center(t)
+		var d: Vector2 = Vector2(m.tile, 0) if ch != "-" else Vector2(0, m.tile)
+		if ch == "|" or (ch == "g" and m.at(t + Vector2i(0, 1)) == "g") or (ch == "f" and m.at(t + Vector2i(0, 1)) == "#") \
+				or (ch == "m" and m.at(t + Vector2i(0, 1)) == "m"):
+			d = Vector2(m.tile, 0)
+		elif ch == "g" or ch == "f" or ch == "m":
+			d = Vector2(0, m.tile)
+		check(game.clear_line(c - d * 0.9, c + d * 0.9) == bool(vus[ch]), "« %s » : la vue %s" % [ch, "passe" if vus[ch] else "s'arrête"])
+		# Passage réel : un corps lancé à travers la case est arrêté.
+		var a: BkActor = game.actors[1]
+		a.set_role(BkActor.Role.HIDER)
+		a.position = c - d * 1.0
+		var arret: bool = a.test_move(a.global_transform, d * 2.0)
+		check(arret, "« %s » : un perso ne traverse pas" % ch)
+	# Cloison fine : sa forme est une bande mince (un perso s'en approche plus près qu'un mur).
+	var tc: Vector2i = _case(m, "|")
+	var bande: Rect2 = m.thin_rect(Rect2i(tc, Vector2i.ONE))
+	check(bande.size.x < m.tile * 0.5 and is_equal_approx(bande.size.y, m.tile), "cloison fine : bande mince (%s)" % bande)
+	# Sol meuble.
+	var tm: Vector2i = _case(m, ":")
+	check(m.walkable(tm) and m.meuble(tm) and not m.meuble(m.spawns[0]), "sable : sol meuble marchable")
+	await free_game(game)
+
+
+func _case(m: BkMap, ch: String) -> Vector2i:
+	for y: int in m.height:
+		for x: int in m.width:
+			if m.at(Vector2i(x, y)) == ch:
+				return Vector2i(x, y)
+	return Vector2i(-1, -1)
+
+
+## Carte bac à sable (tools/blackout/make_bac_a_sable.py), carte par défaut et seule de la partie
+## rapide : ~3 × 2 écrans, tout le sol atteignable, cachettes accessibles, 2 sorties ouvertes à chaque
+## round, un disjoncteur par secteur, lampadaires, gâteaux et mouettes à leurs places ; deux rounds IA.
+func test_bac_a_sable() -> void:
+	var cartes: Array = load("res://src/blackout/menus/bk_partie_rapide.gd").CARTES
+	var ids: Array = cartes.map(func(c: Array) -> String: return str(c[0]))
+	check(ids == ["bac_a_sable"], "partie rapide : le bac à sable seul (%s)" % str(ids))
+	check(str(BkGame.config["map"]) == "bac_a_sable", "carte par défaut : bac à sable")
+	BkRules._data["phase_draw"] = 0.5
+	BkRules._data["phase_hide"] = 3.0
+	BkRules._data["phase_hunt"] = 25.0
+	BkRules._data["phase_end"] = 0.5
+	BkRules._data["exits_open_at"] = 10.0
+	BkGame.config["players"] = 6
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
+	game._bots_only = true
+	game._stats = true
+	root.add_child(game)
+	await physics_frame
+	var m: BkMap = game.map
+	var ecran: Vector2 = Vector2(BkEchelle.taille_jeu())
+	var sz: Vector2 = m.size_px() / ecran
+	check(m.map_id == "bac_a_sable" and sz.x >= 2.5 and sz.x <= 3.5 and sz.y >= 1.8 and sz.y <= 2.5,
+		"environ 3 × 2 écrans (%.1f × %.1f)" % [sz.x, sz.y])
+	var start: Vector2i = m.spawns[0]
+	var n_walk: int = 0
+	var reach: int = 0
+	for y: int in m.height:
+		for x: int in m.width:
+			if m.walkable(Vector2i(x, y)):
+				n_walk += 1
+				if not m.path(m.center(start), m.center(Vector2i(x, y))).is_empty():
+					reach += 1
+	check(n_walk > 0 and reach == n_walk, "tout le sol atteignable (%d / %d)" % [reach, n_walk])
+	check(m.cachettes.size() >= 10, "au moins 10 cachettes (%d)" % m.cachettes.size())
+	for c: Vector2i in m.cachettes:
+		var free: int = 0
+		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			free += int(m.walkable(c + d))
+		check(free >= 2, "cachette %s : au moins deux côtés libres" % c)
+	check(m.exit_groups.size() == 2 and game.open_exit_zones.size() == 2, "2 sorties, ouvertes à chaque round (%d)" % game.open_exit_zones.size())
+	check(m.secteurs.size() == 3 and m.disjoncteurs.size() == m.secteurs.size(), "un disjoncteur par secteur")
+	for d: Dictionary in m.disjoncteurs:
+		check(m.walkable(d["pos"]) and m.at((d["pos"] as Vector2i) + (d["mur"] as Vector2i)) == "#", "disjoncteur %s contre un mur" % d["pos"])
+	check(m.lampadaires.size() >= m.secteurs.size(), "des lampadaires dans chaque secteur")
+	check(game.gateaux.size() == int(BkRules.f("gateaux_nombre")), "gâteaux posés (%d)" % game.gateaux.size())
+	for g: Dictionary in game.gateaux:
+		check(m.gateaux_places.has(m.to_tile(g["pos"])), "gâteau sur une place de la carte")
+	check(not game.mouettes.is_empty() and m.mouettes_places.has(m.to_tile(game.mouettes[0]["pos"])), "mouettes à leurs places")
+	var frames: int = 0
+	while game.round_no < 3 and frames < 60 * 90:
+		await physics_frame
+		frames += 1
+	check(game.round_no >= 3, "deux rounds IA joués sur le bac à sable (%d images)" % frames)
+	await free_game(game)
+
+
+## Réglages propres à une carte (zones.json → « regles ») : posés pour la partie, retirés après. Les
+## anciennes cartes (archivées, GDD §10.1) se chargent encore par `--bk-map`.
+func test_regles_carte() -> void:
+	BkRules._data["exits_open_at"] = 10.0
+	BkGame.config["players"] = 4
+	BkGame.config["map"] = "port_pecheurs"
+	var game: BkGame = (load(GAME) as PackedScene).instantiate()
+	game._bots_only = true
+	root.add_child(game)
+	await physics_frame
+	check(game.map.map_id == "port_pecheurs" and game.map.zones.size() == 14, "ancienne carte encore lisible")
+	check(is_equal_approx(BkRules.f("exits_open_at"), 110.0), "réglage propre à la carte : sorties à 110 s")
+	await free_game(game)
+	check(is_equal_approx(BkRules.f("exits_open_at"), 10.0), "réglage de la carte retiré à la fin de la partie")

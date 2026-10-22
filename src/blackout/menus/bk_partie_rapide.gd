@@ -1,6 +1,6 @@
 extends Control
 ## Partie rapide (GDD-BLACKOUT.md) : toi contre des IA, hors ligne. « Jouer » lance tout de suite
-## avec les défauts (6 joueurs, IA Normal, Port des Pêcheurs, rounds = nombre de joueurs, options
+## avec les défauts (6 joueurs, IA Normal, bac à sable, rounds = nombre de joueurs, options
 ## validées activées) ; « Réglages » déplie : joueurs (4 à 8), IA (Facile, Normal, Malin), carte,
 ## rounds (3 à 12 ; suivent le nombre de joueurs tant qu'on n'y a pas touché) et les options de
 ## gameplay du catalogue data/blackout/options_partie.json (on/off et curseurs bornés), posées sur
@@ -8,9 +8,9 @@ extends Control
 
 const NIVEAUX: PackedStringArray = ["facile", "normal", "malin"]
 const NOMS_NIVEAUX: PackedStringArray = ["Facile", "Normal", "Malin"]
-## Cartes jouables : [id, nom] (assets/maps/<id>/).
-const CARTES: Array = [["port_pecheurs", "Port des Pêcheurs"], ["parc_mazon", "Parc Mazon"],
-	["plage", "Côte des Basques"]]
+## Cartes jouables : [id, nom] (assets/maps/<id>/). Jalon actuel : le bac à sable seul (GDD §10.1) ;
+## Port des Pêcheurs, plage et parc Mazon sont archivés (fichiers gardés, `--bk-map=<id>` en QA).
+const CARTES: Array = [[BkGame.CARTE_DEFAUT, "Bac à sable"]]
 
 ## Réglages de la session : players, level, map, rounds, rounds_touche, options {clé: valeur}.
 static var choix: Dictionary = {}
@@ -56,7 +56,7 @@ func _ready() -> void:
 	col.alignment = BoxContainer.ALIGNMENT_CENTER
 	col.add_theme_constant_override(&"separation", 16)
 	corps.add_child(col)
-	var av: BkAvatar = BkAvatar.cree(BkProfil.perso(), BkRules.color(BkProfil.couleur()), 200)
+	var av: BkAvatar = BkAvatar.cree(BkProfil.perso(), 200)
 	av.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(av)
 	_carte = BkUi.label("", 34, BkUi.JAUNE)

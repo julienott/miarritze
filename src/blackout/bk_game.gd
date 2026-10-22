@@ -10,15 +10,11 @@ enum Phase { DRAW, HIDE, HUNT, END, PODIUM, VERSUS }
 
 const COUNT_WORDS: PackedStringArray = ["bat", "bi", "hiru", "lau", "bost", "sei", "zazpi", "zortzi",
 	"bederatzi", "hamar", "hamaika", "hamabi", "hamahiru", "hamalau", "hamabost"]
-## Emotes (GDD-BLACKOUT.md) : animation du perso, dans l'ordre des touches 1 à 6 et des bulles
-## (icônes dessinées par BkDraw.emote_icon). Permises seulement hors de l'action (`emotes_allowed`).
-const EMOTES: PackedStringArray = ["emote_salut", "emote_rire", "emote_danse", "emote_pouce",
-	"emote_chut", "emote_langue"]
 ## Tremblement d'une cachette (entrée, sortie, fouille) et frémissement quand quelqu'un est dedans.
 const SHAKE_FREQ: float = 60.0
-const SHAKE_PX: float = 4.0
+const SHAKE_PX: float = 2.0
 const SHIVER_FREQ: float = 45.0
-const SHIVER_PX: float = 1.5
+const SHIVER_PX: float = 1.0
 ## Caisse procédurale (sans image) : couvercle ouvert, en part de la hauteur de la caisse.
 const LID_K: float = 0.35
 const LID_OPEN_K: float = 0.5
@@ -45,9 +41,10 @@ const QA_GAP_S: float = 2.0
 
 ## Réglages de la partie, posés par la partie rapide et le profil (menus/bk_partie_rapide.gd,
 ## BkProfil.vers_partie) : rounds = nombre de rounds de la partie (0 : rounds_defaut de rules.json,
-## sinon un par joueur), emote = emote favorite du joueur (jouée sur le podium).
-static var config: Dictionary = {"players": 6, "level": "normal", "map": "port_pecheurs",
-	"name": "Toi", "color": 0, "rounds": 0, "emote": 0}
+## sinon un par joueur) ; carte par défaut : le bac à sable (GDD §10.1).
+const CARTE_DEFAUT: String = "bac_a_sable"
+static var config: Dictionary = {"players": 6, "level": "normal", "map": CARTE_DEFAUT,
+	"name": "Toi", "rounds": 0}
 
 var map: BkMap
 var actors: Array[BkActor] = []
@@ -91,9 +88,6 @@ var _bots_only: bool = false
 var _force_role: String = ""
 var _log: bool = false
 var _local_bot: bool = false          # QA : le joueur local est piloté par l'IA (garde son perso)
-## Affichage 3D abandonné le 2026-10-19 (archive/2026-10-22-docs-gordeka/GORDEKA_STYLE_2D.md) : 2D par défaut, `--bk-3d`
-## rouvre l'ancienne vue 3D.
-var use_3d: bool = false
 ## QA : `--bk-perso=louis` donne ce perso à tout le monde (voir ses animations sur toutes les IA).
 var _all_char: String = ""
 ## QA gameplay : niveau imposé au chasseur IA (`--bk-hunter-level=`), arrêt après N rounds
@@ -112,7 +106,6 @@ var mouettes: Array = []
 var _cake_respawn: Array[float] = []    # instants de réapparition des gâteaux mangés (idee_mouvement)
 var _last_find_t: float = 0.0
 var _noise_at: float = -100.0
-var _tickle_free_until: float = 0.0     # chasseur à l'abri des chatouilles jusqu'à cet instant (répit)
 var _rescues: int = 0                   # délivrances déjà faites ce round
 ## Mesures de tension (`--bk-stats`, archive/2026-10-22-docs-gordeka/GORDEKA_EQUILIBRAGE.md) : état par chassé (id → {…}) pour
 ## les frôlements, les « vu puis perdu », le mouvement et les changements de planque.
@@ -125,13 +118,10 @@ var last_stats: Dictionary = {}
 var hunter_alert: float = 0.0
 var alert_bang: float = 0.0
 var alert_lost: float = 0.0
-var view: BkView3D
 ## Ressenti du chassé local (idee_frisson) : battement, vignettage, vibration.
 var frisson: BkFrisson
 var _last_dt: float = 0.0
-## QA : `--bk-qa-emotes` fait enchaîner les emotes à tout le monde et ouvre l'éventail ;
-## `--bk-qa-podium` passe directement au podium.
-var _qa_emotes: bool = false
+## QA : `--bk-qa-podium` passe directement au podium.
 var _qa_podium: bool = false
 ## QA : `--bk-qa-cachette=<zone>[@t]` : des chassés entrent dans les cachettes de la zone de sorte
 ## que la capture (`--delay`) tombe `t` s après l'entrée (0,35 par défaut), ressortent QA_OUT_S s plus
@@ -161,12 +151,10 @@ var _qa_zoom: float = 0.0             # QA `--bk-qa-zoom=<z>` : zoom de la camé
 var _rafale: Array = []
 var _rafale_t: float = 0.0
 var _rafale_i: int = 0
-## Lampe du chasseur allumée pour cette manche (hunter_reveal joué en fin de phase cachée).
-var _reveal_joue: bool = false
 ## Nombre de rounds de la partie, podium ensuite (GDD-BLACKOUT.md) ; 0 = sans fin (IA contre IA
 ## sans `--bk-rounds`). Écran Versus entre le tirage et la cachette, sauté en IA contre IA, en
 ## visite et avec `--bk-sans-versus` ; versus et podium sont des écrans posés sur le calque 9, sous
-## le HUD (bouton Quitter, éventail des emotes).
+## le HUD (bouton Quitter).
 var rounds_total: int = 0
 var _sans_versus: bool = false
 var _ecrans: CanvasLayer
@@ -199,8 +187,6 @@ func _ready() -> void:
 			_sans_versus = true
 		elif arg == "--bk-local-bot":
 			_local_bot = true
-		elif arg == "--bk-3d":
-			use_3d = true
 		elif arg.begins_with("--bk-level="):
 			config["level"] = arg.trim_prefix("--bk-level=")
 		elif arg.begins_with("--bk-map="):
@@ -212,16 +198,12 @@ func _ready() -> void:
 			_hunter_level = arg.trim_prefix("--bk-hunter-level=")
 		elif arg.begins_with("--bk-rounds="):
 			_rounds_max = int(arg.trim_prefix("--bk-rounds="))
-		elif arg == "--bk-mannequin":
-			BkPerso.use_pantin = true
 		elif arg == "--bk-stats":
 			_stats = true
 		elif arg.begins_with("--bk-perso="):
 			_all_char = arg.trim_prefix("--bk-perso=")
 		elif arg == "--bk-log":
 			_log = true
-		elif arg == "--bk-qa-emotes":
-			_qa_emotes = true
 		elif arg == "--bk-qa-podium":
 			_qa_podium = true
 		elif arg.begins_with("--bk-qa-cachette="):
@@ -235,17 +217,17 @@ func _ready() -> void:
 			_force_role = arg.trim_prefix("--bk-local-role=")
 		elif arg.begins_with("--bk-qa-place="):
 			_qa_place.append(arg.trim_prefix("--bk-qa-place=").split(":"))
+	# Rendu pixel art en 640×360 (GDD §9) ; les menus repassent en 1280×720 (BkEchelle).
+	BkEchelle.jeu()
 	map = BkMap.new()
-	map.draw_2d = not use_3d
 	add_child(map)
-	map.load_map(str(config.get("map", "port_pecheurs")))
+	map.load_map(str(config.get("map", CARTE_DEFAUT)))
 	# Réglages propres à la carte (zones.json → « regles »), retirés à la sortie de la partie.
 	BkRules.surcharge_carte(map.regles)
-	if not use_3d:
-		var water: BkWater = BkWater.new()
-		water.map = map
-		map.add_child(water)
-		map.move_child(water, 0)
+	var water: BkWater = BkWater.new()
+	water.map = map
+	map.add_child(water)
+	map.move_child(water, 0)
 	for t: Vector2i in map.cachettes:
 		cachettes.append({"tile": t, "pos": map.center(t)})
 	_reset_cachettes()
@@ -256,10 +238,6 @@ func _ready() -> void:
 	add_child(people)
 	_make_actors(people)
 	_make_view()
-	if use_3d:
-		view = BkView3D.new()
-		add_child(view)
-		view.setup(self)
 	frisson = BkFrisson.new()
 	frisson.game = self
 	add_child(frisson)
@@ -272,8 +250,9 @@ func _ready() -> void:
 	hud_layer.layer = 10
 	add_child(hud_layer)
 	hud_layer.add_child(hud)
-	# Thème cartoon des menus : un Control sous un CanvasLayer n'hérite pas de celui de la fenêtre.
-	hud.theme = BkUi.theme()
+	# Thème du jeu en 640×360 (police pixel) : un Control sous un CanvasLayer n'hérite pas de celui
+	# de la fenêtre.
+	hud.theme = BkUi.theme_jeu()
 	_ecrans = CanvasLayer.new()
 	_ecrans.layer = 9
 	add_child(_ecrans)
@@ -303,12 +282,6 @@ func _make_actors(parent: Node2D) -> void:
 	for c: Variant in all_chars:
 		if BkPerso.available(str(c)):
 			drawn.append(str(c))
-	var my_color: int = int(config.get("color", 0))
-	var colors: Array[int] = []
-	for i: int in 12:
-		if i != my_color:
-			colors.append(i)
-	colors.shuffle()
 	for i: int in n:
 		var a: BkActor = BkActor.new()
 		var bot: bool = i > 0 or _bots_only or _local_bot
@@ -321,7 +294,7 @@ func _make_actors(parent: Node2D) -> void:
 			a.character = drawn[i % drawn.size()]
 		if _all_char != "":
 			a.character = _all_char
-		a.setup(i, nm, BkRules.color(my_color if i == 0 else colors[i - 1]), bot)
+		a.setup(i, nm, bot)
 		parent.add_child(a)
 		actors.append(a)
 		if bot and visite == "":
@@ -333,8 +306,8 @@ func _make_view() -> void:
 	_camera = Camera2D.new()
 	_camera.position_smoothing_enabled = true
 	_camera.position_smoothing_speed = 8.0
-	# Zoom proche d'Among Us : un personnage fait environ 1/11 de la hauteur d'écran.
-	_camera.zoom = Vector2(1.25, 1.25)
+	# Pixel art : un pixel du monde = un pixel de l'écran 640×360 (GDD §9), caméra qui suit le joueur.
+	_camera.zoom = Vector2.ONE
 	if _qa_zoom > 0.0:
 		_camera.zoom = Vector2(_qa_zoom, _qa_zoom)
 	_camera.limit_left = 0
@@ -445,7 +418,7 @@ func _start_round() -> void:
 		"trouves_apres_onde": 0, "pieges_poses": 0, "pieges_pris": 0, "trouves_apres_piege": 0,
 		"entrees_cachette": 0, "ejections_cachette": 0, "trouves_en_cachette": 0, "sorties": 0,
 		"evasions_de_vue": 0, "t_trouves": [], "lieux_trouves": [], "sorties_round": open_exit_zones.duplicate(),
-		"chatouilles": 0, "delivres": 0, "grincements": 0, "gateaux": 0, "mouettes": 0,
+		"delivres": 0, "grincements": 0, "gateaux": 0, "mouettes": 0,
 		"trouves_apres_bruit": 0, "elan_s": 0.0, "fantome_s": 0.0,
 		# Carte (tools/blackout/ab_tension.py chaleur) : présence par case (« x,y » → s, échantillon par
 		# seconde), entrées par cachette, lieux des vu-perdu et des frôlements, sorties prises.
@@ -458,7 +431,6 @@ func _start_round() -> void:
 	_trap_hit_at = -100.0
 	_last_find_t = 0.0
 	_noise_at = -100.0
-	_tickle_free_until = 0.0
 	_rescues = 0
 	_place_bonus()
 	hunter_alert = 0.0
@@ -468,7 +440,6 @@ func _start_round() -> void:
 		a2.doubted = false
 		a2.ouf_t = 0.0
 		a2.speed_mult = 1.0
-		a2.tickle_left = 0.0
 		a2.sprint_left = 0.0
 		a2.chase_left = 0.0
 		a2.chase_used = false
@@ -536,8 +507,6 @@ func _start_visite() -> void:
 	messages.clear()
 	if _visite_fantome:
 		visite_toggle_ghost()
-	if local == hunter:
-		hunter.play_once("hunter_reveal")      # la lampe s'allume, comme au début d'une chasse
 	_say("Visite %s (debug) : F formes, C perso, G fantôme" % ("du chasseur" if local == hunter else "du chassé"),
 		Color("ffd34a"), 4.0)
 
@@ -573,8 +542,6 @@ func visite_next_character() -> void:
 		var c: String = str(chars[(i + k) % chars.size()])
 		if BkPerso.available(c):
 			local.set_character(c)
-			if local == hunter:
-				local.play_once("hunter_reveal")
 			_say(c.capitalize(), Color.WHITE, 1.5)
 			return
 
@@ -694,17 +661,14 @@ func quit_to_podium() -> void:
 	for a: BkActor in actors:
 		a.frozen = true
 		a.end_pose = ""
-		a.stop_emote()
 	if _bots_only and DisplayServer.get_name() == "headless":
 		get_tree().quit()
 		return
 	podium = BkPodium.new()
 	podium.game = self
 	podium.theme = BkUi.theme()
+	BkEchelle.menus()
 	_ecrans.add_child(podium)
-	# Le joueur local fait son emote favorite en montant sur le podium.
-	if not local.is_bot:
-		emote(local, int(config.get("emote", 0)))
 
 
 func go_menu() -> void:
@@ -719,6 +683,8 @@ func _ouvrir_versus() -> void:
 	versus.game = self
 	versus.theme = BkUi.theme()
 	versus.duree = phase_t
+	# Versus et podium sont des écrans de menu (1280×720, BkUi) posés sur la partie.
+	BkEchelle.menus()
 	_ecrans.add_child(versus)
 
 
@@ -726,6 +692,7 @@ func _fermer_versus() -> void:
 	if versus != null:
 		versus.queue_free()
 		versus = null
+		BkEchelle.jeu()
 
 
 ## Fin du tirage ou du versus : les chassés filent se cacher, le chasseur compte.
@@ -735,7 +702,6 @@ func _debut_cachette() -> void:
 	phase_t = BkRules.f("phase_hide")
 	for a: BkActor in actors:
 		a.frozen = a == hunter
-	_reveal_joue = false
 	_say("Cachez-vous !" if local != hunter else "Compte jusqu'à quinze…", Color.WHITE, 2.0)
 
 
@@ -745,7 +711,6 @@ func _physics_process(dt: float) -> void:
 	if not _rafale.is_empty():
 		_qa_rafale(dt)
 	_last_dt = dt
-	_update_emotes(dt)
 	if _qa_cachette != "":
 		_qa_cachettes(dt)
 	if phase == Phase.PODIUM:
@@ -763,19 +728,10 @@ func _physics_process(dt: float) -> void:
 			if phase_t <= 0.0:
 				_debut_cachette()
 		Phase.HIDE:
-			# Le chasseur allume sa lampe juste avant d'être lâché, encore figé (anim_reveal_avance) :
-			# le geste se joue en entier, sans glisser sous ses pieds quand il part.
-			if not _reveal_joue and BkRules.f("anim_reveal_avance") > 0.5 \
-					and phase_t <= hunter.once_length("hunter_reveal"):
-				_reveal_joue = true
-				hunter.play_once("hunter_reveal")
 			if phase_t <= 0.0:
 				phase = Phase.HUNT
 				phase_t = BkRules.f("phase_hunt")
 				hunter.frozen = false
-				if not _reveal_joue:
-					hunter.play_once("hunter_reveal")
-				_reveal_joue = true
 				_say("Le chasseur arrive !", Color("ff3b30"), 2.0)
 		Phase.HUNT:
 			hunt_elapsed += dt
@@ -899,45 +855,6 @@ func action_cooldown(a: BkActor) -> float:
 	return 0.0
 
 
-# ---------------------------------------------------------------- emotes
-
-## Emotes seulement hors de l'action : au tirage, sur le podium, ou fantôme ou échappé.
-## Jamais en jeu actif, pour ne pas tricher ni gêner la cachette (Julien, 2026-10-19).
-func emotes_allowed(a: BkActor) -> bool:
-	return phase == Phase.DRAW or phase == Phase.PODIUM or a.role == BkActor.Role.GHOST \
-		or a.role == BkActor.Role.OUT
-
-
-## Lance l'emote `i` : geste du perso et bulle d'icône au-dessus de sa tête.
-func emote(a: BkActor, i: int) -> void:
-	if i < 0 or i >= EMOTES.size() or not emotes_allowed(a):
-		return
-	if a.emote_t > BkRules.f("emote_duration") - BkRules.f("emote_gap"):
-		return
-	a.emote = i
-	a.emote_t = BkRules.f("emote_duration")
-	a.play_once(EMOTES[i])
-
-
-func _update_emotes(dt: float) -> void:
-	input.emotes_enabled = emotes_allowed(local) and (not local.is_bot or _qa_emotes)
-	if _qa_emotes and input.emotes_enabled:
-		input.wheel_open = true
-	for a: BkActor in actors:
-		if a.emote_t > 0.0 and not emotes_allowed(a):
-			a.stop_emote()
-		a.emote_t = maxf(0.0, a.emote_t - dt)
-		var e: int = -1
-		if a == local and not a.is_bot:
-			e = input.take_emote()
-		elif brains.has(a.id):
-			e = (brains[a.id] as BkAi).want_emote(dt)
-		if _qa_emotes and a.emote_t <= 0.0:
-			e = (a.id + round_no) % EMOTES.size()
-		if e >= 0:
-			emote(a, e)
-
-
 func _hiders_left() -> int:
 	return actors.filter(func(a: BkActor) -> bool: return a.role == BkActor.Role.HIDER).size()
 
@@ -971,7 +888,7 @@ func sight_fraction(h: BkActor, p: Vector2, r: float, all_rays: bool = true) -> 
 	var screen: bool = map.decor != null and d > BkRules.px("masque_vue_portee") + r
 	var hidden_lv: Array[bool] = []
 	for lv: float in levels:
-		hidden_lv.append(screen and map.decor.covered_at(p, lv * BkPerso.HEIGHT_PX))
+		hidden_lv.append(screen and map.decor.covered_at(p, lv * BkPerso.hauteur_px()))
 	var side: Vector2 = v.orthogonal().normalized() * r * 0.8
 	var n: int = 0
 	var total: int = 0
@@ -981,7 +898,7 @@ func sight_fraction(h: BkActor, p: Vector2, r: float, all_rays: bool = true) -> 
 			total += 1
 			if not clear or hidden_lv[k]:
 				continue
-			if map.decor and map.decor.low_blocks(h.position, target, eye, levels[k] * BkPerso.HEIGHT_PX):
+			if map.decor and map.decor.low_blocks(h.position, target, eye, levels[k] * BkPerso.hauteur_px()):
 				continue
 			n += 1
 			if not all_rays:
@@ -991,7 +908,7 @@ func sight_fraction(h: BkActor, p: Vector2, r: float, all_rays: bool = true) -> 
 
 ## Hauteur de l'œil du chasseur (px au-dessus du pied) : vue_oeil × hauteur d'un perso.
 static func eye_height() -> float:
-	return BkRules.f("vue_oeil") * BkPerso.HEIGHT_PX
+	return BkRules.f("vue_oeil") * BkPerso.hauteur_px()
 
 
 ## Portée du cône du chasseur vers `p` (px) : `grotte_portee` cases au plus dans le noir (`idee_grottes`),
@@ -1541,6 +1458,19 @@ func _place_bonus() -> void:
 		return
 	var spawn: Vector2 = map.center(map.spawns[0]) if not map.spawns.is_empty() else map.size_px() * 0.5
 	var taken: Array[Vector2] = []
+	# Places prévues par la carte (zones.json → « gateaux », « mouettes ») : tirées au hasard parmi elles.
+	var pg: Array[Vector2i] = map.gateaux_places.duplicate()
+	var pm: Array[Vector2i] = map.mouettes_places.duplicate()
+	pg.shuffle()
+	pm.shuffle()
+	while gateaux.size() < want_g and not pg.is_empty():
+		gateaux.append({"pos": map.center(pg.pop_back())})
+	while mouettes.size() < want_m and not pm.is_empty():
+		mouettes.append({"pos": map.center(pm.pop_back()), "away": 0.0, "fly": 0.0})
+	for g: Dictionary in gateaux:
+		taken.append(g["pos"])
+	for m: Dictionary in mouettes:
+		taken.append(m["pos"])
 	for tries: int in 40:
 		if gateaux.size() >= want_g and mouettes.size() >= want_m:
 			break
@@ -1575,6 +1505,22 @@ func _bonus_spot(taken: Array[Vector2], away: Vector2) -> Vector2:
 	return Vector2.INF
 
 
+## Place prévue par la carte pour un gâteau qui réapparaît : libre, la plus loin du chasseur ;
+## Vector2.INF si la carte n'en prévoit pas ou si toutes sont prises.
+func _cake_place(taken: Array[Vector2]) -> Vector2:
+	var best: Vector2 = Vector2.INF
+	var bd: float = -1.0
+	for c: Vector2i in map.gateaux_places:
+		var p: Vector2 = map.center(c)
+		if taken.has(p):
+			continue
+		var d: float = p.distance_to(hunter.position)
+		if d > bd:
+			bd = d
+			best = p
+	return best
+
+
 ## Un bruit (cachette qui grince, mouettes qui s'envolent) : le chasseur IA l'entend s'il est à
 ## portée ; un chasseur humain le voit sur son écran (dessiné dans le calque du monde).
 func _noise(pos: Vector2, stat: String) -> void:
@@ -1587,19 +1533,6 @@ func _noise(pos: Vector2, stat: String) -> void:
 
 
 func _update_ideas(dt: float) -> void:
-	# Chatouille : un fantôme qui touche le chasseur le fait rire, et il ralentit un instant.
-	if BkRules.on("idee_chatouille") and not hunter.frozen:
-		for a: BkActor in actors:
-			if a.role == BkActor.Role.GHOST and a.power_cd <= 0.0 and hunt_elapsed >= _tickle_free_until \
-					and a.position.distance_to(hunter.position) < BkRules.px("chatouille_portee"):
-				a.power_cd = BkRules.f("chatouille_cooldown")
-				hunter.tickle_left = BkRules.f("chatouille_duree")
-				_tickle_free_until = hunt_elapsed + BkRules.f("chatouille_repit")
-				_give(a, BkRules.score("ghost_tickle"))
-				_say("Tu chatouilles le chasseur !" if a == local else "%s chatouille le chasseur !" % a.display_name,
-					Color("ffd34a"), 1.6)
-				if _stats:
-					_st["chatouilles"] += 1
 	# Délivrance : un chassé libre et hors de vue reste près d'un fantôme, qui revient en jeu.
 	if BkRules.on("idee_delivrance") and _rescues < int(BkRules.f("delivrance_max")):
 		for gh: BkActor in actors:
@@ -1637,7 +1570,9 @@ func _update_ideas(dt: float) -> void:
 		var taken: Array[Vector2] = []
 		for g3: Dictionary in gateaux:
 			taken.append(g3["pos"])
-		var p: Vector2 = _bonus_spot(taken, hunter.position)
+		var p: Vector2 = _cake_place(taken)
+		if p == Vector2.INF:
+			p = _bonus_spot(taken, hunter.position)
 		if p != Vector2.INF:
 			_cake_respawn.pop_front()
 			gateaux.append({"pos": p})
@@ -1800,22 +1735,12 @@ func _update_view() -> void:
 			a.shown = show
 			a.queue_redraw()
 	_camera.position = local.position
-	if use_3d:
-		view.refresh(_last_dt)
-		for a: BkActor in actors:
-			a.draw_2d = false
-		_dark.color = Color.WHITE
-		for l: PointLight2D in [_cone_light, _near_light, _cone_light_decor, _near_light_decor]:
-			l.enabled = false
-	else:
-		_overlay.queue_redraw()
+	_overlay.queue_redraw()
 	hud.queue_redraw()
 
 
-## Position à l'écran d'un point du jeu (HUD), en 2D comme en 3D.
-func screen_pos(p: Vector2, height: float = 0.0) -> Vector2:
-	if use_3d:
-		return view.screen_pos(p, height)
+## Position à l'écran d'un point du jeu (HUD).
+func screen_pos(p: Vector2) -> Vector2:
 	return get_viewport().get_canvas_transform() * p
 
 
@@ -1839,85 +1764,85 @@ func _ray_end(a: Vector2, b: Vector2) -> Vector2:
 
 func _draw_overlay(ci: CanvasItem) -> void:
 	var as_hunter: bool = local == hunter and phase != Phase.END and phase != Phase.PODIUM
-	var font: Font = ThemeDB.fallback_font
+	var t: float = map.tile
 	# Sorties : grisées tant qu'elles sont fermées.
 	var open: bool = exits_open()
 	for r: Rect2i in _open_exit_rects():
-		var px: Rect2 = Rect2(Vector2(r.position) * map.tile, Vector2(r.size) * map.tile)
+		var px: Rect2 = Rect2(Vector2(r.position) * t, Vector2(r.size) * t)
 		ci.draw_rect(px, Color(0.3, 0.9, 0.45, 0.35) if open else Color(0.4, 0.4, 0.4, 0.25))
-		ci.draw_rect(px, Color("6fe08a") if open else Color("8a8a8a"), false, 4.0)
-		ci.draw_string(font, px.position + Vector2(0, px.size.y * 0.5 + 8), "SORTIE" if open else "FERMÉE",
-			HORIZONTAL_ALIGNMENT_CENTER, px.size.x, 22, Color.WHITE)
+		ci.draw_rect(px.grow(-0.5), Color("6fe08a") if open else Color("8a8a8a"), false, 1.0)
+		BkDraw.texte(ci, Vector2(px.get_center().x, px.get_center().y + 3), "SORTIE" if open else "FERMÉE", 8,
+			Color.WHITE, 2, px.size.x + 16)
 	# Cachettes : caisse orange qui s'ouvre, s'écrase et tremble (entrée, sortie, fouille).
 	for i: int in cachettes.size():
 		var c: Dictionary = cachettes[i]
 		var look: Dictionary = cachette_look(i)
 		var sq: float = float(look["squash"])
-		var size: Vector2 = Vector2(map.tile, map.tile) * 0.84 * Vector2(1.0 + sq * 0.6, 1.0 - sq)
-		var bottom: Vector2 = (c["pos"] as Vector2) + Vector2(float(look["dx"]), map.tile * 0.42)
-		var px2: Rect2 = Rect2(bottom - Vector2(size.x * 0.5, size.y), size)
+		var size: Vector2 = (Vector2(t, t) * 0.84 * Vector2(1.0 + sq * 0.6, 1.0 - sq)).round()
+		var bottom: Vector2 = (c["pos"] as Vector2) + Vector2(roundf(float(look["dx"])), t * 0.42)
+		var px2: Rect2 = Rect2((bottom - Vector2(size.x * 0.5, size.y)).round(), size)
 		# Cachette dessinée par pixelforge : l'image du décor (animée par BkDecor) remplace la caisse.
 		if not map.decor.has_image_at(c["tile"]):
 			_draw_crate(ci, px2, float(look["open"]), float(c["lock"]) > 0.0)
 		var occ: int = int(c["occupant"])
 		if occ >= 0 and not as_hunter and actors[occ].inside():
-			# Les chassés savent qui est dedans : deux yeux de la couleur du joueur.
-			ci.draw_circle(px2.get_center() + Vector2(-9, 8), 6, actors[occ].color)
-			ci.draw_circle(px2.get_center() + Vector2(9, 8), 6, actors[occ].color)
+			# Les chassés savent qui est dedans : deux yeux qui brillent, et son pseudo.
+			ci.draw_rect(Rect2(px2.get_center() + Vector2(-4, 2), Vector2(2, 2)), Color("ffd34a"))
+			ci.draw_rect(Rect2(px2.get_center() + Vector2(2, 2), Vector2(2, 2)), Color("ffd34a"))
+			BkDraw.texte(ci, Vector2(px2.get_center().x, px2.position.y - 3), actors[occ].display_name, 8,
+				Color(1, 1, 1, 0.8))
 	# Cachette qui grince : « crac ! » au-dessus, vu de tous (c'est un bruit).
 	for c3: Dictionary in cachettes:
 		if float(c3["creak"]) > 0.0:
 			var k3: float = float(c3["creak"]) / 0.9
-			var p3: Vector2 = (c3["pos"] as Vector2) + Vector2(0, -map.tile * (0.8 + 0.4 * (1.0 - k3)))
-			_draw_noise_bubble(ci, font, p3, "crac !", k3)
+			var p3: Vector2 = (c3["pos"] as Vector2) + Vector2(0, -t * (0.8 + 0.4 * (1.0 - k3)))
+			_draw_noise_bubble(ci, p3, "crac !", k3)
 	# Gâteaux basques au sol (vus de tous, chasseur compris : ils attirent les chassés à découvert).
 	for g2: Dictionary in gateaux:
-		var gp: Vector2 = g2["pos"]
-		var bob: float = sin(hunt_elapsed * 4.0 + gp.x) * 3.0
-		BkDraw.ellipse(ci, gp + Vector2(0, 10), 20, 6, Color(0, 0, 0, 0.2))
-		BkDraw.ellipse(ci, gp + Vector2(0, bob), 20, 13, Color("e7b45a"), 3.0)
-		BkDraw.ellipse(ci, gp + Vector2(0, bob - 3), 13, 7, Color("f2cf7f"))
-		for k7: int in 3:
-			ci.draw_line(gp + Vector2(-8 + k7 * 8, bob - 7), gp + Vector2(-4 + k7 * 8, bob + 1), Color("b5772a"), 2.0)
-		BkDraw.ellipse(ci, gp + Vector2(6, bob - 6), 4, 3, Color("c62828"), 1.5)
-	# Mouettes posées (petits « v » blancs) ; envolées, elles montent en criant « kaio ! ».
+		var gp: Vector2 = (g2["pos"] as Vector2).round()
+		var bob: float = roundf(sin(hunt_elapsed * 4.0 + gp.x) * 1.0)
+		BkDraw.ellipse(ci, gp + Vector2(0, 5), 6, 2, Color(0, 0, 0, 0.25))
+		BkDraw.ellipse(ci, gp + Vector2(0, bob), 6, 4, Color("b5772a"))
+		BkDraw.ellipse(ci, gp + Vector2(0, bob - 1), 5, 3, Color("e7b45a"))
+		ci.draw_rect(Rect2(gp + Vector2(1, bob - 3), Vector2(2, 1)), Color("c62828"))
+	# Mouettes posées ; envolées, elles montent en criant « kaio ! ».
 	for m: Dictionary in mouettes:
-		var mp: Vector2 = m["pos"]
+		var mp: Vector2 = (m["pos"] as Vector2).round()
 		var fly: float = float(m["fly"])
 		if float(m["away"]) <= 0.0:
 			for k5: int in 3:
-				_draw_gull(ci, mp + Vector2(-26 + k5 * 26, (k5 % 2) * 12), 1.0 if k5 != 1 else -1.0)
+				_draw_gull(ci, mp + Vector2(-8 + k5 * 8, (k5 % 2) * 4), 1.0 if k5 != 1 else -1.0)
 		elif fly > 0.0:
-			var up: float = (1.5 - fly) * 70.0
+			var up: float = (1.5 - fly) * t
 			for k6: int in 3:
-				var bp2: Vector2 = mp + Vector2(-24 + k6 * 24 + (1.5 - fly) * 20 * (k6 - 1), -up - k6 * 10)
-				ci.draw_polyline(PackedVector2Array([bp2 + Vector2(-10, -4), bp2, bp2 + Vector2(10, -4)]),
-					Color(1, 1, 1, fly / 1.5), 3.0, true)
-			_draw_noise_bubble(ci, font, mp + Vector2(0, -map.tile * 0.9 - up * 0.5), "kaio !", fly / 1.5)
+				var bp2: Vector2 = (mp + Vector2(-8 + k6 * 8 + (1.5 - fly) * 6 * (k6 - 1), -up - k6 * 3)).round()
+				ci.draw_polyline(PackedVector2Array([bp2 + Vector2(-3, -1), bp2, bp2 + Vector2(3, -1)]),
+					Color(1, 1, 1, fly / 1.5), 1.0)
+			_draw_noise_bubble(ci, mp + Vector2(0, -t * 0.9 - up * 0.5), "kaio !", fly / 1.5)
 	# Pièges : visibles des chassés ; le chasseur ne les voit que tout près, dans sa vue.
-	for t: Dictionary in traps:
-		var p: Vector2 = t["pos"]
-		if as_hunter and (p.distance_to(hunter.position) > BkRules.px("trap_seen_range") or not sees(hunter, p, 6.0)):
+	for tr: Dictionary in traps:
+		var p: Vector2 = (tr["pos"] as Vector2).round()
+		if as_hunter and (p.distance_to(hunter.position) > BkRules.px("trap_seen_range") or not sees(hunter, p, 3.0)):
 			continue
-		ci.draw_circle(p, 18, Color(0.95, 0.75, 0.2, 0.55))
+		ci.draw_circle(p, t * 0.28, Color(0.95, 0.75, 0.2, 0.55))
 		for k: int in 4:
-			var a: float = float(k) * PI / 4.0
-			ci.draw_line(p - Vector2.from_angle(a) * 18, p + Vector2.from_angle(a) * 18, Color("5a3410"), 3.0)
+			var ang: float = float(k) * PI / 4.0
+			ci.draw_line(p - Vector2.from_angle(ang) * t * 0.28, p + Vector2.from_angle(ang) * t * 0.28, Color("5a3410"), 1.0)
 	# Cône rouge du chasseur, vu des chassés et des fantômes.
 	if not as_hunter and hunter and (phase == Phase.HUNT or phase == Phase.HIDE):
 		var poly: PackedVector2Array = cone_polygon(hunter)
 		ci.draw_colored_polygon(poly, Color(1, 0.15, 0.1, 0.22 if phase == Phase.HUNT else 0.1))
-		ci.draw_polyline(poly, Color(1, 0.2, 0.15, 0.5), 2.0)
-		ci.draw_arc(hunter.position, BkRules.px("near_radius"), 0, TAU, 32, Color(1, 0.2, 0.15, 0.45), 2.0)
+		ci.draw_polyline(poly, Color(1, 0.2, 0.15, 0.5), 1.0)
+		ci.draw_arc(hunter.position, BkRules.px("near_radius"), 0, TAU, 32, Color(1, 0.2, 0.15, 0.45), 1.0)
 	# Détection progressive : jauge, « ? » et « ! » au-dessus du chasseur (vus de tous), « ouf ! » d'un
 	# chassé qui s'en tire (vu des chassés et des fantômes, et du chasseur s'il le voit).
 	if BkRules.on("idee_detection") and hunter and phase == Phase.HUNT:
-		_draw_alert(ci, font)
+		_draw_alert(ci)
 		for a4: BkActor in actors:
 			if a4.ouf_t > 0.0 and a4.role == BkActor.Role.HIDER and a4.hidden_in < 0 \
 					and (not as_hunter or bool(_seen.get(a4.id, false))):
 				var k4: float = a4.ouf_t / OUF_S
-				_draw_noise_bubble(ci, font, a4.position + Vector2(0, a4.name_y() - 20.0 - 30.0 * (1.0 - k4)), "ouf !",
+				_draw_noise_bubble(ci, a4.position + Vector2(0, a4.name_y() - 10.0 - 12.0 * (1.0 - k4)), "ouf !",
 					k4, Color("6fe08a"))
 	# Onde de détection et silhouettes révélées.
 	for r2: Dictionary in reveals:
@@ -1927,86 +1852,80 @@ func _draw_overlay(ci: CanvasItem) -> void:
 				_draw_hint_arrow(ci, hunter.position, r2["dir"], left)
 		elif int(r2["id"]) < 0:
 			var k2: float = 1.0 - left / 0.6
-			ci.draw_arc(r2["pos"], BkRules.px("detect_radius") * k2, 0, TAU, 64, Color(0.6, 0.85, 1.0, 1.0 - k2), 6.0)
+			ci.draw_arc(r2["pos"], BkRules.px("detect_radius") * k2, 0, TAU, 64, Color(0.6, 0.85, 1.0, 1.0 - k2), 2.0)
 		elif as_hunter or not local.is_hider():
-			ci.draw_circle(r2["pos"], 26, Color(0.6, 0.85, 1.0, 0.5))
-			ci.draw_arc(r2["pos"], 30, 0, TAU, 24, Color(0.6, 0.85, 1.0), 3.0)
+			ci.draw_circle(r2["pos"], t * 0.4, Color(0.6, 0.85, 1.0, 0.5))
+			ci.draw_arc(r2["pos"], t * 0.46, 0, TAU, 24, Color(0.6, 0.85, 1.0), 1.0)
 	# Progression de la sortie.
 	for a: BkActor in actors:
 		if a.extract_t > 0.0 and a.role == BkActor.Role.HIDER and (not as_hunter or bool(_seen.get(a.id, false))):
-			ci.draw_arc(a.position, a.radius + 14, -PI * 0.5, -PI * 0.5 + TAU * a.extract_t / BkRules.f("extract_hold"),
-				32, Color("6fe08a"), 6.0)
+			ci.draw_arc(a.position, a.radius + 4, -PI * 0.5, -PI * 0.5 + TAU * a.extract_t / BkRules.f("extract_hold"),
+				32, Color("6fe08a"), 2.0)
 
 
 ## Caisse orange procédurale (cachette sans image) : le couvercle, sur le dessus, bascule vers
 ## l'arrière quand elle s'ouvre (`open` 0 → 1) et montre l'intérieur sombre.
 func _draw_crate(ci: CanvasItem, r: Rect2, open: float, locked: bool) -> void:
 	var ink: Color = Color("5a3410")
-	var lid_h: float = r.size.y * LID_K
-	ci.draw_rect(r, Color("e08a2e") if not locked else Color("8a6a4a"))
-	ci.draw_rect(r, ink, false, 4.0)
+	var lid_h: float = roundf(r.size.y * LID_K)
+	var body: Color = Color("e08a2e") if not locked else Color("8a6a4a")
+	ci.draw_rect(r, ink)
+	ci.draw_rect(r.grow(-1), body)
+	ci.draw_rect(Rect2(r.position + Vector2(1, lid_h), Vector2(r.size.x - 2, 1)), ink)
+	ci.draw_rect(Rect2(r.position + Vector2(1, lid_h + 1), Vector2(r.size.x - 2, r.size.y - lid_h - 2)), body.darkened(0.2))
 	if open <= 0.01:
-		ci.draw_line(r.position + Vector2(6, lid_h), Vector2(r.end.x - 6, r.position.y + lid_h), ink, 3.0)
 		return
 	# Intérieur sombre à la place du dessus, puis le couvercle levé derrière la charnière.
-	var inside: Rect2 = Rect2(r.position + Vector2(5, 5), Vector2(r.size.x - 10, lid_h - 3))
-	ci.draw_rect(inside, Color("2a1606").lerp(Color("e08a2e"), 1.0 - open))
-	var up: float = r.size.y * LID_OPEN_K * open
-	var lid: PackedVector2Array = [r.position + Vector2(-2, 2), Vector2(r.end.x + 2, r.position.y + 2),
-		Vector2(r.end.x - 1, r.position.y - up), r.position + Vector2(1, -up)]
-	ci.draw_colored_polygon(lid, Color("c46e1c"))
-	lid.append(lid[0])
-	ci.draw_polyline(lid, ink, 3.0)
+	ci.draw_rect(Rect2(r.position + Vector2(1, 1), Vector2(r.size.x - 2, lid_h - 1)), Color("2a1606").lerp(body, 1.0 - open))
+	var up: float = roundf(r.size.y * LID_OPEN_K * open)
+	ci.draw_rect(Rect2(r.position + Vector2(-1, -up), Vector2(r.size.x + 2, up + 1)), Color("c46e1c"))
+	ci.draw_rect(Rect2(r.position + Vector2(-1, -up), Vector2(r.size.x + 2, up + 1)), ink, false, 1.0)
 
 
-## Mouette posée, de profil (`face` 1 vers la droite, -1 vers la gauche).
+## Mouette posée, de profil (`face` 1 vers la droite, -1 vers la gauche), en pixels.
 func _draw_gull(ci: CanvasItem, p: Vector2, face: float) -> void:
-	BkDraw.ellipse(ci, p + Vector2(0, 12), 13, 4, Color(0, 0, 0, 0.18))
-	ci.draw_line(p + Vector2(-3, 6), p + Vector2(-3, 12), Color("f6a91e"), 3.0)
-	ci.draw_line(p + Vector2(3, 6), p + Vector2(3, 12), Color("f6a91e"), 3.0)
-	BkDraw.ellipse(ci, p, 14, 9, Color.WHITE, 2.5)
-	BkDraw.ellipse(ci, p + Vector2(-3 * face, -1), 9, 5, Color("aab4c0"), 2.0)
-	BkDraw.ellipse(ci, p + Vector2(11 * face, -9), 7, 7, Color.WHITE, 2.5)
-	BkDraw.poly(ci, PackedVector2Array([p + Vector2(16 * face, -10), p + Vector2(25 * face, -8),
-		p + Vector2(16 * face, -6)]), Color("f6a91e"), 1.5)
-	ci.draw_circle(p + Vector2(13 * face, -11), 1.8, BkDraw.INK)
+	ci.draw_rect(Rect2(p + Vector2(-3, 3), Vector2(6, 1)), Color(0, 0, 0, 0.25))
+	ci.draw_rect(Rect2(p + Vector2(-1, 2), Vector2(1, 1)), Color("f6a91e"))
+	ci.draw_rect(Rect2(p + Vector2(1, 2), Vector2(1, 1)), Color("f6a91e"))
+	ci.draw_rect(Rect2(p + Vector2(-3, -1), Vector2(6, 3)), Color.WHITE)
+	ci.draw_rect(Rect2(p + Vector2(-3 if face > 0 else 0, -1), Vector2(3, 1)), Color("aab4c0"))
+	var hx: float = 2.0 if face > 0 else -4.0
+	ci.draw_rect(Rect2(p + Vector2(hx, -3), Vector2(2, 2)), Color.WHITE)
+	ci.draw_rect(Rect2(p + Vector2(hx + (2.0 if face > 0 else -1.0), -2), Vector2(1, 1)), Color("f6a91e"))
 
 
 ## Bulle de bruit (grincement, mouettes) : texte cerné d'encre, qui s'efface avec `k` (1 → 0).
-func _draw_noise_bubble(ci: CanvasItem, font: Font, at: Vector2, text: String, k: float,
-		col: Color = Color("ffd34a"), fsize: int = 30) -> void:
+func _draw_noise_bubble(ci: CanvasItem, at: Vector2, text: String, k: float,
+		col: Color = Color("ffd34a"), fsize: int = 8) -> void:
 	var a: float = clampf(k * 3.0, 0.0, 1.0)
-	ci.draw_string_outline(font, at - Vector2(100, 0), text, HORIZONTAL_ALIGNMENT_CENTER, 200, fsize, 8,
-		Color(BkDraw.INK, a))
-	ci.draw_string(font, at - Vector2(100, 0), text, HORIZONTAL_ALIGNMENT_CENTER, 200, fsize, Color(col, a))
+	BkDraw.texte(ci, at, text, fsize, Color(col, a), 2, 120.0)
 
 
 ## Jauge de détection au-dessus du chasseur : barre jaune → rouge (la plus haute des jauges des
 ## chassés), « ? » qui gonfle dès detection_doute, « ! » rouge à la capture, « ? » gris qui retombe
 ## quand un chassé s'en tire.
-func _draw_alert(ci: CanvasItem, font: Font) -> void:
-	var head: Vector2 = hunter.position + Vector2(0, hunter.name_y() - 40.0)
+func _draw_alert(ci: CanvasItem) -> void:
+	var head: Vector2 = (hunter.position + Vector2(0, hunter.name_y() - 12.0)).round()
 	if alert_bang > 0.0:
 		var k: float = alert_bang / ALERT_BANG_S
-		var pop: int = int(64.0 + 24.0 * sin((1.0 - k) * PI))
-		_draw_noise_bubble(ci, font, head + Vector2(0, 8), "!", k, Color("ff3b30"), pop)
+		_draw_noise_bubble(ci, head + Vector2(0, 2), "!", k, Color("ff3b30"), 16)
 		return
 	var g: float = hunter_alert
 	if g <= 0.0 and alert_lost <= 0.0:
 		return
 	if g > 0.0:
-		var w: float = 76.0
-		var r: Rect2 = Rect2(head + Vector2(-w * 0.5, 10), Vector2(w, 12))
-		ci.draw_rect(r.grow(3), BkDraw.INK)
+		var w: float = roundf(map.tile * 0.9)
+		var r: Rect2 = Rect2(head + Vector2(-roundf(w * 0.5), 3), Vector2(w, 3))
+		ci.draw_rect(r.grow(1), BkDraw.INK)
 		ci.draw_rect(r, Color(1, 1, 1, 0.25))
-		ci.draw_rect(Rect2(r.position, Vector2(w * clampf(g, 0.0, 1.0), r.size.y)),
+		ci.draw_rect(Rect2(r.position, Vector2(roundf(w * clampf(g, 0.0, 1.0)), r.size.y)),
 			Color("ffd34a").lerp(Color("ff3b30"), clampf(g, 0.0, 1.0)))
 	if g >= BkRules.f("detection_doute"):
-		var pulse: float = 1.0 + 0.15 * sin(hunt_elapsed * 18.0)
-		_draw_noise_bubble(ci, font, head, "?", 1.0, Color("ffd34a").lerp(Color("ff3b30"), g), int(44.0 * pulse * (0.8 + 0.4 * g)))
+		var big: bool = fmod(hunt_elapsed * 3.0, 1.0) < 0.5 and g > 0.6
+		_draw_noise_bubble(ci, head, "?", 1.0, Color("ffd34a").lerp(Color("ff3b30"), g), 16 if big else 8 + int(8.0 * g))
 	elif alert_lost > 0.0:
 		var k2: float = alert_lost / ALERT_LOST_S
-		_draw_noise_bubble(ci, font, head + Vector2(0, 10.0 * (1.0 - k2)), "?", k2, Color("c8ccd4"), 40)
+		_draw_noise_bubble(ci, head + Vector2(0, roundf(4.0 * (1.0 - k2))), "?", k2, Color("c8ccd4"), 8)
 
 
 ## Flèche d'indice de l'onde : part du chasseur dans la direction du chassé le plus proche.
@@ -2015,6 +1934,6 @@ func _draw_hint_arrow(ci: CanvasItem, from: Vector2, dir: Vector2, left: float) 
 	var c: Color = Color(0.6, 0.85, 1.0, a)
 	var p0: Vector2 = from + dir * map.tile * 1.4
 	var p1: Vector2 = from + dir * map.tile * 3.2
-	ci.draw_line(p0, p1, c, 8.0, true)
+	ci.draw_line(p0, p1, c, 2.0)
 	var side: Vector2 = dir.orthogonal() * map.tile * 0.45
 	ci.draw_colored_polygon(PackedVector2Array([p1 + dir * map.tile * 0.7, p1 + side, p1 - side]), c)

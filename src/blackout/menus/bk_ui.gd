@@ -1,6 +1,6 @@
 class_name BkUi
 extends RefCounted
-## Kit d'interface des menus de Blackout en 1280×720 (1280×720) :
+## Kit d'interface des menus de Blackout en 1280×720 (les menus restent en 1280×720, BkEchelle) :
 ## style cartoon du jeu (aplats vifs, gros contour encre, coins ronds), gros boutons pour les doigts,
 ## focus doré bien visible au clavier et à la manette, fond de mer. Aucune référence
 ## aux autoloads (la partie et les tests headless s'en servent) ; la mise en page d'un écran de menu
@@ -22,6 +22,7 @@ const BORD: int = 4
 const TEXTE: int = 30
 
 static var _theme: Theme
+static var _theme_jeu: Theme
 
 
 ## Thème de tout le jeu (posé sur la racine par bk_boot) : boutons, cases, curseurs, champs.
@@ -82,6 +83,35 @@ static func theme() -> Theme:
 	t.set_color(&"font_outline_color", &"Label", INK)
 	t.set_constant(&"outline_size", &"Label", 8)
 	_theme = t
+	return t
+
+
+## Thème de la partie en 640×360 (HUD, GDD §9) : police pixel sans lissage, petits boutons à bord
+## d'un pixel, sans arrondi lissé.
+static func theme_jeu() -> Theme:
+	if _theme_jeu != null:
+		return _theme_jeu
+	var t: Theme = Theme.new()
+	t.default_font = BkDraw.police()
+	t.default_font_size = 8
+	for etat: StringName in [&"normal", &"hover", &"pressed", &"hover_pressed"]:
+		var sb: StyleBoxFlat = StyleBoxFlat.new()
+		sb.bg_color = JAUNE.darkened(0.1) if etat == &"pressed" or etat == &"hover_pressed" else CREME
+		sb.border_color = INK
+		sb.set_border_width_all(1)
+		sb.border_width_bottom = 2
+		sb.set_content_margin_all(3)
+		sb.content_margin_left = 6
+		sb.content_margin_right = 6
+		sb.anti_aliasing = false
+		t.set_stylebox(etat, &"Button", sb)
+	for c: StringName in [&"font_color", &"font_hover_color", &"font_pressed_color", &"font_focus_color",
+			&"font_hover_pressed_color"]:
+		t.set_color(c, &"Button", INK)
+	t.set_font_size(&"font_size", &"Button", 8)
+	t.set_color(&"font_outline_color", &"Label", INK)
+	t.set_constant(&"outline_size", &"Label", 2)
+	_theme_jeu = t
 	return t
 
 

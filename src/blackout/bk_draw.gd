@@ -1,8 +1,7 @@
 class_name BkDraw
 extends RefCounted
-## Petits outils de dessin vectoriel « cartoon propre » (GDD-BLACKOUT.md) : formes arrondies
-## avec contour sombre épais, aplat + ombre douce. Tout est tracé à l'exécution : net à toute
-## taille, recolorable (la tenue prend la couleur choisie par le joueur).
+## Petits outils de dessin (GDD-BLACKOUT.md) : formes arrondies
+## avec contour, ellipses, police pixel du jeu et lettres 3×5 des silhouettes de repli.
 
 const INK: Color = Color("1d2230")
 
@@ -54,90 +53,52 @@ static func poly(ci: CanvasItem, pts: PackedVector2Array, fill: Color, border: f
 		ci.draw_polyline(closed, ink, border, true)
 
 
-# ---------------------------------------------------------------- emotes
+# ---------------------------------------------------------------- pixel art
 
-const SKIN: Color = Color("f6c79a")
-const SMILEY: Color = Color("ffd34a")
-
-
-## Bulle d'emote au-dessus d'une tête : rond blanc à gros contour, pointe vers `tip`, icône dedans.
-static func emote_bubble(ci: CanvasItem, c: Vector2, tip: Vector2, i: int, r: float) -> void:
-	var d: Vector2 = (tip - c).normalized()
-	var side: Vector2 = d.orthogonal() * r * 0.42
-	var base: Vector2 = c + d * r * 0.7
-	poly(ci, PackedVector2Array([base + side, tip, base - side]), Color.WHITE, 3.0)
-	emote_disc(ci, c, r, i)
-	# Raccord bulle-pointe sans contour.
-	ci.draw_colored_polygon(PackedVector2Array([base + side * 0.8, c + d * (r - 1.0), base - side * 0.8]), Color.WHITE)
+## Police du jeu en 640×360 (GDD §9 : HUD minimal en police pixel) : la police par défaut, rendue
+## sans lissage, pour des lettres nettes une fois agrandies ×2 au plus proche voisin.
+static var _police: FontFile
 
 
-## Rond blanc à contour avec l'icône de l'emote `i` (éventail, bouton) ; `ring` surligne.
-static func emote_disc(ci: CanvasItem, c: Vector2, r: float, i: int, ring: Color = Color(0, 0, 0, 0)) -> void:
-	ellipse(ci, c, r, r, Color.WHITE, 3.0)
-	if ring.a > 0.0:
-		ci.draw_arc(c, r + 5.0, 0.0, TAU, 40, ring, 6.0, true)
-	emote_icon(ci, c, r * 0.72, i)
+static func police() -> Font:
+	if _police == null:
+		var base: Font = ThemeDB.fallback_font
+		if base is FontFile:
+			_police = (base as FontFile).duplicate() as FontFile
+			_police.antialiasing = TextServer.FONT_ANTIALIASING_NONE
+			_police.hinting = TextServer.HINTING_NONE
+			_police.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
+		else:
+			return base
+	return _police
 
 
-## Icône d'une emote, sans texte (BkGame.EMOTES) : salut, rire, danse, pouce, chut, langue.
-## Dessinée dans un repère de -10 à 10 centré sur `c`, mis à l'échelle de `r`.
-static func emote_icon(ci: CanvasItem, c: Vector2, r: float, i: int) -> void:
-	ci.draw_set_transform(c, 0.0, Vector2.ONE * r / 10.0)
-	match i:
-		0:      # salut : main ouverte qui s'agite
-			var fingers: Array = [[Vector2(-3.6, 0), Vector2(-4.8, -6.8)], [Vector2(-1.2, -1), Vector2(-1.5, -8.4)],
-				[Vector2(1.2, -1), Vector2(1.7, -8.1)], [Vector2(3.6, 0), Vector2(4.6, -6.2)], [Vector2(4.2, 3.5), Vector2(8, 0.5)]]
-			_caps(ci, fingers, 2.6, SKIN, Vector2(0, 3.2), Vector2(5.4, 5.0))
-			ci.draw_arc(Vector2(-6.5, -1), 4.5, PI * 0.75, PI * 1.25, 8, INK, 1.1, true)
-			ci.draw_arc(Vector2(-6.5, -1), 7.0, PI * 0.8, PI * 1.2, 8, INK, 1.1, true)
-		1:      # rire : yeux fermés de plaisir, grande bouche, larmes de rire
-			ellipse(ci, Vector2.ZERO, 9.0, 9.0, SMILEY, 1.2)
-			ci.draw_arc(Vector2(-3.4, -1.8), 2.0, PI * 1.1, PI * 1.9, 8, INK, 1.4, true)
-			ci.draw_arc(Vector2(3.4, -1.8), 2.0, PI * 1.1, PI * 1.9, 8, INK, 1.4, true)
-			var mouth: PackedVector2Array = PackedVector2Array()
-			for k: int in 13:
-				mouth.append(Vector2(0, 1.6) + Vector2.from_angle(PI * float(k) / 12.0) * Vector2(5.2, 5.0))
-			poly(ci, mouth, Color("7a1f2b"), 1.0)
-			ellipse(ci, Vector2(0, 5.0), 2.4, 1.2, Color("ff6f91"))
-			ellipse(ci, Vector2(-8.6, 0.5), 1.4, 2.1, Color("6cc6ff"), 0.6)
-			ellipse(ci, Vector2(8.6, 0.5), 1.4, 2.1, Color("6cc6ff"), 0.6)
-		2:      # danse : deux notes de musique
-			var col: Color = Color("9b4fd6")
-			poly(ci, PackedVector2Array([Vector2(-2.6, -7.2), Vector2(8.2, -9.6), Vector2(8.2, -6.4),
-				Vector2(-2.6, -4.0)]), col, 1.0)
-			_caps(ci, [[Vector2(-2.2, 5.5), Vector2(-2.2, -5.6)], [Vector2(7.4, 3.5), Vector2(7.4, -8.0)]], 1.4, col)
-			ellipse(ci, Vector2(-4.6, 6.0), 3.0, 2.3, col, 1.0)
-			ellipse(ci, Vector2(5.0, 4.0), 3.0, 2.3, col, 1.0)
-		3:      # pouce levé
-			_caps(ci, [[Vector2(-2.2, 0), Vector2(-2.6, -8.2)]], 3.6, SKIN, Vector2(1.2, 3.4), Vector2(6.2, 5.0))
-			for k: int in 3:
-				ci.draw_line(Vector2(2.5, 0.8 + k * 2.6), Vector2(6.6, 0.8 + k * 2.6), INK, 0.9, true)
-		4:      # chut : un doigt sur la bouche
-			ellipse(ci, Vector2.ZERO, 9.0, 9.0, SMILEY, 1.2)
-			ellipse(ci, Vector2(-3.4, -2.4), 1.3, 1.5, INK)
-			ellipse(ci, Vector2(3.4, -2.4), 1.3, 1.5, INK)
-			ellipse(ci, Vector2(0, 4.2), 3.0, 1.7, Color("e0566e"), 0.8)
-			_caps(ci, [[Vector2(0, 10.5), Vector2(0, 0.6)]], 2.8, SKIN)
-		5:      # tirer la langue, un œil fermé
-			ellipse(ci, Vector2.ZERO, 9.0, 9.0, SMILEY, 1.2)
-			ci.draw_line(Vector2(-5.0, -2.6), Vector2(-2.0, -2.2), INK, 1.4, true)
-			ellipse(ci, Vector2(3.4, -2.4), 1.3, 1.5, INK)
-			ellipse(ci, Vector2(1.2, 5.6), 2.8, 3.2, Color("ff6f91"), 1.0)
-			ci.draw_line(Vector2(1.2, 4.0), Vector2(1.2, 7.0), Color("c23a5a"), 0.8, true)
-			ci.draw_arc(Vector2(0, -1.0), 5.2, PI * 0.25, PI * 0.75, 10, INK, 1.4, true)
-	ci.draw_set_transform(Vector2.ZERO)
+## Texte centré sur `at.x` (ligne de base en `at.y`), cerné d'encre d'un pixel.
+static func texte(ci: CanvasItem, at: Vector2, t: String, taille: int, col: Color, contour: int = 2,
+		largeur: float = 400.0) -> void:
+	var f: Font = police()
+	var p: Vector2 = Vector2(at.x - largeur * 0.5, at.y).round()
+	if contour > 0:
+		ci.draw_string_outline(f, p, t, HORIZONTAL_ALIGNMENT_CENTER, largeur, taille, contour, Color(INK, col.a))
+	ci.draw_string(f, p, t, HORIZONTAL_ALIGNMENT_CENTER, largeur, taille, col)
 
 
-## Traits arrondis à contour (doigts, pouce, hampes), avec une paume ovale optionnelle :
-## tous les contours d'abord, puis les aplats, pour une forme d'un seul tenant.
-static func _caps(ci: CanvasItem, segs: Array, w: float, fill: Color, palm: Vector2 = Vector2.INF,
-		palm_r: Vector2 = Vector2.ZERO) -> void:
-	for pass_i: int in 2:
-		var o: float = 1.1 if pass_i == 0 else 0.0
-		var col: Color = INK if pass_i == 0 else fill
-		for s: Array in segs:
-			ci.draw_line(s[0], s[1], col, w + o * 2.0, true)
-			ci.draw_circle(s[0], w * 0.5 + o, col)
-			ci.draw_circle(s[1], w * 0.5 + o, col)
-		if palm != Vector2.INF:
-			ci.draw_colored_polygon(ellipse_points(palm, palm_r.x + o, palm_r.y + o, 28), col)
+## Lettres 3×5 (majuscules) pour les silhouettes de repli des persos : une chaîne de 15 bits par
+## lettre, ligne par ligne.
+const GLYPHES: Dictionary = {
+	"A": "010101111101101", "B": "110101110101110", "C": "011100100100011", "D": "110101101101110",
+	"E": "111100110100111", "F": "111100110100100", "G": "011100101101011", "H": "101101111101101",
+	"I": "111010010010111", "J": "001001001101010", "K": "101101110101101", "L": "100100100100111",
+	"M": "101111111101101", "N": "110101101101101", "O": "010101101101010", "P": "110101110100100",
+	"Q": "010101101110011", "R": "110101110101101", "S": "011100010001110", "T": "111010010010010",
+	"U": "101101101101111", "V": "101101101101010", "W": "101101111111101", "X": "101101010101101",
+	"Y": "101101010010010", "Z": "111001010100111",
+}
+
+
+## Pose la lettre `ch` (3×5) dans `img`, coin haut gauche en `o`.
+static func glyphe(img: Image, ch: String, o: Vector2i, col: Color) -> void:
+	var g: String = str(GLYPHES.get(ch.to_upper(), ""))
+	for i: int in g.length():
+		if g[i] == "1":
+			img.set_pixel(o.x + i % 3, o.y + i / 3, col)
