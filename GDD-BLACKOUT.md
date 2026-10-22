@@ -521,7 +521,8 @@ encore, sinon son `profile_hd.png` et son `set.json`, que nous gardons dans `ass
 (les tâches sont purgées après 48 h).
 **Perso validé = conservé des deux côtés** (*Julien, 22/10*) : quand Julien valide un perso en QA, ses tâches
 A et B sont marquées « à garder » chez pixelforge (jamais purgées ; conservation exposée dans l'API,
-demandée le 22/10) et sa référence est committée chez nous (`hd/profile_hd.png`, `hd/set.json` et le
+demandée le 22/10 ; **toute la descendance est gardée aussi** : réduction B, animations ajoutées plus tard et leurs
+enfants, qui héritent de la conservation) et sa référence est committée chez nous (`hd/profile_hd.png`, `hd/set.json` et le
 dossier `px32/`). Tous les éléments fixes sont sautés, et la nouvelle animation garde
 la même palette, le même cadrage, la même ligne des pieds et la même échelle. En B, la réduction reprend la
 palette 32 px du set d'origine. Les éléments déjà validés ne sont jamais régénérés.
