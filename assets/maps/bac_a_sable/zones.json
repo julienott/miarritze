@@ -1,0 +1,353 @@
+{
+ "name": "Bac à sable",
+ "version": 1,
+ "_doc": "Écrit par tools/blackout/make_bac_a_sable.py (GDD-BLACKOUT.md §10.1). Lampadaires et disjoncteurs : données et marqueurs seulement (la lumière vient ensuite).",
+ "regles": {
+  "exits_min_gap": 10.0
+ },
+ "zones": [
+  {
+   "name": "Salon",
+   "rect": [
+    1,
+    1,
+    9,
+    8
+   ],
+   "sol": "#6b5a52"
+  },
+  {
+   "name": "Cuisine",
+   "rect": [
+    11,
+    1,
+    9,
+    8
+   ],
+   "sol": "#5b6670"
+  },
+  {
+   "name": "Couloir",
+   "rect": [
+    1,
+    10,
+    19,
+    2
+   ],
+   "sol": "#5a5560"
+  },
+  {
+   "name": "Chambre",
+   "rect": [
+    1,
+    13,
+    9,
+    10
+   ],
+   "sol": "#675870"
+  },
+  {
+   "name": "Atelier",
+   "rect": [
+    11,
+    13,
+    9,
+    10
+   ],
+   "sol": "#5c5f58"
+  },
+  {
+   "name": "Jardin",
+   "rect": [
+    27,
+    4,
+    6,
+    4
+   ],
+   "sol": "#4f6a48"
+  },
+  {
+   "name": "Place",
+   "rect": [
+    21,
+    1,
+    18,
+    22
+   ],
+   "sol": "#62677a"
+  },
+  {
+   "name": "Hangar",
+   "rect": [
+    40,
+    1,
+    10,
+    7
+   ],
+   "sol": "#585d66"
+  },
+  {
+   "name": "Plage",
+   "rect": [
+    40,
+    1,
+    19,
+    22
+   ],
+   "sol": "#a08a60"
+  }
+ ],
+ "exits": [
+  {
+   "zone": "Place",
+   "tiles": [
+    [
+     36,
+     1
+    ],
+    [
+     37,
+     1
+    ],
+    [
+     36,
+     2
+    ],
+    [
+     37,
+     2
+    ]
+   ]
+  },
+  {
+   "zone": "Plage",
+   "tiles": [
+    [
+     56,
+     20
+    ],
+    [
+     57,
+     20
+    ],
+    [
+     56,
+     21
+    ],
+    [
+     57,
+     21
+    ]
+   ]
+  }
+ ],
+ "secteurs": [
+  {
+   "id": "A",
+   "nom": "Maison",
+   "rect": [
+    0,
+    0,
+    21,
+    24
+   ]
+  },
+  {
+   "id": "B",
+   "nom": "Place",
+   "rect": [
+    21,
+    0,
+    18,
+    24
+   ]
+  },
+  {
+   "id": "C",
+   "nom": "Plage",
+   "rect": [
+    39,
+    0,
+    21,
+    24
+   ]
+  }
+ ],
+ "lampadaires": [
+  {
+   "pos": [
+    5,
+    3
+   ],
+   "rayon": 3.0,
+   "secteur": "A"
+  },
+  {
+   "pos": [
+    15,
+    10
+   ],
+   "rayon": 2.5,
+   "secteur": "A"
+  },
+  {
+   "pos": [
+    5,
+    17
+   ],
+   "rayon": 3.0,
+   "secteur": "A"
+  },
+  {
+   "pos": [
+    24,
+    5
+   ],
+   "rayon": 3.5,
+   "secteur": "B"
+  },
+  {
+   "pos": [
+    35,
+    10
+   ],
+   "rayon": 3.5,
+   "secteur": "B"
+  },
+  {
+   "pos": [
+    26,
+    20
+   ],
+   "rayon": 3.5,
+   "secteur": "B"
+  },
+  {
+   "pos": [
+    36,
+    21
+   ],
+   "rayon": 3.0,
+   "secteur": "B"
+  },
+  {
+   "pos": [
+    45,
+    3
+   ],
+   "rayon": 3.0,
+   "secteur": "C"
+  },
+  {
+   "pos": [
+    45,
+    11
+   ],
+   "rayon": 3.5,
+   "secteur": "C"
+  },
+  {
+   "pos": [
+    53,
+    17
+   ],
+   "rayon": 3.5,
+   "secteur": "C"
+  }
+ ],
+ "disjoncteurs": [
+  {
+   "pos": [
+    12,
+    10
+   ],
+   "mur": [
+    0,
+    -1
+   ],
+   "secteur": "A"
+  },
+  {
+   "pos": [
+    30,
+    1
+   ],
+   "mur": [
+    0,
+    -1
+   ],
+   "secteur": "B"
+  },
+  {
+   "pos": [
+    43,
+    7
+   ],
+   "mur": [
+    0,
+    1
+   ],
+   "secteur": "C"
+  }
+ ],
+ "gateaux": [
+  [
+   5,
+   7
+  ],
+  [
+   17,
+   10
+  ],
+  [
+   3,
+   18
+  ],
+  [
+   29,
+   6
+  ],
+  [
+   23,
+   12
+  ],
+  [
+   34,
+   19
+  ],
+  [
+   47,
+   11
+  ],
+  [
+   57,
+   17
+  ],
+  [
+   42,
+   2
+  ]
+ ],
+ "mouettes": [
+  [
+   32,
+   13
+  ],
+  [
+   26,
+   22
+  ],
+  [
+   45,
+   17
+  ],
+  [
+   55,
+   10
+  ],
+  [
+   53,
+   21
+  ]
+ ]
+}
