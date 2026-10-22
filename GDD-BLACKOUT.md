@@ -353,12 +353,12 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 |---|---|---|
 | `profile` | sprite de référence | — |
 | `portrait` | buste de **trois-quarts face**, 64×64 (HD 256), pour menus, versus, podium | — |
-| `idle` | immobile | Idle_Loop |
+| `idle` | immobile | respiration faite par pixelforge (code) |
 | `idle_long` | pose d'inactivité propre au perso (§8.2) | par perso |
 | `run` | course | Sprint_Loop |
 | `jump_hide` | saut vers la cachette (la sortie = à l'envers) | Jump_Start |
 | `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir_Idle_Loop |
-| `ghost` | fantôme, **sans ailes** | Swim_Idle_Loop |
+| `ghost` | fantôme, **sans ailes** | profil translucide fait par pixelforge (code) |
 | `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6) | placeholders pour l'instant |
 
 - Clips : **uniquement Quaternius**, nommés explicitement ; pixelforge a les bibliothèques UAL1 et
@@ -508,27 +508,30 @@ pixelforge, jamais par un traitement de notre côté.
 signature, §8.2), `colors`, la graine, et la liste `extras`. Rien d'autre : ni palette, ni retouche.
 
 **Ce que pixelforge livre**, chaîne A (HD, case 256, pieds à 240) → B (32 px, case 64, pieds à 60) :
-- éléments fixes : `profile`, `portrait` (buste de trois-quarts face), `idle` (Idle_Loop), `run`
-  (4 poses, Sprint_Loop), `jump_hide` (Jump_Start), `lift` (LiftAir_Idle_Loop), `ghost` (Swim_Idle_Loop) ;
-- **plusieurs extras** dans le même set : chacun `{name, motion, action, object, loop, fps, frames,
-  anchor}`, même palette, même cadrage, même ligne de pieds. Aujourd'hui un seul (`idle_long`) ; demain
-  aussi les lancements des coups spéciaux (§4.6) ;
+- éléments fixes : `profile` (pose debout tirée d'Idle_Loop), `portrait` (buste de trois-quarts face,
+  fait depuis le profil seul), `idle` (respiration par code), `run` (4 poses à pas égal, Sprint_Loop ;
+  `run_frames` 6 ou 8 possibles), `jump_hide` (Jump_Start), `lift` (LiftAir_Idle_Loop), `ghost` (profil
+  translucide par code). Le clip de `run`, `jump_hide` et `lift` se change avec `clips` ; `set.json`
+  donne les clips utilisés ;
+- **jusqu'à 4 extras** dans le même set (au-delà : refus au dépôt) : chacun `{name, motion, action,
+  object, loop, fps, frames, anchor}`, même palette, même cadrage, même ligne de pieds. Aujourd'hui un
+  seul (`idle_long`) ; demain aussi les lancements des coups spéciaux (§4.6) ;
 - `set.json` : cadence, boucle, calage, ligne des pieds, palette, contrôles.
 
 **Animation ajoutée à un perso déjà validé** (*question de Julien, 22/10, demandée à pixelforge*) :
-mode « extras seuls » de `pf_px__character_set`. Référence = le perso validé : sa tâche si elle existe
+mode « extras seuls » de `pf_px__character_set` (*en place le 22/10* : `base_task`, ou après la purge
+`base_set` + `input_image` ; en B `base_task` de la réduction d'origine ou `base_set`). Référence = le perso validé : sa tâche si elle existe
 encore, sinon son `profile_hd.png` et son `set.json`, que nous gardons dans `assets/blackout/persos/<id>/hd/`
 (les tâches sont purgées après 48 h).
 **Perso validé = conservé des deux côtés** (*Julien, 22/10*) : quand Julien valide un perso en QA, ses tâches
-A et B sont marquées « à garder » chez pixelforge (jamais purgées ; conservation exposée dans l'API,
-demandée le 22/10 ; **toute la descendance est gardée aussi** : réduction B, animations ajoutées plus tard et leurs
+A et B sont marquées « à garder » chez pixelforge (jamais purgées ; `PATCH /v2/inferences/tasks/{id}` avec `{"keep": true}`, en place le 22/10 ; **toute la descendance est gardée aussi** : réduction B, animations ajoutées plus tard et leurs
 enfants, qui héritent de la conservation) et sa référence est committée chez nous (`hd/profile_hd.png`, `hd/set.json` et le
 dossier `px32/`). Tous les éléments fixes sont sautés, et la nouvelle animation garde
 la même palette, le même cadrage, la même ligne des pieds et la même échelle. En B, la réduction reprend la
 palette 32 px du set d'origine. Les éléments déjà validés ne sont jamais régénérés.
 
-**Clip absent de sa banque** : uniquement des clips Quaternius nommés (21/10). Un clip inconnu doit être
-**refusé au dépôt** avec les clips les plus proches, pas ignoré en silence ; je soumets le remplaçant à
+**Clip absent de sa banque** : uniquement des clips Quaternius nommés (21/10). Un clip inconnu est
+**refusé au dépôt** (400, avant la file) avec les clips les plus proches (*en place le 22/10*) ; je soumets le remplaçant à
 Julien. Une nouvelle bibliothèque se demande par message, avec l'accord de Julien. Pas de clip sur mesure.
 
 **Qualité due par pixelforge** (Julien : « Nous devons faire des prompts, pixelforge nous livrer des
@@ -542,10 +545,12 @@ images de qualité. C'est à lui de faire les traitements corrects. ») :
 6. objet de l'action réellement dessiné ;
 7. pieds sur la ligne, rien qui sorte de la case.
 
-**Défauts ouverts** (Louis v2, 22/10) : 1 (ombre et blanc entre les jambes sur `profile_hd`), 2 (palette
-de 20 couleurs avec rouges jumeaux), 3 (pantalon bordeaux sur une image de la course HD), 4 (course
-irrégulière), 5 (étoile jaune inventée sur le béret du portrait). Run v2 suspendu jusqu'à leur
-correction ; on relancera Louis seul d'abord.
+**Garanties de qualité** : écrites par pixelforge dans sa description (« traitements systématiques »),
+chacune avec un contrôle chiffré dans `set.json` → `controls` ; les écarts sont dans `controls.warnings`.
+Couleurs simplifiées dans le moteur A (aplats, aucune nuance jumelle, chaque zone verrouillée sur ses
+couleurs du profil) ; B garde une palette resserrée et vive.
+**Défauts de Louis v2** (22/10) : corrigés par pixelforge (commit dfc6dcc) ; Louis relancé seul pour
+vérifier, avant les 12 autres.
 
 - **Décor** : masques en suspens (§10.2).
 - Méthode de travail : on intègre chaque rendu tel quel, **Julien tranche en QA** sur /producer
