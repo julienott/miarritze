@@ -4,8 +4,8 @@
   bilan_stats.py <journal.log> [<journal.log> …]
 
 Regroupe par (niveau des chassés, niveau du chasseur) et affiche les moyennes utiles à
-l'équilibrage : part des chassés trouvés, comment (vue, fouille), utilité des ondes, des pièges
-et des cachettes, sorties, durée.
+l'équilibrage : part des chassés trouvés, comment (vue, fouille), coups spéciaux, cachettes,
+sorties, durée.
 """
 import json
 import sys
@@ -38,11 +38,9 @@ def main() -> None:
             print(f"  instant des captures : médiane {t[len(t) // 2]:.0f} s, premier quart {t[len(t) // 4]:.0f} s")
         print(f"  par la vue {tot('vue')}, par une fouille {tot('fouille')} ; "
               f"fouilles réussies {tot('fouille_ok')} / {tot('fouille_ok') + tot('fouille_vide')}")
-        print(f"  ondes {tot('ondes')} ({tot('ondes') / n:.1f}/round), utiles {tot('ondes_utiles')} "
-              f"({100 * tot('ondes_utiles') / max(tot('ondes'), 1):.0f} %), chassés montrés {tot('montres')}, "
-              f"trouvés < 12 s après une onde {tot('trouves_apres_onde')}")
-        print(f"  pièges posés {tot('pieges_poses')}, pris {tot('pieges_pris')}, "
-              f"captures < 8 s après un piège pris {tot('trouves_apres_piege')}")
+        print(f"  coups spéciaux : chasseur {tot('coups_chasseur')} ({tot('coups_chasseur') / n:.1f}/round), "
+              f"chassés {tot('coups_chasse')}, chasseur touché {tot('coups_touche')}, "
+              f"trouvés < 10 s après un coup du chasseur {tot('trouves_apres_coup')}")
         print(f"  entrées en cachette {tot('entrees_cachette')}, éjections (20 s) {tot('ejections_cachette')}, "
               f"trouvés en cachette {tot('trouves_en_cachette')}")
         print(f"  évasions (jauge entamée puis perdue) {tot('evasions_de_vue')} ({tot('evasions_de_vue') / n:.1f}/round)")
