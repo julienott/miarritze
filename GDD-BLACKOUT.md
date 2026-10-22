@@ -369,7 +369,7 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 | `run` | course | Sprint_Loop |
 | `jump_hide` | saut vers la cachette (la sortie = à l'envers) | Jump_Start |
 | `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir_Idle_Loop |
-| `ghost` | fantôme, **sans ailes** | profil translucide fait par pixelforge (code) |
+| `ghost` | **fantôme générique, le même pour tous** (*Julien, 23/10*) : petit drap blanc aux grands yeux ronds et petit béret rouge, qui flotte et avance ; le pseudo au-dessus dit à qui il est | sprite commun (`assets/blackout/fantome/`), plus d'élément ghost par perso |
 | `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6) | placeholders pour l'instant |
 
 - Clips : **uniquement Quaternius**, nommés explicitement ; pixelforge a les bibliothèques UAL1 et
@@ -428,7 +428,9 @@ Référence : **Party Hard 1** (analyse détaillée, mesures et captures : `docs
 - **Pays basque** : maisons labourdines blanchies à la chaux, colombages et volets rouges, toits de
   tuiles, crampottes, barques peintes, quais de pierre, lauburu et linge basque par touches, gâteaux
   basques, piments d'Espelette, chisteras.
-- **Sols à motif** par zone, peu contrastés. **HUD minimal** en police pixel.
+- **Sols à motif** par zone, peu contrastés. **HUD minimal** en police pixel. **Textes nets** (*Julien, 23/10 : textes illisibles en 8 px*) : le jeu reste en
+  640×360, mais le HUD, les pseudos et les bulles sont dessinés par-dessus en pleine résolution (1280×720),
+  avec une police pixel plus grande, comme les menus.
 - **Jamais inquiétant pour un enfant** : même les boss restent des créatures de conte.
 
 ## 10. Cartes
