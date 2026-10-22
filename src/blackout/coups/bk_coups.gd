@@ -17,6 +17,7 @@ const PATH: String = "res://data/blackout/coups.json"
 const FAMILLES: Dictionary = {
 	"deplacement": preload("res://src/blackout/coups/familles/bk_coup_deplacement.gd"),
 	"revele": preload("res://src/blackout/coups/familles/bk_coup_revele.gd"),
+	"lance": preload("res://src/blackout/coups/familles/bk_coup_lance.gd"),
 }
 ## Éclair de lancement (placeholder §4.6) : durée (s) et rayon (px).
 const ECLAIR_S: float = 0.3

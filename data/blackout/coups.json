@@ -20,7 +20,7 @@
 					"pas_ecart": 0.45, "pas_vie": 4.0, "clignote_hz": 3.0}}
 		},
 		"txomin": {
-			"chasse": {"id": "fil_ariane", "nom": "Fil d'Ariane", "famille": "lance", "pret": false,
+			"chasse": {"id": "fil_ariane", "nom": "Fil d'Ariane", "famille": "lance", "pret": true,
 				"recharge": 25.0, "portee": 6.0, "duree": 0.0,
 				"effets": [{"type": "tracte", "duree": 3.0, "params": {"vers": "lanceur"}}],
 				"params": {"projectile": "bouee", "cible": "allie_en_detresse", "detresse_jauge": 0.3, "vitesse": 12.0, "rayon_touche": 0.6,
@@ -35,7 +35,7 @@
 				"recharge": 25.0, "portee": 3.0, "duree": 4.0,
 				"params": {"objet": "seau", "position": "derriere", "recul": 1.0, "rayon": 1.5, "effet_chasseur": "leurre", "effet_duree": 3.0,
 					"bulle": "Des sardines ?!"}},
-			"chasseur": {"id": "prise_au_vol", "nom": "La prise au vol", "famille": "lance", "pret": false,
+			"chasseur": {"id": "prise_au_vol", "nom": "La prise au vol", "famille": "lance", "pret": true,
 				"recharge": 20.0, "portee": 8.0, "duree": 0.0,
 				"effets": [{"type": "tracte", "duree": 1.0, "params": {"vers": "lanceur", "distance": 4.0}}],
 				"params": {"projectile": "ligne", "vitesse": 16.0, "rayon_touche": 0.5}}
@@ -54,7 +54,7 @@
 			"chasse": {"id": "rebond_urgence", "nom": "Rebond d'urgence", "famille": "deplacement", "pret": true,
 				"recharge": 25.0, "portee": 3.0, "duree": 0.3,
 				"params": {"mode": "dash", "repousse_mur": true, "mur_cases": 0.35, "hauteur_px": 6.0}},
-			"chasseur": {"id": "tir_crayon", "nom": "Le tir crayon", "famille": "lance", "pret": false,
+			"chasseur": {"id": "tir_crayon", "nom": "Le tir crayon", "famille": "lance", "pret": true,
 				"recharge": 20.0, "portee": 12.0, "duree": 0.0,
 				"effets": [{"type": "colle", "duree": 2.0, "params": {}}, {"type": "revele", "duree": 3.0, "params": {}}],
 				"params": {"projectile": "pelote", "ricochets": 3, "vitesse": 16.0, "rayon_touche": 0.5, "couleur": "#ffffff"}}
@@ -64,7 +64,7 @@
 				"recharge": 25.0, "portee": 0.0, "duree": 4.0,
 				"effets": [{"type": "insensible", "duree": 4.0, "params": {}}],
 				"params": {"annule_capture": true, "repousse": 1.0, "par_round": 1, "bulle": "Harri !", "bulle_annule": "Même pas trouvé !"}},
-			"chasseur": {"id": "pierre_traqueuse", "nom": "La pierre traqueuse", "famille": "lance", "pret": false,
+			"chasseur": {"id": "pierre_traqueuse", "nom": "La pierre traqueuse", "famille": "lance", "pret": true,
 				"recharge": 20.0, "portee": 8.0, "duree": 0.0,
 				"effets": [{"type": "renverse", "duree": 2.5, "params": {}}],
 				"params": {"projectile": "pierre", "chercheuse": true, "vitesse": 10.0, "virage_deg_s": 240.0, "rayon_touche": 0.5, "couleur": "#a8a29a"}}
@@ -102,7 +102,7 @@
 				"recharge": 25.0, "portee": 1.5, "duree": 15.0,
 				"effets": [{"type": "fige", "duree": 1.5, "params": {"cible": "chasseur"}}, {"type": "rapide", "duree": 3.0, "params": {"k": 0.3, "cible": "chasse"}}],
 				"params": {"objet": "gateau", "position": "pieds", "usages": 1, "bulle_chasseur": "Mmmh…", "bulle_chasse": "Miam !"}},
-			"chasseur": {"id": "pot_piment", "nom": "Pot de piment", "famille": "lance", "pret": false,
+			"chasseur": {"id": "pot_piment", "nom": "Pot de piment", "famille": "lance", "pret": true,
 				"recharge": 20.0, "portee": 6.0, "duree": 4.0,
 				"effets": [{"type": "revele", "duree": 3.0, "params": {"toux": true}}],
 				"params": {"projectile": "pot", "nuage_rayon": 2.0, "vitesse": 10.0, "rayon_touche": 0.5, "sans_cible_ok": true,
@@ -133,7 +133,7 @@
 				"recharge": 25.0, "portee": 6.0, "duree": 0.0,
 				"effets": [{"type": "aveugle", "duree": 2.0, "params": {"masque": "noir"}}],
 				"params": {"filtre": "regarde_vers", "cible": "chasseur", "marge_deg": 10.0, "couleur": "#fff6b0"}},
-			"chasseur": {"id": "eclat_revelateur", "nom": "Éclat révélateur", "famille": "lance", "pret": false,
+			"chasseur": {"id": "eclat_revelateur", "nom": "Éclat révélateur", "famille": "lance", "pret": true,
 				"recharge": 20.0, "portee": 10.0, "duree": 0.0,
 				"effets": [{"type": "revele", "duree": 3.0, "params": {}}, {"type": "ralenti", "duree": 3.0, "params": {"k": 0.3}}],
 				"params": {"projectile": "faisceau", "traverse_bas": true, "rayon_touche": 0.6, "trace_s": 0.5, "sans_cible_ok": true,
