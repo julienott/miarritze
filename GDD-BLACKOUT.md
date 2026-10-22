@@ -442,6 +442,13 @@ Référence : **Party Hard 1** (analyse détaillée, mesures et captures : `docs
   portée, ses coéquipiers voient l'objet en transparence. Les masques et emprises des objets viennent de
   pixelforge quand ils existent, sinon d'un calcul sur l'alpha de l'image (procédure :
   `docs/TEST_DECOR.md`).
+- **Masques du décor : la géométrie se déclare, l'image s'y conforme** (*22/10, après recherche :
+  `docs/RECHERCHE_MASQUES_DECOR.md`*). Chaque objet naît d'un **volume simple écrit en données** (boîtes,
+  cylindres, ellipsoïdes posés sur ses cases, avec hauteur et drapeaux passage / vue / libre). Pixelforge
+  génère l'image guidée par ce volume, vérifie qu'elle le respecte, et livre collision, vue, occulteur
+  de lumière, couches de tri et ombre **calculées depuis le volume** (format `prop.json`). Fini les
+  masques devinés sur la silhouette. *En essai* : pot de fleurs, fontaine, banc, cabine de plage ; le
+  format est validé par Julien en QA sur ce lot.
 - Taille visée d'une carte finale : environ 14 zones reliées par des couloirs, ~5 écrans de large.
 
 ### 10.3 Cartes à venir (après le jalon)
@@ -504,6 +511,9 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
   7. élément `portrait` (buste de trois-quarts face, 64 px) et élément `lift` ;
   8. ~~bibliothèque Quaternius UAL2~~ : installée le 22/10 ;
   9. taille boss : 64 px (case 128, HD 512).
+- **Décor (essai du 22/10)** : chaîne `pf_geo__proxy` → `pf_px__prop` → `pf_px__reduce` étendu, plus le
+  repli `pf_geo__fit` pour une image existante ; spec et critères d'acceptation :
+  `docs/RECHERCHE_MASQUES_DECOR.md` §6.
 - Méthode de travail : on intègre chaque rendu tel quel, **Julien tranche en QA** sur /producer
   (procédure : `docs/PRODUCER.md`).
 
