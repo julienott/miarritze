@@ -11,6 +11,7 @@ import json
 import os
 import shutil
 import sys
+import urllib.parse
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -32,7 +33,8 @@ def rapatrie(r: dict, dossier: str) -> int:
     shutil.rmtree(tmp, ignore_errors=True)
     os.makedirs(tmp)
     for f in p.get("files", []):
-        req = urllib.request.Request(f["url"], headers=pf.AUTH)
+        u = urllib.parse.urlparse(f["url"])   # pixelforge renvoie parfois 127.0.0.1 : on garde le chemin
+        req = urllib.request.Request(pf.PF + u.path + (f"?{u.query}" if u.query else ""), headers=pf.AUTH)
         open(os.path.join(tmp, f["name"]), "wb").write(urllib.request.urlopen(req, timeout=120).read())
     anims = {k: {x: y for x, y in a.items() if x != "frames"} for k, a in (p.get("animations") or {}).items()}
     json.dump(anims, open(os.path.join(tmp, "animations.json"), "w"), ensure_ascii=False, indent=1)

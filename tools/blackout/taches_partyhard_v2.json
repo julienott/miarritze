@@ -1,0 +1,249 @@
+{
+ "louis": {
+  "A": "f9818ad36d70422899cbf902f4105676",
+  "chaine": [
+   {
+    "task_id": "65f572fa3c1b46fc98f3d37ec82fde37",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a little Basque boy with blond hair, a red beret, a white short-sleeved shirt, a red belt and navy rolled-up trousers. Signature detail drawn large and bright: a red Basque beret on blond hair.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Idle_FoldArms_Loop",
+   "action": "folds his arms and taps his foot, glancing around",
+   "loop": true,
+   "fps": 10,
+   "object": false
+  }
+ },
+ "txomin": {
+  "A": "178d6117dc5e4d338fd87ac93f911bfc",
+  "chaine": [
+   {
+    "task_id": "11d541653ad1453f82fb9d0c9e4a4412",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a Basque lifeguard boy with dark brown skin and short black curly hair, a red cap, black sunglasses, a yellow tank top and red swim shorts, barefoot. Signature detail drawn large and bright: a red cap and a yellow tank top.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Idle_TalkingPhone_Loop",
+   "action": "talks into his walkie-talkie held at his mouth",
+   "loop": true,
+   "fps": 10,
+   "object": "a small red walkie-talkie"
+  }
+ },
+ "patxi": {
+  "A": "631d693f34c34f16883bef5d4eed01fe",
+  "chaine": [
+   {
+    "task_id": "20d48558bb2c492e84cf180dc1211d0d",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a bearded Basque fisherman with a blue beanie, a yellow raincoat, light blue trousers and yellow rubber boots. Signature detail drawn large and bright: a bright yellow raincoat and yellow boots.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Fish_Cast_Idle_Loop",
+   "action": "casts a fishing rod and waits for a bite",
+   "loop": true,
+   "fps": 10,
+   "object": "a fishing rod"
+  }
+ },
+ "maia": {
+  "A": "59cf3401cfe44cbd98a9ba74b273e794",
+  "chaine": [
+   {
+    "task_id": "7a05ef26a3024f2a87dffb67f8fe9b50",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a young Basque surfer girl with a brown ponytail, a turquoise wetsuit with a navy panel, a small yellow surfboard strapped upright on her back, barefoot. Signature detail drawn large and bright: a small yellow surfboard upright on her back.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Idle_Talking_Loop",
+   "action": "chats cheerfully with big hand gestures",
+   "loop": true,
+   "fps": 10,
+   "object": false
+  }
+ },
+ "xabi": {
+  "A": "65c3d1fee4a14c6ebfdc6f833744159f",
+  "chaine": [
+   {
+    "task_id": "37a851a5f1044a13a3442fd47714de33",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a little Basque jai alai player with short dark brown hair, a white polo shirt, plain white trousers, a red sash, red espadrilles and a long curved wicker chistera on his right hand pointing forward. Signature detail drawn large and bright: a long curved wicker chistera pointing forward.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Sword_Attack",
+   "action": "practises a chistera swing",
+   "loop": true,
+   "fps": 10,
+   "object": "a wicker chistera"
+  }
+ },
+ "mattin": {
+  "A": "b5aae33f81264aa69dc5e104022aa5a9",
+  "chaine": [
+   {
+    "task_id": "27acee58846e41249b6dc1fb677dabc7",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a short stocky Basque stone lifter with a broad muscular chest, a black beard, a red beret, a red and white horizontally striped shirt, navy trousers and brown shoes. Signature detail drawn large and bright: red and white horizontal stripes on a broad chest.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "PickUp_Table",
+   "action": "lifts a heavy round stone",
+   "loop": true,
+   "fps": 10,
+   "object": "a heavy round stone"
+  }
+ },
+ "amaia": {
+  "A": "8bbc12ed42664f2a8764def82da195df",
+  "chaine": [
+   {
+    "task_id": "19021a43334a4270bd09c6ecc885662f",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a Basque folk dancer girl with a red headscarf, a green vest over a white blouse, a red skirt, simple white shoes and a wooden makila stick on her back. Signature detail drawn large and bright: a red headscarf and a red skirt.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Dance_Loop",
+   "action": "dances a few Basque folk steps",
+   "loop": true,
+   "fps": 10,
+   "object": false
+  }
+ },
+ "kaio": {
+  "A": "9f11a0d9cbbb45a0bf5fdec7b0e833f4",
+  "chaine": [
+   {
+    "task_id": "d07004fb143b4154975b7391d379a030",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot and orange webbed feet. Signature detail drawn large and bright: a big yellow beak and orange webbed feet.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Idle_Rail_Call",
+   "action": "screams with his beak wide open",
+   "loop": true,
+   "fps": 10,
+   "object": false
+  }
+ },
+ "karramarro": {
+  "A": "f6fbfa8252864d0e9a89924b0121d34e",
+  "chaine": [
+   {
+    "task_id": "85a94ced6a2643dcb37b78200d6261ae",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a cheerful orange cartoon crab standing on six thin pointed crab legs, two big raised pincers, eyes on stalks, a yellow belly and a big happy open mouth. Signature detail drawn large and bright: two big raised orange pincers and eyes on stalks.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Zombie_Scratch",
+   "action": "scratches his head with a pincer",
+   "loop": true,
+   "fps": 10,
+   "object": false
+  }
+ },
+ "ramuntxo": {
+  "A": "65cd8e7cfcae45fc90490ff9de357bca",
+  "chaine": [
+   {
+    "task_id": "c7a21d38bb244142bd20f2ff329f8c04",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a jolly Basque chef with a small brown mustache, a tall white chef hat, a white chef jacket, a red neck scarf, plain red trousers and black shoes. Signature detail drawn large and bright: a tall white chef hat.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Consume",
+   "action": "tastes a sauce from a wooden spoon",
+   "loop": true,
+   "fps": 10,
+   "object": "a wooden spoon"
+  }
+ },
+ "itsaso": {
+  "A": "86487b656fa8480e84ae9215e8a4b5e2",
+  "chaine": [
+   {
+    "task_id": "61731b362b344f54b40fbf92c495a471",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with bright white foam, barefoot. Signature detail drawn large and bright: long flowing aqua hair and a white foam hem.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Spell_Simple_Shoot",
+   "action": "swirls a small wave between her hands",
+   "loop": true,
+   "fps": 10,
+   "object": false
+  }
+ },
+ "peio": {
+  "A": "e04c5f1ce3f44b5eb5b560ce49292612",
+  "chaine": [
+   {
+    "task_id": "687e5cbc45b541b881c69015b3030028",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "a sturdy young Basque rugby player with medium brown skin and short black hair, a red and white hooped jersey, black shorts, white socks, black boots and an oval rugby ball under his arm. Signature detail drawn large and bright: a brown oval rugby ball under his arm.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Interact",
+   "action": "spins his rugby ball in his hands",
+   "loop": true,
+   "fps": 10,
+   "object": "an oval rugby ball"
+  }
+ },
+ "itsasargi": {
+  "A": "873b93f68b4449b9bb4cc00e73bb1863",
+  "chaine": [
+   {
+    "task_id": "c84d6d3dd26f41c9993d9bd0d24e9d8f",
+    "style": "pf_px__reduce",
+    "source_field": "px_task"
+   }
+  ],
+  "prompt": "an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern held firmly by its handle in front of him. Signature detail drawn large and bright: a big glowing yellow lantern held forward.",
+  "idle_long": {
+   "name": "idle_long",
+   "motion": "Idle_Lantern_Loop",
+   "action": "raises his lantern and peers into the dark",
+   "loop": true,
+   "fps": 10,
+   "object": "a brass lantern"
+  }
+ }
+}
