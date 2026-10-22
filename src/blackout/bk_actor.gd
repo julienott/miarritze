@@ -32,6 +32,10 @@ var saut_px: float = 0.0
 var effets: Dictionary = {}
 var protection: float = 0.0
 var gene_reste: float = 0.0
+## Dernière commande de déplacement (après inversion), lue par les coups qui déplacent eux-mêmes
+## l'acteur (vol) ; secondes passées sans bouger (filtres « bouge » et « immobile » des coups de zone).
+var commande: Vector2 = Vector2.ZERO
+var immobile_t: float = 0.0
 var hidden_in: int = -1              # index de cachette, -1 = dehors
 var hidden_t: float = 0.0
 ## Plongée dans la cachette : encore visible dehors tant que > 0 (s), même si `hidden_in` est posé.
@@ -161,11 +165,21 @@ func speed() -> float:
 ## (BkEffets) : bloqué (figé, renversé, collé), tracté (glisse vers le point visé), commandes inversées.
 func step(move: Vector2, look_dir: Vector2, dt: float) -> void:
 	coup_cd = maxf(0.0, coup_cd - dt)
-	if en_coup:
-		queue_redraw()
-		return                               # le coup en cours déplace l'acteur (BkCoupActif)
 	if BkEffets.actif(self, "inverse"):
 		move = -move
+	commande = move.limit_length(1.0)
+	var p0: Vector2 = position
+	_step_move(move, look_dir, dt)
+	if position.distance_to(p0) > BkRules.px("speed_hider") * dt * 0.15:
+		immobile_t = 0.0
+	else:
+		immobile_t += dt
+	queue_redraw()
+
+
+func _step_move(move: Vector2, look_dir: Vector2, dt: float) -> void:
+	if en_coup:
+		return                               # le coup en cours déplace l'acteur (BkCoupActif)
 	var tire: Vector2 = BkEffets.traction(self)
 	if frozen or hidden_in >= 0:
 		velocity = Vector2.ZERO

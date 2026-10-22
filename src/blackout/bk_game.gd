@@ -143,6 +143,9 @@ var _qa_place: Array = []
 ## du décor, L la lumière, C le perso suivant, G fantôme ; Échap ou Quitter : retour au menu.
 var visite: String = ""
 var _figurants: bool = false
+## QA des coups (`--bk-visite-libres`) : figurants immobiles mais pas figés (ils subissent les coups :
+## tractés, éjectés, poussés).
+var _figurants_libres: bool = false
 ## QA de la visite : `--bk-visite-fantome` (ou la touche G) met le joueur en fantôme ; `--bk-qa-tourne`
 ## le fait tourner en rond tout seul ; `--bk-qa-rafale=<dossier>,<n>,<intervalle s>,<début s>` enregistre
 ## n captures d'écran de suite puis quitte (planches d'animation).
@@ -186,6 +189,13 @@ var _qa_lumiere: bool = false
 ## invisibles à tous ; `--bk-qa-coup=<s>` lance le coup du joueur local à s secondes de chasse.
 var _qa_effets: Array = []
 var _qa_coup_t: float = -1.0
+## QA des coups : `--bk-qa-jauge=<acteur>:<v>` (répétable) tient la jauge de détection d'un acteur à v
+## jusqu'au lancer du coup (`--bk-qa-coup`) : coéquipier en détresse, feinte au bon moment.
+var _qa_jauges: Array = []
+## `--bk-qa-bouge=<acteur>` : ce figurant marche en rond (filtres « bouge » des coups de zone) ;
+## `--bk-qa-cache=<acteur>` : il entre dans la cachette libre la plus proche au début de la chasse.
+var _qa_bouge: Array[int] = []
+var _qa_cache: Array[int] = []
 
 
 func _exit_tree() -> void:
@@ -205,6 +215,9 @@ func _ready() -> void:
 			_figurants = true
 		elif arg == "--bk-visite-fantome":
 			_visite_fantome = true
+		elif arg == "--bk-visite-libres":
+			_figurants = true
+			_figurants_libres = true
 		elif arg == "--bk-qa-tourne":
 			_qa_tourne = true
 		elif arg.begins_with("--bk-qa-zoom="):
@@ -273,6 +286,12 @@ func _ready() -> void:
 			BkEffetsRendu.qa = true
 		elif arg.begins_with("--bk-qa-coup="):
 			_qa_coup_t = float(arg.trim_prefix("--bk-qa-coup="))
+		elif arg.begins_with("--bk-qa-bouge="):
+			_qa_bouge.append(int(arg.trim_prefix("--bk-qa-bouge=")))
+		elif arg.begins_with("--bk-qa-cache="):
+			_qa_cache.append(int(arg.trim_prefix("--bk-qa-cache=")))
+		elif arg.begins_with("--bk-qa-jauge="):
+			_qa_jauges.append(arg.trim_prefix("--bk-qa-jauge=").split(":"))
 	# Rendu pixel art en 640×360 (GDD §9) ; les menus repassent en 1280×720 (BkEchelle).
 	BkEchelle.jeu()
 	map = BkMap.new()
@@ -500,6 +519,9 @@ func _start_round() -> void:
 		# Coups spéciaux (#627) : lancés par les chassés et par le chasseur, effets subis par le chasseur
 		# à cause d'un chassé, captures moins de 10 s après un coup du chasseur.
 		"coups_chasse": 0, "coups_chasseur": 0, "coups_touche": 0, "trouves_apres_coup": 0,
+		# Par coup (id de coups.json) : lancers, effets qui ont pris ; captures annulées (Endurance) ;
+		# perso du chasseur (taux de trouvés par perso, tools/blackout/bilan_stats.py).
+		"coups_par": {}, "touches_par": {}, "captures_annulees": 0, "chasseur_perso": hunter.character,
 		"entrees_cachette": 0, "ejections_cachette": 0, "trouves_en_cachette": 0, "sorties": 0,
 		"evasions_de_vue": 0, "t_trouves": [], "lieux_trouves": [], "sorties_round": open_exit_zones.duplicate(),
 		"delivres": 0, "grincements": 0, "gateaux": 0, "mouettes": 0,
@@ -591,7 +613,7 @@ func _start_visite() -> void:
 	phase = Phase.HUNT
 	phase_t = 1.0e9
 	for a: BkActor in actors:
-		a.frozen = a != local
+		a.frozen = a != local and not _figurants_libres
 		if a != local and not _figurants:
 			a.position = Vector2(-100000, -100000)
 			a.visible = false
@@ -904,7 +926,9 @@ func _control(dt: float) -> void:
 		var look_dir: Vector2 = Vector2.ZERO
 		var act: bool = false
 		if a.is_bot and not brains.has(a.id):
-			a.step(Vector2.ZERO, Vector2.ZERO, dt)      # figurant immobile de la visite
+			# Figurant immobile de la visite (ou qui tourne en rond, QA des coups).
+			var rond: Vector2 = Vector2.from_angle(hunt_elapsed * 2.0) if _qa_bouge.has(a.id) else Vector2.ZERO
+			a.step(rond, Vector2.ZERO, dt)
 			continue
 		if a.is_bot:
 			var cmd: Dictionary = (brains[a.id] as BkAi).update(dt)
@@ -974,23 +998,38 @@ func _lance_coup(a: BkActor) -> void:
 			_say(r, Color("c8ccd4"), 1.2)
 
 
-## Un coup est parti (BkCoups) : statistiques.
-func coup_lance(a: BkActor, _c: Dictionary) -> void:
+## Un coup est parti (BkCoups) : statistiques (par rôle et par coup).
+func coup_lance(a: BkActor, c: Dictionary) -> void:
 	if a == hunter:
 		_coup_chasseur_at = hunt_elapsed
 	if _stats:
 		_st["coups_chasseur" if a == hunter else "coups_chasse"] += 1
+		var id: String = str(c.get("id", "?"))
+		_st["coups_par"][id] = int(_st["coups_par"].get(id, 0)) + 1
+
+
+## Un effet d'un coup a pris (BkCoupActif.effet) : statistiques par coup.
+func coup_touche(_a: BkActor, c: Dictionary) -> void:
+	if _stats:
+		var id: String = str(c.get("id", "?"))
+		_st["touches_par"][id] = int(_st["touches_par"].get(id, 0)) + 1
 
 
 ## Un effet commun a pris sur `cible` (BkCoups.applique_effet) : un coup de chassé qui gêne le chasseur
 ## rapporte hider_coup_touche points (GDD §2.3) ; vibration courte pour le joueur local (GDD §6).
 func effet_subi(cible: BkActor, type: String, source: BkActor) -> void:
 	if source != null and source.role == BkActor.Role.HIDER and cible == hunter and BkEffets.est_genant(type):
-		_give(source, BkRules.score("hider_coup_touche"))
-		if _stats:
-			_st["coups_touche"] += 1
+		chasseur_touche(source)
 	if cible == local and not cible.is_bot and frisson != null:
 		frisson.vibre(1.0)
+
+
+## Un coup du chassé `source` a touché le chasseur (effet gênant, ou leurre de l'appât de Patxi) :
+## hider_coup_touche points (GDD §2.3).
+func chasseur_touche(source: BkActor) -> void:
+	_give(source, BkRules.score("hider_coup_touche"))
+	if _stats:
+		_st["coups_touche"] += 1
 
 
 ## Libellé du bouton d'action pour un joueur (HUD) : cachette, fouille, disjoncteur, sinon le nom du
@@ -1423,6 +1462,15 @@ func _tile_list(p: Vector2) -> Array:
 
 
 func _found(a: BkActor, via: String = "vue") -> void:
+	# Endurance de Mattin (coup réflexe) : capture annulée, une fois par round.
+	if coups.annule_capture(a):
+		a.gauge = 0.0
+		a.doubted = false
+		if a.hidden_in >= 0:
+			_leave_cachette(a, true)
+		if _stats:
+			_st["captures_annulees"] += 1
+		return
 	if _stats:
 		_st[via] = int(_st.get(via, 0)) + 1
 		(_st["t_trouves"] as Array).append(snappedf(hunt_elapsed, 0.1))
@@ -1682,6 +1730,16 @@ func _qa_coups() -> void:
 	if not _qa_effets.is_empty():
 		for a: BkActor in actors:
 			a.frozen = a != local
+	for i2: int in _qa_cache:
+		if i2 >= 0 and i2 < actors.size() and actors[i2].role == BkActor.Role.HIDER and actors[i2].hidden_in < 0 \
+				and hunt_elapsed < 0.1:
+			var c: int = near_cachette(actors[i2], true)
+			if c >= 0:
+				_enter_cachette(actors[i2], c)
+	if _qa_coup_t >= 0.0:
+		for spec2: PackedStringArray in _qa_jauges:
+			if spec2.size() == 2 and int(spec2[0]) >= 0 and int(spec2[0]) < actors.size():
+				actors[int(spec2[0])].gauge = float(spec2[1])
 	if _qa_coup_t >= 0.0 and hunt_elapsed >= _qa_coup_t:
 		_qa_coup_t = -1.0
 		print("[bk-qa] coup de %s : « %s »" % [local.display_name, coups.lance(local)])

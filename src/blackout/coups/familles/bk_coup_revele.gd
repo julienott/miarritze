@@ -1,8 +1,9 @@
 class_name BkCoupRevele
 extends BkCoupActif
-## Famille « revele » (GDD §4.4) : de l'information pour le lanceur, selon params.rendu. Codé à
-## l'étape 3 : « piste » (Cache-Cache ! de Louis). Les autres rendus (cibles qui brillent, révélation à
-## travers les murs par l'effet « revele ») viendront à l'étape 4.
+## Famille « revele » (GDD §4.4) : de l'information pour le lanceur, selon params.rendu : « piste »
+## (Cache-Cache ! de Louis). Les révélations à travers les murs (effet « revele ») passent par les autres
+## familles (zone, lance) ; le dessin des pas (`dessine_pas`) sert aussi aux traces de Peio et aux
+## fausses traces de l'appât de Patxi.
 ##
 ## Piste : bulle params.bulle au-dessus du lanceur (vue de tous) ; la cible (params.cible =
 ## « plus_proche » : l'adversaire libre le plus proche, hors cachette sauf touche_cachette) laisse pendant
@@ -54,7 +55,8 @@ func maj(dt: float) -> bool:
 		p["age"] = float(p["age"]) + dt
 	var vie: float = float(param("pas_vie", 3.0))
 	pas = pas.filter(func(p: Dictionary) -> bool: return float(p["age"]) < vie)
-	if t < duree() and cible != null and cible.role == BkActor.Role.HIDER and cible.hidden_in < 0:
+	if t < duree() and cible != null and cible.role == BkActor.Role.HIDER and cible.hidden_in < 0 \
+			and not sans_traces(cible):
 		var v: Vector2 = cible.position - _dernier
 		if v.length() >= float(param("pas_ecart", 0.5)) * game.map.tile:
 			_pose(cible.position, v)
@@ -69,8 +71,17 @@ func derniere_trace() -> Vector2:
 func dessine(ci: CanvasItem, vue: Dictionary) -> void:
 	if not (vue.get("local") == lanceur or bool(vue.get("fantome", false))):
 		return
-	var vie: float = float(param("pas_vie", 3.0))
-	var hz: float = float(param("clignote_hz", 3.0))
+	dessine_pas(ci, pas, float(param("pas_vie", 3.0)), float(param("clignote_hz", 3.0)))
+
+
+## Sans traces (Mutxiko d'Amaia : bonus « rapide » avec params.sans_traces) : pas de pas au sol.
+static func sans_traces(a: BkActor) -> bool:
+	return BkEffets.actif(a, "rapide") and bool(BkEffets.params(a, "rapide").get("sans_traces", false))
+
+
+## Pas au sol {pos, dir, cote, age} (piste de Louis, traces de Peio, fausses traces de l'appât) : chaque
+## pas clignote (hz) et s'estompe en `vie` s.
+static func dessine_pas(ci: CanvasItem, pas: Array, vie: float, hz: float) -> void:
 	for p: Dictionary in pas:
 		var age: float = float(p["age"])
 		# S'estompe en fin de vie ; clignote : plein, puis à moitié, hz fois par seconde.

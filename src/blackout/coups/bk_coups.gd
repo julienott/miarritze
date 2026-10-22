@@ -29,6 +29,8 @@ var actifs: Array[BkCoupActif] = []
 ## Annonces au-dessus d'un lanceur {id, nom, famille, left} et bulles de texte {id, texte, left, duree}.
 var annonces: Array = []
 var bulles: Array = []
+## Usages limités par round (params.par_round) : "id_acteur:id_coup" → nombre.
+var usages: Dictionary = {}
 
 
 static func donnees() -> Dictionary:
@@ -140,6 +142,7 @@ func reset() -> void:
 	actifs.clear()
 	annonces.clear()
 	bulles.clear()
+	usages.clear()
 	for a: BkActor in game.actors:
 		BkEffets.efface(a)
 		a.coup_cd = 0.0
@@ -181,8 +184,10 @@ func adversaires(lanceur: BkActor, c: Dictionary) -> Array[BkActor]:
 
 ## Visée commune (GDD §4.2) : droit devant (`dir`), avec un aimant de ±aimant_deg (coups.json) vers la
 ## cible visible (ligne de vue dégagée, pas invisible) la mieux alignée à `portee` px au plus.
+## `vitesse` (px/s, projectile) : on vise là où la cible sera à l'arrivée (elle court).
 ## Rend {dir: Vector2, cible: BkActor ou null}.
-func vise(lanceur: BkActor, dir: Vector2, portee: float, cibles: Array[BkActor], aimant_deg: float = -1.0) -> Dictionary:
+func vise(lanceur: BkActor, dir: Vector2, portee: float, cibles: Array[BkActor], aimant_deg: float = -1.0,
+		vitesse: float = 0.0) -> Dictionary:
 	var aim: float = deg_to_rad(aimant_deg if aimant_deg >= 0.0 else float(donnees().get("aimant_deg", 20.0)))
 	var d0: Vector2 = dir.normalized() if dir.length() > 0.01 else Vector2.from_angle(lanceur.look)
 	var best: BkActor = null
@@ -197,7 +202,12 @@ func vise(lanceur: BkActor, dir: Vector2, portee: float, cibles: Array[BkActor],
 		if ang < best_a:
 			best_a = ang
 			best = c
-	return {"dir": (best.position - lanceur.position).normalized() if best != null else d0, "cible": best}
+	if best == null:
+		return {"dir": d0, "cible": null}
+	var but: Vector2 = best.position
+	if vitesse > 0.0:
+		but += best.velocity * (best.position.distance_to(lanceur.position) / vitesse)
+	return {"dir": (but - lanceur.position).normalized(), "cible": best}
 
 
 ## API commune des effets (côté règles) : pose l'effet `type` sur `cible` pour `duree` s (plafonnée
@@ -207,6 +217,32 @@ func applique_effet(cible: BkActor, type: String, duree: float, params: Dictiona
 	if BkEffets.applique(cible, type, duree, params) <= 0.0:
 		return false
 	game.effet_subi(cible, type, source)
+	return true
+
+
+## Capture de `a` annulée par un de ses coups en cours (Endurance de Mattin) ?
+func annule_capture(a: BkActor) -> bool:
+	for inst: BkCoupActif in actifs:
+		if inst.lanceur == a and inst.annule_capture():
+			return true
+	return false
+
+
+## IA : un coup en cours demande-t-il à `a` de rester immobile (enfoui) ?
+func garde_immobile(a: BkActor) -> bool:
+	for inst: BkCoupActif in actifs:
+		if inst.lanceur == a and inst.garde_immobile():
+			return true
+	return false
+
+
+## Usage limité par round : vrai (et compté) s'il en reste pour `a` et ce coup (params.par_round).
+func consomme_usage(a: BkActor, c: Dictionary) -> bool:
+	var n: int = int((c.get("params", {}) as Dictionary).get("par_round", 0))
+	var k: String = "%d:%s" % [a.id, str(c.get("id", ""))]
+	if n > 0 and int(usages.get(k, 0)) >= n:
+		return false
+	usages[k] = int(usages.get(k, 0)) + 1
 	return true
 
 

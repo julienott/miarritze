@@ -38,12 +38,15 @@ static func applique(a: BkActor, type: String, duree: float, params: Dictionary 
 		return 0.0
 	if a.role != BkActor.Role.HIDER and a.role != BkActor.Role.HUNTER:
 		return 0.0
-	if not BONUS.has(type) and a.effets.has("insensible"):
+	# Aide d'un coéquipier (bouée de Txomin, params.aide) : ni l'insensibilité ni la protection ne la
+	# refusent ; elle reste plafonnée comme tout effet qui prend les commandes.
+	var aide: bool = bool(params.get("aide", false))
+	if not BONUS.has(type) and a.effets.has("insensible") and not aide:
 		var filtre: String = str((a.effets["insensible"]["params"] as Dictionary).get("filtre", ""))
 		if filtre == "" or bool(params.get("au_sol", false)):
 			return 0.0
 	if est_genant(type):
-		if a.protection > 0.0:
+		if a.protection > 0.0 and not aide:
 			return 0.0
 		var cap: float = BkRules.f("effet_max_genant_s")
 		if type == "inverse":

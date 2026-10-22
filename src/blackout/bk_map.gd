@@ -460,6 +460,50 @@ func _fit_grid_to_decor() -> void:
 			formes.add_child(line)
 
 
+## Obstacle temporaire (muret d'Itsaso, GDD §4.4) : les cases `cells` bloquent la vue et le passage
+## (couches 1 et 2, ombre de la lampe du chasseur) et sortent de la grille des IA, jusqu'à
+## `libere_temporaire`. Rend la poignée à lui repasser.
+func bloque_temporaire(cells: Array[Vector2i]) -> Dictionary:
+	var body: StaticBody2D = StaticBody2D.new()
+	body.collision_layer = LAYER_MOVE | LAYER_SIGHT
+	body.collision_mask = 0
+	add_child(body)
+	var occs: Array[LightOccluder2D] = []
+	var avant: Dictionary = {}
+	for c: Vector2i in cells:
+		var px: Rect2 = Rect2(Vector2(c) * tile, Vector2(tile, tile))
+		_add_shape(body, px)
+		var occ: LightOccluder2D = LightOccluder2D.new()
+		var op: OccluderPolygon2D = OccluderPolygon2D.new()
+		op.polygon = PackedVector2Array([px.position, Vector2(px.end.x, px.position.y), px.end, Vector2(px.position.x, px.end.y)])
+		occ.occluder = op
+		occ.occluder_light_mask = 1
+		add_child(occ)
+		occs.append(occ)
+		avant[c] = _walk_fix.get(c, null)
+		_walk_fix[c] = false
+		if astar and astar.is_in_boundsv(c):
+			astar.set_point_solid(c, true)
+	return {"body": body, "occs": occs, "avant": avant}
+
+
+func libere_temporaire(h: Dictionary) -> void:
+	if h.is_empty():
+		return
+	for n: Node in [h["body"]] + h["occs"]:
+		remove_child(n)
+		n.queue_free()
+	var avant: Dictionary = h["avant"]
+	for c: Vector2i in avant:
+		if avant[c] == null:
+			_walk_fix.erase(c)
+		else:
+			_walk_fix[c] = avant[c]
+		if astar and astar.is_in_boundsv(c):
+			astar.set_point_solid(c, not walkable(c))
+	h.clear()
+
+
 ## Chemin (centres de cases) de a vers b, en pixels.
 func path(a: Vector2, b: Vector2) -> PackedVector2Array:
 	var ta: Vector2i = to_tile(a)
