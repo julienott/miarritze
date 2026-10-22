@@ -1,0 +1,285 @@
+{
+ "_doc": "Bibliothèque des PNJ v1 (23/10), copie machine de GDD-BLACKOUT.md §8.4 (qui fait foi). Règles de jeu : §3.8. Préparation des jobs : tools/blackout/pnj_jobs.py.",
+ "set_humain": {
+  "prompt_style": "pf_px__character_set",
+  "skip": [
+   "portrait",
+   "jump_hide",
+   "lift",
+   "ghost"
+  ],
+  "run_action": "runs away in panic, arms up",
+  "extras_communs": [
+   {
+    "name": "marcher",
+    "motion": "Walk_Loop",
+    "action": "walks calmly",
+    "loop": true
+   },
+   {
+    "name": "sursaut",
+    "motion": "Hit_Chest",
+    "action": "jumps back startled",
+    "loop": false
+   }
+  ]
+ },
+ "activites": {
+  "parler": {
+   "clip": "Idle_Talking_Loop",
+   "action": "chats with big hand gestures",
+   "objet": null,
+   "objet_du_pnj": false
+  },
+  "telephone": {
+   "clip": "Idle_TalkingPhone_Loop",
+   "action": "talks on a smartphone",
+   "objet": "a smartphone",
+   "objet_du_pnj": false
+  },
+  "danser": {
+   "clip": "Dance_Loop",
+   "action": "dances happily",
+   "objet": null,
+   "objet_du_pnj": false
+  },
+  "musique": {
+   "clip": "Yes",
+   "action": "nods his head to the music",
+   "objet": "big headphones",
+   "objet_du_pnj": false
+  },
+  "journal": {
+   "clip": "Idle_Torch_Loop",
+   "action": "reads a newspaper held in front of him",
+   "objet": "a newspaper",
+   "objet_du_pnj": false
+  },
+  "boire": {
+   "clip": "Consume",
+   "action": "sips a drink",
+   "objet": "a glass of cider",
+   "objet_du_pnj": false
+  },
+  "assis": {
+   "clip": "Sitting_Idle_Loop",
+   "action": "sits and relaxes",
+   "objet": null,
+   "objet_du_pnj": false
+  },
+  "attendre": {
+   "clip": "Idle_FoldArms_Loop",
+   "action": "waits with arms crossed",
+   "objet": null,
+   "objet_du_pnj": false
+  },
+  "promener": {
+   "clip": "Walk_Loop",
+   "action": "walks a dog on a leash",
+   "objet": "a red leash",
+   "objet_du_pnj": false
+  },
+  "jouer": {
+   "clip": "Interact",
+   "action": "plays a little tune",
+   "objet": null,
+   "objet_du_pnj": true
+  }
+ },
+ "humains": {
+  "festayre": {
+   "description": "a festival-goer dressed all in white with a red sash and a red neckerchief",
+   "signature": "a red neckerchief on an all-white outfit",
+   "activites": [
+    "danser",
+    "boire"
+   ]
+  },
+  "txistulari": {
+   "description": "a txistu flute player in white with a red beret",
+   "signature": "a long thin flute and a red beret",
+   "activites": [
+    "jouer",
+    "parler"
+   ]
+  },
+  "amona": {
+   "description": "a little grandmother in a black dress with a red fan and a grey bun",
+   "signature": "a red fan",
+   "activites": [
+    "parler",
+    "assis"
+   ]
+  },
+  "marin": {
+   "description": "a fisherman in a striped blue and white sailor shirt and yellow boots",
+   "signature": "blue and white stripes",
+   "activites": [
+    "parler",
+    "boire"
+   ]
+  },
+  "surfeuse": {
+   "description": "a surfer girl with bleached hair in a black wetsuit carrying a longboard",
+   "signature": "a long white surfboard",
+   "activites": [
+    "telephone",
+    "parler"
+   ]
+  },
+  "serveur": {
+   "description": "a waiter in a white shirt and black apron with a tray of cider glasses",
+   "signature": "a round tray of glasses",
+   "activites": [
+    "parler",
+    "attendre"
+   ]
+  },
+  "sardine": {
+   "description": "a giant-head festival mascot of a smiling silver sardine",
+   "signature": "a huge smiling fish head",
+   "activites": [
+    "danser",
+    "attendre"
+   ]
+  },
+  "errege": {
+   "description": "a giant-head festival mascot of a Basque king with a golden crown",
+   "signature": "a huge crowned head",
+   "activites": [
+    "danser",
+    "attendre"
+   ]
+  },
+  "ballon": {
+   "description": "a little kid in a yellow raincoat holding a red balloon",
+   "signature": "a red balloon on a string",
+   "activites": [
+    "attendre",
+    "danser"
+   ]
+  },
+  "trompettiste": {
+   "description": "a bandas trumpet player in white and red",
+   "signature": "a shiny golden trumpet",
+   "activites": [
+    "jouer",
+    "boire"
+   ]
+  },
+  "glacier": {
+   "description": "an ice cream seller with a pink and white striped apron and cap",
+   "signature": "a striped apron",
+   "activites": [
+    "parler",
+    "attendre"
+   ]
+  },
+  "supporter": {
+   "description": "a rugby fan with a red and white scarf and a painted face",
+   "signature": "a red and white scarf",
+   "activites": [
+    "parler",
+    "boire"
+   ]
+  },
+  "touriste": {
+   "description": "a tourist in a flowery Hawaiian shirt and shorts with a camera",
+   "signature": "a flowery shirt and a camera",
+   "activites": [
+    "telephone",
+    "attendre"
+   ]
+  },
+  "jogger": {
+   "description": "a jogger in a bright green tracksuit with headphones",
+   "signature": "a bright green tracksuit",
+   "activites": [
+    "musique",
+    "attendre"
+   ]
+  },
+  "ado": {
+   "description": "a teenager in a purple hoodie with big headphones",
+   "signature": "big headphones on a purple hoodie",
+   "activites": [
+    "musique",
+    "telephone"
+   ]
+  },
+  "lecteur": {
+   "description": "an old man in a beige coat and a black beret",
+   "signature": "a black beret and a newspaper",
+   "activites": [
+    "journal",
+    "assis"
+   ]
+  },
+  "promeneuse": {
+   "description": "a woman in a long yellow coat walking her dog",
+   "signature": "a long yellow coat",
+   "activites": [
+    "promener",
+    "parler"
+   ]
+  },
+  "cycliste": {
+   "description": "a cyclist in a blue jersey pushing a red bicycle",
+   "signature": "a red bicycle",
+   "activites": [
+    "attendre",
+    "boire"
+   ]
+  },
+  "musicienne": {
+   "description": "a street guitarist in a denim jacket with a guitar",
+   "signature": "a wooden guitar",
+   "activites": [
+    "jouer",
+    "parler"
+   ]
+  },
+  "amoureux": {
+   "description": "a young man in a white shirt holding a single red rose",
+   "signature": "a red rose",
+   "activites": [
+    "parler",
+    "attendre"
+   ]
+  },
+  "policier": {
+   "description": "a friendly municipal police officer in a dark blue uniform and cap",
+   "signature": "a dark blue cap",
+   "activites": [
+    "parler",
+    "attendre"
+   ]
+  },
+  "pecheuse": {
+   "description": "a fisherwoman in a yellow oilskin and green boots with a bucket",
+   "signature": "a yellow oilskin",
+   "activites": [
+    "parler",
+    "boire"
+   ]
+  }
+ },
+ "animaux": {
+  "chat": {
+   "description": "a small black cat with yellow eyes",
+   "activite": "dort roulé en boule, se lèche"
+  },
+  "chien": {
+   "description": "a happy brown and white beagle",
+   "activite": "renifle le sol, suit son maître en laisse"
+  },
+  "goeland": {
+   "description": "a big white and grey seagull with a yellow beak",
+   "activite": "picore, s'envole en criant"
+  },
+  "pigeon": {
+   "description": "a grey city pigeon with a green neck",
+   "activite": "picore, s'envole"
+  }
+ }
+}

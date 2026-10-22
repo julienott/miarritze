@@ -133,7 +133,7 @@ Cumulé sur la partie, affiché entre les rounds et au podium. Pas de classement
 - **Gâteaux basques = recharges** : posés au sol dans des coins dégagés. Un joueur (chassé ou chasseur)
   qui en ramasse un **recharge son coup spécial tout de suite**. Un gâteau mangé réapparaît ailleurs
   12 s plus tard, loin du chasseur. Y aller expose : ça crée du mouvement.
-- **Mouettes** : groupes posés. Un chassé qui passe trop près les fait s'envoler en criant « kaio ! »,
+- **Mouettes** (*devenues des PNJ oiseaux, §3.8*) : groupes posés. Un chassé qui passe trop près les fait s'envoler en criant « kaio ! »,
   visible de tous : un indice pour le chasseur. Elles reviennent après 20 s.
 - **Disjoncteurs** : §3.2.
 
@@ -146,6 +146,48 @@ Cumulé sur la partie, affiché entre les rounds et au podium. Pas de classement
   chassé (lui seul le voit) ; s'ils restent **3 s** ensemble hors de la vue du chasseur, le fantôme
   revient en jeu à cet endroit. Une fois par round et par fantôme ; +2 points au sauveur. Pas de
   délivrance pendant le round du boss.
+
+### 3.8 PNJ : la foule de la nuit (*Julien, 23/10*)
+La carte est habitée par des **personnages non joueurs** (PNJ) qui vivent leur vie : ils remplissent la
+carte, donnent l'ambiance de fête du soir à Biarritz, et offrent aux chassés un camouflage vivant.
+
+**Qui** : des **humains** (15 à 25 par carte, réglable par carte) et, **en plus de ce quota**, des
+**animaux** (6 à 12 : chats, chiens, goélands, pigeons). Tous tirés de la bibliothèque §8.4, sans jamais
+reprendre un des 13 persos jouables. Les PNJ ne sont ni chassés ni chasseurs : on ne peut ni les trouver
+ni les toucher, et ils ne bloquent pas le passage (on les traverse, comme les joueurs).
+
+**Leur vie** (IA simple, jouée par l'hôte et synchronisée) :
+- chaque carte a des **points d'activité** (banc, bar, terrasse, kiosque, quai, piste de danse…) ;
+- un PNJ y fait une **activité** (parler, téléphoner, danser, écouter de la musique, lire le journal,
+  boire un verre, s'asseoir…), **statique** quelques dizaines de secondes, puis **marche** vers un autre
+  point et y fait une autre activité ; certains restent sur place tout le round ;
+- les PNJ se **regroupent** : 2 à 4 se rejoignent sur un point et parlent ensemble un moment, puis se
+  séparent ;
+- un promeneur de chien est un **couple PNJ + animal** : le chien suit son maître en laisse ;
+- les animaux ont leurs propres manières : le chat dort ou se lèche, puis file ; le chien renifle et suit ;
+  les goélands et pigeons picorent en petits groupes.
+
+**Camouflage**
+- **Le chasseur ne voit pas les pseudos des chassés** (seulement après une capture). Les chassés, eux, voient
+  les pseudos de tout le monde, et les PNJ n'en ont pas.
+- **Dans un groupe** (un chassé à moins d'une case d'au moins deux PNJ), la détection **ne démarre que si
+  le chasseur est dans son cercle de proximité** (1,5 case) : de loin, un chassé qui marche ou attend au
+  milieu d'un groupe se confond avec la foule. S'il **court**, il sort du camouflage.
+- Les PNJ n'arrêtent pas le cône : ce sont des personnes, pas des murs.
+
+**Réactions à l'action en cours** (toutes visibles de tous)
+- **Un chassé qui court tout près** d'un PNJ le fait sursauter (« ! » au-dessus de sa tête) et fait
+  s'envoler les oiseaux voisins : **un indice pour le chasseur**. Les mouettes actuelles (§3.5) deviennent
+  ces PNJ oiseaux.
+- **Lumière coupée** (disjoncteur) : les PNJ du secteur ont peur un moment (« ! ») et courent vers une zone
+  éclairée, puis reprennent leur vie quand la lumière revient.
+- **Coup spécial** : les PNJ dans le rayon de l'effet sursautent, étonnés, et s'enfuient hors du rayon ;
+  ils ne subissent jamais l'effet.
+- **Round du boss** : les PNJ **évitent absolument le boss**, paniqués : ils courent dans la direction
+  opposée dès qu'il approche, et la foule se vide autour de lui.
+
+**Animations d'un PNJ** : profil, idle, fuite (course), marche, sursaut, plus 2 ou 3 activités (§8.4).
+Tant qu'elles n'existent pas, des placeholders de 32 px font l'affaire.
 
 ### 3.7 Vitesses (données)
 | | Vitesse |
@@ -244,7 +286,7 @@ son character set (§8.1), la même pour tous.
   trouvé. Il utilise ses deux pouvoirs en IA (recharge ~15 s).
 - Points : +1 par tranche de 5 s, +5 au dernier survivant (§2.3).
 - **Ambiance** : lune rouge, brume, lumières qui vacillent ; musique propre (quand le son reviendra).
-- Les boss sont **plus gros** (64 px, §8.1) et un peu plus rapides ; plus tard, ils font fuir les PNJ.
+- Les boss sont **plus gros** (64 px, §8.1) et un peu plus rapides ; ils font fuir les PNJ (§3.8).
 - Vocabulaire léger : personne n'est blessé, mangé ni pétrifié. On est *trouvé*, *figé*, *délogé*.
 
 ### 5.2 Fiches des boss
@@ -320,7 +362,7 @@ Aucun texte libre entre joueurs.
 3. **Mon profil** : choix du **personnage** (les 13) et du **pseudo** (2 à 15 caractères, filtre
    anti-gros-mots du serveur et hors ligne, rappel « pas ton vrai nom ! »). **Rien d'autre** : pas de
    couleur, pas de cosmétique, pas d'âge. Les joueurs se reconnaissent à leur **pseudo** affiché
-   au-dessus de la tête. Deux joueurs peuvent prendre le même perso.
+   au-dessus de la tête. Exception : **le chasseur ne voit pas les pseudos des chassés** (§3.8). Deux joueurs peuvent prendre le même perso.
 4. **Réglages** : vibration, aide. Les curseurs Musique et Sons sont **masqués** tant que le jeu n'a pas
    de son.
 5. **Versus** avant chaque round, **Scores** entre les rounds, **Podium** à la fin.
@@ -416,6 +458,65 @@ Maïa et Peio inchangés.
   extras propres au perso** (`idle_long`, `cast_chasse`, `cast_chasseur`). Un perso déjà validé reçoit ce
   qui lui manque par le mode « extras seuls » (§14.1), sans toucher au reste.
 
+### 8.4 Bibliothèque des PNJ (*v1, 23/10*)
+Copie machine : `data/blackout/pnj.json` (fait foi ici d'abord, comme §8.2). Style identique aux persos :
+pixel art Party Hard, 32 px, prompts simples (description + signature), clichés de soirée basque lisibles
+de loin, aucune personnalisation, rien de violent.
+
+**Character set d'un PNJ humain** (`pf_px__character_set`, case 64 en 32 px) : `profile`, `idle`, `run` (la
+fuite : Sprint_Loop, action « runs away in panic, arms up »), tout le reste sauté (`portrait`,
+`jump_hide`, `lift`, `ghost`, éléments standard), et **4 extras** : `marcher` (Walk_Loop) , `sursaut`
+(Hit_Chest, « jumps back startled ») et ses **2 activités** prises dans le catalogue ci-dessous.
+
+**Catalogue d'activités** (extra : clip Quaternius, action, objet)
+| Activité | Clip | Action | Objet |
+|---|---|---|---|
+| parler | Idle_Talking_Loop | chats with big hand gestures | — |
+| telephone | Idle_TalkingPhone_Loop | talks on a smartphone | a smartphone |
+| danser | Dance_Loop | dances happily | — |
+| musique | Yes | nods his head to the music | big headphones |
+| journal | Idle_Torch_Loop | reads a newspaper held in front of him | a newspaper |
+| boire | Consume | sips a drink | a glass of cider |
+| assis | Sitting_Idle_Loop | sits and relaxes | — |
+| attendre | Idle_FoldArms_Loop | waits with arms crossed | — |
+| promener | Walk_Loop | walks a dog on a leash | a red leash |
+| jouer | Interact | plays a little tune | (objet du PNJ) |
+
+**Humains (22)**
+| id | Description | Signature | Activités |
+|---|---|---|---|
+| festayre | a festival-goer dressed all in white with a red sash and a red neckerchief | a red neckerchief on an all-white outfit | danser, boire |
+| txistulari | a txistu flute player in white with a red beret | a long thin flute and a red beret | jouer, parler |
+| amona | a little grandmother in a black dress with a red fan and a grey bun | a red fan | parler, assis |
+| marin | a fisherman in a striped blue and white sailor shirt and yellow boots | blue and white stripes | parler, boire |
+| surfeuse | a surfer girl with bleached hair in a black wetsuit carrying a longboard | a long white surfboard | telephone, parler |
+| serveur | a waiter in a white shirt and black apron with a tray of cider glasses | a round tray of glasses | parler, attendre |
+| sardine | a giant-head festival mascot of a smiling silver sardine | a huge smiling fish head | danser, attendre |
+| errege | a giant-head festival mascot of a Basque king with a golden crown | a huge crowned head | danser, attendre |
+| ballon | a little kid in a yellow raincoat holding a red balloon | a red balloon on a string | attendre, danser |
+| trompettiste | a bandas trumpet player in white and red | a shiny golden trumpet | jouer, boire |
+| glacier | an ice cream seller with a pink and white striped apron and cap | a striped apron | parler, attendre |
+| supporter | a rugby fan with a red and white scarf and a painted face | a red and white scarf | parler, boire |
+| touriste | a tourist in a flowery Hawaiian shirt and shorts with a camera | a flowery shirt and a camera | telephone, attendre |
+| jogger | a jogger in a bright green tracksuit with headphones | a bright green tracksuit | musique, attendre |
+| ado | a teenager in a purple hoodie with big headphones | big headphones on a purple hoodie | musique, telephone |
+| lecteur | an old man in a beige coat and a black beret | a black beret and a newspaper | journal, assis |
+| promeneuse | a woman in a long yellow coat walking her dog | a long yellow coat | promener, parler |
+| cycliste | a cyclist in a blue jersey pushing a red bicycle | a red bicycle | attendre, boire |
+| musicienne | a street guitarist in a denim jacket with a guitar | a wooden guitar | jouer, parler |
+| amoureux | a young man in a white shirt holding a single red rose | a red rose | parler, attendre |
+| policier | a friendly municipal police officer in a dark blue uniform and cap | a dark blue cap | parler, attendre |
+| pecheuse | a fisherwoman in a yellow oilskin and green boots with a bucket | a yellow oilskin | parler, boire |
+
+**Animaux (4, hors quota humain)** : pas de squelette humain ; méthode demandée à pixelforge (comme pour
+les boss non humanoïdes). Chacun : idle, marcher, fuir, et une activité.
+| id | Description | Activité |
+|---|---|---|
+| chat | a small black cat with yellow eyes | dort roulé en boule, se lèche |
+| chien | a happy brown and white beagle | renifle le sol, suit son maître en laisse |
+| goeland | a big white and grey seagull with a yellow beak | picore, s'envole en criant |
+| pigeon | a grey city pigeon with a green neck | picore, s'envole |
+
 ### 8.3 Boss
 Même pipeline, `size: "boss"` (64 px dans une case de 128, §8.1). Éléments d'un boss (*23/10*) :
 `profile`, `portrait` (versus), `idle`, `run` (sa démarche, clip propre au boss), `etourdi` (Zezengorri
@@ -461,7 +562,8 @@ Référence : **Party Hard 1** (analyse détaillée, mesures et captures : `docs
 - Contenu : pièces et couloirs, **murets d'une case** (Louis, Kaio), **cloisons fines** (Louis),
   **grilles et fenêtres** (vue oui, passage non), **sol meuble** (Karramarro), **cachettes**, objets
   hauts et bas, **lampadaires** et zones d'ombre, **un disjoncteur** par secteur, gâteaux basques,
-  mouettes, 2 points de sortie.
+  PNJ oiseaux, 2 points de sortie, **points d'activité des PNJ** (bancs, bar, terrasse, piste de danse), 15 à 25 PNJ
+  et quelques animaux.
 - Menu debug pour tester chaque coup avec chaque perso, chaque rôle et chaque boss (§7.2).
 - Les anciennes cartes (Port des Pêcheurs, plage de la Côte des Basques, parc Mazon), en cases de 64 px
   et sans lumière, sont **archivées** ; elles serviront de références de lieux.
@@ -491,7 +593,7 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
   autres ; surveiller le cône, fuir dès que leur jauge monte, changer de cachette dans le dos du
   chasseur, utiliser leur coup quand c'est pertinent, actionner un disjoncteur.
 - **Chasseur IA** : patrouiller entre les zones, regarder derrière les gros objets, réagir aux indices
-  (mouettes, toux, traces), lancer son coup au bon moment, réparer un disjoncteur.
+  (PNJ qui sursautent, oiseaux qui s'envolent, toux, traces), lancer son coup au bon moment, réparer un disjoncteur.
 - **Réaction du chasseur IA par paliers** (*Julien, 23/10*), comme un joueur : dès qu'un chassé entre
   dans sa vue (même jauge vide), il marque un temps d'arrêt et tourne la tête vers lui ; s'il reste
   visible, il marche vers l'endroit où il l'a vu (sans connaître sa position exacte dans l'ombre) ;
@@ -642,4 +744,4 @@ Piles de caisses de poisson ou de bois : les pousser quand le chasseur passe le 
 2 s).
 
 ### A.4 PNJ de la fête
-Une foule de PNJ façon Party Hard, que les boss font fuir.
+Décidé le 23/10 : voir §3.8 (règles) et §8.4 (bibliothèque).
