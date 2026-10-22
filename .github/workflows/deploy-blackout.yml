@@ -1,6 +1,6 @@
-name: Déployer Blackout (test, /gordeka/)
+name: Déployer Blackout (test, /blackout/)
 
-# Version de test de Miarritze Blackout (ex-Gordeka), publiée à part dans <site>/gordeka/ (2026-10-19, demande de
+# Version de test de Miarritze Blackout (ex-Gordeka), publiée à part dans <site>/blackout/ (2026-10-19, demande de
 # Julien) ; l'API n'est pas touchée. Le déploiement principal (racine du site) est deploy.yml.
 # Déploiement à la main seulement.
 on:
@@ -13,7 +13,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     concurrency:
-      group: gordeka-deploy
+      group: blackout-deploy
       cancel-in-progress: false
     steps:
       - name: Checkout
@@ -57,10 +57,10 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 
-      - name: Deploy dans /gordeka/
+      - name: Deploy dans /blackout/
         env:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
         run: |
           SSH_OPTS="ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1"
           sshpass -e rsync -avz -e "$SSH_OPTS" \
-            web/build/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/gordeka/"
+            web/build/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/blackout/"
