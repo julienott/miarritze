@@ -1,12 +1,12 @@
 {
-	"_doc": "Coups spéciaux (GDD-BLACKOUT.md §4) : par perso, son coup de chassé (« chasse ») et son coup de chasseur (« chasseur »). Champs communs : id, nom (affiché sur le bouton, le versus, l'annonce), famille (script réutilisable de src/blackout/coups/familles/, voir « familles »), recharge (s, GDD §4.1 : ≈25 chassé, ≈20 chasseur), portee (cases), duree (s), touche_cachette (vrai : atteint un chassé dans une cachette, GDD §4.2), effets [{type, duree, params}] (catalogue §4.5, src/blackout/coups/bk_effets.gd ; durées plafonnées par le moteur, §4.3), params (propres à la famille). pret = vrai : codé et actif ; sinon le bouton affiche « bientôt » et rien ne part (étape 4 du jalon 1). Valeurs du GDD §4.4, à équilibrer.",
+	"_doc": "Coups spéciaux (GDD-BLACKOUT.md §4) : par perso, son coup de chassé (« chasse ») et son coup de chasseur (« chasseur »). Champs communs : id, nom (affiché sur le bouton, le versus, l'annonce), famille (script réutilisable de src/blackout/coups/familles/, voir « familles »), recharge (s, GDD §4.1 : ≈25 chassé, ≈20 chasseur), portee (cases), duree (s), touche_cachette (vrai : atteint un chassé dans une cachette, GDD §4.2), effets [{type, duree, params}] (catalogue §4.5, src/blackout/coups/bk_effets.gd ; durées plafonnées par le moteur, §4.3), params (propres à la famille). pret = vrai : codé et actif ; sinon le bouton affiche « bientôt » et rien ne part. Paramètres de chaque famille : en tête de son script. Valeurs du GDD §4.4, à équilibrer.",
 	"familles": {
-		"lance": "Projectile droit devant (direction de marche), aimant de ±aimant_deg vers une cible visible ; ricochets, tête chercheuse, faisceau à travers les objets bas selon params.",
-		"zone": "Autour du lanceur (ou devant, params.centre) : chaque cible dans la portée qui remplit params.filtre (bouge, immobile, regarde_vers…) subit les effets.",
-		"deplacement": "Le lanceur bouge ou change d'état : saut, dash, plongeon, vol, enfouissement, glissade, vitesse (params.mode).",
-		"revele": "Information pour le lanceur : piste de pas, cibles qui brillent, révélation à travers les murs (params.rendu).",
-		"pose": "Objet posé (gâteau, muret, seau) qui agit tant qu'il est là (params.objet).",
-		"reflexe": "Réaction au bon moment (GDD §4.1) : appuyé à vide, il part quand même et repart en recharge."
+		"lance": "Projectile droit devant (direction de marche), aimant de ±aimant_deg vers une cible visible ; ricochets, pierre chercheuse, faisceau, nuage à l'arrivée, bouée vers un coéquipier en détresse selon params (src/blackout/coups/familles/bk_coup_lance.gd).",
+		"zone": "Autour du lanceur (portee) : chaque cible qui remplit params.filtre (bouge, immobile, regarde_vers) subit les effets ; suites si_bouge et traces ; geysers sur les cachettes (params.centre = cachettes) (bk_coup_zone.gd).",
+		"deplacement": "Le lanceur bouge ou change d'état : saut, dash, vitesse, vol, enfouissement (params.mode) ; ses effets sont posés sur lui (bk_coup_deplacement.gd).",
+		"revele": "Information pour le lanceur : piste de pas (params.rendu) (bk_coup_revele.gd).",
+		"pose": "Objet posé qui agit tant qu'il est là : gâteau, seau, muret (params.objet) (bk_coup_pose.gd).",
+		"reflexe": "Réaction au bon moment (GDD §4.1) : pas de côté, capture annulée ; appuyé à vide, il part quand même et repart en recharge (bk_coup_reflexe.gd)."
 	},
 	"aimant_deg": 20.0,
 	"persos": {
@@ -23,88 +23,90 @@
 			"chasse": {"id": "fil_ariane", "nom": "Fil d'Ariane", "famille": "lance", "pret": false,
 				"recharge": 25.0, "portee": 6.0, "duree": 0.0,
 				"effets": [{"type": "tracte", "duree": 3.0, "params": {"vers": "lanceur"}}],
-				"params": {"projectile": "bouee", "cible": "allie_en_detresse", "detresse_jauge": 0.3,
-					"gerbe_portee": 4.0, "gerbe_effet": "aveugle", "gerbe_duree": 3.0, "gerbe_masque": "eau"}},
+				"params": {"projectile": "bouee", "cible": "allie_en_detresse", "detresse_jauge": 0.3, "vitesse": 12.0, "rayon_touche": 0.6,
+					"gerbe_portee": 4.0, "gerbe_effet": "aveugle", "gerbe_duree": 3.0, "gerbe_masque": "eau", "bulle": "Accroche-toi !"}},
 			"chasseur": {"id": "sifflet_vigie", "nom": "Coup de sifflet", "famille": "zone", "pret": false,
 				"recharge": 20.0, "portee": 8.0, "duree": 0.0,
 				"effets": [{"type": "fige", "duree": 2.0, "params": {}}],
-				"params": {"filtre": "bouge"}}
+				"params": {"filtre": "bouge", "bouge_s": 0.3, "bulle": "Tuuuut !", "couleur": "#9fe2ff"}}
 		},
 		"patxi": {
 			"chasse": {"id": "appat_sardines", "nom": "Appât de sardines", "famille": "pose", "pret": false,
 				"recharge": 25.0, "portee": 3.0, "duree": 4.0,
-				"params": {"objet": "seau", "position": "derriere", "effet_chasseur": "leurre", "effet_duree": 3.0}},
+				"params": {"objet": "seau", "position": "derriere", "recul": 1.0, "rayon": 1.5, "effet_chasseur": "leurre", "effet_duree": 3.0,
+					"bulle": "Des sardines ?!"}},
 			"chasseur": {"id": "prise_au_vol", "nom": "La prise au vol", "famille": "lance", "pret": false,
 				"recharge": 20.0, "portee": 8.0, "duree": 0.0,
 				"effets": [{"type": "tracte", "duree": 1.0, "params": {"vers": "lanceur", "distance": 4.0}}],
-				"params": {"projectile": "ligne"}}
+				"params": {"projectile": "ligne", "vitesse": 16.0, "rayon_touche": 0.5}}
 		},
 		"maia": {
-			"chasse": {"id": "canard", "nom": "Le canard", "famille": "deplacement", "pret": false,
+			"chasse": {"id": "canard", "nom": "Le canard", "famille": "deplacement", "pret": true,
 				"recharge": 25.0, "portee": 2.0, "duree": 1.5,
-				"effets": [{"type": "invisible", "duree": 1.5, "params": {"jauge_gelee": true}}],
-				"params": {"mode": "plongeon"}},
-			"chasseur": {"id": "take_off", "nom": "Take-off foudroyant", "famille": "deplacement", "pret": false,
+				"effets": [{"type": "invisible", "duree": 1.5, "params": {"jauge_gelee": true}}, {"type": "insensible", "duree": 1.5, "params": {}}],
+				"params": {"mode": "dash", "glisse_s": 0.5, "hauteur_px": 0.0}},
+			"chasseur": {"id": "take_off", "nom": "Take-off foudroyant", "famille": "deplacement", "pret": true,
 				"recharge": 20.0, "portee": 0.0, "duree": 4.0,
 				"effets": [{"type": "rapide", "duree": 4.0, "params": {"k": 0.8}}],
 				"params": {"mode": "vitesse"}}
 		},
 		"xabi": {
-			"chasse": {"id": "rebond_urgence", "nom": "Rebond d'urgence", "famille": "deplacement", "pret": false,
+			"chasse": {"id": "rebond_urgence", "nom": "Rebond d'urgence", "famille": "deplacement", "pret": true,
 				"recharge": 25.0, "portee": 3.0, "duree": 0.3,
-				"params": {"mode": "dash", "repousse_mur": true}},
+				"params": {"mode": "dash", "repousse_mur": true, "mur_cases": 0.35, "hauteur_px": 6.0}},
 			"chasseur": {"id": "tir_crayon", "nom": "Le tir crayon", "famille": "lance", "pret": false,
 				"recharge": 20.0, "portee": 12.0, "duree": 0.0,
 				"effets": [{"type": "colle", "duree": 2.0, "params": {}}, {"type": "revele", "duree": 3.0, "params": {}}],
-				"params": {"projectile": "pelote", "ricochets": 3}}
+				"params": {"projectile": "pelote", "ricochets": 3, "vitesse": 16.0, "rayon_touche": 0.5, "couleur": "#ffffff"}}
 		},
 		"mattin": {
 			"chasse": {"id": "endurance", "nom": "Endurance", "famille": "reflexe", "pret": false,
 				"recharge": 25.0, "portee": 0.0, "duree": 4.0,
 				"effets": [{"type": "insensible", "duree": 4.0, "params": {}}],
-				"params": {"annule_capture": true, "repousse": 1.0, "par_round": 1}},
+				"params": {"annule_capture": true, "repousse": 1.0, "par_round": 1, "bulle": "Harri !", "bulle_annule": "Même pas trouvé !"}},
 			"chasseur": {"id": "pierre_traqueuse", "nom": "La pierre traqueuse", "famille": "lance", "pret": false,
 				"recharge": 20.0, "portee": 8.0, "duree": 0.0,
 				"effets": [{"type": "renverse", "duree": 2.5, "params": {}}],
-				"params": {"projectile": "pierre", "chercheuse": true}}
+				"params": {"projectile": "pierre", "chercheuse": true, "vitesse": 10.0, "virage_deg_s": 240.0, "rayon_touche": 0.5, "couleur": "#a8a29a"}}
 		},
 		"amaia": {
-			"chasse": {"id": "mutxiko", "nom": "Mutxiko", "famille": "deplacement", "pret": false,
+			"chasse": {"id": "mutxiko", "nom": "Mutxiko", "famille": "deplacement", "pret": true,
 				"recharge": 25.0, "portee": 0.0, "duree": 4.0,
-				"effets": [{"type": "rapide", "duree": 4.0, "params": {"k": 0.3}}, {"type": "insensible", "duree": 4.0, "params": {"filtre": "sol"}}],
-				"params": {"mode": "vitesse", "sans_traces": true}},
-			"chasseur": {"id": "sonnerie_makila", "nom": "Sonnerie du makila", "famille": "revele", "pret": false,
+				"effets": [{"type": "rapide", "duree": 4.0, "params": {"k": 0.3, "sans_traces": true}}, {"type": "insensible", "duree": 4.0, "params": {"filtre": "sol"}}],
+				"params": {"mode": "vitesse"}},
+			"chasseur": {"id": "sonnerie_makila", "nom": "Sonnerie du makila", "famille": "zone", "pret": false,
 				"recharge": 20.0, "portee": 8.0, "duree": 2.0,
 				"effets": [{"type": "revele", "duree": 2.0, "params": {}}],
-				"params": {"rendu": "effet", "filtre": "immobile", "immobile_s": 2.0}}
+				"params": {"filtre": "immobile", "immobile_s": 2.0, "bulle": "Tiling !", "bulle_cible": "ding !", "couleur": "#ffd34a"}}
 		},
 		"kaio": {
-			"chasse": {"id": "battement_plumes", "nom": "Battement de plumes", "famille": "deplacement", "pret": false,
+			"chasse": {"id": "battement_plumes", "nom": "Battement de plumes", "famille": "deplacement", "pret": true,
 				"recharge": 25.0, "portee": 0.0, "duree": 3.0,
-				"params": {"mode": "vol", "franchit": "mbr", "cachettes_hautes": true}},
+				"params": {"mode": "vol", "franchit": "mbr", "hauteur_px": 12.0, "vol_rab_s": 1.0}},
 			"chasseur": {"id": "cri_strident", "nom": "Cri strident", "famille": "zone", "pret": false,
 				"recharge": 20.0, "portee": 5.0, "duree": 0.0,
 				"effets": [{"type": "inverse", "duree": 2.0, "params": {}}],
-				"params": {"si_bouge": "revele", "si_bouge_duree": 3.0}}
+				"params": {"si_bouge": "revele", "si_bouge_duree": 3.0, "bulle": "KAIOOO !", "couleur": "#e8eef2"}}
 		},
 		"karramarro": {
-			"chasse": {"id": "enfouissement", "nom": "L'enfouissement", "famille": "deplacement", "pret": false,
+			"chasse": {"id": "enfouissement", "nom": "L'enfouissement", "famille": "deplacement", "pret": true,
 				"recharge": 25.0, "portee": 0.0, "duree": 8.0,
 				"effets": [{"type": "invisible", "duree": 8.0, "params": {"tant_qu_immobile": true}}],
-				"params": {"mode": "enfouissement", "sol": ":"}},
-			"chasseur": {"id": "debordement_crabe", "nom": "Débordement crabe", "famille": "deplacement", "pret": false,
+				"params": {"mode": "enfouissement", "sol": ":", "bulle": "frrrt !"}},
+			"chasseur": {"id": "debordement_crabe", "nom": "Débordement crabe", "famille": "deplacement", "pret": true,
 				"recharge": 20.0, "portee": 4.0, "duree": 0.35,
-				"params": {"mode": "glissade", "lateral": true}}
+				"params": {"mode": "dash", "glisse_s": 0.35, "hauteur_px": 0.0}}
 		},
 		"ramuntxo": {
 			"chasse": {"id": "gateau_partage", "nom": "Gâteau du partage", "famille": "pose", "pret": false,
 				"recharge": 25.0, "portee": 1.5, "duree": 15.0,
 				"effets": [{"type": "fige", "duree": 1.5, "params": {"cible": "chasseur"}}, {"type": "rapide", "duree": 3.0, "params": {"k": 0.3, "cible": "chasse"}}],
-				"params": {"objet": "gateau", "usages": 1}},
+				"params": {"objet": "gateau", "position": "pieds", "usages": 1, "bulle_chasseur": "Mmmh…", "bulle_chasse": "Miam !"}},
 			"chasseur": {"id": "pot_piment", "nom": "Pot de piment", "famille": "lance", "pret": false,
 				"recharge": 20.0, "portee": 6.0, "duree": 4.0,
 				"effets": [{"type": "revele", "duree": 3.0, "params": {"toux": true}}],
-				"params": {"projectile": "pot", "nuage_rayon": 2.0}}
+				"params": {"projectile": "pot", "nuage_rayon": 2.0, "vitesse": 10.0, "rayon_touche": 0.5, "sans_cible_ok": true,
+					"bulle_nuage": "kof kof !", "couleur": "#e8392c"}}
 		},
 		"itsaso": {
 			"chasse": {"id": "batisse_eclair", "nom": "Bâtisse éclair", "famille": "pose", "pret": false,
@@ -113,27 +115,29 @@
 			"chasseur": {"id": "courant_laminak", "nom": "Courant des laminak", "famille": "zone", "pret": false,
 				"recharge": 20.0, "portee": 10.0, "duree": 0.0, "touche_cachette": true,
 				"effets": [{"type": "revele", "duree": 2.0, "params": {}}],
-				"params": {"centre": "cachettes", "geysers": 3, "ejecte": true}}
+				"params": {"centre": "cachettes", "geysers": 3, "ejecte": true, "geyser_delai": 0.5, "geyser_rayon": 0.8,
+					"bulle": "Laminak !", "bulle_cible": "plouf !", "couleur": "#6ff0ff"}}
 		},
 		"peio": {
 			"chasse": {"id": "feinte_passe", "nom": "Feinte de passe", "famille": "reflexe", "pret": false,
 				"recharge": 25.0, "portee": 2.0, "duree": 0.0,
 				"effets": [{"type": "rapide", "duree": 2.0, "params": {"k": 0.3, "si_jauge": 0.7}}],
-				"params": {"pas_de_cote": 2.0, "jauge_seuil": 0.7, "jauge_a_zero": true}},
+				"params": {"pas_de_cote": 2.0, "jauge_seuil": 0.7, "jauge_a_zero": true, "bulle": "Feinte !"}},
 			"chasseur": {"id": "troisieme_mi_temps", "nom": "Troisième mi-temps", "famille": "zone", "pret": false,
 				"recharge": 20.0, "portee": 7.0, "duree": 3.0,
 				"effets": [{"type": "ralenti", "duree": 3.0, "params": {"k": 0.3}}],
-				"params": {"traces": 3.0}}
+				"params": {"traces": 3.0, "pas_vie": 2.5, "pas_ecart": 0.45, "bulle": "Allez !!", "couleur": "#ff6b5e"}}
 		},
 		"itsasargi": {
 			"chasse": {"id": "feu_occultation", "nom": "Feu à occultation", "famille": "zone", "pret": false,
 				"recharge": 25.0, "portee": 6.0, "duree": 0.0,
 				"effets": [{"type": "aveugle", "duree": 2.0, "params": {"masque": "noir"}}],
-				"params": {"filtre": "regarde_vers", "cible": "chasseur"}},
+				"params": {"filtre": "regarde_vers", "cible": "chasseur", "marge_deg": 10.0, "couleur": "#fff6b0"}},
 			"chasseur": {"id": "eclat_revelateur", "nom": "Éclat révélateur", "famille": "lance", "pret": false,
 				"recharge": 20.0, "portee": 10.0, "duree": 0.0,
 				"effets": [{"type": "revele", "duree": 3.0, "params": {}}, {"type": "ralenti", "duree": 3.0, "params": {"k": 0.3}}],
-				"params": {"projectile": "faisceau", "traverse_bas": true}}
+				"params": {"projectile": "faisceau", "traverse_bas": true, "rayon_touche": 0.6, "trace_s": 0.5, "sans_cible_ok": true,
+					"couleur": "#fff6b0"}}
 		}
 	}
 }
