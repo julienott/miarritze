@@ -412,7 +412,7 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 | `run` | course | Sprint_Loop |
 | `jump_hide` | saut vers la cachette (la sortie = à l'envers) | Jump_Start |
 | `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir_Idle_Loop |
-| `ghost` | **fantôme générique, le même pour tous** (*Julien, 23/10*) : petit drap blanc aux grands yeux ronds et petit béret rouge, qui flotte et avance ; le pseudo au-dessus dit à qui il est | sprite commun (`assets/blackout/fantome/`), plus d'élément ghost par perso |
+| `ghost` | **fantôme générique, le même pour tous** (*Julien, 23/10*) : petit drap blanc aux grands yeux ronds et petit béret rouge, qui flotte et avance ; le pseudo au-dessus dit à qui il est | sprite commun (`assets/blackout/fantome/`) : style `pf_px__ghost` de pixelforge (drap dessiné une fois, mouvements par code : `float`, `advance`, `appear`) ; les sets des persos font `skip: ["ghost"]` |
 | `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6), propres au perso | extras, clip par coup |
 | `interagir` | fouiller une cachette, actionner un disjoncteur (1 s) | élément standard, Interact |
 | `victoire`, `defaite` | podium | éléments standard, Dance_Loop et Idle_No_Loop |
@@ -453,6 +453,8 @@ simples ; Kaio et Karramarro sans foulard, Karramarro sur pattes de crabe ; Ramu
 uni et chaussures noires ; Itsaso écume blanche ; Itsasargi lanterne plus grosse, bien tenue. Louis,
 Maïa et Peio inchangés.
 
+- **Proportions trapues façon Party Hard** (*Julien avec pixelforge, 23/10*) : ~7 px de large à 32 px
+  (Louis passait de 5 à 7).
 - **Character set complet** (*Julien, 23/10*) : éléments fixes + **9 éléments standard** communs à tous
   (`interagir`, `victoire`, `defaite` et les 6 animations d'effets), demandés à pixelforge le 23/10, + **3
   extras propres au perso** (`idle_long`, `cast_chasse`, `cast_chasseur`). Un perso déjà validé reçoit ce
@@ -465,7 +467,7 @@ de loin, aucune personnalisation, rien de violent.
 
 **Character set d'un PNJ humain** (`pf_px__character_set`, case 64 en 32 px) : `profile`, `idle`, `run` (la
 fuite : Sprint_Loop, action « runs away in panic, arms up »), tout le reste sauté (`portrait`,
-`jump_hide`, `lift`, `ghost`, éléments standard), et **4 extras** : `marcher` (Walk_Loop) , `sursaut`
+`jump_hide`, `lift`, `ghost`, `standard`), et **4 extras** : `marcher` (Walk_Loop) , `sursaut`
 (Hit_Chest, « jumps back startled ») et ses **2 activités** prises dans le catalogue ci-dessous.
 
 **Catalogue d'activités** (extra : clip Quaternius, action, objet)

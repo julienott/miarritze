@@ -6,7 +6,8 @@
    "portrait",
    "jump_hide",
    "lift",
-   "ghost"
+   "ghost",
+   "standard"
   ],
   "run_action": "runs away in panic, arms up",
   "extras_communs": [
