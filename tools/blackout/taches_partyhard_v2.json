@@ -1,9 +1,9 @@
 {
  "louis": {
-  "A": "f9818ad36d70422899cbf902f4105676",
+  "A": "8ecd5e95a5264e10aab152f9ad8cdc4f",
   "chaine": [
    {
-    "task_id": "65f572fa3c1b46fc98f3d37ec82fde37",
+    "task_id": "be746981dd1c43f29867925a9a942e9b",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
@@ -16,7 +16,8 @@
    "loop": true,
    "fps": 10,
    "object": false
-  }
+  },
+  "note": "Louis v5 lancé par pixelforge (graine 7, commit 16f6cb3), 23/10"
  },
  "txomin": {
   "A": "178d6117dc5e4d338fd87ac93f911bfc",

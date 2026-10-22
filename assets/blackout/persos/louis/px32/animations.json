@@ -1,63 +1,63 @@
 {
  "profile": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/profile.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/profile_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/profile_sheet.png",
   "fps": 1,
   "loop": false,
   "count": 1,
   "caption": "profile · 1 image · 1 i/s"
  },
  "idle": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/idle.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/idle_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/idle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/idle_sheet.png",
   "fps": 3,
   "loop": true,
   "count": 2,
   "caption": "idle · 2 images · 3 i/s · boucle"
  },
  "run": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/run.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/run_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/run_sheet.png",
   "fps": 12,
   "loop": true,
   "count": 4,
   "caption": "run · 4 images · 12 i/s · boucle"
  },
  "jump_hide": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/jump_hide.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/jump_hide_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/jump_hide.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/jump_hide_sheet.png",
   "fps": 12,
   "loop": false,
   "count": 5,
   "caption": "jump_hide · 5 images · 12 i/s"
  },
  "lift": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/lift.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/lift_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/lift.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/lift_sheet.png",
   "fps": 8.0,
   "loop": true,
   "count": 6,
   "caption": "lift · 6 images · 8 i/s · boucle"
  },
  "ghost": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/ghost.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/ghost_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/ghost.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/ghost_sheet.png",
   "fps": 6,
   "loop": true,
   "count": 4,
   "caption": "ghost · 4 images · 6 i/s · boucle"
  },
  "portrait": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/portrait.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/portrait_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/portrait.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/portrait_sheet.png",
   "fps": 1,
   "loop": false,
   "count": 1,
   "caption": "portrait · 1 image · 1 i/s"
  },
  "idle_long": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/idle_long.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/8b9b9366b769413c8767829cd61cf696/idle_long_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/idle_long.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/be746981dd1c43f29867925a9a942e9b/idle_long_sheet.png",
   "fps": 10.0,
   "loop": true,
   "count": 8,
