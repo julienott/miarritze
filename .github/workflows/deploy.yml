@@ -1,16 +1,14 @@
 name: Build & deploy web export
 
 # Depuis le 2026-10-20 (Julien) : main = Miarritze Gordeka, publié À LA RACINE du site (remplace
-# Borroka) ; /producer est préparé en local (tools/producer/publie.sh) et recopié ensuite par producer.yml. Steam Deck et Recalbox sont sautés « jusqu'à nouvel ordre ».
+# Borroka, supprimé du dépôt le 2026-10-22) ; /producer est préparé en local (tools/producer/publie.sh)
+# et recopié ensuite par producer.yml.
 # Déploiement à la main seulement, sur décision de Julien.
 on:
   workflow_dispatch:
 
 env:
   GODOT_VERSION: "4.7.2"
-  # Extension WebRTC native (addons/webrtc_native) : fait partie du « moteur » pour
-  # l'auto-update (paquet complet si elle change). Égal à RUNTIME_TAG de updater.gd.
-  WEBRTC_TAG: "webrtc1.2.2"
 
 jobs:
   deploy:
@@ -67,20 +65,6 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 
-      # Force l'auth par mot de passe — sans ces flags, ssh tente publickey
-      # d'abord et un MaxAuthTries bas côté serveur peut nous bloquer avant
-      # d'atteindre la tentative par mot de passe. (Même pattern que sutorimu.)
-      # Pas de --delete : FTP_PATH pourrait contenir d'autres fichiers (API
-      # backend plus tard) ; les fichiers index.* sont simplement écrasés.
-      # landing/ : fond, logo et police de la page d'accueil (web/shell.html).
-      - name: Copy PWA + landing assets dans le build
-        run: |
-          mkdir -p web/build/pwa web/build/landing
-          cp web/pwa/*.png web/build/pwa/
-          cp web/pwa/manifest.webmanifest web/build/pwa/manifest.webmanifest
-          cp web/landing/* web/build/landing/
-          test -f web/build/landing/bg_menu_0.png && test -f web/build/landing/press_start_2p.ttf
-
       # Relais TURN (connexion en 4G / NAT strict) : identifiants Cloudflare lus dans
       # les secrets, écrits dans backend/turn.php (gitignoré) ; absents = STUN seul.
       - name: TURN config
@@ -95,6 +79,11 @@ jobs:
             echo "Pas de relais TURN configuré (secrets CF_TURN_KEY_ID / CF_TURN_API_TOKEN)"
           fi
 
+      # Force l'auth par mot de passe — sans ces flags, ssh tente publickey
+      # d'abord et un MaxAuthTries bas côté serveur peut nous bloquer avant
+      # d'atteindre la tentative par mot de passe. (Même pattern que sutorimu.)
+      # Pas de --delete : FTP_PATH pourrait contenir d'autres fichiers (API
+      # backend plus tard) ; les fichiers index.* sont simplement écrasés.
       - name: Deploy via rsync over SSH
         env:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
@@ -116,174 +105,3 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run producer.yml --ref "${{ github.ref_name }}"
-
-  # Version Steam Deck (Linux x86_64), voir docs/STEAMDECK.md : export,
-  # archive + .pck + manifest.json, publiés dans /steamdeck/ à côté du jeu
-  # web. Job indépendant : un échec ici ne bloque jamais le déploiement web.
-  # Le numéro de build (run_number de CE workflow) est ce que le jeu compare
-  # pour se mettre à jour : il doit rester croissant (ne pas renommer le
-  # fichier sans relever le compteur, cf. doc).
-  steamdeck:
-    if: ${{ false }}   # sauté jusqu'à nouvel ordre de Julien (2026-10-20)
-    runs-on: ubuntu-latest
-    # Deux pushs rapprochés : on publie dans l'ordre, jamais un manifeste plus ancien en dernier.
-    concurrency:
-      group: steamdeck-deploy
-      cancel-in-progress: false
-    env:
-      SITE_URL: https://miarritze.ijulien.com
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cache Godot + Linux templates
-        id: godot-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/godot-bin
-            ~/.local/share/godot/export_templates
-          key: godot-${{ env.GODOT_VERSION }}-linux
-
-      # Seul le modèle Linux x86_64 release est utile (~70 Mo).
-      - name: Install Godot + Linux export templates
-        if: steps.godot-cache.outputs.cache-hit != 'true'
-        run: tools/release/install_godot.sh "$GODOT_VERSION" linux_release.x86_64
-
-      # Version = numéro de run + SHA court, injectée dans la copie de travail
-      # de la CI (project.godot versionné reste sans numéro : « dev »).
-      - name: Version du build
-        id: version
-        run: |
-          BUILD="${{ github.run_number }}"
-          VERSION="${BUILD}-${GITHUB_SHA::7}"
-          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          python3 tools/release/set_version.py "$BUILD" "$VERSION"
-          grep -n '^config/' project.godot
-
-      - name: Import project resources
-        run: ~/godot-bin/godot --headless --import || true
-
-      - name: Export SteamDeck (release)
-        run: |
-          mkdir -p exports/steamdeck
-          ~/godot-bin/godot --headless --export-release "SteamDeck" exports/steamdeck/MiarritzeBorroka.x86_64
-          test -x exports/steamdeck/MiarritzeBorroka.x86_64 && test -f exports/steamdeck/MiarritzeBorroka.pck
-
-      # .tar.gz plutôt qu'AppImage : l'auto-update doit pouvoir réécrire le
-      # jeu sur place, et une AppImage est en lecture seule (squashfs + FUSE).
-      - name: Package (archive + pck + manifeste)
-        run: |
-          tools/steamdeck/package.sh exports/steamdeck web/build/steamdeck \
-            "${{ steps.version.outputs.build }}" "${{ steps.version.outputs.version }}" \
-            "$GODOT_VERSION+$WEBRTC_TAG" "$SITE_URL/steamdeck"
-          cp web/steamdeck/index.html web/steamdeck/install.sh web/steamdeck/.htaccess web/build/steamdeck/
-          bash -n web/build/steamdeck/install.sh
-          ls -la web/build/steamdeck
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: MiarritzeBorroka-steamdeck-${{ steps.version.outputs.version }}
-          path: web/build/steamdeck/*.tar.gz
-          retention-days: 14
-
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-
-      # Même hébergement et mêmes secrets que le job deploy. Ordre : d'abord
-      # les fichiers (sans le manifeste), puis le manifeste et le ménage des
-      # anciennes versions (--delete limité à steamdeck/) : un client ne lit
-      # jamais un manifeste qui pointe vers un fichier pas encore envoyé.
-      - name: Deploy /steamdeck via rsync over SSH
-        env:
-          SSHPASS: ${{ secrets.FTP_PASSWORD }}
-        run: |
-          SSH_OPTS="ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1"
-          DEST="${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/steamdeck/"
-          sshpass -e rsync -az -e "$SSH_OPTS" --exclude='manifest.json' web/build/steamdeck/ "$DEST"
-          sshpass -e rsync -az --delete -e "$SSH_OPTS" web/build/steamdeck/ "$DEST"
-
-  # Version Recalbox (Raspberry Pi 4/5 en 64 bits + PC x86_64), voir
-  # docs/RECALBOX.md : deux exports (un .pck commun), un .zip par architecture
-  # à décompresser sur la partition share, manifest.json, publiés dans
-  # /recalbox/. Job indépendant (comme steamdeck) : un échec ici ne bloque
-  # jamais le déploiement web. Même numéro de build (run_number de CE
-  # workflow) : il doit rester croissant.
-  recalbox:
-    if: ${{ false }}   # sauté jusqu'à nouvel ordre de Julien (2026-10-20)
-    runs-on: ubuntu-latest
-    concurrency:
-      group: recalbox-deploy
-      cancel-in-progress: false
-    env:
-      SITE_URL: https://miarritze.ijulien.com
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cache Godot + Linux arm64/x86_64 templates
-        id: godot-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/godot-bin
-            ~/.local/share/godot/export_templates
-          key: godot-${{ env.GODOT_VERSION }}-linux-recalbox
-
-      - name: Install Godot + Linux export templates
-        if: steps.godot-cache.outputs.cache-hit != 'true'
-        run: tools/release/install_godot.sh "$GODOT_VERSION" linux_release.arm64 linux_release.x86_64
-
-      - name: Version du build
-        id: version
-        run: |
-          BUILD="${{ github.run_number }}"
-          VERSION="${BUILD}-${GITHUB_SHA::7}"
-          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          python3 tools/release/set_version.py "$BUILD" "$VERSION"
-          grep -n '^config/' project.godot
-
-      - name: Import project resources
-        run: ~/godot-bin/godot --headless --import || true
-
-      - name: Export Recalbox arm64 + x86_64 (release)
-        run: |
-          mkdir -p exports/recalbox/arm64 exports/recalbox/x86_64
-          ~/godot-bin/godot --headless --export-release "Recalbox" exports/recalbox/arm64/MiarritzeBorroka.arm64
-          ~/godot-bin/godot --headless --export-release "Recalbox x86_64" exports/recalbox/x86_64/MiarritzeBorroka.x86_64
-          test -f exports/recalbox/arm64/MiarritzeBorroka.arm64 && test -f exports/recalbox/arm64/MiarritzeBorroka.pck
-          test -f exports/recalbox/x86_64/MiarritzeBorroka.x86_64 && test -f exports/recalbox/x86_64/MiarritzeBorroka.pck
-
-      - name: Package (zips + pck + manifeste)
-        run: |
-          bash -n tools/recalbox/MiarritzeBorroka.sh
-          python3 tools/recalbox/package.py exports/recalbox web/build/recalbox \
-            "${{ steps.version.outputs.build }}" "${{ steps.version.outputs.version }}" \
-            "$GODOT_VERSION+$WEBRTC_TAG" "$SITE_URL/recalbox"
-          cp web/recalbox/index.html web/recalbox/install.sh web/recalbox/.htaccess web/build/recalbox/
-          bash -n web/build/recalbox/install.sh
-          ls -la web/build/recalbox
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: MiarritzeBorroka-recalbox-${{ steps.version.outputs.version }}
-          path: web/build/recalbox/*.zip
-          retention-days: 14
-
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-
-      # Même hébergement et mêmes secrets que les autres jobs ; d'abord les
-      # fichiers, puis le manifeste et le ménage (--delete limité à recalbox/).
-      - name: Deploy /recalbox via rsync over SSH
-        env:
-          SSHPASS: ${{ secrets.FTP_PASSWORD }}
-        run: |
-          SSH_OPTS="ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1"
-          DEST="${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/recalbox/"
-          sshpass -e rsync -az -e "$SSH_OPTS" --exclude='manifest.json' web/build/recalbox/ "$DEST"
-          sshpass -e rsync -az --delete -e "$SSH_OPTS" web/build/recalbox/ "$DEST"

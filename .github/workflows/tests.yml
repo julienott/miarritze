@@ -1,4 +1,4 @@
-name: Tests (sim headless, données, budget RD)
+name: Tests (Gordeka headless, salons, PHP)
 
 on:
   push:
@@ -27,20 +27,11 @@ jobs:
           unzip -q godot.zip
           mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" ~/godot-bin/godot
           chmod +x ~/godot-bin/godot
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Python deps
-        run: pip install pillow numpy pyyaml soundfile
-      - name: Validation des fiches combattants
-        run: python tools/sprites/build_fighter.py --all
-      - name: Test hors ligne du plafond RD
-        run: python tools/rd/test_client.py
       - name: Import
         run: ~/godot-bin/godot --headless --path . --import || true
-      - name: Tests de la sim (déterminisme, rollback, règles)
-        run: |
-          ~/godot-bin/godot --headless --path . --script res://tests/run_tests.gd
-          ~/godot-bin/godot --headless --path . res://tests/touch_test.tscn
+      - name: Tests de Gordeka (règles, IA, cartes, profils)
+        run: ~/godot-bin/godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd
       - name: PHP lint
-        run: find backend -name '*.php' -print0 | xargs -0 -n1 php -l
+        run: find backend producer -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Tests des salons (API)
+        run: python3 tests/backend/rooms_test.py
