@@ -1,82 +1,153 @@
 {
  "factor": 4,
+ "size": "normal",
+ "height": 30,
  "canvas": [
-  32,
-  32
+  64,
+  64
  ],
- "feet_y": 31,
+ "feet_y": 60,
  "palette": [
-  "#10090d",
-  "#25161d",
-  "#3f3230",
-  "#724c34",
-  "#7f0003",
-  "#8d716b",
-  "#e00008",
-  "#ffab75",
-  "#ffb800",
+  "#030f25",
+  "#072353",
+  "#27000e",
+  "#670004",
+  "#724b33",
+  "#a6a4a6",
+  "#e5000a",
+  "#fcb100",
+  "#ffa773",
   "#ffffff"
+ ],
+ "palette_base": [
+  "#072353",
+  "#e5000a",
+  "#ffffff",
+  "#fcb100",
+  "#ffa773",
+  "#27000e",
+  "#a6a4a6"
+ ],
+ "palette_dark": [
+  "#030f25",
+  "#670004",
+  "#724b33",
+  "#724b33",
+  "#724b33",
+  "#030f25",
+  "#724b33"
  ],
  "elements": {
   "profile": {
    "frames": 1,
    "fps": 1,
-   "loop": false
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
   },
   "idle": {
    "frames": 2,
    "fps": 3,
-   "loop": true
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
   },
   "run": {
    "frames": 4,
    "fps": 12,
-   "loop": true
+   "loop": true,
+   "anchor": "common",
+   "size": [
+    64,
+    64
+   ]
   },
   "jump_hide": {
    "frames": 5,
    "fps": 12,
-   "loop": false
+   "loop": false,
+   "anchor": "common",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "lift": {
+   "frames": 6,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "common",
+   "size": [
+    64,
+    64
+   ]
   },
   "ghost": {
    "frames": 4,
    "fps": 6,
-   "loop": true
+   "loop": true,
+   "anchor": "common",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "portrait": {
+   "frames": 1,
+   "fps": 1,
+   "loop": false,
+   "anchor": "bottom",
+   "size": [
+    64,
+    64
+   ]
   },
   "idle_long": {
    "frames": 8,
    "fps": 10.0,
-   "loop": true
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
   }
  },
- "source": "16d7566d4b504b479f37b7c93b5a1968",
+ "source": "778a64186bc24f2b9c3ae9314ddb12a4",
  "controls": {
   "warnings": [
-   "teinte d'une zone dérivée de 21.7 ΔE entre 128 et 32"
+   "largeur du corps 5 px (attendu ~8)",
+   "teinte d'une zone dérivée de 23.3 ΔE entre 128 et 32"
   ],
-  "height_px": 30,
-  "body_width_px": 6,
+  "height_px": 29,
+  "body_width_px": 5,
   "colors_used": 10,
-  "isolated_px": 21,
+  "isolated_px": 3,
   "feet_bottom": {
    "profile": [
-    31
+    60
    ],
    "idle": [
-    31,
-    31
+    60,
+    60
    ],
    "run": [
-    31,
-    31,
-    31,
-    31
+    59,
+    60,
+    59,
+    60
    ]
   },
   "feet_max_dev": 0,
   "eye_present": true,
-  "zone_drift_de": 21.7,
-  "saturation_mean": 0.6,
+  "zone_drift_de": 23.3,
+  "saturation_mean": 0.87,
   "lightness_range": 95,
   "colors_budget": 10
  }
