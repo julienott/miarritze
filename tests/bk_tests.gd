@@ -6,7 +6,8 @@ extends SceneTree
 ## la lumière et l'ombre (éclairé derrière un mur, jauge 3 fois plus lente, silhouette), les
 ## disjoncteurs (coupure de 15 s, recharge, rallumage par le chasseur, priorité du bouton), le menu
 ## debug et les coups spéciaux (données, recharge et gâteaux, plafond des effets et protection, aimant de
-## visée, Passe-Muraille, Cache-Cache !, pièges et onde retirés).
+## visée, Passe-Muraille, Cache-Cache !, pièges et onde retirés), plus les 24 autres coups
+## (tests/bk_coups_tests.gd, un test par coup).
 ## godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd [-- --only=nom]
 
 const GAME: String = "res://src/blackout/bk_game.tscn"
@@ -17,6 +18,8 @@ var _passed: int = 0
 var _only: String = ""
 var _saved: Dictionary = {}
 var _saved_cfg: Dictionary = {}
+## Tests des coups de l'étape 4 (gardés en vie pendant l'exécution).
+var _coups_tests: RefCounted
 
 
 func _initialize() -> void:
@@ -37,6 +40,9 @@ func _run() -> void:
 		test_eclaire_mur, test_ombre_facteur, test_ombre_capture_silhouette, test_disjoncteur,
 		test_disjoncteur_priorite, test_disjoncteur_ia, test_menu_debug, test_coups_donnees, test_recharge,
 		test_plafond_protection, test_aimant, test_passe_muraille, test_cache_cache, test_pieges_retires]
+	# Les 24 coups de l'étape 4 (un test par coup) : tests/bk_coups_tests.gd.
+	_coups_tests = preload("res://tests/bk_coups_tests.gd").new(self)
+	tests.append_array(_coups_tests.tests())
 	for t: Callable in tests:
 		if _only != "" and not t.get_method().contains(_only):
 			continue
@@ -1030,7 +1036,7 @@ func avance_coups(game: BkGame, secs: float) -> void:
 
 
 ## Données (GDD §4.4) : 13 persos × 2 coups, champs communs, familles connues, recharges ≈25 s (chassé)
-## et ≈20 s (chasseur) ; seuls ceux de Louis sont codés à l'étape 3, les autres sont « bientôt ».
+## et ≈20 s (chasseur) ; les 26 sont codés (étape 4).
 func test_coups_donnees() -> void:
 	var d: Dictionary = BkCoups.donnees()
 	var persos: Dictionary = d.get("persos", {})
@@ -1047,7 +1053,7 @@ func test_coups_donnees() -> void:
 			check(familles.has(str(c.get("famille", ""))), "%s/%s : famille connue (%s)" % [ch, role, c.get("famille")])
 			check(near(float(c.get("recharge", 0.0)), 25.0 if role == "chasse" else 20.0, 5.0),
 				"%s/%s : recharge %.0f s" % [ch, role, float(c.get("recharge", 0.0))])
-			check(BkCoups.code(c) == (str(ch) == "louis"), "%s/%s : codé seulement pour Louis" % [ch, role])
+			check(BkCoups.code(c), "%s/%s : codé (pret, famille connue)" % [ch, role])
 			check(not ids.has(c.get("id")), "id unique : %s" % c.get("id"))
 			ids[c.get("id")] = true
 	check(str(BkCoups.coup_de("louis", false)["nom"]) == "Passe-Muraille" and str(BkCoups.coup_de("louis", true)["nom"]) == "Cache-Cache !",
@@ -1088,10 +1094,13 @@ func test_recharge() -> void:
 	game.gateaux = [{"pos": c.position}]
 	game._update_ideas(DT)
 	check(c.coup_cd <= 0.0 and c.score == sc, "chassé : gâteau = recharge, pas de point")
-	# Coup pas encore codé : « bientôt ».
+	# Coup pas encore codé (pret faux) : « bientôt », rien de consommé.
 	c.character = "txomin"
+	var fil: Dictionary = BkCoups.coup_de("txomin", false)
+	fil["pret"] = false
 	check(game.action_label(c) == "Fil d'Ariane" and game.coups.lance(c) == "bientot" and c.coup_cd <= 0.0,
-		"coup d'un autre perso : « bientôt », rien de consommé")
+		"coup pas prêt : « bientôt », rien de consommé")
+	fil["pret"] = true
 	await free_game(game)
 
 
