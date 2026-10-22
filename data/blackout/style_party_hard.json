@@ -709,21 +709,23 @@
   "personnalisation": false
  },
  "idle_long": {
-  "_doc": "Pose d'inactivité par perso (GDD §8.2) : geste (texte) + clip Quaternius (UAL1 ou UAL2, installée chez pixelforge le 22/10).",
+  "_doc": "Pose d'inactivité par perso (GDD §8.2) : geste (texte) + clip Quaternius (UAL1 ou UAL2, installée chez pixelforge le 22/10). objet = accessoire de l'extra nommé pour pixelforge (champ object, ajouté au perso avant l'animation).",
   "louis": {
    "geste": "folds his arms and taps his foot, glancing around",
    "clip": "Idle_FoldArms_Loop",
    "repli": null
   },
   "txomin": {
-   "geste": "talks into a small black walkie-talkie held at his mouth",
+   "geste": "talks into his walkie-talkie held at his mouth",
    "clip": "Idle_TalkingPhone_Loop",
-   "repli": null
+   "repli": null,
+   "objet": "a small red walkie-talkie"
   },
   "patxi": {
    "geste": "casts a fishing rod and waits for a bite",
    "clip": "Fish_Cast_Idle_Loop",
-   "repli": null
+   "repli": null,
+   "objet": "a fishing rod"
   },
   "maia": {
    "geste": "chats cheerfully with big hand gestures",
@@ -733,12 +735,14 @@
   "xabi": {
    "geste": "practises a chistera swing",
    "clip": "Sword_Attack",
-   "repli": null
+   "repli": null,
+   "objet": "a wicker chistera"
   },
   "mattin": {
    "geste": "lifts a heavy round stone",
    "clip": "PickUp_Table",
-   "repli": null
+   "repli": null,
+   "objet": "a heavy round stone"
   },
   "amaia": {
    "geste": "dances a few Basque folk steps",
@@ -758,7 +762,8 @@
   "ramuntxo": {
    "geste": "tastes a sauce from a wooden spoon",
    "clip": "Consume",
-   "repli": null
+   "repli": null,
+   "objet": "a wooden spoon"
   },
   "itsaso": {
    "geste": "swirls a small wave between her hands",
@@ -768,12 +773,14 @@
   "peio": {
    "geste": "spins his rugby ball in his hands",
    "clip": "Interact",
-   "repli": null
+   "repli": null,
+   "objet": "an oval rugby ball"
   },
   "itsasargi": {
    "geste": "raises his lantern and peers into the dark",
    "clip": "Idle_Lantern_Loop",
-   "repli": null
+   "repli": null,
+   "objet": "a brass lantern"
   }
  }
 }

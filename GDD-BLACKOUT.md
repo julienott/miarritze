@@ -376,7 +376,7 @@ graine 7, chaîne moteur A → moteur B). Toute modification se fait ici d'abord
 | Perso | Description (prompt) | Signature | idle_long : geste — clip |
 |---|---|---|---|
 | Louis — l'enfant du pays | a little Basque boy with blond hair, a red beret, a white short-sleeved shirt, a red belt and navy rolled-up trousers | a red Basque beret on blond hair | folds his arms and taps his foot, glancing around — Idle_FoldArms_Loop |
-| Txomin — maître-nageur | a Basque lifeguard boy with dark brown skin and short black curly hair, a red cap, black sunglasses, a yellow tank top and red swim shorts, barefoot | a red cap and a yellow tank top | talks into a small black walkie-talkie held at his mouth — Idle_TalkingPhone_Loop |
+| Txomin — maître-nageur | a Basque lifeguard boy with dark brown skin and short black curly hair, a red cap, black sunglasses, a yellow tank top and red swim shorts, barefoot | a red cap and a yellow tank top | talks into his walkie-talkie held at his mouth — Idle_TalkingPhone_Loop |
 | Patxi — pêcheur | a bearded Basque fisherman with a blue beanie, a yellow raincoat, light blue trousers and yellow rubber boots | a bright yellow raincoat and yellow boots | casts a fishing rod and waits for a bite — Fish_Cast_Idle_Loop |
 | Maïa — surfeuse | a young Basque surfer girl with a brown ponytail, a turquoise wetsuit with a navy panel, a small yellow surfboard strapped upright on her back, barefoot | a small yellow surfboard upright on her back | chats cheerfully with big hand gestures — Idle_Talking_Loop |
 | Xabi — pelotari | a little Basque jai alai player with short dark brown hair, a white polo shirt, plain white trousers, a red sash, red espadrilles and a long curved wicker chistera on his right hand pointing forward | a long curved wicker chistera pointing forward | practises a chistera swing — Sword_Attack |
@@ -511,6 +511,10 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
   7. élément `portrait` (buste de trois-quarts face, 64 px) et élément `lift` ;
   8. ~~bibliothèque Quaternius UAL2~~ : installée le 22/10 ;
   9. taille boss : 64 px (case 128, HD 512).
+- **Fait par pixelforge le 22/10** (commit be24c7a) : points 1 à 7 et 9 ci-dessus. Le moteur B lit la ligne
+  des pieds dans le `set.json` du moteur A (60, ou 120 pour un boss) ; l'accessoire d'un extra se nomme
+  dans `object` (colonne `objet` de `idle_long` dans le JSON) ; `lift` et `portrait` sont produits par
+  défaut. Limite connue : à 32 px, cheveux noirs et lunettes de soleil se fondent encore.
 - **Décor (essai du 22/10)** : chaîne `pf_geo__proxy` → `pf_px__prop` → `pf_px__reduce` étendu, plus le
   repli `pf_geo__fit` pour une image existante ; spec et critères d'acceptation :
   `docs/RECHERCHE_MASQUES_DECOR.md` §6.

@@ -33,9 +33,10 @@ def requete(pid: str, prio: str) -> dict:
     return {
         "prompt_style": "pf_px__character_set", "prompt": prompt(pid), "colors": 20, "seed": GRAINE,
         "priority": prio, "tag": TAG,
-        "extras": [{"name": "idle_long", "motion": il["clip"], "action": il["geste"], "loop": True,
-                    "fps": 10}],
-        "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10, "feet_y": 31}],
+        "extras": [{"name": "idle_long", "motion": il["clip"], "action": il["geste"], "loop": True, "fps": 10,
+                    "object": il.get("objet") or False}],
+        # B lit la ligne des pieds dans le set.json de A (60 en 32 px, case 64) : pas de feet_y.
+        "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10}],
     }
 
 
