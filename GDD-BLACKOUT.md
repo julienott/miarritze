@@ -482,31 +482,54 @@ fuite : Sprint_Loop, action « runs away in panic, arms up »), tout le reste sa
 | promener | Walk_Loop | walks a dog on a leash | a red leash |
 | jouer | Interact | plays a little tune | (objet du PNJ) |
 
-**Humains (22)**
-| id | Description | Signature | Activités |
-|---|---|---|---|
-| festayre | a festival-goer dressed all in white with a red sash and a red neckerchief | a red neckerchief on an all-white outfit | danser, boire |
-| txistulari | a txistu flute player in white with a red beret | a long thin flute and a red beret | jouer, parler |
-| amona | a little grandmother in a black dress with a red fan and a grey bun | a red fan | parler, assis |
-| marin | a fisherman in a striped blue and white sailor shirt and yellow boots | blue and white stripes | parler, boire |
-| surfeuse | a surfer girl with bleached hair in a black wetsuit carrying a longboard | a long white surfboard | telephone, parler |
-| serveur | a waiter in a white shirt and black apron with a tray of cider glasses | a round tray of glasses | parler, attendre |
-| sardine | a giant-head festival mascot of a smiling silver sardine | a huge smiling fish head | danser, attendre |
-| errege | a giant-head festival mascot of a Basque king with a golden crown | a huge crowned head | danser, attendre |
-| ballon | a little kid in a yellow raincoat holding a red balloon | a red balloon on a string | attendre, danser |
-| trompettiste | a bandas trumpet player in white and red | a shiny golden trumpet | jouer, boire |
-| glacier | an ice cream seller with a pink and white striped apron and cap | a striped apron | parler, attendre |
-| supporter | a rugby fan with a red and white scarf and a painted face | a red and white scarf | parler, boire |
-| touriste | a tourist in a flowery Hawaiian shirt and shorts with a camera | a flowery shirt and a camera | telephone, attendre |
-| jogger | a jogger in a bright green tracksuit with headphones | a bright green tracksuit | musique, attendre |
-| ado | a teenager in a purple hoodie with big headphones | big headphones on a purple hoodie | musique, telephone |
-| lecteur | an old man in a beige coat and a black beret | a black beret and a newspaper | journal, assis |
-| promeneuse | a woman in a long yellow coat walking her dog | a long yellow coat | promener, parler |
-| cycliste | a cyclist in a blue jersey pushing a red bicycle | a red bicycle | attendre, boire |
-| musicienne | a street guitarist in a denim jacket with a guitar | a wooden guitar | jouer, parler |
-| amoureux | a young man in a white shirt holding a single red rose | a red rose | parler, attendre |
-| policier | a friendly municipal police officer in a dark blue uniform and cap | a dark blue cap | parler, attendre |
-| pecheuse | a fisherwoman in a yellow oilskin and green boots with a bucket | a yellow oilskin | parler, boire |
+**Humains (42 : 22 spéciaux, 20 génériques)** — les *spéciaux* sont des personnages typés de la fête ; les
+*génériques* sont des passants ordinaires, majoritaires dans la foule (environ 2 génériques pour 1 spécial
+sur une carte).
+
+| id | Type | Description | Signature | Activités |
+|---|---|---|---|---|
+| festayre | spécial | a festival-goer dressed all in white with a red sash and a red neckerchief | a red neckerchief on an all-white outfit | danser, boire |
+| txistulari | spécial | a txistu flute player in white with a red beret | a long thin flute and a red beret | jouer, parler |
+| amona | spécial | a little grandmother in a black dress with a red fan and a grey bun | a red fan | parler, assis |
+| marin | spécial | a fisherman in a striped blue and white sailor shirt and yellow boots | blue and white stripes | parler, boire |
+| surfeuse | spécial | a surfer girl with bleached hair in a black wetsuit carrying a longboard | a long white surfboard | telephone, parler |
+| serveur | spécial | a waiter in a white shirt and black apron with a tray of cider glasses | a round tray of glasses | parler, attendre |
+| sardine | spécial | a giant-head festival mascot of a smiling silver sardine | a huge smiling fish head | danser, attendre |
+| errege | spécial | a giant-head festival mascot of a Basque king with a golden crown | a huge crowned head | danser, attendre |
+| ballon | spécial | a little kid in a yellow raincoat holding a red balloon | a red balloon on a string | attendre, danser |
+| trompettiste | spécial | a bandas trumpet player in white and red | a shiny golden trumpet | jouer, boire |
+| glacier | spécial | an ice cream seller with a pink and white striped apron and cap | a striped apron | parler, attendre |
+| supporter | spécial | a rugby fan with a red and white scarf and a painted face | a red and white scarf | parler, boire |
+| touriste | spécial | a tourist in a flowery Hawaiian shirt and shorts with a camera | a flowery shirt and a camera | telephone, attendre |
+| jogger | spécial | a jogger in a bright green tracksuit with headphones | a bright green tracksuit | musique, attendre |
+| ado | spécial | a teenager in a purple hoodie with big headphones | big headphones on a purple hoodie | musique, telephone |
+| lecteur | spécial | an old man in a beige coat and a black beret | a black beret and a newspaper | journal, assis |
+| promeneuse | spécial | a woman in a long yellow coat walking her dog | a long yellow coat | promener, parler |
+| cycliste | spécial | a cyclist in a blue jersey pushing a red bicycle | a red bicycle | attendre, boire |
+| musicienne | spécial | a street guitarist in a denim jacket with a guitar | a wooden guitar | jouer, parler |
+| amoureux | spécial | a young man in a white shirt holding a single red rose | a red rose | parler, attendre |
+| policier | spécial | a friendly municipal police officer in a dark blue uniform and cap | a dark blue cap | parler, attendre |
+| pecheuse | spécial | a fisherwoman in a yellow oilskin and green boots with a bucket | a yellow oilskin | parler, boire |
+| passant_jean | générique | a man in his thirties in a plain blue t-shirt and jeans | a plain blue t-shirt | telephone, attendre |
+| passante_robe | générique | a young woman in a simple green summer dress | a green dress | parler, boire |
+| papy_gilet | générique | an old man in a brown cardigan and grey trousers | a brown cardigan | assis, journal |
+| mamie_cabas | générique | an old woman in a lilac coat carrying a shopping bag | a lilac coat | parler, attendre |
+| femme_tailleur | générique | a woman in a navy blazer and white trousers | a navy blazer | telephone, boire |
+| homme_costume | générique | a man in a grey suit and tie | a grey suit | telephone, attendre |
+| etudiante | générique | a student girl with a backpack and a yellow sweater | a yellow sweater | musique, parler |
+| etudiant | générique | a student boy with a backpack and a red sweatshirt | a red sweatshirt | telephone, parler |
+| maman | générique | a mother in a white top and blue jeans | a white top | parler, attendre |
+| papa | générique | a father in a checked flannel shirt and khaki trousers | a checked shirt | parler, boire |
+| enfant_fille | générique | a little girl in a pink t-shirt and shorts | a pink t-shirt | danser, attendre |
+| enfant_garcon | générique | a little boy in an orange t-shirt and blue shorts | an orange t-shirt | danser, attendre |
+| femme_pull | générique | a woman in a teal knitted sweater and black trousers | a teal sweater | boire, parler |
+| homme_polo | générique | a man in a white polo shirt and beige shorts | a white polo shirt | boire, parler |
+| jeune_casquette | générique | a young man in a black cap and grey hoodie | a black cap | musique, attendre |
+| femme_imper | générique | a woman in a beige trench coat | a beige trench coat | telephone, journal |
+| homme_doudoune | générique | a man in a dark green puffer jacket | a dark green jacket | attendre, telephone |
+| femme_short | générique | a woman in a striped t-shirt and denim shorts | a striped t-shirt | danser, boire |
+| homme_chemise | générique | a man in a light blue shirt with rolled sleeves | a light blue shirt | parler, boire |
+| ado_skate | générique | a teenager in a white t-shirt carrying a skateboard | a skateboard | musique, parler |
 
 **Animaux (4, hors quota humain)** : pas de squelette humain ; méthode demandée à pixelforge (comme pour
 les boss non humanoïdes). Chacun : idle, marcher, fuir, et une activité.

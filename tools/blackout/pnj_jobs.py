@@ -3,6 +3,7 @@
 
   pnj_jobs.py --montre [festayre …]           affiche les requêtes, n'envoie rien
   pnj_jobs.py --depose [festayre …] [--prio normal|high|night]
+  pnj_jobs.py --montre --type generique|special  (filtre par type)
 
 Un PNJ = character set (profil, idle, fuite) + 4 extras : marcher, sursaut et ses 2 activités ; le reste
 est sauté. Les animaux attendent la méthode de pixelforge pour les corps non humains.
@@ -27,7 +28,7 @@ def requete(pid: str, prio: str) -> dict:
         extras.append({"name": act, "motion": a["clip"], "action": a["action"], "object": objet, "loop": True,
                        "fps": 10})
     return {
-        "prompt_style": base["prompt_style"], "seed": 7, "colors": 20, "priority": prio, "tag": "miarritze/pnj_v1",
+        "prompt_style": base["prompt_style"], "seed": 7, "colors": 20, "priority": prio, "tag": f"miarritze/pnj_v1_{p['type']}",
         "prompt": f"{p['description']}. Signature detail drawn large and bright: {p['signature']}.",
         "skip": base["skip"], "extras": extras,
         "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10}],
@@ -37,7 +38,9 @@ def requete(pid: str, prio: str) -> dict:
 def main() -> None:
     args = sys.argv[1:]
     prio = args[args.index("--prio") + 1] if "--prio" in args else "normal"
-    pids = [a for a in args if not a.startswith("--") and a != prio] or list(PNJ["humains"])
+    typ = args[args.index("--type") + 1] if "--type" in args else None
+    pids = [a for a in args if not a.startswith("--") and a not in (prio, typ)] or \
+        [k for k, v in PNJ["humains"].items() if typ is None or v["type"] == typ]
     reqs = {pid: requete(pid, prio) for pid in pids}
     if "--depose" not in args:
         print(json.dumps(reqs, ensure_ascii=False, indent=1))
