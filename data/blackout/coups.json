@@ -25,7 +25,7 @@
 				"effets": [{"type": "tracte", "duree": 3.0, "params": {"vers": "lanceur"}}],
 				"params": {"projectile": "bouee", "cible": "allie_en_detresse", "detresse_jauge": 0.3, "vitesse": 12.0, "rayon_touche": 0.6,
 					"gerbe_portee": 4.0, "gerbe_effet": "aveugle", "gerbe_duree": 3.0, "gerbe_masque": "eau", "bulle": "Accroche-toi !"}},
-			"chasseur": {"id": "sifflet_vigie", "nom": "Coup de sifflet", "famille": "zone", "pret": false,
+			"chasseur": {"id": "sifflet_vigie", "nom": "Coup de sifflet", "famille": "zone", "pret": true,
 				"recharge": 20.0, "portee": 8.0, "duree": 0.0,
 				"effets": [{"type": "fige", "duree": 2.0, "params": {}}],
 				"params": {"filtre": "bouge", "bouge_s": 0.3, "bulle": "Tuuuut !", "couleur": "#9fe2ff"}}
@@ -74,7 +74,7 @@
 				"recharge": 25.0, "portee": 0.0, "duree": 4.0,
 				"effets": [{"type": "rapide", "duree": 4.0, "params": {"k": 0.3, "sans_traces": true}}, {"type": "insensible", "duree": 4.0, "params": {"filtre": "sol"}}],
 				"params": {"mode": "vitesse"}},
-			"chasseur": {"id": "sonnerie_makila", "nom": "Sonnerie du makila", "famille": "zone", "pret": false,
+			"chasseur": {"id": "sonnerie_makila", "nom": "Sonnerie du makila", "famille": "zone", "pret": true,
 				"recharge": 20.0, "portee": 8.0, "duree": 2.0,
 				"effets": [{"type": "revele", "duree": 2.0, "params": {}}],
 				"params": {"filtre": "immobile", "immobile_s": 2.0, "bulle": "Tiling !", "bulle_cible": "ding !", "couleur": "#ffd34a"}}
@@ -83,7 +83,7 @@
 			"chasse": {"id": "battement_plumes", "nom": "Battement de plumes", "famille": "deplacement", "pret": true,
 				"recharge": 25.0, "portee": 0.0, "duree": 3.0,
 				"params": {"mode": "vol", "franchit": "mbr", "hauteur_px": 12.0, "vol_rab_s": 1.0}},
-			"chasseur": {"id": "cri_strident", "nom": "Cri strident", "famille": "zone", "pret": false,
+			"chasseur": {"id": "cri_strident", "nom": "Cri strident", "famille": "zone", "pret": true,
 				"recharge": 20.0, "portee": 5.0, "duree": 0.0,
 				"effets": [{"type": "inverse", "duree": 2.0, "params": {}}],
 				"params": {"si_bouge": "revele", "si_bouge_duree": 3.0, "bulle": "KAIOOO !", "couleur": "#e8eef2"}}
@@ -112,7 +112,7 @@
 			"chasse": {"id": "batisse_eclair", "nom": "Bâtisse éclair", "famille": "pose", "pret": false,
 				"recharge": 25.0, "portee": 3.0, "duree": 4.0,
 				"params": {"objet": "muret", "position": "derriere", "largeur": 3}},
-			"chasseur": {"id": "courant_laminak", "nom": "Courant des laminak", "famille": "zone", "pret": false,
+			"chasseur": {"id": "courant_laminak", "nom": "Courant des laminak", "famille": "zone", "pret": true,
 				"recharge": 20.0, "portee": 10.0, "duree": 0.0, "touche_cachette": true,
 				"effets": [{"type": "revele", "duree": 2.0, "params": {}}],
 				"params": {"centre": "cachettes", "geysers": 3, "ejecte": true, "geyser_delai": 0.5, "geyser_rayon": 0.8,
@@ -123,13 +123,13 @@
 				"recharge": 25.0, "portee": 2.0, "duree": 0.0,
 				"effets": [{"type": "rapide", "duree": 2.0, "params": {"k": 0.3, "si_jauge": 0.7}}],
 				"params": {"pas_de_cote": 2.0, "jauge_seuil": 0.7, "jauge_a_zero": true, "bulle": "Feinte !"}},
-			"chasseur": {"id": "troisieme_mi_temps", "nom": "Troisième mi-temps", "famille": "zone", "pret": false,
+			"chasseur": {"id": "troisieme_mi_temps", "nom": "Troisième mi-temps", "famille": "zone", "pret": true,
 				"recharge": 20.0, "portee": 7.0, "duree": 3.0,
 				"effets": [{"type": "ralenti", "duree": 3.0, "params": {"k": 0.3}}],
 				"params": {"traces": 3.0, "pas_vie": 2.5, "pas_ecart": 0.45, "bulle": "Allez !!", "couleur": "#ff6b5e"}}
 		},
 		"itsasargi": {
-			"chasse": {"id": "feu_occultation", "nom": "Feu à occultation", "famille": "zone", "pret": false,
+			"chasse": {"id": "feu_occultation", "nom": "Feu à occultation", "famille": "zone", "pret": true,
 				"recharge": 25.0, "portee": 6.0, "duree": 0.0,
 				"effets": [{"type": "aveugle", "duree": 2.0, "params": {"masque": "noir"}}],
 				"params": {"filtre": "regarde_vers", "cible": "chasseur", "marge_deg": 10.0, "couleur": "#fff6b0"}},
