@@ -126,7 +126,7 @@ def main() -> None:
         for name, data in got.items():
             open(os.path.join(dest, ROLES[name].format(a=anim)), "wb").write(data)
         print(f"{anim} : ok")
-    # Post-traitement complet du perso (tools/blackout/post_anims.py, SPEC-GORDEKA §16.3) : pieds, lampe,
+    # Post-traitement complet du perso (tools/blackout/post_anims.py, GDD-BLACKOUT.md) : pieds, lampe,
     # échelle, calage, images utiles, tables d'entrée. Un nouvel idle change la référence de tout le perso.
     try:
         import post_anims

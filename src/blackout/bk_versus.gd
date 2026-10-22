@@ -1,6 +1,6 @@
 class_name BkVersus
 extends Control
-## Écran Versus (SPEC-GORDEKA §2.2), entre le tirage et la cachette : à gauche le chasseur en grand
+## Écran Versus (GDD-BLACKOUT.md), entre le tirage et la cachette : à gauche le chasseur en grand
 ## (avatar animé, pseudo, icône de détection), à droite les chassés (avatar, pseudo, pastille de
 ## couleur, icône de piège), grand « VS » au centre qui arrive avec une secousse, compte à rebours
 ## 5 → 1 et son de tension généré ici (grondement qui monte, un coup de tambour par seconde).

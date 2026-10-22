@@ -1,6 +1,6 @@
 class_name BkRules
 extends RefCounted
-## Règles de Blackout (data/blackout/rules.json, SPEC-GORDEKA §2-4). Tout réglage de jeu vient
+## Règles de Blackout (data/blackout/rules.json, GDD-BLACKOUT.md). Tout réglage de jeu vient
 ## de ce fichier ; `--bk-rules=clé:valeur,…` les surcharge pour la QA (phases raccourcies).
 
 const PATH: String = "res://data/blackout/rules.json"

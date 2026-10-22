@@ -1,4 +1,8 @@
-# Animations pixelforge : uniquement Quaternius (au 21/10/2026)
+# Animations pixelforge : clips Quaternius (référence)
+
+> Liste de référence des clips de pixelforge. Éléments d'animation des persos et clips retenus :
+> `GDD-BLACKOUT.md` §8 (fait foi). Pixelforge n'expose que la bibliothèque UAL1 ; UAL2 (LiftAir_Idle,
+> Idle_LookAround, Fish_Cast_Idle, Spell_Double_Shoot, Idle_Lantern…) demandée le 22/10.
 
 Décision de Julien (21/10) : **uniquement les animations Quaternius**. Les clips sur mesure (wave, thumbs_up,
 shush, laugh, tongue, dance, hunter_reveal, dive_hide, versions sur mesure de found, trap, hide_out, ghost) sont
@@ -43,4 +47,4 @@ Les clips en `_RM` avancent dans la vidéo : préférer les versions sans `_RM`.
 5. `arms: "side"` fige les clips portés par les bras (search, detect) : donner le mouvement par le corps.
 
 ## Post-traitements
-`pf_2d__tenue` (masque de tenue), `pf_px__character_set` puis `pf_px__reduce` (pixel art 128 px puis 32 px, voir docs/STYLE_PARTY_HARD.md).
+`pf_px__character_set` (moteur A) puis `pf_px__reduce` (moteur B), voir `GDD-BLACKOUT.md` §14.

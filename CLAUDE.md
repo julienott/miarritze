@@ -1,23 +1,27 @@
-# CLAUDE.md — Miarritze Gordeka
+# CLAUDE.md — Miarritze Blackout
 
-Cache-cache en ligne pour enfants, façon *Among Us*, dans les décors de Biarritz.
-**La seule source de vérité est `SPEC-GORDEKA.md`** ; en cas de doute, elle prime. Ce fichier en est
-le résumé opérationnel (stack, conventions, commandes).
+Cache-cache asymétrique pour enfants, de nuit, en pixel art façon *Party Hard*, dans Biarritz.
+**La seule source de vérité est `GDD-BLACKOUT.md`** ; en cas de doute, elle prime. Ce fichier n'en est
+que le résumé opérationnel (stack, conventions, commandes) et ne contient aucune décision de conception.
+Toute nouvelle décision de Julien s'écrit d'abord dans le GDD (datée), puis on corrige ou archive le jour
+même tout document, JSON ou commentaire qui la contredit. On ne crée pas d'autre document de conception.
 
 L'ancien jeu de combat *Miarritze Borroka* a été retiré du dépôt le 2026-10-22 (récupérable par le tag
 `avant-suppression-borroka` et la branche `borroka`). N'en restent que le réseau des salons, le client
-pixelforge et quelques briques réduites dans `src/gordeka/commun/`, à remplacer.
+pixelforge et quelques briques réduites dans `src/blackout/commun/`, à remplacer.
 
 ---
 
 ## 0. Règles d'or
 
 1. **GDScript typé uniquement** (le C# ne s'exporte pas en web). Renderer **Compatibility**.
-2. **Web-first, paysage, iPhone + clavier/manette.** Projet en **1280×720** lissé,
-   `stretch=canvas_items`, `aspect=expand`. Zones sûres iPhone (`SafeArea`).
+2. **Web-first, paysage, iPhone + clavier/manette, Steam Deck.** Cible (GDD §9) : pixel art en
+   **640×360** affiché ×2, cases et persos de 32 px, filtre plus proche voisin. *Le projet est encore
+   en 1280×720 lissé et en cases de 64 px : bascule prévue au jalon actuel (GDD §15).* Zones sûres
+   iPhone (`SafeArea`).
 3. **Enfants (9 ans) :** lisible, généreux, jamais punitif, zéro violence graphique.
    **Zéro donnée personnelle** : pseudo seul, pas de texte libre.
-4. **Tout paramètre de gameplay est une donnée** (`data/gordeka/rules.json`, `options_partie.json`,
+4. **Tout paramètre de gameplay est une donnée** (`data/blackout/rules.json`, `options_partie.json`,
    constantes nommées), pas un nombre magique. Une option de gameplay validée devient réglable dans
    le menu de création de partie.
 5. **Branche de travail = `main`.** Les commits et les push sur `main` sont autorisés. Pas de
@@ -36,21 +40,21 @@ numpy), Playwright (`tests/web/`).
 ## 2. Arborescence
 
 ```
-src/gordeka/          partie et règles (gk_game, gk_rules), carte (gk_map, gk_map_chunk, gk_decor),
-                      acteurs (gk_actor, gk_perso, gk_pantin), IA (gk_ai), entrées (gk_input), HUD,
-                      versus, podium ; démarrage gk_boot.tscn
-src/gordeka/menus/    gk_qui_joue → gk_accueil → gk_partie_rapide, gk_profil_ecran, gk_reglages ;
-                      navigation GkNav, kit 1280×720 GkUi, profil GkProfil
-src/gordeka/commun/   briques héritées, réduites, à remplacer : autoloads Settings, Profiles, InputHub,
+src/blackout/          partie et règles (bk_game, bk_rules), carte (bk_map, bk_map_chunk, bk_decor),
+                      acteurs (bk_actor, bk_perso, bk_pantin), IA (bk_ai), entrées (bk_input), HUD,
+                      versus, podium ; démarrage bk_boot.tscn
+src/blackout/menus/    bk_qui_joue → bk_accueil → bk_partie_rapide, bk_profil_ecran, bk_reglages ;
+                      navigation BkNav, kit BkUi, profil BkProfil
+src/blackout/commun/   briques héritées, réduites, à remplacer : autoloads Settings, Profiles, InputHub,
                       QaCapture ; InputDevice, Prompts, SafeArea, WebTextField
-src/gordeka/gk_online.tscn   « En ligne » (écran d'attente, à remplacer par les salons)
+src/blackout/bk_online.tscn   « En ligne » (écran d'attente, à remplacer par les salons)
 src/net/              réseau des salons : Api (autoload, client HTTP), P2PLink (WebRTC), Signaling
-data/gordeka/         rules.json, options_partie.json, gros_mots.json…
-assets/maps/<carte>/  cartes (map.txt, décor) ; assets/gordeka/ persos, décor, mannequin
+data/blackout/         rules.json, options_partie.json, gros_mots.json…
+assets/maps/<carte>/  cartes (map.txt, décor) ; assets/blackout/ persos, décor
 backend/              API PHP (routeur unique public/index.php, salons dans src/Rooms.php)
 producer/             service /producer (pilotage) ; tools/producer/ pour le construire
-tools/gordeka/        cartes, décor, persos, recette (pixelforge) ; tools/pf/ client pixelforge
-tests/                gk_tests.gd (headless), decor/, backend/rooms_test.py, web/ (Playwright)
+tools/blackout/        cartes, décor, persos, recette (pixelforge) ; tools/pf/ client pixelforge
+tests/                bk_tests.gd (headless), decor/, backend/rooms_test.py, web/ (Playwright)
 web/                  shell.html (page d'accueil web), .htaccess (COOP/COEP)
 ```
 
@@ -62,26 +66,28 @@ web/                  shell.html (page d'accueil web), .htaccess (COOP/COEP)
 - Commentaires et code en **français**.
 - `.gdignore` dans `.venv`, `tools`, `web`, `backend`, `docs`, `tests/web`, `tests/out`.
 - Commits atomiques par étape.
-- Prompts de génération sans négation (décrire seulement le résultat voulu) ; chaque génération
-  retenue est notée dans SPEC-GORDEKA §16.2.
+- Prompts de génération simples et sans négation (décrire seulement le résultat voulu) ; la
+  bibliothèque de prompts est dans GDD-BLACKOUT.md §8.2 (copie machine : `data/blackout/style_party_hard.json`).
+- Jobs pixelforge : par la file (API), jamais par message ; rien en file sans accord de Julien.
+- Routes et tables du backend gardent leur préfixe historique `gk_` (données en prod).
 
 ## 4. Commandes
 
 ```bash
 godot --headless --path . --import                                              # (ré)import
-godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd       # tests Gordeka
-godot --path . -- --scene=gk_game [--gk-local-role=hunter|hider] [--gk-rules=phase_hide:2,…]
-godot --headless --path . -- --scene=gk_game --gk-bots-only --gk-log --speed=8  # rounds IA contre IA
-godot --path . --resolution 1280x720 -- --scene=gk_<écran> --shot=/abs/out.png --delay=3   # capture
+godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd       # tests Blackout
+godot --path . -- --scene=bk_game [--bk-local-role=hunter|hider] [--bk-rules=phase_hide:2,…]
+godot --headless --path . -- --scene=bk_game --bk-bots-only --bk-log --speed=8  # rounds IA contre IA
+godot --path . --resolution 1280x720 -- --scene=bk_<écran> --shot=/abs/out.png --delay=3   # capture
 godot --headless --path . --export-release "Web" web/build/index.html
-node tests/web/smoke.mjs chromium "#scene=gk_game" 20                           # web
+node tests/web/smoke.mjs chromium "#scene=bk_game" 20                           # web
 python3 tests/backend/rooms_test.py                                             # API des salons
-python3 tools/gordeka/make_proto_map.py                                         # carte → assets/maps/
+python3 tools/blackout/make_proto_map.py                                         # carte → assets/maps/
 tools/producer/build.sh <dossier>                                               # /producer
 ```
 
-Écrans pour `--scene=` : `gk_qui_joue`, `gk_accueil`, `gk_partie_rapide`, `gk_profil`, `gk_reglages`,
-`gk_en_ligne`, `gk_game` (web : `#scene=gk_game`). Captures de tous les menus :
+Écrans pour `--scene=` : `bk_qui_joue`, `bk_accueil`, `bk_partie_rapide`, `bk_profil`, `bk_reglages`,
+`bk_en_ligne`, `bk_game` (web : `#scene=bk_game`). Captures de tous les menus :
 `tools/producer/captures_ecrans.sh`.
 
 ## 5. Contraintes web (rappels)
@@ -91,3 +97,9 @@ libérer chaque scène, tester une session longue. Zones sûres iPhone
 (`DisplayServer.get_display_safe_area()`). Sur iOS, l'index d'un toucher est arbitraire : jamais
 supposer 0. Le clic sur JOUER de la page d'accueil (`web/shell.html`) est le geste qui débloque
 l'audio et le plein écran.
+
+## 6. Documents
+
+`GDD-BLACKOUT.md` (fait foi) · procédures : `docs/PRODUCER.md`, `docs/ONLINE.md`, `docs/TEST_DECOR.md`,
+`docs/PIXELFORGE_ANIMATIONS.md` · analyses : `docs/STYLE_PARTY_HARD.md`, `docs/PROMPTS_MUSIQUE.md` ·
+historique : `archive/`.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mesures A/B de la tension des rounds IA contre IA (docs/GORDEKA_EQUILIBRAGE.md, 2026-10-20).
+"""Mesures A/B de la tension des rounds IA contre IA (archive/2026-10-22-docs-gordeka/GORDEKA_EQUILIBRAGE.md, 2026-10-20).
 
   ab_tension.py run <variante> [--rules k:v,…] [--map <id de carte>] [--niveaux normal/facile,normal/normal,normal/malin]
                 [--rounds 80] [--procs 8] [--players 6] [--projet <copie du projet>]

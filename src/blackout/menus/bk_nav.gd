@@ -1,6 +1,6 @@
 class_name BkNav
 extends RefCounted
-## Navigation entre les écrans de Blackout (SPEC-GORDEKA §6.0). Chaque écran a un identifiant ;
+## Navigation entre les écrans de Blackout (GDD-BLACKOUT.md). Chaque écran a un identifiant ;
 ## `--scene=bk_<id>` (web : `#scene=bk_<id>`) ouvre directement l'écran (QA, captures).
 ## « En ligne » ouvre ECRANS["en_ligne"] : une seule ligne à changer pour brancher les salons.
 

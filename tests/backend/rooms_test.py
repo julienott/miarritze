@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests des salons Blackout (SPEC-GORDEKA §6.2, §11 ; docs/ONLINE_GORDEKA.md) sur
+"""Tests des salons Blackout (GDD-BLACKOUT.md ; docs/ONLINE.md) sur
 `php -S` local, base jetable (MIARRITZE_DB) et horloge simulée (MIARRITZE_CLOCK_FILE).
 Usage : python3 tests/backend/rooms_test.py"""
 import json, os, subprocess, sys, tempfile, time, urllib.error, urllib.request

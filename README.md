@@ -1,11 +1,12 @@
 # Miarritze Blackout
 
-Cache-cache en ligne pour enfants, façon *Among Us*, dans les décors de Biarritz : un chasseur, des
-chassés qui se cachent, des rounds courts (ex-*Gordeka*, « cache-cache » en basque).
+Cache-cache asymétrique pour enfants, de nuit dans Biarritz, en pixel art façon *Party Hard* : un
+chasseur, des chassés qui se cachent dans l'ombre, des coups spéciaux et un boss basque en fin de partie
+(ex-*Gordeka*, « cache-cache » en basque).
 
-- Spec (seule source de vérité) : `SPEC-GORDEKA.md`
+- Conception (seul document qui fait foi) : `GDD-BLACKOUT.md`
 - Conventions, commandes, architecture : `CLAUDE.md`
-- En ligne (API des salons) : `docs/ONLINE_GORDEKA.md` · pilotage : `docs/PRODUCER.md`
+- En ligne (API des salons) : `docs/ONLINE.md` · pilotage : `docs/PRODUCER.md`
 
 L'ancien jeu de combat *Miarritze Borroka* a été retiré du dépôt le 2026-10-22 (tag
 `avant-suppression-borroka`, branche `borroka`).

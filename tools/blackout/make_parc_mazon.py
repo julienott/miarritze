@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parc Mazon (SPEC-GORDEKA §8) : parc urbain pour enfants, très arboré et clôturé, demandé par Julien
+"""Parc Mazon (GDD-BLACKOUT.md) : parc urbain pour enfants, très arboré et clôturé, demandé par Julien
 le 2026-10-20 (« deux aires de jeux, une pour les grands, une pour les petits, un grand terrain central
 avec un fronton comme au parc Mazon, plein d'opportunités de se cacher »).
 
@@ -847,7 +847,7 @@ def main():
     ap.add_argument("--sans-images", action="store_true", help="n'écrit pas les placeholders")
     ap.add_argument("--variante", default="", help="écrit assets/maps/<variante>/ (décor de parc_mazon), pour les A/B")
     ap.add_argument("--sortie-sud", action="store_true", help="4e sortie : portail sud de la fontaine")
-    ap.add_argument("--version", type=int, default=VERSION, help="version du plan (journal dans SPEC-GORDEKA §8)")
+    ap.add_argument("--version", type=int, default=VERSION, help="version du plan (journal dans GDD-BLACKOUT.md)")
     opts = ap.parse_args()
     build(opts)
     out_id = opts.variante or MAP_ID

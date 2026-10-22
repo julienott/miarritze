@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Port des Pêcheurs v3 (SPEC-GORDEKA §8, revue de carte du 2026-10-20, demande de Julien : « une meilleure
+"""Port des Pêcheurs v3 (GDD-BLACKOUT.md, revue de carte du 2026-10-20, demande de Julien : « une meilleure
 map », zones moins vides, mieux segmentées par des couloirs, déco plus riche, le tout bien balancé).
 
 Part de la carte v2 (make_port_v2.py, avec sa passe « tension ») et applique des passes au choix :
@@ -26,7 +26,7 @@ défaut du jeu. La v2 d'avant reste générée à part par make_port_v2.py (asse
 et decor.json (objets imposés et ornements, lus par src/blackout/bk_decor.gd). Vérifie que tout est
 atteignable, sans passage d'une seule case créé par les passes. Mesures : tools/blackout/analyse_carte.py,
 parties : tools/blackout/ab_tension.py run <variante> --map <id>. Journal des essais :
-docs/GORDEKA_EQUILIBRAGE.md (revue de carte).
+archive/2026-10-22-docs-gordeka/GORDEKA_EQUILIBRAGE.md (revue de carte).
 """
 import argparse
 import json
@@ -406,7 +406,7 @@ def largeur_un(avant):
 
 def main():
     ap = argparse.ArgumentParser()
-    # Variante retenue (essai « v3d » du 2026-10-21, docs/GORDEKA_EQUILIBRAGE.md) : carte par défaut du jeu.
+    # Variante retenue (essai « v3d » du 2026-10-21, archive/2026-10-22-docs-gordeka/GORDEKA_EQUILIBRAGE.md) : carte par défaut du jeu.
     ap.add_argument("--passes", default="ruelles,salles,cachettes,sorties,entrees,densite,ornements")
     ap.add_argument("--id", default="port_pecheurs")
     ap.add_argument("--graine", type=int, default=7)

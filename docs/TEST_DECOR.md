@@ -1,4 +1,8 @@
-# Test du décor : taille, masques, tri, vue du chasseur
+# Test du décor : taille, masques, tri, vue du chasseur (procédure)
+
+> Procédure outillée, sans décision de conception (règles du décor : `GDD-BLACKOUT.md` §10.2). Écrite
+> sur le Port des Pêcheurs en cases de 64 px, archivé depuis le 22/10 : à reprendre sur la carte bac à
+> sable en 32 px quand elle existera.
 
 Méthode utilisée le 21/10/2026 sur le port (demande de Julien : « vérifier si les éléments de décor ont la
 bonne taille et le bon masque, en mode debug et en profondeur, en joueur comme en chasseur, sans être en
@@ -33,7 +37,7 @@ Masques périmés ou absents, en un coup : `.venv/bin/python tools/producer/masq
 ```bash
 godot --path . --script res://tests/decor/visite_decor.gd -- --role=chasse   --out=/abs/chasse   [--map=port_pecheurs] [--only=id,id]
 godot --path . --script res://tests/decor/visite_decor.gd -- --role=chasseur --out=/abs/chasseur [--only=id,id]
-.venv/bin/python tools/gordeka/planche_test_decor.py /abs/chasse /abs/planche.png devant,devant_F,derriere,derriere_F,gauche_F,droite_F
+.venv/bin/python tools/blackout/planche_test_decor.py /abs/chasse /abs/planche.png devant,devant_F,derriere,derriere_F,gauche_F,droite_F
 ```
 
 Pour chaque objet (une pose par id, taille et miroir), le perso est posé là où il s'arrête en marchant vers
@@ -55,7 +59,7 @@ vue instantanée (0 à 1). À vérifier à l'œil :
 - **Données** (sans régénérer) : `taille_cases`, `debord_haut_cases` (décimales permises, négatif pour un
   objet plus bas que ses cases), `hauteur_cases` (hauteur dessinée imposée, en cases : h_perso × 1,375 ;
   la largeur suit et peut déborder des cases sur les côtés, emprise et masque compris, les cases de sol
-  couvertes sont bloquées pour l'IA ; c'est le réglage des objets plus larges que leurs cases) dans `assets/gordeka/decor/index.json` et `tools/gordeka/prompts_decor.json` ;
+  couvertes sont bloquées pour l'IA ; c'est le réglage des objets plus larges que leurs cases) dans `assets/blackout/decor/index.json` et `tools/blackout/prompts_decor.json` ;
   placement dans `assets/maps/<carte>/decor.json` ; seuil `decor_masques_pf_part_max` de `rules.json`
   (part maximale de la silhouette qu'un masque pixelforge peut couvrir avant d'être écarté). Remesurer et
   recapturer après chaque correction.
@@ -67,7 +71,7 @@ vue instantanée (0 à 1). À vérifier à l'œil :
 ## 4. Tests de non-régression
 
 ```bash
-godot --headless --path . --fixed-fps 60 --script res://tests/gk_tests.gd
+godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd
 ```
 
 Bilan du 21/10 (port, 140 objets) : bitte, fronton et banc de la chapelle corrigés en données ; 13 objets

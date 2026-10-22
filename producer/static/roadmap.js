@@ -153,7 +153,7 @@ function renderRoadmap() {
     if (rm.editing === -1) blocks.push(milestoneForm(null));
     if (!state.milestones.length && (g.jalons_spec || []).length) {
       blocks.push(el('div', { class: 'panel' },
-        el('p', {}, 'Aucun jalon pour l\'instant. La spec en propose ', el('strong', { text: String(g.jalons_spec.length) }), ' (SPEC-GORDEKA §14) :'),
+        el('p', {}, 'Aucun jalon pour l\'instant. La spec en propose ', el('strong', { text: String(g.jalons_spec.length) }), ' (GDD-BLACKOUT.md) :'),
         el('ol', {}, g.jalons_spec.map((j) => el('li', {}, el('strong', { text: j.titre }), j.description ? ' — ' + j.description.replace(/\n/g, ' ') : ''))),
         el('button', { type: 'button', class: 'primary small', onclick: seedMilestones }, 'Créer ces jalons')));
     }

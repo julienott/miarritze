@@ -9,7 +9,7 @@ verrouillés (`hold`), masque de tenue par un mot simple.
   anime_perso.py payload <id> <anim>   affiche le payload sans rien envoyer
 
 Suivi : tools/blackout/taches_<id>.json (relu par import_perso.py). GIF de relecture :
-tools/rd/out/<id>/gk2d/anims/<anim>.gif. Les paramètres sont recopiés dans SPEC-GORDEKA.md §16.2.
+tools/rd/out/<id>/gk2d/anims/<anim>.gif. Les paramètres sont recopiés dans GDD-BLACKOUT.md
 """
 import json
 import os

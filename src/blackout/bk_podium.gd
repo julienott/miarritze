@@ -1,6 +1,6 @@
 class_name BkPodium
 extends Control
-## Podium de fin de partie (SPEC-GORDEKA §2.2) : cumul des points, or, argent et bronze sur leurs
+## Podium de fin de partie (GDD-BLACKOUT.md) : cumul des points, or, argent et bronze sur leurs
 ## marches avec les avatars animés (pose de victoire), les autres en dessous, puis « Retour à
 ## l'accueil ». Les emotes restent permises (bulles des avatars) ; le joueur local fait son emote
 ## favorite en arrivant.

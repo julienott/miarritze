@@ -1,5 +1,5 @@
 extends Control
-## Mon profil (SPEC-GORDEKA §6.0, §7) : le perso (grille des 12, vignettes animées au focus ou au
+## Mon profil (GDD-BLACKOUT.md) : le perso (grille des 12, vignettes animées au focus ou au
 ## survol), le pseudo, la couleur préférée (12 pastilles : tous les persos se recolorent) et l'emote
 ## favorite. Chaque choix est enregistré tout de suite dans le profil.
 

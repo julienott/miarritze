@@ -1,6 +1,6 @@
 class_name BkView3D
 extends Node3D
-## Affichage 3D de la partie (SPEC-GORDEKA §9) : même vue de dessus en 3/4, mais des modèles
+## Affichage 3D de la partie (GDD-BLACKOUT.md) : même vue de dessus en 3/4, mais des modèles
 ## en volume, ombrage « toon » et contours sombres, pour garder le style cartoon d'origine.
 ## Les règles restent en 2D (BkGame, BkMap) : cette vue ne fait que recopier leur état.
 ## 1 case (64 px de jeu) = 1 mètre.

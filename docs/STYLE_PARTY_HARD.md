@@ -1,14 +1,13 @@
 # Style « Party Hard » : analyse visuelle et recettes pixelforge
 
-> 21/10/2026. Étude préalable à un éventuel reboot visuel de Gordeka « façon Party Hard »
-> (Pinokl Games / tinyBuild, 2015 ; *Party Hard 2*, 2018). Tout ce qui suit vient de 31 captures
-> réelles étudiées et mesurées, de 2 vidéos de la fiche Steam et de l'audio de 2 bandes-annonces
-> (liste et sources en fin de document). **Les prompts réutilisables sont dans `docs/style/`**
-> (01 style commun, 02 personnages, 03 animations, 04 cartes, 05 décor, 06 musique) et, pour les
-> scripts, dans `data/gordeka/style_party_hard.json`. Les captures restent hors du
-> dépôt (droits d'auteur) : planche contact et zooms dans le scratchpad de la session
-> (`partyhard_refs/planche.png`, `partyhard_refs/planche_zooms.png`).
-> On garde **l'esthétique**, pas le contenu (meurtres, sang, drogue, nudité : tout est écarté).
+> **Document d'analyse, pas de décisions.** Les décisions de style (échelle, persos, éléments
+> d'animation, lumière, prompts) sont dans `GDD-BLACKOUT.md` §8, §9 et §14, qui fait foi ; en cas
+> d'écart, c'est le GDD qui a raison. Ce document garde l'étude du 21/10/2026 de *Party Hard*
+> (Pinokl Games / tinyBuild, 2015 ; *Party Hard 2*, 2018) : 31 captures mesurées, 2 vidéos de la
+> fiche Steam, l'audio de 2 bandes-annonces (sources en fin de document). Blocs de prompts pour les
+> scripts : `data/blackout/style_party_hard.json` ; prompts de musique : `docs/PROMPTS_MUSIQUE.md`.
+> Les captures restent hors du dépôt (droits d'auteur). On garde **l'esthétique**, pas le contenu
+> (meurtres, sang, drogue, nudité : tout est écarté).
 
 ## 1. Ce qu'il faut retenir
 
@@ -95,7 +94,7 @@ sur toutes les captures 1920 de PH1, 4,00 sur les 2560. Les JPEG Steam brouillen
   textures pixel, avec une caméra perspective inclinée d'environ 55–60°. Les murs du premier plan y
   sont abaissés en coupe, la lumière et les ombres dynamiques sont réelles et un léger flou de
   profondeur s'ajoute. C'est plus riche mais beaucoup moins lisible : la foule se confond avec le
-  décor. **Pour Gordeka, la référence utile est PH1.**
+  décor. **Pour Blackout, la référence utile est PH1.**
 
 ## 4. Personnages
 
@@ -214,47 +213,19 @@ sur toutes les captures 1920 de PH1, 4,00 sur les 2560. Les JPEG Steam brouillen
 - **Menus PH1.** Carte des États-Unis désaturée, posters de niveaux, objets posés sur une table
   (hc_03, comm_15).
 
-## 8. Recettes pixelforge pour Gordeka
+## 8. Recettes pixelforge
 
-Les recettes complètes, avec des prompts prêts à copier et les paramètres pixelforge, sont dans
-`docs/style/`. Les blocs que les scripts assemblent sont dans `data/gordeka/style_party_hard.json`.
+Les anciennes recettes détaillées du 21/10 (`archive/2026-10-22-docs-gordeka/style/`) sont archivées :
+elles supposaient une toile de 48 px et 5 éléments. Recettes en vigueur : `GDD-BLACKOUT.md` §8 et §14.
 
-| Fichier | Contenu |
-|---|---|
-| `docs/style/01_style_commun.md` | Règles, bloc « style commun » à coller dans tous les prompts, suffixes par type, palette |
-| `docs/style/02_personnages.md` | Gabarit (32 px, 4–5 têtes), anatomie, prompt modèle, fiches des 13 persos, PNJ de fête |
-| `docs/style/03_animations.md` | Les 5 éléments décidés par Julien (profil, idle, course, saut de cachette, fantôme) : images, cadence, prompts, styles |
-| `docs/style/04_cartes.md` | Structure, échelle (1 case = 32 px natifs), caméra, prompt d'une zone, recettes du port, du parc Mazon et de la plage |
-| `docs/style/05_decor.md` | Sols, murs, mobilier, cachettes (repère orange), sorties (lumière verte), objets animés |
-| `docs/style/06_musique.md` | Prompts de musique et de sons (électro festive + touches basques) |
+## 9. Ce qui reste incertain (mesures)
 
-En résumé :
-- le monde est en 640×360 affiché ×2 ;
-- 1 case = 32 px natifs = 1 perso adulte ;
-- les persos font 28–33 px sur une toile de 48 px avec 12 couleurs, de profil, sans
-  personnalisation ;
-- les objets ont 16–24 couleurs, les sols 8 ;
-- l'ambiance est un soir de fête à Biarritz : lampions et néons sur une base sombre, sans violence.
-
-## 9. Ce qui reste incertain
-
-- **Directions.** Les vidéos montrent le profil (miroir) et la face, pas le dos. Party Hard utilise
-  le sprite de face pour les diagonales vers le bas ; Gordeka reste en profil seul (décision de
-  Julien).
-- **Gestes propres à Gordeka** (plongeon dans une cachette, fantôme). Ils n'existent pas dans Party
-  Hard : leur nombre d'images est extrapolé de la cadence mesurée.
-- **Caméra.** Elle est fixe dans PH1 au zoom standard. Les bandes-annonces zooment de ×4,7 à ×5.
-  Nos cartes font environ 4,8 × 3,6 écrans : la caméra doit suivre, ce qui s'éloigne de PH1.
 - **Couleurs.** Les mesures sont faites sur des JPEG et des vidéos compressées : les teintes
   exactes et le nombre de couleurs par sprite sont approchés (±2 couleurs, ±1 px).
 - **Tempo en jeu.** Il n'a pas pu être mesuré : le let's play a un commentaire par-dessus. Les
-  120 BPM viennent des bandes-annonces. La bande-son d'origine de PH1 (sous licence) a été
-  remplacée par une version réécrite.
-- **Taille des persos.** 32 px (fidèle) ou 36–40 px (lisible sur iPhone) : à essayer avec une
-  maquette.
-- **Changement de direction artistique.** Le style HD lisse actuel (`docs/GORDEKA_STYLE_2D.md`,
-  persos et animations déjà produits) serait abandonné pour du pixel art en 640×360 : décision à
-  prendre par Julien.
+  120 BPM viennent des bandes-annonces.
+
+Taille des persos, caméra, directions et abandon du style HD : tranchés, voir `GDD-BLACKOUT.md`.
 
 ## 10. Vidéos : mesures d'animation
 
@@ -311,7 +282,7 @@ dans le scratchpad (jamais commités) :
   boucles longues sans couplet. PH2 tire vers le nu-disco et le funk (titres *Groovy Move*,
   *Swing It*, *Sunny Funny*). L'univers sonore de la série est sombre ; chez nous, il devient
   joyeux.
-- **Prompts réutilisables** : `docs/style/06_musique.md` et `data/gordeka/style_party_hard.json`
+- **Prompts réutilisables** : `docs/PROMPTS_MUSIQUE.md` et `data/blackout/style_party_hard.json`
   → `musique`.
 
 ## 12. Captures et sources
@@ -356,9 +327,3 @@ Fichiers dans le scratchpad (`partyhard_refs/video/`), jamais commités.
 
 **Bandes-son** : fiches Steam des apps 554790, 964370 et 733080 ;
 gamegrin.com/directory/game/party-hard/music.
-
-## Décisions de Julien (21/10/2026)
-
-- Persos de **32 px** de haut (fidèle à Party Hard), pas 36–40.
-- La **caméra suit le joueur** (nos cartes font ~5 écrans de large ; Party Hard 1 a une caméra fixe).
-- Persos réduits à 5 éléments : profil, idle, course, saut vers la cachette (sortie = à l envers), fantôme ; aucune personnalisation.

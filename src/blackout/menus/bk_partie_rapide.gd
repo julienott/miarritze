@@ -1,5 +1,5 @@
 extends Control
-## Partie rapide (SPEC-GORDEKA §6.1) : toi contre des IA, hors ligne. « Jouer » lance tout de suite
+## Partie rapide (GDD-BLACKOUT.md) : toi contre des IA, hors ligne. « Jouer » lance tout de suite
 ## avec les défauts (6 joueurs, IA Normal, Port des Pêcheurs, rounds = nombre de joueurs, options
 ## validées activées) ; « Réglages » déplie : joueurs (4 à 8), IA (Facile, Normal, Malin), carte,
 ## rounds (3 à 12 ; suivent le nombre de joueurs tant qu'on n'y a pas touché) et les options de

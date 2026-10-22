@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cartes de jeu fidèles à un lieu réel (Blackout, SPEC-GORDEKA §8).
+"""Cartes de jeu fidèles à un lieu réel (Blackout, GDD-BLACKOUT.md).
 
 Méthode (Port des Pêcheurs de Biarritz, 2026-10-19) :
   1. `telecharger` : l'orthophoto IGN (BD ORTHO, licence ouverte Etalab 2.0, ~0,22 m/px au zoom 19)

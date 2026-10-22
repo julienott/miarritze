@@ -2,10 +2,10 @@
 declare(strict_types=1);
 
 /**
- * Routeur unique de l'API Miarritze Gordeka (docs/ONLINE_GORDEKA.md).
+ * Routeur unique de l'API Miarritze Gordeka (docs/ONLINE.md).
  *
  * Réseau (sans auth) : GET /net/config (STUN/TURN), POST /net/report, GET /net/reports
- * Salons (SPEC-GORDEKA §6.2) : POST /gk/player, GET /rooms, POST /room/{create,join,presence,me,
+ * Salons (GDD-BLACKOUT.md) : POST /gk/player, GET /rooms, POST /room/{create,join,presence,me,
  *             settings,launch,round,end,kick,leave,signal}, GET /room/signal — voir src/Rooms.php.
  * Le serveur ne fait pas de temps réel : présence et signalisation WebRTC par polling ; la partie
  * passe en pair-à-pair.
@@ -14,7 +14,7 @@ declare(strict_types=1);
 require __DIR__ . '/../src/Db.php';
 require __DIR__ . '/../src/Validation.php';
 require __DIR__ . '/../src/Profanity.php';
-require __DIR__ . '/../src/Rooms.php';   // salons de Gordeka (SPEC-GORDEKA §6.2, docs/ONLINE_GORDEKA.md)
+require __DIR__ . '/../src/Rooms.php';   // salons de Gordeka (GDD-BLACKOUT.md, docs/ONLINE.md)
 
 const SIGNAL_TTL = 600;   // messages de signalisation des salons gardés 10 min
 

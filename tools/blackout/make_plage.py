@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plage de la Côte des Basques (SPEC-GORDEKA §8, carte « à valider par Julien », 2026-10-21).
+"""Plage de la Côte des Basques (GDD-BLACKOUT.md, carte « à valider par Julien », 2026-10-21).
 
 Demande de Julien : « une autre [carte] sur une plage avec des rochers, des cavernes sous la falaise,
 des tunnels, des cabanes de plage, des restaurants ». Biarritz : la falaise de la Côte des Basques en
@@ -25,7 +25,7 @@ Légende (BkMap) : .  sol (sable, planches, carrelage selon la zone)
 Usage : .venv/bin/python make_plage.py [--variante=<nom>] [--sans-images]
 Variantes (essais A/B, écrites dans assets/maps/plage_<nom>/ avec le décor de « plage ») : voir VARIANTES.
 
-Essais retenus (tools/blackout/ab_tension.py, docs/GORDEKA_EQUILIBRAGE.md, 2026-10-21) : tunnels qui arrivent
+Essais retenus (tools/blackout/ab_tension.py, archive/2026-10-22-docs-gordeka/GORDEKA_EQUILIBRAGE.md, 2026-10-21) : tunnels qui arrivent
 au palier du milieu de l'escalier et de la rampe, canot des sauveteurs au bout d'un ponton ; talus entre les
 volées (la montée se voit d'en bas) ; plus de zone « Bord de l'eau » (bande de sable mouillé rattachée aux
 plages) ; moins de cabines et de gros rochers (moins de planques derrière). Écartés : plus d'abris sur le sable,

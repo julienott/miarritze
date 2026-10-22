@@ -1,5 +1,5 @@
 extends Control
-## « Qui joue ? » au lancement (SPEC-GORDEKA §6.0) : jusqu'à 4 profils sur l'appareil (frères et
+## « Qui joue ? » au lancement (GDD-BLACKOUT.md) : jusqu'à 4 profils sur l'appareil (frères et
 ## sœurs). Une carte par profil (avatar animé, pseudo) : la toucher choisit le profil. « Nouveau »
 ## crée un profil (pseudo, rappel « pas ton vrai nom ! »), « Supprimer » passe en mode effacement,
 ## toujours avec une confirmation.

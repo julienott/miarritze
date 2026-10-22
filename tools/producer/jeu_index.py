@@ -19,7 +19,7 @@ RULES = ROOT / "data" / "blackout" / "rules.json"
 OPTIONS = ROOT / "data" / "blackout" / "options_partie.json"
 NAV = ROOT / "src" / "blackout" / "menus" / "bk_nav.gd"
 PARTIE_RAPIDE = ROOT / "src" / "blackout" / "menus" / "bk_partie_rapide.gd"
-SPEC = ROOT / "SPEC-GORDEKA.md"
+SPEC = ROOT / "GDD-BLACKOUT.md"
 EQUILIBRAGE = ROOT / "docs" / "GORDEKA_EQUILIBRAGE.md"
 CAPTURES = ROOT / "docs" / "captures" / "ecrans"       # <id>.png, faites par tools/producer/captures_ecrans.sh
 MAPS = ROOT / "assets" / "maps"
@@ -323,13 +323,13 @@ def cartes(liens_chapeaux: dict) -> list[dict]:
 
 
 def jalons_spec() -> list[dict]:
-    """Jalons de SPEC-GORDEKA §14 (liste numérotée, sous-points), pour amorcer la roadmap."""
+    """Jalons de GDD-BLACKOUT.md §15 (liste numérotée, sous-points), pour amorcer la roadmap."""
     if not SPEC.exists():
         return []
     dans, out = False, []
     for ln in SPEC.read_text(encoding="utf-8").splitlines():
         if ln.startswith("## "):
-            dans = ln.startswith("## 14.")
+            dans = ln.startswith("## 15.")
             continue
         if not dans:
             continue

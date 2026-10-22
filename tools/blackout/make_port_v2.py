@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Port des Pêcheurs v2 (SPEC-GORDEKA §8, revue de level design du 2026-10-19).
+"""Port des Pêcheurs v2 (GDD-BLACKOUT.md, revue de level design du 2026-10-19).
 
 Même taille que v1 (96 × 40, taille de The Skeld), mais façon Among Us : salles de formes et de
 tailles variées reliées par des couloirs, une boucle (objet dont on fait le tour) et un repère
@@ -14,7 +14,7 @@ Légende : . sol   # mur/bâtiment   c caisse   B bateau   (pleins, cachent la v
           H cachette   E sortie possible   S départ
 Usage : make_port_v2.py [--sans-tension] [--id port_v2]
 
-Tension (2026-10-20, docs/GORDEKA_EQUILIBRAGE.md) : caisses qui coupent les longues lignes de vue
+Tension (2026-10-20, archive/2026-10-22-docs-gordeka/GORDEKA_EQUILIBRAGE.md) : caisses qui coupent les longues lignes de vue
 (place, criée, jetée, escalier, atelier), coffres au milieu du quai nord, cachettes déplacées des
 recoins vers les passages, avec plusieurs côtés libres pour en ressortir. `--sans-tension` redonne
 la carte d'avant (A/B). Le décor suit tout seul : BkDecor pose l'image de chaque objet d'après son

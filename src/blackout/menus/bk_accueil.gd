@@ -1,5 +1,5 @@
 extends Control
-## Accueil (SPEC-GORDEKA §6.0) : quatre gros boutons Partie rapide, En ligne, Mon profil, Réglages,
+## Accueil (GDD-BLACKOUT.md) : quatre gros boutons Partie rapide, En ligne, Mon profil, Réglages,
 ## avec l'avatar animé du profil actif à côté (le toucher ouvre Mon profil). « Changer de joueur »
 ## revient à « Qui joue ? ». Les boutons « DEBUG · Visite » restent en bas (temporaires).
 

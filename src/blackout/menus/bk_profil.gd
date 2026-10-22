@@ -1,6 +1,6 @@
 class_name BkProfil
 extends RefCounted
-## Profil Blackout (SPEC-GORDEKA §6.0, §7) par-dessus les profils locaux de l'appareil (autoload
+## Profil Blackout (GDD-BLACKOUT.md) par-dessus les profils locaux de l'appareil (autoload
 ## Profiles, user://profiles.json, 4 au plus) : pseudo, perso favori, couleur préférée (0 à 11) et
 ## emote favorite (index dans BkGame.EMOTES). Aucune donnée personnelle, plus de code de groupe
 ## (les champs de Borroka restent dans le fichier, sans être montrés). Les anciens profils reçoivent

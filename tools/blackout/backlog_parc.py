@@ -191,7 +191,7 @@ def cmd_kanban(args):
              "des petits et des grands). Carte jouable en partie rapide avec des placeholders dessinés par le code "
              "(assets/maps/parc_mazon/decor/). Une carte enfant par asset, prompt proposé dans la description "
              "(tools/blackout/prompts_decor.json → cartes → parc_mazon). À prioriser par Julien : rien n'est déposé chez "
-             "pixelforge. Section de la carte : SPEC-GORDEKA §8.")
+             "pixelforge. Section de la carte : GDD-BLACKOUT.md")
         suivi["chapeau"] = _id(cli("add-card", "--type", "asset", "--title", "Carte : Parc Mazon", "--desc", d,
                                    "--status", "backlog"))
         print("chapeau", suivi["chapeau"])

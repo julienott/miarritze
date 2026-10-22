@@ -166,7 +166,7 @@ carte("Décor · toit en tuiles : version calme", "asset", "backlog", parent=sou
 
 # ------------------------------------------------------------------ gameplay et bugs
 chap_gp = carte("Gameplay", "gameplay", "qa",
-                desc="Idées testées en parties IA le 20/10 et activées, à valider par Julien (SPEC-GORDEKA).")
+                desc="Idées testées en parties IA le 20/10 et activées, à valider par Julien (GDD-BLACKOUT.md).")
 for t, d in [
     ("Chatouille : un fantôme qui touche le chasseur le ralentit 1,5 s", "Répit de 8 s. Activée."),
     ("Délivrance : un chassé libre reste 3 s près d'un fantôme pour le remettre en jeu", "Une fois par manche. Activée."),

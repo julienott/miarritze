@@ -1,5 +1,5 @@
 extends Control
-## Réglages (SPEC-GORDEKA §6.0) : vibration (réglage de l'appareil, autoload Settings), aide (les
+## Réglages (GDD-BLACKOUT.md) : vibration (réglage de l'appareil, autoload Settings), aide (les
 ## règles en quelques lignes) et « refaire le round guidé » (§7.2 ; pas encore fait : bouton
 ## « bientôt »). Le jeu n'a plus de son (Julien 2026-10-22) : les curseurs Musique et Sons sont
 ## masqués (AVEC_SONS), les volumes restent dans Settings.

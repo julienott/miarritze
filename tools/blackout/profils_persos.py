@@ -6,7 +6,7 @@ pixelforge, relevées au fil de l'eau.
   profils_persos.py [<id> …]      (par défaut : tous ceux de PROMPTS)
 
 Sorties : tools/rd/out/<id>/gk2d/profil/ (image_0N.png, image_0N_white.png, params.json, planche.png)
-et tools/rd/out/gk2d_profils.png (tous les persos). Les prompts sont recopiés dans SPEC-GORDEKA.md §16.2.
+et tools/rd/out/gk2d_profils.png (tous les persos). Les prompts sont recopiés dans GDD-BLACKOUT.md
 Les accessoires tenus en main (canne, poêle, makila) sont portés sur le dos ou à la ceinture pour
 laisser les mains libres aux animations (mouvements Quaternius).
 """

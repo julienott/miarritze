@@ -1,6 +1,6 @@
 class_name BkSaisiePseudo
 extends PanelContainer
-## Saisie du pseudo (SPEC-GORDEKA §6.0) : champ de texte (vrai champ HTML sur le web, pour le clavier
+## Saisie du pseudo (GDD-BLACKOUT.md) : champ de texte (vrai champ HTML sur le web, pour le clavier
 ## de l'iPhone : WebTextField), rappel « pas ton vrai nom ! », message d'erreur, et à la manette une
 ## grille de lettres (seuls les caractères permis). `valider(texte) -> String` renvoie l'erreur, ou ""
 ## si le pseudo est accepté ; `annuler` (facultatif) ajoute un bouton Annuler.

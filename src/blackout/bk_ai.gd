@@ -1,6 +1,6 @@
 class_name BkAi
 extends RefCounted
-## IA d'un joueur (SPEC-GORDEKA §10). Elle ne voit que ce que voit son rôle :
+## IA d'un joueur (GDD-BLACKOUT.md). Elle ne voit que ce que voit son rôle :
 ## un chassé voit toute la carte (et le chasseur) ; le chasseur ne sait que ce qu'il voit,
 ## ce que lui donnent ses ondes, les pièges qu'il déclenche et les cachettes qui tremblent.
 

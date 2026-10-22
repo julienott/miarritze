@@ -1,6 +1,6 @@
 class_name BkDraw
 extends RefCounted
-## Petits outils de dessin vectoriel « cartoon propre » (SPEC-GORDEKA §9) : formes arrondies
+## Petits outils de dessin vectoriel « cartoon propre » (GDD-BLACKOUT.md) : formes arrondies
 ## avec contour sombre épais, aplat + ombre douce. Tout est tracé à l'exécution : net à toute
 ## taille, recolorable (la tenue prend la couleur choisie par le joueur).
 

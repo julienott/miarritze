@@ -1,6 +1,6 @@
 class_name BkHud
 extends Control
-## Interface du round (SPEC-GORDEKA §2, §5) : rôle, chrono, messages, bouton d'action avec
+## Interface du round (GDD-BLACKOUT.md) : rôle, chrono, messages, bouton d'action avec
 ## son temps de recharge, joystick tactile, flèche vers le chasseur hors champ, voile du
 ## chasseur qui compte, scores entre les rounds (« Round k/N », bouton « Terminer » en partie rapide).
 ## Versus et podium sont des écrans à part (BkVersus, BkPodium), sous ce calque : le HUD n'y montre
@@ -9,7 +9,7 @@ extends Control
 
 var game: BkGame
 var _quit: Button
-## Partie rapide : arrêter la partie pendant les scores, podium tout de suite (SPEC-GORDEKA §2.2).
+## Partie rapide : arrêter la partie pendant les scores, podium tout de suite (GDD-BLACKOUT.md).
 var _terminer: Button
 ## Vignettage du chassé local (idee_frisson) : bords sombres et rougeâtres, centre libre.
 var _vignette: TextureRect

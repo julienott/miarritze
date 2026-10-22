@@ -1,5 +1,5 @@
 extends Control
-## En ligne (SPEC-GORDEKA §6.2) : écran d'attente « Salons en ligne : bientôt ». Les salons sont
+## En ligne (GDD-BLACKOUT.md) : écran d'attente « Salons en ligne : bientôt ». Les salons sont
 ## développés à part ; pour les brancher, remplacer cette scène (BkNav.ECRANS["en_ligne"]).
 
 

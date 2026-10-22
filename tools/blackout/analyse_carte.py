@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Diagnostic chiffré d'une carte de Blackout (SPEC-GORDEKA §8, revue de carte du 2026-10-20).
+"""Diagnostic chiffré d'une carte de Blackout (GDD-BLACKOUT.md, revue de carte du 2026-10-20).
 
   analyse_carte.py <id de carte> [--ab <variante>[,<variante>…]] [--png <dossier>] [--json <fichier>]
 

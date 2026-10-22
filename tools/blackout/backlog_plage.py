@@ -185,7 +185,7 @@ def cmd_kanban(args):
              "bateaux tirés au sec, Port-Vieux et sa digue). Carte jouable en partie rapide avec des placeholders "
              "dessinés par le code (assets/maps/plage/decor/provisoires/). Une carte enfant par asset, prompt proposé "
              "dans la description (tools/blackout/prompts_decor.json → cartes → plage). À prioriser par Julien : rien "
-             "n'est déposé chez pixelforge. Section de la carte : SPEC-GORDEKA §8.")
+             "n'est déposé chez pixelforge. Section de la carte : GDD-BLACKOUT.md")
         suivi["chapeau"] = _id(cli("add-card", "--type", "asset", "--title", "Carte : Plage de la Côte des Basques",
                                    "--desc", d, "--status", "backlog"))
         print("chapeau", suivi["chapeau"])

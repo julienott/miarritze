@@ -1,6 +1,6 @@
 class_name BkMap
 extends Node2D
-## Carte du prototype gris (SPEC-GORDEKA §8) lue depuis assets/maps/<id>/map.txt :
+## Carte du prototype gris (GDD-BLACKOUT.md) lue depuis assets/maps/<id>/map.txt :
 ## une lettre par case (légende dans tools/blackout/make_proto_map.py). Construit les
 ## collisions (couche 1 : on ne passe pas ; couche 2 : on ne voit pas à travers), les
 ## occulteurs de lumière (vue du chasseur), la grille A* des IA et le dessin en blocs.

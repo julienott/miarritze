@@ -1,7 +1,11 @@
-# En ligne Gordeka : API des salons
+# En ligne : API des salons (procédure)
 
-Serveur des salons de Miarritze Gordeka (SPEC-GORDEKA §2.2, §6.2, §11). Code : `backend/src/Rooms.php`,
-tables dans `backend/db/schema.sql` (section « Gordeka : salons »). Tests :
+> Décrit l'API **telle qu'elle est codée**. Écarts connus avec `GDD-BLACKOUT.md` (qui fait foi), à
+> corriger dans le code : plus de couleur de joueur (GDD §7.1) ; 13 persos ; la carte bac à sable ;
+> option boss final ; signalisation à brancher sur `/room/signal`.
+
+Serveur des salons de Miarritze Blackout (GDD-BLACKOUT.md). Code : `backend/src/Rooms.php`,
+tables dans `backend/db/schema.sql` (section « salons »). Tests :
 `python3 tests/backend/rooms_test.py` (59 vérifications, `php -S` sur une base jetable, horloge simulée).
 
 Le serveur ne fait tourner aucune partie. Il tient les salons, la présence par salon et la signalisation
@@ -15,7 +19,7 @@ des rounds. Tout passe par du polling JSON sur la même origine `/api`.
   Le client les garde dans son profil local. Pas de groupe, pas de donnée personnelle.
 - Erreur : statut HTTP + `{"error": "message à afficher", "reason": "code_machine"}`. Le client s'appuie sur
   `reason`, et peut afficher `error` tel quel (français, adapté aux enfants).
-- Couleurs : un **indice 0–11** dans `data/gordeka/rules.json` → `colors` (0 Rouge … 11 Citron).
+- Couleurs : un **indice 0–11** dans `data/blackout/rules.json` → `colors` (0 Rouge … 11 Citron).
 - Persos : les 12 ids de `rules.json` → `characters` (miroir dans `GK_CHARACTERS`). Un perso inconnu
   devient `louis` à l'entrée ; il est refusé (`bad_perso`) sur `/room/me`.
 - Cartes : `port_pecheurs` seulement pour l'instant (`GK_MAPS`).

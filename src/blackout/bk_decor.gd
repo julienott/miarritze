@@ -706,7 +706,7 @@ static func _read_image(path: String) -> Image:
 	return img
 
 
-## Forme d'un objet à sa taille dessinée, calculée une fois par image et par taille (SPEC-GORDEKA,
+## Forme d'un objet à sa taille dessinée, calculée une fois par image et par taille (GDD-BLACKOUT.md,
 ## décor) : {mask: BitMap de la silhouette, foot: BitMap de l'empreinte au sol, scale (px de jeu par
 ## point), polys: contours de l'empreinte en px de jeu depuis le coin haut gauche de l'image dessinée}.
 ## C'est le repli quand pixelforge n'a pas (encore) fourni les masques de l'objet (`_pf_shape`).

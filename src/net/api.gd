@@ -1,5 +1,5 @@
 extends Node
-## Api — client HTTP de l'API PHP (backend/, docs/ONLINE_GORDEKA.md).
+## Api — client HTTP de l'API PHP (backend/, docs/ONLINE.md).
 ##
 ## Toutes les requêtes sont asynchrones : `call_api()` renvoie via le
 ## callback `on_done(ok: bool, code: int, data: Variant)`. En export web,

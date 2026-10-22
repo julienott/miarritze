@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * Salons en ligne de Miarritze Gordeka (SPEC-GORDEKA §2.2, §6.2, §11).
+ * Salons en ligne de Miarritze Gordeka (GDD-BLACKOUT.md).
  *
  * Le serveur ne fait tourner aucune partie : il tient les salons (public/privé,
  * code, places, admin, ordre d'arrivée, exclusions), la présence par salon et la
@@ -10,7 +10,7 @@ declare(strict_types=1);
  * des rounds. Tout passe par du polling JSON, comme le reste de l'API.
  *
  * Utilise les utilitaires de public/index.php : ok(), fail(), jsonBody(),
- * rateLimit(), clientIp(). Documentation : docs/ONLINE_GORDEKA.md.
+ * rateLimit(), clientIp(). Documentation : docs/ONLINE.md.
  */
 
 const GK_CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ';   // ni I, L, O, ni chiffres

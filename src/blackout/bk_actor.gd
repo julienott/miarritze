@@ -1,7 +1,7 @@
 class_name BkActor
 extends CharacterBody2D
 ## Un joueur (humain ou IA) du prototype : pastille de couleur avec une visière qui montre
-## où il regarde (SPEC-GORDEKA §3). Les personnages se traversent (couche 4, on ne heurte
+## où il regarde (GDD-BLACKOUT.md). Les personnages se traversent (couche 4, on ne heurte
 ## que la carte) ; un fantôme traverse aussi les murs.
 
 enum Role { HIDER, HUNTER, GHOST, OUT }

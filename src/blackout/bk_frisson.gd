@@ -1,6 +1,6 @@
 class_name BkFrisson
 extends Node
-## Ressenti du chassé local (`idee_frisson`, SPEC-GORDEKA §3.4) : battement de cœur, vignettage et
+## Ressenti du chassé local (`idee_frisson`, GDD-BLACKOUT.md) : battement de cœur, vignettage et
 ## vibration qui montent quand le chasseur approche, « Il fouille à côté ! » quand il fouille une
 ## cachette voisine. Seulement pour le joueur local chassé (jamais le chasseur ni un fantôme) ; ne
 ## dépend que de la distance au chasseur, sans direction : ça ne révèle rien que le chassé ne voie

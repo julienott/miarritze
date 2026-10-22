@@ -1,4 +1,4 @@
--- Miarritze Gordeka — schéma SQLite (docs/ONLINE_GORDEKA.md).
+-- Miarritze Gordeka — schéma SQLite (docs/ONLINE.md).
 -- Appliqué à chaque connexion (idempotent). Les tables de l'ancien jeu de combat
 -- (groups, players, profiles, presence, matches, signals, tower_scores, join_requests)
 -- ne sont plus créées ; celles d'une base existante restent en place, inutilisées.
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS rate_limits (
 );
 
 -- ------------------------------------------------------------------ Gordeka : salons
--- Miarritze Gordeka (SPEC-GORDEKA §6.2, §11). Les joueurs n'ont pas de groupe.
+-- Miarritze Gordeka (GDD-BLACKOUT.md). Les joueurs n'ont pas de groupe.
 CREATE TABLE IF NOT EXISTS gk_players (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   pseudo      TEXT NOT NULL,

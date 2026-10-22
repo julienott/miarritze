@@ -1,12 +1,12 @@
 class_name BkPerso
 extends Sprite2D
-## Le perso dessiné d'un acteur, en 2D flat cartoon façon Among Us (docs/GORDEKA_STYLE_2D.md) :
+## Le perso dessiné d'un acteur, en 2D flat cartoon façon Among Us (archive/2026-10-22-docs-gordeka/GORDEKA_STYLE_2D.md) :
 ## planches pixelforge (`pf_2d__anim`) dans assets/blackout/persos/<id>/, de profil vers la
 ## droite (miroir à gauche). La tenue prend la couleur du joueur grâce au masque de tenue.
 ## L'animation suit l'état de l'acteur ; les gestes ponctuels (piège, détection, trouvé…)
 ## sont demandés par la partie via `play_once`.
 ## Mode pantin (`use_pantin`) : le mannequin articulé (BkPantin) remplace les planches ; il sera
-## habillé de la garde-robe du perso (docs/GORDEKA_STYLE_2D.md §4).
+## habillé de la garde-robe du perso (archive/2026-10-22-docs-gordeka/GORDEKA_STYLE_2D.md §4).
 
 const DIR: String = "res://assets/blackout/persos/%s/"
 ## Hauteur du perso à l'écran (px), pieds compris ; ~90 px comme dans Among Us en 720p.
@@ -57,7 +57,7 @@ const WING_FLAP_DEG: float = 14.0
 const SHOULDER_K: float = 0.52       # épaule : part de la hauteur de la silhouette, depuis le haut
 const SHOULDER_INSET_K: float = 0.06 # rentrée dans le dos, en part de la largeur de la silhouette
 
-## Raccord des animations (SPEC-GORDEKA §16.3, tools/blackout/post_anims.py) : chaque planche est
+## Raccord des animations (GDD-BLACKOUT.md, tools/blackout/post_anims.py) : chaque planche est
 ## ramenée à la taille (`echelle`) et à la place (`decalage`, `frame_offsets`) de l'idle du perso, ne
 ## joue que ses images utiles (`debut`, `fin`) et sait où entrer dans l'anim suivante (`entrees`).
 ## Passage d'un état à l'autre : on entre dans la boucle suivante à l'image la plus proche de l'image

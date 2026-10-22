@@ -168,7 +168,7 @@ function ecranBody(j, big) {
 }
 
 function jeuEcrans(g) {
-  return [el('p', { class: 'muted intro', text: 'Le parcours des écrans, dans l\'ordre (SPEC-GORDEKA §6). Le rôle vient du commentaire en tête de chaque script ; les captures de docs/captures/ecrans.' }),
+  return [el('p', { class: 'muted intro', text: 'Le parcours des écrans, dans l\'ordre (GDD-BLACKOUT.md). Le rôle vient du commentaire en tête de chaque script ; les captures de docs/captures/ecrans.' }),
     el('div', { class: 'jeu-grid ecrans' }, (g.ecrans || []).map((id) => state.assetsById.get(id)).filter(Boolean).map((a) =>
       el('section', { class: 'panel jeu-block' }, ...jeuHead(a.jeu.nom, a.id, [a.jeu.nom]), ...ecranBody(a.jeu, false))))];
 }
@@ -236,7 +236,7 @@ function stackBarRow(cards) {
 // ------------------------------------------------------------------ équilibrage
 
 function jeuEquilibrage(g) {
-  const out = [el('p', { class: 'muted intro' }, 'Bilans des parties IA contre IA (', el('code', { text: 'docs/GORDEKA_EQUILIBRAGE.md' }),
+  const out = [el('p', { class: 'muted intro' }, 'Bilans des parties IA contre IA (', el('code', { text: 'archive/2026-10-22-docs-gordeka/GORDEKA_EQUILIBRAGE.md' }),
     '). Les bilans propres à une carte sont aussi dans l\'onglet Cartes de jeu.')];
   for (const s of g.equilibrage_general || []) {
     out.push(el('details', { class: 'panel jdoc' }, el('summary', { text: s.titre }), ...md(s.texte)));

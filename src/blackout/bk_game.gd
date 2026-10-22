@@ -1,6 +1,6 @@
 class_name BkGame
 extends Node2D
-## Partie de Blackout contre l'IA (prototype gris, SPEC-GORDEKA §2-4, jalon 1).
+## Partie de Blackout contre l'IA (prototype gris, GDD-BLACKOUT.md, jalon 1).
 ## La partie tourne entièrement ici (rôle d'hôte) : rounds, vision du chasseur, capture,
 ## cachettes, pièges, détections, sorties et points. Les joueurs n'envoient que move/look/action.
 
@@ -10,7 +10,7 @@ enum Phase { DRAW, HIDE, HUNT, END, PODIUM, VERSUS }
 
 const COUNT_WORDS: PackedStringArray = ["bat", "bi", "hiru", "lau", "bost", "sei", "zazpi", "zortzi",
 	"bederatzi", "hamar", "hamaika", "hamabi", "hamahiru", "hamalau", "hamabost"]
-## Emotes (SPEC-GORDEKA §3.2) : animation du perso, dans l'ordre des touches 1 à 6 et des bulles
+## Emotes (GDD-BLACKOUT.md) : animation du perso, dans l'ordre des touches 1 à 6 et des bulles
 ## (icônes dessinées par BkDraw.emote_icon). Permises seulement hors de l'action (`emotes_allowed`).
 const EMOTES: PackedStringArray = ["emote_salut", "emote_rire", "emote_danse", "emote_pouce",
 	"emote_chut", "emote_langue"]
@@ -91,7 +91,7 @@ var _bots_only: bool = false
 var _force_role: String = ""
 var _log: bool = false
 var _local_bot: bool = false          # QA : le joueur local est piloté par l'IA (garde son perso)
-## Affichage 3D abandonné le 2026-10-19 (docs/GORDEKA_STYLE_2D.md) : 2D par défaut, `--bk-3d`
+## Affichage 3D abandonné le 2026-10-19 (archive/2026-10-22-docs-gordeka/GORDEKA_STYLE_2D.md) : 2D par défaut, `--bk-3d`
 ## rouvre l'ancienne vue 3D.
 var use_3d: bool = false
 ## QA : `--bk-perso=louis` donne ce perso à tout le monde (voir ses animations sur toutes les IA).
@@ -114,7 +114,7 @@ var _last_find_t: float = 0.0
 var _noise_at: float = -100.0
 var _tickle_free_until: float = 0.0     # chasseur à l'abri des chatouilles jusqu'à cet instant (répit)
 var _rescues: int = 0                   # délivrances déjà faites ce round
-## Mesures de tension (`--bk-stats`, docs/GORDEKA_EQUILIBRAGE.md) : état par chassé (id → {…}) pour
+## Mesures de tension (`--bk-stats`, archive/2026-10-22-docs-gordeka/GORDEKA_EQUILIBRAGE.md) : état par chassé (id → {…}) pour
 ## les frôlements, les « vu puis perdu », le mouvement et les changements de planque.
 var _tens: Dictionary = {}
 var _heat_t: float = 0.0
@@ -163,7 +163,7 @@ var _rafale_t: float = 0.0
 var _rafale_i: int = 0
 ## Lampe du chasseur allumée pour cette manche (hunter_reveal joué en fin de phase cachée).
 var _reveal_joue: bool = false
-## Nombre de rounds de la partie, podium ensuite (SPEC-GORDEKA §2.2) ; 0 = sans fin (IA contre IA
+## Nombre de rounds de la partie, podium ensuite (GDD-BLACKOUT.md) ; 0 = sans fin (IA contre IA
 ## sans `--bk-rounds`). Écran Versus entre le tirage et la cachette, sauté en IA contre IA, en
 ## visite et avec `--bk-sans-versus` ; versus et podium sont des écrans posés sur le calque 9, sous
 ## le HUD (bouton Quitter, éventail des emotes).
@@ -423,7 +423,7 @@ func versus_actif() -> bool:
 	return BkRules.f("phase_versus") > 0.0 and not _bots_only and not _sans_versus and visite == ""
 
 
-## Partie rapide : le joueur peut terminer plus tôt pendant les scores (SPEC-GORDEKA §2.2).
+## Partie rapide : le joueur peut terminer plus tôt pendant les scores (GDD-BLACKOUT.md).
 func peut_terminer() -> bool:
 	return phase == Phase.END and visite == "" and not _bots_only
 
@@ -843,7 +843,7 @@ func _control(dt: float) -> void:
 			act_for(a)
 
 
-## Le bouton d'action, selon le rôle et l'endroit (SPEC-GORDEKA §4, §8).
+## Le bouton d'action, selon le rôle et l'endroit (GDD-BLACKOUT.md).
 func act_for(a: BkActor) -> void:
 	if phase != Phase.HIDE and phase != Phase.HUNT:
 		return

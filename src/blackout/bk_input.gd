@@ -1,11 +1,11 @@
 class_name BkInput
 extends Node
-## Source d'entrées du joueur local (SPEC-GORDEKA §5) : déplacement + un seul bouton.
+## Source d'entrées du joueur local (GDD-BLACKOUT.md) : déplacement + un seul bouton.
 ##   clavier : flèches ou ZQSD/WASD, Espace ou Entrée ;
 ##   manette : stick gauche ou croix, A ;
 ##   tactile : joystick flottant sur la moitié gauche (là où le pouce se pose),
 ##             bouton d'action en bas à droite.
-## Emotes, seulement quand la partie les permet (`emotes_enabled`, SPEC-GORDEKA §3.2) :
+## Emotes, seulement quand la partie les permet (`emotes_enabled`, GDD-BLACKOUT.md) :
 ##   tactile : petit bouton au-dessus du bouton d'action, qui ouvre un éventail de 6 bulles ;
 ##   clavier : touches 1 à 6 ; manette : LB ou RB ouvre l'éventail, la croix choisit, A valide.
 ## Seule source qui lit les InputEvent bruts (CLAUDE.md §0.4) ; le jeu ne voit que move/action/emote.
