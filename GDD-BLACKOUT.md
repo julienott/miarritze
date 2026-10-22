@@ -442,13 +442,11 @@ Référence : **Party Hard 1** (analyse détaillée, mesures et captures : `docs
   portée, ses coéquipiers voient l'objet en transparence. Les masques et emprises des objets viennent de
   pixelforge quand ils existent, sinon d'un calcul sur l'alpha de l'image (procédure :
   `docs/TEST_DECOR.md`).
-- **Masques du décor : la géométrie se déclare, l'image s'y conforme** (*22/10, après recherche :
-  `docs/RECHERCHE_MASQUES_DECOR.md`*). Chaque objet naît d'un **volume simple écrit en données** (boîtes,
-  cylindres, ellipsoïdes posés sur ses cases, avec hauteur et drapeaux passage / vue / libre). Pixelforge
-  génère l'image guidée par ce volume, vérifie qu'elle le respecte, et livre collision, vue, occulteur
-  de lumière, couches de tri et ombre **calculées depuis le volume** (format `prop.json`). Fini les
-  masques devinés sur la silhouette. *En essai* : pot de fleurs, fontaine, banc, cabine de plage ; le
-  format est validé par Julien en QA sur ce lot.
+- **Masques du décor : en suspens** (*Julien, 22/10*). Deux pistes étudiées, aucune lancée :
+  volume déclaré par objet et masques calculés par pixelforge (`docs/RECHERCHE_MASQUES_DECOR.md`, spec
+  mise en pause : Julien doute qu'il faille écrire un volume par objet) ; modèle dédié entraîné chez
+  pixelforge, sans token par objet (`docs/RECHERCHE_MODELE_MASQUES.md`, recommandé par la recherche,
+  « pas maintenant »). On y revient après le jalon 1 : la carte bac à sable n'a pas de décor en image.
 - Taille visée d'une carte finale : environ 14 zones reliées par des couloirs, ~5 écrans de large.
 
 ### 10.3 Cartes à venir (après le jalon)
@@ -515,9 +513,7 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
   des pieds dans le `set.json` du moteur A (60, ou 120 pour un boss) ; l'accessoire d'un extra se nomme
   dans `object` (colonne `objet` de `idle_long` dans le JSON) ; `lift` et `portrait` sont produits par
   défaut. Limite connue : à 32 px, cheveux noirs et lunettes de soleil se fondent encore.
-- **Décor (essai du 22/10)** : chaîne `pf_geo__proxy` → `pf_px__prop` → `pf_px__reduce` étendu, plus le
-  repli `pf_geo__fit` pour une image existante ; spec et critères d'acceptation :
-  `docs/RECHERCHE_MASQUES_DECOR.md` §6.
+- **Décor** : masques en suspens (§10.2).
 - Méthode de travail : on intègre chaque rendu tel quel, **Julien tranche en QA** sur /producer
   (procédure : `docs/PRODUCER.md`).
 
