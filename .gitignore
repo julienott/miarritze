@@ -17,24 +17,18 @@ config.php
 # OS
 .DS_Store
 
-# Clé API Retro Diffusion (jamais versionnée)
+# Clé API de l'ancien client Retro Diffusion (supprimé ; le fichier local reste ignoré)
 .rd_api_key
 
 # Outils Python
 .venv/
 __pycache__/
-# Sorties brutes Retro Diffusion (le cache et le registre, eux, sont versionnés)
+# Dossier de travail local des outils de génération (sorties pixelforge, gitignoré)
 tools/rd/out/
 # Artefacts de tests / captures
 tests/out/
 .cc_tmp/
 node_modules/
-
-# Sauvegardes des sheets de combattants avant nettoyage procédural
-# (voir tools/sprites/clean_alpha.py). Les .orig restent en local pour
-# pouvoir rejouer un nettoyage ; la vérité versionnée est la sheet nettoyée.
-assets/fighters/*/sheet.orig.png
-assets/fighters/*/sheet.orig.png.import
 
 # Service /producer : données serveur et jeton local de l'agent (jamais versionnés)
 producer/data/
