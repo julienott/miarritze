@@ -599,7 +599,8 @@ Référence : **Party Hard 1** (analyse détaillée, mesures et captures : `docs
 - **Nuit** : grandes surfaces sombres et désaturées (bleu nuit, violet), couleurs franches réservées
   aux persos, aux lumières et aux objets interactifs. **Lumière additive** saturée et chaude : halos
   jaunes des lampadaires, néons rose et cyan, faisceau du phare, rouge de Tartalo. L'ombre est une
-  vraie zone de jeu (§3.2).
+  vraie zone de jeu (§3.2). **Dans la lumière, persos, PNJ et boss ont des couleurs plus saturées**
+  (*Julien, 23/10* : `rules.json` → `eclaire_saturation` 1,35, fondu `eclaire_saturation_s` 0,3 s).
 - **Pays basque** : maisons labourdines blanchies à la chaux, colombages et volets rouges, toits de
   tuiles, crampottes, barques peintes, quais de pierre, lauburu et linge basque par touches, gâteaux
   basques, piments d'Espelette, chisteras.

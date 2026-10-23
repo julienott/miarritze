@@ -76,7 +76,21 @@ void fragment() {
 }
 """
 
+## Couleurs plus saturées dans la lumière (Julien 23/10) : le sprite seul, sans toucher à sa luminosité.
+const SATURATION_SHADER: String = """shader_type canvas_item;
+uniform float saturation = 1.0;
+void fragment() {
+	vec4 c = texture(TEXTURE, UV);
+	float l = dot(c.rgb, vec3(0.299, 0.587, 0.114));
+	COLOR = vec4(clamp(mix(vec3(l), c.rgb, saturation), 0.0, 1.0), c.a) * COLOR;
+}
+"""
+static var _shader_saturation: Shader
+
 var actor: BkActor
+## Part de la saturation « éclairé » (0 → 1), en fondu (eclaire_saturation_s) ; matériau propre au sprite.
+var _k_sat: float = 0.0
+var _mat_sat: ShaderMaterial
 var _anim: String = ""
 var _t: float = 0.0
 var _once: String = ""
@@ -476,6 +490,8 @@ func _process(dt: float) -> void:
 	# Effets communs subis (GDD §4.5) : teinte, contour, sprite couché, oscillation (BkEffetsRendu).
 	var pose: Dictionary = BkEffetsRendu.pose(actor, actor == _local())
 	material = silhouette_material() if actor.silhouette else pose["material"]
+	if material == null:
+		material = _saturation(dt)
 	region_rect = Rect2(Vector2(cell.x * float(f), 0.0), cell)
 	var face: float = 1.0 if cos(actor.look) >= 0.0 else -1.0
 	flip_h = face < 0.0
@@ -495,6 +511,22 @@ func _process(dt: float) -> void:
 	rotation = float(pose["rotation"])
 	# Le sprite tourne autour de ses pieds (renversé sans planche : couché sur le sol).
 	position = (pieds - Vector2(fx, feet.y).rotated(rotation)).round()
+
+
+## Matériau de saturation selon la lumière (actor.lit, calculé par la partie) ; null hors partie ou dans l'ombre.
+func _saturation(dt: float) -> ShaderMaterial:
+	var cible: float = 1.0 if actor.lit and _local() != null else 0.0
+	_k_sat = move_toward(_k_sat, cible, dt / maxf(BkRules.f("eclaire_saturation_s"), 0.01))
+	if _k_sat <= 0.0:
+		return null
+	if _mat_sat == null:
+		if _shader_saturation == null:
+			_shader_saturation = Shader.new()
+			_shader_saturation.code = SATURATION_SHADER
+		_mat_sat = ShaderMaterial.new()
+		_mat_sat.shader = _shader_saturation
+	_mat_sat.set_shader_parameter("saturation", lerpf(1.0, BkRules.f("eclaire_saturation"), _k_sat))
+	return _mat_sat
 
 
 ## Joueur local de la partie (le perso invisible reste visible à 30 % pour lui seul).

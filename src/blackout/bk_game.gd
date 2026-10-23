@@ -2048,6 +2048,9 @@ func _update_view() -> void:
 		if a.shown != show:
 			a.shown = show
 			a.queue_redraw()
+		# Le chasseur aussi sait s'il est éclairé (couleurs saturées dans la lumière, BkPerso).
+		if a.role == BkActor.Role.HUNTER:
+			a.lit = eclaire(pieds(a))
 		# Dans l'ombre, le chasseur ne voit d'un chassé qu'une silhouette sombre (GDD §3.2).
 		a.silhouette = as_hunter and a != hunter and a.role == BkActor.Role.HIDER and not a.lit
 	foule.maj_vue(as_hunter, _last_dt)

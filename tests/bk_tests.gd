@@ -901,7 +901,10 @@ func test_ombre_capture_silhouette() -> void:
 	check(near(h.gauge / maxf(g_ombre, 1e-6), 3.0, 0.15), "jauge 3 fois plus haute éclairé (%.3f / %.3f)" % [h.gauge, g_ombre])
 	game._update_view()
 	h.perso._process(0.0)
-	check(not h.silhouette and h.perso.material == null, "éclairé : son sprite normal")
+	check(not h.silhouette and h.perso.material != BkPerso.silhouette_material(), "éclairé : son sprite, pas la silhouette")
+	h.perso._process(1.0)
+	var m: ShaderMaterial = h.perso.material as ShaderMaterial
+	check(m != null and float(m.get_shader_parameter("saturation")) > 1.0, "éclairé : couleurs saturées")
 	# Les chassés voient tout normalement.
 	game.local = h
 	game.pannes["T"] = 5.0
