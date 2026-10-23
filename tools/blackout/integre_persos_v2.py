@@ -31,7 +31,12 @@ DEST = os.environ.get("DEST", "persos")
 
 def tache(tid: str) -> dict:
     req = urllib.request.Request(f"{pf.PF}/v2/inferences/tasks/{tid}", headers=pf.AUTH)
-    return json.loads(urllib.request.urlopen(req, timeout=60).read())
+    try:
+        return json.loads(urllib.request.urlopen(req, timeout=60).read())
+    except urllib.error.HTTPError as e:
+        if e.code == 404:                      # tâche annulée puis purgée chez pixelforge
+            return {"status": "introuvable"}
+        raise
 
 
 def rapatrie(r: dict, dossier: str) -> int:
