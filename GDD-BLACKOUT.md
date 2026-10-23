@@ -525,7 +525,7 @@ sur une carte).
 | ado | spécial | a teenager in a purple hoodie with big headphones | big headphones on a purple hoodie | musique, telephone |
 | lecteur | spécial | an old man in a beige coat and a black beret | a black beret and a newspaper | journal, assis |
 | promeneuse | spécial | a woman in a long yellow coat walking her dog | a long yellow coat | promener, parler |
-| cycliste | spécial | a cyclist in a blue jersey pushing a red bicycle | a red bicycle | attendre, boire |
+| cycliste | spécial | a cyclist in a blue jersey standing beside a red bicycle, both hands on the handlebar | a red bicycle | attendre, boire |
 | musicienne | spécial | a street guitarist in a denim jacket with a guitar | a wooden guitar | jouer, parler |
 | amoureux | spécial | a young man in a white shirt holding a single red rose | a red rose | parler, attendre |
 | policier | spécial | a friendly municipal police officer in a dark blue uniform and cap | a dark blue cap | parler, attendre |
@@ -839,6 +839,9 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   Txomin, Patxi, Maïa). La suite repart **sur l'ordre de Julien**, avec **un perso et un PNJ de test** d'abord ;
   le reste plus tard. Côté jeu : quand la planche lift ou jump_hide monte d'elle-même, le jeu n'ajoute plus
   ni `lift_px` ni l'arc de sortie de cachette (`BkPerso._monte`).
+- **23/10** (cycliste, Julien : option 2) : Wan anime le vélo de la référence avec lui ; le cycliste est décrit
+  debout à côté de son vélo, et on accepte qu'il le pousse en se déplaçant. Ses visage, portrait et objets
+  coupés sont corrigés chez pixelforge (12 h 30) : à refaire en set complet le moment venu.
 
 ---
 

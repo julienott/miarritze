@@ -251,7 +251,7 @@
   },
   "cycliste": {
    "type": "special",
-   "description": "a cyclist in a blue jersey pushing a red bicycle",
+   "description": "a cyclist in a blue jersey standing beside a red bicycle, both hands on the handlebar",
    "signature": "a red bicycle",
    "activites": [
     "attendre",
