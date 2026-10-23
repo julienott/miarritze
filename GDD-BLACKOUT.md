@@ -276,19 +276,19 @@ son character set (§8.1), la même pour tous.
 
 | Perso | Coup de chassé : clip, action | Coup de chasseur : clip, action |
 |---|---|---|
-| louis | Spell_Simple_Enter+Spell_Simple_Exit, « vaults over a low wall » | Spell_Simple_Enter+Spell_Simple_Exit, « cups his hands around his mouth and calls out » |
-| txomin | OverhandThrow, « throws his red rescue buoy forward to a friend » | Spell_Simple_Enter+Spell_Simple_Exit, « blows hard into his lifeguard whistle » |
-| patxi | Spell_Simple_Enter+Spell_Simple_Exit, « tips a bucket of sardines onto the ground behind him » | OverhandThrow, « casts his fishing line far forward » |
-| maia | Spell_Simple_Enter+Spell_Simple_Exit, « dives low and rolls under a wave » | Spell_Simple_Enter+Spell_Simple_Exit, « jumps on her surfboard and surfs forward » |
-| xabi | Spell_Simple_Enter+Spell_Simple_Exit, « bounces off a wall in a quick dash » | OverhandThrow, « hurls a pelota ball with his chistera » |
-| mattin | Spell_Simple_Enter+Spell_Simple_Exit, « flexes his big arms proudly » | OverhandThrow, « heaves a heavy round stone forward » |
-| amaia | Spell_Simple_Enter+Spell_Simple_Exit, « does quick light Basque dance steps » | Spell_Simple_Enter+Spell_Simple_Exit, « strikes the ground with her makila stick » |
-| kaio | Spell_Simple_Enter+Spell_Simple_Exit, « leaps up and glides » | Spell_Simple_Enter+Spell_Simple_Exit, « screams with his beak wide open » |
-| karramarro | Spell_Simple_Enter+Spell_Simple_Exit, « digs himself down into the sand » | Spell_Simple_Enter+Spell_Simple_Exit, « slides sideways very fast » |
-| ramuntxo | Spell_Simple_Enter+Spell_Simple_Exit, « places a Basque cake on the ground » | OverhandThrow, « throws a small pot of red pepper » |
-| itsaso | Spell_Simple_Enter+Spell_Simple_Exit, « raises a little stone wall with a wave of her hand » | Spell_Simple_Enter+Spell_Simple_Exit, « calls water geysers out of the ground » |
-| peio | Spell_Simple_Enter+Spell_Simple_Exit, « sidesteps and rolls away quickly » | Spell_Simple_Enter+Spell_Simple_Exit, « shouts a war cry with his fists up » |
-| itsasargi | Spell_Simple_Enter+Spell_Simple_Exit, « raises his lantern and it flashes bright » | OverhandThrow, « points his lantern beam straight ahead » |
+| louis | Spell_Simple_Enter+Spell_Simple_Exit, « raises one hand, then sweeps it forward as if passing through a wall » | Spell_Simple_Enter+Spell_Simple_Exit, « raises both hands to his mouth, then throws them open to call out » |
+| txomin | OverhandThrow, « throws his red rescue buoy forward to a friend » | Spell_Simple_Enter+Spell_Simple_Exit, « raises his silver whistle to his lips, then lowers it after a sharp blow » |
+| patxi | Spell_Simple_Enter+Spell_Simple_Exit, « lifts a small bucket up, then tips it forward to drop sardines on the ground » | OverhandThrow, « casts his fishing line far forward » |
+| maia | Spell_Simple_Enter+Spell_Simple_Exit, « raises her arms, then sweeps them down as if diving under a wave » | Spell_Simple_Enter+Spell_Simple_Exit, « lifts her yellow surfboard up, then swings it forward » |
+| xabi | Spell_Simple_Enter+Spell_Simple_Exit, « pulls his arms back, then pushes off forward in a quick dash » | OverhandThrow, « hurls a pelota ball with his chistera » |
+| mattin | Spell_Simple_Enter+Spell_Simple_Exit, « raises both arms, then flexes them proudly » | OverhandThrow, « heaves a heavy round stone forward » |
+| amaia | Spell_Simple_Enter+Spell_Simple_Exit, « lifts her hands high, then lands a quick light Basque dance step » | Spell_Simple_Enter+Spell_Simple_Exit, « raises her wooden makila stick, then brings it down on the ground » |
+| kaio | Spell_Simple_Enter+Spell_Simple_Exit, « raises his wings, then flaps them down hard » | Spell_Simple_Enter+Spell_Simple_Exit, « pulls his head back, then leans forward with a loud scream, beak wide open » |
+| karramarro | Spell_Simple_Enter+Spell_Simple_Exit, « raises both claws, then digs them down into the sand » | Spell_Simple_Enter+Spell_Simple_Exit, « raises both claws, then sweeps them sideways » |
+| ramuntxo | Spell_Simple_Enter+Spell_Simple_Exit, « lifts a round Basque cake up, then sets it forward on the ground » | OverhandThrow, « throws a small pot of red pepper » |
+| itsaso | Spell_Simple_Enter+Spell_Simple_Exit, « raises her hand, then sweeps it forward to raise a little stone wall » | Spell_Simple_Enter+Spell_Simple_Exit, « raises both hands, then pushes them down to call water geysers » |
+| peio | Spell_Simple_Enter+Spell_Simple_Exit, « fakes a pass with both arms up, then pulls them back » | Spell_Simple_Enter+Spell_Simple_Exit, « raises his fists high, then shouts a war cry » |
+| itsasargi | Spell_Simple_Enter+Spell_Simple_Exit, « raises his brass lantern high, then lowers it after a bright flash » | OverhandThrow, « swings his brass lantern overhead and throws its beam straight ahead » |
 
 - Ce qui est lancé ou posé (pelote, bouée, pierre, gâteau, nuage, muret, geysers) : **formes simples
   en placeholder**, remplacées plus tard par de petits sprites pixelforge.

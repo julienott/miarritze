@@ -687,5 +687,689 @@
    }
   },
   "integre": "echec"
+ },
+ {
+  "famille": "persos",
+  "pid": "louis",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "325fd433233647ae9f7a9fb2a7ccb216",
+  "B": "4e66e255a75e4820bfb5e5f04a2b9dd4",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "4c6bb9fdca38418d8c02eaa19548b3f6",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "aa34a69a34a94890b1ed8028b0386d93"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   },
+   "actions": {
+    "cast_chasse": "raises one hand, then sweeps it forward as if passing through a wall",
+    "cast_chasseur": "raises both hands to his mouth, then throws them open to call out"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "txomin",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "acd772800ac447d28f2dee8f68dc2746",
+  "B": "7ab148889f234ff6b687ae8de1ebf587",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "b246f75028e34bbd9ae0769ec4cd0c64",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "8a63856ea0f9474894978ed261aeb7f3"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "OverhandThrow",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   },
+   "actions": {
+    "cast_chasse": "throws his red rescue buoy forward to a friend",
+    "cast_chasseur": "raises his silver whistle to his lips, then lowers it after a sharp blow"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "patxi",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "e8d4ea152eb34b28a38f8f5071ee5ac3",
+  "B": "097afc5854dd4bb3a7de26ab7803fbad",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "1cdf594b37e44e05a83eb1e4669d240f",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "30c378309eb643419a08c6a12b85838d"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "OverhandThrow"
+   },
+   "actions": {
+    "cast_chasse": "lifts a small bucket up, then tips it forward to drop sardines on the ground",
+    "cast_chasseur": "casts his fishing line far forward"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "maia",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "7fb747c952a6496f849cffde934307f7",
+  "B": "1dd93fb734c64631b5ab08a966498a46",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "452b650efd714850ac010315a10ba990",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "08a6611dd7f94c1a884aacddc94cc1b0"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   },
+   "actions": {
+    "cast_chasse": "raises her arms, then sweeps them down as if diving under a wave",
+    "cast_chasseur": "lifts her yellow surfboard up, then swings it forward"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "xabi",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "bcd29c4b0c92474b8cc8e4359178dbd6",
+  "B": "3216b94e534b45e6a2867ecd061cd432",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "e69b3e7afd3e4d08886b0d4f05c60291",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "c8b8c959c5534115b3ccae7169da85d6"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "OverhandThrow"
+   },
+   "actions": {
+    "cast_chasse": "pulls his arms back, then pushes off forward in a quick dash",
+    "cast_chasseur": "hurls a pelota ball with his chistera"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "mattin",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "7904d02c4c1c4517bcc4d42c88ac8a74",
+  "B": "77506a1b2a66406180e0235919133c11",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "920c1371d869455c890ef24fa21b2e4e",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "b11fd2ea32d44f90871b0b83710fe245"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "OverhandThrow"
+   },
+   "actions": {
+    "cast_chasse": "raises both arms, then flexes them proudly",
+    "cast_chasseur": "heaves a heavy round stone forward"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "amaia",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "1f9dbf79f3c644179790f6647576cf2e",
+  "B": "0bad1a7fa7a44babab66029c1547bae3",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "767d8c701eec4483846484d3aae2fc14",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "0099cb00206e459c85321131f45738d9"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   },
+   "actions": {
+    "cast_chasse": "lifts her hands high, then lands a quick light Basque dance step",
+    "cast_chasseur": "raises her wooden makila stick, then brings it down on the ground"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "kaio",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "52bfbd71f812408eb6a8b2ea3005f7cb",
+  "B": "f9081bbd5a434a24a921efae3060d0f9",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "a8d99efdffb44a41aa64ec9b600af6bb",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "d276ca92d8f74f5e81d5e943a7a07e28"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   },
+   "actions": {
+    "cast_chasse": "raises his wings, then flaps them down hard",
+    "cast_chasseur": "pulls his head back, then leans forward with a loud scream, beak wide open"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "karramarro",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "204655578412400d8b832261686323f6",
+  "B": "9c3605e4baf84d708cd3d613dfa914c9",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "b679f2460d1b427fb5cc4e8049537d6a",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "2d1f102c86d34fa89547258d27d67c77"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   },
+   "actions": {
+    "cast_chasse": "raises both claws, then digs them down into the sand",
+    "cast_chasseur": "raises both claws, then sweeps them sideways"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "ramuntxo",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "6258c45632cb4b07a8bd422e4c116abf",
+  "B": "b49631be940247c3b7943d8dccea233f",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "8f9d1fc084e34c51a5d2088130489997",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "2d455d3a456342edacde307b5eca26cf"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "OverhandThrow"
+   },
+   "actions": {
+    "cast_chasse": "lifts a round Basque cake up, then sets it forward on the ground",
+    "cast_chasseur": "throws a small pot of red pepper"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "itsaso",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "6afecb8559524f0e90ac9a70ebbdc43b",
+  "B": "d062f0296b334945a73c5135ae8cc3c1",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "31d04fb52b624638b3cc0f9db2c01f70",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "bf4d094538d24af0a548625e782ab4a0"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   },
+   "actions": {
+    "cast_chasse": "raises her hand, then sweeps it forward to raise a little stone wall",
+    "cast_chasseur": "raises both hands, then pushes them down to call water geysers"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "peio",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "51a993282acc4852843639bf79a253cb",
+  "B": "ef11f1f1e838407aa110140ee6907ac4",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "9fc4458e5e26432cb5fb61ffeaadcd4a",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "92addbe1fc1f40abbbb65282342b04a3"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   },
+   "actions": {
+    "cast_chasse": "fakes a pass with both arms up, then pulls them back",
+    "cast_chasseur": "raises his fists high, then shouts a war cry"
+   }
+  },
+  "integre": false
  }
 ]

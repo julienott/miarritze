@@ -790,16 +790,16 @@
   }
  },
  "casts": {
-  "_doc": "Lancements des coups spéciaux (GDD §4.6) : extras cast_chasse et cast_chasseur ; clip Quaternius, action, objet (false = aucun). Julien 23/10 (recette) : clip selon la famille du coup — « lance » : OverhandThrow ; les autres : Spell_Simple_Enter+Spell_Simple_Exit (séquence).",
+  "_doc": "Lancements des coups spéciaux (GDD §4.6) : extras cast_chasse et cast_chasseur ; clip Quaternius, action, objet (false = aucun). Julien 23/10 (recette) : clip selon la famille du coup — « lance » : OverhandThrow ; les autres : Spell_Simple_Enter+Spell_Simple_Exit (séquence). Actions réécrites le 23/10 pour aller avec ces clips (lever la main ou l'objet, puis relâcher).",
   "louis": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "vaults over a low wall",
+    "action": "raises one hand, then sweeps it forward as if passing through a wall",
     "objet": false
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "cups his hands around his mouth and calls out",
+    "action": "raises both hands to his mouth, then throws them open to call out",
     "objet": false
    }
   },
@@ -811,14 +811,14 @@
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "blows hard into his lifeguard whistle",
+    "action": "raises his silver whistle to his lips, then lowers it after a sharp blow",
     "objet": "a silver whistle"
    }
   },
   "patxi": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "tips a bucket of sardines onto the ground behind him",
+    "action": "lifts a small bucket up, then tips it forward to drop sardines on the ground",
     "objet": "a small bucket"
    },
    "cast_chasseur": {
@@ -830,19 +830,19 @@
   "maia": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "dives low and rolls under a wave",
+    "action": "raises her arms, then sweeps them down as if diving under a wave",
     "objet": false
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "jumps on her surfboard and surfs forward",
+    "action": "lifts her yellow surfboard up, then swings it forward",
     "objet": "a yellow surfboard"
    }
   },
   "xabi": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "bounces off a wall in a quick dash",
+    "action": "pulls his arms back, then pushes off forward in a quick dash",
     "objet": false
    },
    "cast_chasseur": {
@@ -854,7 +854,7 @@
   "mattin": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "flexes his big arms proudly",
+    "action": "raises both arms, then flexes them proudly",
     "objet": false
    },
    "cast_chasseur": {
@@ -866,43 +866,43 @@
   "amaia": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "does quick light Basque dance steps",
+    "action": "lifts her hands high, then lands a quick light Basque dance step",
     "objet": false
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "strikes the ground with her makila stick",
+    "action": "raises her wooden makila stick, then brings it down on the ground",
     "objet": "a wooden makila stick"
    }
   },
   "kaio": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "leaps up and glides",
+    "action": "raises his wings, then flaps them down hard",
     "objet": false
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "screams with his beak wide open",
+    "action": "pulls his head back, then leans forward with a loud scream, beak wide open",
     "objet": false
    }
   },
   "karramarro": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "digs himself down into the sand",
+    "action": "raises both claws, then digs them down into the sand",
     "objet": false
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "slides sideways very fast",
+    "action": "raises both claws, then sweeps them sideways",
     "objet": false
    }
   },
   "ramuntxo": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "places a Basque cake on the ground",
+    "action": "lifts a round Basque cake up, then sets it forward on the ground",
     "objet": "a round Basque cake"
    },
    "cast_chasseur": {
@@ -914,36 +914,36 @@
   "itsaso": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "raises a little stone wall with a wave of her hand",
+    "action": "raises her hand, then sweeps it forward to raise a little stone wall",
     "objet": false
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "calls water geysers out of the ground",
+    "action": "raises both hands, then pushes them down to call water geysers",
     "objet": false
    }
   },
   "peio": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "sidesteps and rolls away quickly",
+    "action": "fakes a pass with both arms up, then pulls them back",
     "objet": false
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "shouts a war cry with his fists up",
+    "action": "raises his fists high, then shouts a war cry",
     "objet": false
    }
   },
   "itsasargi": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "raises his lantern and it flashes bright",
+    "action": "raises his brass lantern high, then lowers it after a bright flash",
     "objet": "a brass lantern"
    },
    "cast_chasseur": {
     "clip": "OverhandThrow",
-    "action": "points his lantern beam straight ahead",
+    "action": "swings his brass lantern overhead and throws its beam straight ahead",
     "objet": "a brass lantern"
    }
   }

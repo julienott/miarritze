@@ -7,8 +7,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 MODE="${1:---montre}"
 for pid in $("$ROOT/.venv/bin/python" -c "import json;print(' '.join(k for k in json.load(open('$ROOT/data/blackout/style_party_hard.json'))['casts'] if k!='_doc'))"); do
-  read -r cc ccr < <("$ROOT/.venv/bin/python" -c "import json;c=json.load(open('$ROOT/data/blackout/style_party_hard.json'))['casts']['$pid'];print(c['cast_chasse']['clip'],c['cast_chasseur']['clip'])")
+  J="import json;c=json.load(open('$ROOT/data/blackout/style_party_hard.json'))['casts']['$pid']"
+  cc=$("$ROOT/.venv/bin/python" -c "$J;print(c['cast_chasse']['clip'])")
+  ccr=$("$ROOT/.venv/bin/python" -c "$J;print(c['cast_chasseur']['clip'])")
+  ac=$("$ROOT/.venv/bin/python" -c "$J;print(c['cast_chasse']['action'])")
+  acr=$("$ROOT/.venv/bin/python" -c "$J;print(c['cast_chasseur']['action'])")
   "$ROOT/.venv/bin/python" "$ROOT/tools/blackout/retouche.py" "$MODE" "persos/$pid" \
     portrait run jump_hide lift victoire defaite etourdi colle aveugle tracte cast_chasse cast_chasseur \
-    --clip "cast_chasse=$cc" --clip "cast_chasseur=$ccr" --prio normal
+    --clip "cast_chasse=$cc" --clip "cast_chasseur=$ccr" \
+    --action "cast_chasse=$ac" --action "cast_chasseur=$acr" --prio normal
 done
