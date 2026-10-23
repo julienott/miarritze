@@ -8,34 +8,34 @@
  ],
  "feet_y": 60,
  "palette": [
-  "#030f25",
-  "#072353",
-  "#27000e",
-  "#670004",
-  "#724b33",
-  "#a6a4a6",
-  "#e5000a",
-  "#fcb100",
-  "#ffa773",
+  "#020d25",
+  "#061f53",
+  "#27000d",
+  "#47342c",
+  "#724d35",
+  "#9e7463",
+  "#ef0004",
+  "#ffad76",
+  "#ffb700",
   "#ffffff"
  ],
  "palette_base": [
-  "#072353",
-  "#e5000a",
+  "#061f53",
+  "#ef0004",
   "#ffffff",
-  "#fcb100",
-  "#ffa773",
-  "#27000e",
-  "#a6a4a6"
+  "#ffb700",
+  "#ffad76",
+  "#9e7463",
+  "#27000d"
  ],
  "palette_dark": [
-  "#030f25",
-  "#670004",
-  "#724b33",
-  "#724b33",
-  "#724b33",
-  "#030f25",
-  "#724b33"
+  "#020d25",
+  "#724d35",
+  "#724d35",
+  "#724d35",
+  "#724d35",
+  "#47342c",
+  "#020d25"
  ],
  "elements": {
   "profile": {
@@ -60,7 +60,7 @@
   },
   "run": {
    "frames": 4,
-   "fps": 12,
+   "fps": 9,
    "loop": true,
    "anchor": "common",
    "size": [
@@ -69,7 +69,7 @@
    ]
   },
   "jump_hide": {
-   "frames": 5,
+   "frames": 6,
    "fps": 12,
    "loop": false,
    "anchor": "common",
@@ -81,7 +81,7 @@
   "lift": {
    "frames": 6,
    "fps": 8.0,
-   "loop": true,
+   "loop": false,
    "anchor": "common",
    "size": [
     64,
@@ -109,9 +109,9 @@
    ]
   },
   "victoire": {
-   "frames": 8,
+   "frames": 10,
    "fps": 10.0,
-   "loop": true,
+   "loop": false,
    "anchor": "feet",
    "size": [
     64,
@@ -119,9 +119,9 @@
    ]
   },
   "defaite": {
-   "frames": 6,
+   "frames": 8,
    "fps": 8.0,
-   "loop": true,
+   "loop": false,
    "anchor": "feet",
    "size": [
     64,
@@ -129,7 +129,7 @@
    ]
   },
   "etourdi": {
-   "frames": 6,
+   "frames": 8,
    "fps": 10.0,
    "loop": false,
    "anchor": "feet",
@@ -219,13 +219,13 @@
    ]
   }
  },
- "source": "4c6bb9fdca38418d8c02eaa19548b3f6",
+ "source": "9e20b7af66104a59b7d05437056c45c4",
  "controls": {
   "warnings": [],
-  "height_px": 29,
+  "height_px": 30,
   "body_width_px": 5,
   "colors_used": 10,
-  "isolated_px": 10,
+  "isolated_px": 83,
   "feet_bottom": {
    "profile": [
     60
@@ -237,14 +237,14 @@
    "run": [
     59,
     60,
-    59,
+    58,
     60
    ]
   },
   "feet_max_dev": 0,
   "eye_present": true,
   "zone_drift_de": 0.0,
-  "saturation_mean": 0.87,
+  "saturation_mean": 0.74,
   "lightness_range": 95,
   "colors_budget": 10
  }
