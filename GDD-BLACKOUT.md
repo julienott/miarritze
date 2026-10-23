@@ -625,7 +625,7 @@ les prompts**. Ce sont les clés de pixelforge (`GET /v2/expressions`). Profil e
 de cette expression sont animés sur elle (`profile_of`). « base » = l'expression de base du perso.
 
 **Persos joueurs, par élément** : `idle` base, `idle_long` base, `run` neutre, `jump_hide` inquiet, `lift` surpris, `interagir` determine, `victoire` rire, `defaite` pleure, `etourdi` etourdi, `renverse` choque, `colle` perplexe, `ralenti` fatigue, `aveugle` ebloui, `tracte` surpris, `cast_chasse` malicieux, `cast_chasseur` determine.
-Portraits : menus base, versus_chasseur determine, versus_chasse inquiet, podium_gagnant fier, podium_perdant triste.
+Portraits : menus base, versus_chasseur determine, versus_chasse inquiet, podium_gagnant rire, podium_perdant pleure (*Julien, 23/10 : seulement les expressions des animations, victoire et défaite comprises*).
 **Pas d'expression pour les courses** (*Julien, 23/10*) : une seule course, neutre, pour les deux rôles et pour les PNJ.
 
 | Perso | Base | Exceptions |

@@ -1000,8 +1000,8 @@
    "menus": "base",
    "versus_chasseur": "determine",
    "versus_chasse": "inquiet",
-   "podium_gagnant": "fier",
-   "podium_perdant": "triste"
+   "podium_gagnant": "rire",
+   "podium_perdant": "pleure"
   },
   "boss": {
    "basajaun": {
