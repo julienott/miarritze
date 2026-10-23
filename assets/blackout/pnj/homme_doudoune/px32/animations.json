@@ -1,0 +1,44 @@
+{
+ "profile": {
+  "fps": 1,
+  "loop": false,
+  "count": 1,
+  "caption": "profile · 1 image(s) · 1 i/s · placeholder"
+ },
+ "idle": {
+  "fps": 3,
+  "loop": true,
+  "count": 2,
+  "caption": "idle · 2 image(s) · 3 i/s · boucle · placeholder"
+ },
+ "run": {
+  "fps": 12,
+  "loop": true,
+  "count": 4,
+  "caption": "run · 4 image(s) · 12 i/s · boucle · placeholder"
+ },
+ "marcher": {
+  "fps": 8,
+  "loop": true,
+  "count": 4,
+  "caption": "marcher · 4 image(s) · 8 i/s · boucle · placeholder"
+ },
+ "sursaut": {
+  "fps": 8,
+  "loop": false,
+  "count": 3,
+  "caption": "sursaut · 3 image(s) · 8 i/s · placeholder"
+ },
+ "attendre": {
+  "fps": 3,
+  "loop": true,
+  "count": 2,
+  "caption": "attendre · 2 image(s) · 3 i/s · boucle · placeholder"
+ },
+ "telephone": {
+  "fps": 3,
+  "loop": true,
+  "count": 2,
+  "caption": "telephone · 2 image(s) · 3 i/s · boucle · placeholder"
+ }
+}

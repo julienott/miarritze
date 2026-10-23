@@ -1,0 +1,97 @@
+{
+ "placeholder": true,
+ "source": "tools/blackout/placeholders_sets.py",
+ "size": "normal",
+ "height": 30,
+ "canvas": [
+  64,
+  64
+ ],
+ "feet_y": 60,
+ "palette": [
+  "#120e16",
+  "#14101c",
+  "#16161c",
+  "#1a1822",
+  "#1c1c24",
+  "#2a6ad0",
+  "#3a3a44",
+  "#5a3a20",
+  "#c59975",
+  "#d82828",
+  "#e8b48a",
+  "#f2b84a"
+ ],
+ "elements": {
+  "profile": {
+   "frames": 1,
+   "fps": 1,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "idle": {
+   "frames": 2,
+   "fps": 3,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "run": {
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "marcher": {
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "sursaut": {
+   "frames": 3,
+   "fps": 8,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "attendre": {
+   "frames": 2,
+   "fps": 3,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "boire": {
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  }
+ }
+}

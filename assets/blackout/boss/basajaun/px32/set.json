@@ -1,0 +1,110 @@
+{
+ "placeholder": true,
+ "source": "tools/blackout/placeholders_sets.py",
+ "size": "boss",
+ "height": 59,
+ "canvas": [
+  128,
+  128
+ ],
+ "feet_y": 120,
+ "palette": [
+  "#120e16",
+  "#14101c",
+  "#1a1822",
+  "#482e16",
+  "#4a8a3a",
+  "#54361c",
+  "#5a1020",
+  "#5a3a1c",
+  "#6a4424",
+  "#6a4a2a",
+  "#6ad04a",
+  "#8a5a2a",
+  "#8a6a4a",
+  "#f2e040",
+  "#f4f1ea"
+ ],
+ "elements": {
+  "profile": {
+   "frames": 1,
+   "fps": 1,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    128,
+    128
+   ]
+  },
+  "portrait": {
+   "frames": 1,
+   "fps": 1,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    128,
+    128
+   ]
+  },
+  "idle": {
+   "frames": 2,
+   "fps": 3,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    128,
+    128
+   ]
+  },
+  "run": {
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    128,
+    128
+   ]
+  },
+  "etourdi": {
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    128,
+    128
+   ]
+  },
+  "cri": {
+   "frames": 3,
+   "fps": 6,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    128,
+    128
+   ]
+  },
+  "pouvoir_1": {
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    128,
+    128
+   ]
+  },
+  "pouvoir_2": {
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    128,
+    128
+   ]
+  }
+ }
+}

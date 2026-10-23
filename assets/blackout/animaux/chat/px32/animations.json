@@ -1,0 +1,32 @@
+{
+ "profile": {
+  "fps": 1,
+  "loop": false,
+  "count": 1,
+  "caption": "profile · 1 image(s) · 1 i/s · placeholder"
+ },
+ "idle": {
+  "fps": 3,
+  "loop": true,
+  "count": 2,
+  "caption": "idle · 2 image(s) · 3 i/s · boucle · placeholder"
+ },
+ "marcher": {
+  "fps": 6,
+  "loop": true,
+  "count": 4,
+  "caption": "marcher · 4 image(s) · 6 i/s · boucle · placeholder"
+ },
+ "run": {
+  "fps": 10,
+  "loop": true,
+  "count": 4,
+  "caption": "run · 4 image(s) · 10 i/s · boucle · placeholder"
+ },
+ "dormir": {
+  "fps": 3,
+  "loop": true,
+  "count": 2,
+  "caption": "dormir · 2 image(s) · 3 i/s · boucle · placeholder"
+ }
+}

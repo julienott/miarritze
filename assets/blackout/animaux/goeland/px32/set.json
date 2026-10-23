@@ -1,0 +1,71 @@
+{
+ "placeholder": true,
+ "source": "tools/blackout/placeholders_sets.py",
+ "size": "normal",
+ "height": 9,
+ "canvas": [
+  64,
+  64
+ ],
+ "feet_y": 60,
+ "palette": [
+  "#120e16",
+  "#14101c",
+  "#9aa0aa",
+  "#e0a040",
+  "#f2c12e",
+  "#f4f1ea"
+ ],
+ "elements": {
+  "profile": {
+   "frames": 1,
+   "fps": 1,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "idle": {
+   "frames": 2,
+   "fps": 3,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "marcher": {
+   "frames": 2,
+   "fps": 6,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "run": {
+   "frames": 4,
+   "fps": 10,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "picorer": {
+   "frames": 4,
+   "fps": 5,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  }
+ }
+}
