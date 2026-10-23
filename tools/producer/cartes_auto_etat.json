@@ -489,6 +489,20 @@
    "sursaut": "a674ff67a4e4"
   }
  },
+ "blackout/pnj/musicienne/animations": {
+  "carte": 683,
+  "empreintes": {
+   "compare": "a31ec33839d2",
+   "idle": "add96f3002a5",
+   "jouer": "2b3cc62ff311",
+   "marcher": "b1db4dd4e890",
+   "parler": "c07b8711fbe2",
+   "profile": "a682c3d11898",
+   "renverse": "b0bf4cb1b5c4",
+   "run": "96a39c395a11",
+   "sursaut": "4343ed2faae0"
+  }
+ },
  "blackout/pnj/sardine/animations": {
   "carte": 668,
   "empreintes": {
