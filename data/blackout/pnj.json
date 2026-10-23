@@ -37,6 +37,16 @@
   "run": {
    "clip": "Sprint_Loop",
    "action": "runs away in panic, arms up, mouth wide open"
+  },
+  "expressions": {
+   "_doc": "Expression par élément (GDD §8.5) ; « base » = celle du PNJ (champ expression).",
+   "idle": "base",
+   "marcher": "base",
+   "run": "peur",
+   "sursaut": "choque",
+   "a_terre": "etourdi",
+   "relever": "gene",
+   "portrait_menus": "base"
   }
  },
  "activites": {
@@ -44,61 +54,71 @@
    "clip": "Idle_Talking_Loop",
    "action": "chats with big hand gestures",
    "objet": null,
-   "objet_du_pnj": false
+   "objet_du_pnj": false,
+   "expression": "sourire"
   },
   "telephone": {
    "clip": "Idle_TalkingPhone_Loop",
    "action": "talks on a smartphone",
    "objet": "a smartphone",
-   "objet_du_pnj": false
+   "objet_du_pnj": false,
+   "expression": "base"
   },
   "danser": {
    "clip": "Dance_Loop",
    "action": "dances happily",
    "objet": null,
-   "objet_du_pnj": false
+   "objet_du_pnj": false,
+   "expression": "rire"
   },
   "musique": {
    "clip": "Yes",
    "action": "nods to the music",
    "objet": null,
-   "objet_du_pnj": false
+   "objet_du_pnj": false,
+   "expression": "sourire"
   },
   "journal": {
    "clip": "Idle_Torch_Loop",
    "action": "reads a newspaper held in front of him",
    "objet": "a newspaper",
-   "objet_du_pnj": false
+   "objet_du_pnj": false,
+   "expression": "pensif"
   },
   "boire": {
    "clip": "Consume",
    "action": "sips a drink",
    "objet": "a glass of cider",
-   "objet_du_pnj": false
+   "objet_du_pnj": false,
+   "expression": "sourire"
   },
   "assis": {
    "clip": "Sitting_Idle_Loop",
    "action": "sits and relaxes",
    "objet": null,
-   "objet_du_pnj": false
+   "objet_du_pnj": false,
+   "expression": "base"
   },
   "attendre": {
    "clip": "Idle_FoldArms_Loop",
    "action": "waits with arms crossed",
    "objet": null,
-   "objet_du_pnj": false
+   "objet_du_pnj": false,
+   "expression": "ennui"
   },
   "promener": {
    "clip": "Walk_Loop",
    "action": "walks holding a red leash out in front",
    "objet": "a red leash",
-   "objet_du_pnj": false
+   "objet_du_pnj": false,
+   "expression": "sourire"
   },
   "jouer": {
    "clip": "Interact",
    "action": "plays a little tune",
    "objet": null,
-   "objet_du_pnj": true
+   "objet_du_pnj": true,
+   "expression": "base"
   }
  },
  "humains": {
@@ -110,7 +130,8 @@
    "activites": [
     "danser",
     "boire"
-   ]
+   ],
+   "expression": "rire"
   },
   "txistulari": {
    "prenom": "Joxe",
@@ -121,7 +142,8 @@
     "jouer",
     "parler"
    ],
-   "objet_jouer": "a long thin txistu flute"
+   "objet_jouer": "a long thin txistu flute",
+   "expression": "sourire"
   },
   "amona": {
    "prenom": "Maddalen",
@@ -131,7 +153,8 @@
    "activites": [
     "parler",
     "assis"
-   ]
+   ],
+   "expression": "sourire"
   },
   "marin": {
    "prenom": "Manex",
@@ -141,7 +164,8 @@
    "activites": [
     "parler",
     "boire"
-   ]
+   ],
+   "expression": "pensif"
   },
   "surfeuse": {
    "prenom": "Nahia",
@@ -151,7 +175,8 @@
    "activites": [
     "telephone",
     "parler"
-   ]
+   ],
+   "expression": "sourire"
   },
   "serveur": {
    "prenom": "Jon",
@@ -161,7 +186,8 @@
    "activites": [
     "parler",
     "attendre"
-   ]
+   ],
+   "expression": "sourire"
   },
   "sardine": {
    "prenom": "Xardin",
@@ -171,7 +197,8 @@
    "activites": [
     "danser",
     "attendre"
-   ]
+   ],
+   "expression": "rire"
   },
   "errege": {
    "prenom": "Antton",
@@ -181,7 +208,8 @@
    "activites": [
     "danser",
     "attendre"
-   ]
+   ],
+   "expression": "fier"
   },
   "ballon": {
    "prenom": "Ane",
@@ -191,7 +219,8 @@
    "activites": [
     "attendre",
     "danser"
-   ]
+   ],
+   "expression": "sourire"
   },
   "trompettiste": {
    "prenom": "Iñaki",
@@ -202,7 +231,8 @@
     "jouer",
     "boire"
    ],
-   "objet_jouer": "a shiny golden trumpet"
+   "objet_jouer": "a shiny golden trumpet",
+   "expression": "fier"
   },
   "glacier": {
    "prenom": "Gorka",
@@ -212,7 +242,8 @@
    "activites": [
     "parler",
     "attendre"
-   ]
+   ],
+   "expression": "sourire"
   },
   "supporter": {
    "prenom": "Battitte",
@@ -222,7 +253,8 @@
    "activites": [
     "parler",
     "boire"
-   ]
+   ],
+   "expression": "rire"
   },
   "touriste": {
    "prenom": "Gérard",
@@ -232,7 +264,8 @@
    "activites": [
     "telephone",
     "attendre"
-   ]
+   ],
+   "expression": "surpris"
   },
   "jogger": {
    "prenom": "Unai",
@@ -242,7 +275,8 @@
    "activites": [
     "musique",
     "attendre"
-   ]
+   ],
+   "expression": "determine"
   },
   "ado": {
    "prenom": "Eneko",
@@ -252,7 +286,8 @@
    "activites": [
     "musique",
     "telephone"
-   ]
+   ],
+   "expression": "ennui"
   },
   "lecteur": {
    "prenom": "Pantxoa",
@@ -262,7 +297,8 @@
    "activites": [
     "journal",
     "assis"
-   ]
+   ],
+   "expression": "pensif"
   },
   "promeneuse": {
    "prenom": "Kattalin",
@@ -272,7 +308,8 @@
    "activites": [
     "promener",
     "parler"
-   ]
+   ],
+   "expression": "sourire"
   },
   "cycliste": {
    "prenom": "Ander",
@@ -282,7 +319,8 @@
    "activites": [
     "attendre",
     "boire"
-   ]
+   ],
+   "expression": "sourire"
   },
   "musicienne": {
    "prenom": "Ainhoa",
@@ -293,7 +331,8 @@
     "jouer",
     "parler"
    ],
-   "objet_jouer": "a wooden guitar"
+   "objet_jouer": "a wooden guitar",
+   "expression": "reveur"
   },
   "amoureux": {
    "prenom": "Mikel",
@@ -303,7 +342,8 @@
    "activites": [
     "parler",
     "attendre"
-   ]
+   ],
+   "expression": "reveur"
   },
   "policier": {
    "prenom": "Ellande",
@@ -313,7 +353,8 @@
    "activites": [
     "parler",
     "attendre"
-   ]
+   ],
+   "expression": "fier"
   },
   "pecheuse": {
    "prenom": "Maite",
@@ -323,7 +364,8 @@
    "activites": [
     "parler",
     "boire"
-   ]
+   ],
+   "expression": "sourire"
   },
   "passant_jean": {
    "prenom": "Thomas",
@@ -333,7 +375,8 @@
    "activites": [
     "telephone",
     "attendre"
-   ]
+   ],
+   "expression": "sourire"
   },
   "passante_robe": {
    "prenom": "Léa",
@@ -343,7 +386,8 @@
    "activites": [
     "parler",
     "boire"
-   ]
+   ],
+   "expression": "rire"
   },
   "papy_gilet": {
    "prenom": "Fermin",
@@ -353,7 +397,8 @@
    "activites": [
     "assis",
     "journal"
-   ]
+   ],
+   "expression": "pensif"
   },
   "mamie_cabas": {
    "prenom": "Mayi",
@@ -363,7 +408,8 @@
    "activites": [
     "parler",
     "attendre"
-   ]
+   ],
+   "expression": "sourire"
   },
   "femme_tailleur": {
    "prenom": "Sophie",
@@ -373,7 +419,8 @@
    "activites": [
     "telephone",
     "boire"
-   ]
+   ],
+   "expression": "determine"
   },
   "homme_costume": {
    "prenom": "Bernard",
@@ -383,7 +430,8 @@
    "activites": [
     "telephone",
     "attendre"
-   ]
+   ],
+   "expression": "ennui"
   },
   "etudiante": {
    "prenom": "Leire",
@@ -393,7 +441,8 @@
    "activites": [
     "musique",
     "parler"
-   ]
+   ],
+   "expression": "rire"
   },
   "etudiant": {
    "prenom": "Hugo",
@@ -403,7 +452,8 @@
    "activites": [
     "telephone",
     "parler"
-   ]
+   ],
+   "expression": "fatigue"
   },
   "maman": {
    "prenom": "Garazi",
@@ -413,7 +463,8 @@
    "activites": [
     "parler",
     "attendre"
-   ]
+   ],
+   "expression": "sourire"
   },
   "papa": {
    "prenom": "Didier",
@@ -423,7 +474,8 @@
    "activites": [
     "parler",
     "boire"
-   ]
+   ],
+   "expression": "rire"
   },
   "enfant_fille": {
    "prenom": "Uxue",
@@ -433,7 +485,8 @@
    "activites": [
     "danser",
     "attendre"
-   ]
+   ],
+   "expression": "rire"
   },
   "enfant_garcon": {
    "prenom": "Oihan",
@@ -443,7 +496,8 @@
    "activites": [
     "danser",
     "attendre"
-   ]
+   ],
+   "expression": "malicieux"
   },
   "femme_pull": {
    "prenom": "Irati",
@@ -453,7 +507,8 @@
    "activites": [
     "boire",
     "parler"
-   ]
+   ],
+   "expression": "sourire"
   },
   "homme_polo": {
    "prenom": "Stéphane",
@@ -463,7 +518,8 @@
    "activites": [
     "boire",
     "parler"
-   ]
+   ],
+   "expression": "rire"
   },
   "jeune_casquette": {
    "prenom": "Bixente",
@@ -473,7 +529,8 @@
    "activites": [
     "musique",
     "attendre"
-   ]
+   ],
+   "expression": "malicieux"
   },
   "femme_imper": {
    "prenom": "Isabelle",
@@ -483,7 +540,8 @@
    "activites": [
     "telephone",
     "journal"
-   ]
+   ],
+   "expression": "mefiant"
   },
   "homme_doudoune": {
    "prenom": "Iker",
@@ -493,7 +551,8 @@
    "activites": [
     "attendre",
     "telephone"
-   ]
+   ],
+   "expression": "ennui"
   },
   "femme_short": {
    "prenom": "Chloé",
@@ -503,7 +562,8 @@
    "activites": [
     "danser",
     "boire"
-   ]
+   ],
+   "expression": "sourire"
   },
   "homme_chemise": {
    "prenom": "Ximun",
@@ -513,7 +573,8 @@
    "activites": [
     "parler",
     "boire"
-   ]
+   ],
+   "expression": "sourire"
   },
   "ado_skate": {
    "prenom": "Lucas",
@@ -523,7 +584,8 @@
    "activites": [
     "musique",
     "parler"
-   ]
+   ],
+   "expression": "malicieux"
   }
  },
  "animaux": {

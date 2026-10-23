@@ -947,5 +947,93 @@
     "objet": "a brass lantern"
    }
   }
+ },
+ "expressions": {
+  "_doc": "Expressions faciales (GDD §8.5, Julien 23/10). Clés de pixelforge (GET /v2/expressions). Profil et portrait sont faits en « neutre » ; chaque élément est animé sur la variante de son expression (expression_of puis profile_of), pour que le visage soit raccord avec l'action. « base » = l'expression de base du perso. Pas dans les prompts.",
+  "base": {
+   "louis": "malicieux",
+   "txomin": "fier",
+   "patxi": "sourire",
+   "maia": "sourire",
+   "xabi": "determine",
+   "mattin": "fier",
+   "amaia": "sourire",
+   "kaio": "malicieux",
+   "karramarro": "rire",
+   "ramuntxo": "sourire",
+   "itsaso": "reveur",
+   "peio": "determine",
+   "itsasargi": "pensif"
+  },
+  "par_element": {
+   "idle": "base",
+   "idle_long": "base",
+   "run": {
+    "chasse": "inquiet",
+    "chasseur": "determine"
+   },
+   "jump_hide": "inquiet",
+   "lift": "surpris",
+   "interagir": "determine",
+   "victoire": "rire",
+   "defaite": "pleure",
+   "etourdi": "etourdi",
+   "renverse": "choque",
+   "colle": "perplexe",
+   "ralenti": "fatigue",
+   "aveugle": "ebloui",
+   "tracte": "surpris",
+   "cast_chasse": "malicieux",
+   "cast_chasseur": "determine"
+  },
+  "exceptions": {
+   "louis": {
+    "idle_long": "ennui",
+    "cast_chasseur": "crie"
+   },
+   "kaio": {
+    "cast_chasseur": "crie"
+   },
+   "peio": {
+    "cast_chasseur": "crie"
+   }
+  },
+  "portraits": {
+   "menus": "base",
+   "versus_chasseur": "determine",
+   "versus_chasse": "inquiet",
+   "podium_gagnant": "fier",
+   "podium_perdant": "triste"
+  },
+  "attendues": {
+   "crie": "surpris",
+   "ebloui": "surpris"
+  },
+  "boss": {
+   "basajaun": {
+    "base": "mefiant",
+    "run": "determine",
+    "cri": "furieux",
+    "pouvoir_1": "determine",
+    "pouvoir_2": "colere",
+    "etourdi": "etourdi"
+   },
+   "tartalo": {
+    "base": "perplexe",
+    "run": "determine",
+    "cri": "furieux",
+    "pouvoir_1": "mefiant",
+    "pouvoir_2": "colere",
+    "etourdi": "etourdi"
+   },
+   "intxixu": {
+    "base": "malicieux",
+    "run": "malicieux",
+    "cri": "rire",
+    "pouvoir_1": "malicieux",
+    "pouvoir_2": "malicieux",
+    "etourdi": "etourdi"
+   }
+  }
  }
 }

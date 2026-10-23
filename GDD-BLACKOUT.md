@@ -616,6 +616,47 @@ Intxixuk : trois character sets (un par lutin, variantes), groupés par le jeu.
   (feuilles en VFX) ; `pouvoir_2` Étreinte racinaire : Sword_Attack, « slams his carved trunk staff down
   onto the ground ».
 
+### 8.5 Expressions faciales (*Julien, 23/10*)
+Le visage d'une animation est **raccord avec l'action** : quelqu'un qui fuit ne sourit pas. Les expressions
+vivent ici et dans les JSON (`style_party_hard.json` → `expressions`, `pnj.json` → `expression`), **jamais dans
+les prompts**. Ce sont les clés de pixelforge (`GET /v2/expressions`). Profil et portrait sont faits en
+« neutre » ; pour chaque expression utile, une variante (`expression` + `expression_of`), puis les éléments
+de cette expression sont animés sur elle (`profile_of`). « base » = l'expression de base du perso.
+
+**Persos joueurs, par élément** : `idle` base, `idle_long` base, `run` chassé inquiet, chasseur determine, `jump_hide` inquiet, `lift` surpris, `interagir` determine, `victoire` rire, `defaite` pleure, `etourdi` etourdi, `renverse` choque, `colle` perplexe, `ralenti` fatigue, `aveugle` ebloui, `tracte` surpris, `cast_chasse` malicieux, `cast_chasseur` determine.
+Portraits : menus base, versus_chasseur determine, versus_chasse inquiet, podium_gagnant fier, podium_perdant triste.
+La course sert aux deux rôles : deux courses (`run` du chassé inquiet, `run` du chasseur déterminé) — *à
+trancher par Julien*.
+
+| Perso | Base | Exceptions |
+|---|---|---|
+| louis | malicieux | idle_long ennui, cast_chasseur crie |
+| txomin | fier | — |
+| patxi | sourire | — |
+| maia | sourire | — |
+| xabi | determine | — |
+| mattin | fier | — |
+| amaia | sourire | — |
+| kaio | malicieux | cast_chasseur crie |
+| karramarro | rire | — |
+| ramuntxo | sourire | — |
+| itsaso | reveur | — |
+| peio | determine | cast_chasseur crie |
+| itsasargi | pensif | — |
+
+**PNJ humains** : `idle` et `marcher` base, `run` (fuite apeurée) peur, `sursaut` choqué, `a_terre` étourdi,
+`relever` gêné ; activités : parler sourire, telephone base, danser rire, musique sourire, journal pensif, boire sourire, assis base, attendre ennui, promener sourire, jouer base ; portrait des menus : base.
+Bases : Beñat (festayre) rire, Joxe (txistulari) sourire, Maddalen (amona) sourire, Manex (marin) pensif, Nahia (surfeuse) sourire, Jon (serveur) sourire, Xardin (sardine) rire, Antton (errege) fier, Ane (ballon) sourire, Iñaki (trompettiste) fier, Gorka (glacier) sourire, Battitte (supporter) rire, Gérard (touriste) surpris, Unai (jogger) determine, Eneko (ado) ennui, Pantxoa (lecteur) pensif, Kattalin (promeneuse) sourire, Ander (cycliste) sourire, Ainhoa (musicienne) reveur, Mikel (amoureux) reveur, Ellande (policier) fier, Maite (pecheuse) sourire, Thomas (passant_jean) sourire, Léa (passante_robe) rire, Fermin (papy_gilet) pensif, Mayi (mamie_cabas) sourire, Sophie (femme_tailleur) determine, Bernard (homme_costume) ennui, Leire (etudiante) rire, Hugo (etudiant) fatigue, Garazi (maman) sourire, Didier (papa) rire, Uxue (enfant_fille) rire, Oihan (enfant_garcon) malicieux, Irati (femme_pull) sourire, Stéphane (homme_polo) rire, Bixente (jeune_casquette) malicieux, Isabelle (femme_imper) mefiant, Iker (homme_doudoune) ennui, Chloé (femme_short) sourire, Ximun (homme_chemise) sourire, Lucas (ado_skate) malicieux.
+
+**Boss** : Basajaun base méfiant (cri furieux, pouvoir_1 déterminé, pouvoir_2 colère) ; Tartalo base perplexe
+(cri furieux, pouvoir_1 méfiant, pouvoir_2 colère) ; Intxixuk base malicieux (cri rire) ; `run` déterminé,
+`etourdi` étourdi. Zezengorri (taureau) et Herensuge (marionnette) : sans objet.
+
+**Manquantes chez pixelforge** (*demandées le 23/10*) : `crie` (crier fort sans colère, pour « 1, 2, 3…
+j'arrive ! », le cri de Kaio, le cri de guerre de Peio) et `ebloui` (yeux plissés par une lumière, pour
+`aveugle` ; `douleur` ne convient pas aux enfants). Repli en attendant : surpris.
+À noter : le prompt de Karramarro dit « a big happy open mouth », en conflit avec le profil neutre.
+
 ## 9. Direction artistique
 
 Référence : **Party Hard 1** (analyse détaillée, mesures et captures : `docs/STYLE_PARTY_HARD.md`).
