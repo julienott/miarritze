@@ -483,9 +483,9 @@ Copie machine : `data/blackout/pnj.json` (fait foi ici d'abord, comme §8.2). St
 pixel art Party Hard, 32 px, prompts simples (description + signature), clichés de soirée basque lisibles
 de loin, aucune personnalisation, rien de violent.
 
-**Character set d'un PNJ humain** (`pf_px__character_set`, case 64 en 32 px) : `profile`, `idle`, `run` (la
+**Character set d'un PNJ humain** (`pf_px__character_set`, case 64 en 32 px) : `profile`, `idle`, `portrait` (HD dans `hd/` et pixel dans `px32/`, *Julien, 23/10*), `run` (la
 fuite apeurée : clip Sprint_Loop et action « runs away in panic, arms up, mouth wide open », passés dans
-`clips`/`actions`), tout le reste sauté (`portrait`, `jump_hide`, `lift`, `ghost`, `standard`), et **6 extras**
+`clips`/`actions`), tout le reste sauté (`jump_hide`, `lift`, `ghost`, `standard`), et **6 extras**
 (10 au plus chez pixelforge, commit 08ddeb3) : `marcher` (Walk_Loop), `sursaut` (Surprise, « jumps with surprise,
 eyes wide open »), `a_terre` (IdleToLay, « drops to the ground and lies flat, dizzy » : renversé par un boss qui
 fonce, gardé sur sa dernière image), `relever` (LayToIdle, « gets back up and dusts off ») et ses
@@ -853,7 +853,7 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   debout à côté de son vélo, et on accepte qu'il le pousse en se déplaçant. Ses visage, portrait et objets
   coupés sont corrigés chez pixelforge (12 h 30) : à refaire en set complet le moment venu.
 - **23/10** (PNJ, Julien) : prénom pour chaque PNJ humain (§8.4) ; extras `a_terre` (IdleToLay) et `relever`
-  (LayToIdle), la limite de pixelforge passant de 4 à 10 extras à la demande de Julien (Ainhoa, déposée avant,
+  (LayToIdle) ; portrait HD et pixel pour chaque PNJ (les 14 déjà livrés : à ajouter plus tard, par redo ["portrait"] si pixelforge l.accepte sur un set qui n.en a pas) ; la limite de pixelforge passant de 4 à 10 extras à la demande de Julien (Ainhoa, déposée avant,
   a « à terre » en `renverse`) ; `sursaut` passe à Surprise, suivi de la fuite apeurée (Sprint_Loop, bras en l'air),
   dont l'action n'était jusqu'ici pas envoyée à pixelforge (`pnj_jobs.py` la passe désormais).
 

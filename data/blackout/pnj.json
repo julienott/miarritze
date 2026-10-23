@@ -3,7 +3,6 @@
  "set_humain": {
   "prompt_style": "pf_px__character_set",
   "skip": [
-   "portrait",
    "jump_hide",
    "lift",
    "ghost",
