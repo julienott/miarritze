@@ -1,6 +1,5 @@
 {
- "placeholder": true,
- "source": "tools/blackout/placeholders_sets.py",
+ "factor": 4,
  "size": "normal",
  "height": 30,
  "canvas": [
@@ -9,15 +8,34 @@
  ],
  "feet_y": 60,
  "palette": [
-  "#120e16",
-  "#14101c",
-  "#1a1822",
-  "#21212e",
-  "#2a2a3a",
-  "#3a5a8a",
-  "#5a3a20",
-  "#b07030",
-  "#e8b48a"
+  "#00050e",
+  "#130e10",
+  "#21262e",
+  "#2b2024",
+  "#3c95c7",
+  "#4a5668",
+  "#572a12",
+  "#724603",
+  "#ff9c08",
+  "#ffa369"
+ ],
+ "palette_base": [
+  "#4a5668",
+  "#ff9c08",
+  "#00050e",
+  "#572a12",
+  "#3c95c7",
+  "#ffa369",
+  "#2b2024"
+ ],
+ "palette_dark": [
+  "#21262e",
+  "#724603",
+  "#130e10",
+  "#130e10",
+  "#21262e",
+  "#724603",
+  "#130e10"
  ],
  "elements": {
   "profile": {
@@ -42,8 +60,18 @@
   },
   "run": {
    "frames": 4,
-   "fps": 12,
+   "fps": 9,
    "loop": true,
+   "anchor": "common",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "renverse": {
+   "frames": 12,
+   "fps": 12.0,
+   "loop": false,
    "anchor": "feet",
    "size": [
     64,
@@ -51,8 +79,8 @@
    ]
   },
   "marcher": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -61,8 +89,8 @@
    ]
   },
   "sursaut": {
-   "frames": 3,
-   "fps": 8,
+   "frames": 8,
+   "fps": 10.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -71,8 +99,8 @@
    ]
   },
   "jouer": {
-   "frames": 4,
-   "fps": 6,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -81,8 +109,8 @@
    ]
   },
   "parler": {
-   "frames": 4,
-   "fps": 6,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -90,5 +118,37 @@
     64
    ]
   }
+ },
+ "source": "8573167a0dd54fcc984d1532b325417c",
+ "controls": {
+  "warnings": [
+   "largeur du corps 8 px (attendu 5–7)",
+   "teinte d'une zone dérivée de 19.7 ΔE entre 128 et 32"
+  ],
+  "height_px": 30,
+  "body_width_px": 8,
+  "colors_used": 10,
+  "isolated_px": 55,
+  "feet_bottom": {
+   "profile": [
+    60
+   ],
+   "idle": [
+    60,
+    60
+   ],
+   "run": [
+    59,
+    60,
+    58,
+    60
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 19.7,
+  "saturation_mean": 0.61,
+  "lightness_range": 70,
+  "colors_budget": 10
  }
 }
