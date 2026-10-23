@@ -75,6 +75,10 @@ def main() -> None:
             continue
         n = rapatrie(a, os.path.join(base, "hd")) + rapatrie(b, os.path.join(base, "px32"))
         open(marque, "w").write(t["A"] + "\n")
+        # Tâche gardée chez pixelforge (keep, avec sa réduction) : retouches et ajouts d'extras restent possibles.
+        req = urllib.request.Request(f"{pf.PF}/v2/inferences/tasks/{t['A']}", data=b'{"keep": true}', method="PATCH",
+                                     headers={**pf.AUTH, "Content-Type": "application/json"})
+        urllib.request.urlopen(req, timeout=60)
         bilan[pid] = f"intégré ({n} fichiers, éléments : {', '.join(sorted(b['result']['pixelforge'].get('animations', {})))})"
     for pid, txt in bilan.items():
         print(pid, ":", txt)

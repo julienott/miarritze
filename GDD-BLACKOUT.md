@@ -752,6 +752,9 @@ en QA sur /producer, qui montre toutes ses animations et leur description. Julie
 élément et **décide seul** quand un perso repart en file. Je ne renvoie alors **que ce qui doit changer** :
 - si seuls des extras sont à refaire (idle_long, lancements, activités), j'utilise le mode « extras seuls » sur la tâche d'origine (`base_task`) ;
 - run, jump_hide, lift, portrait, un standard ou un extra se refont seuls avec **`redo`** (*en ligne chez pixelforge le 23/10, commit f9b8803*). La requête reprend `base_task` (tâche A d'origine) et `redo: [éléments]`. Options : `clips`, `actions`, `run_frames`, `seed` (une autre graine pour une autre tentative). En B, `base_task` reprend la réduction d'origine. Seuls ces éléments sont livrés, avec la même palette, la même échelle et la même ligne des pieds. Outil : `tools/blackout/retouche.py`. Ses résultats sont intégrés par fusion dans le set, par `livraison.sh` ;
+- **ajouter** une animation à un set livré, sans rien refaire : même `base_task` (ou `base_set` + son
+  `profile_hd.png`, gardés dans `hd/`) avec les seuls nouveaux `extras` ou standards. Chaque tâche intégrée est
+  marquée `keep` chez pixelforge par `integre_persos_v2.py`, pour ne pas être purgée (*23/10*) ;
 - profile, idle et ghost ne se refont pas seuls : si le profil change, tout le set repart ;
 Le reste du set est gardé tel quel.
 
