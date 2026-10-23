@@ -133,10 +133,10 @@
   }
  },
  "kaio": {
-  "A": "a8d99efdffb44a41aa64ec9b600af6bb",
+  "A": "03ad7dcdcac742fb94e5e40c33bf7f94",
   "chaine": [
    {
-    "task_id": "d276ca92d8f74f5e81d5e943a7a07e28",
+    "task_id": "d102a93386f5457f8fb02c42f7fedbf8",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
@@ -228,10 +228,10 @@
   }
  },
  "itsasargi": {
-  "A": "78f4ff90abe549f090da0e1f2bef50c1",
+  "A": "869fc5d08ff44c45a9c33fee3ac332fe",
   "chaine": [
    {
-    "task_id": "db49fc80f5b349c5b150bf21a3082348",
+    "task_id": "f0c337cabc5c4bbe9c2ec6395eccd83c",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
