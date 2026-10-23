@@ -890,6 +890,8 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   produit le HD dans la tâche A (`portrait_hd.png`), `integre_persos_v2.py` le rapatrie dans `hd/`. État :
   les 13 persos, Basajaun et Tartalo l'ont ; aucun des PNJ livrés (dont Ainhoa) ni Zezengorri, Herensuge et
   les Intxixuk : à ajouter au prochain envoi (élément `portrait`).
+- **23/10** (chaîne HD → pixel de pixelforge, Julien) : les images `src64_<élément>.png` livrées avec un set
+  sont gardées telles quelles dans `hd/` à l'intégration, pour d'éventuels menus ou usages en jeu.
 
 ---
 
