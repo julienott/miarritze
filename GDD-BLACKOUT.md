@@ -740,6 +740,14 @@ couleurs du profil) ; B garde une palette resserrée et vive.
 **Défauts de Louis v2** (22/10) : corrigés par pixelforge (commit dfc6dcc) ; Louis relancé seul pour
 vérifier, avant les 12 autres.
 
+**Recette d'un perso et retouches** (*Julien, 23/10*) : chaque perso, PNJ ou boss livré a sa carte chapeau
+en QA sur /producer, qui montre toutes ses animations et leur description. Julien commente élément par
+élément et **décide seul** quand un perso repart en file. Je ne renvoie alors **que ce qui doit changer** :
+- si seuls des extras sont à refaire (idle_long, lancements, activités), j'utilise le mode « extras seuls » sur la tâche d'origine (`base_task`) ;
+- si c'est un élément fixe ou standard, je le refais seul si pixelforge le permet, sinon je lui demande la capacité ;
+- si c'est le profil, tout le set repart, puisque tout en découle.
+Le reste du set est gardé tel quel.
+
 - **Décor** : masques en suspens (§10.2).
 - Méthode de travail : on intègre chaque rendu tel quel, **Julien tranche en QA** sur /producer
   (procédure : `docs/PRODUCER.md`).
