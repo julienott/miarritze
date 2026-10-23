@@ -442,7 +442,12 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 
 ### 8.2 Les 13 personnages
 Les prompts sont volontairement **simples** : une description et une signature (ce qui doit se lire de
-loin), sans négation. Les défauts de rendu (ombre, blanc entre les jambes, halos, flashs) sont à
+loin), sans négation. **Prompt envoyé** (*23/10, conseil de pixelforge*) : « <description>, with <signature>
+clearly visible. » — le détail clé est une phrase de la description, sans en-tête ; l'ancienne formule
+« Signature detail drawn large and bright » est abandonnée (« signature » fait écrire du texte, « large »
+grossit les objets, « bright » sature). Mots à ne jamais écrire dans un prompt, sauf si c'est voulu :
+signature, logo, text, writing, letters, label, emblem, badge. Pour un objet, préciser plutôt sa taille
+relative et sa position (« about the size of his head, at hip height »). Les défauts de rendu (ombre, blanc entre les jambes, halos, flashs) sont à
 corriger **chez pixelforge**, pas dans les prompts (Julien, 21/10).
 
 **Bibliothèque de prompts v2 (22/10)** — copie machine : `data/blackout/style_party_hard.json`
@@ -463,7 +468,7 @@ graine 7, chaîne moteur A → moteur B). Toute modification se fait ici d'abord
 | Ramuntxo — chef des Halles | a jolly Basque chef with a small brown mustache, a tall white chef hat, a white chef jacket, a red neck scarf, plain red trousers and black shoes | a tall white chef hat | tastes a sauce from a wooden spoon — Consume |
 | Itsaso — esprit de l'écume | a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with bright white foam, barefoot | long flowing aqua hair and a white foam hem | swirls a small wave between her hands — Spell_Simple_Shoot |
 | Peio — rugbyman | a sturdy young Basque rugby player with medium brown skin and short black hair, a red and white hooped jersey, black shorts, white socks, black boots and an oval rugby ball under his arm | a brown oval rugby ball under his arm | spins his rugby ball in his hands — Interact |
-| Itsasargi — gardien du phare | an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern in his right hand, his hand gripping its handle | a big glowing yellow lantern in his hand | raises his lantern and peers into the dark — Idle_Lantern_Loop |
+| Itsasargi — gardien du phare | an old lighthouse keeper with a white beard, a captain cap and a navy pea coat, holding a glowing brass lantern by its handle in his right hand at hip height, the lantern about the size of his head | the glowing lantern in his hand | raises his lantern and peers into the dark — Idle_Lantern_Loop |
 
 Changements du 22/10 (retours de Julien sur le run du 21/10) : Txomin sans palmes, casquette rouge ;
 Patxi sans canne (elle n'apparaît que dans son idle_long), pantalon bleu clair et bottes jaunes ; Xabi

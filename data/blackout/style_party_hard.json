@@ -1,5 +1,5 @@
 {
- "_doc": "Copie machine des prompts de Miarritze Blackout. Ce qui fait foi : GDD-BLACKOUT.md (§8.2 pour les persos, §9 style, §14 pipeline) ; toute modification se fait d'abord dans le GDD, puis ici. Analyse du style : docs/STYLE_PARTY_HARD.md. Prompts en anglais, simples, sans négation, sans citer de jeu existant. Persos (v2) : prompt du moteur A = persos[id].description + '. Signature detail drawn large and bright: ' + signature + '.' ; rejeu : tools/blackout/party_hard_v2.py. Les gabarits (prop, cachette, sol, mur, anime, carte_zone) et style_commun servent au décor ; gabarits.perso et animations.* (48 px, pf_pro__character / pf_anim__*) sont l'essai du 21/10, remplacé par les moteurs A et B.",
+ "_doc": "Copie machine des prompts de Miarritze Blackout. Ce qui fait foi : GDD-BLACKOUT.md (§8.2 pour les persos, §9 style, §14 pipeline) ; toute modification se fait d'abord dans le GDD, puis ici. Analyse du style : docs/STYLE_PARTY_HARD.md. Prompts en anglais, simples, sans négation, sans citer de jeu existant. Persos (v2) : prompt du moteur A = persos[id].description + ', with ' + signature + ' clearly visible.' (23/10, GDD §8.2) ; rejeu : tools/blackout/party_hard_v2.py. Les gabarits (prop, cachette, sol, mur, anime, carte_zone) et style_commun servent au décor ; gabarits.perso et animations.* (48 px, pf_pro__character / pf_anim__*) sont l'essai du 21/10, remplacé par les moteurs A et B.",
  "version": 2,
  "date": "2026-10-22",
  "echelle": {
@@ -95,7 +95,7 @@
    "colors": 12,
    "num_images": 3,
    "seed": 1,
-   "prompt": "Tiny party game character, {gabarit_corps}, strict side view facing right, standing relaxed, {description}. Signature detail drawn large and bright: {signature}. Hair as a simple block, face as a few skin pixels with one dark eye dot, bright shoes."
+   "prompt": "Tiny party game character, {gabarit_corps}, strict side view facing right, standing relaxed, {description}, with {signature} clearly visible. Hair as a simple block, face as a few skin pixels with one dark eye dot, bright shoes."
   },
   "gabarits_corps": {
    "enfant": "child proportions about four heads tall, 28 pixels tall, one-pixel arms and legs, slightly bigger head",
@@ -229,8 +229,8 @@
   },
   "itsasargi": {
    "corps": "adulte",
-   "signature": "a big glowing yellow lantern in his hand",
-   "description": "an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern in his right hand, his hand gripping its handle"
+   "signature": "the glowing lantern in his hand",
+   "description": "an old lighthouse keeper with a white beard, a captain cap and a navy pea coat, holding a glowing brass lantern by its handle in his right hand at hip height, the lantern about the size of his head"
   }
  },
  "pnj_fete": {

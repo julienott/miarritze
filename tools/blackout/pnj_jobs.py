@@ -29,7 +29,7 @@ def requete(pid: str, prio: str) -> dict:
                        "fps": 10})
     return {
         "prompt_style": base["prompt_style"], "seed": 7, "colors": 20, "priority": prio, "tag": f"miarritze/pnj_v1_{p['type']}",
-        "prompt": f"{p['description']}. Signature detail drawn large and bright: {p['signature']}.",
+        "prompt": f"{p['description']}, with {p['signature']} clearly visible.",
         "clips": {"run": base["run"]["clip"]}, "actions": {"run": base["run"]["action"]},
         "skip": base["skip"], "extras": extras,
         "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10}],

@@ -25,7 +25,7 @@ GRAINE = 7
 
 def prompt(pid: str) -> str:
     p = SPEC["persos"][pid]
-    return f"{p['description']}. Signature detail drawn large and bright: {p['signature']}."
+    return f"{p['description']}, with {p['signature']} clearly visible."
 
 
 def casts(pid: str) -> list:
