@@ -55,6 +55,20 @@ def rapatrie(r: dict, dossier: str) -> int:
     return len(p.get("files", []))
 
 
+def complete(r: dict, dossier: str) -> int:
+    """Ajoute à `dossier` les fichiers d'une autre tâche (aperçu) qu'il n'a pas déjà."""
+    n = 0
+    for f in (r.get("result") or {}).get("pixelforge", {}).get("files", []):
+        cible = os.path.join(dossier, f["name"])
+        if os.path.exists(cible):
+            continue
+        u = urllib.parse.urlparse(f["url"])
+        req = urllib.request.Request(pf.PF + u.path + (f"?{u.query}" if u.query else ""), headers=pf.AUTH)
+        open(cible, "wb").write(urllib.request.urlopen(req, timeout=120).read())
+        n += 1
+    return n
+
+
 def main() -> None:
     taches = json.load(open(TACHES))
     pids = sys.argv[1:] or list(taches)
@@ -74,6 +88,8 @@ def main() -> None:
             bilan[pid] = f"pas intégré : A {a['status']}, B {b['status']} {str(b.get('error') or a.get('error') or '')[:120]}"
             continue
         n = rapatrie(a, os.path.join(base, "hd")) + rapatrie(b, os.path.join(base, "px32"))
+        if t.get("apercu"):                    # profil et portrait HD venus de l'aperçu (profile_of)
+            n += complete(tache(t["apercu"]), os.path.join(base, "hd"))
         open(marque, "w").write(t["A"] + "\n")
         # Tâche gardée chez pixelforge (keep, avec sa réduction) : retouches et ajouts d'extras restent possibles.
         req = urllib.request.Request(f"{pf.PF}/v2/inferences/tasks/{t['A']}", data=b'{"keep": true}', method="PATCH",
