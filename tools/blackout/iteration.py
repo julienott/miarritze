@@ -14,7 +14,7 @@ expression), jamais du prompt.
   iteration.py integre louis …                 rapatrie dans assets/blackout/<famille>/<id>/ (hd/ et px32/),
                                                élément par élément, sans toucher aux autres
   options : --famille persos|pnj (défaut persos), --prio high|normal|night (défaut normal), --montre
-            (affiche les requêtes, n'envoie rien), --role chasseur (course du chasseur)
+            (affiche les requêtes, n'envoie rien) ; les courses sont neutres (GDD §8.5)
 Ids dans tools/blackout/iterations.json. Ne rien déposer sans l'accord de Julien (GDD §14).
 """
 import json
@@ -53,10 +53,8 @@ class Persos:
     def base(self, pid: str) -> str:
         return self.ex["base"][pid]
 
-    def expression(self, pid: str, el: str, role: str) -> str:
+    def expression(self, pid: str, el: str) -> str:
         e = self.ex["exceptions"].get(pid, {}).get(el) or self.ex["par_element"][el]
-        if isinstance(e, dict):
-            e = e["chasseur" if role == "chasseur" else "chasse"]
         return self.base(pid) if e == "base" else e
 
     def extras(self, pid: str) -> dict:
@@ -85,7 +83,7 @@ class Pnj:
     def base(self, pid: str) -> str:
         return self.p["humains"][pid]["expression"]
 
-    def expression(self, pid: str, el: str, role: str) -> str:
+    def expression(self, pid: str, el: str) -> str:
         e = self.p["set_humain"]["expressions"].get(el) or self.p["activites"].get(el, {}).get("expression", "base")
         return self.base(pid) if e == "base" else e
 
@@ -173,8 +171,8 @@ def job_expression(b, e: dict, pid: str, k: str, prio: str, montre: bool) -> str
     return rep["task_id"]
 
 
-def job_anim(b, e: dict, pid: str, el: str, role: str, prio: str, montre: bool) -> None:
-    k = b.expression(pid, el, role)
+def job_anim(b, e: dict, pid: str, el: str, prio: str, montre: bool) -> None:
+    k = b.expression(pid, el)
     socle = job_expression(b, e, pid, k, prio, montre)
     extras = b.extras(pid)
     r = {"prompt_style": "pf_px__character_set", "prompt": b.prompt(pid), "seed": GRAINE, "priority": prio,
@@ -191,8 +189,7 @@ def job_anim(b, e: dict, pid: str, el: str, role: str, prio: str, montre: bool) 
     r.update(b.requete_anim(pid, el))
     rep = depose(r, montre)
     if not montre:
-        nom = f"{el}@chasseur" if role == "chasseur" and el == "run" else el
-        e[cle(b, pid)].setdefault("animations", {})[nom] = {
+        e[cle(b, pid)].setdefault("animations", {})[el] = {
             "A": rep["task_id"], "B": (rep.get("then") or [{}])[0].get("task_id"), "expression": k,
             "socle": socle}
         print(pid, el, f"({k})", rep["task_id"])
@@ -260,10 +257,7 @@ def integre(b, e: dict, pid: str) -> None:
         if sa != "succeeded" or sb != "succeeded":
             print(pid, nom, ": pas prêt (A", sa, ", B", sb, ")")
             continue
-        el = nom.split("@")[0]
-        if "@" in nom:
-            print(pid, nom, ": course du chasseur non intégrée (décision en attente, GDD §8.5)")
-            continue
+        el = nom
         n = rapatrie(a["A"], hd, el, False) + rapatrie(a["B"], os.path.join(base, "px32"), el, True)
         faits[nom] = a["A"]
         print(pid, nom, f"({a['expression']}) intégré : {n} fichiers")
@@ -272,10 +266,10 @@ def integre(b, e: dict, pid: str) -> None:
 def main() -> None:
     args = sys.argv[1:]
     opt = lambda o, d: args[args.index(o) + 1] if o in args else d  # noqa: E731
-    prio, fam, role = opt("--prio", "normal"), opt("--famille", "persos"), opt("--role", "chasse")
+    prio, fam = opt("--prio", "normal"), opt("--famille", "persos")
     montre = "--montre" in args
     libres = [a for i, a in enumerate(args) if not a.startswith("--") and (i == 0 or args[i - 1] not in
-                                                                             ("--prio", "--famille", "--role"))]
+                                                                             ("--prio", "--famille"))]
     if not libres:
         sys.exit(__doc__)
     cmd, reste = libres[0], libres[1:]
@@ -291,7 +285,7 @@ def main() -> None:
     elif cmd == "anime":
         pid = reste[0]
         for el in reste[1:]:
-            job_anim(b, e, pid, el, role, prio, montre)
+            job_anim(b, e, pid, el, prio, montre)
     elif cmd == "etat":
         for c, s in e.items():
             if reste and c.split("/")[1] not in reste:

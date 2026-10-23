@@ -42,7 +42,7 @@
    "_doc": "Expression par élément (GDD §8.5) ; « base » = celle du PNJ (champ expression).",
    "idle": "base",
    "marcher": "base",
-   "run": "peur",
+   "run": "neutre",
    "sursaut": "choque",
    "a_terre": "etourdi",
    "relever": "gene",

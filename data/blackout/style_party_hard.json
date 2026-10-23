@@ -968,10 +968,7 @@
   "par_element": {
    "idle": "base",
    "idle_long": "base",
-   "run": {
-    "chasse": "inquiet",
-    "chasseur": "determine"
-   },
+   "run": "neutre",
    "jump_hide": "inquiet",
    "lift": "surpris",
    "interagir": "determine",
