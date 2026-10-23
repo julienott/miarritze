@@ -164,6 +164,8 @@ var _sans_versus: bool = false
 var _ecrans: CanvasLayer
 var versus: BkVersus
 var podium: BkPodium
+## PNJ, la foule de la nuit (GDD §3.8, base de #647) : hors de `actors`, dans le calque trié des persos.
+var foule: BkFoule
 ## Lumière et ombre (GDD §3.2, carte #625) : sources fixes de la carte (BkLumieres), nuit pour tous.
 var lumieres: BkLumieres
 ## Disjoncteurs (GDD §3.2, carte #626) : un boîtier par secteur {pos, mur, secteur, cd (s de recharge)},
@@ -321,6 +323,10 @@ func _ready() -> void:
 	people.y_sort_enabled = true
 	add_child(people)
 	_make_actors(people)
+	foule = BkFoule.new()
+	foule.game = self
+	add_child(foule)
+	foule.cree(people)
 	coups = BkCoups.new()
 	coups.game = self
 	add_child(coups)
@@ -910,6 +916,7 @@ func _physics_process(dt: float) -> void:
 			elif a.role == BkActor.Role.GHOST and _stats:
 				_st["fantome_s"] = float(_st["fantome_s"]) + dt
 	_update_cachettes(dt)
+	foule.maj(dt)
 	alert_bang = maxf(0.0, alert_bang - dt)
 	alert_lost = maxf(0.0, alert_lost - dt)
 	for a3: BkActor in actors:
@@ -998,8 +1005,9 @@ func _lance_coup(a: BkActor) -> void:
 			_say(r, Color("c8ccd4"), 1.2)
 
 
-## Un coup est parti (BkCoups) : statistiques (par rôle et par coup).
+## Un coup est parti (BkCoups) : les PNJ proches s'enfuient (BkFoule) ; statistiques (par rôle et par coup).
 func coup_lance(a: BkActor, c: Dictionary) -> void:
+	foule.coup(a.position)
 	if a == hunter:
 		_coup_chasseur_at = hunt_elapsed
 	if _stats:
@@ -1260,6 +1268,7 @@ func _actionne(a: BkActor, i: int) -> void:
 		pannes[sect] = BkRules.f("disjoncteur_duree")
 		b["cd"] = BkRules.f("disjoncteur_cooldown")
 		_say("Panne de lumière : %s !" % map.secteur_nom(sect), Color("9fd8ef"), 2.0)
+		foule.panne(sect)
 		if _stats:
 			_st["coupures"] += 1
 	else:
@@ -2041,6 +2050,7 @@ func _update_view() -> void:
 			a.queue_redraw()
 		# Dans l'ombre, le chasseur ne voit d'un chassé qu'une silhouette sombre (GDD §3.2).
 		a.silhouette = as_hunter and a != hunter and a.role == BkActor.Role.HIDER and not a.lit
+	foule.maj_vue(as_hunter, _last_dt)
 	_camera.position = local.position
 	_overlay.queue_redraw()
 	hud.queue_redraw()
