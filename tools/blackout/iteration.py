@@ -176,14 +176,14 @@ def job_anim(b, e: dict, pid: str, el: str, prio: str, montre: bool) -> None:
     socle = job_expression(b, e, pid, k, prio, montre)
     extras = b.extras(pid)
     r = {"prompt_style": "pf_px__character_set", "prompt": b.prompt(pid), "seed": GRAINE, "priority": prio,
-         "tag": f"{TAG}/{b.famille}/anim", "profile_of": socle, "skip": ["portrait"],
+         "tag": f"{TAG}/{b.famille}/anim", "profile_of": socle, "elements": [],
          "then": [{"prompt_style": "pf_px__reduce", **({"steps": json.loads(os.environ["PF_STEPS"])}
                                                         if os.environ.get("PF_STEPS") else {})}]}
     if el in extras:
         r["extras"] = [extras[el]]
     elif el in STANDARDS or el == "idle":
-        r["elements"] = ["profile", "idle", "run"] + ([el] if el not in ("idle", "run") else [])
-        r.pop("skip")
+        # Un job ne fait que ce qu'on demande (pixelforge, 23/10) ; profil (repris) et idle (code) toujours livrés.
+        r["elements"] = [] if el == "idle" else [el]
     else:
         sys.exit(f"{pid} : élément inconnu {el}")
     r.update(b.requete_anim(pid, el))
