@@ -901,6 +901,10 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
 - **23/10** (pixelforge, Julien) : historique de pixelforge entièrement purgé, tâches `keep` comprises. Les
   sets livrés restent dans le jeu (`assets/blackout/`), mais plus aucun `base_task` / `px_task` d'avant n'est
   utilisable : retouche (`redo`) ou ajout d'extras d'un perso livré = nouveau set complet.
+- **23/10** (style HD, Julien, après comparaison sur Mattin) : HD « cartoon » par défaut chez pixelforge
+  (contour bleu nuit, une teinte d'ombre nette, visage dessiné ; `hd_style: "flat"` pour l'ancien) ; le pixel
+  efface toujours les traits. Profil et portrait faits avec l'expression neutre ; variantes d'expression d'un
+  perso par clé (`expression`, `expression_of`, liste `GET /v2/expressions`), animables via `profile_given`.
 
 ---
 
