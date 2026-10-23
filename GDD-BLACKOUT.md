@@ -256,13 +256,13 @@ son character set (§8.1), la même pour tous.
 
 | Effet | Marques par le code | Animation du perso (élément standard, clip) |
 |---|---|---|
-| Figé | contour bleu clair, petites étoiles | `etourdi` (Hit_Head : coup sur la tête, puis il tangue) |
+| Figé | contour bleu clair, petites étoiles | `etourdi` (Hit_Shoulder_L puis Hit_Shoulder_R : touché d'un côté puis de l'autre ; *Julien 23/10*) |
 | Commandes inversées | plumes qui tournent au-dessus de la tête | `etourdi` |
 | Renversé | étoiles | `renverse` (Hit_Knockback puis LayToIdle : il tombe et se relève) |
-| Collé | flaque de résine sous les pieds | `colle` (Push_Loop : il tire sur ses pieds collés) |
+| Collé | flaque de résine sous les pieds | `colle` (Crouch_Fwd ; *Julien 23/10*) |
 | Ralenti | traits bleus derrière | `ralenti` (Zombie_Walk_Fwd_Loop : marche lourde) |
-| Aveuglé / masqué | écran noir ou bleu d'eau, silhouette du joueur seule | `aveugle` (Idle_No_Loop : il se frotte les yeux) |
-| Tracté | corde ou ligne tendue | `tracte` (Slide_Loop : il glisse en se laissant tirer) |
+| Aveuglé / masqué | écran noir ou bleu d'eau, silhouette du joueur seule | `aveugle` (Spell_Double_Shoot ; *Julien 23/10*) |
+| Tracté | corde ou ligne tendue | `tracte` (Slide ; *Julien 23/10*) |
 | Révélé | contour lumineux visible à travers les murs (pour le chasseur) | aucune |
 | Insensible | halo doré | aucune |
 | Invisible / enfoui | sprite à 30 % pour son joueur seulement, rien pour les autres | aucune |
@@ -272,23 +272,23 @@ son character set (§8.1), la même pour tous.
   Quaternius pour son coup de chassé, un pour son coup de chasseur, choisis par coup (liste des 26 à
   valider par Julien ; essai sur Txomin le 23/10). En attendant : placeholders (pose figée + flash).
 
-**Clips de lancement** (*choisis le 23/10, à revoir en QA* ; copie : `casts` dans `data/blackout/style_party_hard.json`)
+**Clips de lancement** (*Julien, recette du 23/10 : selon la famille du coup — « lance » : OverhandThrow ; les autres : Spell_Simple_Enter + Spell_Simple_Exit* ; copie : `casts` dans `data/blackout/style_party_hard.json`)
 
 | Perso | Coup de chassé : clip, action | Coup de chasseur : clip, action |
 |---|---|---|
-| louis | NinjaJump_Start, « vaults over a low wall » | Idle_Rail_Call, « cups his hands around his mouth and calls out » |
-| txomin | OverhandThrow, « throws his red rescue buoy forward to a friend » | Consume, « blows hard into his lifeguard whistle » |
-| patxi | Interact, « tips a bucket of sardines onto the ground behind him » | OverhandThrow, « casts his fishing line far forward » |
-| maia | Roll, « dives low and rolls under a wave » | Slide_Start, « jumps on her surfboard and surfs forward » |
-| xabi | NinjaJump_Start, « bounces off a wall in a quick dash » | OverhandThrow, « hurls a pelota ball with his chistera » |
-| mattin | Yes, « flexes his big arms proudly » | PickUp_Table, « heaves a heavy round stone forward » |
-| amaia | Dance_Loop, « does quick light Basque dance steps » | Interact, « strikes the ground with her makila stick » |
-| kaio | NinjaJump_Start, « leaps up and glides » | Idle_Rail_Call, « screams with his beak wide open » |
-| karramarro | Sitting_Enter, « digs himself down into the sand » | Slide_Start, « slides sideways very fast » |
-| ramuntxo | Interact, « places a Basque cake on the ground » | OverhandThrow, « throws a small pot of red pepper » |
-| itsaso | Spell_Simple_Shoot, « raises a little stone wall with a wave of her hand » | Spell_Simple_Enter, « calls water geysers out of the ground » |
-| peio | Roll, « sidesteps and rolls away quickly » | Idle_Rail_Call, « shouts a war cry with his fists up » |
-| itsasargi | Spell_Simple_Shoot, « raises his lantern and it flashes bright » | Idle_Torch_Loop, « points his lantern beam straight ahead » |
+| louis | Spell_Simple_Enter+Spell_Simple_Exit, « vaults over a low wall » | Spell_Simple_Enter+Spell_Simple_Exit, « cups his hands around his mouth and calls out » |
+| txomin | OverhandThrow, « throws his red rescue buoy forward to a friend » | Spell_Simple_Enter+Spell_Simple_Exit, « blows hard into his lifeguard whistle » |
+| patxi | Spell_Simple_Enter+Spell_Simple_Exit, « tips a bucket of sardines onto the ground behind him » | OverhandThrow, « casts his fishing line far forward » |
+| maia | Spell_Simple_Enter+Spell_Simple_Exit, « dives low and rolls under a wave » | Spell_Simple_Enter+Spell_Simple_Exit, « jumps on her surfboard and surfs forward » |
+| xabi | Spell_Simple_Enter+Spell_Simple_Exit, « bounces off a wall in a quick dash » | OverhandThrow, « hurls a pelota ball with his chistera » |
+| mattin | Spell_Simple_Enter+Spell_Simple_Exit, « flexes his big arms proudly » | OverhandThrow, « heaves a heavy round stone forward » |
+| amaia | Spell_Simple_Enter+Spell_Simple_Exit, « does quick light Basque dance steps » | Spell_Simple_Enter+Spell_Simple_Exit, « strikes the ground with her makila stick » |
+| kaio | Spell_Simple_Enter+Spell_Simple_Exit, « leaps up and glides » | Spell_Simple_Enter+Spell_Simple_Exit, « screams with his beak wide open » |
+| karramarro | Spell_Simple_Enter+Spell_Simple_Exit, « digs himself down into the sand » | Spell_Simple_Enter+Spell_Simple_Exit, « slides sideways very fast » |
+| ramuntxo | Spell_Simple_Enter+Spell_Simple_Exit, « places a Basque cake on the ground » | OverhandThrow, « throws a small pot of red pepper » |
+| itsaso | Spell_Simple_Enter+Spell_Simple_Exit, « raises a little stone wall with a wave of her hand » | Spell_Simple_Enter+Spell_Simple_Exit, « calls water geysers out of the ground » |
+| peio | Spell_Simple_Enter+Spell_Simple_Exit, « sidesteps and rolls away quickly » | Spell_Simple_Enter+Spell_Simple_Exit, « shouts a war cry with his fists up » |
+| itsasargi | Spell_Simple_Enter+Spell_Simple_Exit, « raises his lantern and it flashes bright » | OverhandThrow, « points his lantern beam straight ahead » |
 
 - Ce qui est lancé ou posé (pelote, bouée, pierre, gâteau, nuage, muret, geysers) : **formes simples
   en placeholder**, remplacées plus tard par de petits sprites pixelforge.
@@ -428,13 +428,13 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 | `portrait` | buste de **trois-quarts face**, 64×64 (HD 256), pour menus, versus, podium | — |
 | `idle` | immobile | respiration faite par pixelforge (code) |
 | `idle_long` | pose d'inactivité propre au perso (§8.2) | par perso |
-| `run` | course | Sprint_Loop |
-| `jump_hide` | saut vers la cachette (la sortie = à l'envers) | Jump_Start |
-| `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir_Idle_Loop |
+| `run` | course | Sprint_Loop (cadence à revenir à celle d'avant le v3, demandé à pixelforge le 23/10) |
+| `jump_hide` | saut vers la cachette (la sortie = à l'envers) | NinjaJump_Start + NinjaJump_Idle + NinjaJump_Land, UAL2_source (*Julien 23/10*) |
+| `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir_RM : le perso monte (root motion), pixelforge garde la montée dans la case (*Julien 23/10*) |
 | `ghost` | **fantôme générique, le même pour tous** (*Julien, 23/10*) : petit drap blanc aux grands yeux ronds et petit béret rouge, qui flotte et avance ; le pseudo au-dessus dit à qui il est | sprite commun (`assets/blackout/fantome/`) : style `pf_px__ghost` de pixelforge (drap dessiné une fois, mouvements par code : `float`, `advance`, `appear`) ; les sets des persos font `skip: ["ghost"]` |
-| `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6), propres au perso | extras, clip par coup |
+| `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6), propres au perso | extras ; clip selon la famille du coup : OverhandThrow pour « lance », Spell_Simple_Enter + Spell_Simple_Exit pour les autres (*Julien 23/10*) |
 | `interagir` | fouiller une cachette, actionner un disjoncteur (1 s) | élément standard, Interact |
-| `victoire`, `defaite` | podium | éléments standard, Dance_Loop et Idle_No_Loop |
+| `victoire`, `defaite` | podium | éléments standard, Celebration et Crying (*Julien 23/10*) |
 | `etourdi`, `renverse`, `colle`, `ralenti`, `aveugle`, `tracte` | effets subis (§4.5) | éléments standard, clips du §4.5 |
 
 - Clips : **uniquement Quaternius**, nommés explicitement ; pixelforge a les bibliothèques UAL1 et
@@ -698,7 +698,7 @@ signature, §8.2), `colors`, la graine, et la liste `extras`. Rien d'autre : ni 
 **Ce que pixelforge livre**, chaîne A (HD, case 256, pieds à 240) → B (32 px, case 64, pieds à 60) :
 - éléments fixes : `profile` (pose debout tirée d'Idle_Loop), `portrait` (buste de trois-quarts face,
   fait depuis le profil seul), `idle` (respiration par code), `run` (4 poses à pas égal, Sprint_Loop ;
-  `run_frames` 6 ou 8 possibles), `jump_hide` (Jump_Start), `lift` (LiftAir_Idle_Loop), `ghost` (profil
+  `run_frames` 6 ou 8 possibles), `jump_hide` (NinjaJump_Start + NinjaJump_Idle + NinjaJump_Land), `lift` (LiftAir_RM), `ghost` (profil
   translucide par code). Le clip de `run`, `jump_hide` et `lift` se change avec `clips` ; `set.json`
   donne les clips utilisés ;
 - **jusqu'à 4 extras** dans le même set (au-delà : refus au dépôt) : chacun `{name, motion, action,
@@ -828,6 +828,11 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   joueur et progression cosmétique retirés ; pas de sprint ; portrait de trois-quarts ; case de 64 ;
   canne de Patxi retirée ; carte bac à sable ; web, iPhone et Steam Deck ; UAL2 chez pixelforge : Louis garde
   Idle_FoldArms_Loop (Idle_LookAround n'existe pas), Itsaso prend Spell_Simple_Shoot.
+- **23/10** (recette des 13 persos v3) : nouveaux clips — jump_hide NinjaJump_Start + Idle + Land, lift LiftAir_RM,
+  victoire Celebration, defaite Crying, etourdi Hit_Shoulder_L + R, colle Crouch_Fwd, aveugle Spell_Double_Shoot,
+  tracte Slide ; lancements selon la famille du coup (OverhandThrow pour « lance », sinon Spell_Simple_Enter + Exit) ;
+  portrait plus fiable et cadence de la course demandés à pixelforge ; retouches par `redo` en priorité normale
+  quand pixelforge est prêt.
 
 ---
 

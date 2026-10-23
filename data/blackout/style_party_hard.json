@@ -702,9 +702,15 @@
   "clips": {
    "idle": "Idle_Loop",
    "run": "Sprint_Loop",
-   "jump_hide": "Jump_Start",
-   "lift": "LiftAir_Idle_Loop",
-   "ghost": "Swim_Idle_Loop"
+   "jump_hide": "NinjaJump_Start+NinjaJump_Idle+NinjaJump_Land",
+   "lift": "LiftAir_RM",
+   "ghost": "Swim_Idle_Loop",
+   "victoire": "Celebration",
+   "defaite": "Crying",
+   "etourdi": "Hit_Shoulder_L+Hit_Shoulder_R",
+   "colle": "Crouch_Fwd",
+   "aveugle": "Spell_Double_Shoot",
+   "tracte": "Slide"
   },
   "personnalisation": false
  },
@@ -784,15 +790,15 @@
   }
  },
  "casts": {
-  "_doc": "Lancements des coups spéciaux (GDD §4.6) : extras cast_chasse et cast_chasseur ; clip Quaternius, action, objet (false = aucun). Choisis le 23/10, à revoir en QA.",
+  "_doc": "Lancements des coups spéciaux (GDD §4.6) : extras cast_chasse et cast_chasseur ; clip Quaternius, action, objet (false = aucun). Julien 23/10 (recette) : clip selon la famille du coup — « lance » : OverhandThrow ; les autres : Spell_Simple_Enter+Spell_Simple_Exit (séquence).",
   "louis": {
    "cast_chasse": {
-    "clip": "NinjaJump_Start",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "vaults over a low wall",
     "objet": false
    },
    "cast_chasseur": {
-    "clip": "Idle_Rail_Call",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "cups his hands around his mouth and calls out",
     "objet": false
    }
@@ -804,14 +810,14 @@
     "objet": "a red rescue tube buoy"
    },
    "cast_chasseur": {
-    "clip": "Consume",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "blows hard into his lifeguard whistle",
     "objet": "a silver whistle"
    }
   },
   "patxi": {
    "cast_chasse": {
-    "clip": "Interact",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "tips a bucket of sardines onto the ground behind him",
     "objet": "a small bucket"
    },
@@ -823,19 +829,19 @@
   },
   "maia": {
    "cast_chasse": {
-    "clip": "Roll",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "dives low and rolls under a wave",
     "objet": false
    },
    "cast_chasseur": {
-    "clip": "Slide_Start",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "jumps on her surfboard and surfs forward",
     "objet": "a yellow surfboard"
    }
   },
   "xabi": {
    "cast_chasse": {
-    "clip": "NinjaJump_Start",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "bounces off a wall in a quick dash",
     "objet": false
    },
@@ -847,55 +853,55 @@
   },
   "mattin": {
    "cast_chasse": {
-    "clip": "Yes",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "flexes his big arms proudly",
     "objet": false
    },
    "cast_chasseur": {
-    "clip": "PickUp_Table",
+    "clip": "OverhandThrow",
     "action": "heaves a heavy round stone forward",
     "objet": "a heavy round stone"
    }
   },
   "amaia": {
    "cast_chasse": {
-    "clip": "Dance_Loop",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "does quick light Basque dance steps",
     "objet": false
    },
    "cast_chasseur": {
-    "clip": "Interact",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "strikes the ground with her makila stick",
     "objet": "a wooden makila stick"
    }
   },
   "kaio": {
    "cast_chasse": {
-    "clip": "NinjaJump_Start",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "leaps up and glides",
     "objet": false
    },
    "cast_chasseur": {
-    "clip": "Idle_Rail_Call",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "screams with his beak wide open",
     "objet": false
    }
   },
   "karramarro": {
    "cast_chasse": {
-    "clip": "Sitting_Enter",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "digs himself down into the sand",
     "objet": false
    },
    "cast_chasseur": {
-    "clip": "Slide_Start",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "slides sideways very fast",
     "objet": false
    }
   },
   "ramuntxo": {
    "cast_chasse": {
-    "clip": "Interact",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "places a Basque cake on the ground",
     "objet": "a round Basque cake"
    },
@@ -907,36 +913,36 @@
   },
   "itsaso": {
    "cast_chasse": {
-    "clip": "Spell_Simple_Shoot",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "raises a little stone wall with a wave of her hand",
     "objet": false
    },
    "cast_chasseur": {
-    "clip": "Spell_Simple_Enter",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "calls water geysers out of the ground",
     "objet": false
    }
   },
   "peio": {
    "cast_chasse": {
-    "clip": "Roll",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "sidesteps and rolls away quickly",
     "objet": false
    },
    "cast_chasseur": {
-    "clip": "Idle_Rail_Call",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "shouts a war cry with his fists up",
     "objet": false
    }
   },
   "itsasargi": {
    "cast_chasse": {
-    "clip": "Spell_Simple_Shoot",
+    "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
     "action": "raises his lantern and it flashes bright",
     "objet": "a brass lantern"
    },
    "cast_chasseur": {
-    "clip": "Idle_Torch_Loop",
+    "clip": "OverhandThrow",
     "action": "points his lantern beam straight ahead",
     "objet": "a brass lantern"
    }
