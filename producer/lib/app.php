@@ -1205,10 +1205,13 @@ final class App
      * Julien 21/10 : « si je fais une suggestion d'amélioration, la carte en QA ne doit pas rester en QA avant
      * d'avoir traité l'amélioration ». Un commentaire d'une personne (pas Claude) sur une carte en QA la renvoie
      * au sommet du Backlog, « à retraiter », comme un refus (le texte sert de consigne).
+     * Sauf la carte chapeau d'un perso (Julien 23/10) : il commente élément par élément et décide
+     * seul du renvoi (bouton Refuser) ; la carte reste en QA pendant la recette.
      */
     private function sortirDeQa(int $id, string $text, int $now): void
     {
-        if ($this->actor === 'claude' || (string) $this->card($id)['status'] !== 'qa') {
+        $c = $this->card($id);
+        if ($this->actor === 'claude' || (string) $c['status'] !== 'qa' || (string) $c['type'] === 'perso') {
             return;
         }
         $this->placeCard($id, 'backlog', 0);
