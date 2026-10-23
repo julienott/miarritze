@@ -5,7 +5,9 @@ portraits), puis chaque animation dès que la base de son expression est prête.
 chaque tour ; un seul enchaînement à la fois. Les erreurs passagères du serveur (502…) sont réessayées.
 Ne contrôle aucun rendu (Julien s'en charge) et ne met en file que ce que Julien a demandé.
 
-  enchaine.py louis txomin … [--prio normal] [--prio-de louis=high]
+  enchaine.py louis txomin … [--prio normal] [--prio-de louis=high] [--un-par-un]
+--un-par-un : un perso ne reçoit ses expressions qu'une fois toutes les animations du précédent déposées,
+pour finir les persos l'un après l'autre (bases neutres déposées tout de suite).
 """
 import os
 import sys
@@ -33,9 +35,10 @@ def utiles(b, pid: str) -> list:
     return els, ks
 
 
-def tour(b, pids: list, prio_de: dict, signale: set) -> bool:
+def tour(b, pids: list, prio_de: dict, signale: set, un_par_un: bool = False) -> bool:
     e = it.etat()
     fini = True
+    precedent_depose = True
     for pid in pids:
         prio = prio_de.get(pid, prio_de["*"])
         s = e.get(it.cle(b, pid), {})
@@ -50,8 +53,12 @@ def tour(b, pids: list, prio_de: dict, signale: set) -> bool:
                 print(pid, ": base neutre", st, flush=True)
                 signale.add(pid)
             fini = fini and st in FIN
+            precedent_depose = False
             continue
         els, ks = utiles(b, pid)
+        if un_par_un and not precedent_depose:
+            fini = False
+            continue
         for k in ks:
             if k not in s.get("expressions", {}):
                 it.job_expression(b, e, pid, k, prio, False)
@@ -71,6 +78,7 @@ def tour(b, pids: list, prio_de: dict, signale: set) -> bool:
                 signale.add((pid, x))
             else:
                 fini = False
+        precedent_depose = all(x in anims or (pid, x) in signale for x in els)
     return fini
 
 
@@ -87,14 +95,17 @@ def main() -> None:
             k, v = args[i + 1].split("=")
             prio_de[k] = v
             i += 1
+        elif args[i] == "--un-par-un":
+            prio_de["un_par_un"] = True
         else:
             pids.append(args[i])
         i += 1
     b = it.Persos()
     signale: set = set()
+    un = bool(prio_de.pop("un_par_un", False))
     while True:
         try:
-            if tour(b, pids, prio_de, signale):
+            if tour(b, pids, prio_de, signale, un):
                 break
         except Exception as x:          # serveur qui redémarre : on réessaie au tour suivant
             print("pixelforge indisponible :", str(x)[:80], flush=True)
