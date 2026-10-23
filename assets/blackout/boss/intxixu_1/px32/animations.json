@@ -1,44 +1,58 @@
 {
  "profile": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/profile_sheet.png",
   "fps": 1,
   "loop": false,
   "count": 1,
-  "caption": "profile · 1 image(s) · 1 i/s · placeholder"
+  "caption": "profile · 1 image · 1 i/s"
  },
  "idle": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/idle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/idle_sheet.png",
   "fps": 3,
   "loop": true,
   "count": 2,
-  "caption": "idle · 2 image(s) · 3 i/s · boucle · placeholder"
+  "caption": "idle · 2 images · 3 i/s · boucle"
  },
  "run": {
-  "fps": 8,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/run_sheet.png",
+  "fps": 12,
   "loop": true,
   "count": 4,
-  "caption": "run · 4 image(s) · 8 i/s · boucle · placeholder"
+  "caption": "run · 4 images · 12 i/s · boucle"
  },
  "etourdi": {
-  "fps": 6,
-  "loop": true,
-  "count": 4,
-  "caption": "etourdi · 4 image(s) · 6 i/s · boucle · placeholder"
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/etourdi.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/etourdi_sheet.png",
+  "fps": 10.0,
+  "loop": false,
+  "count": 6,
+  "caption": "etourdi · 6 images · 10 i/s"
  },
  "cri": {
-  "fps": 6,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/cri.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/cri_sheet.png",
+  "fps": 10.0,
   "loop": false,
-  "count": 3,
-  "caption": "cri · 3 image(s) · 6 i/s · placeholder"
+  "count": 8,
+  "caption": "cri · 8 images · 10 i/s"
  },
  "pouvoir_1": {
-  "fps": 8,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/pouvoir_1.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/pouvoir_1_sheet.png",
+  "fps": 12.0,
   "loop": false,
-  "count": 4,
-  "caption": "pouvoir_1 · 4 image(s) · 8 i/s · placeholder"
+  "count": 8,
+  "caption": "pouvoir_1 · 8 images · 12 i/s"
  },
  "pouvoir_2": {
-  "fps": 8,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/pouvoir_2.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3c0286dae550487f9f063c82f3fbe04d/pouvoir_2_sheet.png",
+  "fps": 12.0,
   "loop": false,
-  "count": 4,
-  "caption": "pouvoir_2 · 4 image(s) · 8 i/s · placeholder"
+  "count": 8,
+  "caption": "pouvoir_2 · 8 images · 12 i/s"
  }
 }

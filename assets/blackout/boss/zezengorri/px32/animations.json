@@ -1,50 +1,34 @@
 {
  "profile": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3e34b715881e479cbf275f7a87518367/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3e34b715881e479cbf275f7a87518367/profile_sheet.png",
   "fps": 1,
   "loop": false,
   "count": 1,
-  "caption": "profile · 1 image(s) · 1 i/s · placeholder"
- },
- "portrait": {
-  "fps": 1,
-  "loop": false,
-  "count": 1,
-  "caption": "portrait · 1 image(s) · 1 i/s · placeholder"
+  "caption": "profile · 1 image · 1 i/s"
  },
  "idle": {
-  "fps": 3,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3e34b715881e479cbf275f7a87518367/idle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3e34b715881e479cbf275f7a87518367/idle_sheet.png",
+  "fps": 6,
   "loop": true,
   "count": 2,
-  "caption": "idle · 2 image(s) · 3 i/s · boucle · placeholder"
+  "caption": "idle · 2 images · 6 i/s · boucle"
  },
  "run": {
-  "fps": 8,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3e34b715881e479cbf275f7a87518367/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3e34b715881e479cbf275f7a87518367/run_sheet.png",
+  "fps": 14,
   "loop": true,
-  "count": 4,
-  "caption": "run · 4 image(s) · 8 i/s · boucle · placeholder"
+  "count": 6,
+  "caption": "run · 6 images · 14 i/s · boucle"
  },
- "etourdi": {
-  "fps": 6,
+ "walk": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3e34b715881e479cbf275f7a87518367/walk.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3e34b715881e479cbf275f7a87518367/walk_sheet.png",
+  "fps": 10,
   "loop": true,
-  "count": 4,
-  "caption": "etourdi · 4 image(s) · 6 i/s · boucle · placeholder"
- },
- "cri": {
-  "fps": 6,
-  "loop": false,
-  "count": 3,
-  "caption": "cri · 3 image(s) · 6 i/s · placeholder"
- },
- "pouvoir_1": {
-  "fps": 8,
-  "loop": false,
-  "count": 4,
-  "caption": "pouvoir_1 · 4 image(s) · 8 i/s · placeholder"
- },
- "pouvoir_2": {
-  "fps": 8,
-  "loop": false,
-  "count": 4,
-  "caption": "pouvoir_2 · 4 image(s) · 8 i/s · placeholder"
+  "count": 8,
+  "caption": "walk · 8 images · 10 i/s · boucle"
  }
 }

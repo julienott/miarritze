@@ -1,25 +1,41 @@
 {
- "placeholder": true,
- "source": "tools/blackout/placeholders_sets.py",
+ "factor": 4,
  "size": "boss",
- "height": 51,
+ "height": 40,
  "canvas": [
   128,
   128
  ],
  "feet_y": 120,
  "palette": [
-  "#14101c",
-  "#5a1020",
-  "#8a1010",
-  "#a61916",
-  "#d0201c",
-  "#e0d070",
-  "#f0e8d0",
-  "#f2e040",
-  "#f4f1ea",
-  "#ff8a20",
-  "#ff9a20"
+  "#00030e",
+  "#000820",
+  "#000821",
+  "#001249",
+  "#4e5866",
+  "#727272",
+  "#c5c6c7",
+  "#ff0500",
+  "#ffc900",
+  "#ffffff"
+ ],
+ "palette_base": [
+  "#ff0500",
+  "#001249",
+  "#ffffff",
+  "#ffc900",
+  "#4e5866",
+  "#c5c6c7",
+  "#000821"
+ ],
+ "palette_dark": [
+  "#727272",
+  "#000820",
+  "#727272",
+  "#727272",
+  "#00030e",
+  "#727272",
+  "#00030e"
  ],
  "elements": {
   "profile": {
@@ -32,19 +48,9 @@
     128
    ]
   },
-  "portrait": {
-   "frames": 1,
-   "fps": 1,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    128,
-    128
-   ]
-  },
   "idle": {
    "frames": 2,
-   "fps": 3,
+   "fps": 6,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -53,8 +59,8 @@
    ]
   },
   "run": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 6,
+   "fps": 14,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -62,45 +68,48 @@
     128
    ]
   },
-  "etourdi": {
-   "frames": 4,
-   "fps": 6,
+  "walk": {
+   "frames": 8,
+   "fps": 10,
    "loop": true,
-   "anchor": "feet",
-   "size": [
-    128,
-    128
-   ]
-  },
-  "cri": {
-   "frames": 3,
-   "fps": 6,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    128,
-    128
-   ]
-  },
-  "pouvoir_1": {
-   "frames": 4,
-   "fps": 8,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    128,
-    128
-   ]
-  },
-  "pouvoir_2": {
-   "frames": 4,
-   "fps": 8,
-   "loop": false,
    "anchor": "feet",
    "size": [
     128,
     128
    ]
   }
+ },
+ "source": "5e0bf56df4c74abd860080e290c5fb26",
+ "controls": {
+  "warnings": [
+   "largeur du corps 32 px (attendu 6–10)"
+  ],
+  "height_px": 40,
+  "body_width_px": 32,
+  "colors_used": 10,
+  "isolated_px": 53,
+  "feet_bottom": {
+   "profile": [
+    120
+   ],
+   "idle": [
+    120,
+    120
+   ],
+   "run": [
+    120,
+    120,
+    120,
+    120,
+    120,
+    120
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 0.0,
+  "saturation_mean": 0.89,
+  "lightness_range": 99,
+  "colors_budget": 10
  }
 }

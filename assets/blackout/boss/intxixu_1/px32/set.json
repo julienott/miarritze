@@ -1,27 +1,41 @@
 {
- "placeholder": true,
- "source": "tools/blackout/placeholders_sets.py",
+ "factor": 4,
  "size": "normal",
- "height": 23,
+ "height": 30,
  "canvas": [
   64,
   64
  ],
  "feet_y": 60,
  "palette": [
-  "#14101c",
-  "#1a1822",
-  "#483b26",
-  "#4aa040",
-  "#5a1020",
-  "#5a4a30",
-  "#6a4a2a",
-  "#7a6040",
-  "#8a8e96",
-  "#9a9aa0",
-  "#c8c0b0",
-  "#f2e040",
-  "#f4f1ea"
+  "#000105",
+  "#00030c",
+  "#1f232b",
+  "#284d06",
+  "#3b342e",
+  "#404040",
+  "#464e60",
+  "#4b900c",
+  "#8f8f8f",
+  "#fffa00"
+ ],
+ "palette_base": [
+  "#8f8f8f",
+  "#fffa00",
+  "#00030c",
+  "#4b900c",
+  "#3b342e",
+  "#284d06",
+  "#464e60"
+ ],
+ "palette_dark": [
+  "#404040",
+  "#404040",
+  "#000105",
+  "#404040",
+  "#000105",
+  "#000105",
+  "#1f232b"
  ],
  "elements": {
   "profile": {
@@ -46,18 +60,18 @@
   },
   "run": {
    "frames": 4,
-   "fps": 8,
+   "fps": 12,
    "loop": true,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     64,
     64
    ]
   },
   "etourdi": {
-   "frames": 4,
-   "fps": 6,
-   "loop": true,
+   "frames": 6,
+   "fps": 10.0,
+   "loop": false,
    "anchor": "feet",
    "size": [
     64,
@@ -65,8 +79,8 @@
    ]
   },
   "cri": {
-   "frames": 3,
-   "fps": 6,
+   "frames": 8,
+   "fps": 10.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -75,8 +89,8 @@
    ]
   },
   "pouvoir_1": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 12.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -85,8 +99,8 @@
    ]
   },
   "pouvoir_2": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 12.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -94,5 +108,36 @@
     64
    ]
   }
+ },
+ "source": "71b2de30004f4afea655e514ce6ce804",
+ "controls": {
+  "warnings": [
+   "teinte d'une zone dérivée de 25.8 ΔE entre 128 et 32"
+  ],
+  "height_px": 30,
+  "body_width_px": 7,
+  "colors_used": 10,
+  "isolated_px": 0,
+  "feet_bottom": {
+   "profile": [
+    60
+   ],
+   "idle": [
+    60,
+    60
+   ],
+   "run": [
+    59,
+    60,
+    58,
+    60
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 25.8,
+  "saturation_mean": 0.7,
+  "lightness_range": 87,
+  "colors_budget": 10
  }
 }

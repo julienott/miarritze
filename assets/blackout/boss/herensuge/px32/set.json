@@ -1,24 +1,37 @@
 {
- "placeholder": true,
- "source": "tools/blackout/placeholders_sets.py",
+ "factor": 4,
  "size": "boss",
- "height": 53,
+ "height": 96,
  "canvas": [
   128,
   128
  ],
  "feet_y": 120,
  "palette": [
-  "#14101c",
-  "#5a1020",
-  "#a07b21",
-  "#a8782a",
-  "#c89a2a",
-  "#e8c83a",
-  "#e8d870",
-  "#f2e040",
-  "#f4f1ea",
-  "#ff7a1a"
+  "#000106",
+  "#00030e",
+  "#000923",
+  "#00144e",
+  "#3c2900",
+  "#4f3800",
+  "#725c00",
+  "#865d00",
+  "#b17e00",
+  "#ffce00"
+ ],
+ "palette_base": [
+  "#b17e00",
+  "#00144e",
+  "#ffce00",
+  "#00030e",
+  "#865d00"
+ ],
+ "palette_dark": [
+  "#4f3800",
+  "#000923",
+  "#725c00",
+  "#000106",
+  "#3c2900"
  ],
  "elements": {
   "profile": {
@@ -31,75 +44,90 @@
     128
    ]
   },
-  "portrait": {
-   "frames": 1,
-   "fps": 1,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    128,
-    128
-   ]
-  },
   "idle": {
    "frames": 2,
-   "fps": 3,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    128,
-    128
-   ]
-  },
-  "run": {
-   "frames": 4,
    "fps": 8,
    "loop": true,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     128,
     128
    ]
   },
   "etourdi": {
-   "frames": 4,
-   "fps": 6,
+   "frames": 8,
+   "fps": 8,
    "loop": true,
-   "anchor": "feet",
+   "anchor": "common",
+   "size": [
+    128,
+    128
+   ]
+  },
+  "advance": {
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "anchor": "common",
    "size": [
     128,
     128
    ]
   },
   "cri": {
-   "frames": 3,
-   "fps": 6,
+   "frames": 6,
+   "fps": 8,
    "loop": false,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     128,
     128
    ]
   },
   "pouvoir_1": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 10,
    "loop": false,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     128,
     128
    ]
   },
   "pouvoir_2": {
-   "frames": 4,
+   "frames": 6,
    "fps": 8,
    "loop": false,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     128,
     128
    ]
   }
+ },
+ "source": "24d4bf49585442c09bcf49b4ad8895b3",
+ "controls": {
+  "warnings": [
+   "largeur du corps 74 px (attendu 15–24)"
+  ],
+  "height_px": 96,
+  "body_width_px": 74,
+  "colors_used": 10,
+  "isolated_px": 1,
+  "feet_bottom": {
+   "profile": [
+    120
+   ],
+   "idle": [
+    120,
+    120
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 0.0,
+  "saturation_mean": 1.0,
+  "lightness_range": 77,
+  "colors_budget": 10
  }
 }

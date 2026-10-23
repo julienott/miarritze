@@ -1,6 +1,5 @@
 {
- "placeholder": true,
- "source": "tools/blackout/placeholders_sets.py",
+ "factor": 4,
  "size": "normal",
  "height": 30,
  "canvas": [
@@ -9,17 +8,34 @@
  ],
  "feet_y": 60,
  "palette": [
-  "#120e16",
-  "#14101c",
-  "#1a1822",
-  "#2aa0d8",
-  "#9aa0aa",
-  "#ac9973",
-  "#c59975",
-  "#c89a50",
-  "#d8c090",
-  "#e8b48a",
-  "#f2d020"
+  "#00d3ff",
+  "#040b14",
+  "#063f3f",
+  "#0a192e",
+  "#0f8c8e",
+  "#525252",
+  "#a18e00",
+  "#b7b7b7",
+  "#ff1400",
+  "#ffe200"
+ ],
+ "palette_base": [
+  "#b7b7b7",
+  "#ffe200",
+  "#ff1400",
+  "#0a192e",
+  "#00d3ff",
+  "#0f8c8e",
+  "#a18e00"
+ ],
+ "palette_dark": [
+  "#525252",
+  "#525252",
+  "#525252",
+  "#040b14",
+  "#063f3f",
+  "#063f3f",
+  "#525252"
  ],
  "elements": {
   "profile": {
@@ -46,15 +62,15 @@
    "frames": 4,
    "fps": 12,
    "loop": true,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     64,
     64
    ]
   },
   "marcher": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -63,8 +79,8 @@
    ]
   },
   "sursaut": {
-   "frames": 3,
-   "fps": 8,
+   "frames": 8,
+   "fps": 10.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -73,8 +89,8 @@
    ]
   },
   "telephone": {
-   "frames": 2,
-   "fps": 3,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -83,8 +99,8 @@
    ]
   },
   "attendre": {
-   "frames": 2,
-   "fps": 3,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -92,5 +108,34 @@
     64
    ]
   }
+ },
+ "source": "a77f7aa4331246769ae2de7a8512e8d5",
+ "controls": {
+  "warnings": [],
+  "height_px": 30,
+  "body_width_px": 6,
+  "colors_used": 10,
+  "isolated_px": 87,
+  "feet_bottom": {
+   "profile": [
+    60
+   ],
+   "idle": [
+    60,
+    60
+   ],
+   "run": [
+    58,
+    60,
+    58,
+    59
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 17.5,
+  "saturation_mean": 0.92,
+  "lightness_range": 78,
+  "colors_budget": 10
  }
 }

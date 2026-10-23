@@ -1,27 +1,41 @@
 {
- "placeholder": true,
- "source": "tools/blackout/placeholders_sets.py",
+ "factor": 4,
  "size": "normal",
- "height": 23,
+ "height": 30,
  "canvas": [
   64,
   64
  ],
  "feet_y": 60,
  "palette": [
-  "#14101c",
-  "#1a1822",
-  "#3b2e20",
-  "#4a3a28",
-  "#5a1020",
-  "#6a5038",
-  "#8a6a40",
-  "#8a8e96",
-  "#9a9aa0",
-  "#c8c0b0",
-  "#e0802a",
-  "#f2e040",
-  "#f4f1ea"
+  "#000105",
+  "#00030c",
+  "#221f1e",
+  "#454544",
+  "#4d4743",
+  "#97551f",
+  "#9a9a99",
+  "#ede9d5",
+  "#ff6400",
+  "#fffd00"
+ ],
+ "palette_base": [
+  "#9a9a99",
+  "#00030c",
+  "#ff6400",
+  "#fffd00",
+  "#4d4743",
+  "#97551f",
+  "#ede9d5"
+ ],
+ "palette_dark": [
+  "#454544",
+  "#000105",
+  "#454544",
+  "#454544",
+  "#221f1e",
+  "#221f1e",
+  "#454544"
  ],
  "elements": {
   "profile": {
@@ -46,18 +60,18 @@
   },
   "run": {
    "frames": 4,
-   "fps": 8,
+   "fps": 12,
    "loop": true,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     64,
     64
    ]
   },
   "etourdi": {
-   "frames": 4,
-   "fps": 6,
-   "loop": true,
+   "frames": 6,
+   "fps": 10.0,
+   "loop": false,
    "anchor": "feet",
    "size": [
     64,
@@ -65,8 +79,8 @@
    ]
   },
   "cri": {
-   "frames": 3,
-   "fps": 6,
+   "frames": 8,
+   "fps": 10.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -75,8 +89,8 @@
    ]
   },
   "pouvoir_1": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 12.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -85,8 +99,8 @@
    ]
   },
   "pouvoir_2": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 12.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -94,5 +108,34 @@
     64
    ]
   }
+ },
+ "source": "f38f3ca9661e4c488c5698873f05bfb7",
+ "controls": {
+  "warnings": [],
+  "height_px": 30,
+  "body_width_px": 7,
+  "colors_used": 10,
+  "isolated_px": 0,
+  "feet_bottom": {
+   "profile": [
+    60
+   ],
+   "idle": [
+    60,
+    60
+   ],
+   "run": [
+    59,
+    60,
+    58,
+    60
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 13.8,
+  "saturation_mean": 0.82,
+  "lightness_range": 90,
+  "colors_budget": 10
  }
 }

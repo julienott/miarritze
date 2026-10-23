@@ -1,6 +1,5 @@
 {
- "placeholder": true,
- "source": "tools/blackout/placeholders_sets.py",
+ "factor": 4,
  "size": "boss",
  "height": 59,
  "canvas": [
@@ -9,34 +8,37 @@
  ],
  "feet_y": 120,
  "palette": [
-  "#120e16",
-  "#14101c",
-  "#1a1822",
-  "#482e16",
-  "#4a8a3a",
-  "#54361c",
-  "#5a1020",
-  "#5a3a1c",
-  "#6a4424",
-  "#6a4a2a",
-  "#6ad04a",
-  "#8a5a2a",
-  "#8a6a4a",
-  "#f2e040",
-  "#f4f1ea"
+  "#00030e",
+  "#112600",
+  "#190d06",
+  "#265600",
+  "#311a0d",
+  "#381d0e",
+  "#489f00",
+  "#6d3b1d",
+  "#b76f48",
+  "#ff964b"
+ ],
+ "palette_base": [
+  "#6d3b1d",
+  "#489f00",
+  "#00030e",
+  "#ff964b",
+  "#265600",
+  "#381d0e",
+  "#b76f48"
+ ],
+ "palette_dark": [
+  "#311a0d",
+  "#112600",
+  "#190d06",
+  "#311a0d",
+  "#112600",
+  "#190d06",
+  "#311a0d"
  ],
  "elements": {
   "profile": {
-   "frames": 1,
-   "fps": 1,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    128,
-    128
-   ]
-  },
-  "portrait": {
    "frames": 1,
    "fps": 1,
    "loop": false,
@@ -58,18 +60,28 @@
   },
   "run": {
    "frames": 4,
-   "fps": 8,
+   "fps": 12,
    "loop": true,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     128,
     128
    ]
   },
+  "portrait": {
+   "frames": 1,
+   "fps": 1,
+   "loop": false,
+   "anchor": "bottom",
+   "size": [
+    64,
+    64
+   ]
+  },
   "etourdi": {
-   "frames": 4,
-   "fps": 6,
-   "loop": true,
+   "frames": 6,
+   "fps": 10.0,
+   "loop": false,
    "anchor": "feet",
    "size": [
     128,
@@ -77,8 +89,8 @@
    ]
   },
   "cri": {
-   "frames": 3,
-   "fps": 6,
+   "frames": 8,
+   "fps": 10.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -87,8 +99,8 @@
    ]
   },
   "pouvoir_1": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 12.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -97,8 +109,8 @@
    ]
   },
   "pouvoir_2": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 12.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -106,5 +118,38 @@
     128
    ]
   }
+ },
+ "source": "5aca85a34a0e4103bd04a66cb69cfb51",
+ "controls": {
+  "warnings": [
+   "largeur du corps 24 px (attendu 9–15)",
+   "contraste faible (écart de luminosité 66 < 70)",
+   "teinte d'une zone dérivée de 19.0 ΔE entre 128 et 32"
+  ],
+  "height_px": 59,
+  "body_width_px": 24,
+  "colors_used": 10,
+  "isolated_px": 15,
+  "feet_bottom": {
+   "profile": [
+    120
+   ],
+   "idle": [
+    120,
+    120
+   ],
+   "run": [
+    120,
+    120,
+    120,
+    120
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 19.0,
+  "saturation_mean": 0.83,
+  "lightness_range": 66,
+  "colors_budget": 10
  }
 }
