@@ -793,6 +793,7 @@ animations de quadrupède : gratter le sol et souffle de soufre restent à deman
 persos validés (§14.1). Animaux : chat et chien attendent le feu vert de Julien à pixelforge
 (`pf_px__creature`) ; goéland et pigeon attendent un mode oiseau. Herensuge en marionnette, essai chat
 a/b : en pause. PNJ dans le jeu (#647) et masques du décor (§10.2) : après le jalon 1.
+**Placeholders** (*Julien, 23/10*) : en attendant pixelforge, chaque PNJ, animal et boss sans rendu a un set temporaire au même format (silhouette aux couleurs de sa description, 2 à 4 images par élément, `set.json` → `"placeholder": true`), fait par `tools/blackout/placeholders_sets.py` dans `assets/blackout/pnj|animaux|boss/<id>/px32/` et chargé par le même chargeur que les persos (BkPerso) ; le vrai rendu le remplace à l'intégration (`integre_persos_v2.py`, `DEST=pnj|animaux|boss`). Liste des boss : `rules.json` → `boss`.
 
 ## 16. Journal des décisions
 - **19/10** : pivot du jeu de combat Borroka vers un cache-cache (« Gordeka »).
