@@ -744,7 +744,8 @@ vérifier, avant les 12 autres.
 en QA sur /producer, qui montre toutes ses animations et leur description. Julien commente élément par
 élément et **décide seul** quand un perso repart en file. Je ne renvoie alors **que ce qui doit changer** :
 - si seuls des extras sont à refaire (idle_long, lancements, activités), j'utilise le mode « extras seuls » sur la tâche d'origine (`base_task`) ;
-- si c'est un élément fixe ou standard, je le refais seul si pixelforge le permet, sinon je lui demande la capacité ;
+- si c'est un élément standard (etourdi, victoire…), je le refais seul : `base_task` + `extras: [{"name": "etourdi"}]`, et je change son clip seulement avec `clips`. Son action est fixée. Pour B : `base_task` de la réduction d'origine. *Réponse de pixelforge, 23/10.*
+- un élément fixe (run, jump_hide, lift, portrait) ne se refait pas seul aujourd'hui. Pixelforge propose un paramètre `redo` (avec `clips`, `actions`, `run_frames`, `seed`), qu'il estime à une demi-journée ; il attend l'accord de Julien. D'ici là, on renvoie tout le set ;
 - si c'est le profil, tout le set repart, puisque tout en découle.
 Le reste du set est gardé tel quel.
 
