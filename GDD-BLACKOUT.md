@@ -892,6 +892,12 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   les Intxixuk : à ajouter au prochain envoi (élément `portrait`).
 - **23/10** (chaîne HD → pixel de pixelforge, Julien) : les images `src64_<élément>.png` livrées avec un set
   sont gardées telles quelles dans `hd/` à l'intégration, pour d'éventuels menus ou usages en jeu.
+- **23/10** (pixelforge, nouvelle API, demande de Julien) : le moteur A (`pf_px__character_set`) ne fait plus que
+  le HD (profil, portrait, objets, animations Wan détourées) ; le moteur B (`pf_px__reduce`, chaîné ou sur un job A)
+  le réduit d'un coup à la taille finale, en « pixel brut », et n'applique que les traitements demandés dans
+  `steps` (`couleurs`, `zones`, `brightness`, `hysteresis`, `face`, `vote`). B se relance sur le même A autant
+  qu'on veut. `party_hard_v2.py` et `pnj_jobs.py` envoient B sans réglage, ou ceux de `PF_STEPS`. Les sets
+  d'avant (retouches par `base_task`) ne changent pas.
 
 ---
 

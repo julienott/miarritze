@@ -19,6 +19,13 @@ PNJ = json.load(open(os.path.join(ROOT, "data", "blackout", "pnj.json"), encodin
 SORTIE = os.path.join(HERE, "taches_pnj.json")
 
 
+def reduction() -> dict:
+    """Moteur B (pixelforge, API du 23/10) : A ne fait plus que le HD ; B le réduit à la taille finale
+    (« pixel brut »). Ses traitements ne s'appliquent que demandés : PF_STEPS='{"couleurs": true, …}'."""
+    steps = json.loads(os.environ.get("PF_STEPS", "{}"))
+    return {"prompt_style": "pf_px__reduce", **({"steps": steps} if steps else {})}
+
+
 def requete(pid: str, prio: str) -> dict:
     p, base = PNJ["humains"][pid], PNJ["set_humain"]
     extras = [dict(e, fps=10, object=False) for e in base["extras_communs"]]
@@ -28,12 +35,12 @@ def requete(pid: str, prio: str) -> dict:
         extras.append({"name": act, "motion": a["clip"], "action": a["action"], "object": objet, "loop": True,
                        "fps": 10})
     return {
-        "prompt_style": base["prompt_style"], "seed": 7, "colors": 20, "priority": prio, "tag": f"miarritze/pnj_v1_{p['type']}",
+        "prompt_style": base["prompt_style"], "seed": 7, "priority": prio, "tag": f"miarritze/pnj_v1_{p['type']}",
         "prompt": p["description"] + "." if "clearly visible" in p["description"]
         else f"{p['description']}, with {p['signature']} clearly visible.",
         "clips": {"run": base["run"]["clip"]}, "actions": {"run": base["run"]["action"]},
         "elements": base["elements"], "extras": extras,
-        "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10}],
+        "then": [reduction()],
     }
 
 
