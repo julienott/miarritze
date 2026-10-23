@@ -1,12 +1,14 @@
 class_name BkPodium
 extends Control
 ## Podium de fin de partie (GDD-BLACKOUT.md) : cumul des points, or, argent et bronze sur leurs
-## marches avec les avatars animés (pose de victoire), les autres en dessous, puis « Retour à
+## marches avec les avatars animés (élément victoire), les autres à droite avec leur portrait, puis « Retour à
 ## l'accueil ». Pas d'emotes ni de couleur de joueur (GDD §6, §7.1) : les pseudos sous les marches.
 
 const OR: Color = Color("ffd34a")
 const ARGENT: Color = Color("cfd6df")
 const BRONZE: Color = Color("d08a4a")
+## Portrait des joueurs hors du podium (px).
+const PORTRAIT_PX: int = 36
 ## Couleurs des confettis.
 const CONFETTIS: Array[Color] = [Color("e23b3b"), Color("2f6fe0"), Color("2fb24a"), Color("f2c12e"),
 	Color("f08a24"), Color("9b4fd6"), Color("41c7d6"), Color("f27ab3")]
@@ -92,9 +94,11 @@ func _draw() -> void:
 		_texte(font, r.position + Vector2(r.size.x * 0.5, 92), a.display_name, 26, Color.WHITE, true)
 		_texte(font, r.position + Vector2(r.size.x * 0.5, 117), "%d pts" % a.score, 20,
 			Color.WHITE, true)
-	# Les suivants, en colonne à droite.
+	# Les suivants, en colonne à droite, avec leur portrait (GDD §8.1).
 	for i: int in range(3, _rangs.size()):
 		var y: float = 190.0 + 40.0 * float(i - 3)
+		draw_texture_rect(BkPerso.portrait_tex(_rangs[i].character, PORTRAIT_PX), Rect2(s.x - 252.0, y - 27.0,
+			PORTRAIT_PX, PORTRAIT_PX), false)
 		draw_string_outline(font, Vector2(s.x - 210.0, y), "%d. %s  %d" % [i + 1, _rangs[i].display_name, _rangs[i].score],
 			HORIZONTAL_ALIGNMENT_LEFT, 200, 20, 6, BkUi.INK)
 		draw_string(font, Vector2(s.x - 210.0, y), "%d. %s  %d" % [i + 1, _rangs[i].display_name, _rangs[i].score],

@@ -1,7 +1,7 @@
 class_name BkVersus
 extends Control
 ## Écran Versus (GDD-BLACKOUT.md §2.2), entre le tirage et la cachette : à gauche le chasseur en grand
-## (avatar animé, pseudo, icône et nom de son coup de chasseur), à droite les chassés (avatar, pseudo,
+## (portrait §8.1, pseudo, icône et nom de son coup de chasseur), à droite les chassés (portrait, pseudo,
 ## icône et nom de leur coup de chassé), grand « VS » au centre qui arrive avec une secousse, compte à
 ## rebours 5 → 1 et son de tension généré ici (grondement qui monte, un coup de tambour par seconde).
 ## En attendant les icônes par coup, une icône par famille de coup (BkEffetsRendu.icone).
@@ -39,7 +39,7 @@ func _ready() -> void:
 	gauche.anchor_bottom = 0.95
 	add_child(gauche)
 	gauche.add_child(_label("CHASSEUR", 44, Color.WHITE))
-	var av: BkAvatar = BkAvatar.cree(h.character, 380)
+	var av: BkPortrait = BkPortrait.cree(h.character, 320)
 	av.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	gauche.add_child(av)
 	var ligne: HBoxContainer = HBoxContainer.new()
@@ -70,15 +70,14 @@ func _ready() -> void:
 	grille.add_theme_constant_override(&"v_separation", 6)
 	grille.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	droite.add_child(grille)
-	var hauteur: float = 170.0 if chasses.size() <= 4 else 150.0
+	var hauteur: float = 128.0
 	for a: BkActor in chasses:
-		# Case de taille fixe : l'avatar et son coup posé à ses pieds, le pseudo dessous (en jaune pour
+		# Case de taille fixe : le portrait et son coup posé dans son coin, le pseudo dessous (en jaune pour
 		# le joueur local). Aucune couleur de joueur (GDD §7.1).
 		var c: VBoxContainer = VBoxContainer.new()
 		c.add_theme_constant_override(&"separation", 0)
 		c.custom_minimum_size = Vector2(CASE_L, 0)
-		var petit: BkAvatar = BkAvatar.cree(a.character, hauteur)
-		petit.regard_gauche = true
+		var petit: BkPortrait = BkPortrait.cree(a.character, hauteur)
 		petit.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		c.add_child(petit)
 		var pied: Control = Control.new()
@@ -86,7 +85,7 @@ func _ready() -> void:
 		c.add_child(pied)
 		var cc: Dictionary = BkCoups.coup_de(a.character, false)
 		var icone: Icone = Icone.cree(str(cc.get("famille", "")), 34)
-		icone.position = Vector2(CASE_L * 0.5 + 22.0, -40.0)
+		icone.position = Vector2(CASE_L * 0.5 + 30.0, -36.0)
 		icone.size = Vector2(34, 34)
 		pied.add_child(icone)
 		var nom: Label = _label(a.display_name.trim_suffix(" (IA)"), 22, BkUi.JAUNE if a == game.local else Color.WHITE)

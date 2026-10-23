@@ -11,6 +11,9 @@ extends Control
 const PETIT: int = 8
 const NORMAL: int = 16
 const GRAND: int = 32
+## Portraits (GDD §8.1) : celui du joueur local à côté de son rôle, ceux de la table des scores (px).
+const PORTRAIT_ROLE: int = 32
+const PORTRAIT_SCORES: int = 14
 
 var game: BkGame
 var _quit: Button
@@ -131,10 +134,11 @@ func _draw() -> void:
 		BkActor.Role.GHOST: "FANTÔME", BkActor.Role.OUT: "ÉCHAPPÉ"}[me.role]
 	var role_col: Color = {BkActor.Role.HIDER: Color("4aa3ff"), BkActor.Role.HUNTER: Color("ff3b30"),
 		BkActor.Role.GHOST: Color("b8c0cc"), BkActor.Role.OUT: Color("6fe08a")}[me.role]
-	draw_rect(Rect2(6, 6, 84, 20), Color(0, 0, 0, 0.55))
-	_text(Vector2(48, 22), role_text, NORMAL, role_col)
+	draw_rect(Rect2(6, 6, 84 + PORTRAIT_ROLE + 4, PORTRAIT_ROLE + 4), Color(0, 0, 0, 0.55))
+	draw_texture_rect(BkPerso.portrait_tex(me.character, PORTRAIT_ROLE), Rect2(8, 8, PORTRAIT_ROLE, PORTRAIT_ROLE), false)
+	_text(Vector2(48 + PORTRAIT_ROLE + 4, 28), role_text, NORMAL, role_col)
 	if game.debug and game.visite == "":
-		_text(Vector2(48, 38), "DEBUG · F · L", PETIT, Color("ffd34a"))
+		_text(Vector2(48 + PORTRAIT_ROLE + 4, 52), "DEBUG · F · L", PETIT, Color("ffd34a"))
 	if game.visite != "":
 		# Visite de debug (temporaire) : pas de chrono, un bandeau discret.
 		draw_rect(Rect2(s.x * 0.5 - 110, 6, 220, 14), Color(0, 0, 0, 0.45))
@@ -249,8 +253,10 @@ func _draw_scores(s: Vector2) -> void:
 	var f: Font = BkDraw.police()
 	for a: BkActor in rows:
 		var tag: String = "chasseur" if a == game.hunter else {BkActor.Role.OUT: "échappé", BkActor.Role.GHOST: "trouvé"}.get(a.role, "caché")
-		draw_string(f, Vector2(box.position.x + 10, y), "%s — %s%s" % [a.display_name, tag, "  ★" if a.won_round else ""],
-			HORIZONTAL_ALIGNMENT_LEFT, 200, PETIT, Color("ffd34a") if a.won_round else Color.WHITE)
+		draw_texture_rect(BkPerso.portrait_tex(a.character, PORTRAIT_SCORES), Rect2(box.position.x + 8, y - 11,
+			PORTRAIT_SCORES, PORTRAIT_SCORES), false)
+		draw_string(f, Vector2(box.position.x + 26, y), "%s — %s%s" % [a.display_name, tag, "  ★" if a.won_round else ""],
+			HORIZONTAL_ALIGNMENT_LEFT, 184, PETIT, Color("ffd34a") if a.won_round else Color.WHITE)
 		draw_string(f, Vector2(box.position.x + 210, y), "+%d   %d pts" % [a.round_points, a.score],
 			HORIZONTAL_ALIGNMENT_RIGHT, 80, PETIT, Color.WHITE)
 		y += 16
