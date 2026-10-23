@@ -4,7 +4,12 @@
 Usage : build_index.py <dossier_sortie>   (ex. web/build/producer/files)
 
 - Lit assets/ en lecture seule.
-- Blackout (assets/blackout, assets/maps) : animations des persos (planches d'une
+- Character sets pixelforge (format du 23/10) des persos, du fantôme commun, des PNJ, des animaux et
+  des boss (assets/blackout/<famille>/<id>/px32 et hd) : un asset « animations » par set, avec ses
+  éléments dans l'ordre (libellé, ce qu'on doit voir, action, objet, clip Quaternius, images, i/s,
+  boucle, planche 32 px et planche HD si le dossier local hd/ est là), les avertissements de
+  set.json → controls.warnings et le drapeau « placeholder » (clé `set`, et `blackout.sets`).
+- Blackout, ancien format (assets/blackout, assets/maps) : animations des persos (planches d'une
   rangée de cases, recadrées sur l'union des frames) et leurs masques de tenue,
   profil validé (modele.png), profils candidats (tools/rd/out/<id>/gk2d/profil,
   réduits, seulement s'ils sont présents : dossier non versionné), pièces du
@@ -93,6 +98,58 @@ BK_ANIM_LABELS = {"idle": "repos", "walk": "marche", "run_scared": "fuite apeur�
                   "trapped": "pris au piège", "search": "fouiller", "detect": "détecter", "extract": "sortir un chassé",
                   "victory": "victoire", "sad": "tristesse", "hunter_reveal": "apparition du chasseur",
                   "ghost": "fantôme", "ghost_move": "fantôme en vol"}
+# Character sets pixelforge (format du 23/10) : <famille>/<id>/px32/ (planches <élément>_sheet.png,
+# animations.json, set.json) et <famille>/<id>/hd/ (même chose en HD, local, non versionné).
+BK_SET_FAMILLES = [("persos", "Perso"), ("fantome", "Fantôme"), ("pnj", "PNJ"), ("animaux", "Animal"), ("boss", "Boss")]
+BK_STYLE = ROOT / "data" / "blackout" / "style_party_hard.json"   # idle_long et casts par perso
+BK_PNJ = ROOT / "data" / "blackout" / "pnj.json"                  # extras communs et activités des PNJ
+BK_COUPS = ROOT / "data" / "blackout" / "coups.json"              # nom des coups spéciaux par perso
+# Éléments d'un character set : libellé, ce qu'on doit voir, clip Quaternius par défaut.
+# Source : GDD-BLACKOUT.md §8.1 (éléments fixes), §4.5 (effets subis), §8.3 (boss), §8.4 (PNJ) ;
+# aucun JSON ne les porte. Le clip réellement utilisé vient de set.json (clips, extras, optional)
+# quand il y est, les éléments propres au perso ou au PNJ de style_party_hard.json et pnj.json.
+BK_ELEMENTS = {
+    "profile": ("profil", "Sprite de référence, debout de profil tourné vers la droite : toutes les "
+                "animations lui restent fidèles.", "Idle_Loop (pose debout, 1re image)"),
+    "portrait": ("portrait", "Buste de trois-quarts face pour les menus, le versus et le podium, fait depuis "
+                 "le profil seul, sans détail inventé.", ""),
+    "idle": ("repos", "Immobile, petite respiration (faite par pixelforge, par code).", "code (respiration)"),
+    "idle_long": ("pose d'inactivité", "Pose propre au perso quand il attend longtemps (§8.2).", ""),
+    "run": ("course", "Course : 4 poses à pas égal (contact, passage, contact, passage), tête stable, "
+            "pieds sur la ligne.", "Sprint_Loop"),
+    "jump_hide": ("saut vers la cachette", "Saut vers la cachette ; la sortie de cachette est la même "
+                  "animation jouée à l'envers.", "Jump_Start"),
+    "lift": ("envol", "Envol avant de devenir fantôme, couleurs normales (le jeu fait clignoter le perso).",
+             "LiftAir_Idle_Loop"),
+    "ghost": ("fantôme", "Fantôme commun à tous les persos (assets/blackout/fantome/).", "code"),
+    "interagir": ("interagir", "Fouille une cachette ou actionne un disjoncteur (1 s).", "Interact"),
+    "cast_chasse": ("lancement du coup de chassé", "Lancement de son coup spécial de chassé (§4.6).", ""),
+    "cast_chasseur": ("lancement du coup de chasseur", "Lancement de son coup spécial de chasseur (§4.6).", ""),
+    "victoire": ("victoire", "Podium du gagnant : il danse de joie.", "Dance_Loop"),
+    "defaite": ("défaite", "Podium du perdant : déçu, il fait non.", "Idle_No_Loop"),
+    "etourdi": ("étourdi", "Effets Figé et Commandes inversées : coup sur la tête, puis il tangue.", "Hit_Head"),
+    "renverse": ("renversé", "Effet Renversé : il tombe, puis se relève.", "Hit_Knockback puis LayToIdle"),
+    "colle": ("collé", "Effet Collé : il tire sur ses pieds collés dans la résine.", "Push_Loop"),
+    "ralenti": ("ralenti", "Effet Ralenti : marche lourde.", "Zombie_Walk_Fwd_Loop"),
+    "aveugle": ("aveuglé", "Effet Aveuglé / masqué : il se frotte les yeux.", "Idle_No_Loop"),
+    "tracte": ("tracté", "Effet Tracté : il glisse en se laissant tirer.", "Slide_Loop"),
+    # Fantôme commun (§8.1) : drap dessiné une fois, mouvements par code (style pf_px__ghost).
+    "float": ("flotte", "Le petit drap blanc flotte sur place, monte et descend doucement.", "code (pf_px__ghost)"),
+    "advance": ("avance", "Le fantôme avance en flottant.", "code (pf_px__ghost)"),
+    "appear": ("apparition", "Le fantôme apparaît, au moment où le perso devient fantôme.", "code (pf_px__ghost)"),
+    # PNJ (§8.4) : la course est la fuite ; marcher et sursaut sont communs à tous.
+    "marcher": ("marcher", "Marche calme, son déplacement normal dans la foule.", "Walk_Loop"),
+    "sursaut": ("sursaut", "Il sursaute en arrière, surpris.", "Hit_Chest"),
+    "fuir": ("fuir", "Il s'enfuit.", ""),
+    # Boss (§8.3, §5.2).
+    "cri": ("cri", "Il repère un joueur et pousse un cri.", ""),
+    "pouvoir_1": ("pouvoir 1", "Premier pouvoir du boss (§5.2).", ""),
+    "pouvoir_2": ("pouvoir 2", "Second pouvoir du boss (§5.2).", ""),
+}
+# Ordre d'affichage des éléments d'un perso (GDD §8.1), les autres ensuite dans l'ordre de set.json.
+BK_ELEMENTS_PERSO = ["profile", "portrait", "idle", "idle_long", "run", "jump_hide", "lift", "interagir",
+                     "cast_chasse", "cast_chasseur", "victoire", "defaite", "etourdi", "renverse", "colle",
+                     "ralenti", "aveugle", "tracte"]
 # Statuts de taches_decor_nuit.json qui sont encore dans la file pixelforge (ou en attente d'elle).
 BK_FILE_STATUTS = {"en_file": "en file", "attend": "attend une autre tâche", "a_voir": "à voir", "question": "question"}
 
@@ -173,28 +230,49 @@ class Builder:
         cands = {p.parents[1].name for p in BK_CANDIDATS.glob("*/*/image_*.png")}
         # Persos animés d'abord, puis ceux qui ont un profil validé, puis les candidats seuls.
         prompts = json.loads(BK_PROMPTS.read_text(encoding="utf-8")) if BK_PROMPTS.exists() else {}
-        ordre = list(prompts.get("persos", {}))
-        # Ordre du casting (prompts_anims.json), les autres ensuite par nom.
+        rules = json.loads(BK_RULES.read_text(encoding="utf-8")) if BK_RULES.exists() else {}
+        noms = dict(zip(rules.get("characters", []), rules.get("bot_names", [])))
+        ordre = list(prompts.get("persos", {})) or list(rules.get("characters", []))
+        # Ordre du casting (prompts_anims.json, sinon rules.json), les autres ensuite par nom.
         def rank(pid: str) -> tuple:
             return (ordre.index(pid) if pid in ordre else len(ordre), pid)
         persos = sorted(dirs | cands | set(ordre), key=rank)
+        self.sets: dict[str, dict] = {}      # clé (pid, ou famille/id hors persos) -> fiche du set
+        self.libelles: dict[str, str] = {}   # élément -> libellé (tous les sets)
         for pid in persos:
-            if pid in dirs:
-                self.bk_perso(pid, BK / "persos" / pid)
+            pdir = BK / "persos" / pid
+            if (pdir / "px32" / "set.json").exists():
+                self.bk_set("persos", pid, pdir, noms.get(pid, pid.capitalize()))
+            elif pid in dirs:
+                self.bk_perso(pid, pdir)
             self.bk_candidats(pid)
-        # Animations attendues pour chaque perso (y compris celles « à venir » : clips sur mesure).
+        # Fantôme commun, PNJ, animaux, boss : mêmes character sets, hors liste des persos.
+        autres = []
+        for fam, label in BK_SET_FAMILLES[1:]:
+            for sj in sorted((BK / fam).glob("*/px32/set.json")):
+                sid = sj.parents[1].name
+                key = f"{fam}/{sid}"
+                nom = label if fam == "fantome" and sid == "fantome" else f"{label} · {sid.replace('_', ' ').capitalize()}"
+                self.bk_set(fam, sid, sj.parents[1], nom)
+                autres.append(key)
+        # Animations attendues pour chaque perso : prompts_anims.json (ancien format), sinon les
+        # éléments du character set (GDD §8.1).
         attendues = [{"name": n, "loop": bool(a.get("boucle", False)),
                       "a_venir": bool((a.get("mouvement") or {}).get("a_venir")),
                       "libelle": BK_ANIM_LABELS.get(n, n.replace("_", " "))}
                      for n, a in prompts.get("animations", {}).items()]
-        rules = json.loads(BK_RULES.read_text(encoding="utf-8")) if BK_RULES.exists() else {}
-        noms = dict(zip(rules.get("characters", []), rules.get("bot_names", [])))
+        if not attendues and any(s["famille"] == "persos" for s in self.sets.values()):
+            attendues = [{"name": n, "loop": False, "a_venir": False, "libelle": BK_ELEMENTS[n][0]}
+                         for n in BK_ELEMENTS_PERSO]
         retouches = {}
         if (BK_TACHES / "retouches_recette.json").exists():
             for k, v in json.loads((BK_TACHES / "retouches_recette.json").read_text(encoding="utf-8")).items():
                 retouches[k] = v if isinstance(v, str) else (v.get("action") or "")
         self.bk = {
-            "persos": persos, "noms": {p: noms.get(p, p.capitalize()) for p in persos}, "anims": attendues,
+            "persos": persos, "anims": attendues,
+            "noms": {**{p: noms.get(p, p.capitalize()) for p in persos}, **{k: self.sets[k]["nom"] for k in autres}},
+            # Character sets hors persos (fantôme, PNJ, animaux, boss), clé famille/id.
+            "autres": autres, "sets": self.sets, "libelles": self.libelles,
             "decor_a_venir": [],
             # Prompts des animations : consigne commune, action et expression par animation, description du perso.
             "prompts_anims": {
@@ -295,6 +373,161 @@ class Builder:
         for a in self.assets:
             for s in (a.get("decor") or {}).get("sources") or []:
                 self.tache(a["id"], tid=s.get("task"), quoi=f"image ({s.get('variante', '')})", date=s.get("date"))
+
+    @staticmethod
+    def _json(path: Path) -> dict:
+        try:
+            return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+        except ValueError:
+            return {}
+
+    def _sources_desc(self) -> tuple[dict, dict, dict]:
+        """style_party_hard.json, pnj.json et coups.json (lus une fois)."""
+        if not hasattr(self, "_desc"):
+            self._desc = (self._json(BK_STYLE), self._json(BK_PNJ), self._json(BK_COUPS))
+        return self._desc
+
+    def bk_element_desc(self, fam: str, sid: str, name: str, sets: list[dict]) -> dict:
+        """Libellé, ce qu'on doit voir, action (prompt), objet et clip d'un élément d'un character set.
+
+        Clip : celui de set.json (extras, optional, clips ; px32 puis HD) s'il y est, sinon celui des
+        données (style_party_hard.json pour idle_long et les casts, pnj.json pour les PNJ), sinon le
+        clip par défaut de BK_ELEMENTS (GDD §8.1, §4.5)."""
+        style, pnj, coups = self._sources_desc()
+        libelle, desc, clip = BK_ELEMENTS.get(name, (name.replace("_", " "), "", ""))
+        action, objet = "", ""
+        if fam == "fantome" and name == "profile":
+            desc = ("Fantôme commun à tous les persos (§8.1) : petit drap blanc aux grands yeux ronds et petit "
+                    "béret rouge ; le pseudo au-dessus dit à qui il est.")
+            clip = "dessiné une fois (pf_px__ghost)"
+        elif fam == "persos" and name == "idle_long":
+            s = (style.get("idle_long") or {}).get(sid) or {}
+            action, clip, objet = s.get("geste", ""), s.get("clip") or clip, s.get("objet") or ""
+        elif fam == "persos" and name in ("cast_chasse", "cast_chasseur"):
+            s = ((style.get("casts") or {}).get(sid) or {}).get(name) or {}
+            action, clip, objet = s.get("action", ""), s.get("clip") or clip, s.get("objet") or ""
+            coup = ((coups.get("persos") or {}).get(sid) or {}).get(name.split("_", 1)[1]) or {}
+            if coup.get("nom"):
+                role = "chassé" if name == "cast_chasse" else "chasseur"
+                desc = (f"Lancement de son coup spécial de {role}, « {coup['nom']} » (§4.6"
+                        + (f", famille {coup['famille']}" if coup.get("famille") else "") + ").")
+        elif fam == "pnj":
+            humain = (pnj.get("humains") or {}).get(sid) or {}
+            sh = pnj.get("set_humain") or {}
+            if name == "run":
+                libelle, desc, action = "fuite", "Course de fuite : il s'enfuit, paniqué.", sh.get("run_action", "")
+            for e in sh.get("extras_communs") or []:
+                if e.get("name") == name:
+                    action, clip = e.get("action", ""), e.get("motion") or clip
+            act = (pnj.get("activites") or {}).get(name)
+            if act:
+                libelle = f"activité : {name}"
+                desc = "Une de ses deux activités dans la foule (§8.4)."
+                action, clip = act.get("action", ""), act.get("clip") or clip
+                objet = act.get("objet") or (f"son objet ({humain.get('signature', '')})" if act.get("objet_du_pnj") else "")
+        elif fam == "animaux" and name not in BK_ELEMENTS:
+            act = ((pnj.get("animaux") or {}).get(sid) or {}).get("activite", "")
+            libelle, desc = f"activité : {name.replace('_', ' ')}", "Son activité (§8.4)" + (f" : {act}." if act else ".")
+        # Ce que pixelforge a réellement utilisé (set.json), prioritaire.
+        for s in sets:
+            for e in (s.get("extras") or []):
+                if isinstance(e, dict) and e.get("name") == name:
+                    clip = e.get("motion") or clip
+                    action = e.get("action") or action
+                    objet = e.get("object") or objet
+            opt = (s.get("optional") or {}).get(name)
+            if isinstance(opt, dict):
+                clip = opt.get("motion") or clip
+                action = opt.get("action") or action
+            if (s.get("clips") or {}).get(name):
+                clip = s["clips"][name]
+        return {"libelle": libelle, "description": desc, "action": action or "", "objet": objet or "",
+                "clip": clip or ""}
+
+    def bk_set(self, fam: str, sid: str, sdir: Path, nom: str) -> None:
+        """Character set pixelforge : un asset « animations » avec la liste ordonnée des éléments.
+
+        px32/ (versionné) : <élément>_sheet.png (une rangée de cases), animations.json (fps, loop,
+        count), set.json (canevas, feet_y, éléments, contrôles). hd/ (local, peut manquer) : idem
+        en HD ; ajouté à chaque élément (`hd`) s'il est là. Les cases ne sont pas recadrées : même
+        échelle pour toutes les animations du set."""
+        px, hd = sdir / "px32", sdir / "hd"
+        sp = self._json(px / "set.json")
+        sh = self._json(hd / "set.json") if (hd / "set.json").exists() else {}
+        ap, ah = self._json(px / "animations.json"), self._json(hd / "animations.json")
+        key = sid if fam == "persos" else f"{fam}/{sid}"
+        aid = f"blackout/{fam}/{sid}/animations"
+        noms_el = list((sp.get("elements") or {}).keys()) or list(ap.keys())
+        if fam == "persos":
+            noms_el = [n for n in BK_ELEMENTS_PERSO if n in noms_el] + [n for n in noms_el if n not in BK_ELEMENTS_PERSO]
+        elif "profile" in noms_el or "portrait" in noms_el:
+            noms_el = [n for n in ("profile", "portrait") if n in noms_el] + [n for n in noms_el if n not in ("profile", "portrait")]
+        anims: list[dict] = []
+        srcs = [p for p in (px / "set.json", px / "animations.json") if p.exists()]
+
+        def planche(d: Path, s: dict, a: dict, name: str, sub: str) -> dict | None:
+            png = d / f"{name}_sheet.png"
+            if not png.exists():
+                return None
+            meta = {**((s.get("elements") or {}).get(name) or {}), **(a.get(name) or {})}
+            canvas = meta.get("size") or s.get("canvas") or [64, 64]
+            cw, ch = int(canvas[0]), int(canvas[1])
+            img = Image.open(png).convert("RGBA")
+            ch = min(ch, img.height)
+            n = max(1, min(int(meta.get("count") or meta.get("frames") or img.width // cw), img.width // cw))
+            rel = f"blackout/{fam}/{sid}/{sub}/{name}.png"
+            if img.width == cw * n and img.height == ch:
+                self.copy(png, rel)
+            else:
+                self.save_png(img.crop((0, 0, cw * n, ch)), rel)
+            poster = self.save_png(img.crop(((n // 2) * cw, 0, (n // 2 + 1) * cw, ch)),
+                                   f"blackout/{fam}/{sid}/{sub}/_poster/{name}.png")
+            fps = float(meta.get("fps") or 8)
+            return {"frames": n, "fps": int(fps) if fps.is_integer() else fps, "loop": bool(meta.get("loop", False)),
+                    "w": cw, "h": ch, "file": rel, "poster": poster, "png": png,
+                    "feet": [cw // 2, int(s.get("feet_y") or ch)]}
+
+        for name in noms_el:
+            p = planche(px, sp, ap, name, "px32")
+            if p is None:
+                continue
+            srcs.append(p.pop("png"))
+            entry = {"name": name, **p, **self.bk_element_desc(fam, sid, name, [sp, sh])}
+            h = planche(hd, sh, ah, name, "hd") if sh else None
+            if h is not None:
+                h.pop("png")
+                entry["hd"] = {k: h[k] for k in ("frames", "fps", "loop", "w", "h", "file", "poster", "feet")}
+            anims.append(entry)
+            self.libelles.setdefault(name, entry["libelle"])
+        if not anims:
+            return
+
+        def controles(s: dict) -> dict:
+            c = s.get("controls") or {}
+            out = {k: v for k, v in c.items() if isinstance(v, (int, float, str, bool)) and not isinstance(v, dict)}
+            out["warnings"] = [str(w) for w in c.get("warnings") or []]
+            return out
+
+        style, pnj, _ = self._sources_desc()
+        fiche = ((style.get("persos") or {}).get(sid) if fam == "persos"
+                 else (pnj.get("humains") or {}).get(sid) if fam == "pnj"
+                 else (pnj.get("animaux") or {}).get(sid) if fam == "animaux" else None) or {}
+        placeholder = bool(sp.get("placeholder") or sh.get("placeholder"))
+        warnings = controles(sp)["warnings"] + ([f"HD : {w}" for w in controles(sh)["warnings"]] if sh else [])
+        info = {"famille": fam, "id": sid, "nom": nom, "asset": aid, "placeholder": placeholder,
+                "description": fiche.get("description", ""), "signature": fiche.get("signature", ""),
+                "type": fiche.get("type", ""), "hd": bool(sh), "taille": sp.get("size", ""),
+                "case": sp.get("canvas") or [anims[0]["w"], anims[0]["h"]], "feet_y": sp.get("feet_y"),
+                "controles": {"px32": controles(sp), **({"hd": controles(sh)} if sh else {})},
+                "warnings": warnings, "elements": [a["name"] for a in anims]}
+        self.sets[key] = info
+        prev = next((a for a in anims if a["name"] == "profile"), anims[0])
+        self.add(id=aid, cat=CAT_BK_PERSOS, group=key, kind="anim", name=f"{nom} · animations", type="sprite",
+                 smooth=False, version=short_hash(*srcs), w=prev["w"], h=prev["h"], file=prev["poster"],
+                 preview=prev["poster"], anims=anims, set=info,
+                 note=f"{len(anims)} éléments, cases de {prev['w']} px" + (" + HD" if sh else "")
+                      + (" · PLACEHOLDER" if placeholder else "")
+                      + (f" · ⚠ {len(warnings)} avertissement(s)" if warnings else ""))
 
     def bk_perso(self, pid: str, pdir: Path) -> None:
         anims: list[dict] = []
