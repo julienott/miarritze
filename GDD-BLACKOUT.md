@@ -744,9 +744,8 @@ vérifier, avant les 12 autres.
 en QA sur /producer, qui montre toutes ses animations et leur description. Julien commente élément par
 élément et **décide seul** quand un perso repart en file. Je ne renvoie alors **que ce qui doit changer** :
 - si seuls des extras sont à refaire (idle_long, lancements, activités), j'utilise le mode « extras seuls » sur la tâche d'origine (`base_task`) ;
-- si c'est un élément standard (etourdi, victoire…), je le refais seul : `base_task` + `extras: [{"name": "etourdi"}]`, et je change son clip seulement avec `clips`. Son action est fixée. Pour B : `base_task` de la réduction d'origine. *Réponse de pixelforge, 23/10.*
-- un élément fixe (run, jump_hide, lift, portrait) ne se refait pas seul aujourd'hui. Pixelforge propose un paramètre `redo` (avec `clips`, `actions`, `run_frames`, `seed`), qu'il estime à une demi-journée ; il attend l'accord de Julien. D'ici là, on renvoie tout le set ;
-- si c'est le profil, tout le set repart, puisque tout en découle.
+- run, jump_hide, lift, portrait, un standard ou un extra se refont seuls avec **`redo`** (*en ligne chez pixelforge le 23/10, commit f9b8803*). La requête reprend `base_task` (tâche A d'origine) et `redo: [éléments]`. Options : `clips`, `actions`, `run_frames`, `seed` (une autre graine pour une autre tentative). En B, `base_task` reprend la réduction d'origine. Seuls ces éléments sont livrés, avec la même palette, la même échelle et la même ligne des pieds. Outil : `tools/blackout/retouche.py`. Ses résultats sont intégrés par fusion dans le set, par `livraison.sh` ;
+- profile, idle et ghost ne se refont pas seuls : si le profil change, tout le set repart ;
 Le reste du set est gardé tel quel.
 
 - **Décor** : masques en suspens (§10.2).

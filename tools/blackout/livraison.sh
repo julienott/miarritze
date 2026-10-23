@@ -12,6 +12,7 @@ for f in "taches_persos_v3.json persos" "taches_fantome.json fantome" "taches_pn
   set -- $f
   TACHES_PERSOS=$1 DEST=$2 "$PY" integre_persos_v2.py | grep -v "en cours chez pixelforge"
 done
+"$PY" retouche.py --integre
 cd "$ROOT"
 if git status --porcelain assets/blackout | grep -q .; then
   godot --headless --path . --import >/dev/null 2>&1
