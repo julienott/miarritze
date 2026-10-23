@@ -2,19 +2,11 @@
  "_doc": "Bibliothèque des PNJ v1 (23/10), copie machine de GDD-BLACKOUT.md §8.4 (qui fait foi). prenom : nom pour s'y référer (Julien 23/10) ; type : special (personnage typé de la fête) ou generique (passant ordinaire, ~2 pour 1 spécial sur une carte). Règles de jeu : §3.8. Jobs : tools/blackout/pnj_jobs.py.",
  "set_humain": {
   "prompt_style": "pf_px__character_set",
-  "skip": [
-   "jump_hide",
-   "lift",
-   "ghost",
-   "interagir",
-   "victoire",
-   "defaite",
-   "etourdi",
-   "renverse",
-   "colle",
-   "ralenti",
-   "aveugle",
-   "tracte"
+  "elements": [
+   "profile",
+   "idle",
+   "run",
+   "portrait"
   ],
   "extras_communs": [
    {

@@ -431,7 +431,7 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 | `run` | course | Sprint_Loop, 9 i/s (2,25 foulées/s, corrigé par pixelforge le 23/10) |
 | `jump_hide` | saut vers la cachette (la sortie = à l'envers) | NinjaJump_Start + NinjaJump_Idle_Loop + NinjaJump_Land, 6 images ; la cloche du saut est dans la planche (pixelforge) (*Julien 23/10*) |
 | `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir (version root motion demandée) : rendu sur place, la montée (0 à 30 % de la hauteur) est ajoutée dans la planche par pixelforge (*Julien 23/10*) |
-| `ghost` | **fantôme générique, le même pour tous** (*Julien, 23/10*) : petit drap blanc aux grands yeux ronds et petit béret rouge, qui flotte et avance ; le pseudo au-dessus dit à qui il est | sprite commun (`assets/blackout/fantome/`) : style `pf_px__ghost` de pixelforge (drap dessiné une fois, mouvements par code : `float`, `advance`, `appear`) ; les sets des persos font `skip: ["ghost"]` |
+| `ghost` | **fantôme générique, le même pour tous** (*Julien, 23/10*) : petit drap blanc aux grands yeux ronds et petit béret rouge, qui flotte et avance ; le pseudo au-dessus dit à qui il est | sprite commun (`assets/blackout/fantome/`) : style `pf_px__ghost` de pixelforge (drap dessiné une fois, mouvements par code : `float`, `advance`, `appear`) ; les sets des persos ne demandent pas `ghost` (liste `elements`, 23/10) |
 | `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6), propres au perso | extras ; clip selon la famille du coup : OverhandThrow pour « lance », Spell_Simple_Enter + Spell_Simple_Exit pour les autres (*Julien 23/10*) |
 | `interagir` | fouiller une cachette, actionner un disjoncteur (1 s) | élément standard, Interact |
 | `victoire`, `defaite` | podium | éléments standard, Celebration et Crying (*Julien 23/10*) |
@@ -500,7 +500,7 @@ de loin, aucune personnalisation, rien de violent.
 
 **Character set d'un PNJ humain** (`pf_px__character_set`, case 64 en 32 px) : `profile`, `idle`, `portrait` (HD dans `hd/` et pixel dans `px32/`, *Julien, 23/10*), `run` (la
 fuite apeurée : clip Sprint_Loop et action « runs away in panic, arms up, mouth wide open », passés dans
-`clips`/`actions`), tout le reste sauté (`jump_hide`, `lift`, `ghost`, `standard`), et **6 extras**
+`clips`/`actions`), rien d'autre (liste `elements` : profile, idle, run, portrait ; pixelforge df70eab), et **6 extras**
 (10 au plus chez pixelforge, commit 08ddeb3) : `marcher` (Walk_Loop), `sursaut` (Surprise, « jumps back with surprise,
 eyes wide open »), `a_terre` (IdleToLay, « drops to the ground and lies flat, dizzy » : renversé par un boss qui
 fonce, gardé sur sa dernière image), `relever` (LayToIdle, « gets back up and dusts off their clothes ») et ses

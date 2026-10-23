@@ -32,7 +32,7 @@ def requete(pid: str, prio: str) -> dict:
         "prompt": p["description"] + "." if "clearly visible" in p["description"]
         else f"{p['description']}, with {p['signature']} clearly visible.",
         "clips": {"run": base["run"]["clip"]}, "actions": {"run": base["run"]["action"]},
-        "skip": base["skip"], "extras": extras,
+        "elements": base["elements"], "extras": extras,
         "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10}],
     }
 

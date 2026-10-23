@@ -21,6 +21,8 @@ SPEC = json.load(open(os.path.join(ROOT, "data", "blackout", "style_party_hard.j
 SORTIE = os.path.join(HERE, "taches_persos_v3.json")
 TAG = "miarritze/persos_v3"
 GRAINE = 7
+ELEMENTS = ["profile", "idle", "run", "jump_hide", "lift", "portrait", "interagir", "victoire", "defaite", "etourdi",
+            "renverse", "colle", "ralenti", "aveugle", "tracte"]
 
 
 def prompt(pid: str) -> str:
@@ -43,7 +45,8 @@ def requete(pid: str, prio: str) -> dict:
     return {
         "prompt_style": "pf_px__character_set", "prompt": prompt(pid), "colors": 20, "seed": GRAINE,
         "priority": prio, "tag": TAG,
-        "skip": ["ghost"],                       # fantôme commun (pf_px__ghost, GDD §8.1)
+        # Éléments voulus (liste blanche, pixelforge df70eab) ; pas de ghost : fantôme commun (pf_px__ghost, GDD §8.1).
+        "elements": ELEMENTS,
         "extras": [{"name": "idle_long", "motion": il["clip"], "action": il["geste"], "loop": True, "fps": 10,
                     "object": il.get("objet") or False}] + casts(pid),
         # B lit la ligne des pieds dans le set.json de A (60 en 32 px, case 64) : pas de feet_y.
