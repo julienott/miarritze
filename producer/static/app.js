@@ -353,17 +353,30 @@ function kindBlocks(items) {
 
 // ============================================================ BLACKOUT : PERSOS
 
+// Clé d'un character set : id du perso (« louis »), ou famille/id hors persos (« pnj/amona »,
+// « fantome/fantome », « boss/basajaun »). Id de son asset « animations ».
+function bkAssetId(pid) {
+  return pid.includes('/') ? `blackout/${pid}/animations` : `blackout/persos/${pid}/animations`;
+}
+
+/** Clé du set d'un asset « animations » ou « masques » de Blackout, sinon null. */
+function bkKeyOf(assetId) {
+  const m = /^blackout\/([^/]+)\/([^/]+)\/(animations|masques)$/.exec(assetId || '');
+  if (!m) return null;
+  return m[1] === 'persos' ? m[2] : `${m[1]}/${m[2]}`;
+}
+
 // Animations d'un perso (asset « animations ») et masques de tenue.
 function bkAnims(pid) {
-  const a = state.assetsById.get(`blackout/persos/${pid}/animations`);
+  const a = state.assetsById.get(bkAssetId(pid));
   return a ? a.anims : [];
 }
 
 // Liste ordonnée des animations du perso : attendues (présentes ou manquantes),
-// puis celles qui existent sans être attendues.
+// puis celles qui existent sans être attendues. Hors persos : les éléments présents.
 function bkSlots(pid) {
   const have = new Map(bkAnims(pid).map((x) => [x.name, x]));
-  const exp = state.index.blackout.anims;
+  const exp = pid.includes('/') ? [] : state.index.blackout.anims;
   const slots = exp.map((e) => ({ ...e, anim: have.get(e.name) || null }));
   for (const [n, x] of have) if (!exp.some((e) => e.name === n)) slots.push({ name: n, loop: x.loop, a_venir: false, anim: x });
   return slots;
@@ -400,7 +413,8 @@ const FS_BGS = [['light', 'Clair'], ['dark', 'Sombre'], ['checker', 'Damier']];
 
 function openPlayer(pid, name) {
   closePlayer(false);
-  const persos = state.index.blackout.persos.filter((p) => bkAnims(p).length);
+  const g = state.index.blackout;
+  const persos = [...g.persos, ...(g.autres || [])].filter((p) => bkAnims(p).length);
   const fs = { pid, anims: [], anim: null, img: null, mask: null, frame: 0, playing: true, timer: 0,
     showMask: false, showFeet: false, bg: store('producer-fs-bg') || state.stageBg || 'checker' };
   state.fs = fs;
@@ -505,7 +519,9 @@ function openPlayer(pid, name) {
     fs.anim = a; fs.frame = 0; fs.img = null; fs.mask = null; fs.layout = null;
     clearTimeout(fs.timer);
     canvas.width = a.w; canvas.height = a.h;
-    title.textContent = `${p} · ${a.name}`;
+    // Pixel art 32 px (cases de 64 à 128) : agrandi net ; l'ancienne HD reste lissée.
+    canvas.classList.toggle('px', a.w <= 128);
+    title.textContent = `${persoName(p)} · ${a.libelle ? `${a.libelle} (${a.name})` : a.name}`;
     maskBtn.disabled = !m;
     feetBtn.disabled = !a.feet;
     info.textContent = 'chargement…';
@@ -968,7 +984,8 @@ function showDetail(a, opts = {}) {
       p.frame = (p.frame + dir + p.anim.frames) % p.anim.frames; draw();
     };
     // Persos de Blackout : lecteur plein écran (animations et masques ont les mêmes noms).
-    const bk = /^blackout\/persos\/([^/]+)\//.exec(a.id);
+    const bkKey = bkKeyOf(a.id);
+    const bk = bkKey ? [a.id, bkKey] : null;
     controls.append(animSel, playBtn,
       el('button', { type: 'button', class: 'small', onclick: () => step(-1), 'aria-label': 'Frame précédente' }, '◀'),
       el('button', { type: 'button', class: 'small', onclick: () => step(1), 'aria-label': 'Frame suivante' }, '▶'),
@@ -1086,7 +1103,7 @@ function showDetail(a, opts = {}) {
   ].filter(Boolean));
 }
 
-function commentForm(a, context, after, cardId) {
+function commentForm(a, context, after, cardId, detail) {
   let kind = 'amelioration';
   const text = el('textarea', { rows: 3, maxlength: 8000, placeholder: 'Ce qu\'il faudrait changer, ou pourquoi c\'est bon…', 'aria-label': 'Commentaire' });
   const kinds = ['amelioration', 'valide'].map((k) => el('button', {
@@ -1102,7 +1119,7 @@ function commentForm(a, context, after, cardId) {
     const ok = await guarded(async () => {
       if (cardId) {
         // Depuis une carte : le commentaire d'asset est aussi reporté sur cette carte.
-        await api('asset_comment', { method: 'POST', body: { asset: a.id, kind, body: text.value, context: context(), card: cardId } });
+        await api('asset_comment', { method: 'POST', body: { asset: a.id, detail: detail || '', kind, body: text.value, context: context(), card: cardId } });
         await Promise.all([reloadComments(), reloadCards()]);
       } else {
         await api('comment', { method: 'POST', body: { asset: a.id, kind, body: text.value, context: context() } });
@@ -2137,12 +2154,19 @@ function fillDetailOptions() {
 /** Vue de l'asset lié, puis le formulaire de commentaire d'asset et ses commentaires. */
 function renderCardAsset() {
   const box = $('cf-asset-view');
-  const a = state.assetsById.get($('cf-asset').value.trim());
+  const type = $('cf-type').value;
+  // Carte « Perso » sans asset : le set est retrouvé par le nom du perso dans le titre.
+  const a = state.assetsById.get($('cf-asset').value.trim()) || (type === 'perso' ? setFromTitle($('cf-title').value) : null);
+  $('card-dialog').classList.remove('wide');
   if (!a) { box.replaceChildren(); box.hidden = true; return; }
   box.hidden = false;
   const detail = $('cf-detail').value.trim();
+  // Carte chapeau d'un perso (type Perso, ou asset « animations » sans détail) : toutes les
+  // animations du set, décrites et commentables une par une (recette.js).
+  if (a.set && (type === 'perso' || !detail)) { renderSetGallery(box, a); return; }
   const anim = cardAnim(a, detail);
-  const bk = /^blackout\/persos\/([^/]+)\/(animations|masques)$/.exec(a.id);
+  const bkKey = bkKeyOf(a.id);
+  const bk = bkKey ? [a.id, bkKey] : null;
   const openAsset = () => { $('card-dialog').close(); location.hash = '#/assets/' + encodeURIComponent(a.id); };
   let view;
   if (anim) {

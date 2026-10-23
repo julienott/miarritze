@@ -94,14 +94,15 @@ function catalogueItems() {
     }
   }
   // Animations : une entrée par animation attendue (présente ou manquante) de chaque perso.
-  for (const pid of g.persos || []) {
-    const aid = `blackout/persos/${pid}/animations`;
+  // Persos, puis fantôme commun, PNJ, animaux et boss (clé famille/id) ; « placeholder » : set provisoire.
+  for (const pid of [...(g.persos || []), ...(g.autres || [])]) {
+    const aid = bkAssetId(pid);
     const a = state.assetsById.get(aid) || null;
     for (const s of bkSlots(pid)) {
       items.push({
         key: aid + '#' + s.name, route: [aid, s.name], type: 'anim', asset: a, assetId: aid, detail: s.name, anim: s.anim,
-        perso: pid, name: `${persoName(pid)} · ${animLabel(s.name)}`, sub: s.name, missing: !s.anim, aVenir: s.a_venir,
-        glisse: s.anim ? glisseOf(s.anim, true) : 0, cartes: [], zones: [],
+        perso: pid, name: `${persoName(pid)} · ${(s.anim && s.anim.libelle) || animLabel(s.name)}`, sub: s.name, missing: !s.anim, aVenir: s.a_venir,
+        glisse: s.anim ? glisseOf(s.anim, true) : 0, cartes: [], zones: [], placeholder: !!(a && a.set && a.set.placeholder),
       });
     }
   }
@@ -271,7 +272,7 @@ function groupItems(shown) {
   const order = {
     type: (gr) => CAT_TYPES.findIndex(([k]) => k === gr.key),
     carte: (gr) => (gr.map ? (g.cartes || []).findIndex((c) => c.id === gr.map) : 99),
-    perso: (gr) => (gr.perso ? (g.persos || []).indexOf(gr.perso) : 999),
+    perso: (gr) => (gr.perso ? [...(g.persos || []), ...(g.autres || [])].indexOf(gr.perso) : 999),
     statut: (gr) => STATUS_RANK[gr.status],
   }[cat.group];
   if (order) list.sort((a, b) => order(a) - order(b));
@@ -378,6 +379,7 @@ function catTile(it, info) {
         it.missing ? el('span', { class: 'badge warn', text: it.aVenir ? 'à venir' : 'à faire' }) : null,
         it.sansMasque ? el('span', { class: 'badge src-aucun', text: 'sans masque' }) : null,
         it.provisoire ? el('span', { class: 'badge', text: 'provisoire' }) : null,
+        it.placeholder ? el('span', { class: 'badge placeholder', text: 'placeholder' }) : null,
         it.glisse >= 6 ? el('span', { class: 'badge warn', title: `glisse de ${it.glisse} px dans la planche`, text: '⚠ glisse' }) : null,
         n ? el('span', { class: 'badge amelioration', text: `💬 ${n}` }) : null,
         it.cartes.length > 1 ? el('span', { class: 'badge', title: it.cartes.map(mapName).join(', '), text: `${it.cartes.length} cartes` }) : null)));
@@ -403,7 +405,7 @@ function showFiche(id, detail) {
     showDetail(a, {
       detail, side, pill, contextRef: ref,
       title: it ? it.name : a.name,
-      onAnim: a.id.startsWith('blackout/persos/') && a.kind === 'anim'
+      onAnim: bkKeyOf(a.id) && a.kind === 'anim'
         ? (name) => { location.hash = '#/assets/' + encodeURIComponent(a.id) + '/' + encodeURIComponent(name); } : null,
     });
     window.scrollTo(0, 0);
