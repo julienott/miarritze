@@ -18,13 +18,13 @@
    {
     "name": "sursaut",
     "motion": "Surprise",
-    "action": "jumps back with surprise, eyes wide open",
+    "action": "jumps back, hands raised in front of the chest",
     "loop": false
    },
    {
     "name": "a_terre",
     "motion": "IdleToLay",
-    "action": "drops to the ground and lies flat, dizzy",
+    "action": "drops to the ground and lies flat",
     "loop": false
    },
    {
@@ -36,7 +36,7 @@
   ],
   "run": {
    "clip": "Sprint_Loop",
-   "action": "runs away in panic, arms up, mouth wide open"
+   "action": "runs away fast, arms up"
   },
   "expressions": {
    "_doc": "Expression par élément (GDD §8.5) ; « base » = celle du PNJ (champ expression).",
@@ -192,7 +192,7 @@
   "sardine": {
    "prenom": "Xardin",
    "type": "special",
-   "description": "a festival mascot person in a white outfit wearing a huge smiling silver sardine head, clearly visible",
+   "description": "a festival mascot person in a white outfit wearing a huge silver sardine head, clearly visible",
    "signature": "a huge smiling fish head",
    "activites": [
     "danser",
@@ -348,7 +348,7 @@
   "policier": {
    "prenom": "Ellande",
    "type": "special",
-   "description": "a friendly man municipal police officer in a dark blue uniform, a dark blue cap clearly visible",
+   "description": "a man municipal police officer in a dark blue uniform, a dark blue cap clearly visible",
    "signature": "a dark blue cap",
    "activites": [
     "parler",

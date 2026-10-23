@@ -205,17 +205,17 @@
   "kaio": {
    "corps": "creature",
    "signature": "a big yellow beak and orange webbed feet",
-   "description": "a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot and orange webbed feet clearly visible"
+   "description": "an upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot and orange webbed feet clearly visible"
   },
   "karramarro": {
    "corps": "creature",
    "signature": "two big raised orange pincers and eyes on stalks",
-   "description": "a cheerful orange cartoon crab standing upright on two short thin crab legs, two big raised pincers as arms, eyes on stalks, a yellow belly and a big happy open mouth, the two big orange pincers clearly visible"
+   "description": "an orange cartoon crab standing upright on two short thin crab legs, two big raised pincers as arms, eyes on stalks and a yellow belly, the two big orange pincers clearly visible"
   },
   "ramuntxo": {
    "corps": "costaud",
    "signature": "a tall white chef hat",
-   "description": "a jolly Basque chef with a small brown mustache, a white chef jacket, a red neck scarf, plain red trousers and black shoes, a tall white chef hat clearly visible"
+   "description": "a Basque chef man with a small brown mustache, a white chef jacket, a red neck scarf, plain red trousers and black shoes, a tall white chef hat clearly visible"
   },
   "itsaso": {
    "corps": "enfant",
@@ -717,7 +717,7 @@
  "idle_long": {
   "_doc": "Pose d'inactivité par perso (GDD §8.2) : geste (texte) + clip Quaternius (UAL1 ou UAL2, installée chez pixelforge le 22/10). objet = accessoire de l'extra nommé pour pixelforge (champ object, ajouté au perso avant l'animation).",
   "louis": {
-   "geste": "folds his arms and taps his foot, glancing around",
+   "geste": "folds his arms and taps his foot, looking around",
    "clip": "Idle_FoldArms_Loop",
    "repli": null
   },
@@ -734,7 +734,7 @@
    "objet": "a fishing rod"
   },
   "maia": {
-   "geste": "chats cheerfully with big hand gestures",
+   "geste": "chats with big hand gestures",
    "clip": "Idle_Talking_Loop",
    "repli": null
   },
@@ -756,7 +756,7 @@
    "repli": null
   },
   "kaio": {
-   "geste": "screams with his beak wide open",
+   "geste": "stretches his neck up and calls out loud",
    "clip": "Idle_Rail_Call",
    "repli": null
   },
@@ -883,7 +883,7 @@
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "raises his wings, then sweeps them forward with a loud scream, beak wide open",
+    "action": "raises his wings, then sweeps them forward with a loud call",
     "objet": false
    }
   },
@@ -992,7 +992,8 @@
     "cast_chasseur": "crie"
    },
    "kaio": {
-    "cast_chasseur": "crie"
+    "cast_chasseur": "crie",
+    "idle_long": "crie"
    },
    "peio": {
     "cast_chasseur": "crie"
