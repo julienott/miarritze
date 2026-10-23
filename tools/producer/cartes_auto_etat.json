@@ -1,4 +1,94 @@
 {
+ "blackout/boss/basajaun/animations": {
+  "carte": 676,
+  "empreintes": {
+   "compare": "4f0c44671ed8",
+   "cri": "e63a36e11cd4",
+   "etourdi": "5835e13b5d7b",
+   "idle": "ba06ddd9dcde",
+   "portrait": "283c9a392c42",
+   "pouvoir_1": "e5cffbb2888c",
+   "pouvoir_2": "e782adac852e",
+   "profile": "b4d4d86c2137",
+   "run": "f06ad9be27ca"
+  }
+ },
+ "blackout/boss/herensuge/animations": {
+  "carte": 677,
+  "empreintes": {
+   "advance": "4b8ecd938ba3",
+   "compare": "f50d425020fe",
+   "cri": "aeafbc21d355",
+   "etourdi": "bcf66e56325a",
+   "idle": "deb6c244310d",
+   "pouvoir_1": "6d1853aff494",
+   "pouvoir_2": "7ffd33d6d92d",
+   "profile": "ce9ef33a6a4a"
+  }
+ },
+ "blackout/boss/intxixu_1/animations": {
+  "carte": 678,
+  "empreintes": {
+   "compare": "8057eef047e6",
+   "cri": "3f7eb0708578",
+   "etourdi": "17f962265ecf",
+   "idle": "04d0e0c00f9d",
+   "pouvoir_1": "b8a2d662acbe",
+   "pouvoir_2": "ad0f3388e2c3",
+   "profile": "1ef44cb1a74b",
+   "run": "1df1a7abfd31"
+  }
+ },
+ "blackout/boss/intxixu_2/animations": {
+  "carte": 679,
+  "empreintes": {
+   "compare": "fe586052cc11",
+   "cri": "1aded02ee793",
+   "etourdi": "820a177f8461",
+   "idle": "e899ca1a625b",
+   "pouvoir_1": "d428e4c8d77c",
+   "pouvoir_2": "77b30bde80bf",
+   "profile": "88c5a8ea9a14",
+   "run": "b21a3afae2ac"
+  }
+ },
+ "blackout/boss/intxixu_3/animations": {
+  "carte": 680,
+  "empreintes": {
+   "compare": "8771e8ab0f13",
+   "cri": "3935154099d9",
+   "etourdi": "1b9ecdd0dda6",
+   "idle": "e0d59c7cc4fb",
+   "pouvoir_1": "aae831c1972a",
+   "pouvoir_2": "f23a77e15f85",
+   "profile": "bc560df3a6b0",
+   "run": "54b0e3a772d4"
+  }
+ },
+ "blackout/boss/tartalo/animations": {
+  "carte": 681,
+  "empreintes": {
+   "compare": "147e58ec51a5",
+   "cri": "1233b36f68be",
+   "etourdi": "b5ffb76d1ae6",
+   "idle": "f8ec4133d844",
+   "portrait": "809936f3c116",
+   "pouvoir_1": "6ae3d9db11d0",
+   "pouvoir_2": "7bbeb0cd83a5",
+   "profile": "ee894445ef90",
+   "run": "2cce0dfae248"
+  }
+ },
+ "blackout/boss/zezengorri/animations": {
+  "carte": 682,
+  "empreintes": {
+   "compare": "8e4474768da3",
+   "idle": "b98460fcb61d",
+   "profile": "58a4c8678ce0",
+   "run": "b4d26ab5d6ee",
+   "walk": "4c178ec7c412"
+  }
+ },
  "blackout/fantome/fantome/animations": {
   "carte": 662,
   "empreintes": {
@@ -425,6 +515,19 @@
    "sursaut": "01f9d31feb8e"
   }
  },
+ "blackout/pnj/supporter/animations": {
+  "carte": 674,
+  "empreintes": {
+   "boire": "c00043695006",
+   "compare": "3693f8c5467f",
+   "idle": "95c750de3a39",
+   "marcher": "5665caa4040e",
+   "parler": "d52eb8530503",
+   "profile": "7cbcd56059f5",
+   "run": "7f06309f0aa7",
+   "sursaut": "b6ec9242c91b"
+  }
+ },
  "blackout/pnj/surfeuse/animations": {
   "carte": 670,
   "empreintes": {
@@ -436,6 +539,19 @@
    "run": "3323b366649d",
    "sursaut": "1ef35183760a",
    "telephone": "be6f38c4b2e7"
+  }
+ },
+ "blackout/pnj/touriste/animations": {
+  "carte": 675,
+  "empreintes": {
+   "attendre": "044e419df9cd",
+   "compare": "6e0ca3e1d759",
+   "idle": "8a8d65250c25",
+   "marcher": "8bdabbadf519",
+   "profile": "fe994cd8f013",
+   "run": "e5d97622a427",
+   "sursaut": "610c925bb84c",
+   "telephone": "a201bae2eb00"
   }
  },
  "blackout/pnj/trompettiste/animations": {
