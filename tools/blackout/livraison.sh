@@ -25,6 +25,8 @@ if git status --porcelain assets/blackout | grep -q .; then
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01LXFHAN75rdxEcdsy5wKHqu" -- assets/blackout && git push -q
   tools/producer/publie.sh 2>&1 | grep -v "Updating files" | tail -30
+  # Le jeu aussi, à la racine du site : tout élément livré est jouable, même en QA (Julien 23/10).
+  gh workflow run deploy.yml --ref main && echo "jeu : déploiement lancé (deploy.yml)"
 else
   echo "Rien de nouveau chez pixelforge."
 fi
