@@ -5,8 +5,8 @@
   pnj_jobs.py --depose [festayre …] [--prio normal|high|night]
   pnj_jobs.py --montre --type generique|special  (filtre par type)
 
-Un PNJ = character set (profil, idle, fuite) + 4 extras : marcher, sursaut et ses 2 activités ; le reste
-est sauté. Les animaux attendent la méthode de pixelforge pour les corps non humains.
+Un PNJ = character set (profil, idle, fuite apeurée en run) + 6 extras : marcher, sursaut, a_terre, relever et
+ses 2 activités ; le reste est sauté. Les animaux attendent la méthode de pixelforge pour les corps non humains.
 Ne rien déposer sans l'accord de Julien (GDD §14). Ids écrits dans tools/blackout/taches_pnj.json.
 """
 import json
@@ -30,6 +30,7 @@ def requete(pid: str, prio: str) -> dict:
     return {
         "prompt_style": base["prompt_style"], "seed": 7, "colors": 20, "priority": prio, "tag": f"miarritze/pnj_v1_{p['type']}",
         "prompt": f"{p['description']}. Signature detail drawn large and bright: {p['signature']}.",
+        "clips": {"run": base["run"]["clip"]}, "actions": {"run": base["run"]["action"]},
         "skip": base["skip"], "extras": extras,
         "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10}],
     }

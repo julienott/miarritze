@@ -1,5 +1,5 @@
 {
- "_doc": "Bibliothèque des PNJ v1 (23/10), copie machine de GDD-BLACKOUT.md §8.4 (qui fait foi). type : special (personnage typé de la fête) ou generique (passant ordinaire, ~2 pour 1 spécial sur une carte). Règles de jeu : §3.8. Jobs : tools/blackout/pnj_jobs.py.",
+ "_doc": "Bibliothèque des PNJ v1 (23/10), copie machine de GDD-BLACKOUT.md §8.4 (qui fait foi). prenom : nom pour s'y référer (Julien 23/10) ; type : special (personnage typé de la fête) ou generique (passant ordinaire, ~2 pour 1 spécial sur une carte). Règles de jeu : §3.8. Jobs : tools/blackout/pnj_jobs.py.",
  "set_humain": {
   "prompt_style": "pf_px__character_set",
   "skip": [
@@ -17,7 +17,6 @@
    "aveugle",
    "tracte"
   ],
-  "run_action": "runs away in panic, arms up",
   "extras_communs": [
    {
     "name": "marcher",
@@ -27,11 +26,27 @@
    },
    {
     "name": "sursaut",
-    "motion": "Hit_Chest",
-    "action": "jumps back startled",
+    "motion": "Surprise",
+    "action": "jumps with surprise, eyes wide open",
+    "loop": false
+   },
+   {
+    "name": "a_terre",
+    "motion": "IdleToLay",
+    "action": "drops to the ground and lies flat, dizzy",
+    "loop": false
+   },
+   {
+    "name": "relever",
+    "motion": "LayToIdle",
+    "action": "gets back up and dusts off",
     "loop": false
    }
-  ]
+  ],
+  "run": {
+   "clip": "Sprint_Loop",
+   "action": "runs away in panic, arms up, mouth wide open"
+  }
  },
  "activites": {
   "parler": {
@@ -97,6 +112,7 @@
  },
  "humains": {
   "festayre": {
+   "prenom": "Beñat",
    "type": "special",
    "description": "a festival-goer dressed all in white with a red sash and a red neckerchief",
    "signature": "a red neckerchief on an all-white outfit",
@@ -106,6 +122,7 @@
    ]
   },
   "txistulari": {
+   "prenom": "Joxe",
    "type": "special",
    "description": "a txistu flute player in white with a red beret",
    "signature": "a long thin flute and a red beret",
@@ -115,6 +132,7 @@
    ]
   },
   "amona": {
+   "prenom": "Maddalen",
    "type": "special",
    "description": "a little grandmother in a black dress with a red fan and a grey bun",
    "signature": "a red fan",
@@ -124,6 +142,7 @@
    ]
   },
   "marin": {
+   "prenom": "Manex",
    "type": "special",
    "description": "a fisherman in a striped blue and white sailor shirt and yellow boots",
    "signature": "blue and white stripes",
@@ -133,6 +152,7 @@
    ]
   },
   "surfeuse": {
+   "prenom": "Nahia",
    "type": "special",
    "description": "a surfer girl with bleached hair in a black wetsuit carrying a longboard",
    "signature": "a long white surfboard",
@@ -142,6 +162,7 @@
    ]
   },
   "serveur": {
+   "prenom": "Jon",
    "type": "special",
    "description": "a waiter in a white shirt and black apron with a tray of cider glasses",
    "signature": "a round tray of glasses",
@@ -151,6 +172,7 @@
    ]
   },
   "sardine": {
+   "prenom": "Xardin",
    "type": "special",
    "description": "a giant-head festival mascot of a smiling silver sardine",
    "signature": "a huge smiling fish head",
@@ -160,6 +182,7 @@
    ]
   },
   "errege": {
+   "prenom": "Antton",
    "type": "special",
    "description": "a giant-head festival mascot of a Basque king with a golden crown",
    "signature": "a huge crowned head",
@@ -169,6 +192,7 @@
    ]
   },
   "ballon": {
+   "prenom": "Ane",
    "type": "special",
    "description": "a little kid in a yellow raincoat holding a red balloon",
    "signature": "a red balloon on a string",
@@ -178,6 +202,7 @@
    ]
   },
   "trompettiste": {
+   "prenom": "Iñaki",
    "type": "special",
    "description": "a bandas trumpet player in white and red",
    "signature": "a shiny golden trumpet",
@@ -187,6 +212,7 @@
    ]
   },
   "glacier": {
+   "prenom": "Gorka",
    "type": "special",
    "description": "an ice cream seller with a pink and white striped apron and cap",
    "signature": "a striped apron",
@@ -196,6 +222,7 @@
    ]
   },
   "supporter": {
+   "prenom": "Battitte",
    "type": "special",
    "description": "a rugby fan with a red and white scarf and a painted face",
    "signature": "a red and white scarf",
@@ -205,6 +232,7 @@
    ]
   },
   "touriste": {
+   "prenom": "Gérard",
    "type": "special",
    "description": "a tourist in a flowery Hawaiian shirt and shorts with a camera",
    "signature": "a flowery shirt and a camera",
@@ -214,6 +242,7 @@
    ]
   },
   "jogger": {
+   "prenom": "Unai",
    "type": "special",
    "description": "a jogger in a bright green tracksuit with headphones",
    "signature": "a bright green tracksuit",
@@ -223,6 +252,7 @@
    ]
   },
   "ado": {
+   "prenom": "Eneko",
    "type": "special",
    "description": "a teenager in a purple hoodie with big headphones",
    "signature": "big headphones on a purple hoodie",
@@ -232,6 +262,7 @@
    ]
   },
   "lecteur": {
+   "prenom": "Pantxoa",
    "type": "special",
    "description": "an old man in a beige coat and a black beret",
    "signature": "a black beret and a newspaper",
@@ -241,6 +272,7 @@
    ]
   },
   "promeneuse": {
+   "prenom": "Kattalin",
    "type": "special",
    "description": "a woman in a long yellow coat walking her dog",
    "signature": "a long yellow coat",
@@ -250,6 +282,7 @@
    ]
   },
   "cycliste": {
+   "prenom": "Ander",
    "type": "special",
    "description": "a cyclist in a blue jersey standing beside a red bicycle, both hands on the handlebar",
    "signature": "a red bicycle",
@@ -259,6 +292,7 @@
    ]
   },
   "musicienne": {
+   "prenom": "Ainhoa",
    "type": "special",
    "description": "a street guitarist in a denim jacket with a guitar",
    "signature": "a wooden guitar",
@@ -268,6 +302,7 @@
    ]
   },
   "amoureux": {
+   "prenom": "Mikel",
    "type": "special",
    "description": "a young man in a white shirt holding a single red rose",
    "signature": "a red rose",
@@ -277,6 +312,7 @@
    ]
   },
   "policier": {
+   "prenom": "Ellande",
    "type": "special",
    "description": "a friendly municipal police officer in a dark blue uniform and cap",
    "signature": "a dark blue cap",
@@ -286,6 +322,7 @@
    ]
   },
   "pecheuse": {
+   "prenom": "Maite",
    "type": "special",
    "description": "a fisherwoman in a yellow oilskin and green boots with a bucket",
    "signature": "a yellow oilskin",
@@ -295,6 +332,7 @@
    ]
   },
   "passant_jean": {
+   "prenom": "Thomas",
    "type": "generique",
    "description": "a man in his thirties in a plain blue t-shirt and jeans",
    "signature": "a plain blue t-shirt",
@@ -304,6 +342,7 @@
    ]
   },
   "passante_robe": {
+   "prenom": "Léa",
    "type": "generique",
    "description": "a young woman in a simple green summer dress",
    "signature": "a green dress",
@@ -313,6 +352,7 @@
    ]
   },
   "papy_gilet": {
+   "prenom": "Fermin",
    "type": "generique",
    "description": "an old man in a brown cardigan and grey trousers",
    "signature": "a brown cardigan",
@@ -322,6 +362,7 @@
    ]
   },
   "mamie_cabas": {
+   "prenom": "Mayi",
    "type": "generique",
    "description": "an old woman in a lilac coat carrying a shopping bag",
    "signature": "a lilac coat",
@@ -331,6 +372,7 @@
    ]
   },
   "femme_tailleur": {
+   "prenom": "Sophie",
    "type": "generique",
    "description": "a woman in a navy blazer and white trousers",
    "signature": "a navy blazer",
@@ -340,6 +382,7 @@
    ]
   },
   "homme_costume": {
+   "prenom": "Bernard",
    "type": "generique",
    "description": "a man in a grey suit and tie",
    "signature": "a grey suit",
@@ -349,6 +392,7 @@
    ]
   },
   "etudiante": {
+   "prenom": "Leire",
    "type": "generique",
    "description": "a student girl with a backpack and a yellow sweater",
    "signature": "a yellow sweater",
@@ -358,6 +402,7 @@
    ]
   },
   "etudiant": {
+   "prenom": "Hugo",
    "type": "generique",
    "description": "a student boy with a backpack and a red sweatshirt",
    "signature": "a red sweatshirt",
@@ -367,6 +412,7 @@
    ]
   },
   "maman": {
+   "prenom": "Garazi",
    "type": "generique",
    "description": "a mother in a white top and blue jeans",
    "signature": "a white top",
@@ -376,6 +422,7 @@
    ]
   },
   "papa": {
+   "prenom": "Didier",
    "type": "generique",
    "description": "a father in a checked flannel shirt and khaki trousers",
    "signature": "a checked shirt",
@@ -385,6 +432,7 @@
    ]
   },
   "enfant_fille": {
+   "prenom": "Uxue",
    "type": "generique",
    "description": "a little girl in a pink t-shirt and shorts",
    "signature": "a pink t-shirt",
@@ -394,6 +442,7 @@
    ]
   },
   "enfant_garcon": {
+   "prenom": "Oihan",
    "type": "generique",
    "description": "a little boy in an orange t-shirt and blue shorts",
    "signature": "an orange t-shirt",
@@ -403,6 +452,7 @@
    ]
   },
   "femme_pull": {
+   "prenom": "Irati",
    "type": "generique",
    "description": "a woman in a teal knitted sweater and black trousers",
    "signature": "a teal sweater",
@@ -412,6 +462,7 @@
    ]
   },
   "homme_polo": {
+   "prenom": "Stéphane",
    "type": "generique",
    "description": "a man in a white polo shirt and beige shorts",
    "signature": "a white polo shirt",
@@ -421,6 +472,7 @@
    ]
   },
   "jeune_casquette": {
+   "prenom": "Bixente",
    "type": "generique",
    "description": "a young man in a black cap and grey hoodie",
    "signature": "a black cap",
@@ -430,6 +482,7 @@
    ]
   },
   "femme_imper": {
+   "prenom": "Isabelle",
    "type": "generique",
    "description": "a woman in a beige trench coat",
    "signature": "a beige trench coat",
@@ -439,6 +492,7 @@
    ]
   },
   "homme_doudoune": {
+   "prenom": "Iker",
    "type": "generique",
    "description": "a man in a dark green puffer jacket",
    "signature": "a dark green jacket",
@@ -448,6 +502,7 @@
    ]
   },
   "femme_short": {
+   "prenom": "Chloé",
    "type": "generique",
    "description": "a woman in a striped t-shirt and denim shorts",
    "signature": "a striped t-shirt",
@@ -457,6 +512,7 @@
    ]
   },
   "homme_chemise": {
+   "prenom": "Ximun",
    "type": "generique",
    "description": "a man in a light blue shirt with rolled sleeves",
    "signature": "a light blue shirt",
@@ -466,6 +522,7 @@
    ]
   },
   "ado_skate": {
+   "prenom": "Lucas",
    "type": "generique",
    "description": "a teenager in a white t-shirt carrying a skateboard",
    "signature": "a skateboard",

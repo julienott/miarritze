@@ -27,6 +27,8 @@ FAMILLES = {"persos": "Perso", "fantome": "Fantôme", "pnj": "PNJ", "animaux": "
 JALONS = {"persos": 2, "fantome": 2, "boss": 3}          # Persos v2, Boss (roadmap)
 NOMS = {"maia": "Maïa", "fantome": "commun", "intxixu_1": "Intxixu 1", "intxixu_2": "Intxixu 2",
         "intxixu_3": "Intxixu 3"}
+PRENOMS = {k: v.get("prenom", "") for k, v in
+           json.loads((ROOT / "data" / "blackout" / "pnj.json").read_text())["humains"].items()}
 
 
 def empreintes(px32: Path) -> dict:
@@ -52,6 +54,8 @@ def main() -> None:
             cartes = [c for c in cli.call("cards", query={"asset": asset})["cards"] if c["type"] == "perso"]
             if not cartes:
                 titre = f"{libelle} : {NOMS.get(pid, pid.replace('_', ' ').title())}"
+                if fam == "pnj" and PRENOMS.get(pid):
+                    titre = f"{libelle} : {PRENOMS[pid]} ({pid.replace('_', ' ')})"
                 print("nouvelle carte :", titre)
                 if not essai:
                     body = {"type": "perso", "title": titre, "asset": asset, "status": "qa",

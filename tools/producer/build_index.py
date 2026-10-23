@@ -139,7 +139,9 @@ BK_ELEMENTS = {
     "appear": ("apparition", "Le fantôme apparaît, au moment où le perso devient fantôme.", "code (pf_px__ghost)"),
     # PNJ (§8.4) : la course est la fuite ; marcher et sursaut sont communs à tous.
     "marcher": ("marcher", "Marche calme, son déplacement normal dans la foule.", "Walk_Loop"),
-    "sursaut": ("sursaut", "Il sursaute en arrière, surpris.", "Hit_Chest"),
+    "sursaut": ("sursaut", "Il sursaute, surpris, puis s'enfuit (fuite).", "Surprise"),
+    "a_terre": ("à terre", "Renversé (par un boss qui fonce) : il tombe et reste allongé.", "IdleToLay"),
+    "relever": ("se relever", "Il se relève quand le danger est passé.", "LayToIdle"),
     "fuir": ("fuir", "Il s'enfuit.", ""),
     # Boss (§8.3, §5.2).
     "cri": ("cri", "Il repère un joueur et pousse un cri.", ""),
@@ -415,7 +417,8 @@ class Builder:
             humain = (pnj.get("humains") or {}).get(sid) or {}
             sh = pnj.get("set_humain") or {}
             if name == "run":
-                libelle, desc, action = "fuite", "Course de fuite : il s'enfuit, paniqué.", sh.get("run_action", "")
+                libelle, desc = "fuite", "Course de fuite : il s'enfuit, paniqué (après le sursaut)."
+                action, clip = (sh.get("run") or {}).get("action", ""), (sh.get("run") or {}).get("clip") or clip
             for e in sh.get("extras_communs") or []:
                 if e.get("name") == name:
                     action, clip = e.get("action", ""), e.get("motion") or clip

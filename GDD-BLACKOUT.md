@@ -186,7 +186,7 @@ ni les toucher, et ils ne bloquent pas le passage (on les traverse, comme les jo
 - **Round du boss** : les PNJ **évitent absolument le boss**, paniqués : ils courent dans la direction
   opposée dès qu'il approche, et la foule se vide autour de lui.
 
-**Animations d'un PNJ** : profil, idle, fuite (course), marche, sursaut, plus 2 ou 3 activités (§8.4).
+**Animations d'un PNJ** : profil, idle, fuite apeurée (course), marche, sursaut, à terre, relever, plus 2 activités (§8.4).
 Tant qu'elles n'existent pas, des placeholders de 32 px font l'affaire.
 
 ### 3.7 Vitesses (données)
@@ -484,9 +484,15 @@ pixel art Party Hard, 32 px, prompts simples (description + signature), clichés
 de loin, aucune personnalisation, rien de violent.
 
 **Character set d'un PNJ humain** (`pf_px__character_set`, case 64 en 32 px) : `profile`, `idle`, `run` (la
-fuite : Sprint_Loop, action « runs away in panic, arms up »), tout le reste sauté (`portrait`,
-`jump_hide`, `lift`, `ghost`, `standard`), et **4 extras** : `marcher` (Walk_Loop) , `sursaut`
-(Hit_Chest, « jumps back startled ») et ses **2 activités** prises dans le catalogue ci-dessous.
+fuite apeurée : clip Sprint_Loop et action « runs away in panic, arms up, mouth wide open », passés dans
+`clips`/`actions`), tout le reste sauté (`portrait`, `jump_hide`, `lift`, `ghost`, `standard`), et **6 extras** :
+`marcher` (Walk_Loop), `sursaut` (Surprise, « jumps with surprise, eyes wide open »), `a_terre` (IdleToLay,
+« drops to the ground and lies flat, dizzy » : renversé par un boss qui fonce, gardé sur sa dernière image),
+`relever` (LayToIdle, « gets back up and dusts off ») et ses **2 activités** prises dans le catalogue
+ci-dessous. Dans le jeu, la peur s'enchaîne : `sursaut` puis `run` (*Julien, 23/10*).
+
+Chaque PNJ humain a un **prénom** pour qu'on puisse y faire référence (*Julien, 23/10*) ; l'id reste la clé
+des fichiers.
 
 **Catalogue d'activités** (extra : clip Quaternius, action, objet)
 | Activité | Clip | Action | Objet |
@@ -506,50 +512,50 @@ fuite : Sprint_Loop, action « runs away in panic, arms up »), tout le reste sa
 *génériques* sont des passants ordinaires, majoritaires dans la foule (environ 2 génériques pour 1 spécial
 sur une carte).
 
-| id | Type | Description | Signature | Activités |
-|---|---|---|---|---|
-| festayre | spécial | a festival-goer dressed all in white with a red sash and a red neckerchief | a red neckerchief on an all-white outfit | danser, boire |
-| txistulari | spécial | a txistu flute player in white with a red beret | a long thin flute and a red beret | jouer, parler |
-| amona | spécial | a little grandmother in a black dress with a red fan and a grey bun | a red fan | parler, assis |
-| marin | spécial | a fisherman in a striped blue and white sailor shirt and yellow boots | blue and white stripes | parler, boire |
-| surfeuse | spécial | a surfer girl with bleached hair in a black wetsuit carrying a longboard | a long white surfboard | telephone, parler |
-| serveur | spécial | a waiter in a white shirt and black apron with a tray of cider glasses | a round tray of glasses | parler, attendre |
-| sardine | spécial | a giant-head festival mascot of a smiling silver sardine | a huge smiling fish head | danser, attendre |
-| errege | spécial | a giant-head festival mascot of a Basque king with a golden crown | a huge crowned head | danser, attendre |
-| ballon | spécial | a little kid in a yellow raincoat holding a red balloon | a red balloon on a string | attendre, danser |
-| trompettiste | spécial | a bandas trumpet player in white and red | a shiny golden trumpet | jouer, boire |
-| glacier | spécial | an ice cream seller with a pink and white striped apron and cap | a striped apron | parler, attendre |
-| supporter | spécial | a rugby fan with a red and white scarf and a painted face | a red and white scarf | parler, boire |
-| touriste | spécial | a tourist in a flowery Hawaiian shirt and shorts with a camera | a flowery shirt and a camera | telephone, attendre |
-| jogger | spécial | a jogger in a bright green tracksuit with headphones | a bright green tracksuit | musique, attendre |
-| ado | spécial | a teenager in a purple hoodie with big headphones | big headphones on a purple hoodie | musique, telephone |
-| lecteur | spécial | an old man in a beige coat and a black beret | a black beret and a newspaper | journal, assis |
-| promeneuse | spécial | a woman in a long yellow coat walking her dog | a long yellow coat | promener, parler |
-| cycliste | spécial | a cyclist in a blue jersey standing beside a red bicycle, both hands on the handlebar | a red bicycle | attendre, boire |
-| musicienne | spécial | a street guitarist in a denim jacket with a guitar | a wooden guitar | jouer, parler |
-| amoureux | spécial | a young man in a white shirt holding a single red rose | a red rose | parler, attendre |
-| policier | spécial | a friendly municipal police officer in a dark blue uniform and cap | a dark blue cap | parler, attendre |
-| pecheuse | spécial | a fisherwoman in a yellow oilskin and green boots with a bucket | a yellow oilskin | parler, boire |
-| passant_jean | générique | a man in his thirties in a plain blue t-shirt and jeans | a plain blue t-shirt | telephone, attendre |
-| passante_robe | générique | a young woman in a simple green summer dress | a green dress | parler, boire |
-| papy_gilet | générique | an old man in a brown cardigan and grey trousers | a brown cardigan | assis, journal |
-| mamie_cabas | générique | an old woman in a lilac coat carrying a shopping bag | a lilac coat | parler, attendre |
-| femme_tailleur | générique | a woman in a navy blazer and white trousers | a navy blazer | telephone, boire |
-| homme_costume | générique | a man in a grey suit and tie | a grey suit | telephone, attendre |
-| etudiante | générique | a student girl with a backpack and a yellow sweater | a yellow sweater | musique, parler |
-| etudiant | générique | a student boy with a backpack and a red sweatshirt | a red sweatshirt | telephone, parler |
-| maman | générique | a mother in a white top and blue jeans | a white top | parler, attendre |
-| papa | générique | a father in a checked flannel shirt and khaki trousers | a checked shirt | parler, boire |
-| enfant_fille | générique | a little girl in a pink t-shirt and shorts | a pink t-shirt | danser, attendre |
-| enfant_garcon | générique | a little boy in an orange t-shirt and blue shorts | an orange t-shirt | danser, attendre |
-| femme_pull | générique | a woman in a teal knitted sweater and black trousers | a teal sweater | boire, parler |
-| homme_polo | générique | a man in a white polo shirt and beige shorts | a white polo shirt | boire, parler |
-| jeune_casquette | générique | a young man in a black cap and grey hoodie | a black cap | musique, attendre |
-| femme_imper | générique | a woman in a beige trench coat | a beige trench coat | telephone, journal |
-| homme_doudoune | générique | a man in a dark green puffer jacket | a dark green jacket | attendre, telephone |
-| femme_short | générique | a woman in a striped t-shirt and denim shorts | a striped t-shirt | danser, boire |
-| homme_chemise | générique | a man in a light blue shirt with rolled sleeves | a light blue shirt | parler, boire |
-| ado_skate | générique | a teenager in a white t-shirt carrying a skateboard | a skateboard | musique, parler |
+| id | Prénom | Type | Description | Signature | Activités |
+|---|---|---|---|---|---|
+| festayre | Beñat | spécial | a festival-goer dressed all in white with a red sash and a red neckerchief | a red neckerchief on an all-white outfit | danser, boire |
+| txistulari | Joxe | spécial | a txistu flute player in white with a red beret | a long thin flute and a red beret | jouer, parler |
+| amona | Maddalen | spécial | a little grandmother in a black dress with a red fan and a grey bun | a red fan | parler, assis |
+| marin | Manex | spécial | a fisherman in a striped blue and white sailor shirt and yellow boots | blue and white stripes | parler, boire |
+| surfeuse | Nahia | spécial | a surfer girl with bleached hair in a black wetsuit carrying a longboard | a long white surfboard | telephone, parler |
+| serveur | Jon | spécial | a waiter in a white shirt and black apron with a tray of cider glasses | a round tray of glasses | parler, attendre |
+| sardine | Xardin | spécial | a giant-head festival mascot of a smiling silver sardine | a huge smiling fish head | danser, attendre |
+| errege | Antton | spécial | a giant-head festival mascot of a Basque king with a golden crown | a huge crowned head | danser, attendre |
+| ballon | Ane | spécial | a little kid in a yellow raincoat holding a red balloon | a red balloon on a string | attendre, danser |
+| trompettiste | Iñaki | spécial | a bandas trumpet player in white and red | a shiny golden trumpet | jouer, boire |
+| glacier | Gorka | spécial | an ice cream seller with a pink and white striped apron and cap | a striped apron | parler, attendre |
+| supporter | Battitte | spécial | a rugby fan with a red and white scarf and a painted face | a red and white scarf | parler, boire |
+| touriste | Gérard | spécial | a tourist in a flowery Hawaiian shirt and shorts with a camera | a flowery shirt and a camera | telephone, attendre |
+| jogger | Unai | spécial | a jogger in a bright green tracksuit with headphones | a bright green tracksuit | musique, attendre |
+| ado | Eneko | spécial | a teenager in a purple hoodie with big headphones | big headphones on a purple hoodie | musique, telephone |
+| lecteur | Pantxoa | spécial | an old man in a beige coat and a black beret | a black beret and a newspaper | journal, assis |
+| promeneuse | Kattalin | spécial | a woman in a long yellow coat walking her dog | a long yellow coat | promener, parler |
+| cycliste | Ander | spécial | a cyclist in a blue jersey standing beside a red bicycle, both hands on the handlebar | a red bicycle | attendre, boire |
+| musicienne | Ainhoa | spécial | a street guitarist in a denim jacket with a guitar | a wooden guitar | jouer, parler |
+| amoureux | Mikel | spécial | a young man in a white shirt holding a single red rose | a red rose | parler, attendre |
+| policier | Ellande | spécial | a friendly municipal police officer in a dark blue uniform and cap | a dark blue cap | parler, attendre |
+| pecheuse | Maite | spécial | a fisherwoman in a yellow oilskin and green boots with a bucket | a yellow oilskin | parler, boire |
+| passant_jean | Thomas | générique | a man in his thirties in a plain blue t-shirt and jeans | a plain blue t-shirt | telephone, attendre |
+| passante_robe | Léa | générique | a young woman in a simple green summer dress | a green dress | parler, boire |
+| papy_gilet | Fermin | générique | an old man in a brown cardigan and grey trousers | a brown cardigan | assis, journal |
+| mamie_cabas | Mayi | générique | an old woman in a lilac coat carrying a shopping bag | a lilac coat | parler, attendre |
+| femme_tailleur | Sophie | générique | a woman in a navy blazer and white trousers | a navy blazer | telephone, boire |
+| homme_costume | Bernard | générique | a man in a grey suit and tie | a grey suit | telephone, attendre |
+| etudiante | Leire | générique | a student girl with a backpack and a yellow sweater | a yellow sweater | musique, parler |
+| etudiant | Hugo | générique | a student boy with a backpack and a red sweatshirt | a red sweatshirt | telephone, parler |
+| maman | Garazi | générique | a mother in a white top and blue jeans | a white top | parler, attendre |
+| papa | Didier | générique | a father in a checked flannel shirt and khaki trousers | a checked shirt | parler, boire |
+| enfant_fille | Uxue | générique | a little girl in a pink t-shirt and shorts | a pink t-shirt | danser, attendre |
+| enfant_garcon | Oihan | générique | a little boy in an orange t-shirt and blue shorts | an orange t-shirt | danser, attendre |
+| femme_pull | Irati | générique | a woman in a teal knitted sweater and black trousers | a teal sweater | boire, parler |
+| homme_polo | Stéphane | générique | a man in a white polo shirt and beige shorts | a white polo shirt | boire, parler |
+| jeune_casquette | Bixente | générique | a young man in a black cap and grey hoodie | a black cap | musique, attendre |
+| femme_imper | Isabelle | générique | a woman in a beige trench coat | a beige trench coat | telephone, journal |
+| homme_doudoune | Iker | générique | a man in a dark green puffer jacket | a dark green jacket | attendre, telephone |
+| femme_short | Chloé | générique | a woman in a striped t-shirt and denim shorts | a striped t-shirt | danser, boire |
+| homme_chemise | Ximun | générique | a man in a light blue shirt with rolled sleeves | a light blue shirt | parler, boire |
+| ado_skate | Lucas | générique | a teenager in a white t-shirt carrying a skateboard | a skateboard | musique, parler |
 
 **Animaux (4, hors quota humain)** : pas de squelette humain ; méthode demandée à pixelforge (comme pour
 les boss non humanoïdes). Chacun : idle, marcher, fuir, et une activité.
@@ -842,6 +848,9 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
 - **23/10** (cycliste, Julien : option 2) : Wan anime le vélo de la référence avec lui ; le cycliste est décrit
   debout à côté de son vélo, et on accepte qu'il le pousse en se déplaçant. Ses visage, portrait et objets
   coupés sont corrigés chez pixelforge (12 h 30) : à refaire en set complet le moment venu.
+- **23/10** (PNJ, Julien) : prénom pour chaque PNJ humain (§8.4) ; nouveaux extras `a_terre` (IdleToLay) et
+  `relever` (LayToIdle) ; `sursaut` passe à Surprise, suivi de la fuite apeurée (Sprint_Loop, bras en l'air),
+  dont l'action n'était jusqu'ici pas envoyée à pixelforge (`pnj_jobs.py` la passe désormais).
 
 ---
 
