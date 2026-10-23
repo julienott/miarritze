@@ -25,6 +25,9 @@ GRAINE = 7
 
 def prompt(pid: str) -> str:
     p = SPEC["persos"][pid]
+    # Détail clé « clearly visible » déjà dans la description (règles de pixelforge, GDD §8.2), sinon ajouté.
+    if "clearly visible" in p["description"]:
+        return p["description"] + "."
     return f"{p['description']}, with {p['signature']} clearly visible."
 
 

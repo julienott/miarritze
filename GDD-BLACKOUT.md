@@ -283,12 +283,12 @@ son character set (§8.1), la même pour tous.
 | xabi | Spell_Simple_Enter+Spell_Simple_Exit, « pulls his arms back, then pushes off forward in a quick dash » | OverhandThrow, « hurls a pelota ball with his chistera » |
 | mattin | Spell_Simple_Enter+Spell_Simple_Exit, « raises both arms, then flexes them proudly » | OverhandThrow, « heaves a heavy round stone forward » |
 | amaia | Spell_Simple_Enter+Spell_Simple_Exit, « lifts her hands high, then lands a quick light Basque dance step » | Spell_Simple_Enter+Spell_Simple_Exit, « raises her wooden makila stick, then brings it down on the ground » |
-| kaio | Spell_Simple_Enter+Spell_Simple_Exit, « raises his wings, then flaps them down hard » | Spell_Simple_Enter+Spell_Simple_Exit, « pulls his head back, then leans forward with a loud scream, beak wide open » |
+| kaio | Spell_Simple_Enter+Spell_Simple_Exit, « raises his wings, then flaps them down hard » | Spell_Simple_Enter+Spell_Simple_Exit, « raises his wings, then sweeps them forward with a loud scream, beak wide open » |
 | karramarro | Spell_Simple_Enter+Spell_Simple_Exit, « raises both claws, then digs them down into the sand » | Spell_Simple_Enter+Spell_Simple_Exit, « raises both claws, then sweeps them sideways » |
 | ramuntxo | Spell_Simple_Enter+Spell_Simple_Exit, « lifts a round Basque cake up, then sets it forward on the ground » | OverhandThrow, « throws a small pot of red pepper » |
-| itsaso | Spell_Simple_Enter+Spell_Simple_Exit, « raises her hand, then sweeps it forward to raise a little stone wall » | Spell_Simple_Enter+Spell_Simple_Exit, « raises both hands, then pushes them down to call water geysers » |
+| itsaso | Spell_Simple_Enter+Spell_Simple_Exit, « raises her hand, then sweeps it forward » | Spell_Simple_Enter+Spell_Simple_Exit, « raises both hands, then pushes them down hard » |
 | peio | Spell_Simple_Enter+Spell_Simple_Exit, « fakes a pass with both arms up, then pulls them back » | Spell_Simple_Enter+Spell_Simple_Exit, « raises his fists high, then shouts a war cry » |
-| itsasargi | Spell_Simple_Enter+Spell_Simple_Exit, « raises his brass lantern high, then lowers it after a bright flash » | OverhandThrow, « swings his brass lantern overhead and throws its beam straight ahead » |
+| itsasargi | Spell_Simple_Enter+Spell_Simple_Exit, « raises his brass lantern high, then lowers it » | OverhandThrow, « swings his brass lantern overhead and forward » |
 
 - Ce qui est lancé ou posé (pelote, bouée, pierre, gâteau, nuage, muret, geysers) : **formes simples
   en placeholder**, remplacées plus tard par de petits sprites pixelforge.
@@ -442,12 +442,22 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 
 ### 8.2 Les 13 personnages
 Les prompts sont volontairement **simples** : une description et une signature (ce qui doit se lire de
-loin), sans négation. **Prompt envoyé** (*23/10, conseil de pixelforge*) : « <description>, with <signature>
+loin), sans négation. **Prompt envoyé** (*23/10, conseil de pixelforge*) : la description seule quand elle
+porte déjà « clearly visible » sur son détail clé (règle 3 ci-dessous), sinon « <description>, with <signature>
 clearly visible. » — le détail clé est une phrase de la description, sans en-tête ; l'ancienne formule
 « Signature detail drawn large and bright » est abandonnée (« signature » fait écrire du texte, « large »
 grossit les objets, « bright » sature). Mots à ne jamais écrire dans un prompt, sauf si c'est voulu :
 signature, logo, text, writing, letters, label, emblem, badge. Pour un objet, préciser plutôt sa taille
-relative et sa position (« about the size of his head, at hip height »). Les défauts de rendu (ombre, blanc entre les jambes, halos, flashs) sont à
+relative et sa position (« about the size of his head, at hip height »).
+**Règles de pixelforge** (*relecture du 23/10*) : (1) genre et âge toujours explicites (« a young woman »,
+« an old man »), avec la coiffure ; (2) pronoms neutres dans ce qui est commun à tous les PNJ ; (3) le détail
+clé une seule fois, « clearly visible » collé à lui, dans la description : le prompt envoyé est alors la
+description seule ; (4) aucun effet dans un prompt (rayon, flash, flammes, fumée, lueur, « glowing ») : les
+effets sont des VFX du jeu, les actions ne décrivent que le corps et l'objet tenu ; (5) l'action suit le clip
+(Spell_Simple : lever le bras puis pousser, abaisser, balayer) ; (6) l'objet d'un extra est tenu en main,
+jamais porté ni déjà sur le profil ; (7) silhouette à deux bras et deux jambes, sinon `pf_px__creature` ;
+(8) aucun mot graphique ; (9) le perso regarde à droite, sa main droite est visible ; (10) matières en aplats
+opaques (eau, vapeur). Les défauts de rendu (ombre, blanc entre les jambes, halos, flashs) sont à
 corriger **chez pixelforge**, pas dans les prompts (Julien, 21/10).
 
 **Bibliothèque de prompts v2 (22/10)** — copie machine : `data/blackout/style_party_hard.json`
@@ -456,19 +466,19 @@ graine 7, chaîne moteur A → moteur B). Toute modification se fait ici d'abord
 
 | Perso | Description (prompt) | Signature | idle_long : geste — clip |
 |---|---|---|---|
-| Louis — l'enfant du pays | a little Basque boy with blond hair, a red beret, a white short-sleeved shirt, a red belt and navy rolled-up trousers | a red Basque beret on blond hair | folds his arms and taps his foot, glancing around — Idle_FoldArms_Loop |
-| Txomin — maître-nageur | a Basque lifeguard boy with dark brown skin and short black curly hair, a red cap, black sunglasses, a yellow tank top and red swim shorts, barefoot | a red cap and a yellow tank top | talks into his walkie-talkie held at his mouth — Idle_TalkingPhone_Loop |
-| Patxi — pêcheur | a bearded Basque fisherman with a blue beanie, a yellow raincoat, light blue trousers and yellow rubber boots | a bright yellow raincoat and yellow boots | casts a fishing rod and waits for a bite — Fish_Cast_Idle_Loop |
-| Maïa — surfeuse | a young Basque surfer girl with a brown ponytail, a turquoise wetsuit with a navy panel, a small yellow surfboard strapped upright on her back, barefoot | a small yellow surfboard upright on her back | chats cheerfully with big hand gestures — Idle_Talking_Loop |
-| Xabi — pelotari | a little Basque jai alai player with short dark brown hair, a white polo shirt, plain white trousers, a red sash, red espadrilles and a long curved wicker chistera on his right hand pointing forward | a long curved wicker chistera pointing forward | practises a chistera swing — Sword_Attack |
-| Mattin — leveur de pierre | a short stocky Basque stone lifter with a broad muscular chest, a black beard, a red beret, a red and white horizontally striped shirt, navy trousers and brown shoes | red and white horizontal stripes on a broad chest | lifts a heavy round stone — PickUp_Table |
-| Amaia — dantzari | a Basque folk dancer girl with a red headscarf, a green vest over a white blouse, a red skirt, simple white shoes and a wooden makila stick on her back | a red headscarf and a red skirt | dances a few Basque folk steps — Dance_Loop |
-| Kaio — goéland | a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot and orange webbed feet | a big yellow beak and orange webbed feet | screams with his beak wide open — Idle_Rail_Call |
-| Karramarro — crabe | a cheerful orange cartoon crab standing on six thin pointed crab legs, two big raised pincers, eyes on stalks, a yellow belly and a big happy open mouth | two big raised orange pincers and eyes on stalks | scratches his head with a pincer — Zombie_Scratch |
-| Ramuntxo — chef des Halles | a jolly Basque chef with a small brown mustache, a tall white chef hat, a white chef jacket, a red neck scarf, plain red trousers and black shoes | a tall white chef hat | tastes a sauce from a wooden spoon — Consume |
-| Itsaso — esprit de l'écume | a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with bright white foam, barefoot | long flowing aqua hair and a white foam hem | swirls a small wave between her hands — Spell_Simple_Shoot |
-| Peio — rugbyman | a sturdy young Basque rugby player with medium brown skin and short black hair, a red and white hooped jersey, black shorts, white socks, black boots and an oval rugby ball under his arm | a brown oval rugby ball under his arm | spins his rugby ball in his hands — Interact |
-| Itsasargi — gardien du phare | an old lighthouse keeper with a white beard, a captain cap and a navy pea coat, holding a glowing brass lantern by its handle in his right hand at hip height, the lantern about the size of his head | the glowing lantern in his hand | raises his lantern and peers into the dark — Idle_Lantern_Loop |
+| Louis — l'enfant du pays | a little Basque boy with short blond hair, a white short-sleeved shirt, a red belt and navy rolled-up trousers, a red Basque beret clearly visible on his blond hair | a red Basque beret on blond hair | folds his arms and taps his foot, glancing around — Idle_FoldArms_Loop |
+| Txomin — maître-nageur | a Basque lifeguard boy with dark brown skin and short black curly hair, black sunglasses, red swim shorts, barefoot, a red cap and a yellow tank top clearly visible | a red cap and a yellow tank top | talks into his walkie-talkie held at his mouth — Idle_TalkingPhone_Loop |
+| Patxi — pêcheur | a bearded Basque fisherman man with a blue beanie, light blue trousers, a bright yellow raincoat and yellow rubber boots clearly visible | a bright yellow raincoat and yellow boots | casts a fishing rod and waits for a bite — Fish_Cast_Idle_Loop |
+| Maïa — surfeuse | a young Basque surfer girl with a long brown ponytail, a turquoise wetsuit with a navy panel, barefoot, a small yellow surfboard strapped upright on her back, clearly visible | a small yellow surfboard upright on her back | chats cheerfully with big hand gestures — Idle_Talking_Loop |
+| Xabi — pelotari | a little Basque jai alai player with short dark brown hair, a white polo shirt, plain white trousers, a red sash, red espadrilles, a long curved wicker chistera on his right hand pointing forward, clearly visible | a long curved wicker chistera pointing forward | practises a chistera swing — Sword_Attack |
+| Mattin — leveur de pierre | a short stocky Basque stone lifter man with a black beard, a red beret, a broad muscular chest in a red and white horizontally striped shirt clearly visible, navy trousers and brown shoes | red and white horizontal stripes on a broad chest | lifts a heavy round stone — PickUp_Table |
+| Amaia — dantzari | a Basque folk dancer girl with long dark braided hair, a red headscarf, a green vest over a white blouse, a red skirt clearly visible, simple white shoes, a wooden makila stick on her back | a red headscarf and a red skirt | dances a few Basque folk steps — Dance_Loop |
+| Kaio — goéland | a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot and orange webbed feet clearly visible | a big yellow beak and orange webbed feet | screams with his beak wide open — Idle_Rail_Call |
+| Karramarro — crabe | a cheerful orange cartoon crab standing upright on two short thin crab legs, two big raised pincers as arms, eyes on stalks, a yellow belly and a big happy open mouth, the two big orange pincers clearly visible | two big raised orange pincers and eyes on stalks | scratches his head with a pincer — Zombie_Scratch |
+| Ramuntxo — chef des Halles | a jolly Basque chef with a small brown mustache, a white chef jacket, a red neck scarf, plain red trousers and black shoes, a tall white chef hat clearly visible | a tall white chef hat | tastes a sauce from a wooden spoon — Consume |
+| Itsaso — esprit de l'écume | a mythical girl spirit of the sea with opaque pale turquoise skin, long wavy aqua hair and a deep blue dress with a white foam-shaped hem, barefoot, the long aqua hair clearly visible | long flowing aqua hair and a white foam hem | holds her hands together in front of her, fingers moving gently — Spell_Simple_Shoot |
+| Peio — rugbyman | a sturdy young Basque rugby player man with medium brown skin and short black hair, a red and white hooped jersey, black shorts, white socks, black boots, a brown oval rugby ball under his arm clearly visible | a brown oval rugby ball under his arm | spins his rugby ball in his hands — Interact |
+| Itsasargi — gardien du phare | an old lighthouse keeper man with a white beard, a captain cap and a navy pea coat, holding a bright brass lantern by its handle in his right hand at hip height, the lantern about the size of his head and clearly visible | the glowing lantern in his hand | raises his lantern and peers into the dark — Idle_Lantern_Loop |
 
 Changements du 22/10 (retours de Julien sur le run du 21/10) : Txomin sans palmes, casquette rouge ;
 Patxi sans canne (elle n'apparaît que dans son idle_long), pantalon bleu clair et bottes jaunes ; Xabi
@@ -491,9 +501,9 @@ de loin, aucune personnalisation, rien de violent.
 **Character set d'un PNJ humain** (`pf_px__character_set`, case 64 en 32 px) : `profile`, `idle`, `portrait` (HD dans `hd/` et pixel dans `px32/`, *Julien, 23/10*), `run` (la
 fuite apeurée : clip Sprint_Loop et action « runs away in panic, arms up, mouth wide open », passés dans
 `clips`/`actions`), tout le reste sauté (`jump_hide`, `lift`, `ghost`, `standard`), et **6 extras**
-(10 au plus chez pixelforge, commit 08ddeb3) : `marcher` (Walk_Loop), `sursaut` (Surprise, « jumps with surprise,
+(10 au plus chez pixelforge, commit 08ddeb3) : `marcher` (Walk_Loop), `sursaut` (Surprise, « jumps back with surprise,
 eyes wide open »), `a_terre` (IdleToLay, « drops to the ground and lies flat, dizzy » : renversé par un boss qui
-fonce, gardé sur sa dernière image), `relever` (LayToIdle, « gets back up and dusts off ») et ses
+fonce, gardé sur sa dernière image), `relever` (LayToIdle, « gets back up and dusts off their clothes ») et ses
 **2 activités** prises dans le catalogue ci-dessous. Dans le jeu, la peur s'enchaîne : `sursaut` puis `run` (*Julien, 23/10*).
 
 Chaque PNJ humain a un **prénom** pour qu'on puisse y faire référence (*Julien, 23/10*) ; l'id reste la clé
@@ -505,13 +515,13 @@ des fichiers.
 | parler | Idle_Talking_Loop | chats with big hand gestures | — |
 | telephone | Idle_TalkingPhone_Loop | talks on a smartphone | a smartphone |
 | danser | Dance_Loop | dances happily | — |
-| musique | Yes | nods his head to the music | big headphones |
+| musique | Yes | nods to the music | — (casque déjà sur le profil) |
 | journal | Idle_Torch_Loop | reads a newspaper held in front of him | a newspaper |
 | boire | Consume | sips a drink | a glass of cider |
 | assis | Sitting_Idle_Loop | sits and relaxes | — |
 | attendre | Idle_FoldArms_Loop | waits with arms crossed | — |
-| promener | Walk_Loop | walks a dog on a leash | a red leash |
-| jouer | Interact | plays a little tune | (objet du PNJ) |
+| promener | Walk_Loop | walks holding a red leash out in front (le chien : sprite à part dans le jeu) | a red leash |
+| jouer | Interact | plays a little tune | son instrument (`objet_jouer` : flûte, trompette, guitare) |
 
 **Humains (42 : 22 spéciaux, 20 génériques)** — les *spéciaux* sont des personnages typés de la fête ; les
 *génériques* sont des passants ordinaires, majoritaires dans la foule (environ 2 génériques pour 1 spécial
@@ -519,27 +529,27 @@ sur une carte).
 
 | id | Prénom | Type | Description | Signature | Activités |
 |---|---|---|---|---|---|
-| festayre | Beñat | spécial | a festival-goer dressed all in white with a red sash and a red neckerchief | a red neckerchief on an all-white outfit | danser, boire |
-| txistulari | Joxe | spécial | a txistu flute player in white with a red beret | a long thin flute and a red beret | jouer, parler |
+| festayre | Beñat | spécial | a young man festival-goer dressed all in white, a red sash and a red neckerchief clearly visible | a red neckerchief on an all-white outfit | danser, boire |
+| txistulari | Joxe | spécial | a middle-aged man txistu flute player dressed in white, with a red beret and a long thin flute clearly visible | a long thin flute and a red beret | jouer, parler |
 | amona | Maddalen | spécial | a little grandmother in a black dress with a red fan and a grey bun | a red fan | parler, assis |
-| marin | Manex | spécial | a fisherman in a striped blue and white sailor shirt and yellow boots | blue and white stripes | parler, boire |
+| marin | Manex | spécial | an old man fisherman in a blue and white striped sailor shirt clearly visible and yellow boots | blue and white stripes | parler, boire |
 | surfeuse | Nahia | spécial | a surfer girl with bleached hair in a black wetsuit carrying a longboard | a long white surfboard | telephone, parler |
-| serveur | Jon | spécial | a waiter in a white shirt and black apron with a tray of cider glasses | a round tray of glasses | parler, attendre |
-| sardine | Xardin | spécial | a giant-head festival mascot of a smiling silver sardine | a huge smiling fish head | danser, attendre |
-| errege | Antton | spécial | a giant-head festival mascot of a Basque king with a golden crown | a huge crowned head | danser, attendre |
+| serveur | Jon | spécial | a young man waiter in a white shirt and black apron, carrying a round tray of cider glasses clearly visible | a round tray of glasses | parler, attendre |
+| sardine | Xardin | spécial | a festival mascot person in a white outfit wearing a huge smiling silver sardine head, clearly visible | a huge smiling fish head | danser, attendre |
+| errege | Antton | spécial | a festival mascot person in a white outfit wearing a huge Basque king head with a golden crown, clearly visible | a huge crowned head | danser, attendre |
 | ballon | Ane | spécial | a little kid in a yellow raincoat holding a red balloon | a red balloon on a string | attendre, danser |
 | trompettiste | Iñaki | spécial | a bandas trumpet player in white and red | a shiny golden trumpet | jouer, boire |
-| glacier | Gorka | spécial | an ice cream seller with a pink and white striped apron and cap | a striped apron | parler, attendre |
-| supporter | Battitte | spécial | a rugby fan with a red and white scarf and a painted face | a red and white scarf | parler, boire |
-| touriste | Gérard | spécial | a tourist in a flowery Hawaiian shirt and shorts with a camera | a flowery shirt and a camera | telephone, attendre |
-| jogger | Unai | spécial | a jogger in a bright green tracksuit with headphones | a bright green tracksuit | musique, attendre |
-| ado | Eneko | spécial | a teenager in a purple hoodie with big headphones | big headphones on a purple hoodie | musique, telephone |
+| glacier | Gorka | spécial | a woman ice cream seller with a pink and white striped apron and cap clearly visible | a striped apron | parler, attendre |
+| supporter | Battitte | spécial | a young man rugby fan with a painted face, a red and white scarf clearly visible | a red and white scarf | parler, boire |
+| touriste | Gérard | spécial | a middle-aged man tourist in shorts, a flowery Hawaiian shirt and a camera clearly visible | a flowery shirt and a camera | telephone, attendre |
+| jogger | Unai | spécial | a young woman jogger with a ponytail, a bright green tracksuit clearly visible, headphones on her ears | a bright green tracksuit | musique, attendre |
+| ado | Eneko | spécial | a teenage boy in a purple hoodie, big headphones on his ears clearly visible | big headphones on a purple hoodie | musique, telephone |
 | lecteur | Pantxoa | spécial | an old man in a beige coat and a black beret | a black beret and a newspaper | journal, assis |
 | promeneuse | Kattalin | spécial | a woman in a long yellow coat walking her dog | a long yellow coat | promener, parler |
-| cycliste | Ander | spécial | a cyclist in a blue jersey standing beside a red bicycle, both hands on the handlebar | a red bicycle | attendre, boire |
-| musicienne | Ainhoa | spécial | a street guitarist in a denim jacket with a guitar | a wooden guitar | jouer, parler |
+| cycliste | Ander | spécial | a man cyclist in a blue jersey standing beside a red bicycle, both hands on the handlebar, the red bicycle clearly visible | a red bicycle | attendre, boire |
+| musicienne | Ainhoa | spécial | a young woman street guitarist with long dark hair, a denim jacket and a wooden guitar clearly visible | a wooden guitar | jouer, parler |
 | amoureux | Mikel | spécial | a young man in a white shirt holding a single red rose | a red rose | parler, attendre |
-| policier | Ellande | spécial | a friendly municipal police officer in a dark blue uniform and cap | a dark blue cap | parler, attendre |
+| policier | Ellande | spécial | a friendly man municipal police officer in a dark blue uniform, a dark blue cap clearly visible | a dark blue cap | parler, attendre |
 | pecheuse | Maite | spécial | a fisherwoman in a yellow oilskin and green boots with a bucket | a yellow oilskin | parler, boire |
 | passant_jean | Thomas | générique | a man in his thirties in a plain blue t-shirt and jeans | a plain blue t-shirt | telephone, attendre |
 | passante_robe | Léa | générique | a young woman in a simple green summer dress | a green dress | parler, boire |
@@ -560,16 +570,16 @@ sur une carte).
 | homme_doudoune | Iker | générique | a man in a dark green puffer jacket | a dark green jacket | attendre, telephone |
 | femme_short | Chloé | générique | a woman in a striped t-shirt and denim shorts | a striped t-shirt | danser, boire |
 | homme_chemise | Ximun | générique | a man in a light blue shirt with rolled sleeves | a light blue shirt | parler, boire |
-| ado_skate | Lucas | générique | a teenager in a white t-shirt carrying a skateboard | a skateboard | musique, parler |
+| ado_skate | Lucas | générique | a teenage boy in a white t-shirt carrying a skateboard under his arm, clearly visible | a skateboard | musique, parler |
 
 **Animaux (4, hors quota humain)** : pas de squelette humain ; méthode demandée à pixelforge (comme pour
 les boss non humanoïdes). Chacun : idle, marcher, fuir, et une activité.
 | id | Description | Activité |
 |---|---|---|
-| chat | a small black cat with yellow eyes | dort roulé en boule, se lèche |
+| chat | a small dark grey cat with yellow eyes | dort roulé en boule, se lèche |
 | chien | a happy brown and white beagle | renifle le sol, suit son maître en laisse |
 | goeland | a big white and grey seagull with a yellow beak | picore, s'envole en criant |
-| pigeon | a grey city pigeon with a green neck | picore, s'envole |
+| pigeon | a grey city pigeon with an iridescent green neck patch | picore, s'envole |
 
 ### 8.3 Boss
 Même pipeline, `size: "boss"` (64 px dans une case de 128, §8.1). Éléments d'un boss (*23/10*) :
@@ -582,13 +592,28 @@ fois, parties découpées, mouvements calculés, comme le fantôme) ; pour les a
 chat entre la marionnette et des vidéos pilotes d'animaux 3D (Quaternius, CC0) avant de choisir.
 Intxixuk : trois character sets (un par lutin, variantes), groupés par le jeu.
 
+**Prompts des autres boss** (*relus par pixelforge le 23/10 ; rayon, pierres, flammes et fumée sont des VFX du jeu*) :
+- Tartalo : « a big clumsy one-eyed ogre giant with a single large round eye in the middle of his forehead,
+  tanned skin, a brown fur tunic and a big wooden club, the single eye and the wooden club clearly visible » ;
+  `cri` « sniffs the air then roars » (Idle_Rail_Call) ; `pouvoir_1` « stares hard, leaning forward »
+  (Idle_Torch_Loop) ; `pouvoir_2` « slams his big wooden club onto the ground » (Sword_Attack).
+- Intxixu 1 : « a small hunched cave goblin with grey stone-like skin, animal fur clothes, bright yellow eyes,
+  a green moss tuft on his head and a pebble sling, the moss tuft clearly visible » ; Intxixu 2 et 3 : idem avec
+  une touffe orange et un petit sac de cailloux, une touffe violette et un collier d'os ; `cri` « cackles with a
+  wide grin » (Idle_Rail_Call) ; `pouvoir_1` « raises both hands from low to high » (Spell_Simple_Shoot) ;
+  `pouvoir_2` « throws a handful of pointy pebbles » (OverhandThrow).
+- Zezengorri (`pf_px__creature`, quadrupède) : « a massive bright scarlet red bull with yellow eyes and big
+  curved horns ».
+- Herensuge (marionnette, serpent à trois têtes) : « a long winged dragon-serpent with three reptile heads,
+  scales the colour of antique bronze and sulphur yellow ».
+
 **Essai du 23/10 : Basajaun.**
-- Prompt : « a giant friendly-scary forest lord covered in thick shaggy brown fur, a long beard of green
-  moss, big root-like hands, leaning on a carved tree trunk staff ». Signature : « a carved tree trunk
-  staff and a mossy green beard ».
+- Prompt (*relu par pixelforge le 23/10*) : « a giant friendly-scary forest lord covered in thick shaggy
+  brown fur, big root-like hands, leaning on a carved tree trunk staff, a long green moss beard and the
+  carved staff clearly visible ».
 - `run` : Zombie_Walk_Fwd_Loop (démarche lourde) ; `cri` : Idle_Rail_Call, « roars with his arms
-  raised » ; `pouvoir_1` Murmure des bois : Spell_Simple_Shoot, « raises one hand, glowing green leaves
-  swirl around it » ; `pouvoir_2` Étreinte racinaire : Sword_Attack, « slams his carved trunk staff down
+  raised » ; `pouvoir_1` Murmure des bois : Spell_Simple_Shoot, « raises one hand high, fingers spread »
+  (feuilles en VFX) ; `pouvoir_2` Étreinte racinaire : Sword_Attack, « slams his carved trunk staff down
   onto the ground ».
 
 ## 9. Direction artistique

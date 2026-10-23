@@ -26,7 +26,7 @@
    {
     "name": "sursaut",
     "motion": "Surprise",
-    "action": "jumps with surprise, eyes wide open",
+    "action": "jumps back with surprise, eyes wide open",
     "loop": false
    },
    {
@@ -38,7 +38,7 @@
    {
     "name": "relever",
     "motion": "LayToIdle",
-    "action": "gets back up and dusts off",
+    "action": "gets back up and dusts off their clothes",
     "loop": false
    }
   ],
@@ -68,8 +68,8 @@
   },
   "musique": {
    "clip": "Yes",
-   "action": "nods his head to the music",
-   "objet": "big headphones",
+   "action": "nods to the music",
+   "objet": null,
    "objet_du_pnj": false
   },
   "journal": {
@@ -98,7 +98,7 @@
   },
   "promener": {
    "clip": "Walk_Loop",
-   "action": "walks a dog on a leash",
+   "action": "walks holding a red leash out in front",
    "objet": "a red leash",
    "objet_du_pnj": false
   },
@@ -113,7 +113,7 @@
   "festayre": {
    "prenom": "Beñat",
    "type": "special",
-   "description": "a festival-goer dressed all in white with a red sash and a red neckerchief",
+   "description": "a young man festival-goer dressed all in white, a red sash and a red neckerchief clearly visible",
    "signature": "a red neckerchief on an all-white outfit",
    "activites": [
     "danser",
@@ -123,12 +123,13 @@
   "txistulari": {
    "prenom": "Joxe",
    "type": "special",
-   "description": "a txistu flute player in white with a red beret",
+   "description": "a middle-aged man txistu flute player dressed in white, with a red beret and a long thin flute clearly visible",
    "signature": "a long thin flute and a red beret",
    "activites": [
     "jouer",
     "parler"
-   ]
+   ],
+   "objet_jouer": "a long thin txistu flute"
   },
   "amona": {
    "prenom": "Maddalen",
@@ -143,7 +144,7 @@
   "marin": {
    "prenom": "Manex",
    "type": "special",
-   "description": "a fisherman in a striped blue and white sailor shirt and yellow boots",
+   "description": "an old man fisherman in a blue and white striped sailor shirt clearly visible and yellow boots",
    "signature": "blue and white stripes",
    "activites": [
     "parler",
@@ -163,7 +164,7 @@
   "serveur": {
    "prenom": "Jon",
    "type": "special",
-   "description": "a waiter in a white shirt and black apron with a tray of cider glasses",
+   "description": "a young man waiter in a white shirt and black apron, carrying a round tray of cider glasses clearly visible",
    "signature": "a round tray of glasses",
    "activites": [
     "parler",
@@ -173,7 +174,7 @@
   "sardine": {
    "prenom": "Xardin",
    "type": "special",
-   "description": "a giant-head festival mascot of a smiling silver sardine",
+   "description": "a festival mascot person in a white outfit wearing a huge smiling silver sardine head, clearly visible",
    "signature": "a huge smiling fish head",
    "activites": [
     "danser",
@@ -183,7 +184,7 @@
   "errege": {
    "prenom": "Antton",
    "type": "special",
-   "description": "a giant-head festival mascot of a Basque king with a golden crown",
+   "description": "a festival mascot person in a white outfit wearing a huge Basque king head with a golden crown, clearly visible",
    "signature": "a huge crowned head",
    "activites": [
     "danser",
@@ -208,12 +209,13 @@
    "activites": [
     "jouer",
     "boire"
-   ]
+   ],
+   "objet_jouer": "a shiny golden trumpet"
   },
   "glacier": {
    "prenom": "Gorka",
    "type": "special",
-   "description": "an ice cream seller with a pink and white striped apron and cap",
+   "description": "a woman ice cream seller with a pink and white striped apron and cap clearly visible",
    "signature": "a striped apron",
    "activites": [
     "parler",
@@ -223,7 +225,7 @@
   "supporter": {
    "prenom": "Battitte",
    "type": "special",
-   "description": "a rugby fan with a red and white scarf and a painted face",
+   "description": "a young man rugby fan with a painted face, a red and white scarf clearly visible",
    "signature": "a red and white scarf",
    "activites": [
     "parler",
@@ -233,7 +235,7 @@
   "touriste": {
    "prenom": "Gérard",
    "type": "special",
-   "description": "a tourist in a flowery Hawaiian shirt and shorts with a camera",
+   "description": "a middle-aged man tourist in shorts, a flowery Hawaiian shirt and a camera clearly visible",
    "signature": "a flowery shirt and a camera",
    "activites": [
     "telephone",
@@ -243,7 +245,7 @@
   "jogger": {
    "prenom": "Unai",
    "type": "special",
-   "description": "a jogger in a bright green tracksuit with headphones",
+   "description": "a young woman jogger with a ponytail, a bright green tracksuit clearly visible, headphones on her ears",
    "signature": "a bright green tracksuit",
    "activites": [
     "musique",
@@ -253,7 +255,7 @@
   "ado": {
    "prenom": "Eneko",
    "type": "special",
-   "description": "a teenager in a purple hoodie with big headphones",
+   "description": "a teenage boy in a purple hoodie, big headphones on his ears clearly visible",
    "signature": "big headphones on a purple hoodie",
    "activites": [
     "musique",
@@ -283,7 +285,7 @@
   "cycliste": {
    "prenom": "Ander",
    "type": "special",
-   "description": "a cyclist in a blue jersey standing beside a red bicycle, both hands on the handlebar",
+   "description": "a man cyclist in a blue jersey standing beside a red bicycle, both hands on the handlebar, the red bicycle clearly visible",
    "signature": "a red bicycle",
    "activites": [
     "attendre",
@@ -293,12 +295,13 @@
   "musicienne": {
    "prenom": "Ainhoa",
    "type": "special",
-   "description": "a street guitarist in a denim jacket with a guitar",
+   "description": "a young woman street guitarist with long dark hair, a denim jacket and a wooden guitar clearly visible",
    "signature": "a wooden guitar",
    "activites": [
     "jouer",
     "parler"
-   ]
+   ],
+   "objet_jouer": "a wooden guitar"
   },
   "amoureux": {
    "prenom": "Mikel",
@@ -313,7 +316,7 @@
   "policier": {
    "prenom": "Ellande",
    "type": "special",
-   "description": "a friendly municipal police officer in a dark blue uniform and cap",
+   "description": "a friendly man municipal police officer in a dark blue uniform, a dark blue cap clearly visible",
    "signature": "a dark blue cap",
    "activites": [
     "parler",
@@ -523,7 +526,7 @@
   "ado_skate": {
    "prenom": "Lucas",
    "type": "generique",
-   "description": "a teenager in a white t-shirt carrying a skateboard",
+   "description": "a teenage boy in a white t-shirt carrying a skateboard under his arm, clearly visible",
    "signature": "a skateboard",
    "activites": [
     "musique",
@@ -533,7 +536,7 @@
  },
  "animaux": {
   "chat": {
-   "description": "a small black cat with yellow eyes",
+   "description": "a small dark grey cat with yellow eyes",
    "activite": "dort roulé en boule, se lèche"
   },
   "chien": {
@@ -545,7 +548,7 @@
    "activite": "picore, s'envole en criant"
   },
   "pigeon": {
-   "description": "a grey city pigeon with a green neck",
+   "description": "a grey city pigeon with an iridescent green neck patch",
    "activite": "picore, s'envole"
   }
  }

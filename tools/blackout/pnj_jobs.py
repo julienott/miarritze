@@ -24,12 +24,13 @@ def requete(pid: str, prio: str) -> dict:
     extras = [dict(e, fps=10, object=False) for e in base["extras_communs"]]
     for act in p["activites"]:
         a = PNJ["activites"][act]
-        objet = a["objet"] or (p["signature"] if a.get("objet_du_pnj") else False)
+        objet = a["objet"] or (p.get("objet_jouer", p["signature"]) if a.get("objet_du_pnj") else False)
         extras.append({"name": act, "motion": a["clip"], "action": a["action"], "object": objet, "loop": True,
                        "fps": 10})
     return {
         "prompt_style": base["prompt_style"], "seed": 7, "colors": 20, "priority": prio, "tag": f"miarritze/pnj_v1_{p['type']}",
-        "prompt": f"{p['description']}, with {p['signature']} clearly visible.",
+        "prompt": p["description"] + "." if "clearly visible" in p["description"]
+        else f"{p['description']}, with {p['signature']} clearly visible.",
         "clips": {"run": base["run"]["clip"]}, "actions": {"run": base["run"]["action"]},
         "skip": base["skip"], "extras": extras,
         "then": [{"prompt_style": "pf_px__reduce", "factor": 4, "colors": 10}],

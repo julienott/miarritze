@@ -1,5 +1,5 @@
 {
- "_doc": "Copie machine des prompts de Miarritze Blackout. Ce qui fait foi : GDD-BLACKOUT.md (§8.2 pour les persos, §9 style, §14 pipeline) ; toute modification se fait d'abord dans le GDD, puis ici. Analyse du style : docs/STYLE_PARTY_HARD.md. Prompts en anglais, simples, sans négation, sans citer de jeu existant. Persos (v2) : prompt du moteur A = persos[id].description + ', with ' + signature + ' clearly visible.' (23/10, GDD §8.2) ; rejeu : tools/blackout/party_hard_v2.py. Les gabarits (prop, cachette, sol, mur, anime, carte_zone) et style_commun servent au décor ; gabarits.perso et animations.* (48 px, pf_pro__character / pf_anim__*) sont l'essai du 21/10, remplacé par les moteurs A et B.",
+ "_doc": "Copie machine des prompts de Miarritze Blackout. Ce qui fait foi : GDD-BLACKOUT.md (§8.2 pour les persos, §9 style, §14 pipeline) ; toute modification se fait d'abord dans le GDD, puis ici. Analyse du style : docs/STYLE_PARTY_HARD.md. Prompts en anglais, simples, sans négation, sans citer de jeu existant. Persos (v2) : prompt du moteur A = persos[id].description + '.' quand elle porte « clearly visible », sinon description + ', with ' + signature + ' clearly visible.' (23/10, GDD §8.2) ; rejeu : tools/blackout/party_hard_v2.py. Les gabarits (prop, cachette, sol, mur, anime, carte_zone) et style_commun servent au décor ; gabarits.perso et animations.* (48 px, pf_pro__character / pf_anim__*) sont l'essai du 21/10, remplacé par les moteurs A et B.",
  "version": 2,
  "date": "2026-10-22",
  "echelle": {
@@ -170,67 +170,67 @@
   "louis": {
    "corps": "enfant",
    "signature": "a red Basque beret on blond hair",
-   "description": "a little Basque boy with blond hair, a red beret, a white short-sleeved shirt, a red belt and navy rolled-up trousers"
+   "description": "a little Basque boy with short blond hair, a white short-sleeved shirt, a red belt and navy rolled-up trousers, a red Basque beret clearly visible on his blond hair"
   },
   "txomin": {
    "corps": "enfant",
    "signature": "a red cap and a yellow tank top",
-   "description": "a Basque lifeguard boy with dark brown skin and short black curly hair, a red cap, black sunglasses, a yellow tank top and red swim shorts, barefoot"
+   "description": "a Basque lifeguard boy with dark brown skin and short black curly hair, black sunglasses, red swim shorts, barefoot, a red cap and a yellow tank top clearly visible"
   },
   "patxi": {
    "corps": "adulte",
    "signature": "a bright yellow raincoat and yellow boots",
-   "description": "a bearded Basque fisherman with a blue beanie, a yellow raincoat, light blue trousers and yellow rubber boots"
+   "description": "a bearded Basque fisherman man with a blue beanie, light blue trousers, a bright yellow raincoat and yellow rubber boots clearly visible"
   },
   "maia": {
    "corps": "enfant",
    "signature": "a small yellow surfboard upright on her back",
-   "description": "a young Basque surfer girl with a brown ponytail, a turquoise wetsuit with a navy panel, a small yellow surfboard strapped upright on her back, barefoot"
+   "description": "a young Basque surfer girl with a long brown ponytail, a turquoise wetsuit with a navy panel, barefoot, a small yellow surfboard strapped upright on her back, clearly visible"
   },
   "xabi": {
    "corps": "enfant",
    "signature": "a long curved wicker chistera pointing forward",
-   "description": "a little Basque jai alai player with short dark brown hair, a white polo shirt, plain white trousers, a red sash, red espadrilles and a long curved wicker chistera on his right hand pointing forward"
+   "description": "a little Basque jai alai player with short dark brown hair, a white polo shirt, plain white trousers, a red sash, red espadrilles, a long curved wicker chistera on his right hand pointing forward, clearly visible"
   },
   "mattin": {
    "corps": "costaud",
    "signature": "red and white horizontal stripes on a broad chest",
-   "description": "a short stocky Basque stone lifter with a broad muscular chest, a black beard, a red beret, a red and white horizontally striped shirt, navy trousers and brown shoes"
+   "description": "a short stocky Basque stone lifter man with a black beard, a red beret, a broad muscular chest in a red and white horizontally striped shirt clearly visible, navy trousers and brown shoes"
   },
   "amaia": {
    "corps": "enfant",
    "signature": "a red headscarf and a red skirt",
-   "description": "a Basque folk dancer girl with a red headscarf, a green vest over a white blouse, a red skirt, simple white shoes and a wooden makila stick on her back"
+   "description": "a Basque folk dancer girl with long dark braided hair, a red headscarf, a green vest over a white blouse, a red skirt clearly visible, simple white shoes, a wooden makila stick on her back"
   },
   "kaio": {
    "corps": "creature",
    "signature": "a big yellow beak and orange webbed feet",
-   "description": "a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot and orange webbed feet"
+   "description": "a cheeky upright seagull with a white head and belly, light grey wings used as arms, a big yellow beak with a red dot and orange webbed feet clearly visible"
   },
   "karramarro": {
    "corps": "creature",
    "signature": "two big raised orange pincers and eyes on stalks",
-   "description": "a cheerful orange cartoon crab standing on six thin pointed crab legs, two big raised pincers, eyes on stalks, a yellow belly and a big happy open mouth"
+   "description": "a cheerful orange cartoon crab standing upright on two short thin crab legs, two big raised pincers as arms, eyes on stalks, a yellow belly and a big happy open mouth, the two big orange pincers clearly visible"
   },
   "ramuntxo": {
    "corps": "costaud",
    "signature": "a tall white chef hat",
-   "description": "a jolly Basque chef with a small brown mustache, a tall white chef hat, a white chef jacket, a red neck scarf, plain red trousers and black shoes"
+   "description": "a jolly Basque chef with a small brown mustache, a white chef jacket, a red neck scarf, plain red trousers and black shoes, a tall white chef hat clearly visible"
   },
   "itsaso": {
    "corps": "enfant",
    "signature": "long flowing aqua hair and a white foam hem",
-   "description": "a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with bright white foam, barefoot"
+   "description": "a mythical girl spirit of the sea with opaque pale turquoise skin, long wavy aqua hair and a deep blue dress with a white foam-shaped hem, barefoot, the long aqua hair clearly visible"
   },
   "peio": {
    "corps": "costaud",
    "signature": "a brown oval rugby ball under his arm",
-   "description": "a sturdy young Basque rugby player with medium brown skin and short black hair, a red and white hooped jersey, black shorts, white socks, black boots and an oval rugby ball under his arm"
+   "description": "a sturdy young Basque rugby player man with medium brown skin and short black hair, a red and white hooped jersey, black shorts, white socks, black boots, a brown oval rugby ball under his arm clearly visible"
   },
   "itsasargi": {
    "corps": "adulte",
    "signature": "the glowing lantern in his hand",
-   "description": "an old lighthouse keeper with a white beard, a captain cap and a navy pea coat, holding a glowing brass lantern by its handle in his right hand at hip height, the lantern about the size of his head"
+   "description": "an old lighthouse keeper man with a white beard, a captain cap and a navy pea coat, holding a bright brass lantern by its handle in his right hand at hip height, the lantern about the size of his head and clearly visible"
   }
  },
  "pnj_fete": {
@@ -772,7 +772,7 @@
    "objet": "a wooden spoon"
   },
   "itsaso": {
-   "geste": "swirls a small wave between her hands",
+   "geste": "holds her hands together in front of her, fingers moving gently",
    "clip": "Spell_Simple_Shoot",
    "repli": null
   },
@@ -883,7 +883,7 @@
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "pulls his head back, then leans forward with a loud scream, beak wide open",
+    "action": "raises his wings, then sweeps them forward with a loud scream, beak wide open",
     "objet": false
    }
   },
@@ -914,12 +914,12 @@
   "itsaso": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "raises her hand, then sweeps it forward to raise a little stone wall",
+    "action": "raises her hand, then sweeps it forward",
     "objet": false
    },
    "cast_chasseur": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "raises both hands, then pushes them down to call water geysers",
+    "action": "raises both hands, then pushes them down hard",
     "objet": false
    }
   },
@@ -938,12 +938,12 @@
   "itsasargi": {
    "cast_chasse": {
     "clip": "Spell_Simple_Enter+Spell_Simple_Exit",
-    "action": "raises his brass lantern high, then lowers it after a bright flash",
+    "action": "raises his brass lantern high, then lowers it",
     "objet": "a brass lantern"
    },
    "cast_chasseur": {
     "clip": "OverhandThrow",
-    "action": "swings his brass lantern overhead and throws its beam straight ahead",
+    "action": "swings his brass lantern overhead and forward",
     "objet": "a brass lantern"
    }
   }
