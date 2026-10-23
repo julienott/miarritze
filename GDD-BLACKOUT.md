@@ -186,7 +186,7 @@ ni les toucher, et ils ne bloquent pas le passage (on les traverse, comme les jo
 - **Round du boss** : les PNJ **évitent absolument le boss**, paniqués : ils courent dans la direction
   opposée dès qu'il approche, et la foule se vide autour de lui.
 
-**Animations d'un PNJ** : profil, idle, fuite apeurée (course), marche, sursaut, à terre, relever, plus 2 activités (§8.4).
+**Animations d'un PNJ** : profil, idle, fuite apeurée (course), marche, sursaut, à terre (renverse, joué à l'envers pour se relever), plus 2 activités (§8.4).
 Tant qu'elles n'existent pas, des placeholders de 32 px font l'affaire.
 
 ### 3.7 Vitesses (données)
@@ -485,11 +485,11 @@ de loin, aucune personnalisation, rien de violent.
 
 **Character set d'un PNJ humain** (`pf_px__character_set`, case 64 en 32 px) : `profile`, `idle`, `run` (la
 fuite apeurée : clip Sprint_Loop et action « runs away in panic, arms up, mouth wide open », passés dans
-`clips`/`actions`), tout le reste sauté (`portrait`, `jump_hide`, `lift`, `ghost`, `standard`), et **6 extras** :
-`marcher` (Walk_Loop), `sursaut` (Surprise, « jumps with surprise, eyes wide open »), `a_terre` (IdleToLay,
-« drops to the ground and lies flat, dizzy » : renversé par un boss qui fonce, gardé sur sa dernière image),
-`relever` (LayToIdle, « gets back up and dusts off ») et ses **2 activités** prises dans le catalogue
-ci-dessous. Dans le jeu, la peur s'enchaîne : `sursaut` puis `run` (*Julien, 23/10*).
+`clips`/`actions`), `renverse` (« à terre » : clip IdleToLay, « drops to the ground and lies flat, dizzy » :
+renversé par un boss qui fonce, gardé sur sa dernière image ; **se relever = la même planche jouée à l'envers**),
+tout le reste sauté (`portrait`, `jump_hide`, `lift`, `ghost`, les autres standards), et **4 extras** (maximum
+de pixelforge) : `marcher` (Walk_Loop), `sursaut` (Surprise, « jumps with surprise, eyes wide open ») et ses
+**2 activités** prises dans le catalogue ci-dessous. Dans le jeu, la peur s'enchaîne : `sursaut` puis `run` (*Julien, 23/10*).
 
 Chaque PNJ humain a un **prénom** pour qu'on puisse y faire référence (*Julien, 23/10*) ; l'id reste la clé
 des fichiers.
@@ -848,8 +848,8 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
 - **23/10** (cycliste, Julien : option 2) : Wan anime le vélo de la référence avec lui ; le cycliste est décrit
   debout à côté de son vélo, et on accepte qu'il le pousse en se déplaçant. Ses visage, portrait et objets
   coupés sont corrigés chez pixelforge (12 h 30) : à refaire en set complet le moment venu.
-- **23/10** (PNJ, Julien) : prénom pour chaque PNJ humain (§8.4) ; nouveaux extras `a_terre` (IdleToLay) et
-  `relever` (LayToIdle) ; `sursaut` passe à Surprise, suivi de la fuite apeurée (Sprint_Loop, bras en l'air),
+- **23/10** (PNJ, Julien) : prénom pour chaque PNJ humain (§8.4) ; « à terre » par l'élément `renverse` (IdleToLay),
+  relevé en le jouant à l'envers (pixelforge : 4 extras au plus) ; `sursaut` passe à Surprise, suivi de la fuite apeurée (Sprint_Loop, bras en l'air),
   dont l'action n'était jusqu'ici pas envoyée à pixelforge (`pnj_jobs.py` la passe désormais).
 
 ---
