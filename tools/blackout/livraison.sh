@@ -14,9 +14,9 @@ for f in "taches_persos_v3.json persos" "taches_fantome.json fantome" "taches_pn
 done
 "$PY" retouche.py --integre
 cd "$ROOT"
-if git status --porcelain assets/blackout | grep -q .; then
+if [ -n "$(git status --porcelain assets/blackout)" ]; then
   godot --headless --path . --import >/dev/null 2>&1
-  if ! godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd 2>&1 | tail -1 | grep -q " 0 échecs"; then
+  if ! godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd 2>&1 | tail -3 | grep " 0 échecs" >/dev/null; then
     echo "TESTS EN ÉCHEC : rien n'est committé ni publié"; exit 1
   fi
   git add assets/blackout

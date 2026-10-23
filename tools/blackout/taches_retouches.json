@@ -50,7 +50,7 @@
     "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -103,7 +103,7 @@
     "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -156,7 +156,7 @@
     "cast_chasseur": "OverhandThrow"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -209,7 +209,7 @@
     "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -262,7 +262,7 @@
     "cast_chasseur": "OverhandThrow"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -315,7 +315,7 @@
     "cast_chasseur": "OverhandThrow"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -368,7 +368,7 @@
     "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -421,7 +421,7 @@
     "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -474,7 +474,7 @@
     "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -527,7 +527,7 @@
     "cast_chasseur": "OverhandThrow"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -580,7 +580,7 @@
     "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -633,7 +633,7 @@
     "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -686,6 +686,6 @@
     "cast_chasseur": "OverhandThrow"
    }
   },
-  "integre": false
+  "integre": "echec"
  }
 ]
