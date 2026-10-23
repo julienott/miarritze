@@ -1,83 +1,253 @@
 {
  "factor": 4,
+ "size": "normal",
+ "height": 30,
  "canvas": [
-  32,
-  32
+  64,
+  64
  ],
- "feet_y": 31,
+ "feet_y": 60,
  "palette": [
-  "#009e21",
-  "#110005",
-  "#27000d",
-  "#352421",
-  "#5a0002",
-  "#77524b",
-  "#c90006",
-  "#f79255",
-  "#ff0006",
+  "#00b220",
+  "#012716",
+  "#5f0002",
+  "#720002",
+  "#724222",
+  "#770002",
+  "#d50005",
+  "#ff0005",
+  "#ff944d",
   "#ffffff"
+ ],
+ "palette_base": [
+  "#d50005",
+  "#00b220",
+  "#ffffff",
+  "#012716",
+  "#ff944d",
+  "#ff0005",
+  "#770002"
+ ],
+ "palette_dark": [
+  "#5f0002",
+  "#724222",
+  "#724222",
+  "#724222",
+  "#724222",
+  "#720002",
+  "#5f0002"
  ],
  "elements": {
   "profile": {
    "frames": 1,
    "fps": 1,
-   "loop": false
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
   },
   "idle": {
    "frames": 2,
    "fps": 3,
-   "loop": true
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
   },
   "run": {
    "frames": 4,
    "fps": 12,
-   "loop": true
+   "loop": true,
+   "anchor": "common",
+   "size": [
+    64,
+    64
+   ]
   },
   "jump_hide": {
    "frames": 5,
    "fps": 12,
-   "loop": false
+   "loop": false,
+   "anchor": "common",
+   "size": [
+    64,
+    64
+   ]
   },
-  "ghost": {
-   "frames": 4,
-   "fps": 6,
-   "loop": true
+  "lift": {
+   "frames": 6,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "common",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "portrait": {
+   "frames": 1,
+   "fps": 1,
+   "loop": false,
+   "anchor": "bottom",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "interagir": {
+   "frames": 6,
+   "fps": 10.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "victoire": {
+   "frames": 8,
+   "fps": 10.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "defaite": {
+   "frames": 6,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "etourdi": {
+   "frames": 6,
+   "fps": 10.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "renverse": {
+   "frames": 12,
+   "fps": 12.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "colle": {
+   "frames": 6,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "ralenti": {
+   "frames": 8,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "aveugle": {
+   "frames": 6,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "tracte": {
+   "frames": 6,
+   "fps": 10.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
   },
   "idle_long": {
    "frames": 8,
    "fps": 10.0,
-   "loop": true
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "cast_chasse": {
+   "frames": 8,
+   "fps": 12.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "cast_chasseur": {
+   "frames": 8,
+   "fps": 12.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
   }
  },
- "source": "6871b346a50244789605a392d634a284",
+ "source": "767d8c701eec4483846484d3aae2fc14",
  "controls": {
   "warnings": [
-   "teinte d'une zone dérivée de 38.4 ΔE entre 128 et 32"
+   "teinte d'une zone dérivée de 29.6 ΔE entre 128 et 32"
   ],
   "height_px": 30,
-  "body_width_px": 6,
+  "body_width_px": 7,
   "colors_used": 10,
-  "isolated_px": 18,
+  "isolated_px": 6,
   "feet_bottom": {
    "profile": [
-    31
+    60
    ],
    "idle": [
-    31,
-    31
+    60,
+    60
    ],
    "run": [
-    31,
-    31,
-    31,
-    31
+    59,
+    60,
+    59,
+    60
    ]
   },
   "feet_max_dev": 0,
   "eye_present": true,
-  "zone_drift_de": 38.4,
-  "saturation_mean": 0.82,
-  "lightness_range": 98,
+  "zone_drift_de": 29.6,
+  "saturation_mean": 0.93,
+  "lightness_range": 90,
   "colors_budget": 10
  }
 }

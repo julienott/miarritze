@@ -88,21 +88,101 @@
     64
    ]
   },
-  "ghost": {
-   "frames": 4,
-   "fps": 6,
-   "loop": true,
-   "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
   "portrait": {
    "frames": 1,
    "fps": 1,
    "loop": false,
    "anchor": "bottom",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "interagir": {
+   "frames": 6,
+   "fps": 10.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "victoire": {
+   "frames": 8,
+   "fps": 10.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "defaite": {
+   "frames": 6,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "etourdi": {
+   "frames": 6,
+   "fps": 10.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "renverse": {
+   "frames": 12,
+   "fps": 12.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "colle": {
+   "frames": 6,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "ralenti": {
+   "frames": 8,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "aveugle": {
+   "frames": 6,
+   "fps": 8.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "tracte": {
+   "frames": 6,
+   "fps": 10.0,
+   "loop": true,
+   "anchor": "feet",
    "size": [
     64,
     64
@@ -117,18 +197,35 @@
     64,
     64
    ]
+  },
+  "cast_chasse": {
+   "frames": 8,
+   "fps": 12.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "cast_chasseur": {
+   "frames": 8,
+   "fps": 12.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
   }
  },
- "source": "8ecd5e95a5264e10aab152f9ad8cdc4f",
+ "source": "4c6bb9fdca38418d8c02eaa19548b3f6",
  "controls": {
-  "warnings": [
-   "largeur du corps 5 px (attendu ~8)",
-   "teinte d'une zone dérivée de 23.3 ΔE entre 128 et 32"
-  ],
+  "warnings": [],
   "height_px": 29,
   "body_width_px": 5,
   "colors_used": 10,
-  "isolated_px": 3,
+  "isolated_px": 10,
   "feet_bottom": {
    "profile": [
     60
@@ -146,7 +243,7 @@
   },
   "feet_max_dev": 0,
   "eye_present": true,
-  "zone_drift_de": 23.3,
+  "zone_drift_de": 0.0,
   "saturation_mean": 0.87,
   "lightness_range": 95,
   "colors_budget": 10

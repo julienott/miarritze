@@ -1,0 +1,34 @@
+{
+ "profile": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/e3c3c4bc6d5d48da8b4a75dc8e376754/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/e3c3c4bc6d5d48da8b4a75dc8e376754/profile_sheet.png",
+  "fps": 1,
+  "loop": false,
+  "count": 1,
+  "caption": "profile · 1 image · 1 i/s"
+ },
+ "float": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/e3c3c4bc6d5d48da8b4a75dc8e376754/float.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/e3c3c4bc6d5d48da8b4a75dc8e376754/float_sheet.png",
+  "fps": 8,
+  "loop": true,
+  "count": 8,
+  "caption": "float · 8 images · 8 i/s · boucle"
+ },
+ "advance": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/e3c3c4bc6d5d48da8b4a75dc8e376754/advance.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/e3c3c4bc6d5d48da8b4a75dc8e376754/advance_sheet.png",
+  "fps": 10,
+  "loop": true,
+  "count": 6,
+  "caption": "advance · 6 images · 10 i/s · boucle"
+ },
+ "appear": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/e3c3c4bc6d5d48da8b4a75dc8e376754/appear.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/e3c3c4bc6d5d48da8b4a75dc8e376754/appear_sheet.png",
+  "fps": 10,
+  "loop": false,
+  "count": 6,
+  "caption": "appear · 6 images · 10 i/s"
+ }
+}

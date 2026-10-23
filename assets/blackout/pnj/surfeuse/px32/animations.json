@@ -1,0 +1,58 @@
+{
+ "profile": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/profile_sheet.png",
+  "fps": 1,
+  "loop": false,
+  "count": 1,
+  "caption": "profile · 1 image · 1 i/s"
+ },
+ "idle": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/idle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/idle_sheet.png",
+  "fps": 3,
+  "loop": true,
+  "count": 2,
+  "caption": "idle · 2 images · 3 i/s · boucle"
+ },
+ "run": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/run_sheet.png",
+  "fps": 12,
+  "loop": true,
+  "count": 4,
+  "caption": "run · 4 images · 12 i/s · boucle"
+ },
+ "marcher": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/marcher.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/marcher_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "marcher · 8 images · 10 i/s · boucle"
+ },
+ "sursaut": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/sursaut.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/sursaut_sheet.png",
+  "fps": 10.0,
+  "loop": false,
+  "count": 8,
+  "caption": "sursaut · 8 images · 10 i/s"
+ },
+ "telephone": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/telephone.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/telephone_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "telephone · 8 images · 10 i/s · boucle"
+ },
+ "parler": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/parler.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/b594780bc205432eaea4009143f7c209/parler_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "parler · 8 images · 10 i/s · boucle"
+ }
+}

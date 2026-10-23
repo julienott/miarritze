@@ -1,0 +1,58 @@
+{
+ "profile": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/profile_sheet.png",
+  "fps": 1,
+  "loop": false,
+  "count": 1,
+  "caption": "profile · 1 image · 1 i/s"
+ },
+ "idle": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/idle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/idle_sheet.png",
+  "fps": 3,
+  "loop": true,
+  "count": 2,
+  "caption": "idle · 2 images · 3 i/s · boucle"
+ },
+ "run": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/run_sheet.png",
+  "fps": 12,
+  "loop": true,
+  "count": 4,
+  "caption": "run · 4 images · 12 i/s · boucle"
+ },
+ "marcher": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/marcher.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/marcher_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "marcher · 8 images · 10 i/s · boucle"
+ },
+ "sursaut": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/sursaut.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/sursaut_sheet.png",
+  "fps": 10.0,
+  "loop": false,
+  "count": 8,
+  "caption": "sursaut · 8 images · 10 i/s"
+ },
+ "attendre": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/attendre.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/attendre_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "attendre · 8 images · 10 i/s · boucle"
+ },
+ "danser": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/danser.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/813c77635ab441eb99e20479236152b7/danser_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "danser · 8 images · 10 i/s · boucle"
+ }
+}

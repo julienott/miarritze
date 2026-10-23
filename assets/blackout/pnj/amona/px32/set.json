@@ -1,0 +1,143 @@
+{
+ "factor": 4,
+ "size": "normal",
+ "height": 30,
+ "canvas": [
+  64,
+  64
+ ],
+ "feet_y": 60,
+ "palette": [
+  "#08090f",
+  "#121522",
+  "#29282e",
+  "#5c5b68",
+  "#725844",
+  "#8b0003",
+  "#a27c61",
+  "#abacac",
+  "#f40004",
+  "#ffc499"
+ ],
+ "palette_base": [
+  "#121522",
+  "#f40004",
+  "#ffc499",
+  "#abacac",
+  "#5c5b68",
+  "#8b0003",
+  "#a27c61"
+ ],
+ "palette_dark": [
+  "#08090f",
+  "#725844",
+  "#725844",
+  "#29282e",
+  "#29282e",
+  "#29282e",
+  "#725844"
+ ],
+ "elements": {
+  "profile": {
+   "frames": 1,
+   "fps": 1,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "idle": {
+   "frames": 2,
+   "fps": 3,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "run": {
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "anchor": "common",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "marcher": {
+   "frames": 8,
+   "fps": 10.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "sursaut": {
+   "frames": 8,
+   "fps": 10.0,
+   "loop": false,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "parler": {
+   "frames": 8,
+   "fps": 10.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  },
+  "assis": {
+   "frames": 8,
+   "fps": 10.0,
+   "loop": true,
+   "anchor": "feet",
+   "size": [
+    64,
+    64
+   ]
+  }
+ },
+ "source": "211fed0310c1411ab7666b92eb8a5717",
+ "controls": {
+  "warnings": [
+   "couleurs ternes (saturation moyenne 0.49 < 0.55)"
+  ],
+  "height_px": 30,
+  "body_width_px": 7,
+  "colors_used": 10,
+  "isolated_px": 5,
+  "feet_bottom": {
+   "profile": [
+    60
+   ],
+   "idle": [
+    60,
+    60
+   ],
+   "run": [
+    59,
+    60,
+    58,
+    60
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 17.5,
+  "saturation_mean": 0.49,
+  "lightness_range": 78,
+  "colors_budget": 10
+ }
+}

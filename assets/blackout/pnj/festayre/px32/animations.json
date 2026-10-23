@@ -1,0 +1,58 @@
+{
+ "profile": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/profile_sheet.png",
+  "fps": 1,
+  "loop": false,
+  "count": 1,
+  "caption": "profile · 1 image · 1 i/s"
+ },
+ "idle": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/idle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/idle_sheet.png",
+  "fps": 3,
+  "loop": true,
+  "count": 2,
+  "caption": "idle · 2 images · 3 i/s · boucle"
+ },
+ "run": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/run_sheet.png",
+  "fps": 12,
+  "loop": true,
+  "count": 4,
+  "caption": "run · 4 images · 12 i/s · boucle"
+ },
+ "marcher": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/marcher.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/marcher_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "marcher · 8 images · 10 i/s · boucle"
+ },
+ "sursaut": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/sursaut.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/sursaut_sheet.png",
+  "fps": 10.0,
+  "loop": false,
+  "count": 8,
+  "caption": "sursaut · 8 images · 10 i/s"
+ },
+ "danser": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/danser.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/danser_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "danser · 8 images · 10 i/s · boucle"
+ },
+ "boire": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/boire.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/73968a066b794112a05da9244117905f/boire_sheet.png",
+  "fps": 10.0,
+  "loop": true,
+  "count": 8,
+  "caption": "boire · 8 images · 10 i/s · boucle"
+ }
+}

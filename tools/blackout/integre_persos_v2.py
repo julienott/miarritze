@@ -6,6 +6,8 @@ anciens fichiers et est signalé.
 
   integre_persos_v2.py            tous les persos
   integre_persos_v2.py louis …    seulement ceux-là
+  TACHES_PERSOS=taches_pnj.json DEST=pnj integre_persos_v2.py      les PNJ (assets/blackout/pnj/)
+  TACHES_PERSOS=taches_fantome.json DEST=fantome integre_persos_v2.py   le fantôme commun
 """
 import json
 import os
@@ -20,6 +22,8 @@ sys.path.insert(0, os.path.join(ROOT, "tools", "pf"))
 import gen_anims_pf as pf  # noqa: E402
 
 TACHES = os.path.join(HERE, os.environ.get("TACHES_PERSOS", "taches_persos_v3.json"))
+# Dossier d'arrivée sous assets/blackout/ : persos (défaut), pnj, fantome…
+DEST = os.environ.get("DEST", "persos")
 
 
 def tache(tid: str) -> dict:
@@ -51,10 +55,13 @@ def main() -> None:
         t = taches[pid]
         a = tache(t["A"])
         b = tache(t["chaine"][0]["task_id"])
+        if a["status"] in ("pending", "running"):
+            bilan[pid] = f"en cours chez pixelforge ({a['status']})"
+            continue
         if a["status"] != "succeeded" or b["status"] != "succeeded":
             bilan[pid] = f"pas intégré : A {a['status']}, B {b['status']} {str(b.get('error') or a.get('error') or '')[:120]}"
             continue
-        base = os.path.join(ROOT, "assets", "blackout", "persos", pid)
+        base = os.path.join(ROOT, "assets", "blackout", DEST, pid)
         n = rapatrie(a, os.path.join(base, "hd")) + rapatrie(b, os.path.join(base, "px32"))
         bilan[pid] = f"intégré ({n} fichiers, éléments : {', '.join(sorted(b['result']['pixelforge'].get('animations', {})))})"
     for pid, txt in bilan.items():

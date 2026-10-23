@@ -37,3 +37,6 @@ producer/data/
 backend/turn.php
 tools/blackout/.decor_go
 tools/blackout/.decor_pause
+
+# HD des character sets pixelforge (locale, sert à producer ; non exportée)
+assets/blackout/*/*/hd/
