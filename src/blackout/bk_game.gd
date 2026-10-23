@@ -2040,6 +2040,9 @@ func _update_view() -> void:
 		var show: bool = true
 		if a.role == BkActor.Role.OUT:
 			show = a == local
+		elif a.role == BkActor.Role.GHOST:
+			# Seuls les fantômes voient les fantômes (GDD §3.6) : ni le chasseur ni les chassés.
+			show = local.role == BkActor.Role.GHOST
 		elif as_hunter and a != hunter:
 			show = a.role == BkActor.Role.HIDER and bool(_seen.get(a.id, false))
 		# Invisible (effet commun) : rien pour les autres ; il se voit à 30 % (BkEffetsRendu).

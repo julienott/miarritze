@@ -41,7 +41,8 @@ func _run() -> void:
 		test_eclaire_mur, test_ombre_facteur, test_ombre_capture_silhouette, test_disjoncteur,
 		test_disjoncteur_priorite, test_disjoncteur_ia, test_menu_debug, test_coups_donnees, test_recharge,
 		test_plafond_protection, test_aimant, test_passe_muraille, test_cache_cache, test_pieges_retires,
-		test_elements_livres_et_replis, test_effets_animes, test_gestes_et_fin, test_fantome_commun, test_foule_pnj]
+		test_elements_livres_et_replis, test_effets_animes, test_gestes_et_fin, test_fantome_commun, test_foule_pnj,
+		test_fantomes_invisibles]
 	# Les 24 coups de l'étape 4 (un test par coup) : tests/bk_coups_tests.gd.
 	_coups_tests = preload("res://tests/bk_coups_tests.gd").new(self)
 	tests.append_array(_coups_tests.tests())
@@ -1560,4 +1561,21 @@ func test_foule_pnj() -> void:
 	check(vu.shown and not loin.shown, "chasseur : PNJ dans son cône vu, dans son dos caché")
 	f.maj_vue(false, 1.0)
 	check(loin.shown, "chassé : toute la foule visible")
+	await free_game(game)
+
+
+## Seuls les fantômes voient les fantômes (GDD §3.6) : ni le chasseur ni les chassés.
+func test_fantomes_invisibles() -> void:
+	var game: BkGame = await make_game()
+	var gh: BkActor = game.actors[2]
+	gh.set_role(BkActor.Role.GHOST)
+	gh.position = devant(game, 2)                # en plein dans le cône du chasseur
+	for vue: BkActor in [game.actors[0], game.actors[1]]:
+		game.local = vue
+		game._update_view()
+		check(not gh.shown, "fantôme caché au %s" % ("chasseur" if vue == game.hunter else "chassé"))
+	game.local = game.actors[1]
+	game.actors[1].set_role(BkActor.Role.GHOST)
+	game._update_view()
+	check(gh.shown, "un fantôme voit les autres fantômes")
 	await free_game(game)
