@@ -652,9 +652,9 @@ Bases : Beñat (festayre) rire, Joxe (txistulari) sourire, Maddalen (amona) sour
 (cri furieux, pouvoir_1 méfiant, pouvoir_2 colère) ; Intxixuk base malicieux (cri rire) ; `run` déterminé,
 `etourdi` étourdi. Zezengorri (taureau) et Herensuge (marionnette) : sans objet.
 
-**Manquantes chez pixelforge** (*demandées le 23/10*) : `crie` (crier fort sans colère, pour « 1, 2, 3…
+**Ajoutées par pixelforge le 23/10 à notre demande** : `crie` (crier fort sans colère, pour « 1, 2, 3…
 j'arrive ! », le cri de Kaio, le cri de guerre de Peio) et `ebloui` (yeux plissés par une lumière, pour
-`aveugle` ; `douleur` ne convient pas aux enfants). Repli en attendant : surpris.
+`aveugle`).
 À noter : le prompt de Karramarro dit « a big happy open mouth », en conflit avec le profil neutre.
 
 ## 9. Direction artistique

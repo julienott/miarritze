@@ -1005,10 +1005,6 @@
    "podium_gagnant": "fier",
    "podium_perdant": "triste"
   },
-  "attendues": {
-   "crie": "surpris",
-   "ebloui": "surpris"
-  },
   "boss": {
    "basajaun": {
     "base": "mefiant",
