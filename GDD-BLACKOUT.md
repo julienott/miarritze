@@ -425,7 +425,7 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 | Élément | Rôle | Clip Quaternius |
 |---|---|---|
 | `profile` | sprite de référence | — |
-| `portrait` | buste de **trois-quarts face**, 64×64 (HD 256), pour menus, versus, podium | — |
+| `portrait` | buste de **trois-quarts face**, 64×64 (HD 256), pour menus, versus, podium ; **obligatoire pour tout perso, PNJ et boss, en pixel (`px32/portrait_*`) et en HD (`hd/portrait_hd.png`, rapatrié avec la tâche A)** (*Julien, 23/10*) | — |
 | `idle` | immobile | respiration faite par pixelforge (code) |
 | `idle_long` | pose d'inactivité propre au perso (§8.2) | par perso |
 | `run` | course | Sprint_Loop, 9 i/s (2,25 foulées/s, corrigé par pixelforge le 23/10) |
@@ -886,6 +886,10 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   (LayToIdle) ; portrait HD et pixel pour chaque PNJ (les 14 déjà livrés : à ajouter plus tard, par redo ["portrait"] si pixelforge l.accepte sur un set qui n.en a pas) ; la limite de pixelforge passant de 4 à 10 extras à la demande de Julien (Ainhoa, déposée avant,
   a « à terre » en `renverse`) ; `sursaut` passe à Surprise, suivi de la fuite apeurée (Sprint_Loop, bras en l'air),
   dont l'action n'était jusqu'ici pas envoyée à pixelforge (`pnj_jobs.py` la passe désormais).
+- **23/10** (portraits, Julien) : chaque perso, PNJ et boss a un portrait pixel et un portrait HD. Pixelforge
+  produit le HD dans la tâche A (`portrait_hd.png`), `integre_persos_v2.py` le rapatrie dans `hd/`. État :
+  les 13 persos, Basajaun et Tartalo l'ont ; aucun des PNJ livrés (dont Ainhoa) ni Zezengorri, Herensuge et
+  les Intxixuk : à ajouter au prochain envoi (élément `portrait`).
 
 ---
 
