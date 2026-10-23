@@ -2,40 +2,59 @@
  "factor": 4,
  "size": "normal",
  "height": 30,
+ "from_hd": [
+  "aveugle",
+  "cast_chasse",
+  "cast_chasseur",
+  "colle",
+  "defaite",
+  "etourdi",
+  "idle_long",
+  "interagir",
+  "jump_hide",
+  "lift",
+  "portrait",
+  "profile",
+  "ralenti",
+  "renverse",
+  "run",
+  "tracte",
+  "victoire"
+ ],
  "canvas": [
   64,
   64
  ],
  "feet_y": 60,
  "palette": [
-  "#030e23",
-  "#07214f",
-  "#72482f",
+  "#060e1c",
+  "#0f2040",
+  "#2b231e",
+  "#445e81",
+  "#6f4b33",
   "#727272",
-  "#7c0016",
-  "#a6a4a6",
-  "#d50007",
-  "#ffa169",
-  "#ffb503",
+  "#b80001",
+  "#f7a773",
+  "#f7c239",
   "#ffffff"
  ],
  "palette_base": [
-  "#07214f",
-  "#ffa169",
-  "#d50007",
+  "#0f2040",
   "#ffffff",
-  "#ffb503",
-  "#a6a4a6",
-  "#7c0016"
+  "#b80001",
+  "#f7c239",
+  "#f7a773",
+  "#2b231e",
+  "#445e81"
  ],
  "palette_dark": [
-  "#030e23",
-  "#72482f",
-  "#72482f",
+  "#060e1c",
   "#727272",
-  "#72482f",
-  "#727272",
-  "#72482f"
+  "#6f4b33",
+  "#6f4b33",
+  "#6f4b33",
+  "#060e1c",
+  "#060e1c"
  ],
  "elements": {
   "profile": {
@@ -219,13 +238,13 @@
    ]
   }
  },
- "source": "07f1c3ac15e64c048f3fd0da3a6b9f78",
+ "source": "381b1a9af677434f8dc7cce7cfbe3a6b",
  "controls": {
   "warnings": [],
   "height_px": 30,
   "body_width_px": 5,
   "colors_used": 10,
-  "isolated_px": 6,
+  "isolated_px": 29,
   "feet_bottom": {
    "profile": [
     60
@@ -235,16 +254,16 @@
     60
    ],
    "run": [
-    59,
     60,
+    59,
     58,
     59
    ]
   },
   "feet_max_dev": 0,
   "eye_present": true,
-  "zone_drift_de": 0.0,
-  "saturation_mean": 0.86,
+  "zone_drift_de": 1.7,
+  "saturation_mean": 0.65,
   "lightness_range": 95,
   "colors_budget": 10
  }
