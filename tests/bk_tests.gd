@@ -651,6 +651,10 @@ func test_persos_px32() -> void:
 		var tex: Texture2D = a["tex"]
 		check(is_equal_approx(cell.x * float(a["n"]), float(tex.get_width())), "images × largeur = planche")
 		check(float((a["feet"] as Vector2).y) < cell.y, "pieds dans la case")
+		check(not bool(a.get("monte", false)), "idle : la planche ne monte pas")
+		# Planches retouchées le 23/10 : la montée est dans la planche, le jeu n'en ajoute pas.
+		for el: String in ["lift", "jump_hide"]:
+			check(bool(BkPerso.element("louis", el).get("monte", false)), "%s de Louis : montée dans la planche" % el)
 	var r: Dictionary = BkPerso.element("perso_de_test", "run")
 	check(r.has("repli") and int(r["n"]) == 4 and (r["cell"] as Vector2) == Vector2(64, 64), "repli : course en 4 images de 64×64")
 	check((r["feet"] as Vector2).y == float(BkPerso.PIEDS_Y), "repli : pieds à y = 60")

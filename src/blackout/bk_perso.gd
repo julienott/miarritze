@@ -47,6 +47,7 @@ const VOISINS: Dictionary = {"portrait": ["profile"], "idle": ["profile"], "idle
 ## Case de repli et ligne des pieds (GDD §8.1 : case de 64×64, pieds à y = 60).
 const CASE_PX: int = 64
 const PIEDS_Y: int = 60
+const MONTEE_MIN_PX: int = 3      # écart de hauteur des pieds dans la planche au-delà duquel elle « monte »
 ## Silhouette de repli : largeur et hauteur de la capsule (px), images et cadence par élément.
 const CAPSULE_L: int = 12
 const CAPSULE_H: int = 30
@@ -230,7 +231,23 @@ static func _planche(character: String, el: String) -> Dictionary:
 	var feet_y: float = float(infos.get("feet_y", roundf(cell.y * float(PIEDS_Y) / float(CASE_PX))))
 	return {"tex": tex, "n": maxi(1, n), "fps": maxf(0.1, float(info.get("fps", 8.0))),
 		"loop": bool(info.get("loop", el != "jump_hide" and el != "profile" and el != "lift")),
-		"cell": cell, "feet": Vector2(floorf(cell.x * 0.5), feet_y)}
+		"cell": cell, "feet": Vector2(floorf(cell.x * 0.5), feet_y),
+		"monte": (el == "lift" or el == "jump_hide") and _monte(tex, cell, maxi(1, n))}
+
+
+## La planche monte-t-elle d'elle-même (pieds qui quittent le sol, pixelforge 23/10) ? Le jeu n'ajoute
+## alors ni l'envol (lift_px) ni l'arc de sortie de cachette : sinon la montée compte deux fois.
+static func _monte(tex: Texture2D, cell: Vector2, n: int) -> bool:
+	var img: Image = tex.get_image()
+	if img == null:
+		return false
+	if img.is_compressed():
+		img.decompress()
+	var bas: Array[int] = []
+	for f: int in n:
+		var r: Rect2i = img.get_region(Rect2i(int(cell.x) * f, 0, int(cell.x), int(cell.y))).get_used_rect()
+		bas.append(r.end.y if r.has_area() else 0)
+	return bas.max() - bas.min() >= MONTEE_MIN_PX
 
 
 static func _json(path: String) -> Dictionary:
@@ -467,14 +484,14 @@ func _process(dt: float) -> void:
 	# Hauteur : envol du trouvé (il monte en clignotant, GDD §3.6), saut d'un coup spécial.
 	hover_lift = actor.saut_px
 	var ghost: bool = fant and k_lift < 0.0
-	if k_lift >= 0.0:
+	if k_lift >= 0.0 and not bool(d.get("monte", false)):
 		hover_lift = maxf(hover_lift, BkRules.f("lift_px") * k_lift)
 	modulate = pose["modulate"]
 	if ghost:
 		modulate.a = BkRules.f("fantome_alpha")
 	var blink: bool = k_lift >= 0.0 and fmod(_once_t * BkRules.f("lift_clignote_hz"), 1.0) < 0.5
 	visible = actor.draw_2d and (actor.shown or _once != "") and not actor.inside() and not blink
-	var pieds: Vector2 = Vector2(0, actor.feet_dy() - hover_lift) + _pop_offset() + (pose["decalage"] as Vector2)
+	var pieds: Vector2 = Vector2(0, actor.feet_dy() - hover_lift) + _pop_offset(bool(d.get("monte", false))) + (pose["decalage"] as Vector2)
 	rotation = float(pose["rotation"])
 	# Le sprite tourne autour de ses pieds (renversé sans planche : couché sur le sol).
 	position = (pieds - Vector2(fx, feet.y).rotated(rotation)).round()
@@ -488,9 +505,10 @@ func _local() -> BkActor:
 
 ## Sortie de cachette : décalage de dessin qui part de la cachette et rejoint l'acteur (posé sur
 ## la case voisine) en sautant un peu, pendant `cachette_out_s`.
-func _pop_offset() -> Vector2:
+func _pop_offset(planche_monte: bool = false) -> Vector2:
 	if actor.pop_left <= 0.0:
 		return Vector2.ZERO
 	var p: float = 1.0 - clampf(actor.pop_left / maxf(BkRules.f("cachette_out_s"), 0.01), 0.0, 1.0)
 	var e: float = 1.0 - pow(1.0 - p, 3.0)
-	return (actor.pop_from - actor.position) * (1.0 - e) + Vector2(0, -BkRules.f("tile_px") * 0.3 * sin(p * PI))
+	var arc: float = 0.0 if planche_monte else BkRules.f("tile_px") * 0.3 * sin(p * PI)
+	return (actor.pop_from - actor.position) * (1.0 - e) + Vector2(0, -arc)

@@ -743,7 +743,7 @@
     "cast_chasseur": "raises both hands to his mouth, then throws them open to call out"
    }
   },
-  "integre": false
+  "integre": true
  },
  {
   "famille": "persos",
@@ -800,7 +800,7 @@
     "cast_chasseur": "raises his silver whistle to his lips, then lowers it after a sharp blow"
    }
   },
-  "integre": false
+  "integre": true
  },
  {
   "famille": "persos",
@@ -857,7 +857,7 @@
     "cast_chasseur": "casts his fishing line far forward"
    }
   },
-  "integre": false
+  "integre": true
  },
  {
   "famille": "persos",
@@ -914,7 +914,7 @@
     "cast_chasseur": "lifts her yellow surfboard up, then swings it forward"
    }
   },
-  "integre": false
+  "integre": true
  },
  {
   "famille": "persos",
@@ -971,7 +971,7 @@
     "cast_chasseur": "hurls a pelota ball with his chistera"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -1028,7 +1028,7 @@
     "cast_chasseur": "heaves a heavy round stone forward"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -1085,7 +1085,7 @@
     "cast_chasseur": "raises her wooden makila stick, then brings it down on the ground"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -1142,7 +1142,7 @@
     "cast_chasseur": "pulls his head back, then leans forward with a loud scream, beak wide open"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -1199,7 +1199,7 @@
     "cast_chasseur": "raises both claws, then sweeps them sideways"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -1256,7 +1256,7 @@
     "cast_chasseur": "throws a small pot of red pepper"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -1313,7 +1313,7 @@
     "cast_chasseur": "raises both hands, then pushes them down to call water geysers"
    }
   },
-  "integre": false
+  "integre": "echec"
  },
  {
   "famille": "persos",
@@ -1370,6 +1370,6 @@
     "cast_chasseur": "raises his fists high, then shouts a war cry"
    }
   },
-  "integre": false
+  "integre": "echec"
  }
 ]

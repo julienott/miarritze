@@ -807,7 +807,8 @@ planter le contrôle final d'un set après tout le calcul). Correctif écrit, pa
 Julien** (23/10) : 13 persos et fantôme en priorité normale, 42 PNJ en priorité nuit, puis les 5 boss en priorité basse (low). Les requêtes sont prêtes à rejouer : `party_hard_v2.py`,
 `pnj_jobs.py`, `taches_fantome.json` et `taches_boss_essai.json` (champ `requete`). Zezengorri n'a que les
 animations de quadrupède : gratter le sol et souffle de soufre restent à demander.
-À intégrer tels quels (`tools/blackout/integre_persos_v2.py`) puis QA par Julien ; poser `keep` sur les
+**File vidée l'après-midi du 23/10** (Julien) : plus rien en file ; prochaine commande, sur son ordre,
+un perso et un PNJ de test, puis le reste (§16). À intégrer tels quels (`tools/blackout/integre_persos_v2.py`) puis QA par Julien ; poser `keep` sur les
 persos validés (§14.1). Animaux : chat et chien attendent le feu vert de Julien à pixelforge
 (`pf_px__creature`) ; goéland et pigeon attendent un mode oiseau. Herensuge en marionnette, essai chat
 a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (§10.2) : après le jalon 1.
@@ -833,6 +834,11 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   tracte Slide ; lancements selon la famille du coup (OverhandThrow pour « lance », sinon Spell_Simple_Enter + Exit) ;
   portrait plus fiable et cadence de la course demandés à pixelforge ; retouches par `redo` en priorité normale
   déposées le 23/10 (13 jobs, `taches_retouches.json`) après les corrections de pixelforge (commits 24beeed, f471e43).
+- **23/10 après-midi** (Julien : « annuler toute la queue, pas mal de retouches à faire ») : file pixelforge vidée
+  (69 tâches : 8 retouches de persos, 52 PNJ, Itsasargi jamais parti). Retouches déjà livrées intégrées (Louis,
+  Txomin, Patxi, Maïa). La suite repart **sur l'ordre de Julien**, avec **un perso et un PNJ de test** d'abord ;
+  le reste plus tard. Côté jeu : quand la planche lift ou jump_hide monte d'elle-même, le jeu n'ajoute plus
+  ni `lift_px` ni l'arc de sortie de cachette (`BkPerso._monte`).
 
 ---
 
