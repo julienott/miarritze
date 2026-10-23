@@ -259,10 +259,10 @@ son character set (§8.1), la même pour tous.
 | Figé | contour bleu clair, petites étoiles | `etourdi` (Hit_Shoulder_L puis Hit_Shoulder_R : touché d'un côté puis de l'autre ; *Julien 23/10*) |
 | Commandes inversées | plumes qui tournent au-dessus de la tête | `etourdi` |
 | Renversé | étoiles | `renverse` (Hit_Knockback puis LayToIdle : il tombe et se relève) |
-| Collé | flaque de résine sous les pieds | `colle` (Crouch_Fwd ; *Julien 23/10*) |
+| Collé | flaque de résine sous les pieds | `colle` (Crouch_Fwd_Loop ; *Julien 23/10*) |
 | Ralenti | traits bleus derrière | `ralenti` (Zombie_Walk_Fwd_Loop : marche lourde) |
-| Aveuglé / masqué | écran noir ou bleu d'eau, silhouette du joueur seule | `aveugle` (Spell_Double_Shoot ; *Julien 23/10*) |
-| Tracté | corde ou ligne tendue | `tracte` (Slide ; *Julien 23/10*) |
+| Aveuglé / masqué | écran noir ou bleu d'eau, silhouette du joueur seule | `aveugle` (Spell_Double_Shoot_Loop : yeux fermés, il tâtonne ; *Julien 23/10*) |
+| Tracté | corde ou ligne tendue | `tracte` (Slide_Loop ; *Julien 23/10*) |
 | Révélé | contour lumineux visible à travers les murs (pour le chasseur) | aucune |
 | Insensible | halo doré | aucune |
 | Invisible / enfoui | sprite à 30 % pour son joueur seulement, rien pour les autres | aucune |
@@ -428,9 +428,9 @@ La vision limitée du chasseur n'a pas de sens si tout le monde regarde le même
 | `portrait` | buste de **trois-quarts face**, 64×64 (HD 256), pour menus, versus, podium | — |
 | `idle` | immobile | respiration faite par pixelforge (code) |
 | `idle_long` | pose d'inactivité propre au perso (§8.2) | par perso |
-| `run` | course | Sprint_Loop (cadence à revenir à celle d'avant le v3, demandé à pixelforge le 23/10) |
-| `jump_hide` | saut vers la cachette (la sortie = à l'envers) | NinjaJump_Start + NinjaJump_Idle + NinjaJump_Land, UAL2_source (*Julien 23/10*) |
-| `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir_RM : le perso monte (root motion), pixelforge garde la montée dans la case (*Julien 23/10*) |
+| `run` | course | Sprint_Loop, 9 i/s (2,25 foulées/s, corrigé par pixelforge le 23/10) |
+| `jump_hide` | saut vers la cachette (la sortie = à l'envers) | NinjaJump_Start + NinjaJump_Idle_Loop + NinjaJump_Land, 6 images ; la cloche du saut est dans la planche (pixelforge) (*Julien 23/10*) |
+| `lift` | envol avant de devenir fantôme, couleurs normales ; le **code fait clignoter** le perso | LiftAir (version root motion demandée) : rendu sur place, la montée (0 à 30 % de la hauteur) est ajoutée dans la planche par pixelforge (*Julien 23/10*) |
 | `ghost` | **fantôme générique, le même pour tous** (*Julien, 23/10*) : petit drap blanc aux grands yeux ronds et petit béret rouge, qui flotte et avance ; le pseudo au-dessus dit à qui il est | sprite commun (`assets/blackout/fantome/`) : style `pf_px__ghost` de pixelforge (drap dessiné une fois, mouvements par code : `float`, `advance`, `appear`) ; les sets des persos font `skip: ["ghost"]` |
 | `cast_chasse`, `cast_chasseur` | lancement des coups spéciaux (§4.6), propres au perso | extras ; clip selon la famille du coup : OverhandThrow pour « lance », Spell_Simple_Enter + Spell_Simple_Exit pour les autres (*Julien 23/10*) |
 | `interagir` | fouiller une cachette, actionner un disjoncteur (1 s) | élément standard, Interact |
@@ -698,7 +698,7 @@ signature, §8.2), `colors`, la graine, et la liste `extras`. Rien d'autre : ni 
 **Ce que pixelforge livre**, chaîne A (HD, case 256, pieds à 240) → B (32 px, case 64, pieds à 60) :
 - éléments fixes : `profile` (pose debout tirée d'Idle_Loop), `portrait` (buste de trois-quarts face,
   fait depuis le profil seul), `idle` (respiration par code), `run` (4 poses à pas égal, Sprint_Loop ;
-  `run_frames` 6 ou 8 possibles), `jump_hide` (NinjaJump_Start + NinjaJump_Idle + NinjaJump_Land), `lift` (LiftAir_RM), `ghost` (profil
+  `run_frames` 6 ou 8 possibles), `jump_hide` (NinjaJump_Start + NinjaJump_Idle_Loop + NinjaJump_Land, cloche dans la planche), `lift` (LiftAir, montée dans la planche), `ghost` (profil
   translucide par code). Le clip de `run`, `jump_hide` et `lift` se change avec `clips` ; `set.json`
   donne les clips utilisés ;
 - **jusqu'à 4 extras** dans le même set (au-delà : refus au dépôt) : chacun `{name, motion, action,
@@ -832,7 +832,7 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   victoire Celebration, defaite Crying, etourdi Hit_Shoulder_L + R, colle Crouch_Fwd, aveugle Spell_Double_Shoot,
   tracte Slide ; lancements selon la famille du coup (OverhandThrow pour « lance », sinon Spell_Simple_Enter + Exit) ;
   portrait plus fiable et cadence de la course demandés à pixelforge ; retouches par `redo` en priorité normale
-  quand pixelforge est prêt.
+  déposées le 23/10 (13 jobs, `taches_retouches.json`) après les corrections de pixelforge (commits 24beeed, f471e43).
 
 ---
 

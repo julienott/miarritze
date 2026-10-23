@@ -1,0 +1,691 @@
+[
+ {
+  "famille": "persos",
+  "pid": "louis",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "a7734ec6978242f2a1bcee9dfe69190e",
+  "B": "30198dd85ec1480ea5d367293a681157",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "4c6bb9fdca38418d8c02eaa19548b3f6",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "aa34a69a34a94890b1ed8028b0386d93"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "txomin",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "13ebe004096946b9aaeeac41be08b0fa",
+  "B": "0d79b0fa79664351bb6cb59b9db04e02",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "b246f75028e34bbd9ae0769ec4cd0c64",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "8a63856ea0f9474894978ed261aeb7f3"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "OverhandThrow",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "patxi",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "050e11462df04e25bb96e645604fee5f",
+  "B": "38a3194fb21d4792916993cfcdb43bd5",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "1cdf594b37e44e05a83eb1e4669d240f",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "30c378309eb643419a08c6a12b85838d"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "OverhandThrow"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "maia",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "2778936c2be642a29bd1b2549407fca2",
+  "B": "376f909eab4b439e9df29a91288d60e3",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "452b650efd714850ac010315a10ba990",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "08a6611dd7f94c1a884aacddc94cc1b0"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "xabi",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "f73a050e38cc483d914e6a778191603d",
+  "B": "c9b0d626b2944b07877941acf1ce04a1",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "e69b3e7afd3e4d08886b0d4f05c60291",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "c8b8c959c5534115b3ccae7169da85d6"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "OverhandThrow"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "mattin",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "ebe291c5102546c18776abcfb7b294c9",
+  "B": "d6ece192a18c4bb0bcd205c1957af3dd",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "920c1371d869455c890ef24fa21b2e4e",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "b11fd2ea32d44f90871b0b83710fe245"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "OverhandThrow"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "amaia",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "5b0f790a48354faca23fb9e57eda11e9",
+  "B": "eeebb1a690c944538aa385dd5925c7a5",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "767d8c701eec4483846484d3aae2fc14",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "0099cb00206e459c85321131f45738d9"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "kaio",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "efa871b152b04f8e8f87f7fbe509434e",
+  "B": "12b86e6af8f448c280e9e721718cd975",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "a8d99efdffb44a41aa64ec9b600af6bb",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "d276ca92d8f74f5e81d5e943a7a07e28"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "karramarro",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "d2b3260a28814c51a9c3ba714147a141",
+  "B": "690aaddeaf0f4cc8ba996b91fd45fdaf",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "b679f2460d1b427fb5cc4e8049537d6a",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "2d1f102c86d34fa89547258d27d67c77"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "ramuntxo",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "ffad15813c9d4fe58be511777e2a9f51",
+  "B": "94b5461377dc41b4914ac036ec2d76b9",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "8f9d1fc084e34c51a5d2088130489997",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "2d455d3a456342edacde307b5eca26cf"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "OverhandThrow"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "itsaso",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "21168c360e384621b9a7076fc23b1139",
+  "B": "d192dfccc8e6453b9f8426be022f87f1",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "31d04fb52b624638b3cc0f9db2c01f70",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "bf4d094538d24af0a548625e782ab4a0"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "peio",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "6eb030e6b0594d7f9c441d2dba463cf1",
+  "B": "9d0ff7889f264b39b44eb2b6d707d43a",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "9fc4458e5e26432cb5fb61ffeaadcd4a",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "92addbe1fc1f40abbbb65282342b04a3"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "Spell_Simple_Enter+Spell_Simple_Exit"
+   }
+  },
+  "integre": false
+ },
+ {
+  "famille": "persos",
+  "pid": "itsasargi",
+  "elements": [
+   "portrait",
+   "run",
+   "jump_hide",
+   "lift",
+   "victoire",
+   "defaite",
+   "etourdi",
+   "colle",
+   "aveugle",
+   "tracte",
+   "cast_chasse",
+   "cast_chasseur"
+  ],
+  "A": "8ee77319dc2c43eb81340e617422b844",
+  "B": "cfdb6b7963cc4d16a9feaeb7dc2d91b8",
+  "requete": {
+   "prompt_style": "pf_px__character_set",
+   "base_task": "78f4ff90abe549f090da0e1f2bef50c1",
+   "redo": [
+    "portrait",
+    "run",
+    "jump_hide",
+    "lift",
+    "victoire",
+    "defaite",
+    "etourdi",
+    "colle",
+    "aveugle",
+    "tracte",
+    "cast_chasse",
+    "cast_chasseur"
+   ],
+   "priority": "normal",
+   "tag": "miarritze/retouche/persos",
+   "then": [
+    {
+     "prompt_style": "pf_px__reduce",
+     "factor": 4,
+     "colors": 10,
+     "base_task": "db49fc80f5b349c5b150bf21a3082348"
+    }
+   ],
+   "clips": {
+    "cast_chasse": "Spell_Simple_Enter+Spell_Simple_Exit",
+    "cast_chasseur": "OverhandThrow"
+   }
+  },
+  "integre": false
+ }
+]
