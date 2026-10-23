@@ -158,6 +158,8 @@
 		"hider_rescue": 2
 	},
 	"bot_names": ["Louis", "Maïa", "Patxi", "Xabi", "Mattin", "Amaia", "Txomin", "Kaio", "Karramarro", "Ramuntxo", "Itsaso", "Peio", "Itsasargi"],
+	"_doc_boss": "Boss du round final (GDD-BLACKOUT.md §5, §8.3) : ids des sets de assets/blackout/boss/<id>/px32/ (64 px dans une case de 128 ; les trois Intxixuk à 32 px dans une case de 64). Placeholders tant que pixelforge n'a pas rendu (tools/blackout/placeholders_sets.py).",
+	"boss": ["basajaun", "tartalo", "intxixu_1", "intxixu_2", "intxixu_3", "zezengorri", "herensuge"],
 	"characters": ["louis", "maia", "patxi", "xabi", "mattin", "amaia", "txomin", "kaio", "karramarro", "ramuntxo", "itsaso", "peio", "itsasargi"],
 	"ai": {
 		"facile": {"think": 0.9, "danger": 6.0, "relocate": 15.0, "extract_chance": 0.3, "hunter_speed": 0.9, "hunter_scan": 1.2, "hunter_react": 0.8, "clue_memory": 0.5, "search_chance": 0.25, "react": 0.5, "guard_exits": 0.0, "smart_search": false, "coup": 0.3, "disjoncteur": 0.3},

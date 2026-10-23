@@ -8,6 +8,9 @@ anciens fichiers et est signalé.
   integre_persos_v2.py louis …    seulement ceux-là
   TACHES_PERSOS=taches_pnj.json DEST=pnj integre_persos_v2.py      les PNJ (assets/blackout/pnj/)
   TACHES_PERSOS=taches_fantome.json DEST=fantome integre_persos_v2.py   le fantôme commun
+  TACHES_PERSOS=taches_boss_essai.json DEST=boss integre_persos_v2.py   les boss (assets/blackout/boss/)
+Un placeholder (set.json → "placeholder": true, tools/blackout/placeholders_sets.py) est remplacé en entier,
+comme tout ancien contenu de px32/.
 """
 import json
 import os
