@@ -258,7 +258,12 @@ def integre(b, e: dict, pid: str) -> None:
             print(pid, nom, ": pas prêt (A", sa, ", B", sb, ")")
             continue
         el = nom
-        n = rapatrie(a["A"], hd, el, False) + rapatrie(a["B"], os.path.join(base, "px32"), el, True)
+        px = os.path.join(base, "px32")
+        if not faits.get("_set"):              # 1re animation de la nouvelle chaîne : son set.json remplace l'ancien
+            if os.path.exists(os.path.join(px, "set.json")):
+                os.remove(os.path.join(px, "set.json"))
+            faits["_set"] = a["B"]
+        n = rapatrie(a["A"], hd, el, False) + rapatrie(a["B"], px, el, True)
         faits[nom] = a["A"]
         print(pid, nom, f"({a['expression']}) intégré : {n} fichiers")
 
