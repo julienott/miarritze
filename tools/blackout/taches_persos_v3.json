@@ -228,15 +228,15 @@
   }
  },
  "itsasargi": {
-  "A": "869fc5d08ff44c45a9c33fee3ac332fe",
+  "A": "5eaf11a1e50b407dba9df8ad40211e94",
   "chaine": [
    {
-    "task_id": "f0c337cabc5c4bbe9c2ec6395eccd83c",
+    "task_id": "a2fa380f1e5b4dfdbe86d14a4f6be944",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
   ],
-  "prompt": "an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern held firmly by its handle in front of him. Signature detail drawn large and bright: a big glowing yellow lantern held forward.",
+  "prompt": "an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern in his right hand, his hand gripping its handle. Signature detail drawn large and bright: a big glowing yellow lantern in his hand.",
   "idle_long": {
    "name": "idle_long",
    "motion": "Idle_Lantern_Loop",

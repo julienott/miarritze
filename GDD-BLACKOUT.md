@@ -463,7 +463,7 @@ graine 7, chaîne moteur A → moteur B). Toute modification se fait ici d'abord
 | Ramuntxo — chef des Halles | a jolly Basque chef with a small brown mustache, a tall white chef hat, a white chef jacket, a red neck scarf, plain red trousers and black shoes | a tall white chef hat | tastes a sauce from a wooden spoon — Consume |
 | Itsaso — esprit de l'écume | a mythical girl made of sea water with pale cyan skin, long wavy aqua hair and a dress of deep blue waves edged with bright white foam, barefoot | long flowing aqua hair and a white foam hem | swirls a small wave between her hands — Spell_Simple_Shoot |
 | Peio — rugbyman | a sturdy young Basque rugby player with medium brown skin and short black hair, a red and white hooped jersey, black shorts, white socks, black boots and an oval rugby ball under his arm | a brown oval rugby ball under his arm | spins his rugby ball in his hands — Interact |
-| Itsasargi — gardien du phare | an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern held firmly by its handle in front of him | a big glowing yellow lantern held forward | raises his lantern and peers into the dark — Idle_Lantern_Loop |
+| Itsasargi — gardien du phare | an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern in his right hand, his hand gripping its handle | a big glowing yellow lantern in his hand | raises his lantern and peers into the dark — Idle_Lantern_Loop |
 
 Changements du 22/10 (retours de Julien sur le run du 21/10) : Txomin sans palmes, casquette rouge ;
 Patxi sans canne (elle n'apparaît que dans son idle_long), pantalon bleu clair et bottes jaunes ; Xabi
