@@ -767,14 +767,33 @@ Le reste du set est gardé tel quel.
 **Fait et publié à la racine** (étapes 1 à 4 du jalon 1) : pixel art 640×360, cases de 32 px, carte bac à
 sable, persos placeholders (Louis v5), nuit, lumière et ombre, disjoncteurs, menu debug, moteur des coups
 spéciaux et **les 26 coups** (placeholders), 10 effets communs et garde-fous, pièges et emotes retirés.
-65 tests ; IA contre IA : 70 % de trouvés, chasseur gagnant 90 % des rounds (trop fort, à équilibrer).
+71 tests ; IA contre IA : 70 % de trouvés, chasseur gagnant 90 % des rounds (trop fort, à équilibrer).
+
+**Éléments livrés branchés dans le jeu** (*23/10, demande de Julien : « tous les éléments livrés dans le
+jeu, même en QA »*) : effets subis joués par le perso (`etourdi` pour figé et commandes inversées,
+`renverse`, `colle`, `ralenti`, `aveugle`, `tracte`, marques du code gardées, plus de sprite couché quand la
+planche existe) ; `interagir` pendant une fouille et un disjoncteur (l'entrée en cachette garde `jump_hide`,
+§8.1) ; `cast_chasse` / `cast_chasseur` selon le rôle au lancement de chaque coup, par-dessus la course
+(et à la place du saut des coups de déplacement) ; `portrait` au versus, au HUD (rôle, scores du round) et
+au podium (suivants) ; `victoire` / `defaite` en fin de round et au podium ; **fantôme commun** (#646 :
+`appear` après l'envol, `float` à l'arrêt, `advance` en mouvement ; plus d'élément ghost cherché dans les
+sets ; on le reconnaît à son pseudo seul, §8.1). Élément manquant : élément voisin, sinon silhouette de
+repli (`BkPerso.VOISINS`). **PNJ, base de #647** (`src/blackout/bk_foule.gd`) : `pnj_nombre` humains (20,
+réglable par carte), sets réels d'abord puis placeholders ; activités en boucle, marche entre des cases,
+une part reste sur place ; sursaut puis fuite vers la lumière quand leur secteur est coupé, sursaut puis
+fuite loin d'un coup spécial ; traversables, triés avec le décor, dans la nuit et la lumière, vus du
+chasseur seulement dans son cône (silhouette dans l'ombre). **Reste sur #647** : camouflage dans un groupe
+et détection (§3.8), sursaut au passage d'un chassé qui court, regroupements, points d'activité de la
+carte, couple promeneur + chien, animaux, fuite devant le boss, synchronisation en ligne. Défaut de rendu
+signalé : les planches de Kaio ont un fond clair sur une partie des images, et les portraits de Kaio et
+Mattin des pixels parasites (à corriger chez pixelforge).
 
 **Reste à faire, jalon 1** (cartes du kanban) :
 - #644 vue du chasseur : cône et proximité fusionnés sans bordure, dégradé, halo pixellisé, vue à 4 cases
   dans le noir, silhouette progressive, plus de lumières et de disjoncteurs ;
 - #645 textes du HUD, pseudos et bulles nets en 1280×720 ;
 - #633 IA : réaction du chasseur par paliers (§11), coups, ombre, disjoncteurs, boss ;
-- #631 fantômes visibles des seuls fantômes et délivrance par halo ; #646 fantôme commun à intégrer ;
+- #631 fantômes visibles des seuls fantômes et délivrance par halo ;
 - #632 round du boss final ; #636 versus, scores et podium aux règles Blackout ;
 - chasseur sans pseudos des chassés (§3.8) ; équilibrage des coups.
 **Écarts et points ouverts de l'étape 4** : Kaio n'a pas de cachettes en hauteur (la carte n'en a pas) ;
@@ -791,7 +810,7 @@ animations de quadrupède : gratter le sol et souffle de soufre restent à deman
 À intégrer tels quels (`tools/blackout/integre_persos_v2.py`) puis QA par Julien ; poser `keep` sur les
 persos validés (§14.1). Animaux : chat et chien attendent le feu vert de Julien à pixelforge
 (`pf_px__creature`) ; goéland et pigeon attendent un mode oiseau. Herensuge en marionnette, essai chat
-a/b : en pause. PNJ dans le jeu (#647) et masques du décor (§10.2) : après le jalon 1.
+a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (§10.2) : après le jalon 1.
 **Placeholders** (*Julien, 23/10*) : en attendant pixelforge, chaque PNJ, animal et boss sans rendu a un set temporaire au même format (silhouette aux couleurs de sa description, 2 à 4 images par élément, `set.json` → `"placeholder": true`), fait par `tools/blackout/placeholders_sets.py` dans `assets/blackout/pnj|animaux|boss/<id>/px32/` et chargé par le même chargeur que les persos (BkPerso) ; le vrai rendu le remplace à l'intégration (`integre_persos_v2.py`, `DEST=pnj|animaux|boss`). Liste des boss : `rules.json` → `boss`.
 
 ## 16. Journal des décisions
