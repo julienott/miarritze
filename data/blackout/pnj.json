@@ -11,6 +11,7 @@
    "victoire",
    "defaite",
    "etourdi",
+   "renverse",
    "colle",
    "ralenti",
    "aveugle",
@@ -28,15 +29,23 @@
     "motion": "Surprise",
     "action": "jumps with surprise, eyes wide open",
     "loop": false
+   },
+   {
+    "name": "a_terre",
+    "motion": "IdleToLay",
+    "action": "drops to the ground and lies flat, dizzy",
+    "loop": false
+   },
+   {
+    "name": "relever",
+    "motion": "LayToIdle",
+    "action": "gets back up and dusts off",
+    "loop": false
    }
   ],
   "run": {
    "clip": "Sprint_Loop",
    "action": "runs away in panic, arms up, mouth wide open"
-  },
-  "renverse": {
-   "clip": "IdleToLay",
-   "action": "drops to the ground and lies flat, dizzy"
   }
  },
  "activites": {

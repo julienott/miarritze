@@ -140,6 +140,8 @@ BK_ELEMENTS = {
     # PNJ (§8.4) : la course est la fuite ; marcher et sursaut sont communs à tous.
     "marcher": ("marcher", "Marche calme, son déplacement normal dans la foule.", "Walk_Loop"),
     "sursaut": ("sursaut", "Il sursaute, surpris, puis s'enfuit (fuite).", "Surprise"),
+    "a_terre": ("à terre", "Renversé (boss qui fonce) : il s'effondre et reste allongé.", "IdleToLay"),
+    "relever": ("se relever", "Il se relève quand le danger est passé.", "LayToIdle"),
     "fuir": ("fuir", "Il s'enfuit.", ""),
     # Boss (§8.3, §5.2).
     "cri": ("cri", "Il repère un joueur et pousse un cri.", ""),
@@ -417,9 +419,6 @@ class Builder:
             if name == "run":
                 libelle, desc = "fuite", "Course de fuite : il s'enfuit, paniqué (après le sursaut)."
                 action, clip = (sh.get("run") or {}).get("action", ""), (sh.get("run") or {}).get("clip") or clip
-            if name == "renverse":
-                libelle, desc = "à terre", "Renversé (boss qui fonce) : il s'effondre ; joué à l'envers, il se relève."
-                action, clip = (sh.get("renverse") or {}).get("action", ""), (sh.get("renverse") or {}).get("clip") or clip
             for e in sh.get("extras_communs") or []:
                 if e.get("name") == name:
                     action, clip = e.get("action", ""), e.get("motion") or clip
