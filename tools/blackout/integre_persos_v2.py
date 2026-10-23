@@ -56,6 +56,10 @@ def main() -> None:
     bilan = {}
     for pid in pids:
         t = taches[pid]
+        base = os.path.join(ROOT, "assets", "blackout", DEST, pid)
+        marque = os.path.join(base, ".tache")          # tâche A déjà intégrée : rien à refaire
+        if os.path.exists(marque) and open(marque).read().strip() == t["A"]:
+            continue
         a = tache(t["A"])
         b = tache(t["chaine"][0]["task_id"])
         if a["status"] in ("pending", "running"):
@@ -64,8 +68,8 @@ def main() -> None:
         if a["status"] != "succeeded" or b["status"] != "succeeded":
             bilan[pid] = f"pas intégré : A {a['status']}, B {b['status']} {str(b.get('error') or a.get('error') or '')[:120]}"
             continue
-        base = os.path.join(ROOT, "assets", "blackout", DEST, pid)
         n = rapatrie(a, os.path.join(base, "hd")) + rapatrie(b, os.path.join(base, "px32"))
+        open(marque, "w").write(t["A"] + "\n")
         bilan[pid] = f"intégré ({n} fichiers, éléments : {', '.join(sorted(b['result']['pixelforge'].get('animations', {})))})"
     for pid, txt in bilan.items():
         print(pid, ":", txt)

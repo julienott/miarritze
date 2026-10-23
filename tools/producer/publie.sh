@@ -32,3 +32,7 @@ git push -q -f origin "HEAD:$BRANCHE"
 # La branche orpheline n'a pas de workflow : on lance celui de main, qui copie producer-build.
 gh workflow run producer.yml --ref main -R "$(git -C "$ROOT" remote get-url origin)"
 echo "producer poussé sur $BRANCHE ($(du -sh . | cut -f1)) : publication lancée (producer.yml)"
+# Cartes chapeau de recette des sets pixelforge publiés, sans intervention (Julien 23/10).
+"$PY" "$ROOT/tools/producer/cartes_auto.py" && git -C "$ROOT" add tools/producer/cartes_auto_etat.json \
+  && { git -C "$ROOT" diff --cached --quiet || git -C "$ROOT" commit -q -m "Producer : état des cartes de recette automatiques" -- tools/producer/cartes_auto_etat.json; } \
+  && git -C "$ROOT" push -q || echo "cartes_auto : échec (voir ci-dessus)"

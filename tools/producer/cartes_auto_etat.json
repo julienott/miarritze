@@ -1,0 +1,441 @@
+{
+ "blackout/fantome/fantome/animations": {
+  "carte": 662,
+  "empreintes": {
+   "advance": "09010c12acfb",
+   "appear": "0d1dfc40da7a",
+   "compare": "8c0bb7aec36e",
+   "float": "cdaeaf4b8883",
+   "profile": "a75aaa4135e2"
+  }
+ },
+ "blackout/persos/amaia/animations": {
+  "carte": 649,
+  "empreintes": {
+   "aveugle": "5c7b748caa84",
+   "cast_chasse": "e71bdaaf9c33",
+   "cast_chasseur": "0935fe3fc13d",
+   "colle": "b5967385b7dd",
+   "compare": "46faf77bbad2",
+   "defaite": "5f543be22a9a",
+   "etourdi": "82beb912a0d9",
+   "idle": "8e8bb28d1808",
+   "idle_long": "d9050d43708f",
+   "interagir": "9c370bc6bdfe",
+   "jump_hide": "088b296d11c5",
+   "lift": "1267d90d0185",
+   "portrait": "986cbda18cfd",
+   "profile": "5971f3339ac1",
+   "ralenti": "c2623971a15e",
+   "renverse": "56f6609ac664",
+   "run": "5f5be685f93a",
+   "tracte": "cf6132a30bd5",
+   "victoire": "a5b7f5806f8b"
+  }
+ },
+ "blackout/persos/itsasargi/animations": {
+  "carte": 650,
+  "empreintes": {
+   "aveugle": "0106e2b396b9",
+   "cast_chasse": "8306163136d1",
+   "cast_chasseur": "c6601ec01a13",
+   "colle": "063c39143e88",
+   "compare": "ab6f5c57aee0",
+   "defaite": "aab336a43b39",
+   "etourdi": "5a816089c78c",
+   "idle": "c00dbb0d1d66",
+   "idle_long": "7298c8a99745",
+   "interagir": "feca477b7cac",
+   "jump_hide": "df08491af34d",
+   "lift": "d5e51cc78322",
+   "portrait": "4eb47bb7303c",
+   "profile": "60bceae055b1",
+   "ralenti": "7268c330bef6",
+   "renverse": "29090ad97584",
+   "run": "21b3b34064cc",
+   "tracte": "aae943c368c2",
+   "victoire": "dfe009efd54f"
+  }
+ },
+ "blackout/persos/itsaso/animations": {
+  "carte": 651,
+  "empreintes": {
+   "aveugle": "8f593defb000",
+   "cast_chasse": "6eb3d3526f9d",
+   "cast_chasseur": "a4e02293d4de",
+   "colle": "f19be89eb4bb",
+   "compare": "dde7754953c6",
+   "defaite": "5ec227618484",
+   "etourdi": "fb65079cfbd4",
+   "idle": "d5e45a1afc05",
+   "idle_long": "360670da856e",
+   "interagir": "f81e90a799dd",
+   "jump_hide": "db10aa7444c9",
+   "lift": "5fe4086c11b7",
+   "portrait": "0bf69e76ca11",
+   "profile": "c7bc6913550f",
+   "ralenti": "1845695fae11",
+   "renverse": "d922e02a1d37",
+   "run": "d19bf2ffdc7f",
+   "tracte": "a386cfcb1f01",
+   "victoire": "69b506562e1a"
+  }
+ },
+ "blackout/persos/kaio/animations": {
+  "carte": 652,
+  "empreintes": {
+   "aveugle": "638a91288abd",
+   "cast_chasse": "9aa3ab5b1d24",
+   "cast_chasseur": "33e4e0978052",
+   "colle": "731f935b734f",
+   "compare": "af55546bcfd3",
+   "defaite": "84b5fc77be84",
+   "etourdi": "b06dcb091581",
+   "idle": "a386d7a3fd4f",
+   "idle_long": "cd8ed701f1b8",
+   "interagir": "3852338738b1",
+   "jump_hide": "20fc32fd32d1",
+   "lift": "8fab8caf5689",
+   "portrait": "1a926991d379",
+   "profile": "89f7d64acaba",
+   "ralenti": "8661f4017496",
+   "renverse": "f28d3e726bc4",
+   "run": "6ec7ada70630",
+   "tracte": "cda8d70d1442",
+   "victoire": "7ca16ba80fd4"
+  }
+ },
+ "blackout/persos/karramarro/animations": {
+  "carte": 653,
+  "empreintes": {
+   "aveugle": "d183674e7547",
+   "cast_chasse": "7b8b6e999bae",
+   "cast_chasseur": "90d2356b91c9",
+   "colle": "0ec99432a984",
+   "compare": "d50986b5359e",
+   "defaite": "5c1d4c134626",
+   "etourdi": "34fb6c34a278",
+   "idle": "c1e7dd026474",
+   "idle_long": "6dca038fad0d",
+   "interagir": "5683b2256428",
+   "jump_hide": "e0b827d2012b",
+   "lift": "bb74e69fdb18",
+   "portrait": "496182ae1798",
+   "profile": "fa8c629ecdd1",
+   "ralenti": "1a4be96d4f98",
+   "renverse": "08df4c5901b7",
+   "run": "1937b71c6c23",
+   "tracte": "683b6f86cf2b",
+   "victoire": "7c46b4e32118"
+  }
+ },
+ "blackout/persos/louis/animations": {
+  "carte": 654,
+  "empreintes": {
+   "aveugle": "2571ea37bd26",
+   "cast_chasse": "51b3805cffc0",
+   "cast_chasseur": "ecc7846d77a5",
+   "colle": "52a286ab11b6",
+   "compare": "ff7603217cbf",
+   "defaite": "c2db04b691ca",
+   "etourdi": "fb034507da3f",
+   "idle": "3cf73ad5a120",
+   "idle_long": "cfb415f1b48f",
+   "interagir": "21f0767c66fe",
+   "jump_hide": "99f57b00b812",
+   "lift": "59c5e79f2f2c",
+   "portrait": "570721c6fdab",
+   "profile": "37388d27ebad",
+   "ralenti": "becf879b4ada",
+   "renverse": "96c3eaf6b948",
+   "run": "2985cca7cc16",
+   "tracte": "87e0855fe402",
+   "victoire": "059454856bb3"
+  }
+ },
+ "blackout/persos/maia/animations": {
+  "carte": 655,
+  "empreintes": {
+   "aveugle": "dd1bae3f6f80",
+   "cast_chasse": "6d5ffa2c6053",
+   "cast_chasseur": "c8927e3f2ee5",
+   "colle": "3670e013659c",
+   "compare": "b8b93bd4f040",
+   "defaite": "60c100f2eb74",
+   "etourdi": "c338834ae513",
+   "idle": "277166091fd3",
+   "idle_long": "22e402718f35",
+   "interagir": "790d633b95a1",
+   "jump_hide": "d8d11a4bc644",
+   "lift": "6215dcda92fc",
+   "portrait": "2f38bc250ff7",
+   "profile": "be5b3dabb4c6",
+   "ralenti": "cc2f8c2877da",
+   "renverse": "cf353340584d",
+   "run": "05a1fcc4c51d",
+   "tracte": "1a68c2edab36",
+   "victoire": "4377b9b2bbc0"
+  }
+ },
+ "blackout/persos/mattin/animations": {
+  "carte": 656,
+  "empreintes": {
+   "aveugle": "bdbdf653d231",
+   "cast_chasse": "aff46feb54de",
+   "cast_chasseur": "52c016893da6",
+   "colle": "3a4fa507da77",
+   "compare": "cabbe99797f2",
+   "defaite": "26e71dafa09d",
+   "etourdi": "4697e859ed82",
+   "idle": "d486fbb1bee8",
+   "idle_long": "4b998abc3f6a",
+   "interagir": "e3f4317c3ac3",
+   "jump_hide": "18afa746271c",
+   "lift": "572a684dc33f",
+   "portrait": "ae825af460b6",
+   "profile": "7efc2e57460d",
+   "ralenti": "c973b7d330dd",
+   "renverse": "4e7211e36101",
+   "run": "be15df97e374",
+   "tracte": "1d7ed76ef847",
+   "victoire": "6cb2c88f5491"
+  }
+ },
+ "blackout/persos/patxi/animations": {
+  "carte": 657,
+  "empreintes": {
+   "aveugle": "b035e145e1d7",
+   "cast_chasse": "4e34c18a2fed",
+   "cast_chasseur": "f2429ee504f4",
+   "colle": "517c2be5cd9f",
+   "compare": "217d6f74656b",
+   "defaite": "44742625091a",
+   "etourdi": "11e80bdc8411",
+   "idle": "2041bbe1bf56",
+   "idle_long": "e28f9fda07a4",
+   "interagir": "2260d2e198ea",
+   "jump_hide": "1ad0ec1fa9f2",
+   "lift": "e045a69daa88",
+   "portrait": "c55b6909ca4d",
+   "profile": "058d8259dbe9",
+   "ralenti": "cd0139f68226",
+   "renverse": "f41d74f0882f",
+   "run": "259bf2b12c10",
+   "tracte": "bdbb1c4d54b1",
+   "victoire": "2853838a7866"
+  }
+ },
+ "blackout/persos/peio/animations": {
+  "carte": 658,
+  "empreintes": {
+   "aveugle": "d6090855bd39",
+   "cast_chasse": "f5f3193d9ae6",
+   "cast_chasseur": "5f4ebcb96c58",
+   "colle": "b1ec4382628e",
+   "compare": "a4d7e1a0fa42",
+   "defaite": "fef436964e6c",
+   "etourdi": "4f30b9209bce",
+   "idle": "29225a283996",
+   "idle_long": "e43fd0003709",
+   "interagir": "daac44563c3b",
+   "jump_hide": "85fd8e6595cc",
+   "lift": "b0ac63fcfdb6",
+   "portrait": "1d17213d0327",
+   "profile": "d9a4e6124fd6",
+   "ralenti": "3a9511bdd11c",
+   "renverse": "bf41e272c418",
+   "run": "e789ad852f3a",
+   "tracte": "ebeec75637d1",
+   "victoire": "ff2789cdee77"
+  }
+ },
+ "blackout/persos/ramuntxo/animations": {
+  "carte": 659,
+  "empreintes": {
+   "aveugle": "a923c2867b04",
+   "cast_chasse": "bd089a5db331",
+   "cast_chasseur": "0de2e16edcfa",
+   "colle": "05bb03f585af",
+   "compare": "833452f6be62",
+   "defaite": "0bfa356c4b66",
+   "etourdi": "ea06da5f5974",
+   "idle": "18001c5556f7",
+   "idle_long": "ef8dc746a2ce",
+   "interagir": "5aa0798a87b2",
+   "jump_hide": "d02cfee12989",
+   "lift": "6878fa6d004e",
+   "portrait": "b8b91b8c7530",
+   "profile": "7ce21725335e",
+   "ralenti": "a6f734d20988",
+   "renverse": "eab3e7472f99",
+   "run": "e7e0ecf7dd1f",
+   "tracte": "ea1d967e398b",
+   "victoire": "f8836ae1ac2a"
+  }
+ },
+ "blackout/persos/txomin/animations": {
+  "carte": 660,
+  "empreintes": {
+   "aveugle": "d960ff2df43c",
+   "cast_chasse": "7941c2a1f2a3",
+   "cast_chasseur": "820f9413b708",
+   "colle": "72e8c45e1238",
+   "compare": "6f9b7cd2742a",
+   "defaite": "a3657132057e",
+   "etourdi": "85b59e674939",
+   "idle": "810824b50d32",
+   "idle_long": "5ea3e0dde602",
+   "interagir": "8e190a30955e",
+   "jump_hide": "0ff1cc7acd27",
+   "lift": "a229ead3bd49",
+   "portrait": "eadd8271f0ac",
+   "profile": "6c3eb51eedad",
+   "ralenti": "52a73533d055",
+   "renverse": "784a06abe4fa",
+   "run": "b7ad0132b114",
+   "tracte": "425735f50970",
+   "victoire": "fe9ec5697d33"
+  }
+ },
+ "blackout/persos/xabi/animations": {
+  "carte": 661,
+  "empreintes": {
+   "aveugle": "ace6e24a9422",
+   "cast_chasse": "c01286f1f3db",
+   "cast_chasseur": "3a68c4f5e9bb",
+   "colle": "0285b2016bbf",
+   "compare": "f1dc543bb35d",
+   "defaite": "a413d3bc39ba",
+   "etourdi": "fd3dc18afff0",
+   "idle": "980226cf97ec",
+   "idle_long": "daaad999f24c",
+   "interagir": "388402666c45",
+   "jump_hide": "b37725ff0378",
+   "lift": "9fd15bbe0012",
+   "portrait": "0730330c4ea9",
+   "profile": "1bfbd1258796",
+   "ralenti": "ee85eb588fd2",
+   "renverse": "c5e42faf7e17",
+   "run": "ed13573752b2",
+   "tracte": "6dde824d9ef5",
+   "victoire": "b319364350de"
+  }
+ },
+ "blackout/pnj/amona/animations": {
+  "carte": 663,
+  "empreintes": {
+   "assis": "7f915f01328b",
+   "compare": "b88477786e90",
+   "idle": "393eac43519f",
+   "marcher": "b1c0d0238e23",
+   "parler": "4c0a2a735958",
+   "profile": "72dec6876e94",
+   "run": "25366a50535b",
+   "sursaut": "c83b4ed55927"
+  }
+ },
+ "blackout/pnj/ballon/animations": {
+  "carte": 664,
+  "empreintes": {
+   "attendre": "11528de562c4",
+   "compare": "9822ab48bbbe",
+   "danser": "8d56b0ceb8b8",
+   "idle": "1d46315b5d19",
+   "marcher": "652a127ad8a2",
+   "profile": "860d78c48ba0",
+   "run": "ebf4bf729957",
+   "sursaut": "69cbfcf0a0f7"
+  }
+ },
+ "blackout/pnj/errege/animations": {
+  "carte": 665,
+  "empreintes": {
+   "attendre": "9b288ff708ff",
+   "compare": "8949df537837",
+   "danser": "9b391bc1ad8c",
+   "idle": "6454333bb5d8",
+   "marcher": "79515fdae76c",
+   "profile": "cfb39f58906f",
+   "run": "07db4d4d9fe5",
+   "sursaut": "75a24ca4e68b"
+  }
+ },
+ "blackout/pnj/festayre/animations": {
+  "carte": 666,
+  "empreintes": {
+   "boire": "3608142ff272",
+   "compare": "d2fc369e80f2",
+   "danser": "6449accd808a",
+   "idle": "d6a87507594d",
+   "marcher": "179cbf8bf66c",
+   "profile": "0760abe0cb0c",
+   "run": "0f64b19614d3",
+   "sursaut": "764e592f4e7a"
+  }
+ },
+ "blackout/pnj/marin/animations": {
+  "carte": 667,
+  "empreintes": {
+   "boire": "79bd1cb2c0b0",
+   "compare": "650ac39e6223",
+   "idle": "a58ae34e9eb8",
+   "marcher": "5fb469ab1faf",
+   "parler": "5fcc5504183a",
+   "profile": "26eb98d25b0d",
+   "run": "a4d0b7945e3f",
+   "sursaut": "a674ff67a4e4"
+  }
+ },
+ "blackout/pnj/sardine/animations": {
+  "carte": 668,
+  "empreintes": {
+   "attendre": "40e2d0089f48",
+   "compare": "e6574b691344",
+   "danser": "d0aa6d18fea8",
+   "idle": "65b9fb69d308",
+   "marcher": "7073b65330c3",
+   "profile": "25dff20049d9",
+   "run": "cdce69dca9a4",
+   "sursaut": "4c5647d1420e"
+  }
+ },
+ "blackout/pnj/serveur/animations": {
+  "carte": 669,
+  "empreintes": {
+   "attendre": "1e5f032dced8",
+   "compare": "a6c382793dc8",
+   "idle": "b2bfdcd30822",
+   "marcher": "0f2a80c3057b",
+   "parler": "7559a782dfc3",
+   "profile": "c4a6148d2fbf",
+   "run": "0d5f9f23968d",
+   "sursaut": "01f9d31feb8e"
+  }
+ },
+ "blackout/pnj/surfeuse/animations": {
+  "carte": 670,
+  "empreintes": {
+   "compare": "3aee32d1bb60",
+   "idle": "59ba343000f4",
+   "marcher": "cbaa909a5073",
+   "parler": "b1138ae7abca",
+   "profile": "abeede304b49",
+   "run": "3323b366649d",
+   "sursaut": "1ef35183760a",
+   "telephone": "be6f38c4b2e7"
+  }
+ },
+ "blackout/pnj/txistulari/animations": {
+  "carte": 671,
+  "empreintes": {
+   "compare": "0a616f042b30",
+   "idle": "3cb0eb258979",
+   "jouer": "9fa62290aa9a",
+   "marcher": "5ccf3bf96396",
+   "parler": "ef5b86b25ed2",
+   "profile": "a35352d87637",
+   "run": "60b1018f120d",
+   "sursaut": "e7b7a90144eb"
+  }
+ }
+}
