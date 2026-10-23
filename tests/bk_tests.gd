@@ -6,7 +6,8 @@ extends SceneTree
 ## la lumière et l'ombre (éclairé derrière un mur, jauge 3 fois plus lente, silhouette), les
 ## disjoncteurs (coupure de 15 s, recharge, rallumage par le chasseur, priorité du bouton), le menu
 ## debug et les coups spéciaux (données, recharge et gâteaux, plafond des effets et protection, aimant de
-## visée, Passe-Muraille, Cache-Cache !, pièges et onde retirés), plus les 24 autres coups
+## visée, Passe-Muraille, Cache-Cache !, pièges et onde retirés), les éléments livrés joués dans leur cas
+## (effets subis, interagir, lancements, victoire et défaite, fantôme commun), les PNJ sur la carte, plus les 24 autres coups
 ## (tests/bk_coups_tests.gd, un test par coup).
 ## godot --headless --path . --fixed-fps 60 --script res://tests/bk_tests.gd [-- --only=nom]
 
@@ -39,7 +40,8 @@ func _run() -> void:
 		test_persos_px32, test_sets_pnj_boss, test_cases_vue_passage, test_bac_a_sable, test_regles_carte,
 		test_eclaire_mur, test_ombre_facteur, test_ombre_capture_silhouette, test_disjoncteur,
 		test_disjoncteur_priorite, test_disjoncteur_ia, test_menu_debug, test_coups_donnees, test_recharge,
-		test_plafond_protection, test_aimant, test_passe_muraille, test_cache_cache, test_pieges_retires]
+		test_plafond_protection, test_aimant, test_passe_muraille, test_cache_cache, test_pieges_retires,
+		test_elements_livres_et_replis, test_effets_animes, test_gestes_et_fin, test_fantome_commun, test_foule_pnj]
 	# Les 24 coups de l'étape 4 (un test par coup) : tests/bk_coups_tests.gd.
 	_coups_tests = preload("res://tests/bk_coups_tests.gd").new(self)
 	tests.append_array(_coups_tests.tests())
@@ -1363,4 +1365,192 @@ func test_pieges_retires() -> void:
 	for a: BkActor in game.actors:
 		a.position = tile_pos(game, 24, 18)
 		check(not (game.action_label(a) in ["Piège", "Onde"]), "bouton sans Piège ni Onde (%s)" % game.action_label(a))
+	await free_game(game)
+
+
+# ------------------------------------------------------------------ éléments livrés (23/10)
+
+## Élément en cours du perso de `a` après une image.
+func joue(a: BkActor, secs: float = DT) -> String:
+	var n: int = maxi(1, int(round(secs / DT)))
+	for i: int in n:
+		a.perso._process(DT)
+	return a.perso.element_courant()
+
+
+## Chaque élément livré d'un perso est lu tel quel ; un élément manquant prend un voisin ou une
+## silhouette de repli, jamais une image vide ; plus aucun set de perso n'a d'élément ghost.
+func test_elements_livres_et_replis() -> void:
+	for c: Variant in BkRules.data().get("characters", []):
+		var dir: String = BkPerso.dossier(str(c))
+		check(not ResourceLoader.exists(dir + "ghost_sheet.png"), "%s : plus d'élément ghost dans le set" % c)
+		for el: String in BkPerso.ELEMENTS:
+			if ResourceLoader.exists(dir + el + "_sheet.png"):
+				check(BkPerso.livre(str(c), el), "%s : %s livré, lu tel quel" % [c, el])
+	for el: String in BkPerso.ELEMENTS + PackedStringArray(["marcher", "sursaut", "parler"]):
+		if el == "lift":
+			continue
+		var d: Dictionary = BkPerso.element("perso_de_test", el)
+		check(not d.is_empty() and d["tex"] != null and int(d["n"]) >= 1, "repli de %s sans planche" % el)
+	var v: Dictionary = BkPerso.element("louis", "sursaut")
+	check(v.get("voisin", "") == "idle", "élément absent d'un vrai set : voisin idle (%s)" % v.get("voisin", ""))
+	var pnj_renverse: Dictionary = BkPerso.element("festayre", "renverse")
+	check(pnj_renverse.has("voisin") or pnj_renverse.has("repli"), "PNJ sans renverse : repli propre")
+	var p: Dictionary = BkPerso.portrait("louis")
+	check(BkPerso.livre("louis", "portrait") and (p["cell"] as Vector2) == Vector2(64, 64), "portrait de Louis 64×64")
+	check(BkPerso.portrait_tex("louis", 32).get_width() == 32, "portrait réduit pour le HUD")
+	check(not BkPerso.portrait("perso_de_test").is_empty(), "portrait de repli")
+	check(BkPerso.FAMILLES.has("fantome") and not BkPerso.ELEMENTS.has("ghost"), "ghost n'est plus un élément de perso")
+
+
+## Effets subis (GDD §4.5) : le perso joue l'animation d'effet ; renversé sans rotation quand la planche existe.
+func test_effets_animes() -> void:
+	var game: BkGame = await make_game()
+	var a: BkActor = game.actors[1]
+	a.position = devant(game, 3)
+	var attendu: Dictionary = {"fige": "etourdi", "inverse": "etourdi", "renverse": "renverse", "colle": "colle",
+		"ralenti": "ralenti", "aveugle": "aveugle", "tracte": "tracte"}
+	for type: String in attendu:
+		BkEffets.efface(a)
+		BkEffets.force(a, type, {"vers": a.position + Vector2(64, 0)} if type == "tracte" else {})
+		check(joue(a) == attendu[type], "%s : animation %s (%s)" % [type, attendu[type], a.perso.element_courant()])
+	BkEffets.efface(a)
+	BkEffets.force(a, "renverse")
+	joue(a)
+	check(is_zero_approx(a.perso.rotation), "renversé : la planche renverse, pas de sprite couché")
+	BkEffets.efface(a)
+	check(joue(a) == "idle", "effet fini : retour à l'idle")
+	await free_game(game)
+
+
+## interagir (fouille, disjoncteur), lancement des coups selon le rôle, victoire et défaite de fin de round.
+func test_gestes_et_fin() -> void:
+	var game: BkGame = await make_game()
+	var h: BkActor = game.hunter
+	var a: BkActor = game.actors[1]
+	a.position = devant(game, 3)
+	h.search_left = 1.0
+	check(joue(h) == "interagir", "fouille : interagir")
+	h.search_left = 0.0
+	a.use_left = 1.0
+	check(joue(a) == "interagir", "disjoncteur : interagir")
+	a.use_left = 0.0
+	check(game.coups.lance(h) == "", "coup du chasseur lancé")
+	check(joue(h) == "cast_chasseur", "lancement du chasseur : cast_chasseur")
+	h.velocity = Vector2(100, 0)
+	check(joue(h, 0.2) == "cast_chasseur", "le lancement passe par-dessus la course")
+	var l: float = h.once_length("cast")
+	joue(h, l + 0.05)
+	check(h.perso.element_courant() == "run", "après le lancement : la course reprend")
+	h.velocity = Vector2.ZERO
+	a.play_once("cast")
+	check(joue(a) == "cast_chasse", "lancement d'un chassé : cast_chasse")
+	joue(a, 1.0)
+	a.end_pose = "victory"
+	check(joue(a) == "victoire", "fin de round gagnée : victoire")
+	a.end_pose = "sad"
+	check(joue(a) == "defaite", "fin de round perdue : defaite")
+	await free_game(game)
+
+
+## Fantôme commun (#646) : appear à l'apparition, float à l'arrêt, advance en mouvement, planches du set
+## fantome pour tous les persos, jamais d'élément ghost cherché dans les sets.
+func test_fantome_commun() -> void:
+	var game: BkGame = await make_game()
+	var a: BkActor = game.actors[1]
+	a.character = "maia"
+	a.set_character("maia")
+	a.position = devant(game, 3)
+	joue(a)
+	game._found(a)
+	check(joue(a) == "lift", "trouvé : envol (lift)")
+	joue(a, BkRules.f("lift_s"))
+	check(a.perso.element_courant() == "appear", "puis le fantôme commun apparaît (appear)")
+	var appear: Dictionary = BkPerso.element(BkPerso.FANTOME, "appear")
+	check(not appear.has("repli") and a.perso.texture == appear["tex"], "planche du fantôme commun")
+	joue(a, 1.0)
+	check(a.perso.element_courant() == "float", "à l'arrêt : float")
+	a.velocity = Vector2(80, 0)
+	check(joue(a) == "advance", "en mouvement : advance")
+	check(a.perso.texture == BkPerso.element(BkPerso.FANTOME, "advance")["tex"], "même fantôme pour tous")
+	check(a.display_name != "", "le pseudo dit à qui il est")
+	for k: Variant in BkPerso._cache:
+		check(not str(k).ends_with("/ghost"), "élément ghost cherché : " + str(k))
+	await free_game(game)
+
+
+## PNJ (GDD §3.8, base de #647) : pnj_nombre humains, sets réels d'abord, hors des joueurs, sans collision
+## bloquante ; ils font leurs activités, marchent, sursautent et fuient un coup spécial ou une panne.
+func test_foule_pnj() -> void:
+	var game: BkGame = await make_game()
+	var f: BkFoule = game.foule
+	var n: int = int(BkRules.f("pnj_nombre"))
+	check(n >= 15 and n <= 25, "15 à 25 humains par carte (%d)" % n)
+	check(f.pnj.size() == n, "%d PNJ posés (attendu %d)" % [f.pnj.size(), n])
+	var reels: int = 0
+	var dispo: int = 0
+	var humains: Dictionary = BkFoule._donnees()["humains"]
+	for id: Variant in humains:
+		if not BkPerso.placeholder(str(id)):
+			dispo += 1
+	for a: BkActor in f.pnj:
+		check(not game.actors.has(a) and a.collision_layer == 0, "%s : hors des joueurs, traversable" % a.character)
+		check(not BkRules.data()["characters"].has(a.character), "jamais un perso jouable")
+		check(a.get_parent() == game.actors[0].get_parent(), "même calque trié que les persos")
+		if not BkPerso.placeholder(a.character):
+			reels += 1
+	check(reels == mini(dispo, n), "sets réels d'abord (%d sur %d disponibles)" % [reels, dispo])
+	# Activités en boucle, puis marche.
+	var acts: int = 0
+	for a: BkActor in f.pnj:
+		var el: String = joue(a)
+		if el != "idle" and el != "run":
+			acts += 1
+	check(acts >= n / 2, "activités jouées (%d)" % acts)
+	for e: Dictionary in f.etats:
+		e["t"] = 0.0
+		e["fixe"] = false
+	var p0: Array[Vector2] = []
+	for a: BkActor in f.pnj:
+		p0.append(a.position)
+	for i: int in 60:
+		f.maj(DT)
+	var bouges: int = 0
+	for k: int in f.pnj.size():
+		if f.pnj[k].position.distance_to(p0[k]) > 4.0:
+			bouges += 1
+	check(bouges >= n / 2, "ils marchent entre des points (%d)" % bouges)
+	var marcheurs: Array = range(n).filter(func(k: int) -> bool: return f.etats[k]["mode"] == "marche")
+	check(not marcheurs.is_empty() and joue(f.pnj[int(marcheurs[0])]) == "marcher", "en marche : élément marcher")
+	# Coup spécial proche : sursaut puis fuite (run) hors du rayon.
+	var cible: BkActor = f.pnj[1]
+	var centre: Vector2 = cible.position + Vector2(8, 0)
+	var d0: float = cible.position.distance_to(centre)
+	f.coup(centre)
+	check(f.etats[1]["mode"] == "sursaut" and joue(cible) == "sursaut", "coup proche : sursaut")
+	var vu_fuir: bool = false
+	for i2: int in 240:
+		f.maj(DT)
+		if f.etats[1]["mode"] == "fuite":
+			vu_fuir = vu_fuir or joue(cible) == "run"
+	check(vu_fuir, "après le sursaut : il fuit en courant (run)")
+	check(cible.position.distance_to(centre) > d0 + game.map.tile * 2.0, "il s'est éloigné du coup (%.0f px)" % cible.position.distance_to(centre))
+	# Panne de son secteur : sursaut.
+	var p2: BkActor = f.pnj[4]
+	f.etats[4]["mode"] = "activite"
+	f.panne(game.map.secteur_of(game.map.to_tile(p2.position)))
+	check(f.etats[4]["mode"] == "sursaut", "lumière coupée dans son secteur : sursaut")
+	# Vu du chasseur : seulement ce qu'il voit, silhouette dans l'ombre.
+	var vu: BkActor = f.pnj[2]
+	f.etats[2]["mode"] = "activite"
+	f.etats[2]["fixe"] = true
+	vu.position = devant(game, 2)
+	var loin: BkActor = f.pnj[3]
+	f.etats[3]["fixe"] = true
+	f.etats[3]["mode"] = "activite"
+	loin.position = tile_pos(game, CHASSEUR.x - 6, CHASSEUR.y)
+	f.maj_vue(true, 1.0)
+	check(vu.shown and not loin.shown, "chasseur : PNJ dans son cône vu, dans son dos caché")
+	f.maj_vue(false, 1.0)
+	check(loin.shown, "chassé : toute la foule visible")
 	await free_game(game)
