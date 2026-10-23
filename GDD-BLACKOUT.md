@@ -898,6 +898,9 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   `steps` (`couleurs`, `zones`, `brightness`, `hysteresis`, `face`, `vote`). B se relance sur le même A autant
   qu'on veut. `party_hard_v2.py` et `pnj_jobs.py` envoient B sans réglage, ou ceux de `PF_STEPS`. Les sets
   d'avant (retouches par `base_task`) ne changent pas.
+- **23/10** (pixelforge, Julien) : historique de pixelforge entièrement purgé, tâches `keep` comprises. Les
+  sets livrés restent dans le jeu (`assets/blackout/`), mais plus aucun `base_task` / `px_task` d'avant n'est
+  utilisable : retouche (`redo`) ou ajout d'extras d'un perso livré = nouveau set complet.
 
 ---
 
