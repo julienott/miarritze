@@ -1,44 +1,58 @@
 {
  "profile": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/profile_sheet.png",
   "fps": 1,
   "loop": false,
   "count": 1,
-  "caption": "profile · 1 image(s) · 1 i/s · placeholder"
+  "caption": "profile · 1 image · 1 i/s"
  },
  "idle": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/idle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/idle_sheet.png",
   "fps": 3,
   "loop": true,
   "count": 2,
-  "caption": "idle · 2 image(s) · 3 i/s · boucle · placeholder"
+  "caption": "idle · 2 images · 3 i/s · boucle"
  },
  "run": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/run_sheet.png",
   "fps": 12,
   "loop": true,
   "count": 4,
-  "caption": "run · 4 image(s) · 12 i/s · boucle · placeholder"
+  "caption": "run · 4 images · 12 i/s · boucle"
  },
  "marcher": {
-  "fps": 8,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/marcher.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/marcher_sheet.png",
+  "fps": 10.0,
   "loop": true,
-  "count": 4,
-  "caption": "marcher · 4 image(s) · 8 i/s · boucle · placeholder"
+  "count": 8,
+  "caption": "marcher · 8 images · 10 i/s · boucle"
  },
  "sursaut": {
-  "fps": 8,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/sursaut.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/sursaut_sheet.png",
+  "fps": 10.0,
   "loop": false,
-  "count": 3,
-  "caption": "sursaut · 3 image(s) · 8 i/s · placeholder"
+  "count": 8,
+  "caption": "sursaut · 8 images · 10 i/s"
  },
  "jouer": {
-  "fps": 6,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/jouer.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/jouer_sheet.png",
+  "fps": 10.0,
   "loop": true,
-  "count": 4,
-  "caption": "jouer · 4 image(s) · 6 i/s · boucle · placeholder"
+  "count": 8,
+  "caption": "jouer · 8 images · 10 i/s · boucle"
  },
  "boire": {
-  "fps": 6,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/boire.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/0082e7477e514a2296fc66b9bb2098c0/boire_sheet.png",
+  "fps": 10.0,
   "loop": true,
-  "count": 4,
-  "caption": "boire · 4 image(s) · 6 i/s · boucle · placeholder"
+  "count": 8,
+  "caption": "boire · 8 images · 10 i/s · boucle"
  }
 }

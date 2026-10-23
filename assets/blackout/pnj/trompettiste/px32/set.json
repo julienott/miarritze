@@ -1,6 +1,5 @@
 {
- "placeholder": true,
- "source": "tools/blackout/placeholders_sets.py",
+ "factor": 4,
  "size": "normal",
  "height": 30,
  "canvas": [
@@ -9,17 +8,34 @@
  ],
  "feet_y": 60,
  "palette": [
-  "#120e16",
-  "#14101c",
-  "#1a1822",
-  "#2a1a10",
-  "#c3c0bb",
-  "#d82020",
-  "#e8b48a",
-  "#f2b84a",
-  "#f2c12e",
-  "#f4f1ea",
-  "#ffd84a"
+  "#3e000d",
+  "#555555",
+  "#5e0003",
+  "#6f5b10",
+  "#727272",
+  "#bdbdbd",
+  "#d30008",
+  "#ffc500",
+  "#ffdf61",
+  "#ffffff"
+ ],
+ "palette_base": [
+  "#ffffff",
+  "#d30008",
+  "#ffc500",
+  "#3e000d",
+  "#6f5b10",
+  "#bdbdbd",
+  "#ffdf61"
+ ],
+ "palette_dark": [
+  "#727272",
+  "#5e0003",
+  "#5e0003",
+  "#555555",
+  "#555555",
+  "#555555",
+  "#727272"
  ],
  "elements": {
   "profile": {
@@ -46,15 +62,15 @@
    "frames": 4,
    "fps": 12,
    "loop": true,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     64,
     64
    ]
   },
   "marcher": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -63,8 +79,8 @@
    ]
   },
   "sursaut": {
-   "frames": 3,
-   "fps": 8,
+   "frames": 8,
+   "fps": 10.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -73,8 +89,8 @@
    ]
   },
   "jouer": {
-   "frames": 4,
-   "fps": 6,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -83,8 +99,8 @@
    ]
   },
   "boire": {
-   "frames": 4,
-   "fps": 6,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -92,5 +108,34 @@
     64
    ]
   }
+ },
+ "source": "2b9e601c5b1340e3ae1d39f60e1db768",
+ "controls": {
+  "warnings": [],
+  "height_px": 29,
+  "body_width_px": 6,
+  "colors_used": 10,
+  "isolated_px": 3,
+  "feet_bottom": {
+   "profile": [
+    60
+   ],
+   "idle": [
+    60,
+    60
+   ],
+   "run": [
+    59,
+    60,
+    60,
+    60
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 11.7,
+  "saturation_mean": 0.91,
+  "lightness_range": 92,
+  "colors_budget": 10
  }
 }

@@ -1,22 +1,39 @@
 {
- "placeholder": true,
- "source": "tools/blackout/placeholders_sets.py",
+ "factor": 4,
  "size": "normal",
- "height": 31,
+ "height": 30,
  "canvas": [
   64,
   64
  ],
  "feet_y": 60,
  "palette": [
-  "#120e16",
-  "#14101c",
-  "#1a1822",
-  "#5a3a20",
-  "#c3c0bb",
-  "#e8b48a",
-  "#f08ab0",
-  "#f4f1ea"
+  "#232a3a",
+  "#282829",
+  "#4e4f4f",
+  "#59595c",
+  "#720034",
+  "#727272",
+  "#a60f75",
+  "#aeb0b0",
+  "#ff0074",
+  "#ffffff"
+ ],
+ "palette_base": [
+  "#aeb0b0",
+  "#ff0074",
+  "#ffffff",
+  "#59595c",
+  "#a60f75",
+  "#232a3a"
+ ],
+ "palette_dark": [
+  "#4e4f4f",
+  "#720034",
+  "#727272",
+  "#282829",
+  "#720034",
+  "#282829"
  ],
  "elements": {
   "profile": {
@@ -43,15 +60,15 @@
    "frames": 4,
    "fps": 12,
    "loop": true,
-   "anchor": "feet",
+   "anchor": "common",
    "size": [
     64,
     64
    ]
   },
   "marcher": {
-   "frames": 4,
-   "fps": 8,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -60,8 +77,8 @@
    ]
   },
   "sursaut": {
-   "frames": 3,
-   "fps": 8,
+   "frames": 8,
+   "fps": 10.0,
    "loop": false,
    "anchor": "feet",
    "size": [
@@ -70,8 +87,8 @@
    ]
   },
   "parler": {
-   "frames": 4,
-   "fps": 6,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -80,8 +97,8 @@
    ]
   },
   "attendre": {
-   "frames": 2,
-   "fps": 3,
+   "frames": 8,
+   "fps": 10.0,
    "loop": true,
    "anchor": "feet",
    "size": [
@@ -89,5 +106,34 @@
     64
    ]
   }
+ },
+ "source": "5d278a79de9e47fda15629b63c524390",
+ "controls": {
+  "warnings": [],
+  "height_px": 27,
+  "body_width_px": 6,
+  "colors_used": 10,
+  "isolated_px": 0,
+  "feet_bottom": {
+   "profile": [
+    60
+   ],
+   "idle": [
+    60,
+    60
+   ],
+   "run": [
+    60,
+    60,
+    60,
+    60
+   ]
+  },
+  "feet_max_dev": 0,
+  "eye_present": true,
+  "zone_drift_de": 0.0,
+  "saturation_mean": 0.83,
+  "lightness_range": 84,
+  "colors_budget": 10
  }
 }

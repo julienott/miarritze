@@ -1,44 +1,58 @@
 {
  "profile": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/profile.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/profile_sheet.png",
   "fps": 1,
   "loop": false,
   "count": 1,
-  "caption": "profile · 1 image(s) · 1 i/s · placeholder"
+  "caption": "profile · 1 image · 1 i/s"
  },
  "idle": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/idle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/idle_sheet.png",
   "fps": 3,
   "loop": true,
   "count": 2,
-  "caption": "idle · 2 image(s) · 3 i/s · boucle · placeholder"
+  "caption": "idle · 2 images · 3 i/s · boucle"
  },
  "run": {
+  "gif": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/run_sheet.png",
   "fps": 12,
   "loop": true,
   "count": 4,
-  "caption": "run · 4 image(s) · 12 i/s · boucle · placeholder"
+  "caption": "run · 4 images · 12 i/s · boucle"
  },
  "marcher": {
-  "fps": 8,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/marcher.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/marcher_sheet.png",
+  "fps": 10.0,
   "loop": true,
-  "count": 4,
-  "caption": "marcher · 4 image(s) · 8 i/s · boucle · placeholder"
+  "count": 8,
+  "caption": "marcher · 8 images · 10 i/s · boucle"
  },
  "sursaut": {
-  "fps": 8,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/sursaut.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/sursaut_sheet.png",
+  "fps": 10.0,
   "loop": false,
-  "count": 3,
-  "caption": "sursaut · 3 image(s) · 8 i/s · placeholder"
+  "count": 8,
+  "caption": "sursaut · 8 images · 10 i/s"
  },
  "parler": {
-  "fps": 6,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/parler.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/parler_sheet.png",
+  "fps": 10.0,
   "loop": true,
-  "count": 4,
-  "caption": "parler · 4 image(s) · 6 i/s · boucle · placeholder"
+  "count": 8,
+  "caption": "parler · 8 images · 10 i/s · boucle"
  },
  "attendre": {
-  "fps": 3,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/attendre.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/722728f51e19426d8083dedf648a1d23/attendre_sheet.png",
+  "fps": 10.0,
   "loop": true,
-  "count": 2,
-  "caption": "attendre · 2 image(s) · 3 i/s · boucle · placeholder"
+  "count": 8,
+  "caption": "attendre · 8 images · 10 i/s · boucle"
  }
 }
