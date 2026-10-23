@@ -1,14 +1,14 @@
 {
  "louis": {
-  "A": "9e20b7af66104a59b7d05437056c45c4",
+  "A": "07f1c3ac15e64c048f3fd0da3a6b9f78",
   "chaine": [
    {
-    "task_id": "c75c186442134554825ce96ea638e58e",
+    "task_id": "e3ac802d1df543f888bd15d654a6f48a",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
   ],
-  "prompt": "a little Basque boy with blond hair, a red beret, a white short-sleeved shirt, a red belt and navy rolled-up trousers. Signature detail drawn large and bright: a red Basque beret on blond hair.",
+  "prompt": "a little Basque boy with short blond hair, a white short-sleeved shirt, a red belt and navy rolled-up trousers, a red Basque beret clearly visible on his blond hair.",
   "idle_long": {
    "name": "idle_long",
    "motion": "Idle_FoldArms_Loop",
@@ -228,15 +228,15 @@
   }
  },
  "itsasargi": {
-  "A": "5eaf11a1e50b407dba9df8ad40211e94",
+  "A": "10d9dc55a9d7474c98fba2c61b39c2d7",
   "chaine": [
    {
-    "task_id": "a2fa380f1e5b4dfdbe86d14a4f6be944",
+    "task_id": "4e0220d984a749b1b538053e17344dde",
     "style": "pf_px__reduce",
     "source_field": "px_task"
    }
   ],
-  "prompt": "an old lighthouse keeper with a white beard, a captain cap, a navy pea coat and a big glowing brass lantern in his right hand, his hand gripping its handle. Signature detail drawn large and bright: a big glowing yellow lantern in his hand.",
+  "prompt": "an old lighthouse keeper man with a white beard, a captain cap and a navy pea coat, holding a bright brass lantern by its handle in his right hand at hip height, the lantern about the size of his head and clearly visible.",
   "idle_long": {
    "name": "idle_long",
    "motion": "Idle_Lantern_Loop",
