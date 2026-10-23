@@ -1,0 +1,1702 @@
+{
+ "name": "Parc Mazon",
+ "version": 4,
+ "zones": [
+  {
+   "name": "Entrée du gardien",
+   "rect": [
+    2,
+    2,
+    14,
+    9
+   ]
+  },
+  {
+   "name": "Labyrinthe de haies",
+   "rect": [
+    21,
+    2,
+    16,
+    9
+   ]
+  },
+  {
+   "name": "Aire des grands",
+   "rect": [
+    41,
+    2,
+    20,
+    10
+   ]
+  },
+  {
+   "name": "Mare aux canards",
+   "rect": [
+    65,
+    2,
+    14,
+    10
+   ]
+  },
+  {
+   "name": "Potager du jardinier",
+   "rect": [
+    83,
+    2,
+    11,
+    10
+   ]
+  },
+  {
+   "name": "Allée du fronton",
+   "rect": [
+    34,
+    14,
+    32,
+    2
+   ]
+  },
+  {
+   "name": "Bosquet",
+   "rect": [
+    2,
+    15,
+    13,
+    13
+   ]
+  },
+  {
+   "name": "Kiosque à musique",
+   "rect": [
+    19,
+    15,
+    14,
+    12
+   ]
+  },
+  {
+   "name": "Terrain du fronton",
+   "rect": [
+    37,
+    18,
+    26,
+    11
+   ]
+  },
+  {
+   "name": "Grande pelouse",
+   "rect": [
+    67,
+    15,
+    27,
+    13
+   ]
+  },
+  {
+   "name": "Aire des petits",
+   "rect": [
+    2,
+    32,
+    17,
+    8
+   ]
+  },
+  {
+   "name": "Fontaine",
+   "rect": [
+    23,
+    31,
+    12,
+    9
+   ]
+  },
+  {
+   "name": "Buvette",
+   "rect": [
+    39,
+    33,
+    12,
+    7
+   ]
+  },
+  {
+   "name": "Jardin des cabanes",
+   "rect": [
+    55,
+    33,
+    16,
+    7
+   ]
+  },
+  {
+   "name": "Allée des platanes",
+   "rect": [
+    75,
+    32,
+    19,
+    8
+   ]
+  }
+ ],
+ "exits": [
+  {
+   "zone": "Aire des petits",
+   "tiles": [
+    [
+     17,
+     39
+    ],
+    [
+     17,
+     40
+    ],
+    [
+     18,
+     39
+    ],
+    [
+     18,
+     40
+    ]
+   ]
+  },
+  {
+   "zone": "Mare aux canards",
+   "tiles": [
+    [
+     71,
+     1
+    ],
+    [
+     71,
+     2
+    ],
+    [
+     72,
+     1
+    ],
+    [
+     72,
+     2
+    ]
+   ]
+  },
+  {
+   "zone": "Allée des platanes",
+   "tiles": [
+    [
+     92,
+     39
+    ],
+    [
+     92,
+     40
+    ],
+    [
+     93,
+     39
+    ],
+    [
+     93,
+     40
+    ]
+   ]
+  }
+ ],
+ "objets": [
+  {
+   "element": "pm_maison_gardien",
+   "rect": [
+    10,
+    2,
+    4,
+    3
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    2,
+    6,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_fleurs",
+   "rect": [
+    10,
+    7,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    4,
+    10,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    15,
+    9,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cachette_poubelle_ruelle",
+   "rect": [
+    14,
+    5,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    9,
+    10,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_niche_haie",
+   "rect": [
+    30,
+    6,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_cabane_chateau",
+   "rect": [
+    42,
+    2,
+    4,
+    3
+   ]
+  },
+  {
+   "element": "pm_sous_chateau",
+   "rect": [
+    43,
+    5,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_grand_toboggan",
+   "rect": [
+    50,
+    2,
+    4,
+    2
+   ]
+  },
+  {
+   "element": "pm_sous_toboggan",
+   "rect": [
+    54,
+    3,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_toile",
+   "rect": [
+    57,
+    6,
+    3,
+    3
+   ]
+  },
+  {
+   "element": "pm_balancoires",
+   "rect": [
+    47,
+    8,
+    4,
+    1
+   ]
+  },
+  {
+   "element": "pm_tyrolienne",
+   "rect": [
+    41,
+    10,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_tyrolienne",
+   "rect": [
+    59,
+    10,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_cable_tyrolienne",
+   "rect": [
+    43,
+    11,
+    16,
+    1
+   ]
+  },
+  {
+   "element": "pm_tunnel",
+   "rect": [
+    53,
+    7,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_roseaux",
+   "rect": [
+    66,
+    6,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    73,
+    10,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_serre",
+   "rect": [
+    84,
+    2,
+    5,
+    3
+   ]
+  },
+  {
+   "element": "pm_cabane_outils",
+   "rect": [
+    90,
+    2,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "pm_composteur",
+   "rect": [
+    89,
+    6,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_carre_potager",
+   "rect": [
+    83,
+    7,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_carre_potager",
+   "rect": [
+    83,
+    10,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_carre_potager",
+   "rect": [
+    88,
+    10,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    37,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    50,
+    15,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    63,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    2,
+    15,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    10,
+    15,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_bosquet",
+   "rect": [
+    5,
+    18,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_buisson_creux",
+   "rect": [
+    8,
+    18,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    12,
+    19,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    2,
+    21,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_bosquet",
+   "rect": [
+    9,
+    22,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_tronc_creux",
+   "rect": [
+    5,
+    24,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    2,
+    26,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    12,
+    26,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    7,
+    27,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson_creux",
+   "rect": [
+    14,
+    23,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_massif",
+   "rect": [
+    3,
+    23,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_kiosque",
+   "rect": [
+    23,
+    18,
+    5,
+    5
+   ]
+  },
+  {
+   "element": "pm_estrade",
+   "rect": [
+    25,
+    23,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    19,
+    16,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    29,
+    16,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    19,
+    25,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    29,
+    25,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_fleurs",
+   "rect": [
+    19,
+    21,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    31,
+    22,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_bosquet",
+   "rect": [
+    30,
+    19,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_local_club",
+   "rect": [
+    37,
+    18,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "pm_malle_pelotes",
+   "rect": [
+    37,
+    21,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_gradins",
+   "rect": [
+    38,
+    28,
+    6,
+    1
+   ]
+  },
+  {
+   "element": "pm_gradins",
+   "rect": [
+    50,
+    28,
+    6,
+    1
+   ]
+  },
+  {
+   "element": "cachette_poubelle_ruelle",
+   "rect": [
+    62,
+    19,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    60,
+    26,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    70,
+    17,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    78,
+    16,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    88,
+    18,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    72,
+    24,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    84,
+    25,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    91,
+    23,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_table_piquenique",
+   "rect": [
+    74,
+    20,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_table_piquenique",
+   "rect": [
+    82,
+    21,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_table_piquenique",
+   "rect": [
+    67,
+    27,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    76,
+    26,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    93,
+    15,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_tronc_creux",
+   "rect": [
+    89,
+    21,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson_creux",
+   "rect": [
+    68,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_portillon",
+   "rect": [
+    17,
+    39,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_tourniquet",
+   "rect": [
+    9,
+    33,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_petit_toboggan",
+   "rect": [
+    13,
+    32,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_ressort",
+   "rect": [
+    3,
+    38,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_ressort",
+   "rect": [
+    6,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_ressort",
+   "rect": [
+    9,
+    38,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "fontaine_place",
+   "rect": [
+    27,
+    33,
+    4,
+    4
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    32,
+    32,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    32,
+    38,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "cachette_poubelle_ruelle",
+   "rect": [
+    34,
+    35,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_bosquet",
+   "rect": [
+    23,
+    34,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_kiosque_glaces",
+   "rect": [
+    43,
+    33,
+    4,
+    2
+   ]
+  },
+  {
+   "element": "pm_coffre_glaces",
+   "rect": [
+    47,
+    34,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    39,
+    38,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    43,
+    38,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    47,
+    38,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    40,
+    35,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_cabane_branches",
+   "rect": [
+    57,
+    34,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_cabane_branches",
+   "rect": [
+    64,
+    37,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_cabane_branches",
+   "rect": [
+    69,
+    34,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_souche",
+   "rect": [
+    60,
+    36,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_souche",
+   "rect": [
+    62,
+    33,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_souche",
+   "rect": [
+    67,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_bosquet",
+   "rect": [
+    55,
+    38,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    64,
+    33,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    60,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    76,
+    33,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    81,
+    33,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "pm_arbre",
+   "rect": [
+    78,
+    38,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    83,
+    38,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "cachette_poubelle_ruelle",
+   "rect": [
+    79,
+    35,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_roseaux",
+   "rect": [
+    66,
+    9,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_portillon",
+   "rect": [
+    71,
+    1,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_portillon",
+   "rect": [
+    92,
+    39,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "pm_buisson_creux",
+   "rect": [
+    77,
+    37,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    86,
+    33,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_tunnel",
+   "rect": [
+    4,
+    37,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_fronton",
+   "rect": [
+    43,
+    18,
+    14,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    23,
+    32,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "banc_vert",
+   "rect": [
+    23,
+    38,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_fleurs",
+   "rect": [
+    75,
+    36,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "pm_niche_haie",
+   "rect": [
+    31,
+    3,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_maisonnette",
+   "rect": [
+    12,
+    35,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    2,
+    27,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    3,
+    27,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    15,
+    10,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    19,
+    15,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    19,
+    26,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    20,
+    15,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    20,
+    26,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    21,
+    10,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    21,
+    15,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    21,
+    26,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    22,
+    10,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    23,
+    8,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    23,
+    9,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    23,
+    10,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    23,
+    31,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    23,
+    33,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    23,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    24,
+    31,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    24,
+    33,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    24,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    25,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    31,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    32,
+    31,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    32,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    33,
+    10,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    33,
+    31,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    33,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    34,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    34,
+    31,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    34,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    35,
+    9,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    35,
+    10,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    36,
+    10,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    37,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    37,
+    28,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    39,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    40,
+    39,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    41,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    41,
+    3,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    47,
+    33,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    54,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    62,
+    18,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    63,
+    33,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    83,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    83,
+    3,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    83,
+    4,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    83,
+    11,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    84,
+    11,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    85,
+    11,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    89,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    89,
+    3,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    93,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pm_buisson",
+   "rect": [
+    93,
+    3,
+    1,
+    1
+   ]
+  }
+ ]
+}

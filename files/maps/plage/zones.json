@@ -1,0 +1,1672 @@
+{
+ "name": "Plage de la Côte des Basques",
+ "version": 1,
+ "zones": [
+  {
+   "name": "Escalier de la falaise",
+   "rect": [
+    1,
+    1,
+    12,
+    21
+   ]
+  },
+  {
+   "name": "Grotte des contrebandiers",
+   "rect": [
+    15,
+    2,
+    13,
+    7
+   ],
+   "sombre": true
+  },
+  {
+   "name": "Grotte aux sirènes",
+   "rect": [
+    39,
+    2,
+    12,
+    6
+   ],
+   "sombre": true
+  },
+  {
+   "name": "Grotte de la marée",
+   "rect": [
+    62,
+    2,
+    12,
+    6
+   ],
+   "sombre": true
+  },
+  {
+   "name": "Rampe du Port-Vieux",
+   "rect": [
+    84,
+    1,
+    11,
+    12
+   ]
+  },
+  {
+   "name": "Cuisine de l'Itsasoa",
+   "rect": [
+    35,
+    9,
+    11,
+    4
+   ]
+  },
+  {
+   "name": "Cuisine du Txiringito",
+   "rect": [
+    63,
+    9,
+    10,
+    4
+   ]
+  },
+  {
+   "name": "Cabines rayées",
+   "rect": [
+    13,
+    13,
+    18,
+    9
+   ]
+  },
+  {
+   "name": "Restaurant Itsasoa",
+   "rect": [
+    31,
+    13,
+    16,
+    9
+   ]
+  },
+  {
+   "name": "Poste de secours",
+   "rect": [
+    47,
+    13,
+    12,
+    9
+   ]
+  },
+  {
+   "name": "Restaurant Txiringito",
+   "rect": [
+    59,
+    13,
+    16,
+    9
+   ]
+  },
+  {
+   "name": "Port-Vieux",
+   "rect": [
+    75,
+    13,
+    20,
+    17
+   ]
+  },
+  {
+   "name": "Rochers du Basta",
+   "rect": [
+    1,
+    22,
+    24,
+    17
+   ]
+  },
+  {
+   "name": "Grande plage",
+   "rect": [
+    25,
+    22,
+    34,
+    17
+   ]
+  },
+  {
+   "name": "Bateaux au sec",
+   "rect": [
+    59,
+    22,
+    16,
+    17
+   ]
+  },
+  {
+   "name": "Digue",
+   "rect": [
+    75,
+    30,
+    12,
+    9
+   ]
+  }
+ ],
+ "exits": [
+  {
+   "zone": "Haut de l'escalier",
+   "tiles": [
+    [
+     2,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     3,
+     2
+    ]
+   ]
+  },
+  {
+   "zone": "Ponton des sauveteurs",
+   "tiles": [
+    [
+     50,
+     37
+    ],
+    [
+     51,
+     37
+    ],
+    [
+     52,
+     37
+    ]
+   ]
+  },
+  {
+   "zone": "Bout de la digue",
+   "tiles": [
+    [
+     82,
+     37
+    ],
+    [
+     82,
+     38
+    ],
+    [
+     83,
+     37
+    ],
+    [
+     83,
+     38
+    ],
+    [
+     84,
+     37
+    ],
+    [
+     84,
+     38
+    ]
+   ]
+  },
+  {
+   "zone": "Haut de la rampe",
+   "tiles": [
+    [
+     92,
+     1
+    ],
+    [
+     92,
+     2
+    ],
+    [
+     93,
+     1
+    ],
+    [
+     93,
+     2
+    ]
+   ]
+  }
+ ],
+ "sombres": [
+  [
+   12,
+   10,
+   3,
+   2
+  ],
+  [
+   14,
+   7,
+   1,
+   4
+  ],
+  [
+   20,
+   9,
+   2,
+   4
+  ],
+  [
+   28,
+   2,
+   4,
+   2
+  ],
+  [
+   30,
+   2,
+   2,
+   5
+  ],
+  [
+   32,
+   5,
+   7,
+   2
+  ],
+  [
+   40,
+   8,
+   2,
+   1
+  ],
+  [
+   51,
+   2,
+   7,
+   2
+  ],
+  [
+   56,
+   2,
+   2,
+   11
+  ],
+  [
+   58,
+   6,
+   4,
+   2
+  ],
+  [
+   68,
+   8,
+   2,
+   1
+  ],
+  [
+   74,
+   2,
+   4,
+   2
+  ],
+  [
+   76,
+   2,
+   2,
+   9
+  ],
+  [
+   78,
+   9,
+   6,
+   2
+  ]
+ ],
+ "objets": [
+  {
+   "element": "sortie_escalier",
+   "rect": [
+    2,
+    1,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "longue_vue",
+   "rect": [
+    6,
+    4,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "banc",
+   "rect": [
+    5,
+    10,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "rocher",
+   "rect": [
+    12,
+    21,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "douche",
+   "rect": [
+    7,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "tonneau",
+   "rect": [
+    16,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "tonneau",
+   "rect": [
+    17,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "caisses",
+   "rect": [
+    24,
+    2,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "rocher_grotte_large",
+   "rect": [
+    18,
+    5,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "rocher_grotte",
+   "rect": [
+    25,
+    6,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cachette_coffre_contrebandiers",
+   "rect": [
+    22,
+    5,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "lanterne_grotte",
+   "rect": [
+    15,
+    8,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "tonneau",
+   "rect": [
+    26,
+    8,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "flaque_grande",
+   "rect": [
+    43,
+    3,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "rocher_grotte",
+   "rect": [
+    42,
+    5,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_grotte",
+   "rect": [
+    48,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_grotte_large",
+   "rect": [
+    46,
+    6,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "cachette_creux_rocher",
+   "rect": [
+    49,
+    5,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "lanterne_grotte",
+   "rect": [
+    39,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_grotte_large",
+   "rect": [
+    64,
+    4,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "rocher_grotte",
+   "rect": [
+    70,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_grotte",
+   "rect": [
+    67,
+    6,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "flaque",
+   "rect": [
+    70,
+    5,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "cachette_creux_rocher",
+   "rect": [
+    63,
+    2,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "lanterne_grotte",
+   "rect": [
+    73,
+    7,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "sortie_rampe",
+   "rect": [
+    92,
+    1,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "lampadaire",
+   "rect": [
+    88,
+    6,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "lampadaire",
+   "rect": [
+    90,
+    4,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "fourneau",
+   "rect": [
+    36,
+    9,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "plan_travail",
+   "rect": [
+    41,
+    11,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "cachette_frigo",
+   "rect": [
+    45,
+    10,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "facade_resto_rouge",
+   "rect": [
+    34,
+    13,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "comptoir",
+   "rect": [
+    39,
+    13,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "facade_resto_rouge",
+   "rect": [
+    44,
+    13,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    32,
+    16,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    36,
+    17,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    44,
+    16,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    40,
+    19,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "parasol",
+   "rect": [
+    35,
+    15,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "parasol",
+   "rect": [
+    42,
+    17,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "jardiniere",
+   "rect": [
+    31,
+    20,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "jardiniere",
+   "rect": [
+    44,
+    20,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "cachette_sous_terrasse",
+   "rect": [
+    36,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "poste_secours",
+   "rect": [
+    49,
+    14,
+    4,
+    2
+   ]
+  },
+  {
+   "element": "chaise_surveillance",
+   "rect": [
+    48,
+    19,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rack_sauvetage",
+   "rect": [
+    53,
+    17,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "cachette_coffre_sauveteur",
+   "rect": [
+    51,
+    18,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "bouee_poteau",
+   "rect": [
+    57,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "fourneau",
+   "rect": [
+    70,
+    9,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "plan_travail",
+   "rect": [
+    64,
+    11,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "cachette_frigo",
+   "rect": [
+    63,
+    9,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "facade_resto_vert",
+   "rect": [
+    62,
+    13,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "comptoir",
+   "rect": [
+    66,
+    13,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "facade_resto_vert",
+   "rect": [
+    71,
+    13,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    60,
+    16,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    64,
+    18,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    72,
+    16,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "table_terrasse",
+   "rect": [
+    68,
+    17,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "parasol_bleu",
+   "rect": [
+    63,
+    16,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "parasol_bleu",
+   "rect": [
+    71,
+    18,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "jardiniere",
+   "rect": [
+    59,
+    20,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "jardiniere",
+   "rect": [
+    72,
+    20,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "cachette_glaciere",
+   "rect": [
+    67,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee_rouge",
+   "rect": [
+    14,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee",
+   "rect": [
+    15,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee",
+   "rect": [
+    17,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee_rouge",
+   "rect": [
+    18,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee",
+   "rect": [
+    23,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee_rouge",
+   "rect": [
+    24,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee",
+   "rect": [
+    27,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee_rouge",
+   "rect": [
+    28,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_large",
+   "rect": [
+    19,
+    16,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "cachette_cabine",
+   "rect": [
+    16,
+    17,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee",
+   "rect": [
+    15,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee_rouge",
+   "rect": [
+    16,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee",
+   "rect": [
+    19,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee_rouge",
+   "rect": [
+    20,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee",
+   "rect": [
+    25,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_rayee_rouge",
+   "rect": [
+    26,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cachette_cabine",
+   "rect": [
+    28,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "douche",
+   "rect": [
+    21,
+    20,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_geant",
+   "rect": [
+    3,
+    24,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "rocher_bas_large",
+   "rect": [
+    9,
+    23,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "rocher_large",
+   "rect": [
+    14,
+    23,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "flaque",
+   "rect": [
+    6,
+    27,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "rocher",
+   "rect": [
+    2,
+    29,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_bas_large",
+   "rect": [
+    12,
+    27,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "rocher_bas_large",
+   "rect": [
+    17,
+    26,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "rocher",
+   "rect": [
+    20,
+    24,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "flaque_grande",
+   "rect": [
+    18,
+    29,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "rocher_bas",
+   "rect": [
+    9,
+    30,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_large",
+   "rect": [
+    22,
+    27,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "cachette_creux_rocher",
+   "rect": [
+    8,
+    26,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cachette_creux_rocher",
+   "rect": [
+    16,
+    29,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "kiosque_glaces",
+   "rect": [
+    41,
+    25,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "club_plage",
+   "rect": [
+    52,
+    23,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "paravent",
+   "rect": [
+    30,
+    23,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "paravent",
+   "rect": [
+    46,
+    24,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "paravent",
+   "rect": [
+    35,
+    28,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "paravent",
+   "rect": [
+    47,
+    29,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "planches_surf",
+   "rect": [
+    56,
+    27,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "planches_surf",
+   "rect": [
+    27,
+    27,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "pile_transats",
+   "rect": [
+    33,
+    25,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "chateau_sable",
+   "rect": [
+    29,
+    25,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "parasol",
+   "rect": [
+    26,
+    23,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "parasol_bleu",
+   "rect": [
+    36,
+    23,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "parasol",
+   "rect": [
+    38,
+    30,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "parasol_bleu",
+   "rect": [
+    45,
+    27,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "parasol",
+   "rect": [
+    52,
+    28,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "parasol_bleu",
+   "rect": [
+    57,
+    24,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "parasol_bleu",
+   "rect": [
+    29,
+    30,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "transat",
+   "rect": [
+    27,
+    24,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "transat",
+   "rect": [
+    37,
+    24,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "transat",
+   "rect": [
+    43,
+    29,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "transat",
+   "rect": [
+    53,
+    29,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "transat",
+   "rect": [
+    30,
+    30,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "cachette_tente",
+   "rect": [
+    38,
+    26,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cachette_coffre_plage",
+   "rect": [
+    49,
+    27,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "barque_retournee",
+   "rect": [
+    60,
+    23,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "bateau_remorque",
+   "rect": [
+    66,
+    24,
+    4,
+    2
+   ]
+  },
+  {
+   "element": "barque_retournee_verte",
+   "rect": [
+    71,
+    22,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "canoe",
+   "rect": [
+    61,
+    27,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "barque_retournee",
+   "rect": [
+    69,
+    28,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "caisses",
+   "rect": [
+    64,
+    29,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "cachette_annexe",
+   "rect": [
+    65,
+    27,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cachette_annexe",
+   "rect": [
+    72,
+    26,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_blanche",
+   "rect": [
+    77,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_blanche",
+   "rect": [
+    80,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_blanche",
+   "rect": [
+    88,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cabine_blanche",
+   "rect": [
+    91,
+    14,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "banc",
+   "rect": [
+    77,
+    18,
+    3,
+    1
+   ]
+  },
+  {
+   "element": "douche",
+   "rect": [
+    81,
+    18,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "grand_rocher",
+   "rect": [
+    91,
+    18,
+    2,
+    2
+   ]
+  },
+  {
+   "element": "rocher_large",
+   "rect": [
+    87,
+    21,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "rocher",
+   "rect": [
+    76,
+    23,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_large",
+   "rect": [
+    89,
+    26,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "cachette_creux_rocher",
+   "rect": [
+    92,
+    23,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "cachette_casier",
+   "rect": [
+    79,
+    21,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "bitte",
+   "rect": [
+    82,
+    30,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "bitte",
+   "rect": [
+    84,
+    34,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "sortie_digue",
+   "rect": [
+    82,
+    37,
+    3,
+    2
+   ]
+  },
+  {
+   "element": "rocher_large",
+   "rect": [
+    9,
+    32,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "rocher_large",
+   "rect": [
+    19,
+    32,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "rocher",
+   "rect": [
+    28,
+    33,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "bouee_poteau",
+   "rect": [
+    40,
+    32,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher",
+   "rect": [
+    46,
+    33,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher",
+   "rect": [
+    62,
+    33,
+    1,
+    1
+   ]
+  },
+  {
+   "element": "rocher_bas_large",
+   "rect": [
+    69,
+    32,
+    2,
+    1
+   ]
+  },
+  {
+   "element": "sortie_canot",
+   "rect": [
+    50,
+    37,
+    3,
+    1
+   ]
+  }
+ ]
+}

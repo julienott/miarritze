@@ -1,0 +1,28 @@
+# /producer — service privé (assets, commentaires, kanban). Voir docs/PRODUCER.md.
+# Les en-têtes COOP/COEP de la racine s'appliquent aussi ici : tout est same-origin.
+
+DirectoryIndex index.php
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	# Transmet l'en-tête Authorization à PHP (souvent supprimé en CGI/FPM).
+	RewriteCond %{HTTP:Authorization} .
+	RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+	# Données, code, config et aperçus ne sont jamais servis directement :
+	# les aperçus passent par index.php?r=file (authentifié, liste blanche).
+	RewriteRule ^(data|lib|files)(/|$) - [F,L]
+	RewriteRule ^config(\.sample)?\.php$ - [F,L]
+</IfModule>
+
+# Même sans mod_rewrite : rien d'autre que index.php et static/ n'est exposé.
+<FilesMatch "\.(sqlite|sqlite-wal|sqlite-shm|sql|json|md)$">
+	Require all denied
+</FilesMatch>
+<Files "config.php">
+	Require all denied
+</Files>
+
+<IfModule mod_headers.c>
+	Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>

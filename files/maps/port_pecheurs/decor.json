@@ -1,0 +1,660 @@
+{
+ "_doc": "Placement du décor propre à cette carte (tools/blackout/make_port_v3.py), lu par src/blackout/bk_decor.gd : objets imposés ou en miroir, ornements sans effet de jeu.",
+ "objets": {
+  "38,37": {
+   "miroir": true
+  },
+  "60,38": {
+   "miroir": true
+  },
+  "90,21": {
+   "miroir": true
+  },
+  "37,15": {
+   "miroir": true
+  },
+  "20,14": {
+   "miroir": true
+  },
+  "82,25": {
+   "miroir": true
+  },
+  "85,5": {
+   "miroir": true
+  },
+  "67,38": {
+   "miroir": true
+  },
+  "25,24": {
+   "miroir": true
+  },
+  "58,22": {
+   "miroir": true
+  },
+  "10,38": {
+   "miroir": true
+  },
+  "12,15": {
+   "miroir": true
+  },
+  "79,37": {
+   "miroir": true
+  },
+  "9,7": {
+   "miroir": false
+  },
+  "8,14": {
+   "miroir": true,
+   "id": "maison_crampotte_verte"
+  },
+  "2,15": {
+   "miroir": false
+  },
+  "13,16": {
+   "miroir": false,
+   "id": "maison_crampotte_verte"
+  },
+  "7,19": {
+   "miroir": true
+  },
+  "2,20": {
+   "miroir": false,
+   "id": "maison_crampotte_verte"
+  },
+  "12,21": {
+   "miroir": false
+  },
+  "6,24": {
+   "miroir": true,
+   "id": "maison_crampotte_verte"
+  }
+ },
+ "ornements": [
+  {
+   "id": "lanterne_murale",
+   "x": 42.5,
+   "y": 34.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 57.5,
+   "y": 16.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 52.5,
+   "y": 27.0,
+   "miroir": true
+  },
+  {
+   "id": "filet_suspendu",
+   "x": 71.5,
+   "y": 27.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 10.5,
+   "y": 28.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 37.5,
+   "y": 28.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 46.5,
+   "y": 14.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 20.5,
+   "y": 30.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 89.5,
+   "y": 12.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 80.5,
+   "y": 25.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 85.5,
+   "y": 25.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 57.5,
+   "y": 27.0,
+   "miroir": true
+  },
+  {
+   "id": "filet_suspendu",
+   "x": 76.5,
+   "y": 32.0,
+   "miroir": false
+  },
+  {
+   "id": "filet_suspendu",
+   "x": 20.5,
+   "y": 14.0,
+   "miroir": false
+  },
+  {
+   "id": "filet_suspendu",
+   "x": 65.5,
+   "y": 14.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 50.5,
+   "y": 34.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 63.5,
+   "y": 27.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 42.5,
+   "y": 26.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 23.5,
+   "y": 34.0,
+   "miroir": false
+  },
+  {
+   "id": "filet_suspendu",
+   "x": 27.5,
+   "y": 29.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 80.5,
+   "y": 5.0,
+   "miroir": false
+  },
+  {
+   "id": "bouee_murale",
+   "x": 54.5,
+   "y": 34.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 61.5,
+   "y": 14.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 5.5,
+   "y": 14.0,
+   "miroir": false
+  },
+  {
+   "id": "bouee_murale",
+   "x": 92.5,
+   "y": 25.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 58.5,
+   "y": 9.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 80.5,
+   "y": 12.0,
+   "miroir": true
+  },
+  {
+   "id": "bouee_murale",
+   "x": 31.5,
+   "y": 34.0,
+   "miroir": false
+  },
+  {
+   "id": "bouee_murale",
+   "x": 3.5,
+   "y": 28.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 14.5,
+   "y": 14.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 84.5,
+   "y": 12.0,
+   "miroir": false
+  },
+  {
+   "id": "filet_suspendu",
+   "x": 33.5,
+   "y": 27.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 33.5,
+   "y": 20.0,
+   "miroir": true
+  },
+  {
+   "id": "filet_suspendu",
+   "x": 31.5,
+   "y": 14.0,
+   "miroir": true
+  },
+  {
+   "id": "filet_suspendu",
+   "x": 24.5,
+   "y": 14.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 51.5,
+   "y": 14.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 46.5,
+   "y": 34.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 76.5,
+   "y": 18.0,
+   "miroir": true
+  },
+  {
+   "id": "bouee_murale",
+   "x": 35.5,
+   "y": 34.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 1.5,
+   "y": 14.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 75.5,
+   "y": 27.0,
+   "miroir": true
+  },
+  {
+   "id": "bouee_murale",
+   "x": 35.5,
+   "y": 14.0,
+   "miroir": true
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 93.5,
+   "y": 12.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 27.5,
+   "y": 34.0,
+   "miroir": false
+  },
+  {
+   "id": "bouee_murale",
+   "x": 15.5,
+   "y": 28.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 75.5,
+   "y": 14.0,
+   "miroir": false
+  },
+  {
+   "id": "lanterne_murale",
+   "x": 48.5,
+   "y": 26.0,
+   "miroir": false
+  },
+  {
+   "id": "lampadaire_port",
+   "x": 36.5,
+   "y": 12.0
+  },
+  {
+   "id": "lampadaire_port",
+   "x": 54.5,
+   "y": 12.0
+  },
+  {
+   "id": "lampadaire_port",
+   "x": 35.5,
+   "y": 25.0
+  },
+  {
+   "id": "lampadaire_port",
+   "x": 52.5,
+   "y": 25.0
+  },
+  {
+   "id": "lampadaire_port",
+   "x": 80.5,
+   "y": 39.0
+  },
+  {
+   "id": "fumee_cheminee",
+   "x": 27.5,
+   "y": 26.8
+  },
+  {
+   "id": "fumee_cheminee",
+   "x": 49.5,
+   "y": 31.8
+  },
+  {
+   "id": "fumee_cheminee",
+   "x": 72.5,
+   "y": 25.8
+  },
+  {
+   "id": "fumee_cheminee",
+   "x": 80.5,
+   "y": 2.8
+  },
+  {
+   "id": "fumee_cheminee",
+   "x": 59.5,
+   "y": 2.8
+  },
+  {
+   "id": "fumee_cheminee",
+   "x": 57.5,
+   "y": 37.8
+  },
+  {
+   "id": "fumee_cheminee",
+   "x": 63.5,
+   "y": 25.8
+  },
+  {
+   "id": "fumee_cheminee",
+   "x": 78.5,
+   "y": 16.8
+  },
+  {
+   "id": "fumee_cheminee",
+   "x": 25.5,
+   "y": 32.8
+  },
+  {
+   "id": "mouette_posee",
+   "x": 43.5,
+   "y": 31.7,
+   "miroir": false
+  },
+  {
+   "id": "mouette_posee",
+   "x": 43.5,
+   "y": 13.7,
+   "miroir": true
+  },
+  {
+   "id": "mouette_posee",
+   "x": 90.5,
+   "y": 23.7,
+   "miroir": false
+  },
+  {
+   "id": "mouette_posee",
+   "x": 53.5,
+   "y": 31.7,
+   "miroir": true
+  },
+  {
+   "id": "mouette_posee",
+   "x": 60.5,
+   "y": 6.7,
+   "miroir": false
+  },
+  {
+   "id": "mouette_posee",
+   "x": 77.5,
+   "y": 23.7,
+   "miroir": true
+  },
+  {
+   "id": "mouette_posee",
+   "x": 57.5,
+   "y": 25.7,
+   "miroir": false
+  },
+  {
+   "id": "fanions_basques",
+   "x": 51.0,
+   "y": 14.6,
+   "l": 10.0,
+   "h": 1.2
+  },
+  {
+   "id": "fanions_basques",
+   "x": 40.0,
+   "y": 27.4,
+   "l": 12.0,
+   "h": 1.2
+  },
+  {
+   "id": "fanions_basques",
+   "x": 52.0,
+   "y": 27.4,
+   "l": 10.0,
+   "h": 1.2
+  },
+  {
+   "id": "fanions_basques",
+   "x": 26.5,
+   "y": 30.4,
+   "l": 13.0,
+   "h": 1.2
+  },
+  {
+   "id": "fanions_basques",
+   "x": 87.0,
+   "y": 12.5,
+   "l": 14.0,
+   "h": 1.2
+  },
+  {
+   "id": "fanions_basques",
+   "x": 87.0,
+   "y": 25.4,
+   "l": 16.0,
+   "h": 1.2
+  },
+  {
+   "id": "fanions_basques",
+   "x": 30.0,
+   "y": 9.3,
+   "l": 12.0,
+   "h": 1.2
+  },
+  {
+   "id": "linge_seche",
+   "x": 43.5,
+   "y": 34.8,
+   "l": 3.0,
+   "h": 1.0
+  },
+  {
+   "id": "linge_seche",
+   "x": 51.5,
+   "y": 38.6,
+   "l": 3.0,
+   "h": 1.0
+  },
+  {
+   "id": "linge_seche",
+   "x": 2.5,
+   "y": 18.8,
+   "l": 2.0,
+   "h": 1.0
+  },
+  {
+   "id": "linge_seche",
+   "x": 13.0,
+   "y": 14.8,
+   "l": 2.0,
+   "h": 1.0
+  },
+  {
+   "id": "drapeau_mat",
+   "x": 4.5,
+   "y": 2.4
+  },
+  {
+   "id": "drapeau_mat",
+   "x": 91.5,
+   "y": 9.6
+  },
+  {
+   "id": "chat_du_port",
+   "x": 31.5,
+   "y": 37.6
+  },
+  {
+   "id": "chat_du_port",
+   "x": 8.5,
+   "y": 25.4
+  },
+  {
+   "id": "ancre_decor",
+   "x": 25.5,
+   "y": 11.8
+  },
+  {
+   "id": "ancre_decor",
+   "x": 60.5,
+   "y": 11.8
+  },
+  {
+   "id": "ancre_decor",
+   "x": 19.5,
+   "y": 7.6
+  },
+  {
+   "id": "cordage_enroule",
+   "x": 33.5,
+   "y": 9.7
+  },
+  {
+   "id": "cordage_enroule",
+   "x": 45.5,
+   "y": 9.7
+  },
+  {
+   "id": "cordage_enroule",
+   "x": 6.5,
+   "y": 7.6
+  },
+  {
+   "id": "cordage_enroule",
+   "x": 21.5,
+   "y": 14.8
+  },
+  {
+   "id": "panier_poissons",
+   "x": 66.5,
+   "y": 9.9,
+   "miroir": false
+  },
+  {
+   "id": "panier_poissons",
+   "x": 66.5,
+   "y": 5.9,
+   "miroir": false
+  },
+  {
+   "id": "panier_poissons",
+   "x": 23.5,
+   "y": 23.9,
+   "miroir": true
+  },
+  {
+   "id": "panier_poissons",
+   "x": 2.5,
+   "y": 9.9,
+   "miroir": true
+  },
+  {
+   "id": "filet_au_sol",
+   "x": 10.0,
+   "y": 35.9,
+   "miroir": true
+  },
+  {
+   "id": "filet_au_sol",
+   "x": 6.0,
+   "y": 37.9,
+   "miroir": false
+  },
+  {
+   "id": "cordage_enroule",
+   "x": 14.5,
+   "y": 37.9,
+   "miroir": true
+  },
+  {
+   "id": "cordage_enroule",
+   "x": 14.5,
+   "y": 31.9,
+   "miroir": false
+  },
+  {
+   "id": "cordage_enroule",
+   "x": 61.5,
+   "y": 35.9,
+   "miroir": false
+  },
+  {
+   "id": "cordage_enroule",
+   "x": 66.5,
+   "y": 35.9,
+   "miroir": true
+  }
+ ]
+}
