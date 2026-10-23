@@ -373,6 +373,19 @@
    "sursaut": "764e592f4e7a"
   }
  },
+ "blackout/pnj/glacier/animations": {
+  "carte": 672,
+  "empreintes": {
+   "attendre": "74d1584d3e6c",
+   "compare": "d73a37286eec",
+   "idle": "d89670d3134c",
+   "marcher": "e1b4a2ffbc08",
+   "parler": "9525dc950197",
+   "profile": "62d4da165239",
+   "run": "e2c352ee48a7",
+   "sursaut": "18e19f983f95"
+  }
+ },
  "blackout/pnj/marin/animations": {
   "carte": 667,
   "empreintes": {
@@ -423,6 +436,19 @@
    "run": "3323b366649d",
    "sursaut": "1ef35183760a",
    "telephone": "be6f38c4b2e7"
+  }
+ },
+ "blackout/pnj/trompettiste/animations": {
+  "carte": 673,
+  "empreintes": {
+   "boire": "7c7237c95a6a",
+   "compare": "2f727cc97abe",
+   "idle": "31eb3d58d793",
+   "jouer": "a6cec93ce891",
+   "marcher": "2bdec2cd3182",
+   "profile": "28ba057c8d40",
+   "run": "87da4c68fab9",
+   "sursaut": "6698f80ca3f7"
   }
  },
  "blackout/pnj/txistulari/animations": {
