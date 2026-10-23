@@ -170,7 +170,7 @@ PRODUCER_PASSWORD=test-local PRODUCER_TOKEN=tok_local_0123456789abcdefghij PRODU
 php -S 127.0.0.1:8099 -t /tmp/producer-site &
 PRODUCER_URL=http://127.0.0.1:8099/producer/ PRODUCER_TEST_PASSWORD=test-local \
   PRODUCER_TOKEN=tok_local_0123456789abcdefghij node tests/web/producer.mjs   # base vide requise
-PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_blackout.mjs # catalogue : animations par perso, manquantes, plein écran, décor (ordi + iPhone)
+PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_blackout.mjs # character sets (persos, fantôme, PNJ, animaux, boss), plein écran, recette de Louis en carte chapeau, placeholder (ordi + iPhone ; crée une carte et un commentaire : base locale seulement)
 PRODUCER_TEST_PASSWORD=test-local node tests/web/producer_pilotage.mjs # bord, catalogue, fiche, Jeu, roadmap, kanban filtré et sélection, aide (ordi + iPhone ; PRODUCER_THEME=dark)
 PRODUCER_URL=http://127.0.0.1:8099/producer/ PRODUCER_TEST_PASSWORD=test-local \
   PRODUCER_TOKEN=tok_local_0123456789abcdefghij node tests/web/producer_kanban.mjs   # kanban (ordi + iPhone portrait/paysage)
