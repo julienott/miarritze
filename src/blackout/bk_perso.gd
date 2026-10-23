@@ -7,17 +7,43 @@ extends Sprite2D
 ## Un élément ou un perso sans planche prend une silhouette de repli (capsule de la couleur du perso,
 ## son initiale), au même format : case de 64×64, pieds à y = 60. Les vraies planches, quand elles
 ## arrivent, sont prises automatiquement (rien à changer dans le code).
-## L'animation suit l'état de l'acteur ; les gestes ponctuels (cachette, trouvé) sont demandés par la
-## partie via `play_once`.
+## L'animation suit l'état de l'acteur (GDD §8.1) : course, attente, attente longue ; effets subis
+## (§4.5 : etourdi, renverse, colle, ralenti, aveugle, tracte) ; interagir pendant une fouille ou un
+## disjoncteur ; victoire et defaite en fin de round ; fantôme commun (assets/blackout/fantome/, appear
+## puis float à l'arrêt et advance en mouvement). Les gestes ponctuels (cachette, trouvé, lancement d'un
+## coup `cast`, sursaut d'un PNJ) sont demandés par la partie via `play_once`.
+## Élément manquant dans un set : élément voisin (VOISINS), sinon silhouette de repli, jamais d'image vide.
 
 const DIR: String = "res://assets/blackout/persos/%s/px32/"
 ## Familles de sets, cherchées dans cet ordre (même format pixelforge) : persos jouables, PNJ humains et
-## animaux (§3.8, §8.4), boss (§5, §8.3 : 64 px dans une case de 128). Un set peut être un placeholder
-## (set.json → "placeholder": true, tools/blackout/placeholders_sets.py) : chargé pareil.
-const FAMILLES: PackedStringArray = ["persos", "pnj", "animaux", "boss"]
+## animaux (§3.8, §8.4), boss (§5, §8.3 : 64 px dans une case de 128), fantôme commun (§3.6, §8.1). Un set
+## peut être un placeholder (set.json → "placeholder": true, tools/blackout/placeholders_sets.py) : chargé pareil.
+const FAMILLES: PackedStringArray = ["persos", "pnj", "animaux", "boss", "fantome"]
 const RACINE: String = "res://assets/blackout/%s/%s/px32/"
-## Éléments d'un perso (GDD §8.1) ; `lift` absent : envol fait par le code (clignote en montant).
-const ELEMENTS: PackedStringArray = ["profile", "idle", "idle_long", "run", "jump_hide", "ghost", "lift"]
+## Éléments d'un perso (GDD §8.1). Plus d'élément ghost par perso : le fantôme est commun (FANTOME).
+const ELEMENTS: PackedStringArray = ["profile", "portrait", "idle", "idle_long", "run", "jump_hide", "lift",
+	"interagir", "victoire", "defaite", "etourdi", "renverse", "colle", "ralenti", "aveugle", "tracte",
+	"cast_chasse", "cast_chasseur"]
+## Fantôme commun à tous les persos (GDD §8.1, carte #646) : son set et ses éléments.
+const FANTOME: String = "fantome"
+const ELEMENTS_FANTOME: PackedStringArray = ["appear", "float", "advance"]
+## Effet subi → animation du perso (GDD §4.5), dans l'ordre de priorité quand plusieurs effets se cumulent.
+const EFFETS_ANIM: Array = [["renverse", "renverse"], ["fige", "etourdi"], ["tracte", "tracte"],
+	["colle", "colle"], ["aveugle", "aveugle"], ["inverse", "etourdi"], ["ralenti", "ralenti"]]
+## Animation d'effet sans boucle : jouée au plus lentement à EFFET_RATE_MIN pour couvrir l'effet, puis
+## tenue sur sa dernière image.
+const EFFET_RATE_MIN: float = 0.4
+## Au-delà de cette durée (s), l'effet est maintenu par la QA : animation en boucle.
+const EFFET_QA_S: float = 1.0e5
+## Élément manquant dans un set → éléments voisins essayés dans l'ordre (planches livrées), puis la
+## silhouette de repli de l'élément ou d'un voisin, puis l'idle.
+const VOISINS: Dictionary = {"portrait": ["profile"], "idle": ["profile"], "idle_long": ["idle"],
+	"run": ["marcher", "idle"], "jump_hide": ["idle"], "interagir": ["idle_long", "idle"],
+	"victoire": ["idle_long", "idle"], "defaite": ["idle"], "etourdi": ["idle"], "renverse": ["etourdi", "idle"],
+	"colle": ["etourdi", "idle"], "ralenti": ["marcher", "run"], "aveugle": ["etourdi", "idle"],
+	"tracte": ["idle"], "cast_chasse": ["cast_chasseur", "idle_long", "idle"],
+	"cast_chasseur": ["cast_chasse", "idle_long", "idle"], "marcher": ["run", "idle"], "sursaut": ["idle"],
+	"appear": ["float"], "float": ["advance", "profile"], "advance": ["float", "profile"]}
 ## Case de repli et ligne des pieds (GDD §8.1 : case de 64×64, pieds à y = 60).
 const CASE_PX: int = 64
 const PIEDS_Y: int = 60
@@ -54,6 +80,10 @@ var _anim: String = ""
 var _t: float = 0.0
 var _once: String = ""
 var _once_t: float = 0.0
+var _once_el: String = ""
+var _once_len: float = 0.0
+var _etait_fantome: bool = false
+var _appear_attendu: bool = false
 var _reverse: bool = false
 var _idle_t: float = 0.0
 ## Hauteur d'envol (px) : l'acteur dessine son ombre en conséquence.
@@ -112,16 +142,74 @@ static func couleur(character: String) -> Color:
 	return Color(str(cs.get(character, "#9aa1ad")))
 
 
-## Données d'un élément : planche livrée, sinon silhouette de repli ({} pour `lift` sans planche).
+## Données d'un élément : planche livrée, sinon planche d'un élément voisin (VOISINS, marquée
+## « voisin »), sinon silhouette de repli (« repli ») ; {} seulement pour `lift` sans planche (envol
+## fait par le code avec l'idle).
 static func element(character: String, el: String) -> Dictionary:
 	var key: String = character + "/" + el
 	if _cache.has(key):
 		return _cache[key]
 	var d: Dictionary = _planche(character, el)
-	if d.is_empty() and REPLI.has(el):
-		d = _repli(character, el)
+	if d.is_empty() and el != "lift":
+		var voisins: Array = VOISINS.get(el, ["idle"])
+		for v: Variant in voisins:
+			d = _planche(character, str(v))
+			if not d.is_empty():
+				d = d.duplicate()
+				d["voisin"] = str(v)
+				break
+		if d.is_empty():
+			for r: Variant in [el] + voisins:
+				if REPLI.has(str(r)) and str(r) != "ghost":
+					d = _repli(character, str(r))
+					break
+		if d.is_empty():
+			d = _repli(character, "idle")
 	_cache[key] = d
 	return d
+
+
+## Vrai si le set de `character` a sa propre planche pour `el` (ni voisin ni repli).
+static func livre(character: String, el: String) -> bool:
+	var d: Dictionary = element(character, el)
+	return not d.is_empty() and not d.has("voisin") and not d.has("repli")
+
+
+## Élément du fantôme commun (appear, float, advance : GDD §8.1, carte #646), le même pour tous ; sans
+## set du fantôme, la silhouette fantôme de repli aux couleurs du perso.
+static func fantome(character: String, el: String) -> Dictionary:
+	var d: Dictionary = element(FANTOME, el)
+	if not d.has("repli"):
+		return d
+	var key: String = character + "/#fantome"
+	if not _cache.has(key):
+		_cache[key] = _repli(character, "ghost")
+	return _cache[key]
+
+
+## Portrait de trois-quarts (GDD §8.1) : {tex, cell} de sa première image (profil en repli).
+static func portrait(character: String) -> Dictionary:
+	return element(character, "portrait")
+
+
+## Portrait réduit à `px` × `px` (HUD, listes), lissé une fois et mis en cache.
+static func portrait_tex(character: String, px: int) -> Texture2D:
+	var key: String = "%s/#portrait%d" % [character, px]
+	if _cache.has(key):
+		return _cache[key]["tex"]
+	var d: Dictionary = portrait(character)
+	var cell: Vector2 = d["cell"]
+	var img: Image = (d["tex"] as Texture2D).get_image()
+	if img == null:
+		return d["tex"]
+	if img.is_compressed():
+		img.decompress()
+	img = img.get_region(Rect2i(0, 0, int(cell.x), int(cell.y)))
+	img.convert(Image.FORMAT_RGBA8)
+	img.resize(px, px, Image.INTERPOLATE_LANCZOS if px < int(cell.x) else Image.INTERPOLATE_NEAREST)
+	var tex: ImageTexture = ImageTexture.create_from_image(img)
+	_cache[key] = {"tex": tex}
+	return tex
 
 
 ## Planche livrée : bande horizontale d'images carrées (ou de la taille du canevas de set.json).
@@ -229,72 +317,141 @@ func setup(a: BkActor) -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 
-## Joue un geste une fois (hide_in, hide_out, found), puis reprend l'état. Sans élément : rien.
+## Joue un geste une fois puis reprend l'état : hide_in, hide_out, saut (jump_hide), found (lift),
+## cast (cast_chasse ou cast_chasseur selon le rôle, GDD §4.6), appear (fantôme commun), ou tout élément
+## livré du set (sursaut d'un PNJ). Sans élément : rien.
 func play_once(anim: String) -> void:
-	if length(anim) <= 0.0:
+	var el: String = _element_geste(anim)
+	if el == "" or length(anim) <= 0.0:
 		return
 	_once = anim
+	_once_el = el
 	_once_t = 0.0
+	_once_len = length(anim)
+
+
+## Élément joué par un geste ponctuel, "" s'il n'en a pas.
+func _element_geste(anim: String) -> String:
+	match anim:
+		"hide_in", "hide_out", "saut":
+			return "jump_hide"
+		"found":
+			return "lift"
+		"cast":
+			return "cast_chasseur" if actor.role == BkActor.Role.HUNTER else "cast_chasse"
+		"appear":
+			return "appear"
+	return anim if livre(actor.character, anim) else ""
 
 
 ## Durée d'un geste ponctuel (s), 0 s'il n'existe pas.
 func length(anim: String) -> float:
 	match anim:
-		"hide_in", "hide_out", "saut":
-			var d: Dictionary = element(actor.character, "jump_hide")
-			return float(d["n"]) / float(d["fps"])
 		"found":
 			return BkRules.f("lift_s")
-	return 0.0
+		"appear":
+			var f: Dictionary = fantome(actor.character, "appear")
+			return float(f["n"]) / float(f["fps"]) if not f.has("repli") else 0.0
+	var el: String = _element_geste(anim)
+	if el == "":
+		return 0.0
+	var d: Dictionary = element(actor.character, el)
+	return float(d["n"]) / float(d["fps"])
 
 
-## Élément de l'état de l'acteur (hors geste ponctuel).
-func _state_anim(dt: float) -> String:
+## Élément en cours (QA, tests) : celui de la dernière image dessinée.
+func element_courant() -> String:
+	return _anim
+
+
+func _est_fantome() -> bool:
+	return actor.role == BkActor.Role.GHOST or actor.role == BkActor.Role.OUT
+
+
+## Élément de l'état de l'acteur (hors geste ponctuel) : [élément, cadence, boucle forcée].
+func _state_anim(dt: float) -> Array:
 	var a: BkActor = actor
-	if a.role == BkActor.Role.GHOST or a.role == BkActor.Role.OUT:
-		return "ghost"
-	if a.velocity.length() > IMMOBILE:
+	var bouge: bool = a.velocity.length() > IMMOBILE
+	if _est_fantome():
+		return ["advance" if bouge else "float", 1.0, false]
+	# Élément imposé par un cerveau extérieur (PNJ : marcher, activité, fuite).
+	if a.anim_impose != "":
+		return [a.anim_impose, 1.0, false]
+	# Effets subis (GDD §4.5) : l'animation d'effet du perso, la même pour tous.
+	if not a.effets.is_empty():
+		for paire: Array in EFFETS_ANIM:
+			if a.effets.has(paire[0]):
+				var el: String = paire[1]
+				var d: Dictionary = element(a.character, el)
+				var rate: float = 1.0
+				var duree: float = float((a.effets[paire[0]] as Dictionary).get("duree", 1.0))
+				if not bool(d["loop"]):
+					rate = clampf(float(d["n"]) / float(d["fps"]) / maxf(duree, 0.01), EFFET_RATE_MIN, 1.0)
+				# Effet maintenu par la QA (BkEffets.force, sans fin) : en boucle, pour le voir en entier.
+				return [el, rate, duree >= EFFET_QA_S]
+	# Fouille d'une cachette, disjoncteur : interagir, en boucle tant que l'action dure.
+	if a.search_left > 0.0 or a.use_left > 0.0:
+		return ["interagir", 1.0, true]
+	# Fin de round (et avatars du podium) : victoire ou défaite.
+	if a.end_pose == "victory":
+		return ["victoire", 1.0, true]
+	if a.end_pose == "sad":
+		return ["defaite", 1.0, true]
+	if bouge:
 		_idle_t = 0.0
-		return "run"
+		return ["run", clampf(a.velocity.length() / maxf(BkRules.px("speed_hider"), 1.0), 0.6, 1.5), false]
 	_idle_t += dt
-	if _idle_t >= BkRules.f("idle_long_apres") and a.end_pose == "":
-		return "idle_long"
-	return "idle"
+	if _idle_t >= BkRules.f("idle_long_apres"):
+		return ["idle_long", 1.0, false]
+	return ["idle", 1.0, false]
 
 
 func _process(dt: float) -> void:
 	if actor == null:
 		return
+	# Devenu fantôme : appear (fantôme commun) dès que le geste en cours (envol) est fini.
+	var fant: bool = _est_fantome()
+	if fant and not _etait_fantome:
+		_appear_attendu = true
+	_etait_fantome = fant
+	if not fant:
+		_appear_attendu = false
 	var el: String = ""
 	var k_lift: float = -1.0
+	var rate: float = 1.0
+	var boucle: bool = false
 	if _once != "":
 		_once_t += dt
-		if _once_t >= length(_once):
+		if _once_t >= _once_len:
 			_once = ""
-		else:
-			match _once:
-				"hide_in", "hide_out", "saut":
-					el = "jump_hide"
-					_reverse = _once == "hide_out"
-				"found":
-					el = "lift"
-					k_lift = _once_t / maxf(BkRules.f("lift_s"), 0.01)
+	if _once == "" and _appear_attendu:
+		_appear_attendu = false
+		play_once("appear")
+	if _once != "":
+		el = _once_el
+		_reverse = _once == "hide_out"
+		if _once == "found":
+			k_lift = _once_t / maxf(BkRules.f("lift_s"), 0.01)
 	if el == "":
-		el = _state_anim(dt)
+		var st: Array = _state_anim(dt)
+		el = st[0]
+		rate = st[1]
+		boucle = st[2]
 		_reverse = false
-	var d: Dictionary = element(actor.character, el)
+	var d: Dictionary
+	if ELEMENTS_FANTOME.has(el):
+		d = fantome(actor.character, el)
+	else:
+		d = element(actor.character, el)
 	if d.is_empty():
 		d = element(actor.character, "idle")      # pas de planche lift : l'idle s'envole
 	if el != _anim:
 		_anim = el
 		_t = 0.0
-	var rate: float = 1.0
-	if el == "run":
-		rate = clampf(actor.velocity.length() / maxf(BkRules.px("speed_hider"), 1.0), 0.6, 1.5)
 	_t += dt * rate
 	var n: int = int(d["n"])
 	var f: int = int(_t * float(d["fps"]))
-	f = f % n if bool(d["loop"]) else mini(f, n - 1)
+	f = f % n if (bool(d["loop"]) or boucle) else mini(f, n - 1)
 	if _reverse:
 		f = n - 1 - f
 	var cell: Vector2 = d["cell"]
@@ -307,10 +464,9 @@ func _process(dt: float) -> void:
 	flip_h = face < 0.0
 	var feet: Vector2 = d["feet"]
 	var fx: float = cell.x - feet.x - 1.0 if flip_h else feet.x
-	# Envol du chassé trouvé : il monte en clignotant (GDD §3.6).
-	# Hauteur : envol du trouvé, saut d'un coup spécial (Passe-Muraille).
+	# Hauteur : envol du trouvé (il monte en clignotant, GDD §3.6), saut d'un coup spécial.
 	hover_lift = actor.saut_px
-	var ghost: bool = (actor.role == BkActor.Role.GHOST or actor.role == BkActor.Role.OUT) and k_lift < 0.0
+	var ghost: bool = fant and k_lift < 0.0
 	if k_lift >= 0.0:
 		hover_lift = maxf(hover_lift, BkRules.f("lift_px") * k_lift)
 	modulate = pose["modulate"]
@@ -320,7 +476,7 @@ func _process(dt: float) -> void:
 	visible = actor.draw_2d and (actor.shown or _once != "") and not actor.inside() and not blink
 	var pieds: Vector2 = Vector2(0, actor.feet_dy() - hover_lift) + _pop_offset() + (pose["decalage"] as Vector2)
 	rotation = float(pose["rotation"])
-	# Le sprite tourne autour de ses pieds (renversé : couché sur le sol).
+	# Le sprite tourne autour de ses pieds (renversé sans planche : couché sur le sol).
 	position = (pieds - Vector2(fx, feet.y).rotated(rotation)).round()
 
 

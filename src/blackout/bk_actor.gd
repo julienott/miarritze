@@ -82,6 +82,8 @@ var rescue_k: float = 0.0
 var rescued: bool = false
 ## Pose de fin de round : "victory", "sad" ou "" pendant le jeu.
 var end_pose: String = ""
+## Élément du perso imposé par un cerveau extérieur (PNJ, BkFoule : marcher, activité, fuite), "" sinon.
+var anim_impose: String = ""
 
 
 func setup(p_id: int, p_name: String, bot: bool) -> void:
@@ -223,7 +225,7 @@ func _draw() -> void:
 	# Pseudo au-dessus de la tête : on reconnaît les joueurs à leur pseudo (GDD §7.1) ; pas celui d'une
 	# silhouette dans l'ombre (le chasseur ne sait pas qui c'est).
 	var top: float = name_y()
-	if not silhouette:
+	if not silhouette and display_name != "":
 		BkDraw.texte(self, Vector2(0, top), display_name, NOM_TAILLE, Color(1, 1, 1, 0.55 if ghost else 1.0), 2)
 	# Effets communs subis (GDD §4.5) : dessinés par BkEffetsRendu.
 	BkEffetsRendu.dessine(self)

@@ -1,11 +1,12 @@
 class_name BkEffetsRendu
 extends Node2D
-## Rendu des effets communs (GDD-BLACKOUT.md §4.5), séparé des règles (BkEffets) : placeholders dessinés
-## par le code, posés sur n'importe quel sprite.
+## Rendu des effets communs (GDD-BLACKOUT.md §4.5), séparé des règles (BkEffets) : marques dessinées
+## par le code, posées sur n'importe quel sprite ; l'animation d'effet du perso (etourdi, renverse, colle,
+## ralenti, aveugle, tracte) est jouée par BkPerso.
 ##
 ## | Effet      | Rendu                                                                 |
 ## | figé       | contour bleu clair, petites étoiles                                   |
-## | renversé   | sprite couché (rotation 90°), étoiles                                 |
+## | renversé   | étoiles (sprite couché s'il n'a pas de planche renverse)              |
 ## | collé      | flaque de résine sous les pieds                                       |
 ## | ralenti    | traits bleus derrière, sprite qui oscille                             |
 ## | révélé     | contour lumineux par-dessus les murs, pour le chasseur (ce calque)    |
@@ -75,9 +76,11 @@ static func pose(a: BkActor, moi: bool) -> Dictionary:
 	if BkEffets.actif(a, "fige"):
 		out["modulate"] = Color(0.75, 0.9, 1.0)
 		out["material"] = contour(C_BLEU_CLAIR)
-	if BkEffets.actif(a, "renverse"):
+	# Renversé, ralenti : le perso joue son animation d'effet (BkPerso) ; sans planche livrée, le sprite
+	# est couché ou oscille.
+	if BkEffets.actif(a, "renverse") and not BkPerso.livre(a.character, "renverse"):
 		out["rotation"] = -PI * 0.5 * (1.0 if cos(a.look) >= 0.0 else -1.0)
-	if BkEffets.actif(a, "ralenti"):
+	if BkEffets.actif(a, "ralenti") and not BkPerso.livre(a.character, "ralenti"):
 		out["decalage"] = Vector2(roundf(sin(_t() * 14.0) * 1.5), 0)
 	if BkEffets.actif(a, "invisible") and (moi or qa):
 		var m: Color = out["modulate"]

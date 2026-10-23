@@ -12,6 +12,7 @@ extends Node
 ## - Visée commune (`vise`) : direction de marche, aimant de ±aimant_deg vers une cible visible.
 ## - Effets communs (`applique_effet`, catalogue et garde-fous dans BkEffets, dessin dans BkEffetsRendu).
 ## - Annonce : l'icône et le nom du coup au-dessus du lanceur (celui du chasseur, vu de tous, GDD §4.2).
+## - Lancement : le lanceur joue cast_chasse ou cast_chasseur (BkPerso, GDD §4.6).
 
 const PATH: String = "res://data/blackout/coups.json"
 const FAMILLES: Dictionary = {
@@ -117,6 +118,9 @@ func _demarre(inst: BkCoupActif) -> void:
 	a.coup_cd_max = a.coup_cd
 	actifs.append(inst)
 	inst.demarre()
+	# Lancement (GDD §4.6) : cast_chasse ou cast_chasseur selon le rôle, par-dessus la course ou l'attente
+	# (et à la place du saut des coups de déplacement : le clip de lancement est leur mouvement).
+	a.play_once("cast")
 	annonces = annonces.filter(func(n: Dictionary) -> bool: return int(n["id"]) != a.id)
 	annonces.append({"id": a.id, "nom": str(inst.coup.get("nom", "")), "famille": str(inst.coup.get("famille", "")),
 		"left": BkRules.f("annonce_coup_s"), "eclair": ECLAIR_S})
