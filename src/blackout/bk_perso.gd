@@ -1,9 +1,9 @@
 class_name BkPerso
 extends Sprite2D
 ## Le perso dessiné d'un acteur, en pixel art 32 px (GDD-BLACKOUT.md §8.1, §9) : planches de
-## assets/blackout/persos/<id>/px32/ (`<élément>_sheet.png` en bande horizontale, `animations.json` :
-## images, fps et boucle par élément ; `set.json` : canevas et ligne des pieds). De profil vers la
-## droite, miroir pour la gauche, dessiné pixel pour pixel (aucune mise à l'échelle).
+## assets/blackout/persos/<id>/px32/, ou pnj/, animaux/, boss/ (FAMILLES) : `<élément>_sheet.png` en
+## bande horizontale, `animations.json` : images, fps et boucle par élément ; `set.json` : canevas et
+## ligne des pieds. De profil vers la droite, miroir pour la gauche, dessiné pixel pour pixel (aucune mise à l'échelle).
 ## Un élément ou un perso sans planche prend une silhouette de repli (capsule de la couleur du perso,
 ## son initiale), au même format : case de 64×64, pieds à y = 60. Les vraies planches, quand elles
 ## arrivent, sont prises automatiquement (rien à changer dans le code).
@@ -11,6 +11,11 @@ extends Sprite2D
 ## partie via `play_once`.
 
 const DIR: String = "res://assets/blackout/persos/%s/px32/"
+## Familles de sets, cherchées dans cet ordre (même format pixelforge) : persos jouables, PNJ humains et
+## animaux (§3.8, §8.4), boss (§5, §8.3 : 64 px dans une case de 128). Un set peut être un placeholder
+## (set.json → "placeholder": true, tools/blackout/placeholders_sets.py) : chargé pareil.
+const FAMILLES: PackedStringArray = ["persos", "pnj", "animaux", "boss"]
+const RACINE: String = "res://assets/blackout/%s/%s/px32/"
 ## Éléments d'un perso (GDD §8.1) ; `lift` absent : envol fait par le code (clignote en montant).
 const ELEMENTS: PackedStringArray = ["profile", "idle", "idle_long", "run", "jump_hide", "ghost", "lift"]
 ## Case de repli et ligne des pieds (GDD §8.1 : case de 64×64, pieds à y = 60).
@@ -25,6 +30,7 @@ const REPLI: Dictionary = {"profile": [1, 1.0, false], "idle": [2, 3.0, true], "
 const IMMOBILE: float = 5.0
 
 static var _cache: Dictionary = {}     # "id/élément" → {tex, n, fps, loop, cell, feet}
+static var _dossiers: Dictionary = {}  # id → dossier px32 du set
 ## Silhouette sombre (vue du chasseur, chassé dans l'ombre, GDD §3.2) : le sprite en aplat de
 ## silhouette_couleur, un liseré plus clair d'un pixel autour pour qu'elle se détache du sol de nuit.
 static var _silhouette: ShaderMaterial
@@ -78,7 +84,26 @@ static func available(_character: String) -> bool:
 
 ## Vrai si le perso a ses planches px32 (au moins l'idle).
 static func has_sheets(character: String) -> bool:
-	return ResourceLoader.exists((DIR % character) + "idle_sheet.png")
+	return ResourceLoader.exists(dossier(character) + "idle_sheet.png")
+
+
+## Dossier px32 du set d'un id (perso, PNJ, animal ou boss) ; celui des persos si aucun n'existe.
+static func dossier(character: String) -> String:
+	if _dossiers.has(character):
+		return _dossiers[character]
+	var d: String = DIR % character
+	for fam: String in FAMILLES:
+		var c: String = RACINE % [fam, character]
+		if FileAccess.file_exists(c + "set.json") or ResourceLoader.exists(c + "idle_sheet.png"):
+			d = c
+			break
+	_dossiers[character] = d
+	return d
+
+
+## Vrai si le set de cet id est un placeholder en attendant le rendu pixelforge.
+static func placeholder(character: String) -> bool:
+	return bool(_json(dossier(character) + "set.json").get("placeholder", false))
 
 
 ## Couleur propre au perso (rules.json → perso_couleurs), pour la silhouette de repli.
@@ -101,7 +126,7 @@ static func element(character: String, el: String) -> Dictionary:
 
 ## Planche livrée : bande horizontale d'images carrées (ou de la taille du canevas de set.json).
 static func _planche(character: String, el: String) -> Dictionary:
-	var dir: String = DIR % character
+	var dir: String = dossier(character)
 	var path: String = dir + el + "_sheet.png"
 	if el == "profile" and not ResourceLoader.exists(path):
 		path = dir + "profile_00.png"

@@ -36,7 +36,7 @@ func _run() -> void:
 		test_frisson_intensite, test_frisson_coeur, test_frisson_local, test_frolements, test_vu_perdu, test_capture_pas_frolement, test_poursuite, test_poursuite_tous_vus, test_vue_objet_bas,
 		test_options_partie, test_partie_ia_courte, test_rounds_pour, test_sac, test_versus_saute_en_ia,
 		test_rounds_fixes_podium, test_partie_rapide_options, test_profil_persiste, test_pseudo, test_roster,
-		test_persos_px32, test_cases_vue_passage, test_bac_a_sable, test_regles_carte,
+		test_persos_px32, test_sets_pnj_boss, test_cases_vue_passage, test_bac_a_sable, test_regles_carte,
 		test_eclaire_mur, test_ombre_facteur, test_ombre_capture_silhouette, test_disjoncteur,
 		test_disjoncteur_priorite, test_disjoncteur_ia, test_menu_debug, test_coups_donnees, test_recharge,
 		test_plafond_protection, test_aimant, test_passe_muraille, test_cache_cache, test_pieges_retires]
@@ -663,6 +663,46 @@ func test_persos_px32() -> void:
 	check(BkPerso.element("perso_de_test", "lift").is_empty(), "pas de planche lift : envol fait par le code")
 	check(is_equal_approx(BkPerso.hauteur_px(), BkRules.f("tile_px")), "un perso = une case (32 px)")
 	check(int(BkRules.f("tile_px")) == 32, "cases de 32 px")
+
+
+## Sets des PNJ, animaux et boss (GDD §3.8, §5, §8.3, §8.4) : chacun a un set chargeable par BkPerso,
+## vrai (pixelforge) ou placeholder (tools/blackout/placeholders_sets.py) ; boss en case de 128.
+func test_sets_pnj_boss() -> void:
+	var pnj: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/blackout/pnj.json"))
+	var ids: Array = []
+	for fam: String in ["humains", "animaux"]:
+		for id: Variant in (pnj[fam] as Dictionary):
+			ids.append(["pnj" if fam == "humains" else "animaux", str(id)])
+	var boss: Array = BkRules.data().get("boss", [])
+	check(boss.size() >= 7, "liste des boss dans rules.json (%d)" % boss.size())
+	for b: Variant in boss:
+		ids.append(["boss", str(b)])
+	var places: int = 0
+	for it: Array in ids:
+		var id: String = it[1]
+		var dir: String = BkPerso.dossier(id)
+		check(dir.contains("/%s/%s/" % [it[0], id]), "%s : set dans assets/blackout/%s/ (%s)" % [id, it[0], dir])
+		var prof: Dictionary = BkPerso.element(id, "profile")
+		var idle: Dictionary = BkPerso.element(id, "idle")
+		check(not prof.is_empty() and not idle.is_empty() and not idle.has("repli"), "%s : profil et idle chargés" % id)
+		if idle.is_empty():
+			continue
+		var tex: Texture2D = idle["tex"]
+		var cell: Vector2 = idle["cell"]
+		check(is_equal_approx(cell.x * float(idle["n"]), float(tex.get_width())), "%s : images × largeur = planche" % id)
+		var gros: bool = it[0] == "boss" and not id.begins_with("intxixu")
+		check(cell == (Vector2(128, 128) if gros else Vector2(64, 64)), "%s : case de %d" % [id, int(cell.x)])
+		check((idle["feet"] as Vector2).y == (120.0 if gros else 60.0), "%s : pieds en bas de case" % id)
+		var els: Array = ["run"]
+		if it[0] == "pnj":
+			els = ["run", "marcher", "sursaut"] + Array(pnj["humains"][id]["activites"])
+		elif it[0] == "boss":
+			els = ["run", "etourdi", "cri", "pouvoir_1", "pouvoir_2"]
+		for el: Variant in els:
+			check(not BkPerso.element(id, str(el)).is_empty(), "%s : élément %s" % [id, el])
+		if BkPerso.placeholder(id):
+			places += 1
+	print("  sets PNJ, animaux, boss : %d, dont %d placeholders" % [ids.size(), places])
 
 
 ## Types de cases (GDD §10.1, §10.2) : murs et cloisons fines bloquent vue et passage ; murets,
