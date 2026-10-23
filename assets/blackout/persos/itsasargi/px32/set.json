@@ -8,34 +8,34 @@
  ],
  "feet_y": 60,
  "palette": [
-  "#010613",
-  "#030e2c",
-  "#07132c",
-  "#112c63",
-  "#362801",
-  "#795903",
-  "#838b97",
-  "#ffb071",
-  "#ffb600",
+  "#000412",
+  "#000b29",
+  "#05142b",
+  "#0c2d61",
+  "#2f220d",
+  "#6a4c1d",
+  "#a16c00",
+  "#a3a29a",
+  "#ffa768",
   "#ffffff"
  ],
  "palette_base": [
-  "#112c63",
-  "#ffb600",
+  "#0c2d61",
+  "#ffa768",
+  "#6a4c1d",
   "#ffffff",
-  "#795903",
-  "#ffb071",
-  "#838b97",
-  "#030e2c"
+  "#000b29",
+  "#a3a29a",
+  "#a16c00"
  ],
  "palette_dark": [
-  "#07132c",
-  "#362801",
-  "#362801",
-  "#362801",
-  "#362801",
-  "#010613",
-  "#010613"
+  "#05142b",
+  "#2f220d",
+  "#2f220d",
+  "#2f220d",
+  "#000412",
+  "#2f220d",
+  "#2f220d"
  ],
  "elements": {
   "profile": {
@@ -60,7 +60,7 @@
   },
   "run": {
    "frames": 4,
-   "fps": 12,
+   "fps": 9,
    "loop": true,
    "anchor": "common",
    "size": [
@@ -69,7 +69,7 @@
    ]
   },
   "jump_hide": {
-   "frames": 5,
+   "frames": 6,
    "fps": 12,
    "loop": false,
    "anchor": "common",
@@ -81,7 +81,7 @@
   "lift": {
    "frames": 6,
    "fps": 8.0,
-   "loop": true,
+   "loop": false,
    "anchor": "common",
    "size": [
     64,
@@ -109,9 +109,9 @@
    ]
   },
   "victoire": {
-   "frames": 8,
+   "frames": 10,
    "fps": 10.0,
-   "loop": true,
+   "loop": false,
    "anchor": "feet",
    "size": [
     64,
@@ -119,9 +119,9 @@
    ]
   },
   "defaite": {
-   "frames": 6,
+   "frames": 8,
    "fps": 8.0,
-   "loop": true,
+   "loop": false,
    "anchor": "feet",
    "size": [
     64,
@@ -129,7 +129,7 @@
    ]
   },
   "etourdi": {
-   "frames": 6,
+   "frames": 8,
    "fps": 10.0,
    "loop": false,
    "anchor": "feet",
@@ -219,15 +219,13 @@
    ]
   }
  },
- "source": "78f4ff90abe549f090da0e1f2bef50c1",
+ "source": "10d9dc55a9d7474c98fba2c61b39c2d7",
  "controls": {
-  "warnings": [
-   "teinte d'une zone dérivée de 26.7 ΔE entre 128 et 32"
-  ],
-  "height_px": 29,
+  "warnings": [],
+  "height_px": 30,
   "body_width_px": 7,
   "colors_used": 10,
-  "isolated_px": 143,
+  "isolated_px": 108,
   "feet_bottom": {
    "profile": [
     60
@@ -237,16 +235,16 @@
     60
    ],
    "run": [
-    60,
-    60,
     59,
+    60,
+    58,
     60
    ]
   },
   "feet_max_dev": 0,
   "eye_present": true,
-  "zone_drift_de": 26.7,
-  "saturation_mean": 0.8,
+  "zone_drift_de": 1.9,
+  "saturation_mean": 0.85,
   "lightness_range": 98,
   "colors_budget": 10
  }

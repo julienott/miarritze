@@ -8,34 +8,34 @@
  ],
  "feet_y": 60,
  "palette": [
-  "#020d25",
-  "#061f53",
-  "#27000d",
-  "#47342c",
-  "#724d35",
-  "#9e7463",
-  "#ef0004",
-  "#ffad76",
-  "#ffb700",
+  "#030e23",
+  "#07214f",
+  "#72482f",
+  "#727272",
+  "#7c0016",
+  "#a6a4a6",
+  "#d50007",
+  "#ffa169",
+  "#ffb503",
   "#ffffff"
  ],
  "palette_base": [
-  "#061f53",
-  "#ef0004",
+  "#07214f",
+  "#ffa169",
+  "#d50007",
   "#ffffff",
-  "#ffb700",
-  "#ffad76",
-  "#9e7463",
-  "#27000d"
+  "#ffb503",
+  "#a6a4a6",
+  "#7c0016"
  ],
  "palette_dark": [
-  "#020d25",
-  "#724d35",
-  "#724d35",
-  "#724d35",
-  "#724d35",
-  "#47342c",
-  "#020d25"
+  "#030e23",
+  "#72482f",
+  "#72482f",
+  "#727272",
+  "#72482f",
+  "#727272",
+  "#72482f"
  ],
  "elements": {
   "profile": {
@@ -219,13 +219,13 @@
    ]
   }
  },
- "source": "9e20b7af66104a59b7d05437056c45c4",
+ "source": "07f1c3ac15e64c048f3fd0da3a6b9f78",
  "controls": {
   "warnings": [],
   "height_px": 30,
   "body_width_px": 5,
   "colors_used": 10,
-  "isolated_px": 83,
+  "isolated_px": 6,
   "feet_bottom": {
    "profile": [
     60
@@ -238,13 +238,13 @@
     59,
     60,
     58,
-    60
+    59
    ]
   },
   "feet_max_dev": 0,
   "eye_present": true,
   "zone_drift_de": 0.0,
-  "saturation_mean": 0.74,
+  "saturation_mean": 0.86,
   "lightness_range": 95,
   "colors_budget": 10
  }
