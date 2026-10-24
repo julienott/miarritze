@@ -93,6 +93,12 @@ Le watcher `tools/producer/studio.py` fait un tour par minute (journal `.studio/
    `assets/blackout/<famille>/<id>/` (sans commit).
 3. **Build de QA** : après une intégration, tests (`bk_tests.gd`), export web dans `.studio/site/jeu` et index
    du board ; les cartes intégrées passent **en QA**. En échec, rien ne bouge et le Bord affiche l'erreur.
+   Après un build réussi, **tous les assets** du disque (32 px et HD, validés ou non) sont versionnés sur la
+   branche **`assets-integres`** et poussés, en arrière-plan (`tools/producer/branche_assets.py`, journal
+   `.studio/branche_assets.log` ; Julien, 24/10). La HD est dans **Git LFS** (`.gitattributes`). `main` ne
+   reçoit toujours que le validé (étape 4), pour que la prod reste sous le contrôle de Julien. Pour retrouver
+   un asset : `git checkout assets-integres -- assets/blackout/persos/louis/hd/run_sheet.png` (avec `git lfs`
+   installé).
 4. **Mise en prod** : 10 min après le dernier ✓ (pour grouper), tests, puis commit et push des **seuls fichiers
    des cartes validées** (pour une animation : ses planches, le `set.json` et son entrée dans
    `animations.json`, le reste du fichier restant celui de la prod), lancement de `deploy.yml`, suivi du run ;
