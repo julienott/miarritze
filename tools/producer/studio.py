@@ -180,7 +180,7 @@ def taches_de(s: dict, b, pid: str, d: str) -> list:
 class Studio:
     def __init__(self) -> None:
         self.etat = charge(ETAT, {})
-        for k in ("statuts", "gardees", "integre", "a_construire", "rework_a", "signale"):
+        for k in ("statuts", "gardees", "integre", "a_construire", "rework_a", "signale", "suit", "propage"):
             self.etat.setdefault(k, {} if k not in ("a_construire",) else [])
         self.t = Taches(self.etat["statuts"])
         self.bq = {f: banque(f) for f in FAMILLES}
@@ -208,7 +208,7 @@ class Studio:
                 commente(c, "studio : ce set n'est pas encore automatisé (iteration.py : persos et PNJ) ; "
                             "l'agent le lance à la main")
                 self.etat["signale"][str(c["id"])] = "manuel"
-        attente = self.refait(e, voulues)
+        attente = self.propage(e, cs, par_id) + self.refait(e, voulues)
         it.sauve(e)
         voulues = [c for c in voulues if c["id"] not in attente]
         self.depose(e, voulues, par_id)
@@ -300,6 +300,63 @@ class Studio:
                     self.etat["a_construire"].append(c["id"])
 
     # ---------------------------------------------------------- 1. dépôts
+    def propage(self, e: dict, cs: list, par_id: dict) -> list:
+        """Profil de référence refusé (Julien 24/10) : une base ou une expression refusée en QA emmène dans sa
+        colonne (Backlog ou Todo, selon le refus) tout ce qui en est fait et qui était en QA, Validé ou En prod :
+        les expressions et portraits d'une base, les animations et portraits faits sur ce profil. Ces cartes
+        attendent que le profil soit refait (sa carte n'est plus « à retraiter ») ; en Todo, elles sont alors
+        redemandées depuis le nouveau profil (anciennes tâches dans « refaites »). Rend les cartes qui attendent."""
+        suit, fait = self.etat["suit"], self.etat["propage"]
+        for c in cs:
+            if not c.get("rework") or c["status"] not in ("backlog", "todo") or not cible(c):
+                continue
+            f, pid, d = cible(c)
+            if d != "base" and not d.startswith("expr:"):
+                continue
+            b = self.bq[f]
+            s = e.get(it.cle(b, pid), {})
+            tid = s.get("base") if d == "base" else s.get("expressions", {}).get(d[5:])
+            if not tid or fait.get(str(c["id"])) == tid:
+                continue
+            fait[str(c["id"])] = tid
+            for k in cs:
+                ck = cible(k) if k["id"] != c["id"] else None
+                if not ck or ck[:2] != (f, pid) or k["status"] not in ("qa", "valide", "done"):
+                    continue
+                d2 = ck[2]
+                a = s.get("animations", {}).get(d2) or {}
+                # Une base porte tout le perso (expressions, puis animations faites sur elles) ; une expression,
+                # ses portraits et les animations faites sur elle.
+                if d == "base" or d2 == d or a.get("socle") == tid:
+                    bouge(k, c["status"], f"studio : suit son profil de référence #{c['id']} ({d}), refusé en QA "
+                                          "(Julien 24/10) ; sera refait depuis le nouveau profil")
+                    suit[str(k["id"])] = c["id"]
+        attente = []
+        for kid, sid in list(suit.items()):
+            k, sc = par_id.get(int(kid)), par_id.get(sid)
+            if not k or not sc:
+                suit.pop(kid, None)
+                continue
+            if sc.get("rework"):
+                attente.append(k["id"])                 # le profil n'est pas encore refait
+                continue
+            if k["status"] != "todo":
+                continue                                # en Backlog : attend que Julien la mette en Todo
+            f, pid, d2 = cible(k)
+            s = e.get(it.cle(self.bq[f], pid), {})
+            rf = s.setdefault("refaites", {})
+            if d2.startswith("expr:") and d2 != cible(sc)[2] and d2[5:] in s.get("expressions", {}):
+                ancien = s["expressions"].pop(d2[5:])
+                rf[f"{d2}_profil_{ancien[:8]}"] = ancien
+            elif d2 in s.get("animations", {}):
+                ancien = s["animations"].pop(d2)["A"]
+                rf[f"{d2}_profil_{ancien[:8]}"] = ancien
+                s.get("integre", {}).pop(d2, None)
+            self.etat["integre"].pop(kid, None)
+            suit.pop(kid)
+            log(pid, d2, "redemandée depuis le nouveau profil", f"(#{sid})")
+        return attente
+
     def refait(self, e: dict, voulues: list) -> list:
         """« Refuser et refaire » (Julien 24/10) : une carte refusée remise en Todo attend Claude, qui relève
         .studio/a_traiter.json toutes les 30 min, applique le commentaire du refus à la demande et écrit
