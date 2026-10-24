@@ -2154,7 +2154,18 @@ async function saveCard(ev) {
 /** Animation visée par une carte (champ « détail »), ou l'idle, ou la première. */
 function cardAnim(a, detail) {
   if (!a || !a.anims || !a.anims.length) return null;
-  return a.anims.find((x) => x.name === detail) || a.anims.find((x) => x.name === 'idle') || a.anims[0];
+  const x = a.anims.find((n) => n.name === detail);
+  if (x || (detail && /^(base|expr:|portrait:|objet|effet|icone)/.test(detail))) return x || null;
+  return a.anims.find((n) => n.name === 'idle') || a.anims[0];
+}
+
+/** Profil HD (et portrait) d'une carte base, expr:<clé> ou portrait:<usage> d'un set (index : set.profils). */
+function profilDe(a, detail) {
+  if (!a || !a.set || !detail) return null;
+  const k = detail === 'base' ? 'neutre' : detail.startsWith('expr:') ? detail.slice(5)
+    : detail.startsWith('portrait:') ? ((a.set.portraits || {})[detail.slice(9)] || 'neutre') : null;
+  if (k === null) return null;
+  return (a.set.profils || []).find((x) => x.expression === k) || { expression: k, absent: true };
 }
 
 /**
@@ -2169,6 +2180,13 @@ function cardThumbEl(c, card) {
   const a = c.asset ? state.assetsById.get(c.asset) : null;
   if (!a || a.type === 'audio' || a.type === 'data') return null;
   const smooth = a.smooth ? ' smooth' : '';
+  const pr = profilDe(a, c.detail);
+  if (pr) {
+    if (pr.absent) return null;
+    // Portrait d'un usage : le portrait ; base et expression : le profil (Julien 24/10 : plus la même image partout).
+    const src = c.detail.startsWith('portrait:') && pr.portrait ? pr.portrait : pr.profile;
+    return el('img', { class: 'card-thumb smooth profil-thumb', src: fileUrl(src), alt: '', loading: 'lazy', decoding: 'async' });
+  }
   const anim = cardAnim(a, c.detail);
   if (anim && anim.poster) {
     const mini = miniAnim(anim, 0);
@@ -2271,18 +2289,15 @@ function renderCardAsset() {
   const openAsset = () => { $('card-dialog').close(); location.hash = '#/assets/' + encodeURIComponent(a.id); };
   let view;
   // Base, expression ou portrait d'un set : ses profil et portrait HD (index : set.profils).
-  const profils = (a.set && a.set.profils) || [];
-  const exprDe = (d) => (d === 'base' ? 'neutre' : d.startsWith('expr:') ? d.slice(5)
-    : d.startsWith('portrait:') ? ((a.set.portraits || {})[d.slice(9)] || 'neutre') : null);
-  const profil = detail && exprDe(detail) !== null
-    ? profils.find((x) => x.expression === exprDe(detail)) || null : null;
+  const pr = profilDe(a, detail);
+  const profil = pr && !pr.absent ? pr : null;
   if (profil) {
     view = el('div', { class: 'ca-profil' },
       el('figure', {}, el('img', { src: fileUrl(profil.profile), alt: 'profil ' + profil.expression }), el('figcaption', { text: 'profil HD' })),
       profil.portrait ? el('figure', {}, el('img', { src: fileUrl(profil.portrait), alt: 'portrait ' + profil.expression }), el('figcaption', { text: 'portrait HD' })) : null,
       el('p', { class: 'muted', text: `expression : ${profil.expression}` }));
-  } else if (detail && exprDe(detail) !== null) {
-    view = el('p', { class: 'muted', text: `Pas encore livré (expression ${exprDe(detail)}).` });
+  } else if (pr) {
+    view = el('p', { class: 'muted', text: `Pas encore livré (expression ${pr.expression}).` });
   } else if (anim) {
     const cellDe = (x, label) => hoverAnimCell(x, 150, el('button', {
       type: 'button', class: 'anim-cell big', title: 'Survoler pour animer, cliquer pour le plein écran',

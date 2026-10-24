@@ -1084,3 +1084,4 @@ a.studio-tile, :root[data-theme="dark"] a.studio-tile { color: var(--text); }
   .cf-nav.prev { left: auto; right: 56px; }
   .cf-nav.next { right: max(8px, env(safe-area-inset-right)); }
 }
+.card-thumb.profil-thumb { object-fit: contain; image-rendering: auto; }
