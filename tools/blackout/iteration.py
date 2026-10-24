@@ -261,6 +261,40 @@ def rapatrie(tid: str, dossier: str, el: str, anims: bool) -> int:
     return n
 
 
+HD_CASE = 256                 # cases de la planche HD du board (hd/set.json : canevas 256)
+
+
+def planche_hd(px: str, hd: str, el: str, noms_b: set, meta: dict) -> bool:
+    """Planche HD d'une animation = les poses HD nettoyées que la réduction a retenues (step_<el>__2_hd_nettoyee
+    puis ses segments __2__2, __3__2…), livrées par la tâche B de la carte : la HD montrée correspond image par
+    image au 32 px (Julien 24/10 : la HD du board venait d'anciennes tâches). Écrit hd/<el>_sheet.png et
+    l'entrée de hd/animations.json."""
+    from PIL import Image
+    import re
+    segs = []
+    for n in os.listdir(px):
+        m = re.fullmatch(rf"step_{re.escape(el)}__(?:(\d+)__)?2_hd_nettoyee__(\d+)f\.png", n)
+        if m and n in noms_b:
+            segs.append((int(m.group(1) or 1), n, int(m.group(2))))
+    if not segs:
+        return False
+    images = []
+    for _i, n, k in sorted(segs):
+        im = Image.open(os.path.join(px, n)).convert("RGBA")
+        c = im.height
+        images += [im.crop((j * c, 0, (j + 1) * c, c)).resize((HD_CASE, HD_CASE), Image.LANCZOS) for j in range(k)]
+    planche = Image.new("RGBA", (HD_CASE * len(images), HD_CASE))
+    for j, im in enumerate(images):
+        planche.paste(im, (j * HD_CASE, 0))
+    planche.save(os.path.join(hd, f"{el}_sheet.png"), optimize=True)
+    chemin = os.path.join(hd, "animations.json")
+    a = json.load(open(chemin)) if os.path.exists(chemin) else {}
+    a[el] = {"fps": meta.get("fps", 8), "loop": meta.get("loop", True), "count": len(images),
+             "size": [HD_CASE, HD_CASE], "source": "réduction " + ",".join(n for _i, n, _k in sorted(segs))}
+    json.dump(a, open(chemin, "w"), ensure_ascii=False, indent=1)
+    return True
+
+
 def integre(b, e: dict, pid: str) -> None:
     s = e.get(cle(b, pid), {})
     base = os.path.join(ROOT, "assets", "blackout", b.famille, pid)
@@ -312,6 +346,8 @@ def integre(b, e: dict, pid: str) -> None:
                 os.remove(os.path.join(px, "set.json"))
             faits["_set"] = a["B"]
         n = rapatrie(a["A"], hd, el, False) + rapatrie(a["B"], px, el, True)
+        meta = (json.load(open(os.path.join(px, "animations.json"))) if os.path.exists(os.path.join(px, "animations.json")) else {}).get(el, {})
+        planche_hd(px, hd, el, {f["name"] for f in fichiers(a["B"])}, meta)
         faits[nom] = a["A"]
         print(pid, nom, f"({a['expression']}) intégré : {n} fichiers")
 
