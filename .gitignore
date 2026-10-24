@@ -40,3 +40,6 @@ tools/blackout/.decor_pause
 
 # HD des character sets pixelforge (locale, sert à producer ; non exportée)
 assets/blackout/*/*/hd/
+
+# Service local du board (données, builds) — jamais versionné
+/.studio/

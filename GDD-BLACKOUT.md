@@ -755,7 +755,9 @@ Phare (annexe A.2), Aquarium, Rocher de la Vierge, Fronton.
 - **Son** : aucun pour l'instant (l'audio de Borroka a été supprimé le 22/10). Plan : annexe A.1.
 - Tests : règles en headless (vision, ombre, détection, coups, fin de round, tirage), IA contre IA sur
   la carte, salons à deux navigateurs.
-- Déploiement : à la main (`deploy.yml`), seulement sur décision de Julien, **à la racine** de https://miarritze.ijulien.com/ ; la racine ne garde que le jeu, `api/` et `producer/` (*Julien, 22/10* : le reste peut être effacé ; plus de version de test séparée).
+- Déploiement : `deploy.yml`, **à la racine** de https://miarritze.ijulien.com/ ; la racine ne garde que le
+  jeu et `api/` (*Julien, 22/10* : le reste peut être effacé). Depuis le 24/10, la décision de Julien est
+  l'acceptation d'une carte en QA sur le board local (§14.2) : le déploiement suit tout seul.
 
 ## 14. Pipeline d'images (pixelforge)
 - **Moteur A** `pf_px__character_set` : perso et animations en pixel art HD (256 px de case).
@@ -822,7 +824,7 @@ vérifier, avant les 12 autres.
 en QA sur /producer, qui montre toutes ses animations et leur description. Julien commente élément par
 élément et **décide seul** quand un perso repart en file. Je ne renvoie alors **que ce qui doit changer** :
 - si seuls des extras sont à refaire (idle_long, lancements, activités), j'utilise le mode « extras seuls » sur la tâche d'origine (`base_task`) ;
-- run, jump_hide, lift, portrait, un standard ou un extra se refont seuls avec **`redo`** (*en ligne chez pixelforge le 23/10, commit f9b8803*). La requête reprend `base_task` (tâche A d'origine) et `redo: [éléments]`. Options : `clips`, `actions`, `run_frames`, `seed` (une autre graine pour une autre tentative). En B, `base_task` reprend la réduction d'origine. Seuls ces éléments sont livrés, avec la même palette, la même échelle et la même ligne des pieds. Outil : `tools/blackout/retouche.py`. Ses résultats sont intégrés par fusion dans le set, par `livraison.sh` ;
+- run, jump_hide, lift, portrait, un standard ou un extra se refont seuls avec **`redo`** (*en ligne chez pixelforge le 23/10, commit f9b8803*). La requête reprend `base_task` (tâche A d'origine) et `redo: [éléments]`. Options : `clips`, `actions`, `run_frames`, `seed` (une autre graine pour une autre tentative). En B, `base_task` reprend la réduction d'origine. Seuls ces éléments sont livrés, avec la même palette, la même échelle et la même ligne des pieds. Outil : `tools/blackout/retouche.py`. Ses résultats sont intégrés par fusion dans le set (`retouche.py --integre`) ;
 - **ajouter** une animation à un set livré, sans rien refaire : même `base_task` (ou `base_set` + son
   `profile_hd.png`, gardés dans `hd/`) avec les seuls nouveaux `extras` ou standards. Chaque tâche intégrée est
   marquée `keep` chez pixelforge par `integre_persos_v2.py`, pour ne pas être purgée (*23/10*) ;
@@ -830,19 +832,44 @@ en QA sur /producer, qui montre toutes ses animations et leur description. Julie
 Le reste du set est gardé tel quel.
 
 - **Décor** : masques en suspens (§10.2).
-- Méthode de travail : on intègre chaque rendu tel quel, **Julien tranche en QA** sur /producer
-  (procédure : `docs/PRODUCER.md`).
+- Méthode de travail : on intègre chaque rendu tel quel, **Julien tranche en QA** sur le board (§14.2).
 
-## 15. Jalons et travail à faire
-1. **Jalon actuel — jouable sur carte nue** : carte bac à sable, lumière et ombre, coups spéciaux en
+### 14.2 Board de production local (*Julien, 24/10*)
+Le /producer en ligne est supprimé (données migrées) et remplacé par un **service local** sur le Mac de
+Julien, joignable de ses appareils par **Tailscale** seulement (pas de mot de passe ; jeton pour l'agent).
+Fonctionnement détaillé, règles de passage et automatismes : **`docs/PRODUCER.md`**.
+- Colonnes : **Backlog → Todo → Doing → QA → Validé → En prod**. Julien seul met en Todo (accord de mise en
+  file) et accepte ou refuse en QA.
+- **QA = le jeu lancé en local** : un build web commun, refait automatiquement après chaque intégration,
+  servi sur Tailscale avec le board. Tout ce qui est en QA y est jouable.
+- **✓ Accepter → Validé** ; le watcher committe et pousse les fichiers des cartes validées, puis déploie en
+  prod 10 min après le dernier accept (un déploiement pour plusieurs cartes) ; les cartes passent alors
+  **En prod**. ✗ Refuser renvoie en haut du Backlog, « à retraiter ».
+- Chaque animation, expression et base de perso, PNJ, boss ou asset a sa carte sous son chapeau, liée à
+  ses tâches pixelforge. Les tâches des cartes en Doing, QA, Validé et En prod sont marquées `keep`.
+- Automatisé sans l'agent (aucun token) : synchronisation avec pixelforge, intégration locale, build QA,
+  passage Doing → QA, chapeaux, commit, push et déploiement. L'agent n'intervient que pour un refus ou un
+  travail de code.
+
+## 15. Roadmap : jalons et travail à faire
+**Cette liste est la roadmap.** Chaque jalon a un identifiant stable (`R1`…) ; le board en fait ses jalons
+(titre « R3 · … », description renvoyant ici), dans cet ordre, par `tools/producer/reorganise_board.py`, qui
+relit cette liste. Changer la roadmap = changer cette liste (datée au journal §16), puis relancer le script.
+Chaque carte du board appartient à un jalon ; son chapeau y emmène sa famille.
+1. **[R0] Studio local : board, QA et prod** : board local sur Tailscale, jeu de QA local, mise en prod
+   groupée, watchers sans agent (§14.2).
+2. **[R1] Jouable sur carte nue** : carte bac à sable, lumière et ombre, coups spéciaux en
    placeholders (13 × 2), effets communs, recharges, fantômes invisibles et délivrance, round du boss
    avec un boss placeholder, menu debug, pseudo seul, sans emotes. Échelle 640×360 et cases de 32 px.
-2. **Persos v2** : run pixelforge avec la bibliothèque v2 et les corrections de pixelforge, puis QA.
-3. **Boss** : 5 boss en 64 px (Intxixuk en trio).
-4. **Équilibrage** : rounds IA contre IA, puis tests avec Louis.
-5. **Level design** : première vraie carte de Biarritz.
-6. **En ligne** : salons branchés sur le jeu (signalisation `/room/signal`).
-7. **Finitions** : son et musique, écran « tourne ton appareil », icônes et PWA, export Steam Deck.
+3. **[R2] Persos : les 13 en itérations** : base neutre, expressions, puis chaque animation (§8.5) ; un perso
+   après l'autre ; fantôme commun.
+4. **[R3] PNJ et animaux** : la foule de la nuit (§3.8, §8.4), 42 humains et 4 animaux en itérations ; vie,
+   groupes, camouflage.
+5. **[R4] Boss** : 7 boss en 64 px (§8.3, Intxixuk en trio).
+6. **[R5] Équilibrage** : rounds IA contre IA, puis tests avec Louis.
+7. **[R6] Level design** : première vraie carte de Biarritz.
+8. **[R7] En ligne** : salons branchés sur le jeu (signalisation `/room/signal`).
+9. **[R8] Finitions** : son et musique, écran « tourne ton appareil », icônes et PWA, export Steam Deck.
 
 ### 15.1 Où on en est (soir du 23/10) et ce qui reste
 **Fait et publié à la racine** (étapes 1 à 4 du jalon 1) : pixel art 640×360, cases de 32 px, carte bac à
@@ -950,6 +977,18 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   (1) base neutre, profil et portrait (`preview`) ; (2) base avec l'expression de l'animation (`expression_of`
   la base neutre) ; (3) l'animation, dérivée de cette base (`profile_of`), puis réduite. Une expression ciblée
   par animation (§8.5), jamais dans le prompt. Outil : `tools/blackout/iteration.py` (persos et PNJ).
+- **24/10** (board, Julien) : /producer en ligne supprimé après migration ; board local sur Tailscale ; QA = jeu
+  local (build commun automatique) ; acceptation = commit, push et déploiement groupé en prod ; colonnes
+  Validé et En prod ; toutes les animations en cartes sous leur chapeau, tâches pixelforge en `keep` (§14.2).
+- **24/10** (autres assets, Julien, sur la réponse de pixelforge) : boss pilote **Basajaun** en itérations, après
+  les 13 persos ; puis remise au contrat de `pf_px__creature` (HD cartoon, A/B, preview, expressions,
+  portrait) pour Zezengorri, Herensuge et les animaux ; **essai animaux sans marionnette** (Wan) sur le chat,
+  pour voir comment le modèle réagit (après les 13 persos, avant Basajaun ; chat de 16 px, « a small slender
+  dark grey cat with bright yellow eyes, pointed ears and a long thin tail, the yellow eyes clearly visible » ;
+  idle et walk sur vidéo pilote Quaternius, run, dormir et se lécher en image vers vidéo ; marionnette à côté) ; **portrait des boss en 128 px** au versus ; objets des coups
+  (`pf_px__prop` proposé) après les 13 persos ; icônes des 26 coups dans un **cercle coloré par rôle** (bleu
+  chassé, rouge chasseur) ; décor : lieu pilote **Port des Pêcheurs**, après le jalon 1. Effets des états :
+  seuls étoile, plume, résine et traits en sprites, contours et halo restent dans le code.
 
 ---
 

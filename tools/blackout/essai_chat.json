@@ -1,0 +1,5 @@
+{
+ "_doc": "Essai du chat (Julien, 24/10 ; GDD §16) : après les 13 persos, avant Basajaun. Deux variantes à comparer (tags frères, filtre « essai_chat » dans /history de pixelforge). Déposé par depose_json.py depuis la carte du board.",
+ "wan": {"prompt_style": "pf_px__animal", "prompt": "a small slender dark grey cat with bright yellow eyes, pointed ears and a long thin tail, the yellow eyes clearly visible", "animal": "cat", "height": 16, "seed": 7, "priority": "high", "tag": "miarritze/essai_chat/wan"},
+ "marionnette": {"prompt_style": "pf_px__creature", "prompt": "a small slender dark grey cat with bright yellow eyes, pointed ears and a long thin tail, the yellow eyes clearly visible", "kind": "quadruped", "height": 16, "seed": 7, "priority": "high", "tag": "miarritze/essai_chat/marionnette", "then": [{"prompt_style": "pf_px__reduce"}]}
+}

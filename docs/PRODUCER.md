@@ -1,6 +1,101 @@
-# Producer — pilotage du projet (bord, kanban, catalogue, jeu, roadmap, API)
+# Producer — le board de production (local, Tailscale)
 
-Service privé : https://miarritze.ijulien.com/producer/
+Référencé par GDD-BLACKOUT.md §14.2 (décision) et §15 (roadmap). Depuis le 24/10, le board tourne sur le
+Mac de Julien et n'existe plus en ligne :
+
+- **Board** : https://squid.tailbeda4d.ts.net:10000/producer/ ; **jeu de QA** : https://squid.tailbeda4d.ts.net:10000/jeu/
+  (joignables seulement des appareils du tailnet de Julien ; pas de mot de passe, Tailscale fait foi).
+- **Prod** : https://miarritze.ijulien.com/ (le jeu seul).
+- Le Mac doit être allumé et éveillé pour que le board, le jeu de QA et les watchers tournent.
+
+## Les colonnes et leurs règles de passage
+
+| Colonne | Ce que ça veut dire | Qui y met une carte | Ce qui se passe ensuite |
+|---|---|---|---|
+| **Backlog** | identifié, pas décidé | Julien ou l'agent | rien |
+| **Todo** | accord de Julien pour lancer le travail | **Julien seul** (ou l'agent sur son ordre explicite) | le watcher la prend (voir plus bas) |
+| **Doing** | en cours : en file chez pixelforge, ou travail de l'agent | le watcher (pixelforge) ou l'agent (code) | suivi automatique |
+| **QA** | livré, intégré **dans le jeu de QA local** (/jeu/), à tester | le watcher, après le build de QA ; l'agent pour le code | Julien : ✓ ou ✗ |
+| **Validé** | accepté par Julien, part au prochain déploiement | ✓ Accepter (Julien) | mise en prod groupée |
+| **En prod** | en ligne sur miarritze.ijulien.com | le watcher, après le déploiement réussi | fini |
+
+- **✗ Refuser** (commentaire obligatoire) renvoie la carte en haut du Backlog avec ↺ « à retraiter » : c'est un
+  travail pour l'agent (nouveau prompt, retouche), relancé quand la carte repasse en Todo. Dès qu'une nouvelle
+  tâche pixelforge est intégrée pour elle, la carte revient seule en QA.
+- **Carte à commande** (Julien, 24/10) : si sa description contient des lignes `$ <outil> …`, le watcher les
+  lance quand la carte est en Todo (outils du dépôt seulement : `tools/blackout`, `tools/pf`, `tools/producer`,
+  `.py` ou `.sh`, sans shell), écrit la sortie en commentaire et passe la carte en Doing. Il suit les tâches
+  pixelforge dont la sortie donne l'id ; quand elles sont finies, il lance les lignes `$ apres: <outil> …`
+  (intégration), puis le build de QA, puis la carte passe en QA. `$ attend: #N` retient la carte en Todo tant
+  que la carte N n'est pas en QA. Exemple :
+  ```
+  $ attend: #1180
+  $ tools/blackout/rereduit.py louis run --prio high
+  $ apres: tools/blackout/iteration.py integre louis
+  ```
+- **Chapeaux** : leur colonne suit leurs enfants (la plus basse ; Doing dès qu'un enfant est commencé). Mettre
+  un chapeau en Todo y emmène tous ses enfants du Backlog. ✓ sur un chapeau valide aussi ses enfants en QA.
+- **Une carte par élément** : chaque perso, PNJ, animal ou boss a son chapeau (asset
+  `blackout/<famille>/<id>/animations`) ; dessous, une carte par base (`detail` = `base`), par expression
+  (`expr:<clé>`) et par animation (`run`, `victoire`…). Les chapeaux de famille (Persos, PNJ et animaux, Boss)
+  les regroupent.
+- **Roadmap** : les jalons du board sont ceux de GDD §15 (`R0`…`R8`, titre « R2 · … »), dans le même ordre.
+  On change la roadmap dans le GDD, puis `tools/producer/reorganise_board.py` met le board à jour (idempotent :
+  rien n'est dupliqué, aucune colonne ne recule).
+- **keep** : toute tâche pixelforge d'une carte en Doing, QA, Validé ou En prod est marquée `keep` (jamais purgée).
+  Les tâches figurent sur la carte (« Tâches pixelforge », 📌 = gardée).
+
+## Les automatismes (sans agent, sans token)
+
+Le watcher `tools/producer/studio.py` fait un tour par minute (journal `.studio/studio.log`) :
+
+1. **Todo → Doing** : une carte de base, d'expression ou d'animation d'un perso ou d'un PNJ part en file
+   chez pixelforge dès que ce dont elle dépend est prêt : base neutre → base avec l'expression de l'animation
+   (§8.5) → animation, puis réduction pixel (`tools/blackout/iteration.py`). Priorité : haute si la carte
+   est en priorité haute, nuit si 🌙, sinon normale. Les persos se finissent l'un après l'autre, dans
+   l'ordre de la colonne.
+2. **Doing** : statuts des tâches recopiés sur la carte ; une tâche échouée ou annulée est redéposée (2 essais,
+   puis un commentaire demande l'agent) ; une tâche finie est **intégrée en local** dans
+   `assets/blackout/<famille>/<id>/` (sans commit).
+3. **Build de QA** : après une intégration, tests (`bk_tests.gd`), export web dans `.studio/site/jeu` et index
+   du board ; les cartes intégrées passent **en QA**. En échec, rien ne bouge et le Bord affiche l'erreur.
+4. **Mise en prod** : 10 min après le dernier ✓ (pour grouper), tests, puis commit et push des **seuls fichiers
+   des cartes validées** (pour une animation : ses planches, le `set.json` et son entrée dans
+   `animations.json`, le reste du fichier restant celui de la prod), lancement de `deploy.yml`, suivi du run ;
+   réussi, les cartes passent **En prod**. En échec, elles restent en Validé et le Bord l'affiche ; un nouvel
+   ✓ relance la tentative.
+5. Boss, animaux et fantôme ne sont pas encore en itérations : mis en Todo, ils reçoivent un commentaire et
+   l'agent les lance à la main.
+
+Les cartes de code (feature, gameplay, bug) ne sont pas traitées par le watcher : l'agent les passe en Doing,
+puis en QA une fois le code commité et le jeu de QA reconstruit (`studio.py --un-tour` ou le prochain tour).
+
+## Installation et exploitation
+
+- Config du board local (`.studio/site/producer/config.php`, écrite par `make_config.php` avec
+  `PRODUCER_TAILSCALE=1`) : `tailscale_auth` vrai, pas de mot de passe, sha256 du jeton de l'agent. Une requête
+  venue de 127.0.0.1 avec l'en-tête `Tailscale-User-Login` (posé par `tailscale serve`) est connectée comme
+  Julien ; sans l'en-tête, 401. Le serveur n'écoute que sur 127.0.0.1.
+- Schéma v6 : colonne `valide`, colonne `jobs` (tâches pixelforge d'une carte, écrites par le watcher :
+  `[{"id","role","label","status","keep"}]`) ; route `GET studio` (`data/studio.json` : `qa_build`, `deploy`),
+  affichée sur le Bord.
+
+```bash
+tools/producer/studio_installe.sh        # board + config + launchd (serveur, watcher) + tailscale serve
+launchctl kickstart -k gui/$(id -u)/com.miarritze.studio   # relancer le watcher
+tail -f .studio/studio.log               # ce que fait le watcher
+tools/producer/reorganise_board.py       # roadmap du GDD → jalons et cartes du board
+```
+
+- `.studio/` (gitignoré) : `site/producer` (board, base `data/producer.sqlite`, `data/studio.json`),
+  `site/jeu` (jeu de QA), `studio_etat.json`, journaux, `sauvegardes/` (export du board en ligne du 24/10).
+- `cli.py` vise le board local (`PRODUCER_URL` par défaut `http://127.0.0.1:8099/producer/`), même jeton.
+- Migration (faite le 24/10) : `exporte_prod.py` (sauvegarde par l'API) puis `importe_local.py` (ids conservés).
+
+---
+
+*La suite décrit l'interface et l'API du board (inchangées, sauf les colonnes Validé et En prod et
+l'accès Tailscale).*
 
 ## Pour Julien
 
@@ -46,7 +141,7 @@ Service privé : https://miarritze.ijulien.com/producer/
   - **💬 Commenter** sous chaque animation : « Amélioration / Validé » + texte ; le commentaire est enregistré sur l'asset avec `detail` = l'élément (contexte `anim : <élément>`) et **reporté sur la carte chapeau** ouverte. Les commentaires déjà posés sur l'élément s'affichent sous lui ; ceux sur l'ensemble du set, en bas. Contrairement aux autres cartes, une amélioration **ne sort pas** la carte Perso de QA (Julien 23/10) : il commente élément par élément et décide seul du renvoi avec **✗ Refuser** ; Claude ne renvoie alors en file pixelforge que les éléments commentés (GDD §14.1) ;
   - ⛶ ouvre le lecteur plein écran sur l'élément (image par image, ligne des pieds) ; « Pause », « Fond » (clair, sombre, damier) et « HD : oui/non » valent pour toute la galerie. Les animations ne tournent que quand elles sont à l'écran et s'arrêtent à la fermeture.
   - Même chose pour le fantôme commun (`blackout/fantome/fantome/animations`), les PNJ (`blackout/pnj/<id>/animations`), les animaux (`blackout/animaux/<id>/…`) et les boss (`blackout/boss/<id>/…`, cases de 128).
-  - **Cartes automatiques** (Julien 23/10) : `publie.sh` lance `cartes_auto.py`, qui crée en QA la carte chapeau de chaque set pixelforge réel publié (persos, fantôme, PNJ, animaux, boss) ou, si le set a changé, la commente (« nouvelle version : éléments ») et la remet en QA. Empreintes dans `tools/producer/cartes_auto_etat.json`. Une livraison complète se fait en une commande : `tools/blackout/livraison.sh` (intègre ce qui est fini chez pixelforge, teste, committe, publie). À la main : `cli.py add-card --title "Perso : Louis" --type perso --asset blackout/persos/louis/animations` (sans `--detail`).
+  - **Cartes automatiques** : depuis le 24/10, c'est le watcher `studio.py` qui crée et déplace les cartes (voir plus haut) ; `reorganise_board.py` crée le chapeau et les cartes de chaque set.
 - Le bouton ◐ bascule entre le thème clair et le thème sombre.
 
 ## Pour l'agent (terminal)
@@ -54,7 +149,7 @@ Service privé : https://miarritze.ijulien.com/producer/
 `tools/producer/cli.py` n'utilise que la bibliothèque standard de Python. Configuration :
 
 - `PRODUCER_TOKEN` : le jeton. Sinon, il est lu dans `.producer_token` à la racine du dépôt (fichier gitignoré, le jeton seul sur la première ligne).
-- `PRODUCER_URL` : l'adresse du service, par défaut `https://miarritze.ijulien.com/producer/`.
+- `PRODUCER_URL` : l'adresse du service, par défaut `http://127.0.0.1:8099/producer/` (board local).
 
 ```bash
 tools/producer/cli.py comments --open            # retours sur les assets (--asset <id>, --json)
@@ -148,17 +243,9 @@ Toutes les routes passent par `index.php?r=<route>` et répondent en JSON. Authe
 
 ## Mise en place (une seule fois)
 
-Les secrets ne vont jamais dans le dépôt, qui est public. Le déploiement écrit `producer/config.php` avec `tools/producer/make_config.php`. Ce fichier ne contient que le `password_hash` du mot de passe et le sha256 du jeton.
-
-```bash
-gh secret set PRODUCER_PASSWORD                 # saisir le mot de passe à l'invite (rien dans l'historique du shell)
-openssl rand -hex 32 > .producer_token          # jeton de l'agent, gardé en local (gitignoré)
-gh secret set PRODUCER_TOKEN < .producer_token
-```
-
-Ensuite, n'importe quel push sur `main` (ou un lancement manuel du workflow) déploie `/producer`. Pour changer le mot de passe ou le jeton, il suffit de mettre à jour le secret et de redéployer.
-
-Si les secrets sont absents, le workflow émet un avertissement et n'envoie pas de config ; sans config, toute connexion est refusée.
+Le jeton de l'agent est dans `.producer_token` (gitignoré ; `openssl rand -hex 32 > .producer_token` pour en
+créer un). `tools/producer/studio_installe.sh` en écrit le hachage dans la config du board local. Plus de
+secrets GitHub ni de déploiement de /producer (supprimé du serveur le 24/10).
 
 ## Tester en local
 
@@ -176,7 +263,7 @@ PRODUCER_URL=http://127.0.0.1:8099/producer/ PRODUCER_TEST_PASSWORD=test-local \
   PRODUCER_TOKEN=tok_local_0123456789abcdefghij node tests/web/producer_kanban.mjs   # kanban (ordi + iPhone portrait/paysage)
 ```
 
-`producer_kanban.mjs` (108 vérifications, dont la mise à jour en direct ; `PRODUCER_FILES_DIR=<build>/files` pour tester aussi la republication d'un asset) : chapeaux, historique, asset lié, Accepter/Refuser, CLI, vue mobile iPhone portrait et paysage, balayage) tourne sur une base quelconque (titres uniques). Pour tester la migration, partir d'une base de version 1 : créer `data/producer.sqlite` avec `git show f0c4e41:producer/lib/schema.sql | sqlite3 …`, y insérer les cartes « Ancienne carte à faire » (todo), « Ancien bug en cours » (doing), « Ancienne carte à vérifier » (review, avec une note `agent` puis une note `julien`) et « Ancienne carte faite » (done), puis lancer le test avec `PRODUCER_EXPECT_MIGRATION=1`. Avec plusieurs requêtes en parallèle (images), lancer `php -S` avec `PHP_CLI_SERVER_WORKERS=6`.
+`producer_kanban.mjs` (136 vérifications ; `PRODUCER_TAILSCALE_URL` = une 2e instance avec `tailscale_auth` pour tester l'accès Tailscale, dont la mise à jour en direct ; `PRODUCER_FILES_DIR=<build>/files` pour tester aussi la republication d'un asset) : chapeaux, historique, asset lié, Accepter/Refuser, CLI, vue mobile iPhone portrait et paysage, balayage) tourne sur une base quelconque (titres uniques). Pour tester la migration, partir d'une base de version 1 : créer `data/producer.sqlite` avec `git show f0c4e41:producer/lib/schema.sql | sqlite3 …`, y insérer les cartes « Ancienne carte à faire » (todo), « Ancien bug en cours » (doing), « Ancienne carte à vérifier » (review, avec une note `agent` puis une note `julien`) et « Ancienne carte faite » (done), puis lancer le test avec `PRODUCER_EXPECT_MIGRATION=1`. Avec plusieurs requêtes en parallèle (images), lancer `php -S` avec `PHP_CLI_SERVER_WORKERS=6`.
 
 Le test (Chromium, 36 vérifications) couvre :
 

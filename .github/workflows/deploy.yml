@@ -1,9 +1,9 @@
 name: Build & deploy web export
 
 # Depuis le 2026-10-20 (Julien) : main = Miarritze Blackout, publié À LA RACINE du site (remplace
-# Borroka, supprimé du dépôt le 2026-10-22) ; /producer est préparé en local (tools/producer/publie.sh)
-# et recopié ensuite par producer.yml.
-# Déploiement à la main seulement, sur décision de Julien.
+# Borroka, supprimé du dépôt le 2026-10-22). /producer n'est plus en ligne (Julien 2026-10-24 : board local
+# sur Tailscale, GDD §14.2) : ce déploiement l'efface du serveur (données migrées en local).
+# Lancé par le watcher du board local quand Julien accepte des cartes en QA (GDD §14.2), ou à la main.
 on:
   workflow_dispatch:
 
@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      actions: write     # relancer producer.yml une fois le jeu en ligne
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,9 +58,6 @@ jobs:
       - name: PHP lint
         run: find backend producer tools/producer -name '*.php' -print0 | xargs -0 -n1 php -l
 
-      # /producer n'est plus construit ici (Julien 2026-10-20 : le jeu d'abord) : producer.yml le
-      # reconstruit et le publie à chaque push sur main, et peut se relancer à la main.
-
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 
@@ -83,8 +79,8 @@ jobs:
       # d'abord et un MaxAuthTries bas côté serveur peut nous bloquer avant
       # d'atteindre la tentative par mot de passe. (Même pattern que sutorimu.)
       # --delete (Julien 2026-10-22 : « tu dois publier à la racine du site, oui tout le reste peut être
-      # effacé ») : la racine ne garde que le build du jeu, api/ et producer/ (et .well-known/ pour le
-      # certificat). Les anciens dossiers (Borroka, /gordeka/, /blackout/…) partent. La liste de ce qui
+      # effacé ») : la racine ne garde que le build du jeu et api/ (et .well-known/ pour le certificat).
+      # Les anciens dossiers (Borroka, /gordeka/, /blackout/…, /producer/ depuis le 24/10) partent. La liste de ce qui
       # est effacé est d'abord affichée (dry-run) dans le journal du job.
       - name: Deploy via rsync over SSH
         env:
@@ -92,8 +88,7 @@ jobs:
         run: |
           cp web/.htaccess web/build/.htaccess
           SSH_OPTS="ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no -o NumberOfPasswordPrompts=1"
-          # producer/data/ (SQLite + sessions) n'est jamais dans le build ni touché.
-          GARDE="--exclude=/api/ --exclude=/producer/ --exclude=/.well-known/ --exclude=/cgi-bin/"
+          GARDE="--exclude=/api/ --exclude=/.well-known/ --exclude=/cgi-bin/"
           echo "== Ce qui sera effacé à la racine =="
           sshpass -e rsync -avz --delete --dry-run $GARDE -e "$SSH_OPTS" \
             web/build/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/" | grep '^deleting' || true
@@ -104,9 +99,3 @@ jobs:
           sshpass -e rsync -avz -e "$SSH_OPTS" \
             --exclude='*.sqlite*' --exclude='config.php' \
             backend/ "${{ secrets.FTP_USER }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PATH }}/api/"
-
-      # Le jeu est en ligne : on recopie ensuite le dernier /producer préparé en local (producer-build).
-      - name: Relancer producer
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run producer.yml --ref "${{ github.ref_name }}"
