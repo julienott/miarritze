@@ -86,6 +86,13 @@ Mac de Julien et n'existe plus en ligne :
 
 ## Les automatismes (sans agent, sans token)
 
+**Rythme (Julien, 24/10)** : tout ce qui part chez pixelforge est en priorité **night** (file de nuit, 01:00–08:00
+Paris), forcé dans le client commun (`tools/pf/gen_anims_pf.py`) ; Julien bascule lui-même la file depuis
+l'interface de pixelforge s'il veut autre chose. Le watcher regarde le **kanban toutes les 3 h** (Todo → file,
+commandes, refus, chapeaux, mise en prod) et fait la **relève de pixelforge une fois par jour à 9 h** (livraisons,
+intégration, build de QA). Pour un tour complet tout de suite : `touch .studio/maintenant` (ou demander à
+Claude). Claude relève les refus « à refaire » toutes les 3 h aussi.
+
 Le watcher `tools/producer/studio.py` fait un tour par minute (journal `.studio/studio.log`) :
 
 1. **Todo → Doing** : une carte de base, d'expression ou d'animation d'un perso ou d'un PNJ part en file

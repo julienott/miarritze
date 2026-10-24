@@ -50,6 +50,9 @@ STUDIO = os.path.join(ROOT, ".studio")
 SITE = os.path.join(STUDIO, "site")
 DATA = os.path.join(SITE, "producer", "data")
 ETAT = os.path.join(STUDIO, "studio_etat.json")
+KANBAN_S = 3 * 3600          # le kanban : toutes les 3 h (Julien 24/10)
+RELEVE_H = 9                 # la relève pixelforge : une fois par jour, à 9 h (nuit pixelforge 01:00–08:00 Paris)
+MAINTENANT = os.path.join(STUDIO, "maintenant")     # touch : un tour complet tout de suite
 A_TRAITER = os.path.join(STUDIO, "a_traiter.json")      # refus à refaire, relevés par Claude
 REFAIRE = os.path.join(STUDIO, "refaire")                # ses demandes ajustées, <id>.json
 LOG = os.path.join(STUDIO, "studio.log")
@@ -191,7 +194,9 @@ class Studio:
         ecrit(ETAT, self.etat)
 
     # ---------------------------------------------------------- tour
-    def tour(self) -> None:
+    def tour(self, kanban: bool = True, pixelforge: bool = True) -> None:
+        """kanban : Todo → file, commandes, refus, chapeaux, mise en prod (toutes les 3 h) ; pixelforge :
+        relève des livraisons, intégration, build de QA (une fois par jour, après la nuit) ; Julien 24/10."""
         self.t.vus = {}
         cs = cartes()
         par_id = {c["id"]: c for c in cs}
@@ -199,30 +204,34 @@ class Studio:
         for c in cs:
             if c.get("parent_id"):
                 enfants.setdefault(c["parent_id"], []).append(c)
-        self.todo_des_chapeaux(cs, enfants)
-        self.commandes(cs)
+        if kanban:
+            self.todo_des_chapeaux(cs, enfants)
+            self.commandes(cs)
         e = it.etat()                                   # relu après les commandes, qui peuvent l'écrire
         voulues = [c for c in cs if cible(c) and cible(c)[2] and c["status"] in ("todo", "doing")
                    and not commandes_de(c)[0]]
-        for c in cs:                                    # boss, animaux, fantôme : pas encore en itérations
+        for c in cs if kanban else ():                  # boss, animaux, fantôme : pas encore en itérations
             if c["status"] == "todo" and not cible(c) and (c.get("asset") or "").startswith("blackout/") \
                     and not enfants.get(c["id"]) and str(c["id"]) not in self.etat["signale"]:
                 commente(c, "studio : ce set n'est pas encore automatisé (iteration.py : persos et PNJ) ; "
                             "l'agent le lance à la main")
                 self.etat["signale"][str(c["id"])] = "manuel"
-        attente = self.propage(e, cs, par_id) + self.refait(e, voulues)
+        attente = self.propage(e, cs, par_id) + (self.refait(e, voulues) if kanban else [])
         it.sauve(e)
         voulues = [c for c in voulues if c["id"] not in attente]
-        self.depose(e, voulues, par_id)
-        it.sauve(e)
-        self.echecs(e, voulues)
-        it.sauve(e)
-        self.synchronise(e, cs)
-        if self.integre(e, voulues):
+        if kanban:
+            self.depose(e, voulues, par_id)
             it.sauve(e)
-        self.build_qa(par_id)
+        if pixelforge:
+            self.echecs(e, voulues)
+            it.sauve(e)
+            self.synchronise(e, cs)
+            if self.integre(e, voulues):
+                it.sauve(e)
+            self.build_qa(par_id)
         self.chapeaux(cs, enfants)
-        self.prod(cartes())
+        if kanban:
+            self.prod(cartes())
         self.sauve()
 
     def todo_des_chapeaux(self, cs: list, enfants: dict) -> None:
@@ -888,13 +897,36 @@ def prepare_commit(c: dict) -> int:
     return len(fs)
 
 
+def a_faire(s: "Studio") -> tuple[bool, bool]:
+    """(kanban, pixelforge) à traiter maintenant (Julien 24/10) : le kanban toutes les 3 h, pixelforge une fois
+    par jour à RELEVE_H (une heure après la fin de sa nuit, 01:00–08:00 Paris). Un fichier .studio/maintenant
+    (touch) force les deux au tour suivant, à la demande de Julien."""
+    now = time.time()
+    if os.path.exists(MAINTENANT):
+        os.remove(MAINTENANT)
+        s.etat["kanban_at"] = now
+        s.etat["releve_jour"] = time.strftime("%Y-%m-%d")
+        return True, True
+    k = now - s.etat.get("kanban_at", 0) >= KANBAN_S
+    jour = time.strftime("%Y-%m-%d")
+    p = time.localtime().tm_hour >= RELEVE_H and s.etat.get("releve_jour") != jour
+    if k:
+        s.etat["kanban_at"] = now
+    if p:
+        s.etat["releve_jour"] = jour
+    return k, p
+
+
 def main() -> None:
     un = "--un-tour" in sys.argv
     log("studio démarré")
     s = Studio()
     while True:
         try:
-            s.tour()
+            k, p = (True, True) if un else a_faire(s)
+            if k or p:
+                log("tour :", " + ".join(x for x, ok in (("kanban", k), ("relève pixelforge", p)) if ok))
+                s.tour(kanban=k, pixelforge=p)
         except (Exception, SystemExit) as x:   # pixelforge ou board indisponible (cli sort par SystemExit) : tour suivant
             log("tour interrompu :", str(x)[:200])
             log(traceback.format_exc()[-800:])

@@ -115,9 +115,15 @@ def keep(tid: str) -> None:
 AJUSTE = None                         # crochet du watcher : demande -> demande (refus à refaire, GDD §14.2)
 
 
+PRIORITE = "night"            # Julien 24/10 : tout part en file de nuit chez pixelforge (01:00–08:00 Paris), jamais autrement
+
+
 def depose(r: dict, montre: bool) -> dict:
     if AJUSTE:
         r = AJUSTE(r)
+    r = {**r, "priority": PRIORITE}
+    if r.get("then"):
+        r["then"] = [{**t, "priority": PRIORITE} for t in r["then"]]
     if montre:
         print(json.dumps(r, ensure_ascii=False, indent=1))
         return {"task_id": "(montre)"}

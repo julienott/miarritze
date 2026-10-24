@@ -25,7 +25,23 @@ PF_TOKEN = os.environ.get("PF_TOKEN") or (open(_tok_path).read().strip() if os.p
 AUTH = {"Authorization": f"Bearer {PF_TOKEN}"} if PF_TOKEN else {}
 
 
+# Julien 24/10 : toute tâche part en file de nuit (01:00–08:00 Paris), jamais autrement ; Julien bascule lui-même
+# la file depuis l'interface de pixelforge s'il veut autre chose.
+PRIORITE_FILE = "night"
+
+
+def _de_nuit(payload):
+    if isinstance(payload, dict) and payload.get("prompt_style"):
+        payload = {**payload, "priority": PRIORITE_FILE}
+        if payload.get("then"):
+            payload["then"] = [_de_nuit(t) if t.get("prompt_style") else {**t, "priority": PRIORITE_FILE}
+                               for t in payload["then"]]
+    return payload
+
+
 def _post_json(url, payload, timeout=900):
+    if "/inferences" in url:
+        payload = _de_nuit(payload)
     req = urllib.request.Request(url, json.dumps(payload).encode(), {
         "Content-Type": "application/json", "Accept": "application/json, text/event-stream", **AUTH})
     try:

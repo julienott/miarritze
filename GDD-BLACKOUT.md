@@ -996,6 +996,8 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
 - **24/10** (chaîne HD → pixel, Julien) : tout rendu 32 px vient de la HD de sa carte, sur le même modèle de base ;
   le profil et le portrait 32 px d'un perso sont faits depuis sa base neutre (job portrait sur ce profil, puis
   pf_px__reduce ; iteration.job_base_px), déposés par le watcher après chaque base. Les anciens venaient de l'ancien modèle.
+- **24/10** (rythme, Julien) : tout part chez pixelforge en file de nuit (01:00–08:00), jamais autrement ; relève des
+  livraisons une fois par jour à 9 h ; kanban regardé toutes les 3 h, sauf demande ponctuelle. La journée est pour la QA.
 - **24/10** (autres assets, Julien, sur la réponse de pixelforge) : boss pilote **Basajaun** en itérations, après
   les 13 persos ; puis remise au contrat de `pf_px__creature` (HD cartoon, A/B, preview, expressions,
   portrait) pour Zezengorri, Herensuge et les animaux ; **essai animaux sans marionnette** (Wan) sur le chat,
