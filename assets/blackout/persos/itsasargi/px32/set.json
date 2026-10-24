@@ -1,5 +1,4 @@
 {
- "factor": 4,
  "size": "normal",
  "height": 30,
  "canvas": [
@@ -7,36 +6,54 @@
   64
  ],
  "feet_y": 60,
+ "scale": "1:1 (pixel natif)",
  "palette": [
-  "#000412",
-  "#000b29",
-  "#05142b",
-  "#0c2d61",
-  "#2f220d",
-  "#6a4c1d",
-  "#a16c00",
-  "#a3a29a",
-  "#ffa768",
-  "#ffffff"
+  "#1d2230",
+  "#1d2534",
+  "#2f3d55",
+  "#373639",
+  "#514425",
+  "#5a585d",
+  "#5d493f",
+  "#706347",
+  "#836f3d",
+  "#865f49",
+  "#898680",
+  "#967667",
+  "#b5a073",
+  "#b8903b",
+  "#bb8a6e",
+  "#d99a76",
+  "#dcb49b",
+  "#ded9d0"
  ],
  "palette_base": [
-  "#0c2d61",
-  "#ffa768",
-  "#6a4c1d",
-  "#ffffff",
-  "#000b29",
-  "#a3a29a",
-  "#a16c00"
+  "#2f3d55",
+  "#5a585d",
+  "#836f3d",
+  "#967667",
+  "#b5a073",
+  "#b8903b",
+  "#bb8a6e",
+  "#d99a76",
+  "#dcb49b",
+  "#ded9d0"
  ],
  "palette_dark": [
-  "#05142b",
-  "#2f220d",
-  "#2f220d",
-  "#2f220d",
-  "#000412",
-  "#2f220d",
-  "#2f220d"
+  "#1d2534",
+  "#373639",
+  "#514425",
+  "#5d493f",
+  "#706347",
+  "#836f3d",
+  "#5d493f",
+  "#865f49",
+  "#967667",
+  "#898680"
  ],
+ "k_raw": 0.07874,
+ "outline": "selout",
+ "native": true,
  "elements": {
   "profile": {
    "frames": 1,
@@ -59,173 +76,51 @@
    ]
   },
   "run": {
-   "frames": 4,
-   "fps": 9,
+   "frames": 8,
+   "fps": 18.0,
    "loop": true,
    "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "jump_hide": {
-   "frames": 6,
-   "fps": 12,
-   "loop": false,
-   "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "lift": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": false,
-   "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "portrait": {
-   "frames": 1,
-   "fps": 1,
-   "loop": false,
-   "anchor": "bottom",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "interagir": {
-   "frames": 6,
-   "fps": 10.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "victoire": {
-   "frames": 10,
-   "fps": 10.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "defaite": {
-   "frames": 8,
-   "fps": 8.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "etourdi": {
-   "frames": 8,
-   "fps": 10.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "renverse": {
-   "frames": 12,
-   "fps": 12.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "colle": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "ralenti": {
-   "frames": 8,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "aveugle": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "tracte": {
-   "frames": 6,
-   "fps": 10.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "idle_long": {
-   "frames": 8,
-   "fps": 10.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "cast_chasse": {
-   "frames": 8,
-   "fps": 12.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "cast_chasseur": {
-   "frames": 8,
-   "fps": 12.0,
-   "loop": false,
-   "anchor": "feet",
    "size": [
     64,
     64
    ]
   }
  },
- "source": "10d9dc55a9d7474c98fba2c61b39c2d7",
+ "extras": [],
+ "optional": {},
+ "clips": {
+  "run": "Sprint_Loop",
+  "jump_hide": "NinjaJump_Start+NinjaJump_Idle_Loop+NinjaJump_Land",
+  "lift": "LiftAir",
+  "interagir": "Interact",
+  "victoire": "Celebration",
+  "defaite": "Crying",
+  "etourdi": "Hit_Shoulder_L+Hit_Shoulder_R",
+  "renverse": "Hit_Knockback+LayToIdle",
+  "colle": "Crouch_Fwd_Loop",
+  "ralenti": "Zombie_Walk_Fwd_Loop",
+  "aveugle": "Spell_Double_Shoot_Loop",
+  "tracte": "Slide_Loop",
+  "profile": "Idle_Loop (pose debout, 1re image)",
+  "idle": "code (respiration)",
+  "ghost": "code (profil translucide qui flotte)"
+ },
+ "jump_exit": "jump_hide joué à l'envers",
+ "run_poses": [
+  18,
+  20,
+  22,
+  24,
+  26,
+  28,
+  30,
+  16
+ ],
+ "run_frames": 8,
+ "jump_frames": [],
  "controls": {
   "warnings": [],
-  "height_px": 30,
-  "body_width_px": 7,
-  "colors_used": 10,
-  "isolated_px": 108,
+  "height_px": 31,
   "feet_bottom": {
    "profile": [
     60
@@ -235,17 +130,34 @@
     60
    ],
    "run": [
-    59,
     60,
-    58,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
     60
    ]
   },
-  "feet_max_dev": 0,
-  "eye_present": true,
-  "zone_drift_de": 1.9,
-  "saturation_mean": 0.85,
-  "lightness_range": 98,
-  "colors_budget": 10
+  "colors_used": 1092,
+  "isolated_px": 702,
+  "holes_px": 0,
+  "hd_clean": {
+   "profile": {
+    "sam": true,
+    "removed_px": 20,
+    "restored_px": 0,
+    "parts": 1
+   },
+   "run": {
+    "sam": true,
+    "removed_px": 510,
+    "restored_px": 0,
+    "parts": 8
+   }
+  },
+  "part_colors": {},
+  "run_head_bob_px": 1
  }
 }

@@ -16,12 +16,12 @@
   "caption": "idle · 2 images · 3 i/s · boucle"
  },
  "run": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/run.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/run_sheet.png",
-  "fps": 9,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3a3e546fb016412c89cd7e76a2df625d/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3a3e546fb016412c89cd7e76a2df625d/run_sheet.png",
+  "fps": 18.0,
   "loop": true,
-  "count": 4,
-  "caption": "run · 4 images · 9 i/s · boucle"
+  "count": 8,
+  "caption": "run · 8 images · 18 i/s · boucle"
  },
  "jump_hide": {
   "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/jump_hide.gif",
