@@ -1289,10 +1289,22 @@ function initKanban() {
   $('cf-back').addEventListener('click', closeCardDialog);
   $('cf-prev').addEventListener('click', () => cardVoisine(-1));
   $('cf-next').addEventListener('click', () => cardVoisine(1));
+  // Raccourcis d'une carte ouverte (Julien 24/10) : ← → voisines, V valider, R refuser (hors champ de saisie).
   $('card-dialog').addEventListener('keydown', (ev) => {
     if (ev.target.closest('input, textarea, select, [contenteditable]') || ev.altKey || ev.metaKey || ev.ctrlKey) return;
+    if ($('refuse-dialog').open) return;
+    const c = state.editing;
+    const k = ev.key.toLowerCase();
     if (ev.key === 'ArrowLeft') { ev.preventDefault(); cardVoisine(-1); }
-    if (ev.key === 'ArrowRight') { ev.preventDefault(); cardVoisine(1); }
+    else if (ev.key === 'ArrowRight') { ev.preventDefault(); cardVoisine(1); }
+    else if (k === 'v' && c && c.status === 'qa') { ev.preventDefault(); acceptCard(c); }
+    else if (k === 'r' && c && c.status === 'qa') { ev.preventDefault(); openRefuse(c); }
+  });
+  // Dialogue de refus : ⌘↵ (ou Ctrl+↵) refuse, ⇧⌘↵ refuse et fait refaire.
+  $('rf-body').addEventListener('keydown', (ev) => {
+    if (ev.key !== 'Enter' || !(ev.metaKey || ev.ctrlKey)) return;
+    ev.preventDefault();
+    $('refuse-form').requestSubmit($(ev.shiftKey ? 'rf-redo' : 'rf-send'));
   });
   // L'URL de la carte est rendue à la fermeture même (close() du dialogue), avant qu'un plein écran ou un
   // changement de vue n'empile la sienne ; l'événement « close » couvre Échap.
@@ -2034,6 +2046,8 @@ function openCardDialog(card, assetId, parentId) {
   $('cf-children').replaceChildren();
   $('cf-children-title').textContent = 'Enfants';
   if (!$('card-dialog').open) $('card-dialog').showModal();
+  // Carte existante : le focus sur le dialogue, pas dans un champ, pour que ← → V R marchent tout de suite.
+  if (card) requestAnimationFrame(() => $('card-dialog').focus({ preventScroll: true }));
   $('card-dialog').scrollTop = 0;
   if (card) loadFeed(card.id);
 }

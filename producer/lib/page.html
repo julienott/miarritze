@@ -98,21 +98,22 @@
   </section>
 </main>
 
-<dialog id="card-dialog">
+<dialog id="card-dialog" tabindex="-1">
   <div id="cf-mbar" class="mbar">
     <button type="button" id="cf-back" class="ghost">← Retour</button>
     <span id="cf-mtitle"></span>
   </div>
   <nav id="cf-up" class="cf-up" aria-label="Chapeaux de la carte" hidden></nav>
-  <button type="button" id="cf-prev" class="cf-nav prev" aria-label="Carte précédente" title="Carte précédente (←)" hidden>‹</button>
-  <button type="button" id="cf-next" class="cf-nav next" aria-label="Carte suivante" title="Carte suivante (→)" hidden>›</button>
+  <button type="button" id="cf-prev" class="cf-nav prev" aria-label="Carte précédente" title="Carte précédente (←)" hidden>‹<kbd class="kb-hint">←</kbd></button>
+  <button type="button" id="cf-next" class="cf-nav next" aria-label="Carte suivante" title="Carte suivante (→)" hidden>›<kbd class="kb-hint">→</kbd></button>
   <form id="card-form" method="dialog" class="card-form">
     <h2 id="card-dialog-title">Carte</h2>
     <p class="muted small-text"><span id="cf-origin"></span> <span id="cf-saved" class="save-state" role="status" aria-live="polite"></span></p>
     <p class="rework" id="cf-rework" hidden>↺ Refusée en QA : à retraiter (voir le refus dans l'historique)</p>
     <div class="qa-actions" id="cf-qa" hidden>
-      <button type="button" id="cf-accept" class="accept">✓ Accepter</button>
-      <button type="button" id="cf-refuse" class="refuse">✗ Refuser</button>
+      <button type="button" id="cf-accept" class="accept" title="Accepter (V)">✓ Accepter <kbd class="kb-hint">V</kbd></button>
+      <button type="button" id="cf-refuse" class="refuse" title="Refuser (R)">✗ Refuser <kbd class="kb-hint">R</kbd></button>
+      <span class="kb-hints muted small-note">← → carte précédente / suivante · Échap fermer</span>
     </div>
     <div class="row">
       <label>Type
@@ -187,8 +188,8 @@
     <p class="error" id="rf-error" role="alert"></p>
     <div class="row end"><span class="spacer"></span>
       <button type="button" id="rf-cancel" class="ghost">Annuler</button>
-      <button type="submit" id="rf-send" class="refuse" value="backlog" title="En haut du Backlog, à retraiter">✗ Refuser</button>
-      <button type="submit" id="rf-redo" class="refuse" value="todo" title="En haut du Todo : redemandée à pixelforge">↻ Refuser et refaire</button></div>
+      <button type="submit" id="rf-send" class="refuse" value="backlog" title="En haut du Backlog, à retraiter (⌘↵)">✗ Refuser <kbd class="kb-hint">⌘↵</kbd></button>
+      <button type="submit" id="rf-redo" class="refuse" value="todo" title="En haut du Todo : redemandée à pixelforge (⇧⌘↵)">↻ Refuser et refaire <kbd class="kb-hint">⇧⌘↵</kbd></button></div>
   </form>
 </dialog>
 
