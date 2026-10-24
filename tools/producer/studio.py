@@ -725,8 +725,15 @@ class Studio:
             self.etat["dernier_echec"] = dernier
             return
         n = 0
-        for c in val:
-            n += prepare_commit(c)
+        try:
+            for c in val:
+                n += prepare_commit(c)
+        except Exception as err:                        # noqa: BLE001
+            sh("git", "reset", "-q")                    # l'index revient à HEAD, la copie de travail ne bouge pas
+            studio_json("deploy", {"state": "echec", "cards": ids, "message": f"préparation du commit : {err}"[:300]})
+            log("préparation du commit en échec, index remis à zéro :", err)
+            self.etat["dernier_echec"] = dernier
+            return
         if n:
             titres = ", ".join(f"#{c['id']}" for c in val)[:300]
             rc, out = sh("git", "commit", "-q", "-m", f"Mise en prod des cartes validées : {titres}\n\n"
@@ -832,13 +839,13 @@ def fichiers_carte(f: str, pid: str, d: str) -> list:
     """Fichiers de travail d'une carte de set itéré (chemins relatifs au dépôt)."""
     base = os.path.join("assets", "blackout", f, pid)
     out = []
-    for sous in ("hd", "px32"):
+    for sous in ("px32",):          # la HD reste sur la branche assets-integres (LFS), jamais sur main
         dossier = os.path.join(ROOT, base, sous)
         if not os.path.isdir(dossier):
             continue
         for n in sorted(os.listdir(dossier)):
-            if d == "base":
-                ok = n in ("profile_hd.png", "portrait_hd.png")
+            if d == "base":                     # profil et portrait 32 px faits depuis la base (job_base_px)
+                ok = it.element_de(n) in ("profile", "portrait") and not n.startswith(("step_", "src64_"))
             elif d.startswith("expr:"):
                 ok = n.endswith(f"_{d[5:]}_hd.png")
             else:
@@ -869,8 +876,9 @@ def prepare_commit(c: dict) -> int:
         rel = os.path.join("assets", "blackout", f, pid, "px32", "animations.json")
         travail = charge(os.path.join(ROOT, rel), {})
         if d in travail:
-            index = sh("git", "show", f":{rel}")
-            prod = json.loads(index[1]) if index[0] == 0 else {}
+            # Sortie complète et sans stderr (sh() tronque à 4000 caractères : animations.json en fait plus).
+            p = subprocess.run(["git", "show", f":{rel}"], cwd=ROOT, capture_output=True, text=True)
+            prod = json.loads(p.stdout) if p.returncode == 0 and p.stdout.strip() else {}
             prod[d] = travail[d]
             data = json.dumps(prod, ensure_ascii=False, indent=1).encode()
             p = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=ROOT, input=data, capture_output=True)
