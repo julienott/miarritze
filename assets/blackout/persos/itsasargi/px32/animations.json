@@ -96,12 +96,12 @@
   "caption": "colle · 23 images · 30.67 i/s · boucle"
  },
  "ralenti": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/ralenti.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/ralenti_sheet.png",
-  "fps": 8.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/d79f0e02b1a9419682823c033ec9f2fb/ralenti.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/d79f0e02b1a9419682823c033ec9f2fb/ralenti_sheet.png",
+  "fps": 15.0,
   "loop": true,
-  "count": 8,
-  "caption": "ralenti · 8 images · 8 i/s · boucle"
+  "count": 15,
+  "caption": "ralenti · 15 images · 15 i/s · boucle"
  },
  "aveugle": {
   "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/aveugle.gif",
