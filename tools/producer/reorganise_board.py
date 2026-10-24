@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Réorganise le board local selon la roadmap (GDD §15) et la règle « une carte par animation » (§14.2) :
-jalons dans l'ordre du GDD ; chapeaux Persos, PNJ et animaux, Boss ; sous chacun, un chapeau par perso,
-PNJ, animal ou boss, avec une carte par base, expression et animation (asset du set + détail).
+jalons dans l'ordre du GDD ; chapeaux Persos, PNJ et animaux, Boss, Décor ; sous chacun, un chapeau par perso,
+PNJ, animal, boss ou carte de jeu, avec une carte par base, expression, animation, portrait (asset du set +
+détail) ; sous chaque perso, un chapeau par coup spécial (lancement, objet, effet, icône) et un pour ses
+portraits ; sous chaque carte de jeu, une carte par asset de son décor (Julien, 24/10).
 Idempotent : une carte existante (même asset et même détail) est reprise, jamais dupliquée ; les
 colonnes déjà avancées ne reculent pas.
   tools/producer/reorganise_board.py [--montre]
@@ -113,6 +115,38 @@ def carte(titre, type_, asset="", detail="", parent=None, statut="backlog", ms=N
     return c["id"]
 
 
+# ------------------------------------------------------------------ coups spéciaux (Julien 24/10 : par asset)
+CASTS = {"cast_chasse": "chasse", "cast_chasseur": "chasseur"}
+COUPS = json.load(open(os.path.join(ROOT, "data", "blackout", "coups.json")))["persos"]
+# Ce qui se voit en plus du lancement, par famille et paramètres (GDD §4.6 : formes simples en attendant).
+EFFETS = {"nuage_rayon": "nuage", "gerbe_portee": "gerbe d'eau", "geysers": "geysers", "rendu": "piste de pas"}
+
+
+def coups_du_perso(pid, nom, asset, h, a_tache, J):
+    """Sous ce perso, un chapeau par coup (chassé, chasseur) : animation de lancement (élément du set),
+    objet lancé ou posé, effet visible, icône (GDD §4.4–4.6). Seule l'animation est automatisée."""
+    for el, role in CASTS.items():
+        cp = COUPS.get(pid, {}).get(role)
+        if not cp:
+            continue
+        lib = "coup de chassé" if role == "chasse" else "coup de chasseur"
+        hc = carte(f"{nom} · {lib} : {cp['nom']}", "gameplay", parent=h, statut="todo", ms=J,
+                   desc=f"GDD §4.4 ({cp['famille']}). Chaque asset du coup a sa carte ; seule l'animation de "
+                        "lancement part en file par le watcher, les objets et l'icône sont faits après les 13 persos.")
+        carte(f"{nom} · {el} (lancement : {cp['nom']})", "animation", asset, el, hc,
+              "doing" if a_tache(el) else "todo", J)
+        pa = cp.get("params", {})
+        ca = f"blackout/coups/{cp['id']}"
+        quoi = pa.get("projectile") or pa.get("objet")
+        if quoi:
+            carte(f"{nom} · {cp['nom']} : objet ({quoi})", "asset", ca, "objet", hc, "backlog", jalon[JR["R1"]])
+        for k, v in EFFETS.items():
+            if k in pa:
+                carte(f"{nom} · {cp['nom']} : effet ({v})", "asset", ca, "effet", hc, "backlog", jalon[JR["R8"]])
+        carte(f"{nom} · {cp['nom']} : icône (cercle {'bleu' if role == 'chasse' else 'rouge'})", "asset", ca, "icone",
+              hc, "backlog", jalon[JR["R8"]])
+
+
 # ------------------------------------------------------------------ persos (itérations)
 J = jalon[JR["R2"]]
 persos = carte("Persos : les 13 en itérations (base, expressions, animations)", "pixelforge", parent=None, ms=J,
@@ -134,9 +168,18 @@ for pid in ORDRE:
         or d in s.get("animations", {})  # noqa: E731
     lignes = [("base", f"{nom} · base neutre (profil et portrait)", "asset")] + \
         [(f"expr:{k}", f"{nom} · expression {k}", "asset") for k in ks] + \
-        [(x, f"{nom} · {x}", "animation") for x in els]
+        [(x, f"{nom} · {x}", "animation") for x in els if x not in CASTS]
     for d, titre, t in lignes:
         carte(titre, t, asset, d, h, "doing" if a_tache(d) else "todo", J)
+    # Portraits (Julien 24/10) : un par usage (GDD §8.5), faits par la base ou par l'expression de l'usage.
+    hp = carte(f"{nom} · portraits", "asset", parent=h, statut="todo", ms=J,
+               desc="Portraits du perso, un par usage (GDD §8.1, §8.5) : menus, versus, podium. Chacun vient de la "
+                    "base neutre ou de la base avec l'expression de l'usage.")
+    for u, v in b.ex["portraits"].items():
+        k = b.base(pid) if v == "base" else v
+        carte(f"{nom} · portrait {u} ({k})", "asset", asset, f"portrait:{u}", hp,
+              "doing" if a_tache("base" if k == it.NEUTRE else f"expr:{k}") else "todo", J)
+    coups_du_perso(pid, nom, asset, h, a_tache, J)
 fan = carte("Fantôme : commun", "perso", "blackout/fantome/fantome/animations", "", persos, "backlog", J)
 for x in ("appear", "float", "advance"):
     carte(f"Fantôme · {x}", "animation", "blackout/fantome/fantome/animations", x, fan, "qa", J)
@@ -164,7 +207,8 @@ for pid, h in bp.p["humains"].items():
             ks.append(k)
     nom = h["prenom"]
     for d, titre, t in [("base", f"{nom} · base neutre (profil et portrait)", "asset")] + \
-            [(f"expr:{k}", f"{nom} · expression {k}", "asset") for k in ks] + [(x, f"{nom} · {x}", "animation") for x in els]:
+            [(f"expr:{k}", f"{nom} · expression {k}", "asset") for k in ks] + [(x, f"{nom} · {x}", "animation") for x in els] + \
+            [("portrait:menus", f"{nom} · portrait menus ({bp.base(pid)})", "asset")]:
         carte(titre, t, asset, d, hid, "backlog", J)
 for aid in json.load(open(os.path.join(ROOT, "data", "blackout", "pnj.json")))["animaux"]:
     asset = f"blackout/animaux/{aid}/animations"
@@ -194,7 +238,8 @@ for bid in json.load(open(os.path.join(ROOT, "data", "blackout", "rules.json")))
     an = json.load(open(os.path.join(f, "animations.json"))) if os.path.exists(os.path.join(f, "animations.json")) else {}
     reel = not json.load(open(os.path.join(f, "set.json"))).get("placeholder") if os.path.exists(os.path.join(f, "set.json")) else False
     for x in [k for k in an if k != "profile"] + ([] if "portrait" in an else ["portrait"]):
-        carte(f"{titre.split(':')[-1].strip()} · {x}", "animation", asset, x, hid,
+        lib = "portrait (versus, 128 px)" if x == "portrait" else x
+        carte(f"{titre.split(':')[-1].strip()} · {lib}", "asset" if x == "portrait" else "animation", asset, x, hid,
               "qa" if reel and x in an else "backlog", J)
 
 # ------------------------------------------------------------------ autres assets (décisions du 24/10, GDD §16)
@@ -209,6 +254,47 @@ for titre, r in (("Objets des coups (pf_px__prop, après les 13 persos) : phrase
                  ("Sprites des effets : étoile, plume, résine, traits du ralenti", "R8"),
                  ("Décor pilote : Port des Pêcheurs (liste des objets et emprises)", "R6")):
     carte(titre, "pixelforge", ms=jalon[JR[r]])
+
+# ------------------------------------------------------------------ décor (Julien 24/10 : les assets sous leur carte de jeu)
+LEGENDE = {".": "sol des zones", "E": "sortie", ":": "sol meuble (sable)", "=": "jetée", "#": "mur plein",
+           "c": "objet haut (caisses, armoire)", "B": "barque", "H": "cachette", "R": "grand rocher",
+           "v": "végétation haute", "|": "cloison fine", "-": "cloison fine", "t": "objet bas (table, étal)",
+           "~": "eau", "r": "rochers bas", "m": "muret", "b": "buisson", "g": "grille", "f": "fenêtre"}
+dec = carte("Décor : les cartes de jeu et leurs assets", "pixelforge", ms=jalon[JR["R6"]],
+            desc="Une carte par carte de jeu (assets/maps/<id>), et sous elle une carte par asset de son décor : "
+                 "cases de la légende (bk_map.gd), objets nommés, lumières, disjoncteurs, gâteaux, mouettes. "
+                 "Pas encore automatisé (le décor est en placeholders, GDD §10).")
+for mid in sorted(os.listdir(os.path.join(ROOT, "assets", "maps"))):
+    dm = os.path.join(ROOT, "assets", "maps", mid)
+    if not os.path.exists(os.path.join(dm, "map.txt")):
+        continue
+    z = json.load(open(os.path.join(dm, "zones.json"))) if os.path.exists(os.path.join(dm, "zones.json")) else {}
+    nomc = z.get("name", mid)
+    Jm = jalon[JR["R1" if mid == "bac_a_sable" else "R6"]]
+    variante = z.get("decor") and z["decor"] != mid
+    hm = carte(f"Carte de jeu : {nomc} ({mid})", "asset", f"maps/{mid}/map.txt", "", dec, "backlog", Jm,
+               desc=f"assets/maps/{mid}" + (f" ; variante : reprend le décor de {z['decor']}" if variante else ""))
+    if variante:
+        continue
+    ca = f"maps/{mid}/decor"
+    vus = []
+    for ch in open(os.path.join(dm, "map.txt"), encoding="utf-8").read():
+        if ch in LEGENDE and LEGENDE[ch] not in vus:
+            vus.append(LEGENDE[ch])
+    noms = [x.get("element") for x in z.get("objets", []) if isinstance(x, dict) and x.get("element")]
+    fd = os.path.join(dm, "decor.json")
+    if os.path.exists(fd):
+        d = json.load(open(fd))
+        noms += [v["id"] for v in d.get("objets", {}).values() if v.get("id")] + [o["id"] for o in d.get("ornements", [])]
+    autres = sorted({f"lumière : {x.get('type')}" for x in z.get("lumieres", [])}) + \
+        (["disjoncteur"] if z.get("disjoncteurs") else []) + (["gâteau basque"] if z.get("gateaux") else []) + \
+        (["mouette"] if z.get("mouettes") else [])
+    for el in vus + sorted(set(noms)) + autres:
+        carte(f"{nomc} · {el}", "asset", ca, el, hm, "backlog", Jm)
+pilote = next((c for c in cs if c["title"].startswith("Décor pilote : Port des Pêcheurs")), None)
+if pilote:
+    carte(pilote["title"], pilote["type"], parent=par_cle[("maps/port_pecheurs/map.txt", "")]["id"],
+          ms=jalon[JR["R6"]])
 
 # ------------------------------------------------------------------ studio local (ce chantier)
 J = jalon[JR["R0"]]

@@ -33,7 +33,7 @@ const ADVANCED_STATUSES = ['qa', 'valide', 'done'];
 // Adresses d'où `tailscale serve` relaie les requêtes (proxy local).
 const LOOPBACK = ['127.0.0.1', '::1'];
 const CARD_TYPES = ['feature', 'bug', 'perso', 'animation', 'asset', 'gameplay', 'pixelforge'];
-const MAX_DEPTH = 3;                // chapeau > sous-chapeau > carte
+const MAX_DEPTH = 4;                // chapeau > perso > coup ou portraits > carte (Julien 24/10)
 const MAX_EVENTS = 1000;
 const PRIORITIES = ['', 'basse', 'normale', 'haute'];
 const COMMENT_KINDS = ['amelioration', 'valide'];

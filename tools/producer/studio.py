@@ -118,13 +118,29 @@ def commente(c: dict, txt: str) -> None:
     log(f"#{c['id']} {c['title']} :", txt)
 
 
+_BANQUES: dict = {}
+
+
+def banque(f: str):
+    if f not in _BANQUES:
+        _BANQUES[f] = FAMILLES[f]()
+    return _BANQUES[f]
+
+
 def cible(c: dict):
     """(famille, pid, détail) d'une carte liée à un set itéré, sinon None. Détail : base, expr:<clé> ou
-    un élément (run, victoire…) ; "" pour le chapeau."""
+    un élément (run, victoire…) ; "" pour le chapeau. Une carte portrait:<usage> (Julien 24/10) vise la
+    tâche qui le fait : la base neutre, ou la base avec l'expression de l'usage (GDD §8.5)."""
     a = c.get("asset") or ""
     p = a.split("/")
     if len(p) == 4 and p[0] == "blackout" and p[1] in FAMILLES and p[3] == "animations":
-        return p[1], p[2], c.get("detail") or ""
+        d = c.get("detail") or ""
+        if d.startswith("portrait:"):
+            b = banque(p[1])
+            v = b.ex["portraits"].get(d[9:], "base") if p[1] == "persos" else "base"
+            k = b.base(p[2]) if v == "base" else v
+            d = "base" if k == it.NEUTRE else f"expr:{k}"
+        return p[1], p[2], d
     return None
 
 
@@ -167,7 +183,7 @@ class Studio:
         for k in ("statuts", "gardees", "integre", "a_construire", "rework_a", "signale"):
             self.etat.setdefault(k, {} if k not in ("a_construire",) else [])
         self.t = Taches(self.etat["statuts"])
-        self.bq = {f: cls() for f, cls in FAMILLES.items()}
+        self.bq = {f: banque(f) for f in FAMILLES}
 
     def sauve(self) -> None:
         ecrit(ETAT, self.etat)
@@ -208,15 +224,19 @@ class Studio:
         self.sauve()
 
     def todo_des_chapeaux(self, cs: list, enfants: dict) -> None:
+        # Les objets, effets et icônes des coups et le décor (pas encore automatisés, faits après les 13 persos)
+        # restent en Backlog : Julien les met en Todo lui-même.
+        tire = lambda k: k["status"] == "backlog" and not (k.get("asset") or "").startswith(("blackout/coups/", "maps/"))  # noqa: E731
         for c in cs:
             if c["status"] == "todo" and enfants.get(c["id"]):
                 for k in enfants[c["id"]]:
-                    if k["status"] == "backlog":
+                    if tire(k):
                         bouge(k, "todo")
-                for k in enfants[c["id"]]:          # sous-chapeaux (ex. expressions groupées)
+                        k["status"] = "todo"
+                for k in enfants[c["id"]]:          # sous-chapeaux (portraits, coups)
                     if enfants.get(k["id"]) and k["status"] == "todo":
                         for kk in enfants[k["id"]]:
-                            if kk["status"] == "backlog":
+                            if tire(kk):
                                 bouge(kk, "todo")
 
     # ---------------------------------------------------------- 0. cartes à commande

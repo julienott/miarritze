@@ -62,9 +62,10 @@ CAT_BK_MANNEQUIN = "Mannequin"
 CAT_BK_DECOR = "Textures & modèles"
 CAT_BK_OBJETS = "Décor"
 CAT_BK_JEU = "Jeu"                 # règles, options de partie, écrans (jeu_index.py)
+CAT_A_VENIR = "À venir"            # assets sans fichier encore (coups, décor des cartes) : cartes du kanban seules
 # Sections de la barre latérale ; la page s'ouvre sur la première catégorie.
 SECTIONS = [
-    {"name": "Blackout", "categories": [CAT_BK_PERSOS, CAT_BK_OBJETS, CAT_BK_MAP, CAT_BK_JEU, CAT_BK_MANNEQUIN, CAT_BK_DECOR]},
+    {"name": "Blackout", "categories": [CAT_BK_PERSOS, CAT_BK_OBJETS, CAT_BK_MAP, CAT_BK_JEU, CAT_BK_MANNEQUIN, CAT_BK_DECOR, CAT_A_VENIR]},
 ]
 CATEGORIES = [c for s in SECTIONS for c in s["categories"]]
 
@@ -226,6 +227,22 @@ class Builder:
         except ValueError:
             return path.relative_to(ROOT).as_posix()
 
+    def bk_a_venir(self) -> None:
+        """Assets sans fichier encore, pour y rattacher leurs cartes (Julien 24/10) : un par coup spécial
+        (objet, effet, icône ; data/blackout/coups.json) et un « décor » par carte de jeu (assets/maps)."""
+        coups = json.loads((ROOT / "data" / "blackout" / "coups.json").read_text(encoding="utf-8"))["persos"]
+        for pid, d in coups.items():
+            for role, cp in d.items() if isinstance(d, dict) else ():
+                if isinstance(cp, dict) and cp.get("id"):
+                    self.add(id=f"blackout/coups/{cp['id']}", cat=CAT_A_VENIR, group=pid, kind="coup",
+                             name=f"{pid} · {cp.get('nom', cp['id'])}", type="jeu", version="0", file="", preview="",
+                             note="GDD §4.4–4.6 : objet, effet et icône du coup (à faire)",
+                             jeu={"sorte": "a_venir", "coup": cp["id"], "role": role, "famille": cp.get("famille")})
+        for m in sorted(p for p in (ASSETS / "maps").iterdir() if (p / "map.txt").exists()):
+            self.add(id=f"maps/{m.name}/decor", cat=CAT_A_VENIR, group=m.name, kind="decor",
+                     name=f"{m.name} · décor", type="jeu", version="0", file="", preview="",
+                     note="assets du décor de la carte (à faire, GDD §10)", jeu={"sorte": "a_venir", "carte": m.name})
+
     # ==================================================================== Blackout
     def blackout(self) -> None:
         dirs = {p.name for p in (BK / "persos").iterdir() if p.is_dir()} if (BK / "persos").is_dir() else set()
@@ -295,6 +312,7 @@ class Builder:
         self.bk_decor()
         self.bk_taches()
         self.bk.update(jeu_index.construit(self.add, self.capture_ecran, self.liens, self.liens_chapeaux))
+        self.bk_a_venir()
         self.bk["liens"] = self.liens
         self.bk["pixelforge"] = self.pixelforge
 
@@ -460,7 +478,10 @@ class Builder:
         ap, ah = self._json(px / "animations.json"), self._json(hd / "animations.json")
         key = sid if fam == "persos" else f"{fam}/{sid}"
         aid = f"blackout/{fam}/{sid}/animations"
-        noms_el = list((sp.get("elements") or {}).keys()) or list(ap.keys())
+        # set.json ne liste que les éléments de la dernière tâche intégrée (iteration.py, un job par élément) :
+        # animations.json tient le set complet.
+        noms_el = list((sp.get("elements") or {}).keys())
+        noms_el += [n for n in ap if n not in noms_el]
         if fam == "persos":
             noms_el = [n for n in BK_ELEMENTS_PERSO if n in noms_el] + [n for n in noms_el if n not in BK_ELEMENTS_PERSO]
         elif "profile" in noms_el or "portrait" in noms_el:

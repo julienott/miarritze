@@ -4,6 +4,9 @@
 // voir, l'action demandée, l'objet, le clip Quaternius, les images, la cadence et la boucle.
 // Un bouton par animation pose un commentaire d'asset (detail = nom de l'élément) reporté sur la
 // carte ouverte ; les commentaires déjà posés sur l'élément s'affichent dessous.
+// Chaque élément montre la colonne de sa carte enfant (base, expression, animation) et, en QA,
+// ✓ Valider et ✗ Refuser (Refuser ou Refuser et refaire, commentaire obligatoire) (Julien, 24/10) ;
+// les éléments prévus mais pas encore livrés sont listés aussi, avec leur colonne.
 'use strict';
 
 const SET_BGS = [['light', 'Clair'], ['dark', 'Sombre'], ['checker', 'Damier']];
@@ -148,6 +151,25 @@ function renderSetGallery(box, a) {
 
   const head = ['profile', 'portrait'];
   const anims = a.anims || [];
+  // Cartes enfants du chapeau ouvert, par élément : base -> profil et portrait.
+  // Toute la famille : les lancements sont sous leur coup, les portraits sous « portraits ».
+  const kids = cardId ? [...familyIds(cardId)].filter((id) => id !== cardId).map(cardById).filter((k) => k && k.detail) : [];
+  const kidOf = (name) => kids.find((k) => k.detail === (name === 'profile' ? 'base' : name === 'portrait' ? 'portrait:menus' : name))
+    || (name === 'portrait' ? kids.find((k) => k.detail === 'base') : null) || null;
+  /** Colonne de la carte de l'élément, et ✓ / ✗ si elle est en QA. */
+  const verdict = (k) => {
+    if (!k) return null;
+    const box = el('span', { class: 'sg-verdict' }, cardPill(k),
+      el('a', { href: '#', class: 'small-note', text: `#${k.id}`, title: k.title,
+        onclick: (ev) => { ev.preventDefault(); openCardDialog(k); } }));
+    if (k.status === 'qa') {
+      box.append(
+        el('button', { type: 'button', class: 'small accept', title: 'Valider cet élément', onclick: () => acceptCard(k) }, '✓ Valider'),
+        el('button', { type: 'button', class: 'small refuse', title: 'Refuser, ou refuser et refaire (commentaire obligatoire)',
+          onclick: () => openRefuse(k) }, '✗ Refuser'));
+    }
+    return box;
+  };
   const fiches = new Map();      // élément -> fonction qui redessine ses commentaires
   const general = el('div', { class: 'asset-comments' });
   const refresh = () => {
@@ -200,6 +222,7 @@ function renderSetGallery(box, a) {
         x.action ? el('p', { class: 'sg-action' }, el('span', { class: 'muted', text: 'Action demandée : ' }), `« ${x.action} »`) : null,
         x.objet ? el('p', { class: 'sg-action' }, el('span', { class: 'muted', text: 'Objet : ' }), x.objet) : null,
         el('p', { class: 'sg-facts muted', text: facts }),
+        verdict(kidOf(x.name)),
         el('div', { class: 'sg-actions' }, commentBtn,
           el('button', { type: 'button', class: 'small', title: 'Lecteur plein écran (image par image, ligne des pieds)',
             onclick: () => { $('card-dialog').close(); openPlayer(key, x.name); } }, '⛶'))),
@@ -225,10 +248,29 @@ function renderSetGallery(box, a) {
 
   const heads = anims.filter((x) => head.includes(x.name));
   const rest = anims.filter((x) => !head.includes(x.name));
+  const livres = new Set(anims.map((x) => x.name));
+  /** Élément prévu (carte enfant) sans rendu dans le build : titre et colonne. */
+  const prevu = (k) => el('article', { class: 'sg-el sg-missing', 'data-el': k.detail },
+    el('div', { class: 'sg-text' },
+      el('h4', {}, el('span', { text: k.title.replace(/^.*·\s*/, '') }), ' ', el('code', { text: k.detail })),
+      el('p', { class: 'muted', text: k.status === 'qa' || k.status === 'valide' || k.status === 'done'
+        ? 'Livré, pas encore dans ce build du board' : 'Pas encore livré' }),
+      verdict(k)));
+  const expressions = kids.filter((k) => k.detail.startsWith('expr:'));
+  const portraits = kids.filter((k) => k.detail.startsWith('portrait:') && k.detail !== 'portrait:menus');
+  const manquants = kids.filter((k) => k.detail !== 'base' && !/^(expr|portrait|objet|effet|icone)/.test(k.detail) && !livres.has(k.detail));
+  const baseKid = kids.find((k) => k.detail === 'base');
   root.append(top,
-    heads.length ? el('div', { class: 'sg-grid sg-top' }, heads.map((x) => fiche(x, true))) : null,
-    el('h3', { text: `Animations (${rest.length})` }),
-    el('div', { class: 'sg-grid' }, rest.map((x) => fiche(x, false))),
+    heads.length ? el('div', { class: 'sg-grid sg-top' }, heads.map((x) => fiche(x, true)))
+      : baseKid ? el('div', { class: 'sg-grid sg-top' }, prevu(baseKid)) : null,
+    portraits.length ? el('h3', { text: `Autres portraits (${portraits.length}) : versus, podium` }) : null,
+    portraits.length ? el('div', { class: 'sg-expr' }, portraits.map((k) => el('div', { class: 'sg-expr-row', 'data-el': k.detail },
+      el('strong', { text: k.title.replace(/^.*·\s*portrait\s*/, '') }), ' ', verdict(k)))) : null,
+    expressions.length ? el('h3', { text: `Expressions (${expressions.length})` }) : null,
+    expressions.length ? el('div', { class: 'sg-expr' }, expressions.map((k) => el('div', { class: 'sg-expr-row', 'data-el': k.detail },
+      el('strong', { text: k.detail.slice(5) }), ' ', verdict(k)))) : null,
+    el('h3', { text: `Animations (${rest.length}${manquants.length ? ` livrées, ${manquants.length} pas encore` : ''})` }),
+    el('div', { class: 'sg-grid' }, rest.map((x) => fiche(x, false)), manquants.map(prevu)),
     el('h3', { text: 'Sur l\'ensemble du set' }),
     commentForm(a, () => '', refresh, cardId),
     general);

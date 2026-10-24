@@ -847,8 +847,10 @@ Fonctionnement détaillé, règles de passage et automatismes : **`docs/PRODUCER
   **En prod**. ✗ Refuser renvoie en haut du Backlog, « à retraiter » ; ↻ Refuser et refaire (*24/10*) renvoie en
   haut du Todo : Claude (relève toutes les 30 min) applique le commentaire à la demande, puis l'élément seul est
   redemandé à pixelforge depuis le profil validé du perso. Commentaire obligatoire.
-- Chaque animation, expression et base de perso, PNJ, boss ou asset a sa carte sous son chapeau, liée à
-  ses tâches pixelforge. Les tâches des cartes en Doing, QA, Validé et En prod sont marquées `keep`.
+- Chaque animation, expression, portrait et base de perso, PNJ, boss ou asset a sa carte sous son chapeau, liée à
+  ses tâches pixelforge ; chaque coup spécial a son chapeau sous son perso (lancement, objet, effet, icône) ;
+  chaque asset de décor a sa carte sous sa carte de jeu (*Julien, 24/10*). Dans la fiche d'un perso, chaque
+  élément se valide ou se refuse à part. Les tâches des cartes en Doing, QA, Validé et En prod sont marquées `keep`.
 - Automatisé sans l'agent (aucun token) : synchronisation avec pixelforge, intégration locale, build QA,
   passage Doing → QA, chapeaux, commit, push et déploiement. L'agent n'intervient que pour un refus ou un
   travail de code.
@@ -985,6 +987,8 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
 - **24/10** (refus, Julien) : deux boutons de refus, commentaire obligatoire : « Refuser » (Backlog) et « Refuser
   et refaire » (Todo) ; un sous-élément refait repart du profil validé (base ou expression socle), §14.2. Le
   commentaire est appliqué par Claude, réveillé toutes les 30 min, pas par un Claude lancé par le watcher.
+- **24/10** (board, Julien) : une carte par portrait (perso, PNJ, boss) ; coups spéciaux détaillés par asset
+  sous leur perso ; assets du décor sous leur carte de jeu ; ✓ / ✗ par élément dans la fiche d'un perso.
 - **24/10** (autres assets, Julien, sur la réponse de pixelforge) : boss pilote **Basajaun** en itérations, après
   les 13 persos ; puis remise au contrat de `pf_px__creature` (HD cartoon, A/B, preview, expressions,
   portrait) pour Zezengorri, Herensuge et les animaux ; **essai animaux sans marionnette** (Wan) sur le chat,

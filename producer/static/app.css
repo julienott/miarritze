@@ -1001,6 +1001,10 @@ button.link { text-transform: none; text-align: left; }
 .sg-action { font-style: italic; }
 .sg-facts { font-size: 12px !important; }
 .sg-actions { display: flex; gap: 6px; margin-top: 6px; }
+.sg-verdict { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; }
+.sg-missing { border-style: dashed; opacity: .85; }
+.sg-expr { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.sg-expr-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .sg-form { margin-top: 8px; }
 .sg-comments .comment { margin-top: 6px; }
 @media (max-width: 760px) {

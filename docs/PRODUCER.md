@@ -47,8 +47,24 @@ Mac de Julien et n'existe plus en ligne :
   un chapeau en Todo y emmène tous ses enfants du Backlog. ✓ sur un chapeau valide aussi ses enfants en QA.
 - **Une carte par élément** : chaque perso, PNJ, animal ou boss a son chapeau (asset
   `blackout/<famille>/<id>/animations`) ; dessous, une carte par base (`detail` = `base`), par expression
-  (`expr:<clé>`) et par animation (`run`, `victoire`…). Les chapeaux de famille (Persos, PNJ et animaux, Boss)
-  les regroupent.
+  (`expr:<clé>`) et par animation (`run`, `victoire`…). Les chapeaux de famille (Persos, PNJ et animaux, Boss,
+  Décor) les regroupent. Depuis le 24/10 (Julien) :
+  - **portraits** : une carte par portrait (`portrait:<usage>` : menus, versus_chasseur, versus_chasse,
+    podium_gagnant, podium_perdant ; un seul, menus, pour un PNJ ; versus en 128 px pour un boss). Sous un perso,
+    elles sont groupées dans « <Nom> · portraits ». Le watcher les relie à la tâche qui fait le portrait (base
+    neutre, ou base avec l'expression de l'usage) ;
+  - **coups spéciaux** : sous chaque perso, un chapeau par coup (« coup de chassé : … », « coup de chasseur : … »)
+    avec une carte par asset : l'animation de lancement (`cast_chasse`, `cast_chasseur`, automatisée), l'objet
+    lancé ou posé, l'effet visible et l'icône (asset `blackout/coups/<id>`, détails `objet`, `effet`, `icone`) ;
+  - **décor** : un chapeau par carte de jeu (asset `maps/<id>/map.txt`), et dessous une carte par asset de son
+    décor (asset `maps/<id>/decor`, détail = l'élément : cases de la légende, objets nommés, lumières,
+    disjoncteur, gâteau, mouette). Une variante de carte (port_v2) reprend le décor de sa carte d'origine.
+  Objets, effets, icônes des coups et décor ne sont pas encore automatisés : un chapeau en Todo les laisse en
+  Backlog. Leurs assets sans fichier encore sont dans l'index, catégorie « À venir ». Quatre niveaux de
+  chapeaux au plus (Persos › perso › coup › carte).
+- **Fiche d'un perso** (carte chapeau) : chaque élément montre la colonne de sa carte et, en QA, **✓ Valider**
+  et **✗ Refuser** (Refuser ou Refuser et refaire, commentaire obligatoire) ; les éléments prévus mais pas
+  encore livrés y sont aussi, avec leur colonne. Le chapeau reste ouvert après un verdict.
 - **Roadmap** : les jalons du board sont ceux de GDD §15 (`R0`…`R8`, titre « R2 · … »), dans le même ordre.
   On change la roadmap dans le GDD, puis `tools/producer/reorganise_board.py` met le board à jour (idempotent :
   rien n'est dupliqué, aucune colonne ne recule).
@@ -131,7 +147,7 @@ l'accès Tailscale).*
   - **Doing** : en cours ou en file d'attente, pixelforge compris. **QA** : en ligne sur le site, à tester. **Done** : réglé.
   - Pour déplacer une carte, glisse-la (ordinateur, l'ordre dans la colonne compte) ou utilise ◀ ▶ (iPhone).
   - Chaque carte a un **type** en petit badge (Feature, Bug, Perso, Animation, Asset, Gameplay, Pixelforge), une priorité (haute, normale, basse) et, discrètement en haut à droite, qui l'a créée (Julien ou Claude).
-  - **Chapeaux** : une carte peut avoir une carte parent, par exemple « Amaia » (type Perso) avec en enfants son image de référence et chacune de ses animations. Le chapeau montre une barre d'avancement (enfants en QA ou Done / total) et « ▸ N enfants » pour les déplier ; un enfant affiche « ↑ nom du chapeau », qui ouvre le chapeau. Les enfants se déplacent librement, chacun dans sa colonne. Trois niveaux au plus.
+  - **Chapeaux** : une carte peut avoir une carte parent, par exemple « Amaia » (type Perso) avec en enfants son image de référence et chacune de ses animations. Le chapeau montre une barre d'avancement (enfants en QA ou Done / total) et « ▸ N enfants » pour les déplier ; un enfant affiche « ↑ nom du chapeau », qui ouvre le chapeau. Les enfants se déplacent librement, chacun dans sa colonne. Quatre niveaux au plus.
   - En haut du board : filtre **Chapeau** (un chapeau et toute sa famille) et **Chapeaux seulement** (les enfants sont masqués, on les voit en dépliant), et son inverse **Masquer les chapeaux** (seules les cartes sans enfant, chacune dans sa colonne, compteurs compris ; cocher l'une décoche l'autre, le choix est retenu).
   - Touche une carte pour la modifier (type, priorité, titre, description, chapeau, asset lié), voir ses enfants (« + Carte enfant » en crée un), et lire son **historique** : création, déplacements, changements, et les **commentaires** de Julien et de Claude mêlés dans l'ordre. « Commenter » envoie tout de suite.
   - **Asset lié** : sur ordinateur, la tuile montre l'asset en haut, sur toute sa largeur (proportions gardées, hauteur bornée, fond clair ou damier pour le décor) ; sur iPhone, une petite miniature. Pour une animation, elle joue au survol de la tuile (premier toucher sur la miniature en tactile, le toucher suivant ouvre la carte), une seule à la fois, arrêtée et libérée quand la souris sort ; pour un objet du décor qui a des masques, les masques se superposent au survol (toucher la miniature les bascule) : la QA se fait sans ouvrir la carte. Dans le détail de la carte, l'asset est affiché en haut, en pleine largeur (animation qui joue au survol, cliquer ouvre le plein écran ; objet du décor avec ou sans masques ; image), avec le formulaire « Amélioration / Validé » de l'asset et ses commentaires : on commente l'asset sans quitter la carte. Pour une carte d'animation, le champ **Détail** donne le nom de l'animation (`walk`) : c'est elle qui s'affiche.

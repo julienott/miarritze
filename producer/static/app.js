@@ -2317,8 +2317,7 @@ async function acceptCard(c) {
   });
   if (!r) return;
   toast(r.accepted.length > 1 ? `${r.accepted.length} cartes acceptées → Validé` : 'Acceptée → Validé');
-  if ($('card-dialog').open) $('card-dialog').close();
-  renderBoard();
+  apresVerdict(c);
 }
 
 function openRefuse(c) {
@@ -2345,8 +2344,17 @@ async function sendRefuse(ev) {
     return;
   }
   $('refuse-dialog').close();
-  if ($('card-dialog').open) $('card-dialog').close();
   toast(refaire ? 'Refusée → sommet du Todo, à refaire' : 'Refusée → sommet du Backlog, à retraiter');
+  apresVerdict(c);
+}
+
+/** Après ✓ / ✗ : le détail de la carte jugée se ferme ; jugée depuis la recette de son chapeau
+ *  (un élément), le chapeau reste ouvert et sa recette se redessine. */
+function apresVerdict(c) {
+  if ($('card-dialog').open) {
+    if (state.editing && state.editing.id !== c.id) renderCardAsset();
+    else $('card-dialog').close();
+  }
   renderBoard();
 }
 
