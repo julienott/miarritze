@@ -544,6 +544,17 @@ class Builder:
                 "case": sp.get("canvas") or [anims[0]["w"], anims[0]["h"]], "feet_y": sp.get("feet_y"),
                 "controles": {"px32": controles(sp), **({"hd": controles(sh)} if sh else {})},
                 "warnings": warnings, "elements": [a["name"] for a in anims]}
+        # Profils de référence (Julien 24/10 : ils portent toutes les variations) : le neutre, puis un par
+        # expression (hd/profile_<clé>_hd.png, portrait_<clé>_hd.png, rapatriés par iteration.py integre).
+        profils = []
+        for f in sorted(hd.glob("profile*_hd.png")) if hd.is_dir() else []:
+            k = f.name[len("profile"):-len("_hd.png")].strip("_") or "neutre"
+            pr = hd / f.name.replace("profile", "portrait", 1)
+            profils.append({"expression": k, "profile": self.copy(f, f"blackout/{fam}/{sid}/profils/{f.name}"),
+                            **({"portrait": self.copy(pr, f"blackout/{fam}/{sid}/profils/{pr.name}")} if pr.exists() else {})})
+            srcs.append(f)
+        profils.sort(key=lambda x: (x["expression"] != "neutre", x["expression"]))
+        info["profils"] = profils
         self.sets[key] = info
         prev = next((a for a in anims if a["name"] == "profile"), anims[0])
         self.add(id=aid, cat=CAT_BK_PERSOS, group=key, kind="anim", name=f"{nom} · animations", type="sprite",

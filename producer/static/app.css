@@ -1049,3 +1049,14 @@ a.studio-tile, :root[data-theme="dark"] a.studio-tile { color: var(--text); }
   .kb-tab { font-size: 11px; padding: 4px 0; letter-spacing: -.01em; }
   .kb-tab.kb-filters { flex: 0 0 36px; }
 }
+
+/* Profils de référence dans la fiche perso (recette.js) */
+.sg-profils { margin: 8px 0 12px; }
+.sg-profils-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.sg-profil { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px; }
+.sg-profil.big { grid-column: span 2; grid-row: span 2; border-color: var(--blue); }
+.sg-profil-img { display: flex; gap: 4px; justify-content: center; align-items: flex-start; }
+.sg-profil-img img { flex: 1 1 0; min-width: 0; max-width: 50%; height: auto; aspect-ratio: auto; object-fit: contain;
+  align-self: flex-start; background: var(--bg2, #eee8dc); border-radius: 4px; }
+.sg-profil figcaption { margin-top: 4px; }
+@media (max-width: 600px) { .sg-profil.big { grid-column: span 1; grid-row: auto; } }

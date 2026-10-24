@@ -965,7 +965,12 @@ function showDetail(a, opts = {}) {
       canvas.style.width = p.anim.w * z + 'px';
       canvas.style.height = p.anim.h * z + 'px';
     };
-    const load = (anim) => {
+    // Julien 24/10 : la HD s'affiche d'abord quand l'élément en a une ; le bouton passe au 32 px.
+    let showHd = true;
+    const hdBtn = a.anims.some((x) => x.hd) ? el('button', { type: 'button', class: 'small on' }) : null;
+    const load = (src) => {
+      const anim = showHd && src.hd ? { ...src.hd, name: src.name, src } : { ...src, src };
+      if (hdBtn) hdBtn.textContent = src.hd ? (showHd ? 'HD : oui' : 'HD : non') : '32 px seulement';
       clearTimeout(p.timer);
       p.anim = anim; p.frame = 0; p.img = null;
       canvas.width = anim.w; canvas.height = anim.h;
@@ -1003,7 +1008,10 @@ function showDetail(a, opts = {}) {
     // Persos de Blackout : lecteur plein écran (animations et masques ont les mêmes noms).
     const bkKey = bkKeyOf(a.id);
     const bk = bkKey ? [a.id, bkKey] : null;
-    controls.append(animSel, playBtn,
+    if (hdBtn) {
+      hdBtn.addEventListener('click', () => { showHd = !showHd; hdBtn.classList.toggle('on', showHd); load(p.anim.src); });
+    }
+    controls.append(animSel, playBtn, hdBtn,
       el('button', { type: 'button', class: 'small', onclick: () => step(-1), 'aria-label': 'Frame précédente' }, '◀'),
       el('button', { type: 'button', class: 'small', onclick: () => step(1), 'aria-label': 'Frame suivante' }, '▶'),
       bk && state.index.blackout ? el('button', { type: 'button', class: 'small primary', onclick: () => openPlayer(bk[1], p.anim.name) }, '⛶ Plein écran') : null,

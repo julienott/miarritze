@@ -542,6 +542,12 @@ for (const [label, browser, opts] of runs) {
   // finir de se fermer : il revient en arrière dans l'historique).
   await page.waitForTimeout(500);
   await page.goto(BASE + '#/assets/' + encodeURIComponent('blackout/persos/amaia/animations') + '/run');
+  // HD d'abord quand le set en a une (Julien 24/10) ; le bouton « HD » repasse au 32 px.
+  await page.waitForFunction(() => state.player && state.player.anim.src && state.player.anim.src.name === 'run');
+  if (await page.evaluate(() => !!state.player.anim.src.hd)) {
+    check('page des animations : HD affichée d\'abord', await page.evaluate(() => state.player.anim.file.includes('/hd/')));
+    await page.click('.controls button:has-text("HD : oui")');
+  }
   await page.waitForFunction(() => state.player && state.player.anim.file.endsWith('/amaia/px32/run.png') && state.player.img);
   await page.evaluate(() => { window.__draws = []; });
   await page.waitForTimeout(800);

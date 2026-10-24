@@ -62,9 +62,12 @@ Mac de Julien et n'existe plus en ligne :
   Objets, effets, icônes des coups et décor ne sont pas encore automatisés : un chapeau en Todo les laisse en
   Backlog. Leurs assets sans fichier encore sont dans l'index, catégorie « À venir ». Quatre niveaux de
   chapeaux au plus (Persos › perso › coup › carte).
-- **Fiche d'un perso** (carte chapeau) : chaque élément montre la colonne de sa carte et, en QA, **✓ Valider**
+- **Fiche d'un perso** (carte chapeau) : en tête, les **profils de référence** (HD) : le profil neutre en grand,
+  puis un profil et un portrait par expression, chacun avec sa carte, car toutes les variations en partent.
+  Ensuite, chaque élément montre la colonne de sa carte et, en QA, **✓ Valider**
   et **✗ Refuser** (Refuser ou Refuser et refaire, commentaire obligatoire) ; les éléments prévus mais pas
-  encore livrés y sont aussi, avec leur colonne. Le chapeau reste ouvert après un verdict.
+  encore livrés y sont aussi, avec leur colonne. Le chapeau reste ouvert après un verdict. Partout (fiche,
+  catalogue, détail d'une carte), la HD s'affiche d'abord quand l'élément en a une ; « HD : oui » passe au 32 px.
 - **Roadmap** : les jalons du board sont ceux de GDD §15 (`R0`…`R8`, titre « R2 · … »), dans le même ordre.
   On change la roadmap dans le GDD, puis `tools/producer/reorganise_board.py` met le board à jour (idempotent :
   rien n'est dupliqué, aucune colonne ne recule).

@@ -260,20 +260,38 @@ function renderSetGallery(box, a) {
   const portraits = kids.filter((k) => k.detail.startsWith('portrait:') && k.detail !== 'portrait:menus');
   const manquants = kids.filter((k) => k.detail !== 'base' && !/^(expr|portrait|objet|effet|icone)/.test(k.detail) && !livres.has(k.detail));
   const baseKid = kids.find((k) => k.detail === 'base');
-  root.append(top,
+  // Profils de référence (Julien 24/10) : le profil porte toutes les variations ; le neutre en grand,
+  // puis un profil par expression, chacun avec sa carte (base, expr:<clé>).
+  const profils = s.profils || [];
+  const avecImage = new Set(profils.map((x) => x.expression));
+  const profilEl = (x, big) => {
+    const k = x.expression === 'neutre' ? kids.find((c) => c.detail === 'base') : kids.find((c) => c.detail === 'expr:' + x.expression);
+    return el('figure', { class: 'sg-profil' + (big ? ' big' : ''), 'data-el': x.expression },
+      el('div', { class: 'sg-profil-img' },
+        el('img', { src: fileUrl(x.profile), alt: `profil ${x.expression}`, loading: 'lazy' }),
+        x.portrait ? el('img', { src: fileUrl(x.portrait), alt: `portrait ${x.expression}`, loading: 'lazy' }) : null),
+      el('figcaption', {}, el('strong', { text: x.expression === 'neutre' ? 'Profil neutre (référence)' : x.expression }),
+        verdict(k || null)));
+  };
+  const blocProfils = profils.length ? el('section', { class: 'sg-profils' },
+    el('h3', { text: 'Profils de référence' }),
+    el('p', { class: 'muted small-note', text: 'Toutes les expressions, portraits et animations sont faits depuis ces profils (HD).' }),
+    el('div', { class: 'sg-profils-grid' }, profils.map((x) => profilEl(x, x.expression === 'neutre')))) : null;
+  const exprSansImage = expressions.filter((k) => !avecImage.has(k.detail.slice(5)));
+  root.append(...[top, blocProfils,
     heads.length ? el('div', { class: 'sg-grid sg-top' }, heads.map((x) => fiche(x, true)))
       : baseKid ? el('div', { class: 'sg-grid sg-top' }, prevu(baseKid)) : null,
     portraits.length ? el('h3', { text: `Autres portraits (${portraits.length}) : versus, podium` }) : null,
     portraits.length ? el('div', { class: 'sg-expr' }, portraits.map((k) => el('div', { class: 'sg-expr-row', 'data-el': k.detail },
       el('strong', { text: k.title.replace(/^.*·\s*portrait\s*/, '') }), ' ', verdict(k)))) : null,
-    expressions.length ? el('h3', { text: `Expressions (${expressions.length})` }) : null,
-    expressions.length ? el('div', { class: 'sg-expr' }, expressions.map((k) => el('div', { class: 'sg-expr-row', 'data-el': k.detail },
+    exprSansImage.length ? el('h3', { text: `Expressions pas encore livrées (${exprSansImage.length})` }) : null,
+    exprSansImage.length ? el('div', { class: 'sg-expr' }, exprSansImage.map((k) => el('div', { class: 'sg-expr-row', 'data-el': k.detail },
       el('strong', { text: k.detail.slice(5) }), ' ', verdict(k)))) : null,
     el('h3', { text: `Animations (${rest.length}${manquants.length ? ` livrées, ${manquants.length} pas encore` : ''})` }),
     el('div', { class: 'sg-grid' }, rest.map((x) => fiche(x, false)), manquants.map(prevu)),
     el('h3', { text: 'Sur l\'ensemble du set' }),
     commentForm(a, () => '', refresh, cardId),
-    general);
+    general].filter(Boolean));
   renderGeneral();
   box.replaceChildren(root);
 }
