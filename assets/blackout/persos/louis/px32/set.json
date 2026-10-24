@@ -1,61 +1,49 @@
 {
- "factor": 4,
  "size": "normal",
  "height": 30,
- "from_hd": [
-  "aveugle",
-  "cast_chasse",
-  "cast_chasseur",
-  "colle",
-  "defaite",
-  "etourdi",
-  "idle_long",
-  "interagir",
-  "jump_hide",
-  "lift",
-  "portrait",
-  "profile",
-  "ralenti",
-  "renverse",
-  "run",
-  "tracte",
-  "victoire"
- ],
  "canvas": [
   64,
   64
  ],
  "feet_y": 60,
+ "scale": "1:1 (pixel natif)",
  "palette": [
-  "#060e1c",
-  "#0f2040",
-  "#2b231e",
-  "#445e81",
-  "#6f4b33",
-  "#727272",
-  "#b80001",
-  "#f7a773",
-  "#f7c239",
-  "#ffffff"
+  "#182032",
+  "#1d2230",
+  "#283551",
+  "#322f33",
+  "#514c53",
+  "#6d1919",
+  "#8a6b57",
+  "#8a7242",
+  "#9d9d9e",
+  "#b12929",
+  "#dfad8d",
+  "#dfb86b",
+  "#eacbb6",
+  "#fefeff"
  ],
  "palette_base": [
-  "#0f2040",
-  "#ffffff",
-  "#b80001",
-  "#f7c239",
-  "#f7a773",
-  "#2b231e",
-  "#445e81"
+  "#283551",
+  "#514c53",
+  "#b12929",
+  "#dfad8d",
+  "#dfb86b",
+  "#eacbb6",
+  "#fefeff"
  ],
  "palette_dark": [
-  "#060e1c",
-  "#727272",
-  "#6f4b33",
-  "#6f4b33",
-  "#6f4b33",
-  "#060e1c",
-  "#060e1c"
+  "#182032",
+  "#322f33",
+  "#6d1919",
+  "#8a6b57",
+  "#8a7242",
+  "#8a6b57",
+  "#9d9d9e"
  ],
+ "k_raw": 0.07874,
+ "outline": "selout",
+ "native": true,
  "elements": {
   "profile": {
    "frames": 1,
@@ -77,160 +65,10 @@
     64
    ]
   },
-  "run": {
-   "frames": 4,
-   "fps": 9,
-   "loop": true,
-   "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "jump_hide": {
-   "frames": 6,
-   "fps": 12,
-   "loop": false,
-   "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "lift": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": false,
-   "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "portrait": {
-   "frames": 1,
-   "fps": 1,
-   "loop": false,
-   "anchor": "bottom",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "interagir": {
-   "frames": 6,
-   "fps": 10.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "victoire": {
-   "frames": 10,
-   "fps": 10.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "defaite": {
-   "frames": 8,
-   "fps": 8.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "etourdi": {
-   "frames": 8,
-   "fps": 10.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "renverse": {
-   "frames": 12,
-   "fps": 12.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "colle": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "ralenti": {
-   "frames": 8,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "aveugle": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "tracte": {
-   "frames": 6,
-   "fps": 10.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
   "idle_long": {
-   "frames": 8,
-   "fps": 10.0,
+   "frames": 30,
+   "fps": 37.5,
    "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "cast_chasse": {
-   "frames": 8,
-   "fps": 12.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "cast_chasseur": {
-   "frames": 8,
-   "fps": 12.0,
-   "loop": false,
    "anchor": "feet",
    "size": [
     64,
@@ -238,13 +76,39 @@
    ]
   }
  },
- "source": "381b1a9af677434f8dc7cce7cfbe3a6b",
+ "extras": [
+  {
+   "name": "idle_long",
+   "motion": "Idle_FoldArms_Loop",
+   "action": "folds his arms and taps his foot, looking around",
+   "status": "ok"
+  }
+ ],
+ "optional": {},
+ "clips": {
+  "run": "Sprint_Loop",
+  "jump_hide": "NinjaJump_Start+NinjaJump_Idle_Loop+NinjaJump_Land",
+  "lift": "LiftAir",
+  "interagir": "Interact",
+  "victoire": "Celebration",
+  "defaite": "Crying",
+  "etourdi": "Hit_Shoulder_L+Hit_Shoulder_R",
+  "renverse": "Hit_Knockback+LayToIdle",
+  "colle": "Crouch_Fwd_Loop",
+  "ralenti": "Zombie_Walk_Fwd_Loop",
+  "aveugle": "Spell_Double_Shoot_Loop",
+  "tracte": "Slide_Loop",
+  "profile": "Idle_Loop (pose debout, 1re image)",
+  "idle": "code (respiration)",
+  "ghost": "code (profil translucide qui flotte)"
+ },
+ "jump_exit": "jump_hide joué à l'envers",
+ "run_poses": [],
+ "run_frames": 2,
+ "jump_frames": [],
  "controls": {
   "warnings": [],
   "height_px": 30,
-  "body_width_px": 5,
-  "colors_used": 10,
-  "isolated_px": 29,
   "feet_bottom": {
    "profile": [
     60
@@ -252,19 +116,26 @@
    "idle": [
     60,
     60
-   ],
-   "run": [
-    60,
-    59,
-    58,
-    59
    ]
   },
-  "feet_max_dev": 0,
-  "eye_present": true,
-  "zone_drift_de": 1.7,
-  "saturation_mean": 0.65,
-  "lightness_range": 95,
-  "colors_budget": 10
+  "colors_used": 1912,
+  "isolated_px": 2039,
+  "holes_px": 0,
+  "hd_clean": {
+   "profile": {
+    "sam": true,
+    "removed_px": 37,
+    "restored_px": 0,
+    "parts": 1
+   },
+   "idle_long": {
+    "sam": true,
+    "removed_px": 589,
+    "restored_px": 0,
+    "parts": 30
+   }
+  },
+  "part_colors": {},
+  "run_head_bob_px": 0
  }
 }

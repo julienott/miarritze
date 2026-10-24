@@ -26,6 +26,7 @@ const ZOOMS = [1, 2, 3, 4, 6, 8];
 
 const state = {
   csrf: '',
+  kbShown: {},             // tuiles affichées par colonne (« Afficher plus »)
   index: null,
   assetsById: new Map(),
   comments: [],
@@ -296,6 +297,9 @@ function route() {
     else renderCatalogue();
   } else if (current === 'kanban') {
     renderBoard();
+    // #/kanban/carte/<id> : la carte ouverte (Julien 24/10 : une URL par carte).
+    const cid = rest[0] === 'carte' ? Number(rest[1]) : 0;
+    if (cid && cardById(cid) && !(state.editing && state.editing.id === cid && $('card-dialog').open)) openCardDialog(cardById(cid));
   } else if (current === 'jeu') {
     renderJeu(rest[0] || '');
   } else if (current === 'roadmap') {
@@ -1226,6 +1230,7 @@ const AUTHOR_LABEL = { julien: 'Julien', claude: 'Claude' };
 // (une nouvelle version publiée recharge tuiles, détail et plein écran) ; les cartes sont relues
 // toutes les 30 s, et à chaque fois tant que le détail d'une carte est ouvert.
 const KANBAN_TICK_MS = Number(store('producer-kb-tick')) || 10000;   // réglable pour les tests
+const KB_PAGE = Number(store('producer-kb-page')) || 40;            // tuiles par colonne avant « Afficher plus »
 const KANBAN_CARDS_EVERY = 3;
 const FRESH_MS = 8000;               // durée du signe « ↻ nouvelle version »
 
@@ -1282,6 +1287,20 @@ function initKanban() {
   }, { passive: true });
   // Détail en plein écran mobile : « ← » ou balayage vers la droite pour fermer.
   $('cf-back').addEventListener('click', closeCardDialog);
+  $('cf-prev').addEventListener('click', () => cardVoisine(-1));
+  $('cf-next').addEventListener('click', () => cardVoisine(1));
+  $('card-dialog').addEventListener('keydown', (ev) => {
+    if (ev.target.closest('input, textarea, select, [contenteditable]') || ev.altKey || ev.metaKey || ev.ctrlKey) return;
+    if (ev.key === 'ArrowLeft') { ev.preventDefault(); cardVoisine(-1); }
+    if (ev.key === 'ArrowRight') { ev.preventDefault(); cardVoisine(1); }
+  });
+  // L'URL de la carte est rendue à la fermeture même (close() du dialogue), avant qu'un plein écran ou un
+  // changement de vue n'empile la sienne ; l'événement « close » couvre Échap.
+  const rendUrl = () => { if (/\/carte\//.test(location.hash)) history.replaceState(null, '', state.hashAvant || '#/kanban'); };
+  const dlg = $('card-dialog');
+  const fermeDlg = dlg.close.bind(dlg);
+  dlg.close = (...args) => { rendUrl(); fermeDlg(...args); };
+  dlg.addEventListener('close', rendUrl);
   $('cf-accept2').addEventListener('click', () => { if (state.editing) acceptCard(state.editing); });
   $('cf-refuse2').addEventListener('click', () => { if (state.editing) openRefuse(state.editing); });
   let dsw = null;
@@ -1295,6 +1314,7 @@ function initKanban() {
     const dx = t.clientX - dsw.x, dy = t.clientY - dsw.y;
     dsw = null;
     if (dx > 90 && Math.abs(dy) < 60) closeCardDialog();
+    else if (dx < -90 && Math.abs(dy) < 60) cardVoisine(1);     // vers la gauche : carte suivante
   }, { passive: true });
   $('new-card').addEventListener('click', () => openCardDialog(null, ''));
   $('cf-cancel').addEventListener('click', closeCardDialog);
@@ -1768,10 +1788,15 @@ function renderBoard() {
   if (mobile) renderKbTabs(cards);
   board.replaceChildren(...STATUSES.map(([status, label], col) => {
     const list = cards.filter((c) => c.status === status);
+    // Julien 24/10 (board lent) : le haut de chaque colonne seulement, puis « Afficher plus ».
+    const shown = state.kbShown[status] || KB_PAGE;
+    const more = list.length - shown;
     const column = el('div', { class: 'column' + (status === active ? ' active' : ''), 'data-status': status },
       el('h3', {}, el('span', { text: label }), el('span', { class: 'muted', text: String(list.length) })),
       status === 'backlog' ? quickAdd() : null,
-      list.map((c) => (mobile ? cardCompact(c) : cardEl(c, col))),
+      list.slice(0, shown).map((c) => (mobile ? cardCompact(c) : cardEl(c, col))),
+      more > 0 ? el('button', { type: 'button', class: 'kb-more', onclick: () => { state.kbShown[status] = shown + KB_PAGE; renderBoard(); } },
+        `Afficher ${Math.min(more, KB_PAGE)} de plus (${more} restantes)`) : null,
       mobile && !list.length ? el('p', { class: 'empty', text: 'Aucune carte ici.' }) : null);
     column.addEventListener('dragover', (ev) => { ev.preventDefault(); column.classList.add('over'); });
     column.addEventListener('dragleave', () => column.classList.remove('over'));
@@ -1999,6 +2024,8 @@ function openCardDialog(card, assetId, parentId) {
   $('cf-rework').hidden = !card || !card.rework;
   renderJobs(card);
   parentOptions($('cf-parent'), card ? card.parent_id : (parentId || 0), card ? familyIds(card.id) : new Set());
+  renderUp(card);
+  cardUrlEtVoisines(card);
   $('cf-note').value = '';
   $('card-error').textContent = '';
   $('cf-delete').hidden = !card;
@@ -2190,6 +2217,41 @@ function fillDetailOptions() {
   $('cf-detail-label').hidden = !(a && a.anims);
 }
 
+/** Carte ouverte (Julien 24/10) : son URL (#/kanban/carte/<id>, rendue à la fermeture), et ses voisines
+ *  dans sa colonne telle qu'affichée (filtres compris), pour ‹ › et les flèches du clavier. */
+function cardUrlEtVoisines(card) {
+  if (!card) { state.nav = null; $('cf-prev').hidden = $('cf-next').hidden = true; return; }
+  if (!/\/carte\//.test(location.hash)) state.hashAvant = location.hash || '#/kanban';
+  history.replaceState(null, '', '#/kanban/carte/' + card.id);
+  let ids = visibleCards().filter((c) => c.status === card.status).map((c) => c.id);
+  if (!ids.includes(card.id)) ids = state.cards.filter((c) => c.status === card.status).map((c) => c.id);
+  const i = ids.indexOf(card.id);
+  state.nav = { ids, i, status: card.status };
+  $('cf-prev').hidden = i <= 0;
+  $('cf-next').hidden = i < 0 || i >= ids.length - 1;
+}
+
+/** Ouvre la voisine (pas = -1 ou +1) de la carte ouverte. */
+function cardVoisine(pas) {
+  const n = state.nav;
+  if (!n || state.dirty && !confirm('Des modifications ne sont pas enregistrées. Changer de carte quand même ?')) return;
+  const c = cardById(n.ids[n.i + pas]);
+  if (c) { setDirty(false); openCardDialog(c); }
+}
+
+/** Fil des chapeaux d'une carte (Julien 24/10) : « ↑ Persos › Perso : Louis › Louis · portraits » ;
+ *  chaque maillon ouvre son chapeau dans le même dialogue. */
+function renderUp(card) {
+  const box = $('cf-up');
+  const chain = [];
+  for (let p = card && cardById(card.parent_id); p && chain.length < 6; p = cardById(p.parent_id)) chain.unshift(p);
+  box.hidden = !chain.length;
+  box.replaceChildren(...(chain.length ? ['↑ ', ...chain.flatMap((p, i) => [
+    i ? ' › ' : '',
+    el('a', { href: '#', text: p.title, title: `#${p.id} · ${STATUS_LABEL[p.status]}`,
+      onclick: (ev) => { ev.preventDefault(); openCardDialog(p); } })])] : []));
+}
+
 /** Vue de l'asset lié, puis le formulaire de commentaire d'asset et ses commentaires. */
 function renderCardAsset() {
   const box = $('cf-asset-view');
@@ -2208,15 +2270,31 @@ function renderCardAsset() {
   const bk = bkKey ? [a.id, bkKey] : null;
   const openAsset = () => { $('card-dialog').close(); location.hash = '#/assets/' + encodeURIComponent(a.id); };
   let view;
-  if (anim) {
-    const cell = hoverAnimCell(anim, 150, el('button', {
+  // Base, expression ou portrait d'un set : ses profil et portrait HD (index : set.profils).
+  const profils = (a.set && a.set.profils) || [];
+  const exprDe = (d) => (d === 'base' ? 'neutre' : d.startsWith('expr:') ? d.slice(5)
+    : d.startsWith('portrait:') ? ((a.set.portraits || {})[d.slice(9)] || 'neutre') : null);
+  const profil = detail && exprDe(detail) !== null
+    ? profils.find((x) => x.expression === exprDe(detail)) || null : null;
+  if (profil) {
+    view = el('div', { class: 'ca-profil' },
+      el('figure', {}, el('img', { src: fileUrl(profil.profile), alt: 'profil ' + profil.expression }), el('figcaption', { text: 'profil HD' })),
+      profil.portrait ? el('figure', {}, el('img', { src: fileUrl(profil.portrait), alt: 'portrait ' + profil.expression }), el('figcaption', { text: 'portrait HD' })) : null,
+      el('p', { class: 'muted', text: `expression : ${profil.expression}` }));
+  } else if (detail && exprDe(detail) !== null) {
+    view = el('p', { class: 'muted', text: `Pas encore livré (expression ${exprDe(detail)}).` });
+  } else if (anim) {
+    const cellDe = (x, label) => hoverAnimCell(x, 150, el('button', {
       type: 'button', class: 'anim-cell big', title: 'Survoler pour animer, cliquer pour le plein écran',
       onclick: () => {
         $('card-dialog').close();
         if (bk) openPlayer(bk[1], anim.name); else openAsset();
       },
-    }), (mini) => [el('div', { class: 'anim-box' }, mini), el('span', { text: `${anim.name} · ${anim.frames} im. · ${anim.fps} i/s` })]);
-    view = el('div', { class: 'ca-anim' + (a.smooth ? ' smooth' : '') }, cell,
+    }), (mini) => [el('div', { class: 'anim-box' }, mini), el('span', { text: `${label} · ${x.frames} im. · ${x.fps} i/s` })]);
+    // HD d'abord quand l'élément en a une (Julien 24/10), puis le 32 px.
+    const cells = anim.hd ? [cellDe({ ...anim.hd, name: anim.name }, `${anim.name} HD`), cellDe(anim, `${anim.name} 32 px`)]
+      : [cellDe(anim, anim.name)];
+    view = el('div', { class: 'ca-anim' + (a.smooth ? ' smooth' : '') }, ...cells,
       bk ? el('button', { type: 'button', class: 'small primary', onclick: () => { $('card-dialog').close(); openPlayer(bk[1], anim.name); } }, '⛶ Plein écran') : null);
   } else if (a.decor && a.kind === 'objet') {
     let mode = a.decor.calque ? 'masques' : 'image';
@@ -2361,7 +2439,13 @@ async function sendRefuse(ev) {
 function apresVerdict(c) {
   if ($('card-dialog').open) {
     if (state.editing && state.editing.id !== c.id) renderCardAsset();
-    else $('card-dialog').close();
+    else {
+      // Julien 24/10 : la carte jugée laisse place à la suivante de sa colonne (sinon la précédente).
+      const n = state.nav;
+      const suite = n ? [...n.ids.slice(n.i + 1), ...n.ids.slice(0, n.i).reverse()]
+        .map(cardById).find((k) => k && k.id !== c.id && k.status === n.status) : null;
+      if (suite) openCardDialog(suite); else $('card-dialog').close();
+    }
   }
   renderBoard();
 }

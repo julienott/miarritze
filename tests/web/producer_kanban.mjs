@@ -562,7 +562,8 @@ for (const [name, vp] of [['iphone_portrait', { width: 390, height: 844 }], ['ip
   await qc.locator('.title').tap();
   await mp.waitForSelector('#cf-qa-bar:not([hidden])');
   await mp.locator('#cf-accept2').tap();
-  await mp.waitForFunction(() => !document.querySelector('#card-dialog[open]'));
+  // La carte suivante de la colonne s'ouvre s'il y en a une (Julien 24/10), sinon le détail se ferme.
+  await mp.waitForFunction((id) => !document.querySelector('#card-dialog[open]') || !location.hash.endsWith('/carte/' + id), qid);
   check(`${name} : Accepter depuis la barre collante -> Validé`, (await apiTok('cards'))[1].cards.find((c) => c.id === qid).status === 'valide');
   await ctx.close();
 }

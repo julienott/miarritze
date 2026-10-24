@@ -551,6 +551,8 @@ body.fs-open { overflow: hidden; }
   #card-dialog .mbar button { color: #fff; border-color: rgba(255, 255, 255, .4); min-height: 40px; }
   #card-dialog .mbar span { font-weight: 600; }
   #card-dialog #cf-asset-view { order: -1; border-top: 0; margin-top: 0; }
+  #card-dialog #cf-up { order: -2; }
+  #card-dialog .mbar { order: -3; }
   #card-dialog #card-form h2 { margin-top: 12px; }
   #card-dialog #cf-qa { display: none; }
   #card-dialog .qa-sticky:not([hidden]) {
@@ -601,6 +603,7 @@ body.fs-open { overflow: hidden; }
 #card-dialog[open] > * { flex: none; }
 #card-dialog #cf-asset-view { order: -1; border-top: 0; margin-top: 0; }
 #card-dialog #cf-asset-view h3 { margin-top: 4px; }
+#card-dialog #cf-up { order: -2; }        /* fil des chapeaux tout en haut, au-dessus de l'asset */
 .card-asset .ca-anim { flex-direction: column; align-items: stretch; }
 .card-asset .anim-cell.big { width: 100%; }
 .card-asset .anim-cell.big .anim-box { height: min(300px, 40vh); }
@@ -1060,3 +1063,24 @@ a.studio-tile, :root[data-theme="dark"] a.studio-tile { color: var(--text); }
   align-self: flex-start; background: var(--bg2, #eee8dc); border-radius: 4px; }
 .sg-profil figcaption { margin-top: 4px; }
 @media (max-width: 600px) { .sg-profil.big { grid-column: span 1; grid-row: auto; } }
+
+.ca-profil { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+.ca-profil figure { margin: 0; width: min(220px, 45%); }
+.ca-profil img { width: 100%; height: auto; object-fit: contain; background: var(--bg2, #eee8dc); border-radius: 4px; }
+.ca-profil p { flex-basis: 100%; margin: 0; }
+.cf-up { font-size: .9em; margin: 0 0 4px; color: var(--muted, #6b6b6b); }
+.cf-up a { color: var(--blue); }
+.kb-more { width: 100%; margin: 6px 0; }
+/* Carte ouverte : voisines de la colonne (‹ ›), au bord de l'écran */
+.cf-nav { position: fixed; top: 50%; transform: translateY(-50%); z-index: 5; width: 44px; height: 88px;
+  font-size: 34px; line-height: 1; padding: 0; border-radius: 10px; background: rgba(20, 30, 50, .55); color: #fff;
+  border: 1px solid rgba(255, 255, 255, .35); }
+.cf-nav:hover { background: rgba(20, 30, 50, .8); }
+.cf-nav.prev { left: 8px; }
+.cf-nav.next { right: 8px; }
+/* iPhone : dans la barre du haut du détail (à droite), pour ne rien recouvrir */
+@media (max-width: 760px), (max-height: 500px) and (max-width: 1000px) {
+  .cf-nav { top: max(6px, env(safe-area-inset-top)); transform: none; width: 40px; height: 40px; font-size: 24px; background: rgba(255, 255, 255, .15); }
+  .cf-nav.prev { left: auto; right: 56px; }
+  .cf-nav.next { right: max(8px, env(safe-area-inset-right)); }
+}

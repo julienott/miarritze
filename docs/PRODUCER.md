@@ -62,6 +62,11 @@ Mac de Julien et n'existe plus en ligne :
   Objets, effets, icônes des coups et décor ne sont pas encore automatisés : un chapeau en Todo les laisse en
   Backlog. Leurs assets sans fichier encore sont dans l'index, catégorie « À venir ». Quatre niveaux de
   chapeaux au plus (Persos › perso › coup › carte).
+- **Carte ouverte** (Julien, 24/10) : son URL est `#/kanban/carte/<id>` (à partager ou recharger) ; en haut, le fil
+  de ses chapeaux (« ↑ Persos › Perso : Louis › Louis · portraits »), chacun cliquable ; **‹ ›** au bord de
+  l'écran (flèches du clavier, balayage vers la gauche sur iPhone) passent aux cartes voisines de sa colonne,
+  dans l'ordre affiché ; après ✓ ou ✗, la carte suivante de la vue s'ouvre. Le kanban n'affiche d'abord que
+  40 tuiles par colonne (« Afficher plus ») et les réponses JSON sont compressées (gzip).
 - **Fiche d'un perso** (carte chapeau) : en tête, les **profils de référence** (HD) : le profil neutre en grand,
   puis un profil et un portrait par expression, chacun avec sa carte, car toutes les variations en partent.
   Ensuite, chaque élément montre la colonne de sa carte et, en QA, **✓ Valider**

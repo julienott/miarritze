@@ -489,7 +489,15 @@ final class App
     {
         http_response_code($code);
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $out = (string) json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        // Cartes et index pèsent ~700 Ko chacun : compressés si le navigateur l'accepte (Julien 24/10 : board lent).
+        if (strlen($out) > 4096 && function_exists('gzencode') && !headers_sent()
+            && str_contains((string) ($_SERVER['HTTP_ACCEPT_ENCODING'] ?? ''), 'gzip')) {
+            header('Content-Encoding: gzip');
+            header('Vary: Accept-Encoding');
+            $out = (string) gzencode($out, 5);
+        }
+        echo $out;
     }
 
     private function body(): array

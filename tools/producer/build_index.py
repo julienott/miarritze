@@ -555,6 +555,11 @@ class Builder:
             srcs.append(f)
         profils.sort(key=lambda x: (x["expression"] != "neutre", x["expression"]))
         info["profils"] = profils
+        # Expression de chaque portrait (cartes portrait:<usage>) : GDD §8.5 (style_party_hard.json).
+        ex = json.loads((ROOT / "data" / "blackout" / "style_party_hard.json").read_text(encoding="utf-8")).get("expressions", {})
+        base = ex.get("base", {}).get(sid, "neutre") if fam == "persos" else ""
+        info["portraits"] = ({u: (base if v == "base" else v) for u, v in ex.get("portraits", {}).items()}
+                             if fam == "persos" else {})
         self.sets[key] = info
         prev = next((a for a in anims if a["name"] == "profile"), anims[0])
         self.add(id=aid, cat=CAT_BK_PERSOS, group=key, kind="anim", name=f"{nom} · animations", type="sprite",
