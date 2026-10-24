@@ -16,8 +16,9 @@ Tourne seul, sans appel au modèle (aucun token), un tour par minute :
   6. Validé → En prod : 10 min après le dernier accept, tests, commit et push des seuls fichiers validés,
      déploiement (deploy.yml), puis les cartes passent En prod.
 
-Une carte refusée (↺ à retraiter) attend l'agent ; dès qu'une nouvelle tâche est intégrée pour elle, elle
-revient en QA d'elle-même. Les cartes de code (feature, bug, gameplay) ne sont jamais traitées ici.
+Une carte refusée (↺ à retraiter) en Backlog attend ; remise en Todo (« Refuser et refaire », ou à la main),
+elle est redemandée à pixelforge depuis le profil validé (Studio.refait) ; dès qu'une nouvelle tâche est
+intégrée pour elle, elle revient en QA d'elle-même. Les cartes de code (feature, bug, gameplay) ne sont jamais traitées ici.
 
   studio.py            (boucle ; lancé par launchd, voir tools/producer/studio_installe.sh)
   studio.py --un-tour  (un seul tour, pour essayer)
@@ -186,6 +187,8 @@ class Studio:
                 commente(c, "studio : ce set n'est pas encore automatisé (iteration.py : persos et PNJ) ; "
                             "l'agent le lance à la main")
                 self.etat["signale"][str(c["id"])] = "manuel"
+        self.refait(e, voulues)
+        it.sauve(e)
         self.depose(e, voulues, par_id)
         it.sauve(e)
         self.echecs(e, voulues)
@@ -271,6 +274,47 @@ class Studio:
                     self.etat["a_construire"].append(c["id"])
 
     # ---------------------------------------------------------- 1. dépôts
+    def refait(self, e: dict, voulues: list) -> None:
+        """« Refuser et refaire » (Julien 24/10) : une carte refusée remise en Todo est redemandée à pixelforge
+        avec une autre graine. Un sous-élément repart du profil déjà validé : une animation garde la base ou
+        l'expression qui lui sert de socle, une expression garde la base ; seul l'élément refusé est refait.
+        L'ancienne tâche est notée dans « refaites »."""
+        for c in voulues:
+            if c["status"] != "todo" or not c.get("rework"):
+                continue
+            f, pid, d = cible(c)
+            b = self.bq[f]
+            s = e.get(it.cle(b, pid), {})
+            ts = taches_de(s, b, pid, d)
+            cle = ",".join(tid for _r, _l, tid in ts)
+            if not ts or not all(tid for _r, _l, tid in ts):
+                continue                                # jamais déposée : depose s'en charge
+            refusee = self.etat["integre"].get(str(c["id"])) or self.etat["rework_a"].setdefault(str(c["id"]), cle)
+            if cle != refusee:
+                continue                                # déjà refaite, on attend la nouvelle tâche
+            rf = s.setdefault("refaites", {})
+            n = 1 + sum(1 for k in rf if k.startswith(f"{d}_refus_"))
+            graine = it.GRAINE + n
+            prio = self.prio([c])
+            rf[f"{d}_refus_{n}"] = cle
+            if d == "base":
+                garde = s.get("expressions", {})
+                it.job_base(b, e, pid, prio, False, graine)
+                s["expressions"] = garde                # les expressions faites restent
+                socle = "nouvelle base"
+            elif d.startswith("expr:"):
+                s["expressions"].pop(d[5:], None)
+                it.job_expression(b, e, pid, d[5:], prio, False, graine)
+                socle = f"base {s['base'][:8]}"
+            else:
+                s["animations"].pop(d, None)
+                it.job_anim(b, e, pid, d, prio, False, graine)
+                socle = f"socle {s['animations'][d]['socle'][:8]} ({s['animations'][d]['expression']})"
+            s.get("integre", {}).pop(d, None)
+            self.etat["rework_a"][str(c["id"])] = cle
+            log(pid, d, "refaite après refus, graine", graine, "depuis", socle)
+            commente(c, f"studio : refaite chez pixelforge depuis le profil validé ({socle}), graine {graine}")
+
     def depose(self, e: dict, voulues: list, par_id: dict) -> None:
         def rang_perso(c):
             h = par_id.get(c.get("parent_id") or 0, c)

@@ -307,6 +307,20 @@ const back = JSON.parse(cli('show', String(kidIds[1]), '--json'));
 check('cli qa : retour en QA, badge effacé, commentaire « retraité : »', back.card.status === 'qa' && !back.card.rework
   && back.card.notes.some((n) => n.body.startsWith('retraité : pieds recalés sur feet_anchor')
     && n.body.includes(`asset ${ASSET} · run version `)));
+// « Refuser et refaire » : commentaire obligatoire aussi, puis sommet du Todo, « à retraiter ».
+cli('move', String(kidIds[1]), 'qa');
+await page.reload();
+await page.locator(`.card[data-id="${kidIds[1]}"] button.refuse`).click();
+await page.waitForSelector('#refuse-dialog[open]');
+check('refus : deux boutons (Refuser, Refuser et refaire)', await page.isVisible('#rf-send') && await page.isVisible('#rf-redo'));
+await page.click('#rf-redo');
+check('refaire sans commentaire bloqué', (await page.textContent('#rf-error')).length > 0);
+await page.fill('#rf-body', 'Les bras bougent trop peu, plus d\'ampleur.');
+await page.click('#rf-redo');
+await page.waitForSelector(`.column[data-status=todo] .card[data-id="${kidIds[1]}"] .rework`);
+check('refaire : sommet du Todo, badge « à retraiter »', /Todo, à refaire/.test(await page.textContent('#toast')), await page.textContent('#toast'));
+check('cli show : refus « à refaire »', cli('show', String(kidIds[1])).includes('QA -> Todo, à refaire'));
+cli('qa', String(kidIds[1]), 'bras repris');
 // Chapeau en QA : Accepter accepte aussi les enfants encore en QA (après confirmation).
 cli('move', String(hatId), 'qa');
 await page.reload();

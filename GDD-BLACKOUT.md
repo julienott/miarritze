@@ -844,7 +844,8 @@ Fonctionnement détaillé, règles de passage et automatismes : **`docs/PRODUCER
   servi sur Tailscale avec le board. Tout ce qui est en QA y est jouable.
 - **✓ Accepter → Validé** ; le watcher committe et pousse les fichiers des cartes validées, puis déploie en
   prod 10 min après le dernier accept (un déploiement pour plusieurs cartes) ; les cartes passent alors
-  **En prod**. ✗ Refuser renvoie en haut du Backlog, « à retraiter ».
+  **En prod**. ✗ Refuser renvoie en haut du Backlog, « à retraiter » ; ↻ Refuser et refaire (*24/10*) renvoie en
+  haut du Todo : l'élément seul est redemandé à pixelforge depuis le profil validé du perso. Commentaire obligatoire.
 - Chaque animation, expression et base de perso, PNJ, boss ou asset a sa carte sous son chapeau, liée à
   ses tâches pixelforge. Les tâches des cartes en Doing, QA, Validé et En prod sont marquées `keep`.
 - Automatisé sans l'agent (aucun token) : synchronisation avec pixelforge, intégration locale, build QA,
@@ -980,6 +981,8 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
 - **24/10** (board, Julien) : /producer en ligne supprimé après migration ; board local sur Tailscale ; QA = jeu
   local (build commun automatique) ; acceptation = commit, push et déploiement groupé en prod ; colonnes
   Validé et En prod ; toutes les animations en cartes sous leur chapeau, tâches pixelforge en `keep` (§14.2).
+- **24/10** (refus, Julien) : deux boutons de refus, commentaire obligatoire : « Refuser » (Backlog) et « Refuser
+  et refaire » (Todo) ; un sous-élément refait repart du profil validé (base ou expression socle), §14.2.
 - **24/10** (autres assets, Julien, sur la réponse de pixelforge) : boss pilote **Basajaun** en itérations, après
   les 13 persos ; puis remise au contrat de `pf_px__creature` (HD cartoon, A/B, preview, expressions,
   portrait) pour Zezengorri, Herensuge et les animaux ; **essai animaux sans marionnette** (Wan) sur le chat,

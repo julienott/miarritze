@@ -225,7 +225,7 @@ def event_line(e: dict, with_card: bool) -> str:
     elif t == "accepte":
         what = f"QA -> {STATUS_LABEL.get(e['new'] or 'valide', e['new'])}"
     elif t == "refuse":
-        what = "QA -> Backlog, à retraiter : « " + e["new"].replace("\n", "\n      ") + " »"
+        what = ("QA -> Todo, à refaire" if e["old"] == "qa>todo" else "QA -> Backlog, à retraiter") + " : « " + e["new"].replace("\n", "\n      ") + " »"
     elif t == "commentaire":
         what = "« " + e["new"].replace("\n", "\n      ") + " »"
     elif t == "suppression":

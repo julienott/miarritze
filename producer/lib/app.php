@@ -1305,12 +1305,14 @@ final class App
     }
 
     /** QA : refus avec commentaire obligatoire -> sommet du Backlog, « à retraiter » (événement « refuse ») ;
-     *  Julien repriorise lui-même (21/10). */
+     *  Julien repriorise lui-même (21/10). Avec refaire (24/10) : sommet du Todo, le watcher la redépose
+     *  chez pixelforge (old de l'événement = « qa>todo »). */
     private function refuseCard(): void
     {
         $b = $this->body();
         $id = self::id($b);
         $text = (string) self::text($b, 'body', MAX_TEXT, true);
+        $vers = empty($b['refaire']) ? 'backlog' : 'todo';
         $db = $this->db();
         $db->exec('BEGIN IMMEDIATE');
         try {
@@ -1320,15 +1322,15 @@ final class App
             $now = time();
             $db->prepare("INSERT INTO card_notes (card_id, author, body, kind, created_at) VALUES (?, ?, ?, 'refus', ?)")
                 ->execute([$id, $this->actor, $text, $now]);
-            $this->placeCard($id, 'backlog', 0);
+            $this->placeCard($id, $vers, 0);
             $db->prepare('UPDATE cards SET rework = 1 WHERE id = ?')->execute([$id]);
-            $this->event($id, 'refuse', 'qa', $text, $now);
+            $this->event($id, 'refuse', $vers === 'todo' ? 'qa>todo' : 'qa', $text, $now);
             $db->exec('COMMIT');
         } catch (Throwable $e) {
             $db->exec('ROLLBACK');
             throw $e;
         }
-        $this->json(['ok' => true]);
+        $this->json(['ok' => true, 'status' => $vers]);
     }
 
     /** Ids des descendants d'une carte. */

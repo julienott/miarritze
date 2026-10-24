@@ -144,8 +144,8 @@ def cle(b, pid: str) -> str:
     return f"{b.famille}/{pid}"
 
 
-def job_base(b, e: dict, pid: str, prio: str, montre: bool) -> None:
-    r = {"prompt_style": "pf_px__character_set", "prompt": b.prompt(pid), "seed": GRAINE, "priority": prio,
+def job_base(b, e: dict, pid: str, prio: str, montre: bool, graine: int = GRAINE) -> None:
+    r = {"prompt_style": "pf_px__character_set", "prompt": b.prompt(pid), "seed": graine, "priority": prio,
          "tag": f"{TAG}/{b.famille}/base", "preview": True}
     rep = depose(r, montre)
     if not montre:
@@ -154,7 +154,7 @@ def job_base(b, e: dict, pid: str, prio: str, montre: bool) -> None:
         print(pid, "base neutre", rep["task_id"])
 
 
-def job_expression(b, e: dict, pid: str, k: str, prio: str, montre: bool) -> str:
+def job_expression(b, e: dict, pid: str, k: str, prio: str, montre: bool, graine: int = GRAINE) -> str:
     s = e.get(cle(b, pid), {})
     if k == NEUTRE:
         return s.get("base", "")
@@ -162,7 +162,7 @@ def job_expression(b, e: dict, pid: str, k: str, prio: str, montre: bool) -> str
         return s["expressions"][k]
     if not s.get("base") and not montre:
         sys.exit(f"{pid} : pas de base neutre (iteration.py base {pid})")
-    r = {"prompt_style": "pf_px__character_set", "prompt": b.prompt(pid), "seed": GRAINE, "priority": prio,
+    r = {"prompt_style": "pf_px__character_set", "prompt": b.prompt(pid), "seed": graine, "priority": prio,
          "tag": f"{TAG}/{b.famille}/expression", "expression": k, "expression_of": s.get("base", "<base>")}
     rep = depose(r, montre)
     if not montre:
@@ -171,11 +171,11 @@ def job_expression(b, e: dict, pid: str, k: str, prio: str, montre: bool) -> str
     return rep["task_id"]
 
 
-def job_anim(b, e: dict, pid: str, el: str, prio: str, montre: bool) -> None:
+def job_anim(b, e: dict, pid: str, el: str, prio: str, montre: bool, graine: int = GRAINE) -> None:
     k = b.expression(pid, el)
-    socle = job_expression(b, e, pid, k, prio, montre)
+    socle = job_expression(b, e, pid, k, prio, montre)    # le profil déjà fait (et validé) sert de socle
     extras = b.extras(pid)
-    r = {"prompt_style": "pf_px__character_set", "prompt": b.prompt(pid), "seed": GRAINE, "priority": prio,
+    r = {"prompt_style": "pf_px__character_set", "prompt": b.prompt(pid), "seed": graine, "priority": prio,
          "tag": f"{TAG}/{b.famille}/anim", "profile_of": socle, "elements": [],
          "then": [{"prompt_style": "pf_px__reduce", **({"steps": json.loads(os.environ["PF_STEPS"])}
                                                         if os.environ.get("PF_STEPS") else {})}]}

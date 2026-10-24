@@ -1947,7 +1947,7 @@ function renderFeed(events) {
     }
     if (e.type === 'refuse') {
       return el('div', { class: 'note refus' },
-        el('strong', { text: `✗ Refusée par ${who} · ${fmtDate(e.at)} · retour en Doing` }), el('br'), e.new);
+        el('strong', { text: `✗ Refusée par ${who} · ${fmtDate(e.at)} · ${e.old === 'qa>todo' ? 'à refaire (Todo)' : 'retour en Backlog'}` }), el('br'), e.new);
     }
     return el('div', { class: 'event' },
       el('span', { class: 'muted', text: fmtDate(e.at) + ' · ' }), el('strong', { text: who }), ' ' + eventText(e));
@@ -2334,10 +2334,11 @@ async function sendRefuse(ev) {
   ev.preventDefault();
   const c = state.refusing;
   const text = $('rf-body').value.trim();
+  const refaire = (ev.submitter || {}).id === 'rf-redo';
   if (!c) return;
-  if (!text) { $('rf-error').textContent = 'Dis ce qui ne va pas : Claude en a besoin pour retraiter.'; return; }
+  if (!text) { $('rf-error').textContent = 'Dis ce qui ne va pas : c\'est la consigne pour refaire.'; return; }
   try {
-    await api('card_refuse', { method: 'POST', body: { id: c.id, body: text } });
+    await api('card_refuse', { method: 'POST', body: { id: c.id, body: text, refaire } });
     await reloadCards();
   } catch (e) {
     $('rf-error').textContent = e.message;
@@ -2345,7 +2346,7 @@ async function sendRefuse(ev) {
   }
   $('refuse-dialog').close();
   if ($('card-dialog').open) $('card-dialog').close();
-  toast('Refusée → sommet du Backlog, à retraiter');
+  toast(refaire ? 'Refusée → sommet du Todo, à refaire' : 'Refusée → sommet du Backlog, à retraiter');
   renderBoard();
 }
 

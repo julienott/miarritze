@@ -19,9 +19,14 @@ Mac de Julien et n'existe plus en ligne :
 | **Validé** | accepté par Julien, part au prochain déploiement | ✓ Accepter (Julien) | mise en prod groupée |
 | **En prod** | en ligne sur miarritze.ijulien.com | le watcher, après le déploiement réussi | fini |
 
-- **✗ Refuser** (commentaire obligatoire) renvoie la carte en haut du Backlog avec ↺ « à retraiter » : c'est un
-  travail pour l'agent (nouveau prompt, retouche), relancé quand la carte repasse en Todo. Dès qu'une nouvelle
-  tâche pixelforge est intégrée pour elle, la carte revient seule en QA.
+- Le dialogue de refus a deux boutons, avec un commentaire obligatoire (ce qui ne va pas, ce qu'il faut améliorer) :
+  - **✗ Refuser** renvoie la carte en haut du Backlog avec ↺ « à retraiter » : c'est un travail pour l'agent
+    (nouveau prompt, retouche), relancé quand la carte repasse en Todo ;
+  - **↻ Refuser et refaire** (Julien, 24/10) la met en haut du Todo, ↺ « à retraiter ». Le watcher la redemande à
+    pixelforge avec une autre graine, depuis le profil déjà validé : une animation garde la base ou l'expression
+    qui lui sert de socle, une expression garde la base ; seul l'élément refusé est refait (l'ancienne tâche est
+    notée dans `refaites` d'iterations.json). Une carte refusée remise en Todo à la main fait de même.
+  Dès qu'une nouvelle tâche pixelforge est intégrée pour elle, la carte revient seule en QA.
 - **Carte à commande** (Julien, 24/10) : si sa description contient des lignes `$ <outil> …`, le watcher les
   lance quand la carte est en Todo (outils du dépôt seulement : `tools/blackout`, `tools/pf`, `tools/producer`,
   `.py` ou `.sh`, sans shell), écrit la sortie en commentaire et passe la carte en Doing. Il suit les tâches
@@ -125,7 +130,7 @@ l'accès Tailscale).*
   - En haut du board : filtre **Chapeau** (un chapeau et toute sa famille) et **Chapeaux seulement** (les enfants sont masqués, on les voit en dépliant), et son inverse **Masquer les chapeaux** (seules les cartes sans enfant, chacune dans sa colonne, compteurs compris ; cocher l'une décoche l'autre, le choix est retenu).
   - Touche une carte pour la modifier (type, priorité, titre, description, chapeau, asset lié), voir ses enfants (« + Carte enfant » en crée un), et lire son **historique** : création, déplacements, changements, et les **commentaires** de Julien et de Claude mêlés dans l'ordre. « Commenter » envoie tout de suite.
   - **Asset lié** : sur ordinateur, la tuile montre l'asset en haut, sur toute sa largeur (proportions gardées, hauteur bornée, fond clair ou damier pour le décor) ; sur iPhone, une petite miniature. Pour une animation, elle joue au survol de la tuile (premier toucher sur la miniature en tactile, le toucher suivant ouvre la carte), une seule à la fois, arrêtée et libérée quand la souris sort ; pour un objet du décor qui a des masques, les masques se superposent au survol (toucher la miniature les bascule) : la QA se fait sans ouvrir la carte. Dans le détail de la carte, l'asset est affiché en haut, en pleine largeur (animation qui joue au survol, cliquer ouvre le plein écran ; objet du décor avec ou sans masques ; image), avec le formulaire « Amélioration / Validé » de l'asset et ses commentaires : on commente l'asset sans quitter la carte. Pour une carte d'animation, le champ **Détail** donne le nom de l'animation (`walk`) : c'est elle qui s'affiche.
-  - **QA** : une carte en QA porte deux gros boutons. **✓ Accepter** la passe en Done (sur un chapeau, ses enfants encore en QA sont acceptés aussi, après confirmation). **✗ Refuser** demande un commentaire obligatoire : la carte repart en Doing avec le badge **↺ à retraiter**, qui disparaît quand Claude la remet en QA.
+  - **QA** : une carte en QA porte deux gros boutons. **✓ Accepter** la passe en Done (sur un chapeau, ses enfants encore en QA sont acceptés aussi, après confirmation). **✗ Refuser** ou **↻ Refuser et refaire** demandent un commentaire obligatoire : la carte repart en Backlog (ou en Todo, redemandée à pixelforge) avec le badge **↺ à retraiter**, qui disparaît quand elle revient en QA.
   - **Sur iPhone** (portrait, ou paysage) : une colonne à la fois, avec des onglets collés en haut (Backlog · Todo · Doing · QA · Done, avec leurs compteurs). On change de colonne en touchant un onglet ou en balayant l'écran à gauche ou à droite. L'onglet choisi est retenu ; à défaut, QA s'ouvre s'il y a des cartes à tester, sinon Todo. Les tuiles sont compactes (titre, badges, miniature) : une dizaine par écran en portrait. En QA, ✓ et ✗ sont sur la tuile ; ailleurs, le menu ⇄ déplace la carte vers une autre colonne. ☰ déplie les filtres et « + Nouvelle carte ». Le détail s'ouvre en plein écran, avec l'asset en haut et Accepter / Refuser collés en bas ; « ← Retour » ou un balayage vers la droite le ferme. La vue ordinateur ne change pas.
   - **Recherche et filtres** : recherche (titre, description, `#id`), type, perso (son nom dans le titre, son asset ou son chapeau), carte de jeu (asset du décor de la carte, chapeau de la carte, titre), jalon (« sans jalon » compris), chapeau ; les choix sont retenus, « Effacer les filtres » les remet à zéro.
   - **☑ Sélection** : coche des cartes (ou « Tout ce qui est affiché »), puis « Déplacer vers… », « 🌙 Night shift… », « Priorité… » ou « Jalon… » s'appliquent à toutes d'un coup (une seule requête, historisée carte par carte).
@@ -208,7 +213,7 @@ Toutes les routes passent par `index.php?r=<route>` et répondent en JSON. Authe
 | POST | `card_comment` `{id, body}` | commente une carte (alias : `card_note`) |
 | POST | `card_delete` `{id}` | supprime une carte (ses enfants sont détachés) |
 | POST | `card_accept` `{id}` | QA -> Done (+ descendants encore en QA) ; événements `accepte` ; renvoie `accepted` |
-| POST | `card_refuse` `{id, body}` | QA -> Doing, `rework` = vrai, commentaire `kind: refus` ; événement `refuse` (`new` = texte) |
+| POST | `card_refuse` `{id, body, refaire?}` | QA -> sommet du Backlog (avec `refaire` : du Todo), `rework` = vrai, commentaire `kind: refus` ; événement `refuse` (`new` = texte, `old` = `qa` ou `qa>todo`) |
 | POST | `cards_bulk` `{ids, status?, night?, priority?, milestone?}` | même changement sur 500 cartes au plus (transaction, historisé) |
 | POST | `asset_comment` `{asset?, detail?, body, kind?, card?, title?, type?, parent?, context?}` | commentaire d'asset reporté sur une carte : `card` = id, `"new"` = nouvelle carte ; sans `card`, la carte non terminée liée à l'asset (même détail, ou titre « … · <libellé> »), sinon nouvelle carte en Backlog sous le chapeau le plus fréquent des cartes de l'asset ; renvoie `{comment, card, created}` |
 | GET | `milestones` | jalons |
