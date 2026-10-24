@@ -112,12 +112,12 @@
   "caption": "aveugle · 6 images · 8 i/s · boucle"
  },
  "tracte": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/tracte.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/tracte_sheet.png",
-  "fps": 10.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/c8fc62465f534aeb8a5dcb1a81a3bf41/tracte.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/c8fc62465f534aeb8a5dcb1a81a3bf41/tracte_sheet.png",
+  "fps": 38.33,
   "loop": true,
-  "count": 6,
-  "caption": "tracte · 6 images · 10 i/s · boucle"
+  "count": 23,
+  "caption": "tracte · 23 images · 38.33 i/s · boucle"
  },
  "idle_long": {
   "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/idle_long.gif",
