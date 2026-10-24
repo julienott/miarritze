@@ -247,13 +247,17 @@ def integre(b, e: dict, pid: str) -> None:
     hd = os.path.join(base, "hd")
     os.makedirs(hd, exist_ok=True)
     # Profil et portrait HD : neutre (profile_hd.png, portrait_hd.png), puis un par expression (_<clé>).
+    # hd/retouches.json : fichiers retouchés à la main (Julien 24/10), jamais écrasés par une intégration.
+    fr = os.path.join(hd, "retouches.json")
+    gardes = set(json.load(open(fr))) if os.path.exists(fr) else set()
     for k, tid in [(NEUTRE, s.get("base"))] + sorted(s.get("expressions", {}).items()):
         if not tid or get(tid).get("status") != "succeeded":
             continue
         for f in fichiers(tid):
             if f["name"] in ("profile_hd.png", "portrait_hd.png"):
                 nom = f["name"] if k == NEUTRE else f["name"].replace("_hd.png", f"_{k}_hd.png")
-                telecharge(f, os.path.join(hd, nom))
+                if nom not in gardes:
+                    telecharge(f, os.path.join(hd, nom))
     faits = s.setdefault("integre", {})
     for nom, a in s.get("animations", {}).items():
         if faits.get(nom) == a["A"]:
