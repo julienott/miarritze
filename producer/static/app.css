@@ -1085,3 +1085,17 @@ a.studio-tile, :root[data-theme="dark"] a.studio-tile { color: var(--text); }
   .cf-nav.next { right: max(8px, env(safe-area-inset-right)); }
 }
 .card-thumb.profil-thumb { object-fit: contain; image-rendering: auto; }
+
+/* Mobile (Julien 24/10) : pas de zoom d'iOS en remplissant un champ (il zoome sous 16 px), et rien de plus
+   large que l'écran, dans toutes les vues et tous les dialogues. */
+@media (hover: none), (pointer: coarse), (max-width: 760px) {
+  input, select, textarea, .quick-add input, .quick-add select, .card.compact .cact select.move { font-size: 16px !important; }
+}
+@media (max-width: 760px), (max-height: 500px) and (max-width: 1000px) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  .view, main, header, nav, dialog, dialog > *, .panel, .set-gal, .sg-grid, .card-form, table { max-width: 100vw; box-sizing: border-box; }
+  img, canvas, video, pre { max-width: 100%; }
+  pre, code { white-space: pre-wrap; overflow-wrap: anywhere; }
+  table { display: block; overflow-x: auto; }
+}
+@media (max-width: 760px) { .cat-row.chips { flex-wrap: wrap; } .cat-row { max-width: 100%; } }
