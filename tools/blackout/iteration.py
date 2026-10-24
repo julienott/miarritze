@@ -159,6 +159,20 @@ def job_base(b, e: dict, pid: str, prio: str, montre: bool, graine: int = GRAINE
         print(pid, "base neutre", rep["task_id"])
 
 
+def job_base_px(b, e: dict, pid: str, prio: str, montre: bool) -> None:
+    """Profil et portrait 32 px depuis la HD de base (Julien 24/10 : la chaîne HD → pixel vient du même modèle).
+    La base neutre (preview) ne livre que la HD et ne se réduit pas : un job reprend son profil, ne demande que
+    l'élément portrait, puis pf_px__reduce ; sa réduction livre profile_sheet et portrait_sheet."""
+    s = e.get(cle(b, pid), {})
+    r = {"prompt_style": "pf_px__character_set", "prompt": b.prompt(pid), "seed": GRAINE, "priority": prio,
+         "tag": f"{TAG}/{b.famille}/base_px", "profile_of": s.get("base", "<base>"), "elements": ["portrait"],
+         "then": [{"prompt_style": "pf_px__reduce"}]}
+    rep = depose(r, montre)
+    if not montre:
+        s["base_px"] = {"A": rep["task_id"], "B": (rep.get("then") or [{}])[0].get("task_id"), "socle": s["base"]}
+        print(pid, "profil et portrait 32 px", rep["task_id"])
+
+
 def job_expression(b, e: dict, pid: str, k: str, prio: str, montre: bool, graine: int = GRAINE) -> str:
     s = e.get(cle(b, pid), {})
     if k == NEUTRE:
@@ -259,6 +273,25 @@ def integre(b, e: dict, pid: str) -> None:
                 if nom not in gardes:
                     telecharge(f, os.path.join(hd, nom))
     faits = s.setdefault("integre", {})
+    bp = s.get("base_px") or {}
+    if bp.get("B") and faits.get("base_px") != bp["B"] and get(bp["B"]).get("status") == "succeeded":
+        px = os.path.join(base, "px32")
+        n = 0
+        for f in fichiers(bp["B"]):
+            if element_de(f["name"]) in ("profile", "portrait") and not f["name"].startswith(("step_", "src64_")):
+                dest = os.path.join(hd if f["name"] == "portrait_hd.png" else px, f["name"])
+                if os.path.basename(dest) not in gardes:
+                    telecharge(f, dest)
+                    n += 1
+        chemin = os.path.join(px, "animations.json")
+        an = json.load(open(chemin)) if os.path.exists(chemin) else {}
+        src = (get(bp["B"]).get("result") or {}).get("pixelforge", {}).get("animations") or {}
+        for el in ("profile", "portrait"):
+            if el in src:
+                an[el] = {x: y for x, y in src[el].items() if x != "frames"}
+        json.dump(an, open(chemin, "w"), ensure_ascii=False, indent=1)
+        faits["base_px"] = bp["B"]
+        print(pid, "profil et portrait 32 px intégrés depuis la base :", n, "fichiers")
     for nom, a in s.get("animations", {}).items():
         if faits.get(nom) == a["A"]:
             continue

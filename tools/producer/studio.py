@@ -168,7 +168,9 @@ class Taches:
 def taches_de(s: dict, b, pid: str, d: str) -> list:
     """Tâches d'une carte : [(rôle, libellé, id)]."""
     if d == "base":
-        return [("base", "profil et portrait neutres", s.get("base", ""))]
+        # Profil et portrait 32 px faits depuis cette base (iteration.job_base_px, Julien 24/10).
+        return [("base", "profil et portrait neutres", s.get("base", "")),
+                ("pixel", "profil et portrait 32 px", (s.get("base_px") or {}).get("B", ""))]
     if d.startswith("expr:"):
         return [("expression", d[5:], s.get("expressions", {}).get(d[5:], ""))]
     a = s.get("animations", {}).get(d)
@@ -487,6 +489,9 @@ class Studio:
                 it.job_base(b, e, pid, prio, False)
                 log(pid, "base neutre déposée", s["base"])
             st_base = self.t.statut(s["base"])
+            if st_base == "succeeded" and (s.get("base_px") or {}).get("socle") != s["base"]:
+                it.job_base_px(b, e, pid, prio, False)      # profil et portrait 32 px depuis cette base
+                log(pid, "profil et portrait 32 px déposés", s["base_px"]["A"])
             for c in cartes_p:
                 if c["status"] == "todo" and cible(c)[2] == "base":
                     bouge(c, "doing", f"en file chez pixelforge (base {s['base'][:8]})")
