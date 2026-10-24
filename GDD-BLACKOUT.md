@@ -989,6 +989,8 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
   commentaire est appliqué par Claude, réveillé toutes les 30 min, pas par un Claude lancé par le watcher.
 - **24/10** (board, Julien) : une carte par portrait (perso, PNJ, boss) ; coups spéciaux détaillés par asset
   sous leur perso ; assets du décor sous leur carte de jeu ; ✓ / ✗ par élément dans la fiche d'un perso.
+- **24/10** (versions, Julien) : tous les assets sont versionnés dans git : la HD en Git LFS, l'intégré non
+  validé sur la branche `assets-integres` (mise à jour par le watcher) ; `main` et la prod ne reçoivent que le validé.
 - **24/10** (autres assets, Julien, sur la réponse de pixelforge) : boss pilote **Basajaun** en itérations, après
   les 13 persos ; puis remise au contrat de `pf_px__creature` (HD cartoon, A/B, preview, expressions,
   portrait) pour Zezengorri, Herensuge et les animaux ; **essai animaux sans marionnette** (Wan) sur le chat,

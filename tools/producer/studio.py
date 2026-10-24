@@ -566,6 +566,7 @@ class Studio:
         if not ok:
             log("build de QA en échec :", msg[-300:])
             return
+        self.versionne()
         for cid in self.etat["a_construire"]:
             c = par_id.get(cid)
             if c and c["status"] in ("todo", "doing"):
@@ -573,6 +574,16 @@ class Studio:
             if c:
                 self.etat["rework_a"].pop(str(cid), None)
         self.etat["a_construire"] = []
+
+    def versionne(self) -> None:
+        """Tous les assets intégrés (32 px et HD en LFS) sur la branche assets-integres (Julien 24/10),
+        en arrière-plan : un envoi LFS peut durer, le tour n'attend pas. Un seul à la fois."""
+        en_cours = getattr(self, "_versionne", None)
+        if en_cours and en_cours.poll() is None:
+            return
+        out = open(os.path.join(STUDIO, "branche_assets.log"), "a")
+        self._versionne = subprocess.Popen([PY, os.path.join(HERE, "branche_assets.py")], cwd=ROOT,
+                                           stdout=out, stderr=subprocess.STDOUT)
 
     # ---------------------------------------------------------- 6. chapeaux
     def chapeaux(self, cs: list, enfants: dict) -> None:
