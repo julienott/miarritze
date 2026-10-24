@@ -17,7 +17,8 @@ Tourne seul, sans appel au modèle (aucun token), un tour par minute :
      déploiement (deploy.yml), puis les cartes passent En prod.
 
 Une carte refusée (↺ à retraiter) en Backlog attend ; remise en Todo (« Refuser et refaire », ou à la main),
-elle est redemandée à pixelforge depuis le profil validé (Studio.refait) ; dès qu'une nouvelle tâche est
+elle attend Claude (.studio/a_traiter.json, relevé toutes les 30 min), qui écrit la demande ajustée selon le
+commentaire ; le watcher la contrôle et la redépose depuis le profil validé (Studio.refait) ; dès qu'une nouvelle tâche est
 intégrée pour elle, elle revient en QA d'elle-même. Les cartes de code (feature, bug, gameplay) ne sont jamais traitées ici.
 
   studio.py            (boucle ; lancé par launchd, voir tools/producer/studio_installe.sh)
@@ -26,6 +27,7 @@ Journal : .studio/studio.log ; état : .studio/studio_etat.json ; état affiché
 """
 from __future__ import annotations
 
+import copy
 import json
 import re
 import shlex
@@ -42,11 +44,14 @@ sys.path.insert(0, os.path.join(ROOT, "tools", "blackout"))
 os.environ.setdefault("PRODUCER_URL", "http://127.0.0.1:8099/producer/")
 import cli  # noqa: E402
 import iteration as it  # noqa: E402
+import refaire  # noqa: E402
 
 STUDIO = os.path.join(ROOT, ".studio")
 SITE = os.path.join(STUDIO, "site")
 DATA = os.path.join(SITE, "producer", "data")
 ETAT = os.path.join(STUDIO, "studio_etat.json")
+A_TRAITER = os.path.join(STUDIO, "a_traiter.json")      # refus à refaire, relevés par Claude
+REFAIRE = os.path.join(STUDIO, "refaire")                # ses demandes ajustées, <id>.json
 LOG = os.path.join(STUDIO, "studio.log")
 PY = os.path.join(ROOT, ".venv", "bin", "python")
 PAUSE_S = 60
@@ -187,8 +192,9 @@ class Studio:
                 commente(c, "studio : ce set n'est pas encore automatisé (iteration.py : persos et PNJ) ; "
                             "l'agent le lance à la main")
                 self.etat["signale"][str(c["id"])] = "manuel"
-        self.refait(e, voulues)
+        attente = self.refait(e, voulues)
         it.sauve(e)
+        voulues = [c for c in voulues if c["id"] not in attente]
         self.depose(e, voulues, par_id)
         it.sauve(e)
         self.echecs(e, voulues)
@@ -274,11 +280,15 @@ class Studio:
                     self.etat["a_construire"].append(c["id"])
 
     # ---------------------------------------------------------- 1. dépôts
-    def refait(self, e: dict, voulues: list) -> None:
-        """« Refuser et refaire » (Julien 24/10) : une carte refusée remise en Todo est redemandée à pixelforge
-        avec une autre graine. Un sous-élément repart du profil déjà validé : une animation garde la base ou
-        l'expression qui lui sert de socle, une expression garde la base ; seul l'élément refusé est refait.
-        L'ancienne tâche est notée dans « refaites »."""
+    def refait(self, e: dict, voulues: list) -> list:
+        """« Refuser et refaire » (Julien 24/10) : une carte refusée remise en Todo attend Claude, qui relève
+        .studio/a_traiter.json toutes les 30 min, applique le commentaire du refus à la demande et écrit
+        .studio/refaire/<id>.json : {"modifs": {prompt, extras, elements, expression}, "explication": "…"}.
+        Le watcher contrôle les modifs (refaire.controle) puis redépose avec une autre graine. Un sous-élément
+        repart du profil déjà validé : une animation garde la base ou l'expression qui lui sert de socle, une
+        expression garde la base ; seul l'élément refusé est refait (l'ancienne tâche va dans « refaites »).
+        Rend les ids des cartes en attente (le reste du tour les laisse de côté)."""
+        attente, liste = [], {}
         for c in voulues:
             if c["status"] != "todo" or not c.get("rework"):
                 continue
@@ -292,28 +302,96 @@ class Studio:
             refusee = self.etat["integre"].get(str(c["id"])) or self.etat["rework_a"].setdefault(str(c["id"]), cle)
             if cle != refusee:
                 continue                                # déjà refaite, on attend la nouvelle tâche
-            rf = s.setdefault("refaites", {})
-            n = 1 + sum(1 for k in rf if k.startswith(f"{d}_refus_"))
-            graine = it.GRAINE + n
-            prio = self.prio([c])
-            rf[f"{d}_refus_{n}"] = cle
-            if d == "base":
-                garde = s.get("expressions", {})
-                it.job_base(b, e, pid, prio, False, graine)
-                s["expressions"] = garde                # les expressions faites restent
-                socle = "nouvelle base"
-            elif d.startswith("expr:"):
+            fichier = os.path.join(REFAIRE, f"{c['id']}.json")
+            if os.path.exists(fichier):
+                try:
+                    self.redepose(e, c, b, s, pid, d, cle, charge(fichier, {}))
+                    os.remove(fichier)
+                    continue
+                except Exception as err:            # noqa: BLE001
+                    os.rename(fichier, fichier + ".refuse")
+                    commente(c, f"studio : demande ajustée refusée ({err}) ; à reprendre par Claude")
+            attente.append(c["id"])
+            refus = [n for n in c.get("notes", []) if n.get("kind") == "refus"]
+            requete = self._apercu(e, b, pid, d)
+            liste[str(c["id"])] = {"titre": c["title"], "famille": f, "perso": pid, "element": d,
+                                   "commentaire": refus[-1]["body"] if refus else "", "requete": requete}
+            if str(c["id"]) not in self.etat["signale"]:
+                self.etat["signale"][str(c["id"])] = "refaire"
+                commente(c, "studio : à refaire, en attente de Claude (relève toutes les 30 min) "
+                            "pour appliquer le commentaire du refus")
+        if liste or os.path.exists(A_TRAITER):
+            ecrit(A_TRAITER, liste)
+        return attente
+
+    def job(self, e: dict, b, pid: str, d: str, prio: str, montre: bool, graine: int) -> None:
+        if d == "base":
+            it.job_base(b, e, pid, prio, montre, graine)
+        elif d.startswith("expr:"):
+            it.job_expression(b, e, pid, d[5:], prio, montre, graine)
+        else:
+            it.job_anim(b, e, pid, d, prio, montre, graine)
+
+    def redepose(self, e: dict, c: dict, b, s: dict, pid: str, d: str, cle: str, dem: dict) -> None:
+        modifs, expl = dem.get("modifs") or {}, str(dem.get("explication", "")).strip()
+        def ajuste(r: dict) -> dict:
+            r2 = {**r, **modifs}
+            refaire.controle(r, r2)
+            return r2
+        ajuste(self._apercu(e, b, pid, d))          # contrôle avant tout changement d'état
+        it.AJUSTE = ajuste
+        rf = s.setdefault("refaites", {})
+        n = 1 + sum(1 for k in rf if k.startswith(f"{d}_refus_"))
+        graine = it.GRAINE + n
+        prio = self.prio([c])
+        garde = dict(s.get("expressions", {}))
+        anciennes = (dict(s.get("expressions", {})), dict(s.get("animations", {})))
+        try:
+            if d.startswith("expr:"):
                 s["expressions"].pop(d[5:], None)
-                it.job_expression(b, e, pid, d[5:], prio, False, graine)
-                socle = f"base {s['base'][:8]}"
-            else:
+            elif d != "base":
                 s["animations"].pop(d, None)
-                it.job_anim(b, e, pid, d, prio, False, graine)
-                socle = f"socle {s['animations'][d]['socle'][:8]} ({s['animations'][d]['expression']})"
-            s.get("integre", {}).pop(d, None)
-            self.etat["rework_a"][str(c["id"])] = cle
-            log(pid, d, "refaite après refus, graine", graine, "depuis", socle)
-            commente(c, f"studio : refaite chez pixelforge depuis le profil validé ({socle}), graine {graine}")
+            self.job(e, b, pid, d, prio, False, graine)
+        except BaseException:
+            s["expressions"], s["animations"] = anciennes
+            raise
+        finally:
+            it.AJUSTE = None
+        if d == "base":
+            s["expressions"] = garde                    # les expressions faites restent
+            socle = "nouvelle base"
+        elif d.startswith("expr:"):
+            socle = f"base {s['base'][:8]}"
+        else:
+            socle = f"socle {s['animations'][d]['socle'][:8]} ({s['animations'][d]['expression']})"
+        rf[f"{d}_refus_{n}"] = cle
+        s.get("integre", {}).pop(d, None)
+        self.etat["rework_a"][str(c["id"])] = cle
+        self.etat["signale"].pop(str(c["id"]), None)
+        it.sauve(e)
+        log(pid, d, "refaite après refus, graine", graine, "depuis", socle)
+        commente(c, f"studio : refaite chez pixelforge depuis le profil validé ({socle}), graine {graine}"
+                    + (f". Claude : {expl}" if expl else ""))
+
+    def _apercu(self, e: dict, b, pid: str, d: str) -> dict:
+        """La demande telle qu'elle serait redéposée (rien n'est déposé ni écrit)."""
+        r: dict = {}
+        e2 = copy.deepcopy(e)
+        s2 = e2.get(it.cle(b, pid), {})
+        if d.startswith("expr:"):
+            s2.get("expressions", {}).pop(d[5:], None)
+        ancien = it.AJUSTE
+        it.AJUSTE = lambda x: r.update(x) or x
+        try:
+            with open(os.devnull, "w") as nul:
+                sortie, sys.stdout = sys.stdout, nul
+                try:
+                    self.job(e2, b, pid, d, "normal", True, it.GRAINE)
+                finally:
+                    sys.stdout = sortie
+        finally:
+            it.AJUSTE = ancien
+        return r
 
     def depose(self, e: dict, voulues: list, par_id: dict) -> None:
         def rang_perso(c):

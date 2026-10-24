@@ -112,7 +112,12 @@ def keep(tid: str) -> None:
     urllib.request.urlopen(req, timeout=60)
 
 
+AJUSTE = None                         # crochet du watcher : demande -> demande (refus à refaire, GDD §14.2)
+
+
 def depose(r: dict, montre: bool) -> dict:
+    if AJUSTE:
+        r = AJUSTE(r)
     if montre:
         print(json.dumps(r, ensure_ascii=False, indent=1))
         return {"task_id": "(montre)"}

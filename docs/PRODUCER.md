@@ -22,10 +22,15 @@ Mac de Julien et n'existe plus en ligne :
 - Le dialogue de refus a deux boutons, avec un commentaire obligatoire (ce qui ne va pas, ce qu'il faut améliorer) :
   - **✗ Refuser** renvoie la carte en haut du Backlog avec ↺ « à retraiter » : c'est un travail pour l'agent
     (nouveau prompt, retouche), relancé quand la carte repasse en Todo ;
-  - **↻ Refuser et refaire** (Julien, 24/10) la met en haut du Todo, ↺ « à retraiter ». Le watcher la redemande à
-    pixelforge avec une autre graine, depuis le profil déjà validé : une animation garde la base ou l'expression
-    qui lui sert de socle, une expression garde la base ; seul l'élément refusé est refait (l'ancienne tâche est
-    notée dans `refaites` d'iterations.json). Une carte refusée remise en Todo à la main fait de même.
+  - **↻ Refuser et refaire** (Julien, 24/10) la met en haut du Todo, ↺ « à retraiter ». Le watcher l'écrit dans
+    `.studio/a_traiter.json` (commentaire du refus, demande pixelforge actuelle) et la laisse en attente. Claude
+    relève ce fichier toutes les 30 min (tâche planifiée de sa session ; rien à faire, rien consommé de plus),
+    applique le commentaire à la demande et la dépose avec `tools/producer/refaire.py N modifs.json`
+    (`{"modifs": {prompt, extras, elements, expression}, "explication": "…"}`). Le watcher contrôle les modifs
+    (seuls ces champs, ni négation ni visage) et redépose avec une autre graine, depuis le profil déjà validé :
+    une animation garde la base ou l'expression qui lui sert de socle, une expression garde la base ; seul
+    l'élément refusé est refait (l'ancienne tâche est notée dans `refaites` d'iterations.json). L'explication
+    de Claude est postée sur la carte. Une carte refusée remise en Todo à la main suit le même chemin.
   Dès qu'une nouvelle tâche pixelforge est intégrée pour elle, la carte revient seule en QA.
 - **Carte à commande** (Julien, 24/10) : si sa description contient des lignes `$ <outil> …`, le watcher les
   lance quand la carte est en Todo (outils du dépôt seulement : `tools/blackout`, `tools/pf`, `tools/producer`,
