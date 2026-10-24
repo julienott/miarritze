@@ -663,7 +663,7 @@ class Studio:
                 st = ORDRE[bas]
             elif RANG["doing"] in rangs:
                 st = "doing"                            # un enfant en cours
-            elif RANG.get(h["status"], 0) >= RANG["qa"]:
+            elif RANG.get(h["status"], 0) >= RANG["qa"] and max(rangs) <= RANG["todo"]:
                 st = ORDRE[max(rangs)]                  # en QA ou après sans rien de livré dessous (Julien 24/10)
             else:
                 continue                                # rien en cours : la colonne du chapeau ne bouge pas
