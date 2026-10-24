@@ -136,11 +136,11 @@
   "caption": "cast_chasse · 8 images · 12 i/s"
  },
  "cast_chasseur": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/cast_chasseur.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/cast_chasseur_sheet.png",
-  "fps": 12.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/4d9f05b3827e4309b240fd5874fd1e46/cast_chasseur.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/4d9f05b3827e4309b240fd5874fd1e46/cast_chasseur_sheet.png",
+  "fps": 25.5,
   "loop": false,
-  "count": 8,
-  "caption": "cast_chasseur · 8 images · 12 i/s"
+  "count": 17,
+  "caption": "cast_chasseur · 17 images · 25.5 i/s"
  }
 }

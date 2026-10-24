@@ -183,11 +183,8 @@ for pid in ORDRE:
 fan = carte("Fantôme : commun", "perso", "blackout/fantome/fantome/animations", "", persos, "backlog", J)
 for x in ("appear", "float", "advance"):
     carte(f"Fantôme · {x}", "animation", "blackout/fantome/fantome/animations", x, fan, "qa", J)
-# Décision de Julien (24/10) : refaire la seule réduction de la course de Louis (cycle entier, pixelforge 6d2ce20).
-carte("Louis · run : réduction refaite sur le cycle entier (pixelforge 6d2ce20)", "pixelforge", parent=chapeau["louis"],
-      statut="todo", ms=J, desc="Proposé par pixelforge, accepté par Julien le 24/10 : même tâche Wan (c4897ae6), "
-      "nouvelle réduction (8 poses à pas égal sur les deux foulées), à la place de f850bb52.\n"
-      "$ tools/blackout/rereduit.py louis run --prio high\n$ apres: tools/blackout/iteration.py integre louis")
+# (24/10) La réduction refaite de la course de Louis (rereduit.py, pixelforge 6d2ce20) est dans « Louis · run » ;
+# sa carte à commande a été retirée (Julien : pas de doublon).
 
 # ------------------------------------------------------------------ PNJ et animaux
 J = jalon[JR["R3"]]
