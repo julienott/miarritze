@@ -48,12 +48,12 @@
   "caption": "portrait · 1 image · 1 i/s"
  },
  "interagir": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/interagir.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/interagir_sheet.png",
-  "fps": 10.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/c8c3bd97879e4eea9581e74376df547c/interagir.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/c8c3bd97879e4eea9581e74376df547c/interagir_sheet.png",
+  "fps": 41.67,
   "loop": false,
-  "count": 6,
-  "caption": "interagir · 6 images · 10 i/s"
+  "count": 25,
+  "caption": "interagir · 25 images · 41.67 i/s"
  },
  "victoire": {
   "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/victoire.gif",
