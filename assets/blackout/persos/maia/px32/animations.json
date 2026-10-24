@@ -32,8 +32,8 @@
   "caption": "jump_hide · 6 images · 12 i/s"
  },
  "lift": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/1dd93fb734c64631b5ab08a966498a46/lift.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/1dd93fb734c64631b5ab08a966498a46/lift_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/2ee2d3054f74425c94992cb52c32bba8/lift.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/2ee2d3054f74425c94992cb52c32bba8/lift_sheet.png",
   "fps": 8.0,
   "loop": false,
   "count": 6,
@@ -48,12 +48,12 @@
   "caption": "portrait · 1 image · 1 i/s"
  },
  "interagir": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/08a6611dd7f94c1a884aacddc94cc1b0/interagir.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/08a6611dd7f94c1a884aacddc94cc1b0/interagir_sheet.png",
-  "fps": 10.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/ccb6ac0308034949a481d6dbe1066eaf/interagir.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/ccb6ac0308034949a481d6dbe1066eaf/interagir_sheet.png",
+  "fps": 41.67,
   "loop": false,
-  "count": 6,
-  "caption": "interagir · 6 images · 10 i/s"
+  "count": 25,
+  "caption": "interagir · 25 images · 41.67 i/s"
  },
  "victoire": {
   "gif": "https://stellar.tailbeda4d.ts.net/files/1dd93fb734c64631b5ab08a966498a46/victoire.gif",
@@ -64,12 +64,12 @@
   "caption": "victoire · 10 images · 10 i/s"
  },
  "defaite": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/1dd93fb734c64631b5ab08a966498a46/defaite.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/1dd93fb734c64631b5ab08a966498a46/defaite_sheet.png",
-  "fps": 8.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/3da121ed84ee45cc8427149c67e63e41/defaite.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/3da121ed84ee45cc8427149c67e63e41/defaite_sheet.png",
+  "fps": 59.0,
   "loop": false,
-  "count": 8,
-  "caption": "defaite · 8 images · 8 i/s"
+  "count": 59,
+  "caption": "defaite · 59 images · 59 i/s"
  },
  "etourdi": {
   "gif": "https://stellar.tailbeda4d.ts.net/files/1dd93fb734c64631b5ab08a966498a46/etourdi.gif",
