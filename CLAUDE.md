@@ -24,8 +24,8 @@ pixelforge et quelques briques réduites dans `src/blackout/commun/`, à remplac
 4. **Tout paramètre de gameplay est une donnée** (`data/blackout/rules.json`, `options_partie.json`,
    constantes nommées), pas un nombre magique. Une option de gameplay validée devient réglable dans
    le menu de création de partie.
-5. **Branche de travail = `main`.** Les commits et les push sur `main` sont autorisés. Pas de
-   déploiement en prod sans Julien.
+5. **Branche de travail = `main`.** Les commits et les push sur `main` sont autorisés. La prod se
+   déploie quand Julien accepte des cartes en QA sur le board (watcher, GDD §14.2), jamais autrement sans lui.
 6. **Tout rendu est regardé** (captures `--shot`) avant d'être montré ou déployé.
 7. Musique et sons : le jeu n'en a pas pour l'instant. Toute musique ajoutée est une composition
    originale ou un air du domaine public.
@@ -52,7 +52,8 @@ src/net/              réseau des salons : Api (autoload, client HTTP), P2PLink 
 data/blackout/         rules.json, options_partie.json, gros_mots.json…
 assets/maps/<carte>/  cartes (map.txt, décor) ; assets/blackout/ persos, décor
 backend/              API PHP (routeur unique public/index.php, salons dans src/Rooms.php)
-producer/             service /producer (pilotage) ; tools/producer/ pour le construire
+producer/             board de production, local sur Tailscale (GDD §14.2) ; tools/producer/ : watcher studio.py,
+                      installation, CLI
 tools/blackout/        cartes, décor, persos, recette (pixelforge) ; tools/pf/ client pixelforge
 tests/                bk_tests.gd (headless), decor/, backend/rooms_test.py, web/ (Playwright)
 web/                  shell.html (page d'accueil web), .htaccess (COOP/COEP)
@@ -83,7 +84,8 @@ godot --headless --path . --export-release "Web" web/build/index.html
 node tests/web/smoke.mjs chromium "#scene=bk_game" 20                           # web
 python3 tests/backend/rooms_test.py                                             # API des salons
 python3 tools/blackout/make_proto_map.py                                         # carte → assets/maps/
-tools/producer/build.sh <dossier>                                               # /producer
+tools/producer/studio_installe.sh                                               # board local + watcher (launchd, Tailscale)
+tools/producer/reorganise_board.py                                              # roadmap du GDD §15 → board
 ```
 
 Écrans pour `--scene=` : `bk_qui_joue`, `bk_accueil`, `bk_partie_rapide`, `bk_profil`, `bk_reglages`,
