@@ -38,8 +38,8 @@ backend/turn.php
 tools/blackout/.decor_go
 tools/blackout/.decor_pause
 
-# HD des character sets pixelforge (locale, sert à producer ; non exportée)
-assets/blackout/*/*/hd/
+# HD des character sets pixelforge : versionnée dans Git LFS (.gitattributes), sur la branche « assets-integres »
+# (tools/producer/branche_assets.py, Julien 24/10) ; non exportée dans le jeu.
 
 # Service local du board (données, builds) — jamais versionné
 /.studio/

@@ -1,0 +1,2 @@
+# HD des character sets pixelforge (≈ 240 Mo par perso) : Git LFS (Julien 24/10).
+assets/blackout/*/*/hd/** filter=lfs diff=lfs merge=lfs -text
