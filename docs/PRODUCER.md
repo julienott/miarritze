@@ -32,6 +32,11 @@ Mac de Julien et n'existe plus en ligne :
     l'élément refusé est refait (l'ancienne tâche est notée dans `refaites` d'iterations.json). L'explication
     de Claude est postée sur la carte. Une carte refusée remise en Todo à la main suit le même chemin.
   Dès qu'une nouvelle tâche pixelforge est intégrée pour elle, la carte revient seule en QA.
+- **Profil de référence refusé** (Julien, 24/10) : refuser une base ou une expression emmène dans la même colonne
+  (Backlog ou Todo) tout ce qui en est fait et qui était en QA, Validé ou En prod : pour une base, tout le perso
+  (expressions, portraits, animations) ; pour une expression, ses portraits et les animations faites sur elle.
+  Ces cartes attendent que le profil soit refait ; en Todo, elles sont alors redemandées depuis le nouveau profil
+  (anciennes tâches notées dans `refaites`). Commentaire sur chacune.
 - **Carte à commande** (Julien, 24/10) : si sa description contient des lignes `$ <outil> …`, le watcher les
   lance quand la carte est en Todo (outils du dépôt seulement : `tools/blackout`, `tools/pf`, `tools/producer`,
   `.py` ou `.sh`, sans shell), écrit la sortie en commentaire et passe la carte en Doing. Il suit les tâches

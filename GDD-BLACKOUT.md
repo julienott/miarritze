@@ -846,7 +846,9 @@ Fonctionnement détaillé, règles de passage et automatismes : **`docs/PRODUCER
   prod 10 min après le dernier accept (un déploiement pour plusieurs cartes) ; les cartes passent alors
   **En prod**. ✗ Refuser renvoie en haut du Backlog, « à retraiter » ; ↻ Refuser et refaire (*24/10*) renvoie en
   haut du Todo : Claude (relève toutes les 30 min) applique le commentaire à la demande, puis l'élément seul est
-  redemandé à pixelforge depuis le profil validé du perso. Commentaire obligatoire.
+  redemandé à pixelforge depuis le profil validé du perso. Commentaire obligatoire. Un profil de référence (base,
+  expression) refusé emmène dans sa colonne ce qui en est fait (QA, Validé, En prod), refait ensuite depuis le
+  nouveau profil (*Julien, 24/10*).
 - Chaque animation, expression, portrait et base de perso, PNJ, boss ou asset a sa carte sous son chapeau, liée à
   ses tâches pixelforge ; chaque coup spécial a son chapeau sous son perso (lancement, objet, effet, icône) ;
   chaque asset de décor a sa carte sous sa carte de jeu (*Julien, 24/10*). Dans la fiche d'un perso, chaque

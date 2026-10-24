@@ -24,16 +24,16 @@
   "caption": "run · 8 images · 18 i/s · boucle"
  },
  "jump_hide": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/jump_hide.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/jump_hide_sheet.png",
-  "fps": 12,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/5326c2d543d8447680d818aa9823c079/jump_hide.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/5326c2d543d8447680d818aa9823c079/jump_hide_sheet.png",
+  "fps": 104.0,
   "loop": false,
-  "count": 6,
-  "caption": "jump_hide · 6 images · 12 i/s"
+  "count": 52,
+  "caption": "jump_hide · 52 images · 104 i/s"
  },
  "lift": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/lift.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/lift_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/e44fbcdcc1e44d5eaf2a017da4584493/lift.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/e44fbcdcc1e44d5eaf2a017da4584493/lift_sheet.png",
   "fps": 8.0,
   "loop": false,
   "count": 6,
