@@ -263,6 +263,10 @@ function renderSetGallery(box, a) {
   // Profils de référence (Julien 24/10) : le profil porte toutes les variations ; le neutre en grand,
   // puis un profil par expression, chacun avec sa carte (base, expr:<clé>).
   const profils = s.profils || [];
+  // Usages de portrait de chaque expression (GDD §8.5 ; index : set.portraits), l'expression les porte (Julien 24/10).
+  const USAGES = { menus: 'menus', versus_chasseur: 'versus chasseur', versus_chasse: 'versus chassé',
+    podium_gagnant: 'podium gagnant', podium_perdant: 'podium perdant' };
+  const usagesDe = (k) => Object.entries(s.portraits || {}).filter(([, v]) => v === k).map(([u]) => USAGES[u] || u).join(', ');
   const avecImage = new Set(profils.map((x) => x.expression));
   const profilEl = (x, big) => {
     const k = x.expression === 'neutre' ? kids.find((c) => c.detail === 'base') : kids.find((c) => c.detail === 'expr:' + x.expression);
@@ -271,6 +275,7 @@ function renderSetGallery(box, a) {
         el('img', { src: fileUrl(x.profile), alt: `profil ${x.expression}`, loading: 'lazy' }),
         x.portrait ? el('img', { src: fileUrl(x.portrait), alt: `portrait ${x.expression}`, loading: 'lazy' }) : null),
       el('figcaption', {}, el('strong', { text: x.expression === 'neutre' ? 'Profil neutre (référence)' : x.expression }),
+        usagesDe(x.expression) ? el('span', { class: 'muted small-note', text: ' · portrait ' + usagesDe(x.expression) }) : null,
         verdict(k || null)));
   };
   const blocProfils = profils.length ? el('section', { class: 'sg-profils' },

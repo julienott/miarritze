@@ -54,10 +54,11 @@ Mac de Julien et n'existe plus en ligne :
   `blackout/<famille>/<id>/animations`) ; dessous, une carte par base (`detail` = `base`), par expression
   (`expr:<clé>`) et par animation (`run`, `victoire`…). Les chapeaux de famille (Persos, PNJ et animaux, Boss,
   Décor) les regroupent. Depuis le 24/10 (Julien) :
-  - **portraits** : une carte par portrait (`portrait:<usage>` : menus, versus_chasseur, versus_chasse,
-    podium_gagnant, podium_perdant ; un seul, menus, pour un PNJ ; versus en 128 px pour un boss). Sous un perso,
-    elles sont groupées dans « <Nom> · portraits ». Le watcher les relie à la tâche qui fait le portrait (base
-    neutre, ou base avec l'expression de l'usage) ;
+  - **portraits** : pas de carte à part. Une expression fait le profil et le portrait de cette expression ; sa carte
+    porte ses usages de portrait dans son titre (« Itsasargi · expression determine (profil + portrait versus
+    chasseur) »), la base neutre porte le profil et le portrait neutres. Les cartes portrait du 24/10 après-midi
+    doublaient les expressions (même tâche pixelforge) et ont été retirées (Julien, 24/10). Un boss garde sa carte
+    « portrait (versus, 128 px) », qui est un élément à part ;
   - **coups spéciaux** : sous chaque perso, un chapeau par coup (« coup de chassé : … », « coup de chasseur : … »)
     avec une carte par asset : l'animation de lancement (`cast_chasse`, `cast_chasseur`, automatisée), l'objet
     lancé ou posé, l'effet visible et l'icône (asset `blackout/coups/<id>`, détails `objet`, `effet`, `icone`) ;

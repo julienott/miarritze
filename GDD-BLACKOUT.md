@@ -849,8 +849,8 @@ Fonctionnement détaillé, règles de passage et automatismes : **`docs/PRODUCER
   redemandé à pixelforge depuis le profil validé du perso. Commentaire obligatoire. Un profil de référence (base,
   expression) refusé emmène dans sa colonne ce qui en est fait (QA, Validé, En prod), refait ensuite depuis le
   nouveau profil (*Julien, 24/10*).
-- Chaque animation, expression, portrait et base de perso, PNJ, boss ou asset a sa carte sous son chapeau, liée à
-  ses tâches pixelforge ; chaque coup spécial a son chapeau sous son perso (lancement, objet, effet, icône) ;
+- Chaque animation, expression et base de perso, PNJ, boss ou asset a sa carte sous son chapeau, liée à
+  ses tâches pixelforge (une expression porte aussi son portrait, usages dans son titre) ; chaque coup spécial a son chapeau sous son perso (lancement, objet, effet, icône) ;
   chaque asset de décor a sa carte sous sa carte de jeu (*Julien, 24/10*). Dans la fiche d'un perso, chaque
   élément se valide ou se refuse à part. Les tâches des cartes en Doing, QA, Validé et En prod sont marquées `keep`.
 - Automatisé sans l'agent (aucun token) : synchronisation avec pixelforge, intégration locale, build QA,
@@ -989,7 +989,7 @@ a/b : en pause. PNJ (#647, reste après la base du 23/10) et masques du décor (
 - **24/10** (refus, Julien) : deux boutons de refus, commentaire obligatoire : « Refuser » (Backlog) et « Refuser
   et refaire » (Todo) ; un sous-élément refait repart du profil validé (base ou expression socle), §14.2. Le
   commentaire est appliqué par Claude, réveillé toutes les 30 min, pas par un Claude lancé par le watcher.
-- **24/10** (board, Julien) : une carte par portrait (perso, PNJ, boss) ; coups spéciaux détaillés par asset
+- **24/10** (board, Julien) : portraits portés par leur carte d'expression (les cartes portrait à part, doublons, retirées le soir) ; coups spéciaux détaillés par asset
   sous leur perso ; assets du décor sous leur carte de jeu ; ✓ / ✗ par élément dans la fiche d'un perso.
 - **24/10** (versions, Julien) : tous les assets sont versionnés dans git : la HD en Git LFS, l'intégré non
   validé sur la branche `assets-integres` (mise à jour par le watcher) ; `main` et la prod ne reçoivent que le validé.

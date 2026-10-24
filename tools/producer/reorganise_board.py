@@ -2,8 +2,8 @@
 """Réorganise le board local selon la roadmap (GDD §15) et la règle « une carte par animation » (§14.2) :
 jalons dans l'ordre du GDD ; chapeaux Persos, PNJ et animaux, Boss, Décor ; sous chacun, un chapeau par perso,
 PNJ, animal, boss ou carte de jeu, avec une carte par base, expression, animation, portrait (asset du set +
-détail) ; sous chaque perso, un chapeau par coup spécial (lancement, objet, effet, icône) et un pour ses
-portraits ; sous chaque carte de jeu, une carte par asset de son décor (Julien, 24/10).
+détail ; une expression porte aussi son portrait, et ses usages sont dans son titre) ; sous chaque perso, un
+chapeau par coup spécial (lancement, objet, effet, icône) ; sous chaque carte de jeu, une carte par asset de son décor (Julien, 24/10).
 Idempotent : une carte existante (même asset et même détail) est reprise, jamais dupliquée ; les
 colonnes déjà avancées ne reculent pas.
   tools/producer/reorganise_board.py [--montre]
@@ -147,6 +147,15 @@ def coups_du_perso(pid, nom, asset, h, a_tache, J):
               hc, "backlog", jalon[JR["R8"]])
 
 
+USAGE = {"menus": "menus", "versus_chasseur": "versus chasseur", "versus_chasse": "versus chassé",
+         "podium_gagnant": "podium gagnant", "podium_perdant": "podium perdant"}
+
+
+def titre_expr(nom, k, usages):
+    u = usages.get(k)
+    return f"{nom} · expression {k}" + (f" (profil + portrait {', '.join(u)})" if u else "")
+
+
 # ------------------------------------------------------------------ persos (itérations)
 J = jalon[JR["R2"]]
 persos = carte("Persos : les 13 en itérations (base, expressions, animations)", "pixelforge", parent=None, ms=J,
@@ -166,19 +175,16 @@ for pid in ORDRE:
     els, ks = en.utiles(b, pid)
     a_tache = lambda d: (d == "base" and s.get("base")) or (d.startswith("expr:") and d[5:] in s.get("expressions", {})) \
         or d in s.get("animations", {})  # noqa: E731
+    # Une expression fait le profil et le portrait de cette expression : ses usages de portrait (GDD §8.5) sont
+    # dans son titre (Julien 24/10 : plus de cartes portrait à part, elles doublaient les expressions).
+    usages = {}
+    for u, v in b.ex["portraits"].items():
+        usages.setdefault(b.base(pid) if v == "base" else v, []).append(USAGE.get(u, u))
     lignes = [("base", f"{nom} · base neutre (profil et portrait)", "asset")] + \
-        [(f"expr:{k}", f"{nom} · expression {k}", "asset") for k in ks] + \
+        [(f"expr:{k}", titre_expr(nom, k, usages), "asset") for k in ks] + \
         [(x, f"{nom} · {x}", "animation") for x in els if x not in CASTS]
     for d, titre, t in lignes:
         carte(titre, t, asset, d, h, "doing" if a_tache(d) else "todo", J)
-    # Portraits (Julien 24/10) : un par usage (GDD §8.5), faits par la base ou par l'expression de l'usage.
-    hp = carte(f"{nom} · portraits", "asset", parent=h, statut="todo", ms=J,
-               desc="Portraits du perso, un par usage (GDD §8.1, §8.5) : menus, versus, podium. Chacun vient de la "
-                    "base neutre ou de la base avec l'expression de l'usage.")
-    for u, v in b.ex["portraits"].items():
-        k = b.base(pid) if v == "base" else v
-        carte(f"{nom} · portrait {u} ({k})", "asset", asset, f"portrait:{u}", hp,
-              "doing" if a_tache("base" if k == it.NEUTRE else f"expr:{k}") else "todo", J)
     coups_du_perso(pid, nom, asset, h, a_tache, J)
 fan = carte("Fantôme : commun", "perso", "blackout/fantome/fantome/animations", "", persos, "backlog", J)
 for x in ("appear", "float", "advance"):
@@ -204,8 +210,8 @@ for pid, h in bp.p["humains"].items():
             ks.append(k)
     nom = h["prenom"]
     for d, titre, t in [("base", f"{nom} · base neutre (profil et portrait)", "asset")] + \
-            [(f"expr:{k}", f"{nom} · expression {k}", "asset") for k in ks] + [(x, f"{nom} · {x}", "animation") for x in els] + \
-            [("portrait:menus", f"{nom} · portrait menus ({bp.base(pid)})", "asset")]:
+            [(f"expr:{k}", titre_expr(nom, k, {bp.base(pid): ["menus"]}), "asset") for k in ks] + \
+            [(x, f"{nom} · {x}", "animation") for x in els]:
         carte(titre, t, asset, d, hid, "backlog", J)
 for aid in json.load(open(os.path.join(ROOT, "data", "blackout", "pnj.json")))["animaux"]:
     asset = f"blackout/animaux/{aid}/animations"
