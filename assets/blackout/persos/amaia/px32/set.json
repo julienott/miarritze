@@ -1,5 +1,4 @@
 {
- "factor": 4,
  "size": "normal",
  "height": 30,
  "canvas": [
@@ -7,36 +6,57 @@
   64
  ],
  "feet_y": 60,
+ "scale": "1:1 (pixel natif)",
  "palette": [
-  "#00b220",
-  "#012716",
-  "#5f0002",
-  "#720002",
-  "#724222",
-  "#770002",
-  "#d50005",
-  "#ff0005",
-  "#ff944d",
-  "#ffffff"
+  "#1d2230",
+  "#212730",
+  "#2d472c",
+  "#36404f",
+  "#462328",
+  "#4a3d37",
+  "#4a7448",
+  "#637163",
+  "#6f1d1d",
+  "#723942",
+  "#724336",
+  "#78635a",
+  "#7b5840",
+  "#818780",
+  "#9d9d9d",
+  "#a1b7a0",
+  "#b43030",
+  "#b96d58",
+  "#c78f68",
+  "#d1dbd0",
+  "#fefefe"
  ],
  "palette_base": [
-  "#d50005",
-  "#00b220",
-  "#ffffff",
-  "#012716",
-  "#ff944d",
-  "#ff0005",
-  "#770002"
+  "#36404f",
+  "#4a7448",
+  "#723942",
+  "#78635a",
+  "#a1b7a0",
+  "#b43030",
+  "#b96d58",
+  "#c78f68",
+  "#d1dbd0",
+  "#fefefe"
  ],
  "palette_dark": [
-  "#5f0002",
-  "#724222",
-  "#724222",
-  "#724222",
-  "#724222",
-  "#720002",
-  "#5f0002"
+  "#212730",
+  "#2d472c",
+  "#462328",
+  "#4a3d37",
+  "#637163",
+  "#6f1d1d",
+  "#724336",
+  "#7b5840",
+  "#818780",
+  "#9d9d9d"
  ],
+ "k_raw": 0.07874,
+ "outline": "selout",
+ "native": true,
  "elements": {
   "profile": {
    "frames": 1,
@@ -59,175 +79,51 @@
    ]
   },
   "run": {
-   "frames": 4,
-   "fps": 12,
+   "frames": 8,
+   "fps": 18.0,
    "loop": true,
    "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "jump_hide": {
-   "frames": 5,
-   "fps": 12,
-   "loop": false,
-   "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "lift": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "common",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "portrait": {
-   "frames": 1,
-   "fps": 1,
-   "loop": false,
-   "anchor": "bottom",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "interagir": {
-   "frames": 6,
-   "fps": 10.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "victoire": {
-   "frames": 8,
-   "fps": 10.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "defaite": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "etourdi": {
-   "frames": 6,
-   "fps": 10.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "renverse": {
-   "frames": 12,
-   "fps": 12.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "colle": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "ralenti": {
-   "frames": 8,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "aveugle": {
-   "frames": 6,
-   "fps": 8.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "tracte": {
-   "frames": 6,
-   "fps": 10.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "idle_long": {
-   "frames": 8,
-   "fps": 10.0,
-   "loop": true,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "cast_chasse": {
-   "frames": 8,
-   "fps": 12.0,
-   "loop": false,
-   "anchor": "feet",
-   "size": [
-    64,
-    64
-   ]
-  },
-  "cast_chasseur": {
-   "frames": 8,
-   "fps": 12.0,
-   "loop": false,
-   "anchor": "feet",
    "size": [
     64,
     64
    ]
   }
  },
- "source": "767d8c701eec4483846484d3aae2fc14",
+ "extras": [],
+ "optional": {},
+ "clips": {
+  "run": "Sprint_Loop",
+  "jump_hide": "NinjaJump_Start+NinjaJump_Idle_Loop+NinjaJump_Land",
+  "lift": "LiftAir",
+  "interagir": "Interact",
+  "victoire": "Celebration",
+  "defaite": "Crying",
+  "etourdi": "Hit_Shoulder_L+Hit_Shoulder_R",
+  "renverse": "Hit_Knockback+LayToIdle",
+  "colle": "Crouch_Fwd_Loop",
+  "ralenti": "Zombie_Walk_Fwd_Loop",
+  "aveugle": "Spell_Double_Shoot_Loop",
+  "tracte": "Slide_Loop",
+  "profile": "Idle_Loop (pose debout, 1re image)",
+  "idle": "code (respiration)",
+  "ghost": "code (profil translucide qui flotte)"
+ },
+ "jump_exit": "jump_hide joué à l'envers",
+ "run_poses": [
+  23,
+  25,
+  27,
+  29,
+  31,
+  17,
+  19,
+  21
+ ],
+ "run_frames": 8,
+ "jump_frames": [],
  "controls": {
-  "warnings": [
-   "teinte d'une zone dérivée de 29.6 ΔE entre 128 et 32"
-  ],
+  "warnings": [],
   "height_px": 30,
-  "body_width_px": 7,
-  "colors_used": 10,
-  "isolated_px": 6,
   "feet_bottom": {
    "profile": [
     60
@@ -237,17 +133,34 @@
     60
    ],
    "run": [
-    59,
     60,
-    59,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
     60
    ]
   },
-  "feet_max_dev": 0,
-  "eye_present": true,
-  "zone_drift_de": 29.6,
-  "saturation_mean": 0.93,
-  "lightness_range": 90,
-  "colors_budget": 10
+  "colors_used": 1351,
+  "isolated_px": 1440,
+  "holes_px": 0,
+  "hd_clean": {
+   "profile": {
+    "sam": true,
+    "removed_px": 0,
+    "restored_px": 0,
+    "parts": 1
+   },
+   "run": {
+    "sam": true,
+    "removed_px": 2161,
+    "restored_px": 0,
+    "parts": 8
+   }
+  },
+  "part_colors": {},
+  "run_head_bob_px": 1
  }
 }

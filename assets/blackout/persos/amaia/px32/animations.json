@@ -16,28 +16,28 @@
   "caption": "idle · 2 images · 3 i/s · boucle"
  },
  "run": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/run.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/run_sheet.png",
-  "fps": 12,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/4efadbcf212f4c5ca7d33857f0de8b92/run.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/4efadbcf212f4c5ca7d33857f0de8b92/run_sheet.png",
+  "fps": 18.0,
   "loop": true,
-  "count": 4,
-  "caption": "run · 4 images · 12 i/s · boucle"
+  "count": 8,
+  "caption": "run · 8 images · 18 i/s · boucle"
  },
  "jump_hide": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/jump_hide.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/jump_hide_sheet.png",
-  "fps": 12,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/86c5c46a36104858bd8f10f2e0ed6efe/jump_hide.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/86c5c46a36104858bd8f10f2e0ed6efe/jump_hide_sheet.png",
+  "fps": 104.0,
   "loop": false,
-  "count": 5,
-  "caption": "jump_hide · 5 images · 12 i/s"
+  "count": 52,
+  "caption": "jump_hide · 52 images · 104 i/s"
  },
  "lift": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/lift.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/lift_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/1403d57fa8e04d58b27c45068bbfbd47/lift.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/1403d57fa8e04d58b27c45068bbfbd47/lift_sheet.png",
   "fps": 8.0,
-  "loop": true,
+  "loop": false,
   "count": 6,
-  "caption": "lift · 6 images · 8 i/s · boucle"
+  "caption": "lift · 6 images · 8 i/s"
  },
  "portrait": {
   "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/portrait.gif",
@@ -48,99 +48,99 @@
   "caption": "portrait · 1 image · 1 i/s"
  },
  "interagir": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/interagir.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/interagir_sheet.png",
-  "fps": 10.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/b962c579660b461f9e913d6fee613f82/interagir.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/b962c579660b461f9e913d6fee613f82/interagir_sheet.png",
+  "fps": 41.67,
   "loop": false,
-  "count": 6,
-  "caption": "interagir · 6 images · 10 i/s"
+  "count": 25,
+  "caption": "interagir · 25 images · 41.67 i/s"
  },
  "victoire": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/victoire.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/victoire_sheet.png",
-  "fps": 10.0,
-  "loop": true,
-  "count": 8,
-  "caption": "victoire · 8 images · 10 i/s · boucle"
+  "gif": "https://stellar.tailbeda4d.ts.net/files/4fdfe37e69704628a75a38b3828f2145/victoire.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/4fdfe37e69704628a75a38b3828f2145/victoire_sheet.png",
+  "fps": 49.0,
+  "loop": false,
+  "count": 49,
+  "caption": "victoire · 49 images · 49 i/s"
  },
  "defaite": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/defaite.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/defaite_sheet.png",
-  "fps": 8.0,
-  "loop": true,
-  "count": 6,
-  "caption": "defaite · 6 images · 8 i/s · boucle"
+  "gif": "https://stellar.tailbeda4d.ts.net/files/0b680d7967ac475685142b9efdd663b3/defaite.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/0b680d7967ac475685142b9efdd663b3/defaite_sheet.png",
+  "fps": 59.0,
+  "loop": false,
+  "count": 59,
+  "caption": "defaite · 59 images · 59 i/s"
  },
  "etourdi": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/etourdi.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/etourdi_sheet.png",
-  "fps": 10.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/da016524a83c4b9e82bad3c1cd6dd5dd/etourdi.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/da016524a83c4b9e82bad3c1cd6dd5dd/etourdi_sheet.png",
+  "fps": 17.5,
   "loop": false,
-  "count": 6,
-  "caption": "etourdi · 6 images · 10 i/s"
+  "count": 14,
+  "caption": "etourdi · 14 images · 17.5 i/s"
  },
  "renverse": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/renverse.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/renverse_sheet.png",
-  "fps": 12.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/77c92cec1dfb4b91b9ef2d914e058ce1/renverse.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/77c92cec1dfb4b91b9ef2d914e058ce1/renverse_sheet.png",
+  "fps": 30.0,
   "loop": false,
-  "count": 12,
-  "caption": "renverse · 12 images · 12 i/s"
+  "count": 30,
+  "caption": "renverse · 30 images · 30 i/s"
  },
  "colle": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/colle.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/colle_sheet.png",
-  "fps": 8.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/4ed29808604348b9b46e072154acb7f5/colle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/4ed29808604348b9b46e072154acb7f5/colle_sheet.png",
+  "fps": 30.67,
   "loop": true,
-  "count": 6,
-  "caption": "colle · 6 images · 8 i/s · boucle"
+  "count": 23,
+  "caption": "colle · 23 images · 30.67 i/s · boucle"
  },
  "ralenti": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/ralenti.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/ralenti_sheet.png",
-  "fps": 8.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/8ba78efe9e2f4bc996d9c8fd8a6f5ff2/ralenti.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/8ba78efe9e2f4bc996d9c8fd8a6f5ff2/ralenti_sheet.png",
+  "fps": 15.0,
   "loop": true,
-  "count": 8,
-  "caption": "ralenti · 8 images · 8 i/s · boucle"
+  "count": 15,
+  "caption": "ralenti · 15 images · 15 i/s · boucle"
  },
  "aveugle": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/aveugle.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/aveugle_sheet.png",
+  "gif": "https://stellar.tailbeda4d.ts.net/files/ddb40e1bdaa24da693104d76732bbc25/aveugle.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/ddb40e1bdaa24da693104d76732bbc25/aveugle_sheet.png",
   "fps": 8.0,
   "loop": true,
   "count": 6,
   "caption": "aveugle · 6 images · 8 i/s · boucle"
  },
  "tracte": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/tracte.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/tracte_sheet.png",
-  "fps": 10.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/75b6f107e537432281cbffe1e6dc228e/tracte.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/75b6f107e537432281cbffe1e6dc228e/tracte_sheet.png",
+  "fps": 38.33,
   "loop": true,
-  "count": 6,
-  "caption": "tracte · 6 images · 10 i/s · boucle"
+  "count": 23,
+  "caption": "tracte · 23 images · 38.33 i/s · boucle"
  },
  "idle_long": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/idle_long.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/idle_long_sheet.png",
-  "fps": 10.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/da0cc4c5643f4eb1b097e6f0c8a03592/idle_long.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/da0cc4c5643f4eb1b097e6f0c8a03592/idle_long_sheet.png",
+  "fps": 15.0,
   "loop": true,
-  "count": 8,
-  "caption": "idle_long · 8 images · 10 i/s · boucle"
+  "count": 12,
+  "caption": "idle_long · 12 images · 15 i/s · boucle"
  },
  "cast_chasse": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/cast_chasse.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/cast_chasse_sheet.png",
-  "fps": 12.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/904e31672bd248d394bcb0245fd21891/cast_chasse.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/904e31672bd248d394bcb0245fd21891/cast_chasse_sheet.png",
+  "fps": 19.5,
   "loop": false,
-  "count": 8,
-  "caption": "cast_chasse · 8 images · 12 i/s"
+  "count": 13,
+  "caption": "cast_chasse · 13 images · 19.5 i/s"
  },
  "cast_chasseur": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/cast_chasseur.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/0099cb00206e459c85321131f45738d9/cast_chasseur_sheet.png",
-  "fps": 12.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/60c8c2631ffb4efb8fa8aa2f00fe0d24/cast_chasseur.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/60c8c2631ffb4efb8fa8aa2f00fe0d24/cast_chasseur_sheet.png",
+  "fps": 19.5,
   "loop": false,
-  "count": 8,
-  "caption": "cast_chasseur · 8 images · 12 i/s"
+  "count": 13,
+  "caption": "cast_chasseur · 13 images · 19.5 i/s"
  }
 }
