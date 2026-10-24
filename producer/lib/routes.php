@@ -9,13 +9,17 @@ declare(strict_types=1);
  */
 return [
     // --------------------------------------------------------------- session
-    ['GET', 'session', 'Session', '', 'État de la session web et jeton CSRF (public).', ''],
+    ['GET', 'session', 'Session', '', 'État de la session web, jeton CSRF et mode (password | tailscale) (public). '
+        . 'Avec tailscale_auth, une requête du proxy local (127.0.0.1 / ::1) portant Tailscale-User-Login est connectée '
+        . 'sans mot de passe.', ''],
     ['POST', 'login', 'Session', '{password}', 'Connexion par mot de passe (en-tête X-CSRF-Token requis).', ''],
     ['POST', 'logout', 'Session', '{}', 'Déconnexion.', ''],
     // ---------------------------------------------------------------- assets
     ['GET', 'index', 'Assets', '', 'Index des assets du build (assets, versions des fichiers, données Blackout : persos, '
         . 'animations attendues, cartes de jeu, règles, liens assets ↔ cartes, file pixelforge).', ''],
     ['GET', 'index_version', 'Assets', '', 'Version légère de l\'index (date + taille), sondée pour le direct.', ''],
+    ['GET', 'studio', 'Assets', '', 'État du studio écrit par le watcher (<data_dir>/studio.json, sinon files/studio.json, '
+        . 'sinon {}) : {qa_build: {at, commit, ok}, deploy: {state: idle|en_attente|en_cours|echec, at, cards, message}}.', ''],
     ['GET', 'file', 'Assets', '&p=<chemin>[&v=<empreinte>]', 'Sert un fichier listé par l\'index (liste blanche, '
         . 'requêtes partielles).', ''],
     // ---------------------------------------------------- commentaires d'asset
@@ -33,7 +37,8 @@ return [
     ['POST', 'comment_delete', 'Commentaires', '{id}', 'Supprime un commentaire.', ''],
     // ---------------------------------------------------------------- kanban
     ['GET', 'cards', 'Kanban', '&status=, &parent=, &night=1, &type=, &milestone=<id>|none, &asset=, &q=',
-        'Cartes avec notes, children, children_done (QA + Done), status_at (entrée dans la colonne), milestone_id, due.',
+        'Cartes avec notes, children, children_done (QA + Validé + En prod), status_at (entrée dans la colonne), '
+        . 'milestone_id, due, jobs (tâches pixelforge, liste).',
         'cards [--status S] [--parent N] [--night] [--type T] [--milestone N|none] [--asset ID] [--search Q]'],
     ['GET', 'card', 'Kanban', '&id=N', '{card, children, events} : détail, enfants et historique.', 'show N'],
     ['GET', 'events', 'Kanban', '&since=<epoch>[&card=N]', 'Événements depuis since (1000 au plus) et now du serveur.',
@@ -41,14 +46,17 @@ return [
     ['POST', 'card', 'Kanban', '{title, type?, description?, priority?, asset?, detail?, night?, status?, parent?, '
         . 'milestone?, due?}', 'Crée une carte (Backlog par défaut).', 'add-card --title … [--milestone N] [--due AAAA-MM-JJ]'],
     ['POST', 'card_update', 'Kanban', '{id, type?, title?, description?, priority?, asset?, detail?, night?, parent?, '
-        . 'milestone? (0 = aucun), due? ("" = aucune)}', 'Modifie une carte ; chaque vrai changement est historisé.',
-        'set N [--milestone N|0] [--due AAAA-MM-JJ|aucune] …'],
-    ['POST', 'card_move', 'Kanban', '{id, status, index?}', 'Déplace une carte (review accepté pour qa).', 'move N doing'],
+        . 'milestone? (0 = aucun), due? ("" = aucune), jobs? (liste JSON en chaîne, 8000 caractères au plus ; "[]" = aucune)}',
+        'Modifie une carte ; chaque vrai changement est historisé (jobs : événement « jobs » résumé, updated_at inchangé). '
+        . 'Tâche : {id, role, label, status: pending|running|succeeded|failed…, keep}.',
+        'set N [--milestone N|0] [--due AAAA-MM-JJ|aucune] [--jobs \'[…]\'] …'],
+    ['POST', 'card_move', 'Kanban', '{id, status, index?}', 'Déplace une carte (review accepté pour qa ; '
+        . 'valide -> done : passage en prod, fait par le watcher du déploiement).', 'move N doing'],
     ['POST', 'cards_bulk', 'Kanban', '{ids: [..], status?, night?, priority?, milestone?}', 'Même changement sur '
         . 'plusieurs cartes (500 au plus), dans une transaction.', 'bulk 4 5 6 [--status qa] [--night on] [--priority haute] [--milestone N]'],
     ['POST', 'card_comment', 'Kanban', '{id, body}', 'Commente une carte (alias card_note).', 'comment N "texte"'],
-    ['POST', 'card_accept', 'Kanban', '{id}', 'QA → Done (descendants encore en QA compris) ; renvoie accepted.', ''],
-    ['POST', 'card_refuse', 'Kanban', '{id, body}', 'QA → Doing, à retraiter, avec le commentaire de refus.', ''],
+    ['POST', 'card_accept', 'Kanban', '{id}', 'QA → Validé (descendants encore en QA compris) ; renvoie accepted.', ''],
+    ['POST', 'card_refuse', 'Kanban', '{id, body}', 'QA → sommet du Backlog, à retraiter, avec le commentaire de refus.', ''],
     ['POST', 'card_delete', 'Kanban', '{id}', 'Supprime une carte (enfants détachés).', ''],
     // ---------------------------------------------------------------- jalons
     ['GET', 'milestones', 'Roadmap', '', 'Jalons (ouverts d\'abord, puis position, échéance).', 'milestones'],

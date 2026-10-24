@@ -7,7 +7,7 @@
 // Statut d'un asset, du plus urgent au plus calme : refusé à retraiter, à valider, en cours…
 const ITEM_STATUSES = [
   ['rework', '↺ À retraiter'], ['qa', 'QA : à valider'], ['doing', 'En cours'], ['todo', 'Todo'],
-  ['backlog', 'Backlog'], ['done', 'Fait'], ['none', 'Sans carte'],
+  ['backlog', 'Backlog'], ['valide', 'Validé'], ['done', 'En prod'], ['none', 'Sans carte'],
 ];
 const ITEM_STATUS_LABEL = Object.fromEntries(ITEM_STATUSES);
 const STATUS_RANK = Object.fromEntries(ITEM_STATUSES.map(([k], i) => [k, i]));
@@ -82,7 +82,7 @@ function cardsFor(assetId, detail) {
   return { direct, general };
 }
 
-/** Statut d'un ensemble de cartes : refus en cours > QA > Doing > Todo > Backlog > Done ; aucune = « none ». */
+/** Statut d'un ensemble de cartes : refus en cours > QA > Doing > Todo > Backlog > Validé > En prod ; aucune = « none ». */
 function statusOfCards(cards) {
   if (!cards.length) return 'none';
   if (cards.some((c) => c.rework)) return 'rework';
@@ -106,7 +106,7 @@ function statusPill(st, extra) {
   return el('span', { class: 'pill p-' + st, title: extra || null, text: ITEM_STATUS_LABEL[st] || STATUS_LABEL[st] || st });
 }
 
-/** Pastille de colonne d'une carte (Backlog… Done, ↺ si refusée). */
+/** Pastille de colonne d'une carte (Backlog… En prod, ↺ si refusée). */
 function cardPill(c) {
   return statusPill(c.rework ? 'rework' : c.status);
 }
@@ -153,12 +153,13 @@ function leavesOf(id) {
   return [...familyIds(id)].map(cardById).filter((c) => c && !c.children);
 }
 
-/** Barre empilée Done / QA / Doing / Todo / Backlog d'une liste de cartes ; renvoie [barre, résumé]. */
+/** Barre empilée En prod / Validé / QA / Doing / Todo / Backlog d'une liste de cartes ; renvoie [barre, résumé]. */
 function stackBar(cards) {
   const n = cards.length || 1;
   const count = (s) => cards.filter((c) => c.status === s).length;
   const bar = el('div', { class: 'stack', role: 'img' });
-  const parts = [['done', count('done')], ['qa', count('qa')], ['doing', count('doing')], ['todo', count('todo')], ['backlog', count('backlog')]];
+  const parts = [['done', count('done')], ['valide', count('valide')], ['qa', count('qa')], ['doing', count('doing')],
+    ['todo', count('todo')], ['backlog', count('backlog')]];
   for (const [s, k] of parts) {
     if (!k) continue;
     const seg = el('span', { class: 'seg-' + s, title: `${STATUS_LABEL[s]} : ${k}` });
@@ -166,10 +167,11 @@ function stackBar(cards) {
     bar.append(seg);
   }
   const done = count('done');
+  const valide = count('valide');
   const qa = count('qa');
-  bar.setAttribute('aria-label', `${done} faites, ${qa} en QA sur ${cards.length}`);
-  const pct = cards.length ? Math.round(100 * (done + qa) / cards.length) : 0;
-  return [bar, `${done} faites · ${qa} en QA · ${cards.length} en tout (${pct} %)`];
+  bar.setAttribute('aria-label', `${done} en prod, ${valide} validées, ${qa} en QA sur ${cards.length}`);
+  const pct = cards.length ? Math.round(100 * (done + valide + qa) / cards.length) : 0;
+  return [bar, `${done} en prod · ${valide} validées · ${qa} en QA · ${cards.length} en tout (${pct} %)`];
 }
 
 // ----------------------------------------------------------------- markdown simple
@@ -241,7 +243,7 @@ function linkedCardRow(c, after) {
   return el('li', { class: 'lcard' },
     el('button', { type: 'button', class: 'lcard-open', onclick: () => openCardDialog(c, '') },
       cardPill(c), el('span', { class: 'lcard-title', text: c.title }), el('span', { class: 'muted', text: '#' + c.id }),
-      c.night ? el('span', { class: 'badge night', text: '🌙' }) : null, dueBadge(c.due, c.status === 'done')),
+      c.night ? el('span', { class: 'badge night', text: '🌙' }) : null, jobsBadge(c), dueBadge(c.due, FINISHED.has(c.status))),
     qa.length ? el('span', { class: 'lcard-qa' }, qa) : null);
 }
 
@@ -258,7 +260,7 @@ function pilotBlock(opts) {
     for (const c of opts.extraCards ? opts.extraCards() : []) if (!direct.includes(c)) direct.push(c);
     const st = statusOfCards(direct);
     const refus = lastRefusal(direct.filter((c) => c.rework));
-    const open = direct.filter((c) => c.status !== 'done');
+    const open = direct.filter((c) => !FINISHED.has(c.status));
     // Carte proposée : la plus avancée des cartes ouvertes ; sinon nouvelle carte.
     const sorted = open.slice().sort((a, b) => STATUS_RANK[a.rework ? 'rework' : a.status] - STATUS_RANK[b.rework ? 'rework' : b.status]);
     const target = el('select', { 'aria-label': 'Carte où reporter le commentaire' },
@@ -311,7 +313,7 @@ function pilotBlock(opts) {
       form].filter(Boolean));
   };
   // Au moins une carte ouverte à proposer ?
-  const body0 = (direct) => direct.some((c) => c.status !== 'done');
+  const body0 = (direct) => direct.some((c) => !FINISHED.has(c.status));
   render();
   box.refresh = render;
   return box;

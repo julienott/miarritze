@@ -26,6 +26,39 @@ function eventLine(e) {
       : el('span', { class: 'muted', text: `#${e.card_id} ${e.card_title || '(supprimée)'}` }));
 }
 
+const DEPLOY_LABEL = { idle: 'à jour', en_attente: 'déploiement en attente', en_cours: 'déploiement en cours…', echec: 'échec du déploiement' };
+
+/** « 24/10 14:32 » */
+function fmtShort(ts) {
+  const d = new Date(ts * 1000);
+  const p = (n) => String(n).padStart(2, '0');
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+/**
+ * Ligne sobre du studio (état écrit par le watcher, GET studio, sinon clé `studio` de l'index) :
+ * build du jeu de QA (lien /jeu/) et déploiement groupé vers la prod (cartes Validé en attente).
+ */
+function studioRow() {
+  const st = (state.studio && Object.keys(state.studio).length ? state.studio : (state.index && state.index.studio)) || {};
+  const qb = st.qa_build && typeof st.qa_build === 'object' ? st.qa_build : null;
+  const dep = st.deploy && typeof st.deploy === 'object' ? st.deploy : null;
+  const valides = state.cards.filter((c) => c.status === 'valide' && !c.children).length;
+  if (!qb && !dep && !valides) return null;
+  const qaText = qb ? (qb.at ? `build du ${fmtShort(qb.at)}` : 'build') + (qb.commit ? ' · ' + String(qb.commit).slice(0, 7) : '')
+    + (qb.ok === false ? ' · ✗ en échec' : '') : 'pas encore de build';
+  const depState = dep ? String(dep.state || 'idle') : 'idle';
+  let prodText = DEPLOY_LABEL[depState] || depState;
+  if (dep && dep.at) prodText += ` (${fmtShort(dep.at)})`;
+  if (valides) prodText += ` · ${valides} validée${valides > 1 ? 's' : ''} à déployer`;
+  const tile = (cls, label, text, href, title) => el('a', { class: 'studio-tile ' + cls, href, title: title || null },
+    el('strong', { text: label }), el('span', { text }));
+  return el('div', { class: 'studio-row' },
+    tile('s-qa' + (qb && qb.ok === false ? ' bad' : ''), '▶ Jeu QA', qaText, '/jeu/', 'Ouvrir le jeu local de QA'),
+    tile('s-prod' + (depState === 'echec' ? ' bad' : ''), 'Prod', prodText, '#/kanban',
+      dep && dep.message ? String(dep.message) : 'miarritze.ijulien.com'));
+}
+
 async function renderBord() {
   const box = $('bord');
   const g = state.index.blackout || {};
@@ -60,6 +93,11 @@ async function renderBord() {
   tiles.children[3].addEventListener('click', kanbanAt('todo'));
   tiles.children[6].addEventListener('click', () => { cat.type = 'anim'; cat.filters = new Set(['manquant']); cat.map = ''; saveCatalogue(); });
   tiles.children[7].addEventListener('click', () => { cat.type = ''; cat.filters = new Set(['manquant']); cat.group = 'carte'; saveCatalogue(); });
+  const studio = studioRow();
+  if (studio) {
+    studio.children[0].target = '_blank';
+    studio.children[1].addEventListener('click', kanbanAt('valide'));
+  }
 
   const qaList = el('section', { class: 'panel bord-col' },
     el('h3', {}, el('span', { text: `À valider (${qa.length})` }), el('a', { href: '#/kanban', class: 'small', onclick: kanbanAt('qa'), text: 'kanban ›' })),
@@ -102,17 +140,18 @@ async function renderBord() {
   }
 
   const act = el('section', { class: 'panel bord-col bord-act' }, el('h3', { text: 'Activité (48 h)' }), el('p', { class: 'muted', text: 'Chargement…' }));
-  box.replaceChildren(tiles, el('div', { class: 'bord-grid' }, qaList, reworkList, msBox, pf, act));
+  box.replaceChildren(...[studio, tiles, el('div', { class: 'bord-grid' }, qaList, reworkList, msBox, pf, act)].filter(Boolean));
   const r = await guarded(() => api('events', { query: { since: Math.floor(Date.now() / 1000) - 2 * 86400 } }));
   if (!r || !location.hash.startsWith('#/bord') && location.hash !== '') return;
-  const evs = r.events.slice().reverse().slice(0, 60);
+  // Les tâches pixelforge (événements « jobs » du watcher) ne remplissent pas l'activité.
+  const evs = r.events.filter((e) => e.type !== 'jobs').reverse().slice(0, 60);
   const byDay = new Map();
   for (const e of evs) {
     const d = new Date(e.at * 1000).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
     if (!byDay.has(d)) byDay.set(d, []);
     byDay.get(d).push(e);
   }
-  act.replaceChildren(el('h3', { text: `Activité (48 h, ${r.events.length} événements)` }),
+  act.replaceChildren(el('h3', { text: `Activité (48 h, ${evs.length} événements)` }),
     ...(evs.length ? [...byDay].flatMap(([d, list]) => [el('h4', { class: 'kind', text: d }), el('ul', { class: 'evs' }, list.map(eventLine))])
       : [el('p', { class: 'muted', text: 'Rien depuis 48 h.' })]));
 }
@@ -132,11 +171,11 @@ function qaTile(c) {
 // ================================================================== AIDE
 
 const GUIDE = [
-  ['Bord', 'Ce qui attend : cartes à valider (✓ / ✗ directement), refus à retraiter, Doing immobiles, file pixelforge, jalons et activité des 48 dernières heures. Les tuiles mènent à la bonne colonne du kanban ou au bon filtre du catalogue.'],
-  ['Kanban', 'Backlog → Todo → Doing → QA → Done. Recherche (titre, #id), filtres par type, perso, carte de jeu, jalon et chapeau (retenus). « ☑ Sélection » : cocher des cartes puis les déplacer, passer en night shift, changer la priorité ou le jalon d\'un coup. Dans le détail d\'une carte : jalon et échéance s\'enregistrent aussitôt.'],
+  ['Bord', 'Ce qui attend : état du jeu de QA (dernier build) et de la prod (déploiement, cartes validées en attente), cartes à valider (✓ / ✗ directement), refus à retraiter, Doing immobiles, file pixelforge, jalons et activité des 48 dernières heures. Les tuiles mènent à la bonne colonne du kanban ou au bon filtre du catalogue.'],
+  ['Kanban', 'Backlog → Todo → Doing → QA → Validé → En prod. QA : à tester dans le jeu local de QA (« ▶ Jeu QA ») ; ✓ Accepter fait passer en Validé : la carte part en prod au prochain déploiement groupé ; En prod : en ligne sur miarritze.ijulien.com (déplacée par le déploiement). ✗ Refuser renvoie en haut du Backlog, à retraiter. Recherche (titre, #id), filtres par type, perso, carte de jeu, jalon et chapeau (retenus). « ☑ Sélection » : cocher des cartes puis les déplacer, passer en night shift, changer la priorité ou le jalon d\'un coup. Dans le détail d\'une carte : jalon et échéance s\'enregistrent aussitôt.'],
   ['Catalogue', 'Tous les éléments du jeu : chaque animation de chaque perso (présente ou manquante), le décor des trois cartes (objets, cachettes, sorties, sols, animations), les plans, règles, options et écrans. Grouper par type, carte de jeu, perso, statut kanban ou zone ; filtres « pas encore fait », « à retraiter », « en QA », « déjà refusé », « sans masque », « provisoire », « sans carte », « avis ouverts ». Le statut vient du kanban (carte liée par l\'asset, l\'animation, ou le titre). La fiche montre l\'élément, ses cartes, le dernier refus, le prompt, les tâches pixelforge et les versions ; « Envoyer » reporte le commentaire sur la carte choisie, ou crée une carte en Backlog.'],
   ['Jeu', 'Règles de rules.json avec des libellés, options de partie validées, écrans de menu (rôle et capture), cartes de jeu (plan, zones, sorties, cachettes, « chasseur gagne » F / N / M, bilan d\'équilibrage) et bilans d\'équilibrage. « Kanban · commenter » sur chaque bloc ; « Lier » rattache une carte qui en parle.'],
-  ['Roadmap', 'Jalons (échéance, description) et chapeaux, avec leur avancement (feuilles Done, QA, Doing, Todo, Backlog) et ce qui bloque. Un chapeau rattaché à un jalon y emmène toute sa famille. Sans jalon, « Créer ces jalons » reprend ceux de la spec (§14).'],
+  ['Roadmap', 'Jalons (échéance, description) et chapeaux, avec leur avancement (feuilles En prod, Validé, QA, Doing, Todo, Backlog) et ce qui bloque. Un chapeau rattaché à un jalon y emmène toute sa famille. Sans jalon, « Créer ces jalons » reprend ceux de la spec (§14).'],
   ['Avis', 'Les commentaires d\'asset (versionnés), avec la carte où ils ont été reportés.'],
 ];
 
@@ -166,13 +205,15 @@ async function renderAide() {
         el('td', {}, x.cli ? el('code', { text: x.cli }) : ''))))))]),
     el('h4', { class: 'kind', text: 'Client terminal' }),
     el('pre', { class: 'data', text: [
-      'PRODUCER_URL=https://miarritze.ijulien.com/producer/   # par défaut ; http://127.0.0.1:8099/producer/ en local',
+      'PRODUCER_URL=https://miarritze.ijulien.com/producer/   # par défaut ; adresse du service local sinon',
       'PRODUCER_TOKEN=…                                      # ou .producer_token à la racine du dépôt',
       'tools/producer/cli.py stats                    # tableau de bord (QA, refus, Doing immobiles, jalons)',
       'tools/producer/cli.py cards --status qa --type animation --search louis',
       'tools/producer/cli.py bulk 12 13 14 --status todo --night on',
       'tools/producer/cli.py milestones · add-milestone --title "Contenu v1" --due 2026-12-01',
       'tools/producer/cli.py set 4 --milestone 2 --due 2026-11-15',
+      'tools/producer/cli.py move 4 done                # Validé -> En prod (fait par le déploiement)',
+      'tools/producer/cli.py set 4 --jobs \'[{"id":"c4897ae6…","role":"A","label":"animation run","status":"running","keep":false}]\'',
       'tools/producer/cli.py asset-comment blackout/persos/louis/animations "pieds qui glissent" --detail walk',
       'tools/producer/cli.py routes                   # cette liste',
     ].join('\n') }));

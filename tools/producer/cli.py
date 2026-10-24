@@ -2,7 +2,7 @@
 """Client terminal du service /producer, pour l'agent (stdlib seulement).
 
 Configuration :
-  PRODUCER_URL    défaut https://miarritze.ijulien.com/producer/
+  PRODUCER_URL    défaut http://127.0.0.1:8099/producer/ (board local)
   PRODUCER_TOKEN  jeton de l'agent ; sinon lu dans .producer_token (racine du
                   dépôt, gitignoré, le jeton seul sur la première ligne).
 
@@ -11,7 +11,8 @@ Exemples :
   cli.py reply 12 "Couleurs du maillot corrigées (commit abc1234)" --done
   cli.py cards --status todo [--parent 3] [--json]
   cli.py show 4                (détail + historique + enfants)
-  cli.py move 4 doing          (backlog | todo | doing | qa | done)
+  cli.py move 4 doing          (backlog | todo | doing | qa | valide | done)
+  cli.py move 4 done           (Validé -> En prod : fait par le déploiement groupé)
   cli.py comment 4 "Commencé : nouvelle palette"
   cli.py add-card --type perso --title "Amaia" --status backlog
   cli.py add-card --type animation --title "Amaia : run" --parent 12
@@ -27,6 +28,8 @@ Exemples :
   cli.py add-milestone --title "Contenu v1" --due 2026-12-01
   cli.py set-milestone 2 --due 2026-12-15 [--closed on]
   cli.py set 4 --milestone 2 --due 2026-11-30   (0 / aucune pour retirer)
+  cli.py set 4 --jobs '[{"id":"c4897ae6…","role":"A","label":"animation run","status":"running","keep":true}]'
+                               (tâches pixelforge de la carte, écrites par le watcher ; '[]' pour vider)
   cli.py asset-comment blackout/persos/louis/animations "pieds qui glissent" --detail walk
                                (commentaire d'asset reporté sur la carte liée, ou nouvelle carte)
   cli.py routes                (toutes les routes de l'API)
@@ -44,16 +47,18 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-DEFAULT_URL = "https://miarritze.ijulien.com/producer/"
+DEFAULT_URL = "http://127.0.0.1:8099/producer/"   # board local (GDD §14.2)
 ROOT = Path(__file__).resolve().parents[2]
 # Colonnes du kanban, et alias de l'ancien CLI (afaire, encours, averifier, review, fait).
-STATUS_LABEL = {"backlog": "Backlog", "todo": "Todo", "doing": "Doing", "qa": "QA", "done": "Done"}
+# valide : accepté en QA, part au prochain déploiement groupé ; done : en prod.
+STATUS_LABEL = {"backlog": "Backlog", "todo": "Todo", "doing": "Doing", "qa": "QA", "valide": "Validé", "done": "En prod"}
 STATUS_ALIASES = {
     "backlog": "backlog",
     "todo": "todo", "afaire": "todo", "a-faire": "todo",
     "doing": "doing", "encours": "doing", "en-cours": "doing",
     "qa": "qa", "review": "qa", "averifier": "qa", "a-verifier": "qa",
-    "done": "done", "fait": "done",
+    "valide": "valide", "validé": "valide", "valid": "valide",
+    "done": "done", "fait": "done", "prod": "done", "en-prod": "done",
 }
 CARD_TYPES = ["feature", "bug", "perso", "animation", "asset", "gameplay", "pixelforge"]
 EVENT_LABEL = {
@@ -61,6 +66,7 @@ EVENT_LABEL = {
     "priorite": "priorité", "type": "type", "asset": "asset", "detail": "détail", "parent": "chapeau",
     "commentaire": "commentaire", "suppression": "suppression",
     "accepte": "ACCEPTÉE", "refuse": "REFUSÉE", "night": "NIGHT", "jalon": "jalon", "echeance": "échéance",
+    "jobs": "pixelforge",
 }
 
 
@@ -130,7 +136,7 @@ def since_arg(s: str) -> int:
 def status_arg(s: str) -> str:
     key = s.lower().replace("à", "a").replace("é", "e").replace(" ", "-")
     if key not in STATUS_ALIASES:
-        raise argparse.ArgumentTypeError("colonne : backlog | todo | doing | qa | done")
+        raise argparse.ArgumentTypeError("colonne : backlog | todo | doing | qa | valide | done")
     return STATUS_ALIASES[key]
 
 
@@ -185,6 +191,11 @@ def print_card(c: dict, full: bool, titles: dict | None = None) -> None:
     rework += " [NIGHT]" if c.get("night") else ""
     rework += f" [⏱ {c['due']}]" if c.get("due") else ""
     rework += f" [jalon {c['milestone_id']}]" if c.get("milestone_id") else ""
+    jobs = [j for j in (c.get("jobs") or []) if isinstance(j, dict)]
+    running = sum(1 for j in jobs if j.get("status") in ("pending", "queued", "running"))
+    failed = sum(1 for j in jobs if j.get("status") in ("failed", "error"))
+    rework += f" [pf {running} en cours]" if running else ""
+    rework += f" [pf {failed} en échec]" if failed else ""
     kids = f" · enfants {c['children_done']}/{c['children']}" if c.get("children") else ""
     parent = ""
     if c.get("parent_id"):
@@ -196,6 +207,9 @@ def print_card(c: dict, full: bool, titles: dict | None = None) -> None:
         print(f"    créée {when(c['created_at'])}, modifiée {when(c['updated_at'])}")
         for line in (c["description"] or "").splitlines():
             print("    " + line)
+        for j in jobs:
+            print(f"    pixelforge {str(j.get('id', '?'))[:8]} {j.get('role', '')} {j.get('label', '')} : {j.get('status', '?')}"
+                  + (" (gardée)" if j.get("keep") else ""))
         for n in c["notes"]:
             print(f"    — {n['author']}{' (refus)' if n.get('kind') == 'refus' else ''} {when(n['created_at'])} : " + n["body"].replace("\n", "\n      "))
 
@@ -209,9 +223,9 @@ def event_line(e: dict, with_card: bool) -> str:
     elif t == "night":
         what = "ON (traitée la nuit, 1 h – 8 h Paris)" if e["new"] == "on" else "OFF"
     elif t == "accepte":
-        what = "QA -> Done"
+        what = f"QA -> {STATUS_LABEL.get(e['new'] or 'valide', e['new'])}"
     elif t == "refuse":
-        what = "QA -> Doing, à retraiter : « " + e["new"].replace("\n", "\n      ") + " »"
+        what = "QA -> Backlog, à retraiter : « " + e["new"].replace("\n", "\n      ") + " »"
     elif t == "commentaire":
         what = "« " + e["new"].replace("\n", "\n      ") + " »"
     elif t == "suppression":
@@ -263,7 +277,7 @@ def cmd_show(a: argparse.Namespace) -> None:
     c = r["card"]
     print_card({**c, "notes": []}, True)
     if r["children"]:
-        print(f"  Enfants ({c['children_done']}/{c['children']} en QA ou Done) :")
+        print(f"  Enfants ({c['children_done']}/{c['children']} en QA, Validé ou En prod) :")
         for k in r["children"]:
             print(f"    #{k['id']} [{STATUS_LABEL[k['status']]}] {k['type']} · {k['title']}")
     print("  Historique :")
@@ -359,8 +373,16 @@ def cmd_set(a: argparse.Namespace) -> None:
         body["milestone"] = a.milestone
     if a.due is not None:
         body["due"] = "" if a.due == "aucune" else a.due
+    if a.jobs is not None:
+        try:
+            jobs = json.loads(a.jobs) if a.jobs.strip() else []
+        except ValueError as e:
+            sys.exit(f"--jobs : JSON invalide ({e})")
+        if not isinstance(jobs, list):
+            sys.exit("--jobs : liste JSON attendue")
+        body["jobs"] = json.dumps(jobs, ensure_ascii=False)
     if len(body) == 1:
-        sys.exit("Rien à modifier (--title, --desc, --type, --priority, --parent, --asset, --detail, --night, --milestone, --due)")
+        sys.exit("Rien à modifier (--title, --desc, --type, --priority, --parent, --asset, --detail, --night, --milestone, --due, --jobs)")
     r = call("card_update", body)
     print(f"Carte #{a.id} : {r.get('changed', 0)} champ(s) modifié(s)")
 
@@ -382,7 +404,7 @@ def cmd_bulk(a: argparse.Namespace) -> None:
 
 
 def bar(done: int, qa: int, total: int, width: int = 24) -> str:
-    """Barre d'avancement : █ Done, ▓ QA, · le reste."""
+    """Barre d'avancement : █ En prod + Validé, ▓ QA, · le reste."""
     if not total:
         return "·" * width
     d = round(width * done / total)
@@ -401,7 +423,8 @@ def cmd_milestones(a: argparse.Namespace) -> None:
         bs = m["by_status"]
         due = f" · échéance {m['due']}" if m["due"] else ""
         print(f"#{m['id']} {m['title']}{due}{' [CLOS]' if m['closed'] else ''}")
-        print(f"    {bar(bs['done'], bs['qa'], m['total'])} {bs['done']} faites, {bs['qa']} en QA, {bs['doing']} en cours,"
+        print(f"    {bar(bs['done'] + bs.get('valide', 0), bs['qa'], m['total'])} {bs['done']} en prod,"
+              f" {bs.get('valide', 0)} validées, {bs['qa']} en QA, {bs['doing']} en cours,"
               f" {bs['todo']} todo, {bs['backlog']} backlog / {m['total']}" + (f" · {m['rework']} à retraiter" if m["rework"] else ""))
 
 
@@ -449,8 +472,9 @@ def cmd_stats(a: argparse.Namespace) -> None:
         print("Jalons :")
         for m in r["milestones"]:
             bs = m["by_status"]
-            print(f"    #{m['id']} {short(m['title'], 40):<40} {bar(bs['done'], bs['qa'], m['total'], 16)} "
-                  f"{bs['done'] + bs['qa']}/{m['total']}" + (f" · échéance {m['due']}" if m["due"] else ""))
+            fini = bs['done'] + bs.get('valide', 0)
+            print(f"    #{m['id']} {short(m['title'], 40):<40} {bar(fini, bs['qa'], m['total'], 16)} "
+                  f"{fini + bs['qa']}/{m['total']}" + (f" · échéance {m['due']}" if m["due"] else ""))
 
 
 def cmd_asset_comment(a: argparse.Namespace) -> None:
@@ -508,7 +532,7 @@ def main() -> None:
     s.set_defaults(fn=cmd_close)
 
     s = sub.add_parser("cards", help="lister les cartes du kanban")
-    s.add_argument("--status", type=status_arg, help="backlog | todo | doing | qa | done")
+    s.add_argument("--status", type=status_arg, help="backlog | todo | doing | qa | valide | done")
     s.add_argument("--parent", type=int, help="seulement les enfants de cette carte chapeau")
     s.add_argument("--night", action="store_true", help="seulement les cartes night shift")
     s.add_argument("--type", choices=CARD_TYPES)
@@ -532,7 +556,7 @@ def main() -> None:
 
     s = sub.add_parser("move", help="déplacer une carte")
     s.add_argument("id", type=int)
-    s.add_argument("status", type=status_arg, help="backlog | todo | doing | qa | done")
+    s.add_argument("status", type=status_arg, help="backlog | todo | doing | qa | valide | done")
     s.set_defaults(fn=cmd_move)
 
     for name in ("comment", "note"):   # « note » : ancien nom
@@ -567,6 +591,7 @@ def main() -> None:
     s.add_argument("--night", choices=["on", "off"], help="night shift : traitée la nuit (1 h – 8 h Paris)")
     s.add_argument("--milestone", type=int, help="id du jalon (0 pour retirer)")
     s.add_argument("--due", help="échéance AAAA-MM-JJ (aucune pour retirer)")
+    s.add_argument("--jobs", help="tâches pixelforge : liste JSON ('[]' pour vider)")
     s.set_defaults(fn=cmd_set)
 
     s = sub.add_parser("bulk", help="même changement sur plusieurs cartes")

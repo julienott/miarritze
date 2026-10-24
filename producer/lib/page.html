@@ -27,6 +27,7 @@
     <a href="#/aide" data-tab="aide"><span class="ti" aria-hidden="true">?</span><span class="tl">Aide</span></a>
   </nav>
   <div class="top-actions">
+    <a id="jeu-qa" class="btn-link small" href="/jeu/" target="_blank" rel="noopener" title="Le jeu local de QA (dernier build)">▶ Jeu QA</a>
     <button type="button" id="theme" class="ghost" title="Fond clair / sombre">◐</button>
     <button type="button" id="logout" class="ghost" hidden>Déconnexion</button>
   </div>
@@ -156,6 +157,10 @@
       <ul id="cf-children" class="kids"></ul>
       <button type="button" id="cf-add-child" class="small">+ Carte enfant</button>
       <button type="button" id="cf-night-children" class="small" title="Donne à tous les enfants le night shift coché ci-dessus">🌙 Appliquer le night shift aux enfants</button>
+      <div id="cf-jobs-box" hidden>
+        <h3>Tâches pixelforge</h3>
+        <ul id="cf-jobs" class="jobs"></ul>
+      </div>
       <h3>Historique et commentaires</h3>
       <div id="cf-feed" class="feed"></div>
       <label>Commenter <textarea id="cf-note" rows="2" maxlength="8000" placeholder="Une remarque, une précision pour itérer…"></textarea></label>
@@ -172,7 +177,7 @@
 <dialog id="refuse-dialog">
   <form id="refuse-form" method="dialog">
     <h2 id="refuse-title">Refuser</h2>
-    <label>Ce qui ne va pas (obligatoire) — la carte repart en Doing, à retraiter
+    <label>Ce qui ne va pas (obligatoire) — la carte repart en haut du Backlog, à retraiter
       <textarea id="rf-body" rows="4" maxlength="8000" placeholder="Ex. la marche glisse, les pieds ne restent pas au sol"></textarea></label>
     <p class="error" id="rf-error" role="alert"></p>
     <div class="row end"><span class="spacer"></span>

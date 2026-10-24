@@ -1,5 +1,5 @@
 // Miarritze Producer — roadmap (#/roadmap) : jalons (avec échéance) et chapeaux du kanban, leur
-// avancement (feuilles en Done / QA / total, barres empilées), et ce qui bloque (refus à retraiter,
+// avancement (feuilles En prod / Validé / QA / total, barres empilées), et ce qui bloque (refus à retraiter,
 // cartes en Doing qui ne bougent plus, échéances dépassées). Un chapeau rattaché à un jalon y
 // emmène toute sa famille.
 'use strict';
@@ -35,7 +35,7 @@ function blockersPanel(scope) {
   const inScope = scope ? (c) => scope.has(c.id) : () => true;
   const rework = state.cards.filter((c) => c.rework && inScope(c));
   const stale = staleCards().filter(inScope);
-  const late = state.cards.filter((c) => c.due && c.due < todayIso() && c.status !== 'done' && inScope(c));
+  const late = state.cards.filter((c) => c.due && c.due < todayIso() && !FINISHED.has(c.status) && inScope(c));
   if (!rework.length && !stale.length && !late.length) return null;
   return el('div', { class: 'blockers' },
     rework.length ? el('div', {}, el('h4', { class: 'kind', text: `↺ Refusées, à retraiter (${rework.length})` }), cardList(rework)) : null,
@@ -54,7 +54,7 @@ function hatRow(h) {
   const rework = leaves.filter((c) => c.rework).length;
   return el('div', { class: 'hat-line' },
     el('button', { type: 'button', class: 'link hat-title', onclick: () => openCardDialog(h, '') }, h.title),
-    el('span', { class: 'muted small', text: '#' + h.id }), cardPill(h), dueBadge(h.due, h.status === 'done'),
+    el('span', { class: 'muted small', text: '#' + h.id }), cardPill(h), dueBadge(h.due, FINISHED.has(h.status)),
     rework ? el('span', { class: 'rework', text: `↺ ${rework}` }) : null,
     el('a', { href: '#/kanban', class: 'small', onclick: () => { state.hat = h.id; store('producer-kb-hat', String(h.id)); }, text: 'kanban ›' }),
     el('div', { class: 'hat-bar' }, bar, el('span', { class: 'muted small', text: txt })));
@@ -166,7 +166,7 @@ function renderRoadmap() {
     }
   } else {
     // Par chapeau : arbre des chapeaux, les moins avancés d'abord.
-    const prog = (h) => { const l = leavesOf(h.id); return l.length ? l.filter((c) => c.status === 'done' || c.status === 'qa').length / l.length : 1; };
+    const prog = (h) => { const l = leavesOf(h.id); return l.length ? l.filter((c) => ADVANCED.has(c.status)).length / l.length : 1; };
     const tree = (h, depth) => [el('div', { class: 'hat-tree d' + depth }, hatRow(h)),
       ...childrenOf(h.id).filter((k) => k.children > 0).sort((a, b) => prog(a) - prog(b)).flatMap((k) => tree(k, depth + 1))];
     blocks.push(el('section', { class: 'panel' }, el('h3', { text: 'Chapeaux et sous-chapeaux' }),

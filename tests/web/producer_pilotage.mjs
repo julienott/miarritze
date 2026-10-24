@@ -80,7 +80,10 @@ for (const [label, browser, opts] of runs) {
   await go('#/assets', '.cgroup .citem');
   await page.evaluate(() => { localStorage.removeItem('producer-catalogue'); });
   const groups = await page.$$eval('.cgroup .group-name', (l) => l.map((x) => x.textContent));
-  check(`${label} : catalogue groupé par type`, groups.includes('Animations des persos') && groups.includes('Cachettes') && groups.includes('Règles'), groups.slice(0, 8).join(' | '));
+  // Le décor n'est plus dans le build depuis le reboot Party Hard (21/10) : ses vérifications sont sautées sans lui.
+  const hasDecor = await page.$$eval('.citem.t-objet, .citem.t-cachette', (l) => l.length > 0);
+  if (!hasDecor && label === 'ordi') console.log('     (pas de décor dans le build : cachettes, zones, masques et fiche décor non testés)');
+  check(`${label} : catalogue groupé par type`, groups.includes('Animations des persos') && (!hasDecor || groups.includes('Cachettes')) && groups.includes('Règles'), groups.slice(0, 8).join(' | '));
   await shot('02_catalogue');
   // Animation au survol (ou premier toucher) : la vignette s'anime sans quitter la page.
   const animTile = '.citem.t-anim:not(.missing)';
@@ -105,25 +108,26 @@ for (const [label, browser, opts] of runs) {
   await page.selectOption('#cat-group', 'zone');
   await page.waitForTimeout(400);
   const byZone = await page.$$eval('.cgroup .group-name', (l) => l.length);
-  check(`${label} : groupement par zone`, byZone > 10, String(byZone));
+  if (hasDecor) check(`${label} : groupement par zone`, byZone > 10, String(byZone));
   await page.selectOption('#cat-group', 'type');
   // Filtre « sans masque » : que des objets du décor marqués.
   await page.click('.chip-btn[data-filter="sans_masque"]');
   await page.waitForTimeout(400);
   const sm = await page.$$eval('.citem', (l) => l.map((x) => !!x.querySelector('.badge.src-aucun')));
-  check(`${label} : filtre sans masque`, sm.length > 0 && sm.every(Boolean), `${sm.length} éléments`);
+  if (hasDecor) check(`${label} : filtre sans masque`, sm.length > 0 && sm.every(Boolean), `${sm.length} éléments`);
   await shot('06_catalogue_sans_masque');
   await page.click('.chip-btn[data-filter="sans_masque"]');
   // Recherche.
-  await page.fill('#cat-search', 'louis marche');
+  // Patxi (perso complet ; Louis est en refonte), animation « run » (course).
+  await page.fill('#cat-search', 'patxi course');
   await page.waitForTimeout(600);
   const found = await page.$$eval('.citem .cname', (l) => l.map((x) => x.textContent));
-  check(`${label} : recherche`, found.includes('Louis · marche'), found.join(' | '));
-  // Fiche : Louis · marche.
+  check(`${label} : recherche`, found.includes('Patxi · course'), found.join(' | '));
+  // Fiche : Patxi · course.
   // Sur écran tactile, le premier toucher anime la vignette, le second ouvre la fiche.
-  await page.click('.citem[data-key$="#walk"]');
+  await page.click('.citem[data-key$="#run"]');
   await page.waitForTimeout(400);
-  if (page.url().endsWith('#/assets')) await page.click('.citem[data-key$="#walk"]');
+  if (page.url().endsWith('#/assets')) await page.click('.citem[data-key$="#run"]');
   await page.waitForSelector('.fiche .fiche-side .pilot');
   await page.waitForTimeout(800);
   const fiche = await page.evaluate(() => ({
@@ -131,8 +135,10 @@ for (const [label, browser, opts] of runs) {
     cards: document.querySelectorAll('.fiche-side .lcard').length,
     prompt: !!document.querySelector('.fiche-side .prompt'),
     canvas: !!document.querySelector('.fiche-main .stage canvas'),
+    // Prompts des animations : absents du build tant que leur source n'est pas revenue (reboot du 21/10).
+    sansPrompts: !Object.keys((state.index.blackout.prompts_anims || {}).animations || {}).length,
   }));
-  check(`${label} : fiche d'une animation (cartes, prompt, lecture)`, fiche.title === 'Louis · marche' && fiche.cards >= 1 && fiche.prompt && fiche.canvas, JSON.stringify(fiche));
+  check(`${label} : fiche d'une animation (cartes, prompt, lecture)`, fiche.title === 'Patxi · course' && fiche.cards >= 1 && (fiche.prompt || fiche.sansPrompts) && fiche.canvas, JSON.stringify(fiche));
   await shot('07_fiche_anim');
   await page.evaluate(() => { location.hash = '#/assets'; });
   await page.fill('#cat-search', '');
@@ -153,13 +159,13 @@ for (const [label, browser, opts] of runs) {
     check(`${label} : commentaire d'amélioration = nouvelle carte en Backlog liée à l'asset`, !!made && made.status === 'backlog' && !!made.asset, made ? `#${made.id} ${made.title}` : 'aucune');
     await page.waitForTimeout(300);
     await shot('08_fiche_decor');
-  } else check(`${label} : objet « tourniquet » trouvé`, false);
+  } else if (hasDecor) check(`${label} : objet « tourniquet » trouvé`, false);
   await page.evaluate(() => { location.hash = '#/assets'; });
   await page.fill('#cat-search', '');
 
   // --------------------------------------------------------------------- jeu
   for (const [tab, sel, n] of [['regles', '.jeu-block .md-table.rules', '09_jeu_regles'], ['options', '.jeu-grid .jeu-block', '10_jeu_options'],
-    ['ecrans', '.jeu-grid.ecrans .jeu-block', '11_jeu_ecrans'], ['cartes', '.carte-jeu', '12_jeu_cartes'], ['equilibrage', 'details.jdoc', '13_jeu_equilibrage']]) {
+    ['ecrans', '.jeu-grid.ecrans .jeu-block', '11_jeu_ecrans'], ['cartes', '.carte-jeu', '12_jeu_cartes'], ['equilibrage', '#jeu > *', '13_jeu_equilibrage']]) {
     await go('#/jeu/' + tab, sel);
     await shot(n);
   }
@@ -168,7 +174,9 @@ for (const [label, browser, opts] of runs) {
   await go('#/jeu/cartes', '.carte-jeu');
   const maps = await page.$$eval('.carte-jeu .jeu-head h3', (l) => l.map((x) => x.textContent));
   const cg = await page.$$eval('.carte-jeu .badge.kpi', (l) => l.map((x) => x.textContent));
-  check(`${label} : cartes de jeu et chiffres d'équilibrage`, maps.length >= 3 && cg.length >= 3, `${maps.join(' | ')} · ${cg.join(' | ')}`);
+  // Bilans d'équilibrage : absents du build tant que les cartes sont « anciennes versions » (reboot du 21/10).
+  const sansEq = await page.evaluate(() => !(state.index.blackout.equilibrage || []).length);
+  check(`${label} : cartes de jeu et chiffres d'équilibrage`, maps.length >= 3 && (cg.length >= 3 || sansEq), `${maps.join(' | ')} · ${cg.join(' | ')}`);
   await page.click('.carte-jeu .jeu-head button.small');
   await page.waitForTimeout(300);
   await shot('12b_jeu_carte_kanban');
@@ -202,11 +210,14 @@ for (const [label, browser, opts] of runs) {
   await page.waitForTimeout(400);
   const types = await page.evaluate(() => [...document.querySelectorAll('#board .card[data-id]')].map((n) => cardById(Number(n.dataset.id)).type));
   check(`${label} : filtre par type`, types.length > 0 && types.every((t) => t === 'animation'), `${types.length} cartes`);
-  await page.selectOption('#kb-perso', 'louis');
+  await page.selectOption('#kb-perso', 'patxi');
   await page.waitForTimeout(400);
-  const louis = await page.evaluate(() => [...document.querySelectorAll('#board .card[data-id]')].map((n) => cardById(Number(n.dataset.id)).title));
+  const perso = await page.evaluate(() => [...document.querySelectorAll('#board .card[data-id]')].map((n) => {
+    const c = cardById(Number(n.dataset.id));
+    return `${c.title} ${c.asset}`;
+  }));
   // Une carte d'un perso : son titre, son asset (blackout/persos/<id>/…) ou son chapeau le nomme.
-  check(`${label} : filtre par perso`, louis.some((t) => /louis/i.test(t)) && !louis.some((t) => /txomin|amaia|patxi/i.test(t)), `${louis.length} cartes`);
+  check(`${label} : filtre par perso`, perso.some((t) => /patxi/i.test(t)) && !perso.some((t) => /txomin|amaia|louis/i.test(t)), `${perso.length} cartes`);
   await shot('16_kanban_filtres');
   // Sélection + action groupée : night shift sur les cartes affichées.
   await page.click('#kb-select');

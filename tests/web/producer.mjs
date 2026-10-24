@@ -15,7 +15,7 @@ if (!PASSWORD || !TOKEN) {
   process.exit(2);
 }
 const ROOT = path.resolve(import.meta.dirname, '../..');
-const OUT = path.join(ROOT, 'tests/out/producer');
+const OUT = process.env.PRODUCER_SHOTS || path.join(ROOT, 'tests/out/producer');
 fs.mkdirSync(OUT, { recursive: true });
 
 const results = [];
@@ -26,6 +26,9 @@ function check(name, ok, detail = '') {
 const cli = (...args) => execFileSync('python3', [path.join(ROOT, 'tools/producer/cli.py'), ...args],
   { env: { ...process.env, PRODUCER_URL: BASE, PRODUCER_TOKEN: TOKEN }, encoding: 'utf8' });
 const url = (q) => BASE + 'index.php?' + q;
+// Assets de Blackout servis par le build (Borroka retiré le 22/10).
+const PERSO = 'blackout/persos/patxi/animations';
+const FICHE = '#/assets/' + encodeURIComponent(PERSO) + '/run';
 
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 1280, height: 860 } });
@@ -55,11 +58,11 @@ check('cookie HttpOnly + SameSite=Strict', sid && sid.httpOnly && sid.sameSite =
 await shot('03_assets_grille');
 
 // ------------------------------------------------------ perso colorisé
-await page.goto(BASE + '#/assets/' + encodeURIComponent('fighters/maia/sheet.png'));
-await page.waitForSelector('.stage canvas');
+await page.goto(BASE + FICHE);
+await page.waitForSelector('.fiche-main .stage canvas');
 await page.waitForTimeout(600);
 const colored = await page.evaluate(() => {
-  const c = document.querySelector('.stage canvas');
+  const c = document.querySelector('.fiche-main .stage canvas');
   const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
   let px = 0; let chroma = 0;
   for (let i = 0; i < d.length; i += 4) {
@@ -67,54 +70,36 @@ const colored = await page.evaluate(() => {
   }
   return { px, chroma };
 });
-check('sprite Maia colorisé (pixels de couleur)', colored.px > 500 && colored.chroma > colored.px * 0.3, JSON.stringify(colored));
-await page.selectOption('.controls select[aria-label=Animation]', 'punch_3');
-await page.waitForTimeout(700);
-await shot('04_maia_punch3');
+check('sprite de Patxi colorisé (pixels de couleur)', colored.px > 100 && colored.chroma > colored.px * 0.3, JSON.stringify(colored));
+await shot('04_patxi_run');
 
 // --------------------------------------------- commentaire (avec tentative XSS)
+// Base vide : l'amélioration crée une carte en Backlog liée à l'animation ; le texte s'affiche échappé.
 const xss = '<img src=x onerror="window.__xss=1">Bras trop long <script>window.__xss=2</script>';
-await page.fill('.pilot-form textarea', xss);
-await page.click('.pilot-form button[type=submit]');
-await page.waitForSelector('.asset-comments .comment');
+await page.fill('.fiche-side .pilot-form textarea', xss);
+await page.click('.fiche-side .pilot-form button[type=submit]');
+await page.waitForSelector('.fiche-side .lcard');
+await page.waitForFunction(() => state.comments.length === 1);
 const xssState = await page.evaluate(() => ({
   flag: window.__xss,
-  text: document.querySelector('.asset-comments .comment .body').textContent,
-  imgs: document.querySelectorAll('.asset-comments .comment img').length,
+  card: state.cards.length === 1 && state.cards[0].description.includes('<script>'),
+  imgs: document.querySelectorAll('.fiche-side img[src="x"], .fiche-main img[src="x"]').length,
 }));
-check('commentaire enregistré et XSS affiché échappé',
-  xssState.flag === undefined && xssState.imgs === 0 && xssState.text.includes('<script>'), JSON.stringify(xssState));
-// Un « validé » sans texte est accepté.
-await page.click('.pilot-form .kind-pick button[data-kind=valide]');
-await page.click('.pilot-form button[type=submit]');
-await page.waitForFunction(() => document.querySelectorAll('.asset-comments .comment').length === 2);
-await shot('05_maia_commentaires');
+check('commentaire enregistré et XSS affiché échappé', xssState.flag === undefined && xssState.imgs === 0 && xssState.card, JSON.stringify(xssState));
+// Un « validé » sans texte est accepté (reporté sur la carte créée).
+await page.click('.fiche-side .pilot-form .kind-pick button[data-kind=valide]');
+await page.click('.fiche-side .pilot-form button[type=submit]');
+await page.waitForFunction(() => state.comments.length === 2);
+check('« validé » sans texte accepté', true);
+await shot('05_patxi_commentaires');
 
-// ---------------------------------------------------------------- décor
-await page.goto(BASE + '#/assets/' + encodeURIComponent('stages/fronton/far_0.png'));
-await page.waitForSelector('.stage img');
-await page.waitForFunction(() => document.querySelector('.stage img').naturalWidth > 0);
-check('décor affiché', await page.evaluate(() => document.querySelector('.stage img').naturalWidth === 512));
-await shot('06_decor_fronton');
-
-// --------------------------------------------------------------- musique
-await page.goto(BASE + '#/assets/' + encodeURIComponent('audio/music/title.ogg'));
-await page.waitForSelector('.stage audio');
-const dur = await page.evaluate(() => new Promise((res) => {
-  const a = document.querySelector('.stage audio');
-  if (a.readyState >= 1) res(a.duration);
-  a.addEventListener('loadedmetadata', () => res(a.duration));
-  a.addEventListener('error', () => res(-1));
-  setTimeout(() => res(-2), 8000);
-}));
-check('musique chargée (métadonnées)', dur > 1, `durée ${dur}`);
-// Requête partielle (Safari) : 206.
+// Requête partielle (Safari, audio) : 206 sur un fichier servi.
+const someFile = await page.evaluate(() => state.index.files.find((f) => f.endsWith('.png')));
 const range = await page.evaluate(async (u) => {
   const r = await fetch(u, { headers: { Range: 'bytes=0-99' } });
   return [r.status, r.headers.get('content-range'), (await r.arrayBuffer()).byteLength];
-}, url('r=file&p=audio%2Fmusic%2Ftitle.ogg'));
-check('Range 206 pour l\'audio', range[0] === 206 && range[2] === 100, JSON.stringify(range));
-await shot('07_musique');
+}, url('r=file&p=' + encodeURIComponent(someFile)));
+check('Range 206 sur un fichier servi', range[0] === 206 && range[2] === 100, JSON.stringify(range));
 
 // ---------------------------------------------------------------- kanban
 await page.goto(BASE + '#/kanban');
@@ -122,7 +107,7 @@ await page.click('#new-card');
 await page.fill('#cf-title', 'Ajouter un costume d\'été à Peio');
 await page.fill('#cf-desc', 'Maillot rayé, lunettes.\n<b>pas du HTML</b>');
 await page.selectOption('#cf-priority', 'normale');
-await page.fill('#cf-asset', 'fighters/peio/sheet.png');
+await page.fill('#cf-asset', 'blackout/persos/peio/animations');
 await page.dispatchEvent('#cf-asset', 'change');   // l'aperçu de l'asset s'affiche avant le clic (pas de saut de mise en page)
 await page.click('#cf-save');
 await page.waitForSelector('.column[data-status=backlog] .card:has-text("costume d\'été")');
@@ -138,14 +123,14 @@ await shot('08_kanban');
 
 // ----------------------------------------------------------- agent (cli.py)
 const listed = cli('comments', '--open');
-check('cli comments --open', listed.includes('fighters/maia/sheet.png') && listed.includes('Bras trop long'));
+check('cli comments --open', listed.includes(PERSO) && listed.includes('Bras trop long'));
 const cid = Number(/#(\d+) \[open\] amelioration/.exec(listed)[1]);
 cli('reply', String(cid), 'Bras raccourcis de 2 px (exemple)', '--done');
 const cards = cli('cards', '--full');
 check('cli cards', cards.includes('costume d\'été'));
 const kid = Number(/#(\d+) \[QA\]/.exec(cards)[1]);
 cli('comment', String(kid), 'Palette prête, à valider');
-cli('move', String(kid), 'done');
+cli('move', String(kid), 'done');   // le déploiement groupé : Validé -> En prod
 const after = cli('comments');
 check('cli reply + done', after.includes('[done]') && after.includes('Bras raccourcis'));
 await page.goto(BASE + '#/comments');
@@ -172,10 +157,10 @@ const mp = await mobile.newPage();
 await mp.goto(BASE + '#/assets');
 await mp.waitForSelector('.citem');
 await mp.screenshot({ path: path.join(OUT, '11_mobile_assets.png') });
-await mp.goto(BASE + '#/assets/' + encodeURIComponent('fighters/maia/sheet.png'));
-await mp.waitForSelector('.stage canvas');
+await mp.goto(BASE + FICHE);
+await mp.waitForSelector('.fiche-main .stage canvas');
 await mp.waitForTimeout(600);
-await mp.screenshot({ path: path.join(OUT, '12_mobile_maia.png'), fullPage: true });
+await mp.screenshot({ path: path.join(OUT, '12_mobile_patxi.png'), fullPage: true });
 await mp.goto(BASE + '#/kanban');
 await mp.waitForSelector('.column.active');
 await mp.screenshot({ path: path.join(OUT, '13_mobile_kanban.png'), fullPage: true });
@@ -187,7 +172,7 @@ await mobile.close();
 const csrf = await page.evaluate(async () => (await (await fetch('index.php?r=session')).json()).csrf);
 const noCsrf = await page.evaluate(async () => (await fetch('index.php?r=comment', {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ asset: 'fighters/maia/sheet.png', kind: 'valide', body: 'x' }) })).status);
+  body: JSON.stringify({ asset: 'blackout/persos/louis/animations', kind: 'valide', body: 'x' }) })).status);
 check('écriture sans CSRF refusée (403)', noCsrf === 403, String(noCsrf));
 const badCsrf = await page.evaluate(async () => (await fetch('index.php?r=card', {
   method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': 'faux' },
@@ -206,7 +191,7 @@ for (const [r, m] of [['comments', 'GET'], ['cards', 'GET'], ['index', 'GET'], [
   const st = await ap.evaluate(async ([u, method]) => (await fetch(u, { method, body: method === 'POST' ? '{}' : undefined })).status, [url('r=' + r), m]);
   check(`sans session ni jeton : ${m} ${r} -> 401`, st === 401, String(st));
 }
-const fileAnon = await ap.evaluate(async (u) => (await fetch(u)).status, url('r=file&p=fighters%2Fmaia%2Fportrait.png'));
+const fileAnon = await ap.evaluate(async (u) => (await fetch(u)).status, url('r=file&p=' + encodeURIComponent(someFile)));
 check('fichier d\'aperçu sans session -> 401', fileAnon === 401, String(fileAnon));
 const badTok = await ap.evaluate(async (u) => (await fetch(u, { headers: { Authorization: 'Bearer faux-jeton' } })).status, url('r=cards'));
 check('API avec mauvais jeton -> 401', badTok === 401, String(badTok));

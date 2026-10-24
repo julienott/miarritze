@@ -16,6 +16,9 @@ return [
     'token_sha256' => '',
     // Cookie de session « Secure » (false seulement pour un test local en http).
     'cookie_secure' => true,
+    // Service local derrière `tailscale serve` : une requête du proxy local (127.0.0.1 / ::1)
+    // portant l'en-tête Tailscale-User-Login est connectée sans mot de passe (CSRF gardé).
+    'tailscale_auth' => false,
     // Dossier des données (SQLite + sessions), jamais écrasé au déploiement.
     'data_dir' => __DIR__ . '/data',
 ];

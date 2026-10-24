@@ -3,9 +3,18 @@
 // jamais via innerHTML.
 'use strict';
 
+// QA = le jeu local de QA ; Validé = part en prod au prochain déploiement groupé ; En prod (done) = en ligne.
 const STATUSES = [
-  ['backlog', 'Backlog'], ['todo', 'Todo'], ['doing', 'Doing'], ['qa', 'QA'], ['done', 'Done'],
+  ['backlog', 'Backlog'], ['todo', 'Todo'], ['doing', 'Doing'], ['qa', 'QA'], ['valide', 'Validé'], ['done', 'En prod'],
 ];
+// Onglets du kanban sur iPhone : libellés courts (6 colonnes sur 390 px).
+const STATUS_SHORT = { done: 'Prod' };
+// Travail fini (plus d'échéance dépassée, plus proposé pour un commentaire) ; « avancé » pour les barres.
+const FINISHED = new Set(['valide', 'done']);
+const ADVANCED = new Set(['qa', 'valide', 'done']);
+// Tâches pixelforge (cards.jobs) : en cours, en échec.
+const JOB_RUNNING = new Set(['pending', 'queued', 'running']);
+const JOB_FAILED = new Set(['failed', 'error']);
 const TYPE_LABEL = {
   feature: 'Feature', bug: 'Bug', perso: 'Perso', animation: 'Animation', asset: 'Asset',
   gameplay: 'Gameplay', pixelforge: 'Pixelforge',
@@ -206,6 +215,7 @@ async function boot() {
   const s = await guarded(() => api('session'));
   if (!s) return;
   state.csrf = s.csrf;
+  state.authMode = s.mode || 'password';
   if (s.auth) await enter();
   else showLogin();
 }
@@ -235,9 +245,10 @@ async function onLogout() {
 async function enter() {
   $('login').hidden = true;
   $('tabs').hidden = false;
-  $('logout').hidden = false;
+  // Connecté par Tailscale : pas de déconnexion possible (la session revient à la requête suivante).
+  $('logout').hidden = state.authMode === 'tailscale';
   const [index, iv] = await Promise.all([api('index'), api('index_version'), reloadComments(), reloadCards(),
-    reloadMilestones()]);
+    reloadMilestones(), reloadStudio()]);
   state.indexV = iv.v;
   state.index = index;
   state.assetsById = new Map(index.assets.map((a) => [a.id, a]));
@@ -254,6 +265,12 @@ async function reloadComments() {
 async function reloadCards() {
   const r = await api('cards');
   state.cards = r.cards;
+}
+
+/** État du studio (build du jeu de QA, déploiement) écrit par le watcher ; {} s'il n'y en a pas. */
+async function reloadStudio() {
+  const r = await api('studio').catch(() => null);
+  state.studio = r && typeof r === 'object' ? r : {};
 }
 
 // ---------------------------------------------------------------- routage
@@ -1192,7 +1209,7 @@ async function renderCommentList() {
 }
 
 // ================================================================== KANBAN
-// Colonnes Backlog → Todo → Doing → QA → Done. Une carte peut avoir une carte
+// Colonnes Backlog → Todo → Doing → QA → Validé → En prod. Une carte peut avoir une carte
 // « chapeau » (parent_id) : le chapeau affiche l'avancement de ses enfants et
 // peut les déplier ; les enfants restent des cartes qui vivent leur vie.
 
@@ -1352,9 +1369,12 @@ async function kanbanTick(n) {
     assetsChanged = await reloadIndex();
   }
   if (r && r.v) state.indexV = r.v;
-  // 2. Cartes : à chaque tour (10 s).
+  // 2. Cartes : à chaque tour (10 s) ; état du studio tous les 3 tours.
   const before = JSON.stringify(state.cards);
+  const studioBefore = JSON.stringify(state.studio || {});
   await reloadCards();
+  if (n % KANBAN_CARDS_EVERY === 0) await reloadStudio();
+  if (JSON.stringify(state.studio || {}) !== studioBefore && (location.hash.startsWith('#/bord') || !location.hash)) rerenderView();
   const cardsChanged = JSON.stringify(state.cards) !== before;
   if (!cardsChanged && !assetsChanged) return;
   renderNavBadges();
@@ -1417,6 +1437,7 @@ function refreshOpenCard(assetsChanged) {
   $('cf-qa-bar').hidden = c.status !== 'qa';
   $('cf-rework').hidden = !c.rework;
   $('cf-night-children').hidden = !c.children;
+  renderJobs(c);
   const free = (id) => document.activeElement !== $(id) && !$(id).disabled;
   if (free('cf-night')) $('cf-night').checked = !!c.night;
   if (free('cf-type')) $('cf-type').value = c.type;
@@ -1674,7 +1695,7 @@ function renderKbTabs(cards) {
   $('kb-tabs').replaceChildren(...STATUSES.map(([status, label]) => el('button', {
     type: 'button', class: 'kb-tab' + (status === active ? ' active' : ''), 'data-status': status,
     'aria-pressed': status === active ? 'true' : 'false', onclick: () => setKbTab(status),
-  }, el('span', { text: label }), el('span', { class: 'n', text: String(cards.filter((c) => c.status === status).length) }))),
+  }, el('span', { class: 'l', text: STATUS_SHORT[status] || label }), el('span', { class: 'n', text: String(cards.filter((c) => c.status === status).length) }))),
   el('button', {
     type: 'button', class: 'kb-tab kb-filters' + ($('view-kanban').classList.contains('filters-open') ? ' active' : '')
       + (state.hat || state.hatsOnly || state.noHats || state.nightOnly || KB_FILTERS.some((k) => state.kb[k]) ? ' on' : ''),
@@ -1715,7 +1736,8 @@ function cardCompact(c) {
       c.rework ? el('span', { class: 'rework', text: '↺ à retraiter' }) : null,
       isFresh(c.asset) ? el('span', { class: 'fresh', text: '↻' }) : null,
       c.night ? el('span', { class: 'badge night', title: 'Night shift', text: '🌙' }) : null,
-      dueBadge(c.due, c.status === 'done'),
+      jobsBadge(c),
+      dueBadge(c.due, FINISHED.has(c.status)),
       c.children > 0 ? el('span', { class: 'muted', text: `▤ ${c.children_done}/${c.children}` }) : null,
       el('span', { class: 'muted', text: '#' + c.id }))),
   el('div', { class: 'cact' }, act));
@@ -1790,7 +1812,7 @@ function cardEl(c, col) {
     const open = state.expanded.has(c.id);
     const kids = childrenOf(c.id);
     hat = el('div', { class: 'hat' },
-      el('div', { class: 'progress', title: `${c.children_done} sur ${c.children} en QA ou Done`, role: 'img', 'aria-label': `Avancement ${pct} %` },
+      el('div', { class: 'progress', title: `${c.children_done} sur ${c.children} en QA, Validé ou En prod`, role: 'img', 'aria-label': `Avancement ${pct} %` },
         el('span', { style: null, class: 'bar' })),
       el('div', { class: 'hat-row' },
         el('span', { class: 'muted', text: `${c.children_done}/${c.children}` }),
@@ -1827,7 +1849,8 @@ function cardEl(c, col) {
     typeBadge(c.type),
     c.priority ? el('span', { class: 'badge ' + c.priority, text: PRIO_LABEL[c.priority] }) : null,
     c.night ? el('span', { class: 'badge night', title: 'Night shift : traitée la nuit (1 h – 8 h)', text: '🌙' }) : null,
-    dueBadge(c.due, c.status === 'done'),
+    jobsBadge(c),
+    dueBadge(c.due, FINISHED.has(c.status)),
     ms ? el('span', { class: 'badge ms', title: 'Jalon', text: '⚑ ' + ms.title }) : null,
     el('span', { class: 'muted', text: '#' + c.id }),
     el('span', { class: 'spacer' }),
@@ -1895,7 +1918,8 @@ function eventText(e) {
     case 'asset': return `a changé l'asset lié : ${e.new || 'aucun'}`;
     case 'parent': return `a changé le chapeau : ${ref(e.old)} → ${ref(e.new)}`;
     case 'detail': return `a changé le détail de l'asset : ${e.new || 'aucun'}`;
-    case 'accepte': return 'a accepté la carte : QA → Done';
+    case 'accepte': return `a accepté la carte : QA → ${st(e.new || 'valide')}`;
+    case 'jobs': return `tâches pixelforge : ${e.new || 'aucune'}`;
     case 'night': return e.new === 'on' ? 'a activé le night shift 🌙' : 'a désactivé le night shift';
     case 'jalon': {
       const m = (id) => (id ? (milestoneById(Number(id)) || { title: '#' + id }).title : 'aucun');
@@ -1909,7 +1933,13 @@ function eventText(e) {
 /** Fil chronologique : événements et commentaires mêlés. */
 function renderFeed(events) {
   const feed = $('cf-feed');
+  // Tâches pixelforge : seul le dernier état est montré, en petit (le watcher en écrit souvent).
+  const lastJobs = events.filter((e) => e.type === 'jobs').pop();
+  events = events.filter((e) => e.type !== 'jobs' || e === lastJobs);
   feed.replaceChildren(...events.map((e) => {
+    if (e.type === 'jobs') {
+      return el('div', { class: 'event jobs muted' }, fmtDate(e.at) + ' · ' + eventText(e));
+    }
     const who = AUTHOR_LABEL[e.author] || e.author;
     if (e.type === 'commentaire') {
       return el('div', { class: 'note ' + e.author },
@@ -1934,7 +1964,7 @@ async function loadFeed(id) {
     el('button', { type: 'button', class: 'kid', onclick: () => openCardDialog(k, '') },
       el('span', { class: 'st st-' + k.status, text: STATUS_LABEL[k.status] }), typeBadge(k.type), el('span', { text: k.title })))));
   $('cf-children-title').textContent = kids.length
-    ? `Enfants (${r.card.children_done}/${r.card.children} en QA ou Done)` : 'Enfants';
+    ? `Enfants (${r.card.children_done}/${r.card.children} en QA, Validé ou En prod)` : 'Enfants';
 }
 
 function openCardDialog(card, assetId, parentId) {
@@ -1959,6 +1989,7 @@ function openCardDialog(card, assetId, parentId) {
   $('cf-qa-bar').hidden = !card || card.status !== 'qa';
   $('cf-mtitle').textContent = card ? `#${card.id} · ${STATUS_LABEL[card.status]}` : 'Nouvelle carte';
   $('cf-rework').hidden = !card || !card.rework;
+  renderJobs(card);
   parentOptions($('cf-parent'), card ? card.parent_id : (parentId || 0), card ? familyIds(card.id) : new Set());
   $('cf-note').value = '';
   $('card-error').textContent = '';
@@ -2241,6 +2272,39 @@ async function nightToChildren() {
   renderBoard();
 }
 
+// ------------------------------------------------------- tâches pixelforge (cards.jobs)
+
+/** Tâches pixelforge d'une carte (liste écrite par le watcher), toujours un tableau d'objets. */
+function cardJobs(c) {
+  return c && Array.isArray(c.jobs) ? c.jobs.filter((j) => j && typeof j === 'object') : [];
+}
+
+/** Petit badge de tuile : tâche en cours (pending / running) ou en échec ; rien sinon. */
+function jobsBadge(c) {
+  const jobs = cardJobs(c);
+  const failed = jobs.filter((j) => JOB_FAILED.has(j.status)).length;
+  const running = jobs.filter((j) => JOB_RUNNING.has(j.status)).length;
+  if (failed) return el('span', { class: 'badge job-failed', title: `${failed} tâche${failed > 1 ? 's' : ''} pixelforge en échec`, text: '⚠ pf' });
+  if (running) return el('span', { class: 'badge job-run', title: `${running} tâche${running > 1 ? 's' : ''} pixelforge en cours`, text: '⚙ ' + running });
+  return null;
+}
+
+/** Section « Tâches pixelforge » du détail : id court, rôle, libellé, statut, 📌 si gardée. */
+function renderJobs(c) {
+  const jobs = cardJobs(c);
+  $('cf-jobs-box').hidden = !jobs.length;
+  $('cf-jobs').replaceChildren(...jobs.map((j) => {
+    const st = String(j.status || '?');
+    const cls = JOB_FAILED.has(st) ? 'job-failed' : JOB_RUNNING.has(st) ? 'job-run' : st === 'succeeded' ? 'job-ok' : '';
+    return el('li', { class: 'job' },
+      el('code', { title: String(j.id || ''), text: String(j.id || '?').slice(0, 8) }),
+      j.role ? el('span', { class: 'badge', text: String(j.role) }) : null,
+      el('span', { class: 'job-label', text: String(j.label || '') }),
+      el('span', { class: 'badge ' + cls, text: st }),
+      j.keep ? el('span', { title: 'Gardée', text: '📌' }) : null);
+  }));
+}
+
 // ------------------------------------------------------- QA : accepter / refuser
 
 async function acceptCard(c) {
@@ -2252,7 +2316,7 @@ async function acceptCard(c) {
     return res;
   });
   if (!r) return;
-  toast(r.accepted.length > 1 ? `${r.accepted.length} cartes acceptées → Done` : 'Acceptée → Done');
+  toast(r.accepted.length > 1 ? `${r.accepted.length} cartes acceptées → Validé` : 'Acceptée → Validé');
   if ($('card-dialog').open) $('card-dialog').close();
   renderBoard();
 }

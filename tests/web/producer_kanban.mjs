@@ -1,10 +1,13 @@
-// Kanban de /producer : colonnes Backlog → Done, cartes chapeau, historique,
-// commentaires Julien/Claude, CLI (events), ordinateur + iPhone portrait/paysage.
+// Kanban de /producer : colonnes Backlog → Todo → Doing → QA → Validé → En prod, cartes chapeau,
+// historique, commentaires Julien/Claude, CLI (events), tâches pixelforge (jobs), ordinateur +
+// iPhone portrait/paysage ; accès Tailscale si PRODUCER_TAILSCALE_URL est donné.
 // Prérequis : service lancé (docs/PRODUCER.md, « Tester en local »).
 // Env : PRODUCER_URL, PRODUCER_TEST_PASSWORD, PRODUCER_TOKEN ;
 //       PRODUCER_EXPECT_MIGRATION=1 si la base de départ est une base v1 de test
 //       (cartes « Ancienne carte … », voir docs/PRODUCER.md) ;
-//       PRODUCER_SHOTS : dossier des captures (défaut tests/out/producer_kanban).
+//       PRODUCER_SHOTS : dossier des captures (défaut tests/out/producer_kanban) ;
+//       PRODUCER_TAILSCALE_URL : même service avec 'tailscale_auth' => true dans sa config (et une
+//       base à part), pour tester la connexion par l'en-tête Tailscale-User-Login.
 import { chromium, webkit } from 'playwright';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
@@ -58,7 +61,12 @@ const shot = (p, name, full = true) => p.screenshot({ path: path.join(OUT, name 
 
 await login(page);
 const cols = await page.$$eval('.column h3 span:first-child', (n) => n.map((x) => x.textContent));
-check('5 colonnes', cols.join(',') === 'Backlog,Todo,Doing,QA,Done', cols.join(','));
+check('6 colonnes', cols.join(',') === 'Backlog,Todo,Doing,QA,Validé,En prod', cols.join(','));
+check('ordinateur : 6 colonnes sur une ligne, sans défilement horizontal', await page.evaluate(() => {
+  const tops = [...document.querySelectorAll('#board .column')].map((c) => Math.round(c.getBoundingClientRect().top));
+  return tops.length === 6 && new Set(tops).size === 1 && document.documentElement.scrollWidth <= innerWidth + 1;
+}));
+check('lien « ▶ Jeu QA » vers /jeu/', (await page.getAttribute('#jeu-qa', 'href')) === '/jeu/' && await page.isVisible('#jeu-qa'));
 
 if (process.env.PRODUCER_EXPECT_MIGRATION === '1') {
   const [, r] = await apiTok('cards');
@@ -185,11 +193,15 @@ cli('set', String(kidIds[2]), '--parent', '0');
 check('cli set --parent 0 détache', !cli('cards', '--parent', String(hatId)).includes(`${tag} idle`));
 
 // ------------------------------------------- asset lié : vue, détail, commentaire
-const ASSET = 'blackout/persos/louis/animations';
-cli('set', String(kidIds[1]), '--asset', ASSET, '--detail', 'walk');
+// Perso complet (Louis est en cours de refonte) ; « run » remplace l'ancienne « walk ».
+const ASSET = 'blackout/persos/patxi/animations';
+cli('set', String(kidIds[1]), '--asset', ASSET, '--detail', 'run');
 cli('move', String(kidIds[1]), 'qa');
 const DECOR = 'blackout/decor/objets/tour_phare.png';   // objet avec ses masques pixelforge (calque)
-const decorId = Number(/#(\d+)/.exec(cli('add-card', '--type', 'asset', '--title', `${tag} fronton masques`, '--asset', DECOR, '--status', 'qa'))[1]);
+// Le décor n'est plus dans le build depuis le reboot Party Hard (21/10) : vérifications sautées sans lui.
+const hasDecor = (await apiTok('index'))[1].assets.some((a) => a.id === DECOR);
+const decorId = hasDecor ? Number(/#(\d+)/.exec(cli('add-card', '--type', 'asset', '--title', `${tag} fronton masques`, '--asset', DECOR, '--status', 'qa'))[1]) : 0;
+if (!hasDecor) console.log(`     (${DECOR} absent du build : tuile décor non testée)`);
 // Trace de chaque image dessinée (case source) : lecture case par case vérifiée sur la tuile.
 await page.addInitScript(() => {
   window.__draws = [];
@@ -202,8 +214,8 @@ await page.addInitScript(() => {
 await page.reload();
 const thumb = page.locator(`.card[data-id="${kidIds[1]}"] img.card-thumb`);
 await thumb.waitFor();
-check('tuile : miniature de l\'asset (image fixe de walk, paresseuse)',
-  (await thumb.getAttribute('loading')) === 'lazy' && decodeURIComponent(await thumb.getAttribute('src')).includes('_poster/walk'));
+check('tuile : miniature de l\'asset (image fixe de run, paresseuse)',
+  (await thumb.getAttribute('loading')) === 'lazy' && decodeURIComponent(await thumb.getAttribute('src')).includes('_poster/run'));
 // Survol de la tuile : la miniature joue l'animation, puis s'arrête et se libère.
 await page.hover(`.card[data-id="${kidIds[1]}"] .title`);
 await page.waitForSelector(`.card[data-id="${kidIds[1]}"] canvas.card-thumb`);
@@ -216,7 +228,7 @@ const moving = await page.evaluate(async (id) => {
 }, kidIds[1]);
 check('tuile : l\'animation joue au survol', moving && (await page.$$('#board canvas')).length === 1);
 const tdraws = await page.evaluate(() => window.__draws);
-const walkFrames = await page.evaluate(() => state.assetsById.get('blackout/persos/louis/animations').anims.find((x) => x.name === 'walk').frames);
+const walkFrames = await page.evaluate(() => state.assetsById.get('blackout/persos/patxi/animations').anims.find((x) => x.name === 'run').frames);
 check('tuile : case par case (décalage multiple exact de la case)', tdraws.length >= 3
   && tdraws.every((d) => d.sw * walkFrames === d.iw && d.sx % d.sw === 0), `${tdraws.length} images`);
 await shot(page, '04a_tuile_survol', false);
@@ -226,6 +238,7 @@ check('tuile : souris sortie = animation arrêtée et libérée',
   (await page.$$('#board canvas')).length === 0 && !!(await page.$(`.card[data-id="${kidIds[1]}"] img.card-thumb`)));
 // Décor avec masques : les masques apparaissent au survol, chargés à ce moment-là.
 const dthumb = `.card[data-id="${decorId}"] .dthumb`;
+if (hasDecor) {
 check('tuile décor : masques non chargés au repos', !(await page.getAttribute(`${dthumb} img.calque`, 'src')));
 await page.hover(`.card[data-id="${decorId}"] .title`);
 await page.waitForFunction((s) => { const i = document.querySelector(s + ' img.calque'); return i && i.complete && i.naturalWidth > 0; }, dthumb);
@@ -235,6 +248,7 @@ check('tuile décor : masques au survol, superposés à l\'image', await page.$e
   return b.classList.contains('masks') && getComputedStyle(cal).visibility === 'visible'
     && Math.abs(r1.top - r2.top) < 1 && Math.abs(r1.width - r2.width) < 1;
 }));
+}
 // Ordinateur : l'asset en haut de la tuile, sur toute sa largeur.
 const full = await page.$eval(`.card[data-id="${kidIds[1]}"]`, (c) => {
   const t = c.firstElementChild.getBoundingClientRect(), r = c.getBoundingClientRect();
@@ -243,10 +257,10 @@ const full = await page.$eval(`.card[data-id="${kidIds[1]}"]`, (c) => {
 check('tuile : asset en haut, pleine largeur, hauteur bornée', full.top < 12 && full.w > 0.85 && full.h <= 160, JSON.stringify(full));
 await shot(page, '04a_tuile_decor_masques', false);
 await page.mouse.move(2, 2);
-check('tuile décor : masques cachés au départ de la souris', !(await page.$eval(dthumb, (b) => b.classList.contains('masks'))));
+if (hasDecor) check('tuile décor : masques cachés au départ de la souris', !(await page.$eval(dthumb, (b) => b.classList.contains('masks'))));
 await page.click(`.card[data-id="${kidIds[1]}"] .title`);
 await page.waitForSelector('#cf-asset-view:not([hidden]) .anim-cell img.mini');
-check('détail : champ « détail » = walk', (await page.inputValue('#cf-detail')) === 'walk');
+check('détail : champ « détail » = run', (await page.inputValue('#cf-detail')) === 'run');
 await page.hover('#cf-asset-view .anim-cell');
 await page.waitForSelector('#cf-asset-view .anim-cell canvas.mini');
 check('détail : l\'animation de l\'asset joue au survol', true);
@@ -255,11 +269,14 @@ await page.click('#cf-asset-view .comment-form button[type=submit]');
 await page.waitForSelector(`#cf-asset-view .comment:has-text("${tag} : les pieds glissent")`);
 const [, cm] = await apiTok('comments');
 const mine = cm.comments.find((c) => c.body === `${tag} : les pieds glissent`);
-check('commentaire d\'asset depuis la carte (version + anim)', mine && mine.asset === ASSET && mine.version && mine.context === 'anim : walk', JSON.stringify(mine && [mine.version, mine.context]));
+check('commentaire d\'asset depuis la carte (version + anim)', mine && mine.asset === ASSET && mine.version && mine.context === 'anim : run', JSON.stringify(mine && [mine.version, mine.context]));
 await shot(page, '04b_detail_asset', false);
 await page.click('#cf-asset-view .anim-cell');
 await page.waitForSelector('.fs canvas');
-check('détail : clic sur l\'animation = plein écran', (await page.textContent('.fs-title')) === 'louis · walk');
+{
+  const fst = await page.textContent('.fs-title');
+  check('détail : clic sur l\'animation = plein écran', fst.startsWith('Patxi · ') && fst.includes('run'), fst);
+}
 await page.click('.fs-close');
 // Une amélioration de Julien sur une carte en QA la sort de QA (sommet du Backlog, « à retraiter », 21/10).
 {
@@ -289,7 +306,7 @@ cli('qa', String(kidIds[1]), 'pieds recalés sur feet_anchor');
 const back = JSON.parse(cli('show', String(kidIds[1]), '--json'));
 check('cli qa : retour en QA, badge effacé, commentaire « retraité : »', back.card.status === 'qa' && !back.card.rework
   && back.card.notes.some((n) => n.body.startsWith('retraité : pieds recalés sur feet_anchor')
-    && n.body.includes(`asset ${ASSET} · walk version `)));
+    && n.body.includes(`asset ${ASSET} · run version `)));
 // Chapeau en QA : Accepter accepte aussi les enfants encore en QA (après confirmation).
 cli('move', String(hatId), 'qa');
 await page.reload();
@@ -297,17 +314,82 @@ const msgs = [];
 page.removeAllListeners('dialog');
 page.on('dialog', (d) => { msgs.push(d.message()); d.accept(); });
 await page.locator(`.card[data-id="${hatId}"] button.accept`).click();
-await page.waitForSelector(`.column[data-status=done] .card[data-id="${hatId}"]`);
+await page.waitForSelector(`.column[data-status=valide] .card[data-id="${hatId}"]`);
+check('accepter : toast « → Validé »', /→ Validé/.test(await page.textContent('#toast')), await page.textContent('#toast'));
 const st2 = Object.fromEntries((await apiTok('cards'))[1].cards.map((c) => [c.id, c.status]));
 check('chapeau accepté avec confirmation (2 enfants en QA)', msgs.some((m) => m.includes('2 enfants')), msgs.join(' | '));
-check('chapeau + enfants en QA -> Done, les autres restent', st2[hatId] === 'done' && st2[kidIds[0]] === 'done'
-  && st2[kidIds[1]] === 'done' && st2[hunterId] === 'backlog', JSON.stringify([st2[hatId], st2[kidIds[0]], st2[kidIds[1]], st2[hunterId]]));
+check('chapeau + enfants en QA -> Validé, les autres restent', st2[hatId] === 'valide' && st2[kidIds[0]] === 'valide'
+  && st2[kidIds[1]] === 'valide' && st2[hunterId] === 'backlog', JSON.stringify([st2[hatId], st2[kidIds[0]], st2[kidIds[1]], st2[hunterId]]));
+{
+  const [, sh] = await apiTok('card&id=' + hatId);
+  check('chapeau : Validé compte comme avancé (children_done)', sh.card.children_done === 2 && sh.card.children === 3,
+    `${sh.card.children_done}/${sh.card.children}`);
+  check('événement accepte : qa -> valide', sh.events.some((e) => e.type === 'accepte' && e.old === 'qa' && e.new === 'valide'));
+}
 const [stBad] = await apiTok('card_accept', { id: hunterId });
 check('accepter hors QA refusé (400)', stBad === 400, String(stBad));
 const evq = JSON.parse(cli('events', '--since', String(t0), '--json')).events;
 check('events : types accepte et refuse (avec le texte)', evq.filter((e) => e.type === 'accepte').length === 3
   && evq.some((e) => e.type === 'refuse' && e.author === 'julien' && e.new.includes('pieds à recaler')));
-check('cli events : ACCEPTÉE / REFUSÉE lisibles', /ACCEPTÉE/.test(cli('events', '--since', String(t0))) && /REFUSÉE QA -> Doing/.test(cli('events', '--since', String(t0))));
+check('cli events : ACCEPTÉE / REFUSÉE lisibles', /ACCEPTÉE QA -> Validé/.test(cli('events', '--since', String(t0))) && /REFUSÉE QA -> Backlog/.test(cli('events', '--since', String(t0))));
+// Passage en prod (watcher du déploiement, jeton) : Validé -> En prod par card_move et cards_bulk.
+{
+  const [sm] = await apiTok('card_move', { id: kidIds[0], status: 'done' });
+  const [sb, rb] = await apiTok('cards_bulk', { ids: [hatId, kidIds[1]], status: 'done' });
+  const all = Object.fromEntries((await apiTok('cards'))[1].cards.map((c) => [c.id, c]));
+  check('card_move / cards_bulk : Validé -> En prod (jeton)', sm === 200 && sb === 200 && rb.changed === 2
+    && [hatId, kidIds[0], kidIds[1]].every((id) => all[id].status === 'done'), JSON.stringify([sm, sb, rb]));
+  const evp = JSON.parse(cli('events', '--since', String(t0), '--json')).events;
+  check('événement deplacement valide -> done par claude', evp.filter((e) => e.type === 'deplacement' && e.old === 'valide'
+    && e.new === 'done' && e.author === 'claude').length === 3);
+  check('cli : move … done affiché « En prod »', cli('show', String(kidIds[0])).includes('[En prod]'));
+  await page.reload();
+  await page.waitForSelector(`.column[data-status=done] .card[data-id="${hatId}"]`);
+  check('colonne En prod : le chapeau y est', true);
+}
+
+// ------------------------------------------------------- tâches pixelforge (jobs)
+{
+  const jobs = [
+    { id: 'c4897ae6d1f04b6e9a2b', role: 'A', label: 'animation run', status: 'running', keep: false },
+    { id: '0aa1bb2cc3dd4ee5ff60', role: 'B', label: 'animation run (variante)', status: 'succeeded', keep: true },
+  ];
+  cli('set', String(hunterId), '--jobs', JSON.stringify(jobs));
+  const [, sj] = await apiTok('card&id=' + hunterId);
+  check('jobs : liste exposée par card', Array.isArray(sj.card.jobs) && sj.card.jobs.length === 2 && sj.card.jobs[1].keep === true);
+  const cj = JSON.parse(cli('cards', '--json')).find((c) => c.id === hunterId);
+  check('cli cards --json : jobs', cj && cj.jobs.length === 2 && cj.jobs[0].id === jobs[0].id);
+  const [b1] = await apiTok('card_update', { id: hunterId, jobs: '{"pas": "une liste"}' });
+  const [b2] = await apiTok('card_update', { id: hunterId, jobs: '[pas du json' });
+  const [b3] = await apiTok('card_update', { id: hunterId, jobs: '[' + '"x",'.repeat(2100) + '"x"]' });
+  check('jobs : objet, JSON invalide ou trop long refusés (400)', b1 === 400 && b2 === 400 && b3 === 400, [b1, b2, b3].join(','));
+  // Même liste renvoyée : aucun nouvel événement.
+  const [, same] = await apiTok('card_update', { id: hunterId, jobs: JSON.stringify(jobs) });
+  const jev = (await apiTok('card&id=' + hunterId))[1].events.filter((e) => e.type === 'jobs');
+  check('jobs : événement seulement si ça change', same.changed === 0 && jev.length === 1 && jev[0].new.startsWith('2 tâches'), JSON.stringify(jev.map((e) => e.new)));
+  check('jobs : pas de commentaire ajouté', (await apiTok('card&id=' + hunterId))[1].card.notes.length === 0);
+  await page.reload();
+  await page.waitForSelector(`.card[data-id="${hunterId}"] .badge.job-run`);
+  check('tuile : badge « tâche en cours »', (await page.textContent(`.card[data-id="${hunterId}"] .badge.job-run`)).includes('1'));
+  await page.click(`.card[data-id="${hunterId}"] .title`);
+  await page.waitForSelector('#cf-jobs-box:not([hidden]) #cf-jobs .job');
+  const rows = await page.$$eval('#cf-jobs .job', (l) => l.map((x) => x.textContent));
+  check('détail : section « Tâches pixelforge » (id court, rôle, libellé, statut, 📌)', rows.length === 2
+    && rows[0].includes('c4897ae6') && !rows[0].includes('c4897ae6d') && rows[0].includes('animation run') && rows[0].includes('running')
+    && rows[1].includes('📌') && !rows[0].includes('📌'), rows.join(' | '));
+  await page.waitForSelector('#cf-feed .event');
+  const jobLines = await page.$$eval('#cf-feed .event.jobs', (l) => l.length);
+  check('fil : tâches pixelforge en une ligne compacte, hors commentaires', jobLines === 1 && !(await page.$('#cf-feed .note.claude')));
+  await shot(page, '04h_jobs_detail', false);
+  await page.click('#cf-cancel');
+  cli('set', String(hunterId), '--jobs', JSON.stringify([{ ...jobs[0], status: 'failed' }]));
+  await page.reload();
+  await page.waitForSelector(`.card[data-id="${hunterId}"] .badge.job-failed`);
+  check('tuile : badge « en échec »', true);
+  cli('set', String(hunterId), '--jobs', '[]');
+  const [, sz] = await apiTok('card&id=' + hunterId);
+  check('jobs : "[]" vide la liste', sz.card.jobs.length === 0 && sz.events.filter((e) => e.type === 'jobs').length === 3);
+}
 
 // ------------------------------------------------------------- night shift
 {
@@ -383,7 +465,7 @@ check('cli events : ACCEPTÉE / REFUSÉE lisibles', /ACCEPTÉE/.test(cli('events
 // ------------------------------------------------------------------ iPhone
 // Vue mobile : une colonne à la fois, onglets collants, tuiles compactes.
 for (let k = 1; k <= 8; k++) {
-  cli('add-card', '--type', 'animation', '--title', `${tag} QA mobile ${k}`, '--asset', ASSET, '--detail', 'walk', '--status', 'qa');
+  cli('add-card', '--type', 'animation', '--title', `${tag} QA mobile ${k}`, '--asset', ASSET, '--detail', 'run', '--status', 'qa');
 }
 const wk = await webkit.launch();
 for (const [name, vp] of [['iphone_portrait', { width: 390, height: 844 }], ['iphone_paysage', { width: 844, height: 390 }]]) {
@@ -393,7 +475,10 @@ for (const [name, vp] of [['iphone_portrait', { width: 390, height: 844 }], ['ip
   await login(mp);
   await mp.waitForSelector('#kb-tabs:not([hidden]) .kb-tab.active');
   const tabs = await mp.$$eval('#kb-tabs .kb-tab[data-status]', (l) => l.map((t) => [t.dataset.status, t.getBoundingClientRect().height]));
-  check(`${name} : 5 onglets assez grands`, tabs.length === 5 && tabs.every(([, h]) => h >= 40), JSON.stringify(tabs));
+  check(`${name} : 6 onglets assez grands`, tabs.length === 6 && tabs.every(([, h]) => h >= 40), JSON.stringify(tabs));
+  const tabFit = await mp.$$eval('#kb-tabs .kb-tab', (l) => l.every((t) => t.scrollWidth <= t.clientWidth + 1
+    && t.getBoundingClientRect().right <= innerWidth + 1));
+  check(`${name} : libellés des onglets lisibles (sans débordement)`, tabFit);
   check(`${name} : QA ouvert par défaut (cartes à tester)`, (await mp.getAttribute('.kb-tab.active', 'data-status')) === 'qa');
   const shown = await mp.$$eval('.column', (l) => l.filter((c) => c.getBoundingClientRect().height > 0).length);
   check(`${name} : une seule colonne à l'écran`, shown === 1, String(shown));
@@ -436,8 +521,8 @@ for (const [name, vp] of [['iphone_portrait', { width: 390, height: 844 }], ['ip
   await anim.locator('.thumb-box').tap();
   await mp.waitForSelector('.column.active canvas.card-thumb');
   check(`${name} : miniature animée au premier toucher, carte fermée`, !(await mp.$('#card-dialog[open]')));
-  await mp.locator(`.card[data-id="${decorId}"]`).scrollIntoViewIfNeeded().catch(() => {});
-  if (await mp.$(`.card[data-id="${decorId}"] .dthumb`)) {
+  if (hasDecor) await mp.locator(`.card[data-id="${decorId}"]`).scrollIntoViewIfNeeded().catch(() => {});
+  if (hasDecor && await mp.$(`.card[data-id="${decorId}"] .dthumb`)) {
     await mp.locator(`.card[data-id="${decorId}"] .dthumb`).tap();
     await mp.waitForTimeout(300);
     check(`${name} : décor, masques au toucher`, await mp.$eval(`.card[data-id="${decorId}"] .dthumb`, (b) => b.classList.contains('masks'))
@@ -464,7 +549,7 @@ for (const [name, vp] of [['iphone_portrait', { width: 390, height: 844 }], ['ip
   await mp.waitForSelector('#cf-qa-bar:not([hidden])');
   await mp.locator('#cf-accept2').tap();
   await mp.waitForFunction(() => !document.querySelector('#card-dialog[open]'));
-  check(`${name} : Accepter depuis la barre collante`, (await apiTok('cards'))[1].cards.find((c) => c.id === qid).status === 'done');
+  check(`${name} : Accepter depuis la barre collante -> Validé`, (await apiTok('cards'))[1].cards.find((c) => c.id === qid).status === 'valide');
   await ctx.close();
 }
 await wk.close();
@@ -485,7 +570,7 @@ await wk.close();
   }, [x0, x1]);
   await swipe(320, 80);
   const after = await mp.getAttribute('.kb-tab.active', 'data-status');
-  check('mobile : balayage à gauche = colonne suivante', before === 'qa' && after === 'done', `${before} -> ${after}`);
+  check('mobile : balayage à gauche = colonne suivante', before === 'qa' && after === 'valide', `${before} -> ${after}`);
   await swipe(80, 320);
   check('mobile : balayage à droite = colonne précédente', (await mp.getAttribute('.kb-tab.active', 'data-status')) === 'qa');
   await ctx.close();
@@ -501,7 +586,7 @@ await wk.close();
   const lp = await live.newPage();
   lp.on('pageerror', (e) => errors.push(String(e)));
   await login(lp);
-  const lid = Number(/#(\d+)/.exec(cli('add-card', '--type', 'animation', '--title', `${tag} direct`, '--asset', ASSET, '--detail', 'walk', '--status', 'todo'))[1]);
+  const lid = Number(/#(\d+)/.exec(cli('add-card', '--type', 'animation', '--title', `${tag} direct`, '--asset', ASSET, '--detail', 'run', '--status', 'todo'))[1]);
   await lp.waitForSelector(`.card[data-id="${lid}"]`, { timeout: 40000 });
   check('direct : une carte créée par le CLI apparaît sans recharger', true);
   await lp.click(`.card[data-id="${lid}"] .title`);
@@ -527,7 +612,7 @@ await wk.close();
     const anim = a.anims.find((x) => x.name === 'idle');
     const posterPath = path.join(FILES, anim.poster);
     const posterSave = fs.readFileSync(posterPath);
-    fs.copyFileSync(path.join(FILES, a.anims.find((x) => x.name === 'walk').poster), posterPath);
+    fs.copyFileSync(path.join(FILES, a.anims.find((x) => x.name === 'run').poster), posterPath);
     idx.versions[anim.poster] = 'abcdef0123';
     a.version = 'nouvelle01';
     fs.writeFileSync(idxPath, JSON.stringify(idx));
@@ -554,6 +639,46 @@ await wk.close();
     console.log('     (PRODUCER_FILES_DIR absent : republication d\'asset non testée)');
   }
   await live.close();
+}
+
+// ------------------------------------------------- accès Tailscale (service local)
+// Service lancé avec 'tailscale_auth' => true : une requête du proxy local (127.0.0.1) portant
+// Tailscale-User-Login est connectée sans mot de passe ; sans l'en-tête, 401.
+const TS = process.env.PRODUCER_TAILSCALE_URL || '';
+if (TS) {
+  const H = { 'Tailscale-User-Login': 'julien@example.com' };
+  const get = (route, headers = {}) => fetch(TS + 'index.php?r=' + route, { headers });
+  const s0 = await (await get('session')).json();
+  check('tailscale : sans l\'en-tête, pas connecté', s0.auth === false && s0.mode === 'password');
+  check('tailscale : sans l\'en-tête, 401', (await get('cards')).status === 401);
+  const r1 = await get('session', H);
+  const s1 = await r1.json();
+  const cookie = (r1.headers.get('set-cookie') || '').split(';')[0];
+  check('tailscale : en-tête -> connecté (session + csrf, mode tailscale)', s1.auth === true && s1.mode === 'tailscale'
+    && s1.csrf.length === 64 && cookie.startsWith('producer_sid='), JSON.stringify({ auth: s1.auth, mode: s1.mode }));
+  check('tailscale : lecture avec l\'en-tête', (await get('cards', { ...H, Cookie: cookie })).status === 200);
+  const post = (headers) => fetch(TS + 'index.php?r=card', { method: 'POST', headers: { ...H, Cookie: cookie, 'Content-Type': 'application/json', ...headers },
+    body: JSON.stringify({ title: `${tag} tailscale` }) });
+  check('tailscale : écriture sans CSRF refusée (403)', (await post({})).status === 403);
+  check('tailscale : écriture avec CSRF (201)', (await post({ 'X-CSRF-Token': s1.csrf })).status === 201);
+  check('tailscale : en-tête direct sans cookie, connecté aussi', (await get('cards', H)).status === 200);
+  check('tailscale : même cookie sans l\'en-tête -> 401', (await get('cards', { Cookie: cookie })).status === 401);
+  check('tailscale : le jeton de l\'agent marche toujours', (await get('cards', { Authorization: 'Bearer ' + TOKEN })).status === 200);
+  // Navigateur : pas d'écran de connexion, pas de « Déconnexion ».
+  const tctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, extraHTTPHeaders: H });
+  const tp = await tctx.newPage();
+  tp.on('pageerror', (e) => errors.push(String(e)));
+  await tp.goto(TS + '#/kanban');
+  await tp.waitForSelector('#view-kanban:not([hidden]) #board .column');
+  check('tailscale : navigateur connecté sans mot de passe', await tp.isHidden('#login') && await tp.isHidden('#logout'));
+  await tp.fill('.quick-add input', `${tag} depuis tailscale`);
+  await tp.click('.quick-add button[type=submit]');
+  await tp.waitForSelector(`.card:has-text("${tag} depuis tailscale") .origin`);
+  check('tailscale : création depuis le navigateur (CSRF), auteur Julien',
+    (await tp.textContent(`.card:has-text("${tag} depuis tailscale") .origin`)) === 'Julien');
+  await tctx.close();
+} else {
+  console.log('     (PRODUCER_TAILSCALE_URL absent : accès Tailscale non testé)');
 }
 
 check('aucune erreur JS', errors.length === 0, errors.join(' | '));

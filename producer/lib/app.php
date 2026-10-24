@@ -5,9 +5,12 @@ declare(strict_types=1);
  * Service /producer : pilotage du projet (catalogue d'assets, commentaires versionnés, kanban,
  * jalons de la roadmap, tableau de bord). Les routes sont décrites dans routes.php (GET routes).
  *
- * Deux façons de s'authentifier :
+ * Trois façons de s'authentifier :
  * - Julien : mot de passe -> session PHP (cookie HttpOnly, Secure, SameSite=Strict),
  *   jeton CSRF exigé (en-tête X-CSRF-Token) sur toute écriture ;
+ * - Julien par Tailscale (config tailscale_auth, service local derrière `tailscale serve`) :
+ *   requête venue de 127.0.0.1 / ::1 avec l'en-tête Tailscale-User-Login -> même session,
+ *   sans mot de passe, CSRF toujours exigé sur les écritures ;
  * - l'agent : Authorization: Bearer <jeton> (ou X-Producer-Token), sans session.
  * Échecs d'authentification limités par IP (AUTH_MAX_FAILURES / AUTH_WINDOW).
  * SQL : requêtes préparées uniquement. Fichiers : liste blanche de l'index.
@@ -18,10 +21,17 @@ const AUTH_WINDOW = 900;            // 15 min
 const SESSION_LIFETIME = 2592000;   // 30 jours
 const MAX_TITLE = 200;
 const MAX_TEXT = 8000;
-const SCHEMA_VERSION = 5;
+const SCHEMA_VERSION = 6;
 // Colonnes du kanban, dans l'ordre. « review » (ancienne colonne) = « qa ».
-const CARD_STATUSES = ['backlog', 'todo', 'doing', 'qa', 'done'];
+// valide (v6) : accepté en QA, part en prod au prochain déploiement groupé ; done : en prod.
+const CARD_STATUSES = ['backlog', 'todo', 'doing', 'qa', 'valide', 'done'];
 const STATUS_ALIASES = ['review' => 'qa'];
+// Colonnes où le travail est fini (plus d'échéance dépassée, plus de reprise par un commentaire d'asset).
+const FINISHED_STATUSES = ['valide', 'done'];
+// Colonnes qui comptent comme « avancées » dans children_done (QA, Validé, En prod).
+const ADVANCED_STATUSES = ['qa', 'valide', 'done'];
+// Adresses d'où `tailscale serve` relaie les requêtes (proxy local).
+const LOOPBACK = ['127.0.0.1', '::1'];
 const CARD_TYPES = ['feature', 'bug', 'perso', 'animation', 'asset', 'gameplay', 'pixelforge'];
 const MAX_DEPTH = 3;                // chapeau > sous-chapeau > carte
 const MAX_EVENTS = 1000;
@@ -87,7 +97,10 @@ final class App
         // Routes publiques (sans être connecté).
         if ($route === 'session' && $method === 'GET') {
             $this->startSession();
-            $this->json(['auth' => ($_SESSION['auth'] ?? false) === true, 'csrf' => $this->csrf()]);
+            $this->tailscaleSession();
+            $tailscale = ($_SESSION['via'] ?? '') === 'tailscale';
+            $this->json(['auth' => ($_SESSION['auth'] ?? false) === true, 'csrf' => $this->csrf(),
+                'mode' => $tailscale ? 'tailscale' : 'password']);
             return;
         }
         if ($route === 'login' && $method === 'POST') {
@@ -104,6 +117,7 @@ final class App
             'POST logout' => $this->logout(),
             'GET index' => $this->json($this->index()),
             'GET index_version' => $this->json(['v' => $this->indexVersion()]),
+            'GET studio' => $this->json($this->studio()),
             'GET comments' => $this->listComments(),
             'POST comment' => $this->addComment(),
             'POST comment_update' => $this->updateComment(),
@@ -166,6 +180,9 @@ final class App
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]);
+            // Les écritures ouvrent leur transaction par BEGIN IMMEDIATE : le verrou d'écriture est pris
+            // d'emblée et attend busy_timeout (une transaction différée qui lit puis écrit échouerait aussitôt
+            // en « database is locked » si une autre requête écrit entre-temps : watcher + interface).
             $pdo->exec('PRAGMA busy_timeout = 3000');
             $pdo->exec('PRAGMA journal_mode = WAL');
             $this->migrate($pdo);
@@ -185,6 +202,9 @@ final class App
      * v3 -> v4 : colonne cards.night (night shift), à 0 pour les cartes existantes.
      * v4 -> v5 : table milestones (créée par schema.sql), colonnes cards.milestone_id, cards.due
      * et comments.card_id ; rien n'est réécrit dans les lignes existantes.
+     * v5 -> v6 : colonne cards.jobs (tâches pixelforge), puis table cards reconstruite pour que
+     * sa contrainte CHECK accepte 'valide' (lignes copiées telles quelles, ids et sqlite_sequence
+     * gardés, index recréés par schema.sql ; clés étrangères coupées pendant la copie).
      */
     private function migrate(PDO $pdo): void
     {
@@ -242,12 +262,15 @@ final class App
                     // v4 -> v5 : jalon, échéance, carte d'un commentaire d'asset.
                     ['cards', 'milestone_id', 'INTEGER REFERENCES milestones (id) ON DELETE SET NULL'],
                     ['cards', 'due', "TEXT NOT NULL DEFAULT ''"],
-                    ['comments', 'card_id', 'INTEGER']] as [$table, $col, $def]) {
+                    ['comments', 'card_id', 'INTEGER'],
+                    ['cards', 'jobs', "TEXT NOT NULL DEFAULT ''"]] as [$table, $col, $def]) {   // v5 -> v6
                     $cols = array_column($pdo->query("PRAGMA table_info($table)")->fetchAll(), 'name');
                     if (!in_array($col, $cols, true)) {
                         $pdo->exec("ALTER TABLE $table ADD COLUMN $col $def");   // noms fixes ci-dessus
                     }
                 }
+                $this->rebuildCards($pdo, $schema);
+                $pdo->exec($schema);   // index de cards (supprimés avec l'ancienne table)
                 $pdo->exec('PRAGMA user_version = ' . SCHEMA_VERSION);
             }
             $pdo->exec('COMMIT');
@@ -257,6 +280,37 @@ final class App
         } finally {
             $pdo->exec('PRAGMA foreign_keys = ON');
         }
+    }
+
+    /**
+     * v6 : reconstruit la table cards si sa contrainte CHECK ignore encore 'valide' (SQLite ne
+     * sait pas modifier une contrainte). Méthode recommandée par SQLite : nouvelle table, copie,
+     * suppression de l'ancienne, renommage. Les clés étrangères doivent être coupées (fait par
+     * migrate() avant la transaction) : card_notes et cards.parent_id visent « cards » par son nom.
+     */
+    private function rebuildCards(PDO $pdo, string $schema): void
+    {
+        $sql = (string) $pdo->query("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'cards'")->fetchColumn();
+        if ($sql === '' || str_contains($sql, "'valide'")) {
+            return;
+        }
+        if (!preg_match('/^CREATE TABLE IF NOT EXISTS cards \((.*?)\n\);/ms', $schema, $m)) {
+            throw new RuntimeException('schema.sql : définition de cards introuvable');
+        }
+        $seq = (int) $pdo->query("SELECT COALESCE(MAX(seq), 0) FROM sqlite_sequence WHERE name = 'cards'")->fetchColumn();
+        $pdo->exec('DROP TABLE IF EXISTS cards_v6');
+        $pdo->exec("CREATE TABLE cards_v6 ({$m[1]}\n)");
+        $new = array_column($pdo->query('PRAGMA table_info(cards_v6)')->fetchAll(), 'name');
+        $old = array_column($pdo->query('PRAGMA table_info(cards)')->fetchAll(), 'name');
+        // Noms de colonnes tirés des deux tables elles-mêmes.
+        $cols = implode(', ', array_map(static fn (string $c): string => '"' . $c . '"', array_values(array_intersect($new, $old))));
+        $pdo->exec("INSERT INTO cards_v6 ($cols) SELECT $cols FROM cards");
+        $pdo->exec('DROP TABLE cards');
+        $pdo->exec('ALTER TABLE cards_v6 RENAME TO cards');
+        // Les ids de cartes supprimées ne sont jamais réutilisés.
+        $pdo->exec("INSERT INTO sqlite_sequence (name, seq) SELECT 'cards', 0"
+            . " WHERE NOT EXISTS (SELECT 1 FROM sqlite_sequence WHERE name = 'cards')");
+        $pdo->prepare("UPDATE sqlite_sequence SET seq = MAX(seq, ?) WHERE name = 'cards'")->execute([$seq]);
     }
 
     private function clientIp(): string
@@ -343,6 +397,7 @@ final class App
             return;    // pas de cookie, donc pas de CSRF possible
         }
         $this->startSession();
+        $this->tailscaleSession();
         if (($_SESSION['auth'] ?? false) !== true) {
             throw new HttpError('Non connecté', 401);
         }
@@ -355,6 +410,40 @@ final class App
         // Libère le verrou de session (requêtes parallèles d'images, audio…).
         session_write_close();
         $this->actor = 'julien';
+    }
+
+    /** Login Tailscale de la requête (en-tête posé par `tailscale serve`), ou '' si l'accès Tailscale ne vaut pas. */
+    private function tailscaleLogin(): string
+    {
+        if (($this->config['tailscale_auth'] ?? false) !== true
+            || !in_array((string) ($_SERVER['REMOTE_ADDR'] ?? ''), LOOPBACK, true)) {
+            return '';
+        }
+        return trim((string) ($_SERVER['HTTP_TAILSCALE_USER_LOGIN'] ?? ''));
+    }
+
+    /**
+     * Session ouverte par Tailscale : connectée tant que les requêtes portent l'en-tête
+     * Tailscale-User-Login (et viennent du proxy local). Une session ouverte par mot de passe
+     * n'est pas touchée. À appeler session démarrée.
+     */
+    private function tailscaleSession(): void
+    {
+        $login = $this->tailscaleLogin();
+        $viaTailscale = ($_SESSION['via'] ?? '') === 'tailscale';
+        if ($login === '') {
+            if ($viaTailscale) {
+                // En-tête absent : la session Tailscale ne vaut plus (accès direct au port local…).
+                unset($_SESSION['auth'], $_SESSION['via']);
+            }
+            return;
+        }
+        if (($_SESSION['auth'] ?? false) !== true) {
+            session_regenerate_id(true);
+            $_SESSION['auth'] = true;
+            $_SESSION['via'] = 'tailscale';
+            $_SESSION['csrf'] = bin2hex(random_bytes(32));
+        }
     }
 
     private function login(): void
@@ -796,7 +885,58 @@ final class App
         $c['night'] = (bool) (int) $c['night'];
         $c['milestone_id'] = ($c['milestone_id'] ?? null) === null ? null : (int) $c['milestone_id'];
         $c['due'] = (string) ($c['due'] ?? '');
+        $c['jobs'] = self::decodeJobs((string) ($c['jobs'] ?? ''));
         return $c;
+    }
+
+    /** Tâches pixelforge stockées ('' ou liste JSON) -> liste (vide si illisible). */
+    private static function decodeJobs(string $raw): array
+    {
+        $v = $raw === '' ? [] : json_decode($raw, true);
+        return is_array($v) && array_is_list($v) ? $v : [];
+    }
+
+    /**
+     * Tâches pixelforge lues dans le corps : absent -> null ; sinon chaîne JSON (≤ MAX_TEXT) ou
+     * liste, qui doit être une liste JSON. Renvoie la forme stockée ('' pour une liste vide).
+     */
+    private static function jobsArg(array $b): ?string
+    {
+        if (!array_key_exists('jobs', $b)) {
+            return null;
+        }
+        $v = $b['jobs'];
+        if (is_array($v)) {
+            $v = json_encode($v, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        }
+        if (!is_string($v) || strlen($v) > MAX_TEXT) {
+            throw new HttpError('jobs : liste JSON de ' . MAX_TEXT . ' caractères au plus attendue', 400);
+        }
+        $v = trim($v);
+        $list = $v === '' ? [] : json_decode($v, true);
+        if (!is_array($list) || !array_is_list($list)) {
+            throw new HttpError('jobs : liste JSON attendue', 400);
+        }
+        return $list ? (string) json_encode($list, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : '';
+    }
+
+    /** Résumé court des tâches pour l'historique : « 3 tâches : 2 succeeded, 1 running ». */
+    private static function jobsSummary(string $stored): string
+    {
+        $list = self::decodeJobs($stored);
+        if (!$list) {
+            return 'aucune';
+        }
+        $by = [];
+        foreach ($list as $j) {
+            $st = is_array($j) && is_string($j['status'] ?? null) ? $j['status'] : '?';
+            $by[$st] = ($by[$st] ?? 0) + 1;
+        }
+        $parts = [];
+        foreach ($by as $st => $n) {
+            $parts[] = "$n $st";
+        }
+        return count($list) . ' tâche' . (count($list) > 1 ? 's' : '') . ' : ' . implode(', ', $parts);
     }
 
     /** Jalon lu dans le corps : absent -> null, 0/''/null -> 0 (aucun), sinon id existant. */
@@ -838,7 +978,7 @@ final class App
 
     /**
      * Toutes les cartes, avec commentaires (`notes`) et avancement des enfants
-     * (`children` : total, `children_done` : qa + done, descendants compris).
+     * (`children` : total, `children_done` : qa + valide + done, descendants compris).
      */
     private function allCards(): array
     {
@@ -869,7 +1009,7 @@ final class App
             }
         }
         foreach ($cards as $c) {
-            $done = in_array($c['status'], ['qa', 'done'], true) ? 1 : 0;
+            $done = in_array($c['status'], ADVANCED_STATUSES, true) ? 1 : 0;
             // Remonte la chaîne : chaque ancêtre compte ce descendant.
             for ($p = $c['parent_id'], $guard = 0; $p !== null && isset($cards[$p]) && $guard < 10; $guard++) {
                 $cards[$p]['children']++;
@@ -971,7 +1111,7 @@ final class App
         $due = (string) (self::dueArg($b) ?? '');
         $this->checkParent(0, $parent);
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         try {
             $stmt = $db->prepare('SELECT COALESCE(MAX(position), -1) + 1 FROM cards WHERE status = ?');
             $stmt->execute([$status]);
@@ -992,9 +1132,9 @@ final class App
             if ($due !== '') {
                 $this->event($id, 'echeance', '', $due, $now);
             }
-            $db->commit();
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
         $this->json(['id' => $id], 201);
@@ -1016,6 +1156,7 @@ final class App
         $night = self::flag($b, 'night');
         $milestone = $this->milestoneArg($b);
         $fields['due'] = self::dueArg($b);
+        $jobs = self::jobsArg($b);
         if ($fields['title'] === '') {
             throw new HttpError('Titre vide', 400);
         }
@@ -1025,11 +1166,12 @@ final class App
         if (($fields['asset'] ?? '') !== '' && $this->asset((string) $fields['asset']) === null) {
             throw new HttpError('Asset inconnu', 400);
         }
-        if ($parent === null && $night === null && $milestone === null && !array_filter($fields, static fn ($v) => $v !== null)) {
+        if ($parent === null && $night === null && $milestone === null && $jobs === null
+            && !array_filter($fields, static fn ($v) => $v !== null)) {
             throw new HttpError('Rien à modifier', 400);
         }
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         try {
             $cur = $this->card($id);
             // Nom de l'événement par colonne (« $col » vient de cette liste fixe).
@@ -1067,12 +1209,20 @@ final class App
                 $args[] = $id;
                 $db->prepare('UPDATE cards SET ' . implode(', ', $sets) . ', updated_at = ? WHERE id = ?')->execute($args);
             }
-            $db->commit();
+            // Tâches pixelforge (écrites par le watcher) : données de machine, sans toucher updated_at ;
+            // un événement « jobs » (résumé court) seulement si elles changent.
+            $changed = count($sets);
+            if ($jobs !== null && $jobs !== (string) $cur['jobs']) {
+                $db->prepare('UPDATE cards SET jobs = ? WHERE id = ?')->execute([$jobs, $id]);
+                $this->event($id, 'jobs', self::jobsSummary((string) $cur['jobs']), self::jobsSummary($jobs));
+                $changed++;
+            }
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
-        $this->json(['ok' => true, 'changed' => count($sets)]);
+        $this->json(['ok' => true, 'changed' => $changed]);
     }
 
     private function moveCard(): void
@@ -1082,7 +1232,7 @@ final class App
         $status = (string) self::status($b, true);
         $index = $b['index'] ?? null;
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         try {
             $old = (string) $this->card($id)['status'];
             $this->placeCard($id, $status, $index);
@@ -1090,9 +1240,9 @@ final class App
             if ($old !== $status) {
                 $this->event($id, 'deplacement', $old, $status);
             }
-            $db->commit();
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
         $this->json(['ok' => true]);
@@ -1121,14 +1271,15 @@ final class App
     }
 
     /**
-     * QA : Julien accepte la carte -> Done (événement « accepte »). Un chapeau
-     * accepte aussi ses descendants encore en QA. Renvoie les ids acceptés.
+     * QA : Julien accepte la carte -> Validé (événement « accepte », qa -> valide). Un chapeau
+     * accepte aussi ses descendants encore en QA. Renvoie les ids acceptés. Le passage
+     * Validé -> En prod (done) est fait par le watcher du déploiement (card_move / cards_bulk).
      */
     private function acceptCard(): void
     {
         $id = self::id($this->body());
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         try {
             if ($this->card($id)['status'] !== 'qa') {
                 throw new HttpError('Seule une carte en QA peut être acceptée', 400);
@@ -1141,13 +1292,13 @@ final class App
                 if ($st->fetchColumn() !== 'qa') {
                     continue;
                 }
-                $this->placeCard($cid, 'done');
-                $this->event($cid, 'accepte', 'qa', 'done');
+                $this->placeCard($cid, 'valide');
+                $this->event($cid, 'accepte', 'qa', 'valide');
                 $accepted[] = $cid;
             }
-            $db->commit();
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
         $this->json(['ok' => true, 'accepted' => $accepted]);
@@ -1161,7 +1312,7 @@ final class App
         $id = self::id($b);
         $text = (string) self::text($b, 'body', MAX_TEXT, true);
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         try {
             if ($this->card($id)['status'] !== 'qa') {
                 throw new HttpError('Seule une carte en QA peut être refusée', 400);
@@ -1172,9 +1323,9 @@ final class App
             $this->placeCard($id, 'backlog', 0);
             $db->prepare('UPDATE cards SET rework = 1 WHERE id = ?')->execute([$id]);
             $this->event($id, 'refuse', 'qa', $text, $now);
-            $db->commit();
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
         $this->json(['ok' => true]);
@@ -1225,7 +1376,7 @@ final class App
         $id = self::id($b);
         $text = (string) self::text($b, 'body', MAX_TEXT, true);
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         try {
             $this->card($id);
             $now = time();
@@ -1235,9 +1386,9 @@ final class App
             $db->prepare('UPDATE cards SET updated_at = ? WHERE id = ?')->execute([$now, $id]);
             $this->event($id, 'commentaire', '', $text, $now);
             $this->sortirDeQa($id, $text, $now);
-            $db->commit();
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
         $this->json(['id' => $nid], 201);
@@ -1247,15 +1398,15 @@ final class App
     {
         $id = self::id($this->body());
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         try {
             $title = (string) $this->card($id)['title'];
             // Les enfants restent, détachés (ON DELETE SET NULL).
             $db->prepare('DELETE FROM cards WHERE id = ?')->execute([$id]);
             $this->event($id, 'suppression', $title, '');
-            $db->commit();
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
         $this->json(['ok' => true]);
@@ -1283,7 +1434,7 @@ final class App
             throw new HttpError('Rien à modifier (status, night, priority, milestone)', 400);
         }
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         $changed = 0;
         try {
             foreach ($ids as $id) {
@@ -1318,9 +1469,9 @@ final class App
                 }
                 $changed += $sets ? 1 : 0;
             }
-            $db->commit();
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
         $this->json(['ok' => true, 'changed' => $changed]);
@@ -1358,7 +1509,7 @@ final class App
             throw new HttpError($assetId !== '' ? 'Asset inconnu' : 'asset, card ou title requis', 400);
         }
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         try {
             $now = time();
             $created = false;
@@ -1375,7 +1526,8 @@ final class App
                 $st = $db->prepare('SELECT * FROM cards WHERE asset = ? ORDER BY updated_at DESC, id DESC');
                 $st->execute([$assetId]);
                 $linked = $st->fetchAll();
-                $open = array_values(array_filter($linked, static fn (array $c): bool => $c['status'] !== 'done'));
+                $open = array_values(array_filter($linked, static fn (array $c): bool =>
+                    !in_array($c['status'], FINISHED_STATUSES, true)));
                 // Même détail ; à défaut (cartes d'animation sans détail), titre « … · <libellé> ».
                 $same = array_values(array_filter($open, static fn (array $c): bool => (string) $c['detail'] === $detail));
                 if (!$same && $detail !== '') {
@@ -1450,9 +1602,9 @@ final class App
                     $this->sortirDeQa($cardId, $text, $now);
                 }
             }
-            $db->commit();
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
         $this->json(['comment' => $commentId, 'card' => $cardId ?: null, 'created' => $created], 201);
@@ -1543,7 +1695,7 @@ final class App
     {
         $id = self::id($this->body());
         $db = $this->db();
-        $db->beginTransaction();
+        $db->exec('BEGIN IMMEDIATE');
         try {
             $st = $db->prepare('SELECT id FROM cards WHERE milestone_id = ?');
             $st->execute([$id]);
@@ -1556,9 +1708,9 @@ final class App
             if ($del->rowCount() === 0) {
                 throw new HttpError('Jalon introuvable', 404);
             }
-            $db->commit();
+            $db->exec('COMMIT');
         } catch (Throwable $e) {
-            $db->rollBack();
+            $db->exec('ROLLBACK');
             throw $e;
         }
         $this->json(['ok' => true]);
@@ -1602,7 +1754,7 @@ final class App
             if ($c['status'] === 'doing' && !$c['rework'] && $now - $c['status_at'] >= $days * 86400) {
                 $stale[] = $brief($c);
             }
-            if ($c['due'] !== '' && $c['due'] < $today && $c['status'] !== 'done') {
+            if ($c['due'] !== '' && $c['due'] < $today && !in_array($c['status'], FINISHED_STATUSES, true)) {
                 $overdue[] = $brief($c);
             }
             if ($c['night'] && $c['status'] === 'todo') {
@@ -1656,6 +1808,26 @@ final class App
             $html = str_replace('static/' . $f . '"', 'static/' . $f . '?v=' . (int) @filemtime($static . $f) . '"', $html);
         }
         echo $html;
+    }
+
+    /**
+     * État du studio écrit par le watcher (build du jeu de QA, déploiement groupé) :
+     * <data_dir>/studio.json, sinon files/studio.json, sinon {}. Format :
+     * {"qa_build": {"at", "commit", "ok"}, "deploy": {"state": idle|en_attente|en_cours|echec, "at", "cards", "message"}}.
+     */
+    private function studio(): object|array
+    {
+        foreach ([$this->dataDir() . '/studio.json', $this->filesDir() . '/studio.json'] as $f) {
+            if (!is_file($f)) {
+                continue;
+            }
+            $raw = @file_get_contents($f, false, null, 0, 262144);
+            $data = $raw === false ? null : json_decode($raw, true);
+            if (is_array($data) && !array_is_list($data)) {
+                return $data;
+            }
+        }
+        return new stdClass();
     }
 
     /** Version légère de l'index des assets (date + taille de index.json) : sondée par le board. */

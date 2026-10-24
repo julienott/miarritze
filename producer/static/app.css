@@ -204,7 +204,7 @@ audio { width: 100%; margin: 10px 0; }
 /* ------------------------------------------------------------------- kanban */
 .kanban-bar { display: flex; gap: 10px 16px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
 .kanban-bar select { width: auto; max-width: 220px; padding: 6px 8px; }
-.board { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; align-items: start; }
+.board { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; align-items: start; }
 .column { background: var(--chip); border-radius: 10px; padding: 8px; min-height: 160px; min-width: 0; }
 .column.over { outline: 2px dashed var(--red); }
 .column h3 { margin: 2px 0 10px; display: flex; justify-content: space-between; }
@@ -243,6 +243,7 @@ audio { width: 100%; margin: 10px 0; }
   border-radius: 4px; background: var(--line); color: var(--text); flex: none; }
 .st-doing { background: #b7791f; color: #fff; }
 .st-qa { background: #6b46c1; color: #fff; }
+.st-valide { background: var(--st-valide); color: #fff; }
 .st-done { background: var(--ok); color: #fff; }
 .st-todo { background: var(--blue); color: #fff; }
 /* Types de cartes : badge et liseré. */
@@ -630,8 +631,9 @@ body.fs-open { overflow: hidden; }
 :root {
   --st-backlog: #8a8178; --st-todo: var(--blue); --st-doing: #b7791f; --st-qa: #6b46c1; --st-done: var(--ok);
   --st-rework: #c2410c;
+  --st-valide: #0b7f8c;   /* Validé : bleu canard, entre le violet de QA et le vert de la prod */
 }
-:root[data-theme="dark"] { --st-todo: #3f7fb3; --st-backlog: #6f6860; }
+:root[data-theme="dark"] { --st-todo: #3f7fb3; --st-backlog: #6f6860; --st-valide: #2596a3; }
 .small { font-size: 13px; }
 p.small, .muted.small { font-size: 12px; }
 .grow { flex: 1; min-width: 0; }
@@ -645,6 +647,7 @@ code { font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background
 .pill.p-todo { background: var(--st-todo); }
 .pill.p-doing { background: var(--st-doing); }
 .pill.p-qa { background: var(--st-qa); }
+.pill.p-valide { background: var(--st-valide); }
 .pill.p-done { background: var(--st-done); }
 .pill.p-rework { background: var(--st-rework); }
 .pill.p-none { background: transparent; color: var(--muted); border: 1px dashed var(--muted); font-weight: 600; }
@@ -701,6 +704,7 @@ a.citem, :root[data-theme="dark"] a.citem { color: var(--text); }
 .citem.s-rework { border-top-color: var(--st-rework); }
 .citem.s-doing { border-top-color: var(--st-doing); }
 .citem.s-todo { border-top-color: var(--st-todo); }
+.citem.s-valide { border-top-color: var(--st-valide); }
 .citem.s-done { border-top-color: var(--st-done); }
 .citem.missing { border-style: dashed; border-top-style: solid; }
 .cthumb {
@@ -832,6 +836,7 @@ button.link.hat-title, .hat-prog .link { text-transform: none; text-align: left;
 .stack { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--chip); width: 100%; }
 .stack span { display: block; height: 100%; }
 .seg-done { background: var(--st-done); }
+.seg-valide { background: var(--st-valide); }
 .seg-qa { background: var(--st-qa); }
 .seg-doing { background: var(--st-doing); }
 .seg-todo { background: var(--st-todo); }
@@ -858,6 +863,7 @@ a.kpi-tile, :root[data-theme="dark"] a.kpi-tile { color: var(--text); }
 .kpi-h { font-size: 12px; }
 .kpi-tile.zero .kpi-n { color: var(--muted); }
 .k-qa { border-left-color: var(--st-qa); }
+.k-valide { border-left-color: var(--st-valide); }
 .k-rework { border-left-color: var(--st-rework); }
 .k-doing { border-left-color: var(--st-doing); }
 .k-todo { border-left-color: var(--st-todo); }
@@ -1000,4 +1006,42 @@ button.link { text-transform: none; text-align: left; }
 @media (max-width: 760px) {
   .sg-grid { grid-template-columns: 1fr; }
   .sg-text h4 { font-size: 14px; }
+}
+
+/* ------------------------------------------------- studio : jeu de QA, prod, tâches pixelforge */
+/* Même allure que les boutons fantômes de la barre du haut (texte blanc sur le bleu). */
+.top-actions .btn-link, :root[data-theme="dark"] .top-actions .btn-link {
+  display: inline-flex; align-items: center; padding: 0 12px; border-radius: 8px; white-space: nowrap;
+  border: 1px solid rgba(255,255,255,.35); text-decoration: none; color: #fff; font-weight: 600; font-size: 14px;
+}
+.top-actions .btn-link:hover { border-color: #fff; }
+.studio-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.studio-tile {
+  display: flex; gap: 8px; align-items: baseline; padding: 5px 10px; border-radius: 8px; font-size: 13px; text-decoration: none;
+  background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--line); min-width: 0;
+}
+a.studio-tile, :root[data-theme="dark"] a.studio-tile { color: var(--text); }
+.studio-tile:hover { border-color: var(--red); }
+.studio-tile span { color: var(--muted); }
+.studio-tile.s-qa { border-left-color: var(--st-qa); }
+.studio-tile.s-prod { border-left-color: var(--st-done); }
+.studio-tile.bad { border-left-color: var(--red); }
+.studio-tile.bad span { color: var(--red); }
+.badge.job-run { background: #b0306f; color: #fff; }
+.badge.job-failed { background: var(--red); color: #fff; }
+.badge.job-ok { background: var(--ok); color: #fff; }
+.jobs { list-style: none; margin: 4px 0 8px; padding: 0; display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
+.job { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 3px 6px; background: var(--chip); border-radius: 6px; }
+.job .job-label { flex: 1; min-width: 0; word-break: break-word; }
+.event.jobs { font-size: 11px; border-left-style: dotted; }
+@media (max-width: 760px) {
+  .top-actions .btn-link { padding: 0 8px; font-size: 12px; }
+  .kb-tab .l { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .kb-tab { font-size: 12px; }
+}
+/* iPhone portrait : 6 colonnes + ☰ sur 390 px. */
+@media (max-width: 430px) {
+  .kb-tabs { gap: 3px; }
+  .kb-tab { font-size: 11px; padding: 4px 0; letter-spacing: -.01em; }
+  .kb-tab.kb-filters { flex: 0 0 36px; }
 }

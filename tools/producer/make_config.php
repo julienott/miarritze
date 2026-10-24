@@ -10,6 +10,9 @@ declare(strict_types=1);
  * jeton, aléatoire et long). N'affiche jamais les secrets.
  * PRODUCER_INSECURE_COOKIE=1 : cookie sans « Secure » (test local en http).
  * PRODUCER_DATA_DIR : dossier de données (défaut : data/ à côté de config.php).
+ * PRODUCER_TAILSCALE=1 : service local derrière `tailscale serve` ; écrit 'tailscale_auth' => true
+ *   (connexion sans mot de passe par l'en-tête Tailscale-User-Login) ; PRODUCER_PASSWORD devient
+ *   facultatif (sans lui, pas de password_hash : la connexion par mot de passe est fermée).
  */
 
 if ($argc !== 2) {
@@ -18,16 +21,21 @@ if ($argc !== 2) {
 }
 $password = (string) getenv('PRODUCER_PASSWORD');
 $token = (string) getenv('PRODUCER_TOKEN');
-if ($password === '' || strlen($token) < 24) {
-    fwrite(STDERR, "PRODUCER_PASSWORD vide ou PRODUCER_TOKEN absent/trop court (24 caractères min.)\n");
+$tailscale = getenv('PRODUCER_TAILSCALE') === '1';
+if (($password === '' && !$tailscale) || strlen($token) < 24) {
+    fwrite(STDERR, "PRODUCER_PASSWORD vide (sans PRODUCER_TAILSCALE=1) ou PRODUCER_TOKEN absent/trop court (24 caractères min.)\n");
     exit(1);
 }
 $dataDir = (string) getenv('PRODUCER_DATA_DIR');
-$config = [
-    'password_hash' => password_hash($password, PASSWORD_DEFAULT),
-    'token_sha256' => hash('sha256', $token),
-    'cookie_secure' => getenv('PRODUCER_INSECURE_COOKIE') !== '1',
-];
+$config = [];
+if ($password !== '') {
+    $config['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
+}
+$config['token_sha256'] = hash('sha256', $token);
+$config['cookie_secure'] = getenv('PRODUCER_INSECURE_COOKIE') !== '1';
+if ($tailscale) {
+    $config['tailscale_auth'] = true;
+}
 $dataLine = $dataDir !== ''
     ? "    'data_dir' => " . var_export($dataDir, true) . ",\n"
     : "    'data_dir' => __DIR__ . '/data',\n";
