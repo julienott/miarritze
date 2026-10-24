@@ -228,6 +228,11 @@ class Studio:
             self.synchronise(e, cs)
             if self.integre(e, voulues):
                 it.sauve(e)
+            for cle_s in list(e):                        # tâches remplacées : keep retiré une fois la nouvelle intégrée
+                lib = it.libere_refaites(e, cle_s) if isinstance(e[cle_s], dict) else []
+                if lib:
+                    log(cle_s, "tâches remplacées libérées chez pixelforge :", " ".join(t[:8] for t in lib))
+            it.sauve(e)
             self.build_qa(par_id)
         self.chapeaux(cs, enfants)
         if kanban:

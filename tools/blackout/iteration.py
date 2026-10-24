@@ -118,6 +118,59 @@ AJUSTE = None                         # crochet du watcher : demande -> demande 
 PRIORITE = "night"            # Julien 24/10 : tout part en file de nuit chez pixelforge (01:00–08:00 Paris), jamais autrement
 
 
+def libere(tid: str) -> None:
+    req = urllib.request.Request(f"{pf.PF}/v2/inferences/tasks/{tid}", data=b'{"keep": false}', method="PATCH",
+                                 headers={**pf.AUTH, "Content-Type": "application/json"})
+    urllib.request.urlopen(req, timeout=60)
+
+
+def utilisees(e: dict) -> set:
+    """Toutes les tâches encore utilisées (bases, expressions, socles, animations, profils 32 px) : jamais libérées."""
+    out = set()
+    for s in e.values():
+        if not isinstance(s, dict):
+            continue
+        out.update(t for t in [s.get("base")] + list(s.get("expressions", {}).values()) if t)
+        for a in list(s.get("animations", {}).values()) + ([s["base_px"]] if s.get("base_px") else []):
+            out.update(t for t in (a.get("A"), a.get("B"), a.get("socle")) if t)
+    return out
+
+
+def libere_refaites(e: dict, pid_cle: str) -> list:
+    """Julien 24/10 : une tâche remplacée (« refaites ») perd son keep chez pixelforge quand sa remplaçante est
+    finie et intégrée. Renvoie les tâches libérées (notées dans « liberees »)."""
+    s = e.get(pid_cle, {})
+    vives, faits, faites = utilisees(e), s.get("integre", {}), set(s.get("liberees", []))
+    anims = sorted(s.get("animations", {}), key=len, reverse=True)
+    out = []
+    for cle_r, val in s.get("refaites", {}).items():
+        if cle_r.startswith("expr:"):
+            el, k = None, cle_r[5:].split("_refus_")[0].split("_profil_")[0]
+        else:
+            el = next((a for a in anims if cle_r == a or cle_r.startswith(a + "_")), None)
+            k = None if el else cle_r.split("_coupee")[0].split("_refus_")[0]
+        if el:
+            a = s["animations"][el]
+            pret = faits.get(el) == a["A"] and a.get("B") and get(a["B"]).get("status") == "succeeded"
+        elif k in s.get("expressions", {}):
+            pret = get(s["expressions"][k]).get("status") == "succeeded"
+        else:
+            continue
+        if not pret:
+            continue
+        for tid in str(val).split(","):
+            tid = tid.strip()
+            if len(tid) == 32 and tid not in vives and tid not in faites:
+                try:
+                    libere(tid)
+                except Exception:          # noqa: BLE001 — déjà purgée chez pixelforge : rien à libérer
+                    pass
+                faites.add(tid)
+                out.append(tid)
+    s["liberees"] = sorted(faites)
+    return out
+
+
 def depose(r: dict, montre: bool) -> dict:
     if AJUSTE:
         r = AJUSTE(r)

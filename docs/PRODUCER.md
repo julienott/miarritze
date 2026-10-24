@@ -114,6 +114,10 @@ Le watcher `tools/producer/studio.py` fait un tour par minute (journal `.studio/
    reçoit toujours que le validé (étape 4), pour que la prod reste sous le contrôle de Julien. Pour retrouver
    un asset : `git checkout assets-integres -- assets/blackout/persos/louis/hd/run_sheet.png` (avec `git lfs`
    installé).
+   **keep** : toute tâche suivie est gardée chez pixelforge (qui efface au bout de 48 h ce qui ne l'est pas) ; une
+   tâche remplacée (notée dans `refaites` : refus, course refaite, réduction refaite…) perd son keep à la relève qui
+   suit l'intégration de sa remplaçante (`iteration.libere_refaites`, Julien 24/10). Bases, expressions et tâches en
+   usage ne sont jamais libérées (elles servent de profil de référence).
 4. **Mise en prod** : 10 min après le dernier ✓ (pour grouper), tests, puis commit et push des **seuls fichiers
    des cartes validées** (pour une animation : ses planches, le `set.json` et son entrée dans
    `animations.json`, le reste du fichier restant celui de la prod), lancement de `deploy.yml`, suivi du run ;
