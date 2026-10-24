@@ -80,12 +80,12 @@
   "caption": "etourdi · 14 images · 17.5 i/s"
  },
  "renverse": {
-  "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/renverse.gif",
-  "sheet": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/renverse_sheet.png",
-  "fps": 12.0,
+  "gif": "https://stellar.tailbeda4d.ts.net/files/4ca04603b68a4595b3e5777e530f1f24/renverse.gif",
+  "sheet": "https://stellar.tailbeda4d.ts.net/files/4ca04603b68a4595b3e5777e530f1f24/renverse_sheet.png",
+  "fps": 30.0,
   "loop": false,
-  "count": 12,
-  "caption": "renverse · 12 images · 12 i/s"
+  "count": 30,
+  "caption": "renverse · 30 images · 30 i/s"
  },
  "colle": {
   "gif": "https://stellar.tailbeda4d.ts.net/files/4e0220d984a749b1b538053e17344dde/colle.gif",
